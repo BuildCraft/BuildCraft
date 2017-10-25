@@ -55,9 +55,9 @@ public class ActionType extends StatementType<ActionWrapper> {
         if (buffer.readBoolean()) {
             String name = buffer.readString();
             EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
-            IStatement stmnt = StatementManager.statements.get(name);
-            if (stmnt instanceof IAction) {
-                return ActionWrapper.wrap(stmnt, part.face);
+            IStatement statement = StatementManager.statements.get(name);
+            if (statement instanceof IAction) {
+                return ActionWrapper.wrap(statement, part.face);
             } else {
                 throw new InvalidInputDataException("Unknown action '" + name + "'");
             }

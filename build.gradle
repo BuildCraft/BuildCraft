@@ -77,6 +77,18 @@ minecraft {
     // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
    	replace "(gradle_replace_mcversion,)", "[" + version + "]"
    	replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
+    if (System.getenv("GIT_COMMIT_HASH") != null) {
+        replace "\${git_commit_hash}" , System.getenv("GIT_COMMIT_HASH")
+    }
+    if (System.getenv("GIT_COMMIT_MSG") != null) {
+        replace "\${git_commit_msg}" , System.getenv("GIT_COMMIT_MSG")
+    }
+    if (System.getenv("GIT_COMMIT_AUTHOR") != null) {
+        replace "\${git_commit_author}" , System.getenv("GIT_COMMIT_AUTHOR")
+    }
+    if (System.getenv("GIT_BRANCH") != null) {
+        replace "\${git_branch}" , System.getenv("GIT_BRANCH")
+    }
 }
 
 // configure  the source folders
@@ -149,6 +161,7 @@ compileJava {
     options.compilerArgs << "-Xmaxwarns" << "2"
     options.compilerArgs << "-Xlint:all"
     options.compilerArgs << "-Xdiags:verbose"
+    options.compilerArgs << "-encoding" << "UTF-8"
 }
 
 // --------------------

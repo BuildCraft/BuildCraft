@@ -20,8 +20,7 @@ import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderFiller extends FastTESR<TileFiller> {
     @Override
-    public void renderTileEntityFast(@Nonnull TileFiller tile, double x, double y, double z, float partialTicks,
-        int destroyStage, @Nonnull VertexBuffer vb) {
+    public void renderTileEntityFast(@Nonnull TileFiller tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer vb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("filler");
 
@@ -32,11 +31,11 @@ public class RenderFiller extends FastTESR<TileFiller> {
         Minecraft.getMinecraft().mcProfiler.endSection();
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
-//        if (tile.markerBox) {
+        if (tile.markerBox) {
             vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb, true);
+            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb, false);
             vb.setTranslation(0, 0, 0);
-//        }
+        }
         Minecraft.getMinecraft().mcProfiler.endSection();
 
         Minecraft.getMinecraft().mcProfiler.endSection();

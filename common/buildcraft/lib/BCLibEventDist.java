@@ -5,11 +5,14 @@
 package buildcraft.lib;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -31,6 +34,8 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.tiles.IDebuggable;
+
 import buildcraft.lib.client.model.ModelHolderRegistry;
 import buildcraft.lib.client.reload.ReloadManager;
 import buildcraft.lib.client.render.DetachedRenderer;
@@ -43,7 +48,7 @@ import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
-import buildcraft.lib.net.MessageDebuggableRequest;
+import buildcraft.lib.net.MessageDebugRequest;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
@@ -183,14 +188,20 @@ public enum BCLibEventDist {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postTick();
-            ClientDebuggables.getDebuggableTileSide().ifPresent(tileSide ->
-                MessageManager.sendToServer(
-                    new MessageDebuggableRequest(
-                        tileSide.getLeft().getPos(),
-                        tileSide.getRight()
-                    )
-                )
-            );
+            Minecraft mc = Minecraft.getMinecraft();
+            EntityPlayerSP player = mc.player;
+            if (player != null && player.capabilities.isCreativeMode && mc.gameSettings.showDebugInfo) {
+                RayTraceResult mouseOver = mc.objectMouseOver;
+                if (mouseOver != null) {
+                    IDebuggable debuggable = ClientDebuggables.getDebuggableObject(mouseOver);
+                    if (debuggable instanceof TileEntity) {
+                        TileEntity tile = (TileEntity) debuggable;
+                        MessageManager.sendToServer(new MessageDebugRequest(tile.getPos(), mouseOver.sideHit));
+                    } else if (debuggable instanceof Entity) {
+                        // TODO: Support entities!
+                    }
+                }
+            }
         }
     }
 }

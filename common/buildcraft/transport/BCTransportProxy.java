@@ -24,6 +24,9 @@ import buildcraft.api.transport.pipe.PipeApiClient;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageManager.MessageId;
+
 import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
@@ -44,6 +47,8 @@ import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
+import buildcraft.transport.wire.MessageWireSystems;
+import buildcraft.transport.wire.MessageWireSystemsPowered;
 
 public abstract class BCTransportProxy implements IGuiHandler {
     @SidedProxy(modId = BCTransport.MODID)
@@ -137,19 +142,31 @@ public abstract class BCTransportProxy implements IGuiHandler {
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCTransportProxy {
 
+        @Override
+        public void fmlPreInit() {
+            super.fmlPreInit();
+
+            MessageManager.addTypeSent(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class, Side.CLIENT);
+            MessageManager.addTypeSent(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class, Side.CLIENT);
+        }
     }
 
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCTransportProxy {
         @Override
         public void fmlPreInit() {
+            super.fmlPreInit();
             BCTransportSprites.fmlPreInit();
             BCTransportModels.fmlPreInit();
             PipeApiClient.registry = PipeRegistryClient.INSTANCE;
+
+            MessageManager.addType(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
+            MessageManager.addType(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
         }
 
         @Override
         public void fmlInit() {
+            super.fmlInit();
             BCTransportModels.fmlInit();
         }
 

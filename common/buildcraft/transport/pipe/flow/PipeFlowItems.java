@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -126,6 +127,18 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         });
     }
 
+    @Override
+    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+        super.addDrops(toDrop, fortune);
+        for (List<TravellingItem> list : items.getAllElements()) {
+            for (TravellingItem item : list) {
+                if (!item.isPhantom) {
+                    toDrop.add(item.stack);
+                }
+            }
+        }
+    }
+
     // IFlowItems
 
     @Override
@@ -162,7 +175,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         ItemStack stack = trans.extract(filter, count, count, simulate);
 
         if (stack.isEmpty()) {
-            throw new IllegalStateException("The transactor " + trans + " returned an empty itemstack from a known good request!");
+            throw new IllegalStateException(
+                "The transactor " + trans + " returned an empty itemstack from a known good request!");
         }
 
         if (!simulate) {
@@ -255,13 +269,15 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     private void onItemReachCenter(TravellingItem item) {
         IPipeHolder holder = pipe.getHolder();
-        PipeEventItem.ReachCenter reachCenter = new PipeEventItem.ReachCenter(holder, this, item.colour, item.stack, item.side);
+        PipeEventItem.ReachCenter reachCenter =
+            new PipeEventItem.ReachCenter(holder, this, item.colour, item.stack, item.side);
         holder.fireEvent(reachCenter);
         if (reachCenter.getStack().isEmpty()) {
             return;
         }
 
-        PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
+        PipeEventItem.SideCheck sideCheck =
+            new PipeEventItem.SideCheck(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
         sideCheck.disallow(reachCenter.from);
         for (EnumFacing face : EnumFacing.VALUES) {
             if (item.tried.contains(face) || !pipe.isConnected(face)) {
@@ -272,7 +288,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         List<EnumSet<EnumFacing>> order = sideCheck.getOrder();
         if (order.isEmpty()) {
-            PipeEventItem.TryBounce tryBounce = new PipeEventItem.TryBounce(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
+            PipeEventItem.TryBounce tryBounce =
+                new PipeEventItem.TryBounce(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
             holder.fireEvent(tryBounce);
             if (tryBounce.canBounce) {
                 order = ImmutableList.of(EnumSet.of(reachCenter.from));
@@ -282,7 +299,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             }
         }
 
-        PipeEventItem.ItemEntry entry = new PipeEventItem.ItemEntry(reachCenter.colour, reachCenter.getStack(), reachCenter.from);
+        PipeEventItem.ItemEntry entry =
+            new PipeEventItem.ItemEntry(reachCenter.colour, reachCenter.getStack(), reachCenter.from);
         PipeEventItem.Split split = new PipeEventItem.Split(holder, this, order, entry);
         holder.fireEvent(split);
         ImmutableList<PipeEventItem.ItemEntry> entries = ImmutableList.copyOf(split.items);
@@ -428,7 +446,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     @Nonnull
     @Override
-    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour, double speed) {
+    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour,
+        double speed) {
         if (pipe.getHolder().getPipeWorld().isRemote) {
             throw new IllegalStateException("Cannot inject items on the client side!");
         }

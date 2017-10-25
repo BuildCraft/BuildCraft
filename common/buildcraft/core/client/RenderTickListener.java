@@ -35,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
+import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -61,12 +62,12 @@ public class RenderTickListener {
     private static final Box LAST_RENDERED_MAP_LOC = new Box();
 
     static {
-        double[][][] upFace = {// Comments for formatting
-            {{0.5, 0.9, 0.5}, {0.5, 1.6, 0.5}},// Main line
-            {{0.5, 0.9, 0.5}, {0.8, 1.2, 0.5}}, // First arrow part (+X)
-            {{0.5, 0.9, 0.5}, {0.2, 1.2, 0.5}}, // Second arrow part (-X)
-            {{0.5, 0.9, 0.5}, {0.5, 1.2, 0.8}}, // Third arrow part (+Z)
-            {{0.5, 0.9, 0.5}, {0.5, 1.2, 0.2}}, // Forth arrow part (-Z)
+        double[][][] upFace = { // Comments for formatting
+            { { 0.5, 0.9, 0.5 }, { 0.5, 1.6, 0.5 } }, // Main line
+            { { 0.5, 0.9, 0.5 }, { 0.8, 1.2, 0.5 } }, // First arrow part (+X)
+            { { 0.5, 0.9, 0.5 }, { 0.2, 1.2, 0.5 } }, // Second arrow part (-X)
+            { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.8 } }, // Third arrow part (+Z)
+            { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.2 } }, // Forth arrow part (-Z)
         };
 
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -90,24 +91,22 @@ public class RenderTickListener {
 
     @SubscribeEvent
     public static void renderOverlay(RenderGameOverlayEvent.Text event) {
-        if (Minecraft.getMinecraft().gameSettings.showDebugInfo &&
-            !Minecraft.getMinecraft().player.hasReducedDebug() &&
-            !Minecraft.getMinecraft().gameSettings.reducedDebugInfo &&
-            Minecraft.getMinecraft().player.capabilities.isCreativeMode) {
-            ClientDebuggables.getDebuggableTileSide().ifPresent(tileSide -> {
-                List<String> clientLeft = new ArrayList<>();
-                List<String> clientRight = new ArrayList<>();
-                tileSide.getLeft().getDebugInfo(clientLeft, clientRight, tileSide.getRight());
-                String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
-                String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
-                appendDiff(event.getLeft(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
-                appendDiff(event.getRight(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
-                tileSide.getLeft().getClientDebugInfo(event.getLeft(), event.getRight(), tileSide.getRight());
-            });
+        Minecraft mc = Minecraft.getMinecraft();
+        IDebuggable debuggable = ClientDebuggables.getDebuggableObject(mc.objectMouseOver);
+        if (debuggable != null) {
+            List<String> clientLeft = new ArrayList<>();
+            List<String> clientRight = new ArrayList<>();
+            debuggable.getDebugInfo(clientLeft, clientRight, mc.objectMouseOver.sideHit);
+            String headerFirst = DIFF_HEADER_FORMATTING + "SERVER:";
+            String headerSecond = DIFF_HEADER_FORMATTING + "CLIENT:";
+            appendDiff(event.getLeft(), ClientDebuggables.SERVER_LEFT, clientLeft, headerFirst, headerSecond);
+            appendDiff(event.getRight(), ClientDebuggables.SERVER_RIGHT, clientRight, headerFirst, headerSecond);
+            debuggable.getClientDebugInfo(event.getLeft(), event.getRight(), mc.objectMouseOver.sideHit);
         }
     }
 
-    private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst, String headerSecond) {
+    private static void appendDiff(List<String> dest, List<String> first, List<String> second, String headerFirst,
+        String headerSecond) {
         dest.add("");
         dest.add(headerFirst);
         dest.addAll(first);
@@ -178,7 +177,8 @@ public class RenderTickListener {
                 Vec3d[][] vectors = MAP_LOCATION_POINT[face.ordinal()];
                 GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
                 for (Vec3d[] vec : vectors) {
-                    LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
+                    LaserData_BC8 laser =
+                        new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
                     LaserRenderer_BC8.renderLaserStatic(laser);
                 }
             }

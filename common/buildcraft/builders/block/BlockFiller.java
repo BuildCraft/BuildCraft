@@ -48,7 +48,7 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
-        if(tile instanceof TileFiller) {
+        if (tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
             return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
         }
@@ -64,6 +64,12 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileFiller) {
+            if (!((TileFiller) tile).hasBox()) {
+                return false;
+            }
+        }
         if (!world.isRemote) {
             BCBuildersGuis.FILLER.openGUI(player, pos);
         }

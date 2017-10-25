@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
@@ -28,16 +27,7 @@ import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.net.MessageContainer;
-import buildcraft.lib.net.MessageDebuggableRequest;
-import buildcraft.lib.net.MessageDebuggableResponse;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageMarker;
-import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-import buildcraft.lib.net.cache.MessageObjectCacheRequest;
-import buildcraft.lib.net.cache.MessageObjectCacheResponse;
-import buildcraft.lib.particle.MessageParticleVanilla;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
@@ -56,8 +46,10 @@ public class BCLib {
     public static final String MODID = "buildcraftlib";
     public static final String VERSION = "${version}";
     public static final String MC_VERSION = "${mcversion}";
-    public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
     public static final String GIT_BRANCH = "${git_branch}";
+    public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
+    public static final String GIT_COMMIT_MSG = "${git_commit_msg}";
+    public static final String GIT_COMMIT_AUTHOR = "${git_commit_author}";
 
     public static final boolean DEV = VERSION.startsWith("$") || Boolean.getBoolean("buildcraft.dev");
 
@@ -69,7 +61,14 @@ public class BCLib {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
-        BCLog.logger.info("http://www.mod-buildcraft.com");
+        BCLog.logger.info("https://www.mod-buildcraft.com");
+        if (!GIT_COMMIT_HASH.startsWith("${")) {
+            BCLog.logger.info("Detailed Build Information:");
+            BCLog.logger.info("  Branch " + GIT_BRANCH);
+            BCLog.logger.info("  Commit " + GIT_COMMIT_HASH);
+            BCLog.logger.info("    " + GIT_COMMIT_MSG);
+            BCLog.logger.info("    committed by " + GIT_COMMIT_AUTHOR);
+        }
         BCLog.logger.info("");
 
         ExpressionDebugManager.logger = BCLog.logger::info;
@@ -82,15 +81,6 @@ public class BCLib {
 
         BuildCraftObjectCaches.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
-
-        MessageManager.addMessageType(MessageUpdateTile.class, MessageUpdateTile.HANDLER, Side.CLIENT, Side.SERVER);
-        MessageManager.addMessageType(MessageContainer.class, MessageContainer.HANDLER, Side.CLIENT, Side.SERVER);
-        MessageManager.addMessageType(MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
-        MessageManager.addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.HANDLER, Side.CLIENT);
-        MessageManager.addMessageType(MessageObjectCacheRequest.class, MessageObjectCacheRequest.HANDLER, Side.SERVER);
-        MessageManager.addMessageType(MessageObjectCacheResponse.class, MessageObjectCacheResponse.HANDLER, Side.CLIENT);
-        MessageManager.addMessageType(MessageDebuggableRequest.class, MessageDebuggableRequest.HANDLER, Side.SERVER);
-        MessageManager.addMessageType(MessageDebuggableResponse.class, MessageDebuggableResponse.HANDLER, Side.CLIENT);
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
 
@@ -115,7 +105,6 @@ public class BCLib {
     public static void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
         BuildCraftObjectCaches.fmlPostInit();
-        MessageManager.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
     }

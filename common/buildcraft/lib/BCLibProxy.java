@@ -41,6 +41,15 @@ import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.MessageDebugRequest;
+import buildcraft.lib.net.MessageDebugResponse;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.MessageManager.MessageId;
+import buildcraft.lib.net.MessageMarker;
+import buildcraft.lib.net.MessageUpdateTile;
+import buildcraft.lib.net.cache.MessageObjectCacheRequest;
+import buildcraft.lib.net.cache.MessageObjectCacheResponse;
 
 public abstract class BCLibProxy implements IGuiHandler {
     @SidedProxy(modId = BCLib.MODID)
@@ -56,7 +65,10 @@ public abstract class BCLibProxy implements IGuiHandler {
 
     public void postRegisterFluid(BCFluid fluid) {}
 
-    void fmlPreInit() {}
+    void fmlPreInit() {
+        MessageManager.addType(MessageId.BC_LIB_TILE_UPDATE, MessageUpdateTile.class, MessageUpdateTile.HANDLER);
+        MessageManager.addType(MessageId.BC_LIB_CONTAINER, MessageContainer.class, MessageContainer.HANDLER);
+    }
 
     void fmlInit() {}
 
@@ -119,6 +131,16 @@ public abstract class BCLibProxy implements IGuiHandler {
             // various sprite registers
             BCLibSprites.fmlPreInitClient();
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
+
+            MessageManager.addType(MessageId.BC_LIB_MARKER, MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
+            MessageManager.addType(MessageId.BC_LIB_CACHE_REQUEST, MessageObjectCacheRequest.class,
+                MessageObjectCacheRequest.HANDLER, Side.SERVER);
+            MessageManager.addType(MessageId.BC_LIB_CACHE_REPLY, MessageObjectCacheResponse.class,
+                MessageObjectCacheResponse.HANDLER, Side.CLIENT);
+            MessageManager.addType(MessageId.BC_LIB_DEBUG_REQUEST, MessageDebugRequest.class,
+                MessageDebugRequest.HANDLER, Side.SERVER);
+            MessageManager.addType(MessageId.BC_LIB_DEBUG_REPLY, MessageDebugResponse.class,
+                MessageDebugResponse.HANDLER, Side.CLIENT);
         }
 
         @Override
@@ -200,5 +222,18 @@ public abstract class BCLibProxy implements IGuiHandler {
     }
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BCLibProxy {}
+    public static class ServerProxy extends BCLibProxy {
+        @Override
+        void fmlPreInit() {
+            super.fmlPreInit();
+
+            MessageManager.addTypeSent(MessageId.BC_LIB_MARKER, MessageMarker.class, Side.CLIENT);
+            MessageManager.addType(MessageId.BC_LIB_CACHE_REQUEST, MessageObjectCacheRequest.class,
+                MessageObjectCacheRequest.HANDLER, Side.SERVER);
+            MessageManager.addTypeSent(MessageId.BC_LIB_CACHE_REPLY, MessageObjectCacheResponse.class, Side.CLIENT);
+            MessageManager.addType(MessageId.BC_LIB_DEBUG_REQUEST, MessageDebugRequest.class,
+                MessageDebugRequest.HANDLER, Side.SERVER);
+            MessageManager.addTypeSent(MessageId.BC_LIB_DEBUG_REPLY, MessageDebugResponse.class, Side.CLIENT);
+        }
+    }
 }

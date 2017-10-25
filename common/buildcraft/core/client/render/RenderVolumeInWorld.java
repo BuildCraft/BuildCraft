@@ -9,7 +9,6 @@ package buildcraft.core.client.render;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +33,8 @@ import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
-import buildcraft.core.marker.volume.Lock;
+import buildcraft.core.marker.volume.Lock.Target.TargetUsedByMachine;
+import buildcraft.core.marker.volume.Lock.Target.TargetUsedByMachine.EnumType;
 
 public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
@@ -52,29 +52,33 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
         ClientVolumeBoxes.INSTANCE.boxes.forEach(box -> {
-            makeLaserBox(
-                    box.box,
-                    box.isEditingBy(player) ?
-                            BuildCraftLaserManager.MARKER_VOLUME_SIGNAL :
-                            box.getLockTargetsStream().anyMatch(Lock.Target.TargetUsedByMachine.class::isInstance) ?
-                                    box.getLockTargetsStream()
-                                            .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
-                                            .map(Lock.Target.TargetUsedByMachine.class::cast)
-                                            .map(target -> target.type)
-                                            .filter(Objects::nonNull)
-                                            .findFirst()
-                                            .orElse(Lock.Target.TargetUsedByMachine.EnumType.STRIPES_WRITE)
-                                            .laserType :
-                                    BuildCraftLaserManager.MARKER_VOLUME_CONNECTED,
-                    box.isEditingBy(player) ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE
-            );
+            boolean isEditing = box.isEditingBy(player);
+            double scale = isEditing ? RENDER_SCALE_HIGHLIGHT : RENDER_SCALE;
+
+            LaserType laserType;
+            if (!isEditing) {
+                TargetUsedByMachine.EnumType type = box.getLockTargetsStream()//
+                    .filter(TargetUsedByMachine.class::isInstance)//
+                    .map(TargetUsedByMachine.class::cast)//
+                    .map(target -> target.type)//
+                    .findFirst().orElse(null);
+                if (type == null) {
+                    laserType = BuildCraftLaserManager.MARKER_VOLUME_CONNECTED;
+                } else if (type == EnumType.STRIPES_READ) {
+                    laserType = BuildCraftLaserManager.STRIPES_READ;
+                } else {
+                    laserType = BuildCraftLaserManager.STRIPES_WRITE;
+                }
+            } else {
+                laserType = BuildCraftLaserManager.MARKER_VOLUME_CONNECTED;
+            }
+            makeLaserBox(box.box, laserType, scale);
 
             Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
 
             // noinspection unchecked
-            box.addons.values().forEach(addon ->
-                ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb)
-            );
+            box.addons.values().forEach(addon -> ((IFastAddonRenderer<Addon>) addon.getRenderer())
+                .renderAddonFast(addon, player, partialTicks, vb));
         });
 
         Tessellator.getInstance().draw();

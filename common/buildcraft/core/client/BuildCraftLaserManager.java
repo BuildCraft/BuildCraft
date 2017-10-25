@@ -7,8 +7,9 @@ package buildcraft.core.client;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import buildcraft.core.BCCoreSprites;
 
 public class BuildCraftLaserManager {
 
@@ -33,7 +34,7 @@ public class BuildCraftLaserManager {
 
     static {
         {
-            SpriteHolder sprite = getSprite("marker_volume_connected");
+            SpriteHolder sprite = BCCoreSprites.MARKER_VOLUME_CONNECTED;
             LaserRow capStart = new LaserRow(sprite, 0, 0, 2, 2);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 2);
             LaserRow[] middle = { //
@@ -45,7 +46,7 @@ public class BuildCraftLaserManager {
             MARKER_VOLUME_CONNECTED = new LaserType(capStart, start, middle, end, capEnd);
         }
         {
-            SpriteHolder sprite = getSprite("marker_path_connected");
+            SpriteHolder sprite = BCCoreSprites.MARKER_PATH_CONNECTED;
             LaserRow capStart = new LaserRow(sprite, 0, 0, 3, 3);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 3);
             LaserRow[] middle = { //
@@ -57,7 +58,7 @@ public class BuildCraftLaserManager {
             MARKER_PATH_CONNECTED = new LaserType(capStart, start, middle, end, capEnd);
         }
         {
-            SpriteHolder sprite = getSprite("marker_volume_possible");
+            SpriteHolder sprite = BCCoreSprites.MARKER_VOLUME_POSSIBLE;
             LaserRow capStart = new LaserRow(sprite, 0, 0, 1, 1);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 1);
             LaserRow[] middle = { //
@@ -73,26 +74,18 @@ public class BuildCraftLaserManager {
             LaserRow capEnd = new LaserRow(sprite, 15, 15, 16, 16);
             MARKER_VOLUME_POSSIBLE = new LaserType(capStart, start, middle, end, capEnd);
         }
-        MARKER_VOLUME_SIGNAL = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("marker_volume_signal"));
-        MARKER_PATH_POSSIBLE = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("marker_path_possible"));
-        MARKER_DEFAULT_POSSIBLE = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("marker_default_possible"));
+        MARKER_VOLUME_SIGNAL = new LaserType(MARKER_VOLUME_CONNECTED, BCCoreSprites.MARKER_VOLUME_SIGNAL);
+        MARKER_PATH_POSSIBLE = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.MARKER_PATH_POSSIBLE);
+        MARKER_DEFAULT_POSSIBLE = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.MARKER_DEFAULT_POSSIBLE);
 
-        STRIPES_READ = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("stripes_read"));
-        STRIPES_WRITE = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("stripes_write"));
-        STRIPES_WRITE_DIRECTION = new LaserType(MARKER_PATH_CONNECTED, getSprite("stripes_write_direction"));
+        STRIPES_READ = new LaserType(MARKER_VOLUME_CONNECTED, BCCoreSprites.STRIPES_READ);
+        STRIPES_WRITE = new LaserType(MARKER_VOLUME_CONNECTED, BCCoreSprites.STRIPES_WRITE);
+        STRIPES_WRITE_DIRECTION = new LaserType(MARKER_PATH_CONNECTED, BCCoreSprites.STRIPES_WRITE_DIRECTION);
 
-        POWER_LOW = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_low"));
-        POWER_MED = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_med"));
-        POWER_HIGH = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_high"));
-        POWER_FULL = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_full"));
+        POWER_LOW = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_LOW);
+        POWER_MED = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_MED);
+        POWER_HIGH = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_HIGH);
+        POWER_FULL = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_FULL);
         POWERS = new LaserType[] {POWER_LOW, POWER_MED, POWER_HIGH, POWER_FULL};
-    }
-
-    private static SpriteHolder getSprite(String post) {
-        return SpriteHolderRegistry.getHolder("buildcraftcore:lasers/" + post);
-    }
-
-    public static void fmlPreInit() {
-        // Maybe at some point this will do something
     }
 }

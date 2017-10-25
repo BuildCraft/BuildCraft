@@ -79,8 +79,8 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                 GuiElementStatement.ICON_SLOT_BLOCKED.drawAt(x, y);
                 return;
             }
-            IStatementParameter stmnt = get();
-            GuiElementStatementSource.drawGuiSlot(stmnt, x, y);
+            IStatementParameter statementParameter = get();
+            GuiElementStatementSource.drawGuiSlot(statementParameter, x, y);
         }
     }
 

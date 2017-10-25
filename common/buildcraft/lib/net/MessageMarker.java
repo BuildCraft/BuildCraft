@@ -9,7 +9,6 @@ package buildcraft.lib.net;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import io.netty.buffer.ByteBuf;
 
@@ -18,7 +17,6 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
 
@@ -69,34 +67,27 @@ public class MessageMarker implements IMessage {
 
     @Override
     public String toString() {
-        boolean[] flags = {add, multiple, connection};
-        return "Message Marker [" + Arrays.toString(flags) +
-                ", cacheId " + cacheId +
-                ", count = " + count +
-                ", positions = " + positions +
-                "]";
+        boolean[] flags = { add, multiple, connection };
+        return "Message Marker [" + Arrays.toString(flags) + ", cacheId " + cacheId + ", count = " + count
+            + ", positions = " + positions + "]";
     }
 
-    private static final BiConsumer<MessageMarker, MessageContext> HANDLER_CLIENT = (message, ctx) -> {
+    public static final IMessageHandler<MessageMarker, IMessage> HANDLER = (message, ctx) -> {
         World world = BCLibProxy.getProxy().getClientWorld();
         if (world == null) {
             if (DEBUG) {
                 BCLog.logger.warn("[lib.messages][marker] The world was null for a message!");
             }
-            return;
+            return null;
         }
         if (message.cacheId < 0 || message.cacheId >= MarkerCache.CACHES.size()) {
             if (DEBUG) {
                 BCLog.logger.warn("[lib.messages][marker] The cache ID " + message.cacheId + " was invalid!");
             }
-            return;
+            return null;
         }
         MarkerCache<?> cache = MarkerCache.CACHES.get(message.cacheId);
         cache.getSubCache(world).handleMessageMain(message);
-    };
-
-    public static final IMessageHandler<MessageMarker, IMessage> HANDLER = (message, ctx) -> {
-        HANDLER_CLIENT.accept(message, ctx);
         return null;
     };
 }

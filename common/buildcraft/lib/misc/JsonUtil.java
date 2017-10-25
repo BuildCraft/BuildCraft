@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -93,7 +99,7 @@ public class JsonUtil {
             }
             return floats;
         } else if (elem.isJsonPrimitive()) {
-            return new float[] { getAsFloat(elem) };
+            return new float[] {getAsFloat(elem)};
         } else {
             throw new JsonSyntaxException("Needed an array of floats or a single float but got " + elem);
         }
@@ -122,7 +128,7 @@ public class JsonUtil {
             }
             return strings;
         } else if (elem.isJsonPrimitive()) {
-            return new String[] { getAsString(elem) };
+            return new String[] {getAsString(elem)};
         } else {
             throw new JsonSyntaxException("Needed an array of strings or a single string but got " + elem);
         }
@@ -204,7 +210,9 @@ public class JsonUtil {
             }
             for (Entry<String, JsonElement> entry : toInline.entrySet()) {
                 String name = entry.getKey();
-                if ("inline".equals(name)) continue;
+                if ("inline".equals(name)) {
+                    continue;
+                }
                 if (!obj.has(name)) {
                     /* FIXME: We really need to deep-copy the element, as then we protect against removing an element
                      * from it and ruining it for everyone. */
@@ -222,7 +230,7 @@ public class JsonUtil {
             .registerTypeAdapter(
                 NBTBase.class,
                 (JsonSerializer<NBTBase>) (src, typeOfSrc, context) -> {
-                    if (src == null) {
+                    if (src == NBTUtilBC.NBT_NULL) {
                         return JsonNull.INSTANCE;
                     }
                     switch (src.getId()) {
@@ -253,46 +261,59 @@ public class JsonUtil {
                     }
                 }
             )
-            .registerTypeAdapter(
-                NBTBase.class,
-                (JsonDeserializer<NBTBase>) (json, typeOfT, context) -> {
-                    if (json.isJsonNull()) {
-                        return null;
-                    }
-                    if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber()) {
-                        Number number = json.getAsJsonPrimitive().getAsNumber();
-                        if (number instanceof BigInteger ||
-                            number instanceof Long ||
-                            number instanceof Integer ||
-                            number instanceof Short ||
-                            number instanceof Byte) {
-                            return context.deserialize(json, NBTTagLong.class);
-                        } else {
-                            return context.deserialize(json, NBTTagDouble.class);
+            .registerTypeAdapterFactory(new TypeAdapterFactory() {
+                @Override
+                public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+                    return type.getRawType() == NBTBase.class ? new TypeAdapter<T>() {
+                        @Override
+                        public void write(JsonWriter out, T value) throws IOException {
+                            throw new UnsupportedOperationException();
                         }
-                    }
-                    if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isBoolean()) {
-                        return context.deserialize(
-                            new JsonPrimitive(
-                                json.getAsJsonPrimitive().getAsBoolean()
-                                    ? (byte) 1
-                                    : (byte) 0
-                            ),
-                            NBTTagByte.class
-                        );
-                    }
-                    if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
-                        return context.deserialize(json, NBTTagString.class);
-                    }
-                    if (json.isJsonArray()) {
-                        return context.deserialize(json, NBTTagList.class);
-                    }
-                    if (json.isJsonObject()) {
-                        return context.deserialize(json, NBTTagCompound.class);
-                    }
-                    throw new IllegalArgumentException(json.toString());
+
+                        @Override
+                        public T read(JsonReader in) throws IOException {
+                            return ((JsonDeserializer<T>) (json, typeOfT, context) -> {
+                                if (json.isJsonNull()) {
+                                    // noinspection unchecked
+                                    return (T) NBTUtilBC.NBT_NULL;
+                                }
+                                if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber()) {
+                                    Number number = json.getAsJsonPrimitive().getAsNumber();
+                                    if (number instanceof BigInteger ||
+                                        number instanceof Long ||
+                                        number instanceof Integer ||
+                                        number instanceof Short ||
+                                        number instanceof Byte) {
+                                        return context.deserialize(json, NBTTagLong.class);
+                                    } else {
+                                        return context.deserialize(json, NBTTagDouble.class);
+                                    }
+                                }
+                                if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isBoolean()) {
+                                    return context.deserialize(
+                                        new JsonPrimitive(
+                                            json.getAsJsonPrimitive().getAsBoolean()
+                                                ? (byte) 1
+                                                : (byte) 0
+                                        ),
+                                        NBTTagByte.class
+                                    );
+                                }
+                                if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
+                                    return context.deserialize(json, NBTTagString.class);
+                                }
+                                if (json.isJsonArray()) {
+                                    return context.deserialize(json, NBTTagList.class);
+                                }
+                                if (json.isJsonObject()) {
+                                    return context.deserialize(json, NBTTagCompound.class);
+                                }
+                                throw new IllegalArgumentException(json.toString());
+                            }).deserialize(Streams.parse(in), type.getType(), gson::fromJson);
+                        }
+                    } : null;
                 }
-            )
+            })
             .registerTypeAdapter(
                 NBTTagByte.class,
                 (JsonSerializer<NBTTagByte>) (src, typeOfSrc, context) ->
@@ -420,7 +441,10 @@ public class JsonUtil {
                 (JsonDeserializer<NBTTagCompound>) (json, typeOfT, context) -> {
                     NBTTagCompound nbtTagCompound = new NBTTagCompound();
                     for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
-                        nbtTagCompound.setTag(entry.getKey(), context.deserialize(entry.getValue(), NBTBase.class));
+                        nbtTagCompound.setTag(
+                            entry.getKey(),
+                            context.deserialize(entry.getValue(), NBTBase.class)
+                        );
                     }
                     return nbtTagCompound;
                 }

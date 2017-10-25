@@ -71,12 +71,9 @@ public class BCCore {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
-        MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
-
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
-
+        MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
-        MessageManager.addMessageType(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
     }
 
     @Mod.EventHandler
@@ -112,6 +109,7 @@ public class BCCore {
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
         registerTag("item.volume_box").reg("volume_box").locale("volume_box").model("volume_box");
         registerTag("item.goggles").reg("goggles").locale("goggles").model("goggles");
+        registerTag("item.fragile_fluid_shard").reg("fragile_fluid_shard").locale("fragile_fluid_shard").model("fragile_fluid_shard");
         // Item Blocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");

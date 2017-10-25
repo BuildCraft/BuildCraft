@@ -145,9 +145,8 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return true;
         }
         Fluid fluid = BlockUtil.getFluidWithFlowing(world, offsetPos);
-        return fluid != null &&
-            FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType()) &&
-            BlockUtil.getFluidWithoutFlowing(getLocalState(offsetPos)) == null;
+        return fluid != null && FluidUtilBC.areFluidsEqual(fluid, tank.getFluidType())
+            && BlockUtil.getFluidWithoutFlowing(getLocalState(offsetPos)) == null;
     }
 
     private boolean canSearch(BlockPos offsetPos) {

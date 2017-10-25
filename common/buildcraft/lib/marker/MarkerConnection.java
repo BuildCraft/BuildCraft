@@ -39,7 +39,6 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
     @SideOnly(Side.CLIENT)
     public abstract void renderInWorld();
 
-    @SideOnly(Side.CLIENT)
     public void getDebugInfo(BlockPos caller, List<String> left) {
         Collection<BlockPos> positions = getMarkerPositions();
         List<BlockPos> list = new ArrayList<>(positions);
@@ -65,7 +64,6 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
         }
     }
 
-    @SideOnly(Side.CLIENT)
     protected String getTypeInfo(BlockPos pos, @Nullable TileMarker<C> value) {
         return "";
     }

@@ -31,6 +31,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -108,7 +109,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static final int NET_REDRAW = IDS.allocId("REDRAW");
 
     protected final CapabilityHelper caps = new CapabilityHelper();
-    protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
+    protected final ItemHandlerManager itemManager = new ItemHandlerManager(this::onSlotChange);
     protected final TankManager tankManager = new TankManager();
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
@@ -234,6 +235,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
      * {@link #onRemove()} is called (by default). */
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         itemManager.addDrops(toDrop);
+        tankManager.addDrops(toDrop);
     }
 
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -263,6 +265,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public void onPlayerClose(EntityPlayer player) {
         usingPlayers.remove(player);
+    }
+
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
+        return tankManager.onActivated(player, getPos(), hand);
     }
 
     @Override
@@ -533,9 +540,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE)
+                deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_GUI_DELTA_SINGLE)
+                deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_REN_DELTA_CLEAR)
+                deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {

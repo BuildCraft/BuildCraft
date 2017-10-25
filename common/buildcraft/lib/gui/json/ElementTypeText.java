@@ -22,6 +22,7 @@ public class ElementTypeText extends ElementType {
 
     // pos: the position of the text
     // text: The text to be drawn. Will be localised first, and used as a fallback
+    // expression: A replacement for text -- uses an expression rather than as a literal.
     // colour: Default colour to be drawn
     // centered: If true then the text will be centered around pos
 
@@ -29,9 +30,7 @@ public class ElementTypeText extends ElementType {
     public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
-        int posX = resolveEquationInt(json, "pos[0]", ctx);
-        int posY = resolveEquationInt(json, "pos[1]", ctx);
-
+        IGuiPosition pos = resolvePosition(json, "pos", parent, ctx);
         INodeObject<String> text;
 
         String prop;
@@ -55,7 +54,7 @@ public class ElementTypeText extends ElementType {
         } else {
             colour = resolveEquationInt(json, "color", ctx);
         }
-        GuiElementText element = new GuiElementText(gui, parent.offset(posX, posY), text, colour);
+        GuiElementText element = new GuiElementText(gui, pos, text, colour);
         element.setCentered("true".equals(json.properties.get("centered")));
         element.setDropShadow("true".equals(json.properties.get("shadow")));
         element.setForeground("true".equals(json.properties.get("foreground")));

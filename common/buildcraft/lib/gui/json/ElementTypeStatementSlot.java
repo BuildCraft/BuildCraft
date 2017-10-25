@@ -53,10 +53,10 @@ public class ElementTypeStatementSlot extends ElementType {
 
         boolean draw = !"false".equals(json.properties.get("draw"));
 
-        FullStatement<?> stmnt = gui.properties.get(source, FullStatement.class);
-        if (stmnt == null) {
+        FullStatement<?> fullStatement = gui.properties.get(source, FullStatement.class);
+        if (fullStatement == null) {
             throw new JsonSyntaxException("Can't find a statement called '" + source + "'");
         }
-        return new GuiElementStatement<>(gui, area, stmnt, draw);
+        return new GuiElementStatement<>(gui, area, fullStatement, draw);
     }
 }
