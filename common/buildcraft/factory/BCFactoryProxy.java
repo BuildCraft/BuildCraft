@@ -65,6 +65,8 @@ public abstract class BCFactoryProxy implements IGuiHandler {
 
     public void fmlInit() {}
 
+    public void fmlPreInit(){}
+
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCFactoryProxy {
 
@@ -88,6 +90,12 @@ public abstract class BCFactoryProxy implements IGuiHandler {
                 }
             }
             return null;
+        }
+
+        @Override
+        public void fmlPreInit() {
+            RenderPump.init();
+            RenderMiningWell.init();
         }
 
         @Override

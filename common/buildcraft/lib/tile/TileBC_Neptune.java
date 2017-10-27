@@ -139,7 +139,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static <T extends TileEntity> void registerTile(Class<T> tileClass, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
-        GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
+        GameRegistry.registerTileEntity(tileClass, regName);
     }
 
     // ##################################################

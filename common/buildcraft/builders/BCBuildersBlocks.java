@@ -4,11 +4,18 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.builders.block.BlockArchitectTable;
 import buildcraft.builders.block.BlockBuilder;
@@ -17,41 +24,60 @@ import buildcraft.builders.block.BlockFiller;
 import buildcraft.builders.block.BlockFrame;
 import buildcraft.builders.block.BlockQuarry;
 import buildcraft.builders.block.BlockReplacer;
-import buildcraft.builders.tile.TileArchitectTable;
-import buildcraft.builders.tile.TileBuilder;
-import buildcraft.builders.tile.TileElectronicLibrary;
-import buildcraft.builders.tile.TileFiller;
-import buildcraft.builders.tile.TileQuarry;
-import buildcraft.builders.tile.TileReplacer;
 
-public class BCBuildersBlocks {
-    public static BlockArchitectTable architect;
-    public static BlockBuilder builder;
-    public static BlockFiller filler;
-    public static BlockElectronicLibrary library;
-    public static BlockReplacer replacer;
+@Mod.EventBusSubscriber(modid = BCBuilders.MODID)
+@GameRegistry.ObjectHolder(BCBuilders.MODID)
+public class BCBuildersBlocks{
+    public static final BlockArchitectTable ARCHITECT = null;
+    public static final BlockBuilder BUILDER = null;
+    public static final BlockFiller FILLER = null;
+    public static final BlockElectronicLibrary LIBRARY = null;
+    public static final BlockReplacer REPLACER = null;
 
-    public static BlockFrame frame;
-    public static BlockQuarry quarry;
+    public static final BlockFrame FRAME = null;
+    public static final BlockQuarry QUARRY = null;
 
-    public static void preInit() {
-        architect = BlockBCBase_Neptune.register(new BlockArchitectTable(Material.IRON, "block.architect"));
-        builder = BlockBCBase_Neptune.register(new BlockBuilder(Material.IRON, "block.builder"));
-        filler = BlockBCBase_Neptune.register(new BlockFiller(Material.IRON, "block.filler"));
-        library = BlockBCBase_Neptune.register(new BlockElectronicLibrary(Material.IRON, "block.library"));
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+
+        RegistryHelper.registerBlocks(event,
+            new BlockArchitectTable(Material.IRON, "block.architect"),
+            new BlockBuilder(Material.IRON, "block.builder"),
+            new BlockFiller(Material.IRON, "block.filler"),
+            new BlockElectronicLibrary(Material.IRON, "block.library"),
+            new BlockFrame(Material.ROCK, "block.frame"),
+            new BlockQuarry(Material.ROCK, "block.quarry")
+        );
         if (BCLib.DEV) {
-            replacer = BlockBCBase_Neptune.register(new BlockReplacer(Material.IRON, "block.replacer"));
+            RegistryHelper.registerBlocks(event, new BlockReplacer(Material.IRON, "block.replacer"));
         }
-        frame = BlockBCBase_Neptune.register(new BlockFrame(Material.ROCK, "block.frame"));
-        quarry = BlockBCBase_Neptune.register(new BlockQuarry(Material.ROCK, "block.quarry"));
-
-        TileBC_Neptune.registerTile(TileArchitectTable.class, "tile.architect");
-        TileBC_Neptune.registerTile(TileBuilder.class, "tile.builder");
-        TileBC_Neptune.registerTile(TileFiller.class, "tile.filler");
-        TileBC_Neptune.registerTile(TileElectronicLibrary.class, "tile.library");
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileReplacer.class, "tile.replacer");
-        }
-        TileBC_Neptune.registerTile(TileQuarry.class, "tile.quarry");
     }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.registerItems(event,
+            ARCHITECT,
+            BUILDER,
+            FILLER,
+            LIBRARY,
+            REPLACER,
+            FRAME,
+            QUARRY
+        );
+
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        RegistryHelper.registerVariants(
+            ARCHITECT,
+            BUILDER,
+            FILLER,
+            LIBRARY,
+            REPLACER,
+            FRAME,
+            QUARRY);
+    }
+
+
 }

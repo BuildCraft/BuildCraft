@@ -8,6 +8,7 @@ package buildcraft.builders.block;
 
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
@@ -15,8 +16,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -25,12 +30,14 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.CapUtil;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
 
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
+    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:shaping_the_world");
     public BlockQuarry(Material material, String id) {
         super(material, id);
     }
@@ -73,7 +80,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileQuarry) {
             for (BlockPos blockPos : ((TileQuarry) tile).framePoses) {
-                if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
+                if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.FRAME) {
                     world.setBlockToAir(blockPos);
                 }
             }
@@ -84,5 +91,13 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
         return SoundType.ANVIL;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        if (placer instanceof EntityPlayer) {
+            AdvancementUtil.unlockAdvancement((EntityPlayer) placer, ADVANCEMENT);
+        }
     }
 }

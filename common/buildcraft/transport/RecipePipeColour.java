@@ -6,15 +6,18 @@
 
 package buildcraft.transport;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
-
+//TODO: convert to factory if needed, currently not used
 public class RecipePipeColour implements IRecipe, IRecipeViewable {
 
     private final ItemStack output;
@@ -41,9 +44,8 @@ public class RecipePipeColour implements IRecipe, IRecipeViewable {
     }
 
     @Override
-    public int getRecipeSize() {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
+    public boolean canFit(int width, int height) {
+        return false;
     }
 
     @Override
@@ -64,6 +66,22 @@ public class RecipePipeColour implements IRecipe, IRecipeViewable {
 
     @Override
     public ChangingItemStack getRecipeOutputs() {
+        return null;
+    }
+
+    @Override
+    public IRecipe setRegistryName(ResourceLocation name) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ResourceLocation getRegistryName() {
+        return null;
+    }
+
+    @Override
+    public Class<IRecipe> getRegistryType() {
         return null;
     }
 }

@@ -69,13 +69,13 @@ public class BCCoreModels {
 
     public static void fmlPreInit() {
         MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
-        ModelLoader.setCustomStateMapper(BCCoreBlocks.engine, b -> ImmutableMap.of());
     }
 
     public static void fmlInit() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineCreative.class, RenderEngineCreative.INSTANCE);
+        ModelLoader.setCustomStateMapper(BCCoreBlocks.ENGINE, b -> ImmutableMap.of());
     }
 
     @SubscribeEvent

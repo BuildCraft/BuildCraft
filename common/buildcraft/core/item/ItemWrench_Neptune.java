@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -20,9 +21,12 @@ import buildcraft.api.blocks.CustomRotationHelper;
 import buildcraft.api.tools.IToolWrench;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.SoundUtil;
 
 public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
+    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:wrenched");
+
     public ItemWrench_Neptune(String id) {
         super(id);
         setMaxStackSize(1);
@@ -35,6 +39,7 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
 
     @Override
     public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
+        AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
         player.swingArm(hand);
     }
 

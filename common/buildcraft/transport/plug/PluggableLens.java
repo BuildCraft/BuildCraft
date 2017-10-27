@@ -104,7 +104,7 @@ public class PluggableLens extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return BCTransportItems.plugLens.getStack(colour, isFilter);
+        return BCTransportItems.PLUG_LENS.getStack(colour, isFilter);
     }
 
     @Override

@@ -8,6 +8,7 @@ package buildcraft.lib.client.sprite;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.IntSupplier;
 
 import com.google.common.collect.ImmutableList;
@@ -70,7 +71,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
     }
 
     @Override
-    public boolean load(IResourceManager manager, ResourceLocation location) {
+    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
         for (int i = 0; i < variantNames.size(); i++) {
             ResourceLocation loc = variantNames.get(i);
             variants[i] = loadSprite(manager, getIconName(), loc, i == 0);

@@ -10,18 +10,20 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.transport.pipe.IItemPipe;
 
-import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
 
 public class RegistryHelper {
     private static final Map<ModContainer, Configuration> modObjectConfigs = new IdentityHashMap<>();
@@ -57,40 +59,55 @@ public class RegistryHelper {
     //
     // #######################
 
-    public static boolean registerItem(Item item) {
-        return registerItem(item, false);
-    }
-
-    public static boolean registerItem(Item item, boolean forced) {
-        if (forced || isEnabled(getCategory(item), item.getRegistryName().getResourcePath(), item.getUnlocalizedName() + ".name")) {
-            GameRegistry.register(item);
-            if (item instanceof IItemBuildCraft) {
-                IItemBuildCraft itemBc = (IItemBuildCraft) item;
-                BCLibProxy.getProxy().postRegisterItem(itemBc);
-            }
-            return true;
+    public static void registerBlocks(RegistryEvent.Register<Block> event, Block...blocks) {
+        for (Block block: blocks) {
+            if (isEnabled(block))
+                event.getRegistry().register(block);
         }
-        return false;
     }
 
-    public static boolean registerBlock(Block block) {
-        return registerBlock(block, false);
-    }
-
-    public static boolean registerBlock(Block block, boolean forced) {
-        if (forced || isEnabled("blocks", block.getRegistryName().getResourcePath(), block.getUnlocalizedName() + ".name")) {
-            GameRegistry.register(block);
-            if (block instanceof BlockBCBase_Neptune) {
-                BlockBCBase_Neptune blockBc = (BlockBCBase_Neptune) block;
-                BCLibProxy.getProxy().postRegisterBlock(blockBc);
+    public static void registerItems(RegistryEvent.Register<Item> event, Object...items) {
+        for (Object o: items) {
+            Item item = null;
+            if (o instanceof Item) {
+                item = (Item) o;
+            } else if (o instanceof BlockBCBase_Neptune) {
+                item = new ItemBlockBC_Neptune((BlockBCBase_Neptune) o);
             }
-            return true;
+            if (item != null && (!(item instanceof ItemBlockBC_Neptune) || isEnabled(item)))
+                event.getRegistry().register(item);
         }
-        return false;
     }
 
-    public static boolean isEnabled(String category, String resourcePath, String langKey) {
-        return isEnabled(getActiveMod(), category, resourcePath, langKey);
+    public static void registerVariants(Object...items) {
+        for (Object o : items) {
+            if (o instanceof Block) {
+                o = Item.getItemFromBlock((Block) o);
+            }
+            if (o instanceof IItemBuildCraft) {
+                ((IItemBuildCraft) o).registerVariants();
+            }
+
+        }
+    }
+
+    public static boolean isEnabled(ItemStack stack) {
+        Item item = stack.getItem();
+        if (item instanceof ItemBlock) {
+            return isEnabled(((ItemBlock) item).getBlock());
+        }
+        return isEnabled(item);
+    }
+
+    public static boolean isEnabled(Item item) {
+        return isEnabled(item.getRegistryName().getResourceDomain(), getCategory(item), item.getRegistryName().getResourcePath(), item.getUnlocalizedName() + ".name");
+    }
+    public static boolean isEnabled(Block block) {
+        return isEnabled(block.getRegistryName().getResourceDomain(), getCategory(block), block.getRegistryName().getResourcePath(), block.getUnlocalizedName() + ".name");
+    }
+
+    private static boolean isEnabled(String modid, String category, String resourcePath, String langKey) {
+        return isEnabled(getMod(modid), category, resourcePath, langKey);
     }
 
     // #######################
@@ -99,17 +116,19 @@ public class RegistryHelper {
     //
     // #######################
 
-    private static String getCategory(Item item) {
+    private static String getCategory(Object item) {
         if (item instanceof IItemPipe) {
             return "pipes";
+        } else if (item instanceof Block) {
+            return "blocks";
         } else {
             return "items";
         }
     }
 
-    private static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
+    public static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
         Configuration config = modObjectConfigs.get(activeMod);
-        if (config == null) throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
+        if (config == null) return false; //throw new RuntimeException("No config exists for the mod " + activeMod.getModId());
         Property prop = config.get(category, resourcePath, true);
         prop.setLanguageKey(langKey);
         prop.setRequiresMcRestart(true);
@@ -121,15 +140,6 @@ public class RegistryHelper {
         ModContainer container = Loader.instance().getIndexedModList().get(modid);
         if (container == null) {
             throw new RuntimeException("No mod with an id of \"" + modid + "\" is loaded!");
-        } else {
-            return container;
-        }
-    }
-
-    private static ModContainer getActiveMod() {
-        ModContainer container = Loader.instance().activeModContainer();
-        if (container == null) {
-            throw new RuntimeException("Was not called within the scope of an active mod!");
         } else {
             return container;
         }

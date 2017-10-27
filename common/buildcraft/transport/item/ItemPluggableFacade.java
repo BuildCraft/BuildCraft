@@ -11,17 +11,18 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,6 +47,8 @@ import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.PluggableFacade;
+
+import static buildcraft.transport.plug.FacadeStateManager.getInfoForBlock;
 
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
     public ItemPluggableFacade(String id) {
@@ -87,21 +90,26 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!this.isInCreativeTab(tab))
+            return;
         // Add a single phased facade as a default
-        FacadePhasedState[] states = {//
-            FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null),//
-            FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED),//
-            FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
-        };
-        FacadeInstance inst = new FacadeInstance(states);
-        subItems.add(createItemStack(inst));
+        //check if the data is present as we only process in post-init
+        FacadeBlockStateInfo stone = getInfoForBlock(Blocks.STONE);
+        if (stone != null) {
+            FacadePhasedState[] states = {//
+                FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null),//
+                FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED),//
+                FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
+            };
+            FacadeInstance inst = new FacadeInstance(states);
+            subItems.add(createItemStack(inst));
 
-        for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
-            if (info.isVisible) {
-                subItems.add(createItemStack(FacadeInstance.createSingle(info, false)));
-                subItems.add(createItemStack(FacadeInstance.createSingle(info, true)));
+            for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
+                if (info.isVisible) {
+                    subItems.add(createItemStack(FacadeInstance.createSingle(info, false)));
+                    subItems.add(createItemStack(FacadeInstance.createSingle(info, true)));
+                }
             }
         }
     }
@@ -126,8 +134,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         return s;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         FacadeInstance states = getStates(stack);
         if (states.type == FacadeType.Phased) {
             String stateString = LocaleUtil.localize("item.FacadePhased.state");

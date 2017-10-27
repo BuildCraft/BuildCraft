@@ -2,8 +2,6 @@ package buildcraft.core.patterns;
 
 import buildcraft.api.core.render.ISprite;
 
-import buildcraft.lib.BCLibSprites;
-
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dHexagon extends PatternShape2d {

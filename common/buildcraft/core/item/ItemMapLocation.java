@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -66,8 +67,9 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
+    public void addInformation(ItemStack stack, World world, List<String> strings, ITooltipFlag flag) {
         stack = StackUtil.asNonNull(stack);
         NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
 

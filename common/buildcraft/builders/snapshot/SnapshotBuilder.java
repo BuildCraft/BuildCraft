@@ -69,7 +69,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                                       @Nonnull IBlockState oldState,
                                       @Nonnull IBlockState newState,
                                       int flags) {
-            if (tile.getBuilder() == SnapshotBuilder.this && getBuildingInfo().box.contains(pos)) {
+            if (tile.getBuilder() == SnapshotBuilder.this && getBuildingInfo() != null && getBuildingInfo().box.contains(pos)) {
                 if (check(pos)) {
                     afterChecks();
                 }
@@ -162,7 +162,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         double progress = placeTask.power * 1D / placeTask.getTarget();
         return new Vec3d(tile.getBuilderPos())
             .add(height.scale(progress))
-            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (Math.abs(height.yCoord) + 1), 0))
+            .add(new Vec3d(0, Math.sin(progress * Math.PI) * (Math.abs(height.y) + 1), 0))
             .add(new Vec3d(0.5, 1, 0.5));
     }
 
@@ -251,13 +251,13 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                     .reduce(Vec3d.ZERO, Vec3d::add)
                     .scale(1D / breakTasks.size());
                 newRobotPos = new Vec3d(
-                    newRobotPos.xCoord,
+                    newRobotPos.x,
                     breakTasks.stream()
                         .map(breakTask -> breakTask.pos)
                         .mapToDouble(BlockPos::getY)
                         .max()
-                        .orElse(newRobotPos.yCoord),
-                    newRobotPos.zCoord
+                        .orElse(newRobotPos.y),
+                    newRobotPos.z
                 );
                 newRobotPos = newRobotPos.add(new Vec3d(0, 3, 0));
                 Vec3d oldRobotPos = robotPos;

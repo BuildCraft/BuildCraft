@@ -74,7 +74,7 @@ public class TileMiningWell extends TileMiner {
             if (canBreak()) {
                 updateLength();
                 return;
-            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.TUBE) {
                 break;
             }
         }

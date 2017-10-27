@@ -99,8 +99,8 @@ public class TilePump extends TileMiner {
                 }
                 fluidConnection = posToCheck;
                 break;
-            } else if (!world.isAirBlock(posToCheck)
-                && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(posToCheck) &&
+                world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.TUBE) {
                 break;
             }
         }
@@ -156,7 +156,7 @@ public class TilePump extends TileMiner {
             List<BlockPos> springPositions = new ArrayList<>();
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
             for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
-                if (world.getBlockState(spring).getBlock() == BCCoreBlocks.spring) {
+                if (world.getBlockState(spring).getBlock() == BCCoreBlocks.SPRING) {
                     TileEntity tile = world.getTileEntity(spring);
                     if (tile instanceof TileSpringOil) {
                         springPositions.add(spring);
@@ -235,10 +235,10 @@ public class TilePump extends TileMiner {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                    if (drain != null
-                        && paths.get(currentPos).stream()
-                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null)
-                        && canDrain(currentPos)) {
+                    if (drain != null &&
+                        paths.get(currentPos).stream()
+                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
+                        canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         if (isInfiniteWaterSource) {

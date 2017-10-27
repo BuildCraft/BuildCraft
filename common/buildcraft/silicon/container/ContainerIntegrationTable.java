@@ -7,7 +7,6 @@
 package buildcraft.silicon.container;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -29,7 +28,7 @@ public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTa
             }
         }
 
-        addSlotToContainer(new SlotDisplay(i -> tile.recipe != null ? tile.recipe.output : ItemStack.EMPTY, 0, 101, 36));
+        addSlotToContainer(new SlotDisplay(i -> tile.getOutput(), 0, 101, 36));
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 138, 49));
     }

@@ -4,8 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.item;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
+import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 
 public class ItemBC_Neptune extends Item implements IItemBuildCraft {
@@ -20,5 +24,14 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     @Override
     public String id() {
         return id;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (!isInCreativeTab(tab))
+            return;
+        if (RegistryHelper.isEnabled(this)) {
+            super.getSubItems(tab, items);
+        }
     }
 }

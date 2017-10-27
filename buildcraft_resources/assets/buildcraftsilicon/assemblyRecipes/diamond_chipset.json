@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "buildcraftsilicon:redstone_chipset",
+    "data": 4
+  },
+  "MJ": 80000,
+  "components": [
+    {
+      "ingredient": {
+        "type": "forge:ore_dict",
+        "ore": "dustRedstone"
+      }
+    },
+    {
+      "ingredient": {
+        "type": "forge:ore_dict",
+        "ore": "gemDiamond"
+      }
+    }, {
+      "ingredient": {
+        "item": "buildcraftsilicon:redstone_chipset",
+        "data": 3
+      }
+    }
+  ]
+
+}

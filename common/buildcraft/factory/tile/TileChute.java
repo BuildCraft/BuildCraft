@@ -72,7 +72,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     private void pickupItems(EnumFacing currentSide) {
         world.getEntitiesWithinAABB(
             EntityItem.class,
-            new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).expandXyz(PICKUP_RADIUS)
+            new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).grow(PICKUP_RADIUS)
         ).stream()
             .limit(PICKUP_MAX)
             .map(TransactorEntityItem::new)

@@ -34,7 +34,7 @@ public class InventoryUtil {
     // Drops
 
     public static void dropAll(World world, Vec3d vec, IItemHandlerModifiable handler) {
-        dropAll(world, vec.xCoord, vec.yCoord, vec.zCoord, handler);
+        dropAll(world, vec.x, vec.y, vec.z, handler);
     }
 
     public static void dropAll(World world, BlockPos pos, IItemHandlerModifiable handler) {

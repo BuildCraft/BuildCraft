@@ -39,6 +39,7 @@ import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
@@ -47,6 +48,12 @@ import buildcraft.builders.snapshot.SchematicBlockAir;
 import buildcraft.builders.snapshot.SchematicBlockDefault;
 import buildcraft.builders.snapshot.SchematicBlockFluid;
 import buildcraft.builders.snapshot.SchematicEntityDefault;
+import buildcraft.builders.tile.TileArchitectTable;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.tile.TileElectronicLibrary;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.builders.tile.TileReplacer;
 import buildcraft.core.BCCore;
 import buildcraft.core.marker.volume.AddonsRegistry;
 
@@ -69,8 +76,6 @@ public class BCBuilders {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCBuildersRegistries.preInit();
-        BCBuildersItems.preInit();
-        BCBuildersBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
         AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filling_planner"), AddonFillingPlanner.class);
@@ -154,6 +159,13 @@ public class BCBuilders {
         BCBuildersProxy.getProxy().fmlInit();
         BCBuildersRegistries.init();
         BCBuildersRecipes.init();
+
+        TileBC_Neptune.registerTile(TileArchitectTable.class, "tile.architect");
+        TileBC_Neptune.registerTile(TileBuilder.class, "tile.builder");
+        TileBC_Neptune.registerTile(TileFiller.class, "tile.filler");
+        TileBC_Neptune.registerTile(TileElectronicLibrary.class, "tile.library");
+        TileBC_Neptune.registerTile(TileReplacer.class, "tile.replacer");
+        TileBC_Neptune.registerTile(TileQuarry.class, "tile.quarry");
     }
 
     @Mod.EventHandler

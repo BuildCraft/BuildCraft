@@ -432,7 +432,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, ent);
         holder.fireEvent(drop);
-        if (ent.getEntityItem().isEmpty() || ent.isDead) {
+        if (ent.getItem().isEmpty() || ent.isDead) {
             return;
         }
 

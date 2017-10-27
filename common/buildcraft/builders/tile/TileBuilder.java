@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +49,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -79,6 +81,7 @@ public class TileBuilder extends TileBC_Neptune
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
+    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
 
     public final ItemHandlerSimple invSnapshot = itemManager.addInvHandler(
         "snapshot",
@@ -151,7 +154,7 @@ public class TileBuilder extends TileBC_Neptune
                 currentBasePosIndex = 0;
                 snapshot = null;
                 if (after.getItem() instanceof ItemSnapshot) {
-                    Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
+                    Snapshot.Header header = BCBuildersItems.SNAPSHOT.getHeader(after);
                     if (header != null) {
                         Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                         if (newSnapshot != null) {
@@ -264,6 +267,8 @@ public class TileBuilder extends TileBC_Neptune
             if (isDone) {
                 if (currentBasePosIndex < basePoses.size() - 1) {
                     currentBasePosIndex++;
+                    if (currentBasePosIndex == basePoses.size() && currentBasePosIndex > 1)
+                        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT);
                     if (currentBasePosIndex >= basePoses.size()) {
                         currentBasePosIndex = basePoses.size() - 1;
                     }

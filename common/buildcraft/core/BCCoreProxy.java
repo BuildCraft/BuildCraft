@@ -22,6 +22,7 @@ import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
+import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
 
 public abstract class BCCoreProxy implements IGuiHandler {
@@ -75,6 +76,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
+            MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
             MessageManager.addType(MessageId.BC_CORE_VOLUME_BOX, MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER,
                 Side.CLIENT);
         }

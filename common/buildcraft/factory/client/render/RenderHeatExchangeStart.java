@@ -8,12 +8,12 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -71,11 +71,10 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
     }
 
     @Override
-    public void renderTileEntityAt(TileHeatExchangeStart tile, double x, double y, double z, float partialTicks,
-        int destroyStage) {
-        super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
+    public void render(TileHeatExchangeStart tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
 
-        IBlockState state = tile.getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        IBlockState state = tile.getCurrentStateForBlock(BCFactoryBlocks.HEAT_EXCHANGE_START);
         if (state == null) {
             return;
         }
@@ -93,17 +92,17 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        VertexBuffer vb = Tessellator.getInstance().getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        vb.setTranslation(x, y, z);
+        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bb.setTranslation(x, y, z);
 
         profiler.startSection("tank");
 
         EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         TankSideData sideTank = TANK_SIDES.get(face);
 
-        renderTank(TANK_BOTTOM, tile.smoothedHeatableIn, combinedLight, partialTicks, vb);
-        renderTank(sideTank.start, tile.smoothedCoolableOut, combinedLight, partialTicks, vb);
+        renderTank(TANK_BOTTOM, tile.smoothedHeatableIn, combinedLight, partialTicks, bb);
+        renderTank(sideTank.start, tile.smoothedCoolableOut, combinedLight, partialTicks, bb);
 
         TileHeatExchangeEnd end = tile.getOtherTile();
         int middles = 0;
@@ -111,10 +110,10 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
             // TODO: Move this into the other renderer!
             BlockPos diff = end.getPos().subtract(tile.getPos());
             middles = Math.abs(VecUtil.getValue(diff, face.getAxis()));
-            vb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
-            renderTank(TANK_TOP, end.smoothedHeatableOut, combinedLight, partialTicks, vb);
-            renderTank(sideTank.end, end.smoothedCoolableIn, combinedLight, partialTicks, vb);
-            vb.setTranslation(x, y, z);
+            bb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
+            renderTank(TANK_TOP, end.smoothedHeatableOut, combinedLight, partialTicks, bb);
+            renderTank(sideTank.end, end.smoothedCoolableIn, combinedLight, partialTicks, bb);
+            bb.setTranslation(x, y, z);
         }
 
         profiler.endStartSection("flow");
@@ -143,15 +142,15 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
                 double otherStart = flip ? p0 : p1 - length * progress;
                 double otherEnd = flip ? p0 + length * progress : p1;
                 Vec3d vDiff = new Vec3d(diff).addVector(x, y, z);
-                renderFlow(vDiff, face, vb, progressStart + 0.01, progressEnd - 0.01,
+                renderFlow(vDiff, face, bb, progressStart + 0.01, progressEnd - 0.01,
                     end.smoothedCoolableIn.getFluidForRender(), 4, partialTicks);
-                renderFlow(vDiff, face.getOpposite(), vb, otherStart, otherEnd,
+                renderFlow(vDiff, face.getOpposite(), bb, otherStart, otherEnd,
                     tile.smoothedHeatableIn.getFluidForRender(), 2, partialTicks);
             }
         }
 
         // buffer finish
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
         profiler.endStartSection("draw");
         Tessellator.getInstance().draw();
 
@@ -164,7 +163,7 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
     }
 
     private static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks,
-        VertexBuffer vb) {
+        BufferBuilder bb) {
         FluidStackInterp fluid = tank.getFluidForRender(partialTicks);
         if (fluid == null || fluid.amount <= 0) {
             return;
@@ -173,10 +172,10 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
         combinedLight |= blockLight << 4;
         FluidRenderer.vertex.lighti(combinedLight);
         FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid.fluid, fluid.amount, tank.getCapacity(), size.min,
-            size.max, vb, null);
+            size.max, bb, null);
     }
 
-    private static void renderFlow(Vec3d diff, EnumFacing face, VertexBuffer vb, double s, double e, FluidStack fluid,
+    private static void renderFlow(Vec3d diff, EnumFacing face, BufferBuilder bb, double s, double e, FluidStack fluid,
         int point, float partialTicks) {
         double tickTime = Minecraft.getMinecraft().world.getTotalWorldTime();
         double offset = (tickTime + partialTicks) % 31 / 31.0;
@@ -202,7 +201,7 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
             if (i < s - 1) {
                 continue;
             }
-            vb.setTranslation(d.xCoord, d.yCoord, d.zCoord);
+            bb.setTranslation(d.x, d.y, d.z);
 
             double s1 = s < i ? 0 : (s % 1);
             double e1 = e > i + 1 ? 1 : (e % 1);
@@ -216,7 +215,7 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
             if (e > i + 1) {
                 sides[face.ordinal()] = false;
             }
-            FluidRenderer.renderFluid(FluidSpriteType.FROZEN, fluid, 1, 1, vs, ve, vb, sides);
+            FluidRenderer.renderFluid(FluidSpriteType.FROZEN, fluid, 1, 1, vs, ve, bb, sides);
 
         }
     }

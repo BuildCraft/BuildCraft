@@ -200,9 +200,9 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
                 ZonePlan zonePlan = new ZonePlan();
                 zonePlan.readFromNBT(invInputMapLocation.getStackInSlot(0).getTagCompound());
-                layers[BCCoreItems.paintbrush.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] = zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
+                layers[BCCoreItems.PAINTBRUSH.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] = zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
                 invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
-                invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
+                invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.MAP_LOCATION));
                 this.markDirty();
                 this.sendNetworkUpdate(NET_RENDER_DATA);
                 progressInput = 0;
@@ -224,7 +224,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                     return;
                 }
 
-                ItemMapLocation.setZone(invOutputMapLocation.getStackInSlot(0), layers[BCCoreItems.paintbrush.getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
+                ItemMapLocation.setZone(invOutputMapLocation.getStackInSlot(0), layers[BCCoreItems.PAINTBRUSH.getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
                     .getWithOffset(pos.getX(), pos.getZ()));
                 invOutputResult.setStackInSlot(0, invOutputMapLocation.getStackInSlot(0));
                 invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);

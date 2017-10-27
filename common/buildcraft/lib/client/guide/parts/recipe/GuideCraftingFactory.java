@@ -11,16 +11,15 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.core.BCLog;
 
@@ -28,9 +27,6 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.NonNullMatrix;
-import buildcraft.lib.recipe.ChangingItemStack;
-import buildcraft.lib.recipe.IRecipeViewable;
-import buildcraft.lib.recipe.IRecipeViewable.IViewableGrid;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
@@ -63,7 +59,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
     }
 
     public static GuidePartFactory create(@Nonnull ItemStack stack) {
-        for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
+        /*for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
             if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
                 GuidePartFactory val = getFactory(recipe);
                 if (val != null) {
@@ -74,12 +70,13 @@ public class GuideCraftingFactory implements GuidePartFactory {
                 }
             }
         }
+        */
         return null;
     }
 
     public static GuidePartFactory getFactory(IRecipe recipe) {
         GuideCraftingFactory val = null;
-        if (recipe instanceof ShapedRecipes) {
+        /*if (recipe instanceof ShapedRecipes) {
             ShapedRecipes shaped = (ShapedRecipes) recipe;
             ItemStack[] input = shaped.recipeItems;
             ItemStack[][] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
@@ -146,7 +143,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             return new GuideCraftingFactoryDirect(inputGrid, output);
         } else {
             BCLog.logger.warn("[lib.guide.crafting] Found an unknown recipe " + recipe.getClass());
-        }
+        }*/
         return val;
     }
 
@@ -214,6 +211,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return create(new ItemStack(output));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public GuideCrafting createNew(GuiGuide gui) {
         return new GuideCrafting(gui, input, output);

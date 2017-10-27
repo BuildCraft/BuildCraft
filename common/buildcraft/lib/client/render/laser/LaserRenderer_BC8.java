@@ -16,7 +16,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.profiler.Profiler;
@@ -24,9 +24,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.SpriteUtil;
 
+@SideOnly(Side.CLIENT)
 public class LaserRenderer_BC8 {
     private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
     private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_STATIC_LASERS;
@@ -152,7 +156,7 @@ public class LaserRenderer_BC8 {
     }
 
     /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
-    public static void renderLaserDynamic(LaserData_BC8 data, VertexBuffer buffer) {
+    public static void renderLaserDynamic(LaserData_BC8 data, BufferBuilder buffer) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("compute");
         LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);

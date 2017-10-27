@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
@@ -71,14 +71,14 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
     public RenderMiningWell() {}
 
     @Override
-    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("miner");
 
         buffer.setTranslation(x, y, z);
         EnumFacing facing = EnumFacing.NORTH;
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() == BCFactoryBlocks.miningWell) {
+        if (state.getBlock() == BCFactoryBlocks.MINING_WELL) {
             facing = state.getValue(BuildCraftProperties.BLOCK_FACING);
         }
 
@@ -120,7 +120,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
         LED_STATUS.render(buffer);
 
-        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
+        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
@@ -130,4 +130,6 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
     public boolean isGlobalRenderer(TileMiningWell tile) {
         return true;
     }
+
+    public static void init() {}
 }

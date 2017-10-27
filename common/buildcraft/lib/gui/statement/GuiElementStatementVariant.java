@@ -5,14 +5,11 @@ import java.util.List;
 
 import net.minecraft.client.renderer.GlStateManager;
 
-import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
-import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IMenuElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;

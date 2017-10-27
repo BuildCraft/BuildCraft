@@ -16,10 +16,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -86,7 +86,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private ItemPaintbrush_BC8.Brush getPaintbrushBrush() {
         ItemStack paintbrush = getPaintbrush();
         if (paintbrush != null) {
-            ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.getBrushFromStack(paintbrush);
+            ItemPaintbrush_BC8.Brush brush = BCCoreItems.PAINTBRUSH.getBrushFromStack(paintbrush);
             if (brush.colour != null) {
                 return brush;
             }
@@ -348,7 +348,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             int b = (int) (((foundColor >> 0) & 0xFF) * 0.7);
             int a = 0x77;
             ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
-            VertexBuffer builder = Tessellator.getInstance().getBuffer();
+            BufferBuilder builder = Tessellator.getInstance().getBuffer();
             builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
             ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(builder, found.getX(), found.getY(), found.getZ());
             Tessellator.getInstance().draw();
@@ -400,7 +400,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 } else {
                                     continue;
                                 }
-                                int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
+                                int color = EnumDyeColor.byMetadata(i).getColorValue();
                                 int r = (color >> 16) & 0xFF;
                                 int g = (color >> 8) & 0xFF;
                                 int b = (color >> 0) & 0xFF;

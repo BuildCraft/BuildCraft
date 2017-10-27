@@ -12,15 +12,18 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
@@ -36,6 +39,7 @@ import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock.Target.TargetUsedByMachine;
 import buildcraft.core.marker.volume.Lock.Target.TargetUsedByMachine.EnumType;
 
+@SideOnly(Side.CLIENT)
 public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
@@ -47,9 +51,9 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     public void render(EntityPlayer player, float partialTicks) {
         GlStateManager.enableBlend();
 
-        VertexBuffer vb = Tessellator.getInstance().getBuffer();
+        BufferBuilder bb = Tessellator.getInstance().getBuffer();
 
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
         ClientVolumeBoxes.INSTANCE.boxes.forEach(box -> {
             boolean isEditing = box.isEditingBy(player);
@@ -74,11 +78,12 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
             }
             makeLaserBox(box.box, laserType, scale);
 
-            Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, vb));
+            Arrays.stream(box.box.laserData).forEach(data -> LaserRenderer_BC8.renderLaserDynamic(data, bb));
 
             // noinspection unchecked
-            box.addons.values().forEach(addon -> ((IFastAddonRenderer<Addon>) addon.getRenderer())
-                .renderAddonFast(addon, player, partialTicks, vb));
+            box.addons.values().forEach(addon ->
+                ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, bb)
+            );
         });
 
         Tessellator.getInstance().draw();
@@ -138,16 +143,16 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale) {
         switch (axis) {
             case X:
-                min = new Vec3d(min.xCoord - 1 / 16D, min.yCoord, min.zCoord);
-                max = new Vec3d(max.xCoord + 1 / 16D, max.yCoord, max.zCoord);
+                min = new Vec3d(min.x - 1 / 16D, min.y, min.z);
+                max = new Vec3d(max.x + 1 / 16D, max.y, max.z);
                 break;
             case Y:
-                min = new Vec3d(min.xCoord, min.yCoord - 1 / 16D, min.zCoord);
-                max = new Vec3d(max.xCoord, max.yCoord + 1 / 16D, max.zCoord);
+                min = new Vec3d(min.x, min.y - 1 / 16D, min.z);
+                max = new Vec3d(max.x, max.y + 1 / 16D, max.z);
                 break;
             case Z:
-                min = new Vec3d(min.xCoord, min.yCoord, min.zCoord - 1 / 16D);
-                max = new Vec3d(max.xCoord, max.yCoord, max.zCoord + 1 / 16D);
+                min = new Vec3d(min.x, min.y, min.z - 1 / 16D);
+                max = new Vec3d(max.x, max.y, max.z + 1 / 16D);
                 break;
         }
         EnumFacing faceForMin = VecUtil.getFacing(axis, true);

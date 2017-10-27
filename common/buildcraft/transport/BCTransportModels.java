@@ -131,7 +131,7 @@ public class BCTransportModels {
     }
 
     public static void fmlInit() {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCTransportItems.plugGate,
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCTransportItems.PLUG_GATE,
             GateMeshDefinition.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TilePipeHolder.class, new RenderPipeHolder());
 

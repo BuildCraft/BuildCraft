@@ -1,0 +1,305 @@
+[
+  {
+    "name": "plankWood",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "plankWood"
+      }
+    ]
+  },
+  {
+    "name": "cobblestone",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "cobblestone"
+      }
+    ]
+  },
+  {
+    "name": "sealant",
+    "ingredient": [
+      {
+        "item": "minecraft:dye",
+        "data": 2
+      },
+      {
+        "item": "minecraft:slime_ball"
+      }
+    ]
+  },
+  {
+    "name": "gearIron",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "gearIron"
+      }
+    ]
+  },
+  {
+    "name": "pulsarPart",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "cobblestone"
+      },
+      {
+        "item": "buildcrafttransport:plug_blocker"
+      }
+    ]
+  },
+  {
+    "name": "dustRedstone",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "dustRedstone"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassColorless",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassColorless"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassWhite",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassWhite"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassOrange",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassOrange"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassMagenta",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassMagenta"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassYellow",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassYellow"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLime",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLime"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassPink",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassPink"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassGray",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassGray"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightGray",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightGray"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassCyan",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassCyan"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassPurple",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassPurple"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassBrown",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassBrown"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassGreen",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassGreen"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassRed",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassRed"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassBlack",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassBlack"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "ingotGold",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "ingotGold"
+      }
+    ]
+  },
+  {
+    "name": "ingotIron",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "ingotIron"
+      }
+    ]
+  },
+  {
+    "name": "blockQuartz",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockQuartz"
+      }
+    ]
+  },
+  {
+    "name": "stone",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  },
+  {
+    "name": "blockGlassLightBlue",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "blockGlassLightBlue"
+      }
+    ]
+  }
+]

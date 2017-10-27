@@ -126,13 +126,13 @@ public final class PatternSpherePart extends Pattern {
             }
         }
 
-        double cx = center.xCoord;
-        double cy = center.yCoord;
-        double cz = center.zCoord;
+        double cx = center.x;
+        double cy = center.y;
+        double cz = center.z;
 
-        double rx = radius.xCoord;
-        double ry = radius.yCoord;
-        double rz = radius.zCoord;
+        double rx = radius.x;
+        double ry = radius.y;
+        double rz = radius.z;
 
         for (int x = 0; x <= tpl.maxX; x++) {
             double dx = Math.abs(x - cx) / rx;

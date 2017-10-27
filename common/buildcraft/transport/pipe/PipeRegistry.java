@@ -9,7 +9,6 @@ package buildcraft.transport.pipe;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -22,24 +21,11 @@ import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.lib.item.ItemManager;
-
-import buildcraft.transport.item.ItemPipeHolder;
-
 public enum PipeRegistry implements IPipeRegistry {
     INSTANCE;
 
     private final Map<ResourceLocation, PipeDefinition> definitions = new HashMap<>();
     private final Map<PipeDefinition, IItemPipe> pipeItems = new IdentityHashMap<>();
-
-    @Override
-    public ItemPipeHolder registerPipeAndItem(PipeDefinition definition) {
-        registerPipe(definition);
-        ItemPipeHolder item = new ItemPipeHolder(definition);
-        ItemManager.register(item);
-        setItemForPipe(definition, item);
-        return item;
-    }
 
     @Override
     public void registerPipe(PipeDefinition definition) {

@@ -13,8 +13,11 @@ import javax.vecmath.Point3f;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
@@ -23,11 +26,12 @@ import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 
+@SideOnly(Side.CLIENT)
 public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;
 
     @Override
-    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
         double transfer = flow.getMaxTransferForRender(partialTicks);
         if (transfer <= 0) {
             return;
@@ -63,7 +67,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
                 );
             }
         }
-        vb.setTranslation(x, y, z);
+        bb.setTranslation(x, y, z);
         for (Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f> faceSideCenterRadius : facesSidesCentersRadiuses) {
             EnumFacing face = faceSideCenterRadius.getLeft().getLeft();
             EnumFacing side = faceSideCenterRadius.getLeft().getRight();
@@ -122,8 +126,8 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
             );
             ModelUtil.createFace(face, center, radius, uvs)
                 .lighti(15, 15)
-                .render(vb);
+                .render(bb);
         }
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
     }
 }

@@ -4,15 +4,19 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.items.FluidItemDrops;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.BCLibItems;
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.core.item.ItemFragileFluidContainer;
 import buildcraft.core.item.ItemGoggles;
@@ -23,48 +27,67 @@ import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.core.item.ItemVolumeBox;
 import buildcraft.core.item.ItemWrench_Neptune;
 
+@Mod.EventBusSubscriber(modid = BCCore.MODID)
+@GameRegistry.ObjectHolder(BCCore.MODID)
 public class BCCoreItems {
 
-    public static ItemWrench_Neptune wrench;
-    public static ItemBC_Neptune gearWood;
-    public static ItemBC_Neptune gearStone;
-    public static ItemBC_Neptune gearIron;
-    public static ItemBC_Neptune gearGold;
-    public static ItemBC_Neptune gearDiamond;
-    public static ItemBC_Neptune diamondShard;
-    public static ItemPaintbrush_BC8 paintbrush;
-    public static ItemList_BC8 list;
-    public static ItemMapLocation mapLocation;
-    public static ItemMarkerConnector markerConnector;
-    public static ItemVolumeBox volumeBox;
-    public static ItemFragileFluidContainer fragileFluidShard;
-    public static ItemGoggles goggles;
+    public static final ItemWrench_Neptune WRENCH = null;
+    public static final ItemBC_Neptune GEAR_WOOD = null;
+    public static final ItemBC_Neptune GEAR_STONE = null;
+    public static final ItemBC_Neptune GEAR_IRON = null;
+    public static final ItemBC_Neptune GEAR_GOLD = null;
+    public static final ItemBC_Neptune GEAR_DIAMOND = null;
+    public static final ItemBC_Neptune DIAMOND_SHARD = null;
+    public static final ItemPaintbrush_BC8 PAINTBRUSH = null;
+    public static final ItemList_BC8 LIST = null;
+    public static final ItemMapLocation MAP_LOCATION = null;
+    public static final ItemMarkerConnector MARKER_CONNECTOR = null;
+    public static final ItemVolumeBox VOLUME_BOX = null;
+    public static final ItemGoggles GOGGLES = null;
+    public static ItemFragileFluidContainer FRAGILE_FLUID_SHARD;
 
-    public static void preInit() {
-        wrench = ItemManager.register(new ItemWrench_Neptune("item.wrench"));
-        gearWood = ItemManager.register(new ItemBC_Neptune("item.gear.wood"));
-        gearStone = ItemManager.register(new ItemBC_Neptune("item.gear.stone"));
-        gearIron = ItemManager.register(new ItemBC_Neptune("item.gear.iron"));
-        gearGold = ItemManager.register(new ItemBC_Neptune("item.gear.gold"));
-        gearDiamond = ItemManager.register(new ItemBC_Neptune("item.gear.diamond"));
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.registerItems(event,
+            new ItemWrench_Neptune("item.wrench"),
+            new ItemBC_Neptune("item.gear.wood"),
+            new ItemBC_Neptune("item.gear.stone"),
+            new ItemBC_Neptune("item.gear.iron"),
+            new ItemBC_Neptune("item.gear.gold"),
+            new ItemBC_Neptune("item.gear.diamond"),
+            new ItemPaintbrush_BC8("item.paintbrush"),
+            new ItemList_BC8("item.list"),
+            new ItemMarkerConnector("item.marker_connector"),
+            new ItemVolumeBox("item.volume_box"),
+            new ItemBC_Neptune("item.diamond.shard"),
+            new ItemFragileFluidContainer("item.fragile_fluid_shard")
+        );
         if (BCLib.DEV) {
-            diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
+            RegistryHelper.registerItems(event,
+                new ItemMapLocation("item.map_location"),
+                new ItemGoggles("item.goggles")
+            );
+
         }
-        paintbrush = ItemManager.register(new ItemPaintbrush_BC8("item.paintbrush"));
-        list = ItemManager.register(new ItemList_BC8("item.list"));
-        if (BCLib.DEV) {
-            mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
-        }
-        markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
-        volumeBox = ItemManager.register(new ItemVolumeBox("item.volume_box"));
-        if (BCLib.DEV) {
-            goggles = ItemManager.register(new ItemGoggles("item.goggles"));
-        }
-        fragileFluidShard = ItemManager.register(new ItemFragileFluidContainer("item.fragile_fluid_shard"));
-        FluidItemDrops.item = fragileFluidShard;
-        CreativeTabs mainTab = CreativeTabManager.getTab("buildcraft.main");
-        BCLibItems.guide.setCreativeTab(mainTab);
-        BCLibItems.note.setCreativeTab(mainTab);
-        BCLibItems.debugger.setCreativeTab(mainTab);
+    }
+
+    @SubscribeEvent
+    public static void registerVariants(ModelRegistryEvent event) {
+        FluidItemDrops.item = FRAGILE_FLUID_SHARD;
+        RegistryHelper.registerVariants(
+            WRENCH,
+            GEAR_WOOD,
+            GEAR_STONE,
+            GEAR_IRON,
+            GEAR_GOLD,
+            GEAR_DIAMOND,
+            DIAMOND_SHARD,
+            PAINTBRUSH,
+            LIST,
+            MAP_LOCATION,
+            MARKER_CONNECTOR,
+            VOLUME_BOX,
+            GOGGLES
+        );
     }
 }

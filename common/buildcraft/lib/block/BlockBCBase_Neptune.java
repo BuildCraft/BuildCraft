@@ -6,7 +6,6 @@ package buildcraft.lib.block;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -14,11 +13,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -26,15 +27,10 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.lib.item.IItemBuildCraft;
-import buildcraft.lib.item.ItemBlockBC_Neptune;
-import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 
 public class BlockBCBase_Neptune extends Block {
     private static List<BlockBCBase_Neptune> registeredBlocks = new ArrayList<>();
@@ -170,30 +166,11 @@ public class BlockBCBase_Neptune extends Block {
         return super.rotateBlock(world, pos, axis);
     }
 
-    public static <B extends BlockBCBase_Neptune> B register(B block) {
-        return register(block, false, ItemBlockBC_Neptune::new);
-    }
-
-    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force) {
-        return register(block, force, ItemBlockBC_Neptune::new);
-    }
-
-    public static <B extends BlockBCBase_Neptune, I extends Item & IItemBuildCraft> B register(B block, Function<B, I> itemBlockConstructor) {
-        return register(block, false, itemBlockConstructor);
-    }
-
-    public static <B extends BlockBCBase_Neptune, I extends Item & IItemBuildCraft> B register(B block, boolean force, Function<B, I> itemBlockConstructor) {
-        if (RegistryHelper.registerBlock(block, force)) {
-            registeredBlocks.add(block);
-            MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
-            if (itemBlockConstructor != null) {
-                I item = itemBlockConstructor.apply(block);
-                if (item != null) {
-                    ItemManager.register(item, true);
-                }
-            }
-            return block;
+    @Override
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+        if (RegistryHelper.isEnabled(this)) {
+            super.getSubBlocks(itemIn, items);
         }
-        return null;
+
     }
 }

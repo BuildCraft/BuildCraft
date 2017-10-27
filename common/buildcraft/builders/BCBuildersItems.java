@@ -4,20 +4,42 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.lib.item.ItemManager;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.builders.item.ItemFillingPlanner;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
 
+@Mod.EventBusSubscriber(modid = BCBuilders.MODID)
+@GameRegistry.ObjectHolder(BCBuilders.MODID)
 public class BCBuildersItems {
-    public static ItemSchematicSingle schematicSingle;
-    public static ItemSnapshot snapshot;
-    public static ItemFillingPlanner fillingPlanner;
+    public static final ItemSchematicSingle SCHEMATIC_SINGLE = null;
+    public static final ItemSnapshot SNAPSHOT = null;
+    public static final ItemFillingPlanner FILLING_PLANNER = null;
 
-    public static void preInit() {
-        schematicSingle = ItemManager.register(new ItemSchematicSingle("item.schematic.single"));
-        snapshot = ItemManager.register(new ItemSnapshot("item.snapshot"));
-        fillingPlanner = ItemManager.register(new ItemFillingPlanner("item.filling_planner"));
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.registerItems(event,
+            new ItemSnapshot("item.snapshot"),
+            new ItemFillingPlanner("item.filling_planner"),
+            new ItemSchematicSingle("item.schematic.single")
+        );
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        RegistryHelper.registerVariants(
+            SCHEMATIC_SINGLE,
+            SNAPSHOT,
+            FILLING_PLANNER
+        );
     }
 }

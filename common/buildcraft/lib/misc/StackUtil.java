@@ -24,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
+import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.StackDefinition;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
@@ -102,6 +103,20 @@ public class StackUtil {
      */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull NonNullList<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
+    }
+
+    /**
+     * Checks that passed stack meets stack definition requirements
+     */
+    public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull ItemStack stack) {
+        return !stack.isEmpty() && ingredientStack.ingredient.apply(stack) && stack.getCount() >= ingredientStack.count;
+    }
+
+    /**
+     * Checks that passed stack definition acceptable for stack collection
+     */
+    public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull NonNullList<ItemStack> stacks) {
+        return stacks.stream().anyMatch((stack) -> contains(ingredientStack, stack));
     }
 
     /** Checks to see if the given required stacks are all contained within the collection of containers. Note that this

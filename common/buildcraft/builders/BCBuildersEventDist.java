@@ -86,7 +86,7 @@ public enum BCBuildersEventDist {
                 continue;
             }
             for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
-                if (target.intersectsWith(aabb)) {
+                if (target.intersects(aabb)) {
                     event.getCollisionBoxesList().add(aabb);
                 }
             }
@@ -98,10 +98,10 @@ public enum BCBuildersEventDist {
     public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
         Snapshot snapshot = null;
         ItemStack stack = event.getStack();
-        Header header = BCBuildersItems.snapshot != null ? BCBuildersItems.snapshot.getHeader(stack) : null;
+        Header header = BCBuildersItems.SNAPSHOT != null ? BCBuildersItems.SNAPSHOT.getHeader(stack) : null;
         if (header != null) {
             snapshot = ClientSnapshots.INSTANCE.getSnapshot(header.key);
-        } else if (BCBuildersItems.schematicSingle != null) {
+        } else if (BCBuildersItems.SCHEMATIC_SINGLE != null) {
             ISchematicBlock schematicBlock = ItemSchematicSingle.getSchematicSafe(stack);
             if (schematicBlock != null) {
                 Blueprint blueprint = new Blueprint();

@@ -217,7 +217,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
 
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return BCFactoryItems.gelledWater;
+        return BCFactoryItems.GELLED_WATER;
     }
 
     @Override

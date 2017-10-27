@@ -194,7 +194,7 @@ public class PluggablePulsar extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugPulsar);
+        return new ItemStack(BCTransportItems.PLUG_PULSAR);
     }
 
     @Override

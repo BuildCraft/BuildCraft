@@ -8,9 +8,9 @@ package buildcraft.lib.client.sprite;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.math.MathHelper;
 
@@ -56,56 +56,48 @@ public class DynamicTextureBC {
         colorMap[x + y * widthPow2] = color;
     }
 
-    @SideOnly(Side.CLIENT)
     public void updateTexture() {
         dynamicTexture.updateDynamicTexture();
     }
 
-    @SideOnly(Side.CLIENT)
     public void bindGlTexture() {
         GlStateManager.bindTexture(dynamicTexture.getGlTextureId());
     }
 
-    @SideOnly(Side.CLIENT)
     public void deleteGlTexture() {
         dynamicTexture.deleteGlTexture();
     }
 
-    @SideOnly(Side.CLIENT)
     public void draw(int screenX, int screenY, float zLevel) {
         draw(screenX, screenY, zLevel, 0, 0, width, height);
     }
 
-    @SideOnly(Side.CLIENT)
     public float getMaxU() {
         return width / (float) widthPow2;
     }
 
-    @SideOnly(Side.CLIENT)
     public float getMaxV() {
         return height / (float) heightPow2;
     }
-
-    @SideOnly(Side.CLIENT)
+    
     public void draw(int screenX, int screenY, float zLevel, int clipX, int clipY, int clipWidth, int clipHeight) {
         updateTexture();
 
         float f = 1F / widthPow2;
         float f1 = 1F / heightPow2;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vb = tessellator.getBuffer();
-        vb.begin(GL11.GL_QUADS, vb.getVertexFormat());
-        vertexUV(vb, screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
-        vertexUV(vb, screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
-        vertexUV(vb, screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);
-        vertexUV(vb, screenX + 0, screenY + 0, zLevel, (clipX + 0) * f, (clipY + 0) * f1);
+        BufferBuilder bb = tessellator.getBuffer();
+        bb.begin(GL11.GL_QUADS, bb.getVertexFormat());
+        vertexUV(bb, screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
+        vertexUV(bb, screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
+        vertexUV(bb, screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);
+        vertexUV(bb, screenX + 0, screenY + 0, zLevel, (clipX + 0) * f, (clipY + 0) * f1);
         tessellator.draw();
     }
 
-    @SideOnly(Side.CLIENT)
-    private static void vertexUV(VertexBuffer vb, double x, double y, double z, double u, double v) {
-        vb.pos(x, y, z);
-        vb.tex(u, v);
-        vb.endVertex();
+    private static void vertexUV(BufferBuilder bb, double x, double y, double z, double u, double v) {
+        bb.pos(x, y, z);
+        bb.tex(u, v);
+        bb.endVertex();
     }
 }

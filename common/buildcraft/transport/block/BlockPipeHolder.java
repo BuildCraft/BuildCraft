@@ -360,7 +360,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (part >= 1 + 6 + 6) {
             return aabb.offset(pos);
         } else {
-            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.expandXyz(1 / 32.0)).offset(pos);
+            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.grow(1 / 32.0)).offset(pos);
         }
     }
 
@@ -409,9 +409,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
 
             if (part != null && tile.wireManager.getColorOfPart(part) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
+                return new ItemStack(BCTransportItems.WIRE, 1, tile.wireManager.getColorOfPart(part).getMetadata());
             } else if (between != null && tile.wireManager.getColorOfPart(between.parts[0]) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0])
+                return new ItemStack(BCTransportItems.WIRE, 1, tile.wireManager.getColorOfPart(between.parts[0])
                     .getMetadata());
             }
         }
@@ -470,8 +470,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get((trace.hitVec.xCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.yCoord % 1 + 1)
-                    % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
+                wirePart = EnumWirePart.get((trace.hitVec.x % 1 + 1) % 1 > 0.5, (trace.hitVec.y % 1 + 1)
+                    % 1 > 0.5, (trace.hitVec.z % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
                 boolean attached = attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
@@ -525,7 +525,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
             return false;
         } else if (part != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.WIRE, 1, tile.wireManager.getColorOfPart(part).getMetadata()));
             tile.wireManager.removePart(part);
             if (!player.capabilities.isCreativeMode) {
                 InventoryUtil.dropAll(world, pos, toDrop);
@@ -533,7 +533,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else if (between != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(
+            toDrop.add(new ItemStack(BCTransportItems.WIRE, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(
                 between.parts[0]).getMetadata()));
             if (between.to == null) {
                 tile.wireManager.removeParts(Arrays.asList(between.parts));
@@ -568,7 +568,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
         }
         for (EnumDyeColor color : tile.wireManager.parts.values()) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 1, color.getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.WIRE, 1, color.getMetadata()));
         }
         Pipe pipe = tile.getPipe();
         if (pipe != null) {

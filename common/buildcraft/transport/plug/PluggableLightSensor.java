@@ -61,7 +61,7 @@ public class PluggableLightSensor extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugLightSensor);
+        return new ItemStack(BCTransportItems.PLUG_LIGHT_SENSOR);
     }
 
     @Override

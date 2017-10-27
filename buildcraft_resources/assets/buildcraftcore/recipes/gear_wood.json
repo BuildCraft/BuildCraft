@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "buildcraftcore:gear_wood"
+  },
+  "pattern": [
+    " o ",
+    "o o",
+    " o "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "o": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:gear_wood"
+    }
+  ]
+}

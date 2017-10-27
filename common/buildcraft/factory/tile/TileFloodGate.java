@@ -201,7 +201,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                             BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), currentPos);
                         if (FluidUtil.tryPlaceFluid(fakePlayer, world, currentPos, tank, fluid)) {
                             for (EnumFacing side : EnumFacing.VALUES) {
-                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate,
+                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.FLOOD_GATE,
                                     false);
                             }
                             delayIndex = 0;

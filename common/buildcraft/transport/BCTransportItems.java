@@ -6,11 +6,18 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.facades.FacadeAPI;
+import net.minecraft.item.Item;
+
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.transport.item.ItemPipeHolder;
 import buildcraft.transport.item.ItemPluggableFacade;
@@ -20,130 +27,176 @@ import buildcraft.transport.item.ItemPluggablePulsar;
 import buildcraft.transport.item.ItemPluggableSimple;
 import buildcraft.transport.item.ItemWire;
 
+@Mod.EventBusSubscriber(modid = BCTransport.MODID)
+@GameRegistry.ObjectHolder(BCTransport.MODID)
 public class BCTransportItems {
-    public static ItemBC_Neptune waterproof;
+    public static final ItemBC_Neptune WATERPROOF = null;
 
-    public static ItemPipeHolder pipeStructure;
+    public static final ItemPipeHolder PIPE_STRUCTURE = null;
 
-    public static ItemPipeHolder pipeItemWood;
-    public static ItemPipeHolder pipeFluidWood;
-    public static ItemPipeHolder pipePowerWood;
+    public static final ItemPipeHolder PIPE_WOOD_ITEM = null;
+    public static final ItemPipeHolder PIPE_WOOD_FLUID = null;
+    public static final ItemPipeHolder PIPE_WOOD_POWER = null;
 
-    public static ItemPipeHolder pipeItemStone;
-    public static ItemPipeHolder pipeFluidStone;
-    public static ItemPipeHolder pipePowerStone;
+    public static final ItemPipeHolder PIPE_STONE_ITEM = null;
+    public static final ItemPipeHolder PIPE_STONE_FLUID = null;
+    public static final ItemPipeHolder PIPE_STONE_POWER = null;
 
-    public static ItemPipeHolder pipeItemCobble;
-    public static ItemPipeHolder pipeFluidCobble;
-    public static ItemPipeHolder pipePowerCobble;
+    public static final ItemPipeHolder PIPE_COBBLE_ITEM = null;
+    public static final ItemPipeHolder PIPE_COBBLE_FLUID = null;
+    public static final ItemPipeHolder PIPE_COBBLE_POWER = null;
 
-    public static ItemPipeHolder pipeItemQuartz;
-    public static ItemPipeHolder pipeFluidQuartz;
-    public static ItemPipeHolder pipePowerQuartz;
+    public static final ItemPipeHolder PIPE_QUARTZ_ITEM = null;
+    public static final ItemPipeHolder PIPE_QUARTZ_FLUID = null;
+    public static final ItemPipeHolder PIPE_QUARTZ_POWER = null;
 
-    public static ItemPipeHolder pipeItemGold;
-    public static ItemPipeHolder pipeFluidGold;
-    public static ItemPipeHolder pipePowerGold;
+    public static final ItemPipeHolder PIPE_GOLD_ITEM = null;
+    public static final ItemPipeHolder PIPE_GOLD_FLUID = null;
+    public static final ItemPipeHolder PIPE_GOLD_POWER = null;
 
-    public static ItemPipeHolder pipeItemSandstone;
-    public static ItemPipeHolder pipeFluidSandstone;
-    public static ItemPipeHolder pipePowerSandstone;
+    public static final ItemPipeHolder PIPE_SANDSTONE_ITEM = null;
+    public static final ItemPipeHolder PIPE_SANDSTONE_FLUID = null;
+    public static final ItemPipeHolder PIPE_SANDSTONE_POWER = null;
 
-    public static ItemPipeHolder pipeItemIron;
-    public static ItemPipeHolder pipeFluidIron;
-    // public static ItemPipeHolder pipePowerIron;
+    public static final ItemPipeHolder PIPE_IRON_ITEM = null;
+    public static final ItemPipeHolder PIPE_IRON_FLUID = null;
+    // public static final ItemPipeHolder pipePowerIron = null;
 
-    public static ItemPipeHolder pipeItemDiamond;
-    public static ItemPipeHolder pipeFluidDiamond;
+    public static final ItemPipeHolder PIPE_DIAMOND_ITEM = null;
+    public static final ItemPipeHolder PIPE_DIAMOND_FLUID = null;
     // public static ItemPipeHolder pipePowerDiamond;
 
-    public static ItemPipeHolder pipeItemDiaWood;
-    public static ItemPipeHolder pipeFluidDiaWood;
+    @GameRegistry.ObjectHolder("pipe_diamond_wood_item")
+    public static final ItemPipeHolder PIPE_DIAWOOD_ITEM = null;
+    @GameRegistry.ObjectHolder("pipe_diamond_wood_fluid")
+    public static final ItemPipeHolder PIPE_DIAWOOD_FLUID = null;
 
-    public static ItemPipeHolder pipeItemClay;
-    public static ItemPipeHolder pipeFluidClay;
+    public static final ItemPipeHolder PIPE_CLAY_ITEM = null;
+    public static final ItemPipeHolder PIPE_CLAY_FLUID = null;
 
-    public static ItemPipeHolder pipeItemVoid;
-    public static ItemPipeHolder pipeFluidVoid;
+    public static final ItemPipeHolder PIPE_VOID_ITEM = null;
+    public static final ItemPipeHolder PIPE_VOID_FLUID = null;
+    public static final ItemPipeHolder PIPE_OBSIDIAN_ITEM = null;
+    public static final ItemPipeHolder PIPE_OBSIDIAN_FLUID = null;
 
-    public static ItemPipeHolder pipeItemObsidian;
-    public static ItemPipeHolder pipeFluidObsidian;
+    public static final ItemPipeHolder PIPE_LAPIS_ITEM = null;
+    public static final ItemPipeHolder PIPE_DAIZULI_ITEM = null;
+    public static final ItemPipeHolder PIPE_EMZULI_ITEM = null;
+    public static final ItemPipeHolder PIPE_STRIPES_ITEM = null;
 
-    public static ItemPipeHolder pipeItemLapis;
-    public static ItemPipeHolder pipeItemDaizuli;
-    public static ItemPipeHolder pipeItemEmzuli;
-    public static ItemPipeHolder pipeItemStripes;
+    public static final ItemPluggableSimple PLUG_BLOCKER = null;
+    public static final ItemPluggableGate PLUG_GATE = null;
+    public static final ItemPluggableLens PLUG_LENS = null;
+    public static final ItemPluggablePulsar PLUG_PULSAR = null;
+    public static final ItemPluggableSimple PLUG_LIGHT_SENSOR = null;
+    public static final ItemPluggableFacade PLUG_FACADE = null;
 
-    public static ItemPluggableSimple plugBlocker;
-    public static ItemPluggableGate plugGate;
-    public static ItemPluggableLens plugLens;
-    public static ItemPluggablePulsar plugPulsar;
-    public static ItemPluggableSimple plugLightSensor;
-    public static ItemPluggableFacade plugFacade;
+    public static final ItemWire WIRE = null;
 
-    public static ItemWire wire;
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.registerItems(event,
+            new ItemBC_Neptune("item.waterproof"),
+            // Register them in order of type -- item, fluid, power
+            makePipeItem(BCTransportPipes.structure),
+            makePipeItem(BCTransportPipes.woodItem),
+            makePipeItem(BCTransportPipes.cobbleItem),
+            makePipeItem(BCTransportPipes.stoneItem),
+            makePipeItem(BCTransportPipes.quartzItem),
+            makePipeItem(BCTransportPipes.ironItem),
+            makePipeItem(BCTransportPipes.goldItem),
+            makePipeItem(BCTransportPipes.clayItem),
+            makePipeItem(BCTransportPipes.sandstoneItem),
+            makePipeItem(BCTransportPipes.voidItem),
+            makePipeItem(BCTransportPipes.obsidianItem),
+            makePipeItem(BCTransportPipes.diamondItem),
+            makePipeItem(BCTransportPipes.diaWoodItem),
+            makePipeItem(BCTransportPipes.lapisItem),
+            makePipeItem(BCTransportPipes.daizuliItem),
+            makePipeItem(BCTransportPipes.emzuliItem),
+            makePipeItem(BCTransportPipes.stripesItem),
+            makePipeItem(BCTransportPipes.woodFluid),
+            makePipeItem(BCTransportPipes.cobbleFluid),
+            makePipeItem(BCTransportPipes.stoneFluid),
+            makePipeItem(BCTransportPipes.quartzFluid),
+            makePipeItem(BCTransportPipes.goldFluid),
+            makePipeItem(BCTransportPipes.ironFluid),
+            makePipeItem(BCTransportPipes.clayFluid),
+            makePipeItem(BCTransportPipes.sandstoneFluid),
+            makePipeItem(BCTransportPipes.voidFluid),
+            makePipeItem(BCTransportPipes.diamondFluid),
+            makePipeItem(BCTransportPipes.diaWoodFluid),
+            //makePipeItem(BCTransportPipes.obsidianFluid),
+            new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker),
+            new ItemPluggableGate("item.plug.gate"),
+            new ItemPluggableLens("item.plug.lens"),
+            new ItemPluggablePulsar("item.plug.pulsar"),
+            new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor),
+            new ItemPluggableFacade("item.plug.facade"),
+            new ItemWire("item.wire"),
+            makePipeItem(BCTransportPipes.woodPower),
+            makePipeItem(BCTransportPipes.cobblePower),
+            makePipeItem(BCTransportPipes.stonePower),
+            makePipeItem(BCTransportPipes.quartzPower),
+            makePipeItem(BCTransportPipes.goldPower),
+            //makePipeItem(BCTransportPipes.ironPower),
+            makePipeItem(BCTransportPipes.sandstonePower)
+        );
 
-    public static void preInit() {
-        waterproof = ItemManager.register(new ItemBC_Neptune("item.waterproof"));
-
-        // Register them in order of type -- item, fluid, power
-
-        pipeStructure = makePipeItem(BCTransportPipes.structure);
-
-        pipeItemWood = makePipeItem(BCTransportPipes.woodItem);
-        pipeItemCobble = makePipeItem(BCTransportPipes.cobbleItem);
-        pipeItemStone = makePipeItem(BCTransportPipes.stoneItem);
-        pipeItemQuartz = makePipeItem(BCTransportPipes.quartzItem);
-        pipeItemIron = makePipeItem(BCTransportPipes.ironItem);
-        pipeItemGold = makePipeItem(BCTransportPipes.goldItem);
-        pipeItemClay = makePipeItem(BCTransportPipes.clayItem);
-        pipeItemSandstone = makePipeItem(BCTransportPipes.sandstoneItem);
-        pipeItemVoid = makePipeItem(BCTransportPipes.voidItem);
-        pipeItemObsidian = makePipeItem(BCTransportPipes.obsidianItem);
-        pipeItemDiamond = makePipeItem(BCTransportPipes.diamondItem);
-        pipeItemDiaWood = makePipeItem(BCTransportPipes.diaWoodItem);
-        pipeItemLapis = makePipeItem(BCTransportPipes.lapisItem);
-        pipeItemDaizuli = makePipeItem(BCTransportPipes.daizuliItem);
-        pipeItemEmzuli = makePipeItem(BCTransportPipes.emzuliItem);
-        pipeItemStripes = makePipeItem(BCTransportPipes.stripesItem);
-
-        pipeFluidWood = makePipeItem(BCTransportPipes.woodFluid);
-        pipeFluidCobble = makePipeItem(BCTransportPipes.cobbleFluid);
-        pipeFluidStone = makePipeItem(BCTransportPipes.stoneFluid);
-        pipeFluidQuartz = makePipeItem(BCTransportPipes.quartzFluid);
-        pipeFluidGold = makePipeItem(BCTransportPipes.goldFluid);
-        pipeFluidIron = makePipeItem(BCTransportPipes.ironFluid);
-        pipeFluidClay = makePipeItem(BCTransportPipes.clayFluid);
-        pipeFluidSandstone = makePipeItem(BCTransportPipes.sandstoneFluid);
-        pipeFluidVoid = makePipeItem(BCTransportPipes.voidFluid);
-        pipeFluidDiamond = makePipeItem(BCTransportPipes.diamondFluid);
-        pipeFluidDiaWood = makePipeItem(BCTransportPipes.diaWoodFluid);
-        // pipeFluidObsidian = makePipeItem(BCTransportPipes.obsidianFluid);
-
-        pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
-        pipePowerCobble = makePipeItem(BCTransportPipes.cobblePower);
-        pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
-        pipePowerQuartz = makePipeItem(BCTransportPipes.quartzPower);
-        pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
-        // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
-        pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
-
-        plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
-        plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));
-        plugLens = ItemManager.register(new ItemPluggableLens("item.plug.lens"));
-        plugPulsar = ItemManager.register(new ItemPluggablePulsar("item.plug.pulsar"));
-        plugLightSensor = ItemManager.register(new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor));
-        plugFacade = ItemManager.register(new ItemPluggableFacade("item.plug.facade"));
-        FacadeAPI.facadeItem = plugFacade;
-
-        wire = ItemManager.register(new ItemWire("item.wire"));
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {
-        ItemPipeHolder item = ItemManager.register(new ItemPipeHolder(def));
-        if (item != null) {
-            item.registerWithPipeApi();
-        }
+        ItemPipeHolder item = new ItemPipeHolder(def);
+        item.registerWithPipeApi();
         return item;
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        RegistryHelper.registerVariants(
+            WATERPROOF,
+            PIPE_STRUCTURE,
+            PIPE_WOOD_ITEM,
+            PIPE_WOOD_FLUID,
+            PIPE_WOOD_POWER,
+            PIPE_STONE_ITEM,
+            PIPE_STONE_FLUID,
+            PIPE_STONE_POWER,
+            PIPE_COBBLE_ITEM,
+            PIPE_COBBLE_FLUID,
+            PIPE_COBBLE_POWER,
+            PIPE_QUARTZ_ITEM,
+            PIPE_QUARTZ_FLUID,
+            PIPE_QUARTZ_POWER,
+            PIPE_GOLD_ITEM,
+            PIPE_GOLD_FLUID,
+            PIPE_GOLD_POWER,
+            PIPE_SANDSTONE_ITEM,
+            PIPE_SANDSTONE_FLUID,
+            PIPE_SANDSTONE_POWER,
+            PIPE_IRON_ITEM,
+            PIPE_IRON_FLUID,
+            PIPE_DIAMOND_ITEM,
+            PIPE_DIAMOND_FLUID,
+            PIPE_DIAWOOD_ITEM,
+            PIPE_DIAWOOD_FLUID,
+            PIPE_CLAY_ITEM,
+            PIPE_CLAY_FLUID,
+            PIPE_VOID_ITEM,
+            PIPE_VOID_FLUID,
+            PIPE_OBSIDIAN_ITEM,
+            PIPE_OBSIDIAN_FLUID,
+            PIPE_LAPIS_ITEM,
+            PIPE_DAIZULI_ITEM,
+            PIPE_EMZULI_ITEM,
+            PIPE_STRIPES_ITEM,
+            WIRE,
+            PLUG_BLOCKER,
+            PLUG_GATE,
+            PLUG_LENS,
+            PLUG_LIGHT_SENSOR,
+            PLUG_PULSAR,
+            PLUG_FACADE
+        );
     }
 }

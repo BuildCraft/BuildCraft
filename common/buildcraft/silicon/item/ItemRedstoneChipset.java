@@ -10,7 +10,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
@@ -36,9 +35,11 @@ public class ItemRedstoneChipset extends ItemBC_Neptune {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab))
+            return;
         for (EnumRedstoneChipset type : EnumRedstoneChipset.values()) {
-            subItems.add(new ItemStack(item, 1, type.ordinal()));
+            subItems.add(new ItemStack(this, 1, type.ordinal()));
         }
     }
 

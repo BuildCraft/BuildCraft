@@ -8,12 +8,16 @@ package buildcraft.lib.client.render.laser;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public abstract class LaserCompiledList {
     public abstract void render();
 
@@ -21,7 +25,7 @@ public abstract class LaserCompiledList {
 
     public static class Builder implements ILaserRenderer {
         private final Tessellator tess;
-        private final VertexBuffer buffer;
+        private final BufferBuilder buffer;
         private final boolean useColour;
 
         public Builder(boolean useNormalColour) {

@@ -13,14 +13,21 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import buildcraft.api.enums.EnumEngineType;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.tile.TileEngineIron_BC8;
+import buildcraft.energy.tile.TileEngineStone_BC8;
+import buildcraft.energy.tile.TileSpringOil;
 
 //@formatter:off
 @Mod(
@@ -30,6 +37,7 @@ import buildcraft.core.BCCore;
     dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
 )
 //@formatter:on
+@Mod.EventBusSubscriber(modid = BCEnergy.MODID)
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
     static {
@@ -43,11 +51,7 @@ public class BCEnergy {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
         BCEnergyConfig.preInit();
-        BCEnergyItems.preInit();
-        BCEnergyFluids.preInit();
-        BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
-        BCEnergyWorldGen.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
 
@@ -57,7 +61,17 @@ public class BCEnergy {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCEnergyRecipes.init();
+        BCEnergyWorldGen.init();
         BCEnergyProxy.getProxy().fmlInit();
+
+        TileBC_Neptune.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
+        BCCoreBlocks.ENGINE.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
+
+        TileBC_Neptune.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
+        BCCoreBlocks.ENGINE.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+
+        TileBC_Neptune.registerTile(TileSpringOil.class, "tile.spring.oil");
+
     }
 
     @Mod.EventHandler

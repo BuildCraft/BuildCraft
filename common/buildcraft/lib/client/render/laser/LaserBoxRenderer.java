@@ -9,15 +9,19 @@ package buildcraft.lib.client.render.laser;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+@SideOnly(Side.CLIENT)
 public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;
 
@@ -31,13 +35,13 @@ public class LaserBoxRenderer {
         }
     }
 
-    public static void renderLaserBoxDynamic(Box box, LaserType type, VertexBuffer vb, boolean center) {
+    public static void renderLaserBoxDynamic(Box box, LaserType type, BufferBuilder bb, boolean center) {
         if (box == null || box.min() == null || box.max() == null) return;
 
         makeLaserBox(box, type, center);
 
         for (LaserData_BC8 data : box.laserData) {
-            LaserRenderer_BC8.renderLaserDynamic(data, vb);
+            LaserRenderer_BC8.renderLaserDynamic(data, bb);
         }
     }
 
@@ -56,14 +60,14 @@ public class LaserBoxRenderer {
         List<LaserData_BC8> datas = new ArrayList<>();
 
         Vec3d[][][] vecs = new Vec3d[2][2][2];
-        vecs[0][0][0] = new Vec3d(min.xCoord, min.yCoord, min.zCoord);
-        vecs[1][0][0] = new Vec3d(max.xCoord, min.yCoord, min.zCoord);
-        vecs[0][1][0] = new Vec3d(min.xCoord, max.yCoord, min.zCoord);
-        vecs[1][1][0] = new Vec3d(max.xCoord, max.yCoord, min.zCoord);
-        vecs[0][0][1] = new Vec3d(min.xCoord, min.yCoord, max.zCoord);
-        vecs[1][0][1] = new Vec3d(max.xCoord, min.yCoord, max.zCoord);
-        vecs[0][1][1] = new Vec3d(min.xCoord, max.yCoord, max.zCoord);
-        vecs[1][1][1] = new Vec3d(max.xCoord, max.yCoord, max.zCoord);
+        vecs[0][0][0] = new Vec3d(min.x, min.y, min.z);
+        vecs[1][0][0] = new Vec3d(max.x, min.y, min.z);
+        vecs[0][1][0] = new Vec3d(min.x, max.y, min.z);
+        vecs[1][1][0] = new Vec3d(max.x, max.y, min.z);
+        vecs[0][0][1] = new Vec3d(min.x, min.y, max.z);
+        vecs[1][0][1] = new Vec3d(max.x, min.y, max.z);
+        vecs[0][1][1] = new Vec3d(min.x, max.y, max.z);
+        vecs[1][1][1] = new Vec3d(max.x, max.y, max.z);
 
         if (sizeX > 1) {
             datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X));

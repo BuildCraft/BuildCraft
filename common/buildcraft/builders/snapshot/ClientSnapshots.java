@@ -18,8 +18,8 @@ import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -39,7 +39,7 @@ public enum ClientSnapshots {
     private final List<Snapshot> snapshots = new ArrayList<>();
     private final List<Snapshot.Key> pending = new ArrayList<>();
     private final Map<Snapshot.Key, FakeWorld> worlds = new HashMap<>();
-    private final Map<Snapshot.Key, VertexBuffer> buffers = new HashMap<>();
+    private final Map<Snapshot.Key, BufferBuilder> buffers = new HashMap<>();
 
     public Snapshot getSnapshot(Snapshot.Key key) {
         Snapshot found = snapshots.stream().filter(snapshot -> snapshot.key.equals(key)).findFirst().orElse(null);
@@ -74,8 +74,8 @@ public enum ClientSnapshots {
             localWorld.uploadSnapshot(snapshot);
             return localWorld;
         });
-        VertexBuffer vertexBuffer = buffers.computeIfAbsent(snapshot.key, key -> {
-            VertexBuffer localBuffer = new VertexBuffer(1024) {
+        BufferBuilder bufferBuilder = buffers.computeIfAbsent(snapshot.key, key -> {
+            BufferBuilder localBuffer = new BufferBuilder(1024) {
                 @Override
                 public void reset() {
                 }
@@ -143,7 +143,7 @@ public enum ClientSnapshots {
         GlStateManager.translate(-snapshot.size.getX() / 2F, -snapshot.size.getY() / 2F, -snapshot.size.getZ() / 2F);
         GlStateManager.translate(0, snapshotSize * 0.1F, 0);
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        new WorldVertexBufferUploader().draw(vertexBuffer);
+        new WorldVertexBufferUploader().draw(bufferBuilder);
         if (snapshotSize < 32) {
             TileEntityRendererDispatcher.instance.preDrawBatch();
             for (int z = 0; z < snapshot.size.getZ(); z++) {
@@ -152,7 +152,7 @@ public enum ClientSnapshots {
                         BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
                         GlStateManager.pushAttrib();
                         // noinspection ConstantConditions
-                        TileEntityRendererDispatcher.instance.renderTileEntityAt(
+                        TileEntityRendererDispatcher.instance.render(
                             world.getTileEntity(pos),
                             pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
                             pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
@@ -171,9 +171,9 @@ public enum ClientSnapshots {
             GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().doRenderEntity(
                 entity,
-                pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                pos.yCoord - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                pos.zCoord - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                pos.x - FakeWorld.BLUEPRINT_OFFSET.getX(),
+                pos.y - FakeWorld.BLUEPRINT_OFFSET.getY(),
+                pos.z - FakeWorld.BLUEPRINT_OFFSET.getZ(),
                 0,
                 0,
                 true

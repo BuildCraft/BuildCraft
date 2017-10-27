@@ -6,25 +6,43 @@
 
 package buildcraft.transport;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import buildcraft.lib.registry.RegistryHelper;
 
 import buildcraft.transport.block.BlockFilteredBuffer;
 import buildcraft.transport.block.BlockPipeHolder;
-import buildcraft.transport.tile.TileFilteredBuffer;
-import buildcraft.transport.tile.TilePipeHolder;
 
+@Mod.EventBusSubscriber(modid = BCTransport.MODID)
+@GameRegistry.ObjectHolder(BCTransport.MODID)
 public class BCTransportBlocks {
-    public static BlockFilteredBuffer filteredBuffer;
-    public static BlockPipeHolder pipeHolder;
+    public static final BlockFilteredBuffer FILTERED_BUFFER = null;
+    public static final BlockPipeHolder PIPE_HOLDER = null;
 
-    public static void preInit() {
-        filteredBuffer = BlockBCBase_Neptune.register(new BlockFilteredBuffer(Material.ROCK, "block.filtered_buffer"));
-        pipeHolder = BlockBCBase_Neptune.register(new BlockPipeHolder(Material.IRON, "block.pipe_holder"), null);
 
-        TileBC_Neptune.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
-        TileBC_Neptune.registerTile(TilePipeHolder.class, "tile.pipe_holder");
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        RegistryHelper.registerBlocks(event,new BlockFilteredBuffer(Material.ROCK, "block.filtered_buffer"));
+        event.getRegistry().registerAll(
+            new BlockPipeHolder(Material.IRON, "block.pipe_holder")
+        );
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        RegistryHelper.registerItems(event, FILTERED_BUFFER);
+    }
+
+    @SubscribeEvent
+    public static void modelRegisterEvent(ModelRegistryEvent event) {
+        RegistryHelper.registerVariants(FILTERED_BUFFER);
     }
 }

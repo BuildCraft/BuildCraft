@@ -59,8 +59,8 @@ public class ItemWaterGel extends ItemBC_Neptune {
                 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
         if (!world.isRemote) {
-            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
-            world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.waterGel, 200);
+            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.WATER_GEL.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
+            world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.WATER_GEL, 200);
 
             // TODO: Snowball stuff
 

@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:volume_box"
+    },
+    "title": {
+      "translate": "advancements.buildcraftcore.path_markers.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftcore.path_markers.description"
+    }
+  },
+  "parent": "buildcraftcore:markers",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

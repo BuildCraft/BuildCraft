@@ -172,9 +172,9 @@ public class TravellingItem {
         if (interpMul <= 0) return start;
         if (interpMul >= 1) return end;
 
-        double x = oneMinus * start.xCoord + interpMul * end.xCoord;
-        double y = oneMinus * start.yCoord + interpMul * end.yCoord;
-        double z = oneMinus * start.zCoord + interpMul * end.zCoord;
+        double x = oneMinus * start.x + interpMul * end.x;
+        double y = oneMinus * start.y + interpMul * end.y;
+        double z = oneMinus * start.z + interpMul * end.z;
         return new Vec3d(x, y, z);
     }
 

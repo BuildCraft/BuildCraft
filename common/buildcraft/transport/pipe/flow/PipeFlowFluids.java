@@ -174,13 +174,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     @Override
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
-        if (currentFluid != null && BCCoreItems.fragileFluidShard != null) {
+        if (currentFluid != null && BCCoreItems.FRAGILE_FLUID_SHARD != null) {
             int totalAmount = 0;
             for (EnumPipePart part : EnumPipePart.VALUES) {
                 totalAmount += sections.get(part).amount;
             }
             if (totalAmount > 0) {
-                BCCoreItems.fragileFluidShard.addFluidDrops(toDrop, new FluidStack(currentFluid, totalAmount));
+                BCCoreItems.FRAGILE_FLUID_SHARD.addFluidDrops(toDrop, new FluidStack(currentFluid, totalAmount));
             }
         }
     }
@@ -869,16 +869,16 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                         dir = dir.add(new Vec3d(p.face.getDirectionVec()).scale(-1));
                     }
                 }
-                dir = new Vec3d(Math.signum(dir.xCoord), Math.signum(dir.yCoord), Math.signum(dir.zCoord));
+                dir = new Vec3d(Math.signum(dir.x), Math.signum(dir.y), Math.signum(dir.z));
                 offsetThis = offsetThis.add(dir.scale(-FLOW_MULTIPLIER));
             } else {
                 double mult = Math.signum(ticksInDirection);
                 offsetThis = VecUtil.offset(offsetLast, part.face, -FLOW_MULTIPLIER * (mult));
             }
 
-            double dx = offsetThis.xCoord >= 0.5 ? -1 : offsetThis.xCoord <= 0.5 ? 1 : 0;
-            double dy = offsetThis.yCoord >= 0.5 ? -1 : offsetThis.yCoord <= 0.5 ? 1 : 0;
-            double dz = offsetThis.zCoord >= 0.5 ? -1 : offsetThis.zCoord <= 0.5 ? 1 : 0;
+            double dx = offsetThis.x >= 0.5 ? -1 : offsetThis.x <= 0.5 ? 1 : 0;
+            double dy = offsetThis.y >= 0.5 ? -1 : offsetThis.y <= 0.5 ? 1 : 0;
+            double dz = offsetThis.z >= 0.5 ? -1 : offsetThis.z <= 0.5 ? 1 : 0;
             if (dx != 0 || dy != 0 || dz != 0) {
                 offsetThis = offsetThis.addVector(dx, dy, dz);
                 offsetLast = offsetLast.addVector(dx, dy, dz);

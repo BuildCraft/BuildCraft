@@ -35,6 +35,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -64,6 +65,7 @@ import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -92,6 +94,7 @@ import buildcraft.core.tile.TileMarkerVolume;
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
 
     private static final long MAX_MJ_PER_TICK = 64 * MjAPI.MJ;
+    private static final ResourceLocation DIGGY_DIGGY_HOLE = new ResourceLocation("buildcraftbuilders:diggy_diggy_hole");
 
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     public final Box frameBox = new Box();
@@ -110,6 +113,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
     private long debugPowerRate = 0;
+    private List<AxisAlignedBB> collisionboxes = null;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState,
@@ -293,7 +297,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBreakBlockPoses.remove(blockPos);
         framePlaceFramePoses.remove(blockPos);
         if (shouldBeFrame(blockPos)) {
-            if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.frame) {
+            if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.FRAME) {
                 if (!world.isAirBlock(blockPos)) {
                     frameBreakBlockPoses.add(blockPos);
                 } else {
@@ -373,7 +377,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBreakBlockPoses.clear();
         framePlaceFramePoses.clear();
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == BCBuildersBlocks.quarry && frameBox.isInitialized()) {
+        if (state.getBlock() == BCBuildersBlocks.QUARRY && frameBox.isInitialized()) {
             List<BlockPos> blocksInArea = frameBox.getBlocksInArea();
             frameBoxPosesCount = blocksInArea.size();
             toCheck.addAll(blocksInArea);
@@ -480,6 +484,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
                 if (found) {
                     sendNetworkUpdate(NET_RENDER_DATA);
+                }else {
+                    AxisAlignedBB box = miningBox.getBoundingBox();
+                    if (box.maxX - box.minX == 63 && box.maxZ - box.minZ == 63) {
+                        AdvancementUtil.unlockAdvancement(getOwner().getId(), DIGGY_DIGGY_HOLE);
+                    }
                 }
             }
         }
@@ -580,24 +589,26 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (!frameBox.isInitialized() || drillPos == null) {
             return ImmutableList.of();
         }
-        List<AxisAlignedBB> list = new ArrayList<>(3);
-        Vec3d min = VecUtil.convertCenter(frameBox.min());
-        Vec3d max = VecUtil.convertCenter(frameBox.max());
-        min = VecUtil.replaceValue(min, Axis.Y, max.yCoord);
+        if (collisionboxes == null) {
+            collisionboxes = new ArrayList<>(3);
+            Vec3d min = VecUtil.convertCenter(frameBox.min());
+            Vec3d max = VecUtil.convertCenter(frameBox.max());
+            min = VecUtil.replaceValue(min, Axis.Y, max.y);
 
-        Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.xCoord + 0.5);
-        Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.xCoord + 0.5);
-        list.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
+            Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5);
+            Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5);
+            collisionboxes.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
 
-        Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.zCoord + 0.5);
-        Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.zCoord + 0.5);
-        list.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
+            Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5);
+            Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5);
+            collisionboxes.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
 
-        Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
-        Vec3d minYAdj = realDrillPos;
-        Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.yCoord);
-        list.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
-        return list;
+            Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
+            Vec3d minYAdj = realDrillPos;
+            Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.y);
+            collisionboxes.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
+        }
+        return collisionboxes;
     }
 
     @Override
@@ -776,7 +787,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 if (drillPos != null) {
                     world.destroyBlock(breakPos, true);
                     for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class,
-                        new AxisAlignedBB(breakPos).expandXyz(1))) {
+                        new AxisAlignedBB(breakPos).grow(1))) {
                         TransactorEntityItem transactor = new TransactorEntityItem(entity);
                         ItemStack stack;
                         while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
@@ -851,7 +862,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         protected boolean finish() {
             if (world.isAirBlock(framePos)) {
-                world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
+                world.setBlockState(framePos, BCBuildersBlocks.FRAME.getDefaultState());
             }
             return true;
         }
@@ -926,6 +937,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             // Vec3d oldDrillPos = drillPos;
             drillPos = to;
             // moveEntities(oldDrillPos);
+            collisionboxes = null;
             return true;
         }
 

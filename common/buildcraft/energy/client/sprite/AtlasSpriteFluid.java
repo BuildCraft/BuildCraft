@@ -6,6 +6,8 @@
 
 package buildcraft.energy.client.sprite;
 
+import java.util.function.Function;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +33,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     }
 
     @Override
-    public boolean load(IResourceManager manager, ResourceLocation location) {
+    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
         ResourceLocation from = SpriteUtil.transformLocation(fromName);
         AtlasSpriteDirect sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {

@@ -16,11 +16,11 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
@@ -55,7 +55,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
     }
 
     @Override
-    public final void renderTileEntityAt(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage) {
+    public final void render(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("zone");
 
@@ -68,7 +68,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         double maxZ = 1 + offset;
 
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() != BCRoboticsBlocks.zonePlanner) {
+        if (state.getBlock() != BCRoboticsBlocks.ZONE_PLANNER) {
             return;
         }
         EnumFacing side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
@@ -78,7 +78,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
             return;
         }
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         texture.updateTexture();
         texture.bindGlTexture();
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -128,10 +128,10 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         vertex.colouri(-1);
         vertex.lighti(0xF, 0xF);
 
-        vertex.positiond(min.xCoord, min.yCoord, min.zCoord).texf(minU, minV).render(buffer);
-        vertex.positiond(max.xCoord, min.yCoord, max.zCoord).texf(maxU, minV).render(buffer);
-        vertex.positiond(max.xCoord, max.yCoord, max.zCoord).texf(maxU, maxV).render(buffer);
-        vertex.positiond(min.xCoord, max.yCoord, min.zCoord).texf(minU, maxV).render(buffer);
+        vertex.positiond(min.x, min.y, min.z).texf(minU, minV).render(buffer);
+        vertex.positiond(max.x, min.y, max.z).texf(maxU, minV).render(buffer);
+        vertex.positiond(max.x, max.y, max.z).texf(maxU, maxV).render(buffer);
+        vertex.positiond(min.x, max.y, min.z).texf(minU, maxV).render(buffer);
 
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();

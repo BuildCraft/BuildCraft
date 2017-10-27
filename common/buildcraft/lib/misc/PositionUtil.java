@@ -69,7 +69,7 @@ public class PositionUtil {
     }
 
     /** Checks to see if the given position is a corner for the box given by min and max
-     * 
+     *
      * @param min The minimum co-ordinate of the box
      * @param max The maximum co-ordinate of the box
      * @param pos The position to test
@@ -79,7 +79,7 @@ public class PositionUtil {
     }
 
     /** Checks to see if the given position is on one of the edges of the box given by min and max
-     * 
+     *
      * @param min The minimum co-ordinate of the box
      * @param max The maximum co-ordinate of the box
      * @param pos The position to test
@@ -89,7 +89,7 @@ public class PositionUtil {
     }
 
     /** Checks to see if the given position is on one of the faces of the box given by min and max
-     * 
+     *
      * @param min The minimum co-ordinate of the box
      * @param max The maximum co-ordinate of the box
      * @param pos The position to test
@@ -152,9 +152,9 @@ public class PositionUtil {
     public static Vec3d rotateVec(Vec3d from, Axis axis, Rotation rotation) {
         Vec3d rotated = new Vec3d(0, 0, 0);
 
-        double numEast = from.xCoord;
-        double numUp = from.yCoord;
-        double numSouth = from.zCoord;
+        double numEast = from.x;
+        double numUp = from.y;
+        double numSouth = from.z;
 
         EnumFacing newEast = PositionUtil.rotateFacing(EnumFacing.EAST, axis, rotation);
         EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);
@@ -447,7 +447,7 @@ public class PositionUtil {
     }
 
     public static void forAllOnArc2d(int a, int b, int degrees, PathIterator2d iter) {
-        
+
     }
 
     @FunctionalInterface

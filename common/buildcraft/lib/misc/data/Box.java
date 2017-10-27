@@ -155,9 +155,9 @@ public class Box implements IBox {
     @Override
     public boolean contains(Vec3d p) {
         AxisAlignedBB bb = getBoundingBox();
-        if (p.xCoord < bb.minX || p.xCoord >= bb.maxX) return false;
-        if (p.yCoord < bb.minY || p.yCoord >= bb.maxY) return false;
-        if (p.zCoord < bb.minZ || p.zCoord >= bb.maxZ) return false;
+        if (p.x < bb.minX || p.x >= bb.maxX) return false;
+        if (p.y < bb.minY || p.y >= bb.maxY) return false;
+        if (p.z < bb.minZ || p.z >= bb.maxZ) return false;
         return true;
     }
 
@@ -209,7 +209,7 @@ public class Box implements IBox {
         return this;
     }
 
-    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#isVecInside(Vec3d)} as the
+    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#contains(Vec3d)} as the
      * logic is different! */
     public AxisAlignedBB getBoundingBox() {
         return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));

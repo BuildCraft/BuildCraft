@@ -8,7 +8,6 @@ package buildcraft.lib.expression;
 
 import net.minecraft.item.EnumDyeColor;
 
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.misc.ColourUtil;
