@@ -2,16 +2,16 @@
   "result": {
     "item": "buildcrafttransport:waterproof"
   },
-  "type": "buildcraftlib:BC_recipe_shapeless",
+  "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "#sealant"
     }
+  ],
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcrafttransport:waterproof"
+    }
   ]
-},
-"conditions": [
-{
-"type": "minecraft:item_exists",
-"item": "buildcraftbuilders:quarry"
 }
-]
