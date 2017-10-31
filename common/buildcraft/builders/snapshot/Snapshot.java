@@ -99,6 +99,21 @@ public abstract class Snapshot {
         return indexToPos(size, i);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int getDataSize(int x, int y, int z) {
+        return x * y * z;
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static int getDataSize(BlockPos size) {
+        return getDataSize(size.getX(), size.getY(), size.getZ());
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public int getDataSize() {
+        return getDataSize(size);
+    }
+
     public static NBTTagCompound writeToNBT(Snapshot snapshot) {
         NBTTagCompound nbt = snapshot.serializeNBT();
         nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));

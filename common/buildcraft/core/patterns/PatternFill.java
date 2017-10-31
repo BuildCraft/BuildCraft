@@ -7,9 +7,8 @@ package buildcraft.core.patterns;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
@@ -27,9 +26,8 @@ public class PatternFill extends Pattern {
     }
 
     @Override
-    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
-        FilledTemplate template = new FilledTemplate(filler.getBox());
-        template.fill();
-        return template;
+    public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
+        filledTemplate.setAll(true);
+        return true;
     }
 }

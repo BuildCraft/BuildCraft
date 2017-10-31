@@ -50,7 +50,6 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
             box.box.min(),
             box.box.size(),
             patternStatement,
-            this,
             IntStream.range(0, patternStatement.maxParams)
                 .mapToObj(patternStatement::get)
                 .toArray(IStatementParameter[]::new),

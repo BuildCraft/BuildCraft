@@ -7,7 +7,7 @@ package buildcraft.core.patterns;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 
@@ -27,7 +27,7 @@ public class PatternClear extends Pattern {
     }
 
     @Override
-    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
-        return new FilledTemplate(filler.getBox());
+    public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
+        return true;
     }
 }

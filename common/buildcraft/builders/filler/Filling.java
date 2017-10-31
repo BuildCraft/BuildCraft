@@ -6,37 +6,35 @@
 
 package buildcraft.builders.filler;
 
-import java.util.Optional;
+import java.util.BitSet;
 
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.statement.FullStatement;
 
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Template;
 
 public class Filling {
     public static Template.BuildingInfo createBuildingInfo(BlockPos basePos,
                                                            BlockPos size,
                                                            FullStatement<IFillerPattern> patternStatement,
-                                                           IFillerStatementContainer filler,
                                                            IStatementParameter[] params,
                                                            boolean inverted) {
-        return Optional.ofNullable(patternStatement.get().createTemplate(filler, params))
-            .map(filledTemplate -> {
-                Template template = new Template();
-                template.size = size;
-                template.offset = BlockPos.ORIGIN;
-                template.data = filledTemplate;
-                if (inverted) {
-                    template.data.invert();
-                }
-                return template.new BuildingInfo(basePos, Rotation.NONE);
-            })
-            .orElse(null);
+        Template template = new Template();
+        template.size = size;
+        template.offset = BlockPos.ORIGIN;
+        template.data = new BitSet(Snapshot.getDataSize(size));
+        if (!patternStatement.get().fillTemplate(template.getFilledTemplate(), params)) {
+            return null;
+        }
+        if (inverted) {
+            template.invert();
+        }
+        return template.new BuildingInfo(basePos, Rotation.NONE);
     }
 }

@@ -7,9 +7,8 @@ package buildcraft.core.patterns;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
@@ -42,49 +41,33 @@ public class PatternStairs extends Pattern {
         return index == 1 ? PatternParameterXZDir.EAST : PatternParameterYDir.UP;
     }
 
+    // TODO: convert to for loops?
     @Override
-    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
-        FilledTemplate template = new FilledTemplate(filler.getBox());
-
+    public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
         PatternParameterYDir yDir = getParam(0, params, PatternParameterYDir.UP);
         PatternParameterXZDir xzDir = getParam(1, params, PatternParameterXZDir.EAST);
 
-        int y;
-        final int yStep;
-        final int yEnd;
-        if (yDir == PatternParameterYDir.UP) {
-            y = 0;
-            yStep = 1;
-            yEnd = template.maxY + 1;
-        } else {
-            y = template.maxY;
-            yStep = -1;
-            yEnd = -1;
-        }
-
-        final int dfx = xzDir.dir.getFrontOffsetX() > 0 ? 1 : 0;
-        final int dfz = xzDir.dir.getFrontOffsetZ() > 0 ? 1 : 0;
-        final int dtx = xzDir.dir.getFrontOffsetX() < 0 ? -1 : 0;
-        final int dtz = xzDir.dir.getFrontOffsetZ() < 0 ? -1 : 0;
+        int y = yDir == PatternParameterYDir.UP ? 0 : filledTemplate.getMax().getY();
+        final int yStep = yDir == PatternParameterYDir.UP ? 1 : -1;
+        final int yEnd = yDir == PatternParameterYDir.UP ? filledTemplate.getMax().getY() + 1 : -1;
 
         int fx = 0;
         int fz = 0;
-        int tx = template.maxX;
-        int tz = template.maxZ;
+        int tx = filledTemplate.getMax().getX();
+        int tz = filledTemplate.getMax().getZ();
 
         while (y != yEnd) {
-            template.fillAreaXZ(fx, tx, y, fz, tz);
+            filledTemplate.setAreaXZ(fx, tx, y, fz, tz, true);
 
-            fx += dfx;
-            fz += dfz;
-            tx += dtx;
-            tz += dtz;
+            fx += Integer.signum(xzDir.dir.getFrontOffsetX());
+            fz += Integer.signum(xzDir.dir.getFrontOffsetZ());
+            tx += Integer.signum(xzDir.dir.getFrontOffsetX());
+            tz += Integer.signum(xzDir.dir.getFrontOffsetZ());
             y += yStep;
 
             if (fx > tx) break;
             if (fz > tz) break;
         }
-
-        return template;
+        return true;
     }
 }

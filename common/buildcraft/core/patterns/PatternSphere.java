@@ -1,10 +1,13 @@
 package buildcraft.core.patterns;
 
+import java.util.BitSet;
+
 import buildcraft.api.core.render.ISprite;
-import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
 
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternSphere extends Pattern {
@@ -38,119 +41,120 @@ public class PatternSphere extends Pattern {
     }
 
     @Override
-    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
+    public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
         PatternParameterHollow hollow = getParam(0, params, PatternParameterHollow.FILLED_INNER);
 
-        FilledTemplate tpl = new FilledTemplate(filler.getBox());
-
-        double cx = tpl.maxX / 2.0;
-        double cy = tpl.maxY / 2.0;
-        double cz = tpl.maxZ / 2.0;
+        double cx = filledTemplate.getMax().getX() / 2.0;
+        double cy = filledTemplate.getMax().getY() / 2.0;
+        double cz = filledTemplate.getMax().getZ() / 2.0;
 
         double rx = cx + 0.5;
         double ry = cy + 0.5;
         double rz = cz + 0.5;
 
-        for (int x = 0; x <= tpl.maxX; x++) {
+        BitSet data = null;
+        if (hollow != PatternParameterHollow.FILLED_INNER) {
+            data = new BitSet(Snapshot.getDataSize(filledTemplate.getSize()));
+        }
+        for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
             double dx = Math.abs(x - cx) / rx;
             double dxx = dx * dx;
-            for (int y = 0; y <= tpl.maxY; y++) {
+            for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
                 double dy = Math.abs(y - cy) / ry;
                 double dyy = dy * dy;
-                for (int z = 0; z <= tpl.maxZ; z++) {
+                for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
                     double dz = Math.abs(z - cz) / rz;
                     double dzz = dz * dz;
                     if (dxx + dyy + dzz < 1) {
-                        tpl.fill(x, y, z);
+                        if (hollow != PatternParameterHollow.FILLED_INNER) {
+                            // noinspection ConstantConditions
+                            data.set(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z), true);
+                        } else {
+                            filledTemplate.set(x, y, z, true);
+                        }
                     }
                 }
             }
         }
 
-        boolean removeInside = hollow != PatternParameterHollow.FILLED_INNER;
         boolean outerFilled = hollow.outerFilled;
 
-        if (removeInside) {
-            FilledTemplate tpl2 = new FilledTemplate(filler.getBox());
-
+        if (hollow != PatternParameterHollow.FILLED_INNER) {
             // Z iteration
-            for (int x = 0; x <= tpl.maxX; x++) {
-                for (int y = 0; y <= tpl.maxY; y++) {
-                    for (int z = 0; z <= tpl.maxZ; z++) {
-                        if (tpl.shouldFill(x, y, z)) {
-                            tpl2.fill(x, y, z);
+            for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
+                for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
+                    for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
+                        if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
+                            filledTemplate.set(x, y, z, true);
                             break;
                         }
                         if (outerFilled) {
-                            tpl2.fill(x, y, z);
+                            filledTemplate.set(x, y, z, true);
                         }
                     }
 
-                    for (int z = tpl.maxZ; z >= 0; z--) {
-                        if (tpl.shouldFill(x, y, z)) {
-                            tpl2.fill(x, y, z);
+                    for (int z = filledTemplate.getMax().getZ(); z >= 0; z--) {
+                        if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
+                            filledTemplate.set(x, y, z, true);
                             break;
                         }
                         if (outerFilled) {
-                            tpl2.fill(x, y, z);
+                            filledTemplate.set(x, y, z, true);
                         }
                     }
                 }
             }
 
             // Y iteration
-            for (int x = 0; x <= tpl.maxX; x++) {
-                for (int z = 0; z <= tpl.maxZ; z++) {
-                    for (int y = 0; y <= tpl.maxY; y++) {
-                        if (tpl.shouldFill(x, y, z)) {
-                            tpl2.fill(x, y, z);
+            for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
+                for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
+                    for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
+                        if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
+                            filledTemplate.set(x, y, z, true);
                             break;
                         }
                         if (outerFilled) {
-                            tpl2.fill(x, y, z);
+                            filledTemplate.set(x, y, z, true);
                         }
                     }
 
-                    for (int y = tpl.maxY; y >= 0; y--) {
-                        if (tpl.shouldFill(x, y, z)) {
-                            tpl2.fill(x, y, z);
+                    for (int y = filledTemplate.getMax().getY(); y >= 0; y--) {
+                        if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
+                            filledTemplate.set(x, y, z, true);
                             break;
                         }
                         if (outerFilled) {
-                            tpl2.fill(x, y, z);
+                            filledTemplate.set(x, y, z, true);
                         }
                     }
                 }
             }
 
             // X iteration
-            for (int y = 0; y <= tpl.maxY; y++) {
-                for (int z = 0; z <= tpl.maxZ; z++) {
-                    for (int x = 0; x <= tpl.maxX; x++) {
-                        if (tpl.shouldFill(x, y, z)) {
-                            tpl2.fill(x, y, z);
+            for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
+                for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
+                    for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
+                        if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
+                            filledTemplate.set(x, y, z, true);
                             break;
                         }
                         if (outerFilled) {
-                            tpl2.fill(x, y, z);
+                            filledTemplate.set(x, y, z, true);
                         }
                     }
 
-                    for (int x = tpl.maxX; x >= 0; x--) {
-                        if (tpl.shouldFill(x, y, z)) {
-                            tpl2.fill(x, y, z);
+                    for (int x = filledTemplate.getMax().getX(); x >= 0; x--) {
+                        if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
+                            filledTemplate.set(x, y, z, true);
                             break;
                         }
                         if (outerFilled) {
-                            tpl2.fill(x, y, z);
+                            filledTemplate.set(x, y, z, true);
                         }
                     }
                 }
             }
-
-            tpl = tpl2;
         }
-
-        return tpl;
+        return true;
     }
 }

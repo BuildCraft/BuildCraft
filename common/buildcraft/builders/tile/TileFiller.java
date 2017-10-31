@@ -309,7 +309,6 @@ public class TileFiller extends TileBC_Neptune
             box.min(),
             box.size(),
             patternStatement,
-            this,
             IntStream.range(0, patternStatement.maxParams)
                 .mapToObj(patternStatement::get)
                 .toArray(IStatementParameter[]::new),

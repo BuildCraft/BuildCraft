@@ -7,9 +7,8 @@ package buildcraft.core.patterns;
 import java.util.EnumMap;
 import java.util.Map;
 
-import buildcraft.api.filler.FilledTemplate;
+import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
@@ -67,39 +66,24 @@ public class PatternPyramid extends Pattern {
         }
     }
 
+    // TODO: convert to for loops?
     @Override
-    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
-        FilledTemplate bpt = new FilledTemplate(filler.getBox());
+    public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
+        // noinspection RedundantCast
+        PyramidDir dir = params.length >= 2 && params[1] != null
+            ? PYRAMID_DIRS.get((PatternParameterCenter) params[1])
+            : PYRAMID_DIRS.get(PatternParameterCenter.CENTER);
+        int stepY = params.length >= 1 && params[0] != null && !(((PatternParameterYDir) params[0]).up) ? -1 : 1;
 
-        PyramidDir dir;
-        int stepY;
-
-        if (params.length >= 1 && params[0] != null && !(((PatternParameterYDir) params[0]).up)) {
-            stepY = -1;
-        } else {
-            stepY = 1;
-        }
-
-        if (params.length >= 2 && params[1] != null) {
-            dir = PYRAMID_DIRS.get(params[1]);
-        } else {
-            dir = PYRAMID_DIRS.get(PatternParameterCenter.CENTER);
-        }
-
-        int y;
-        if (stepY == 1) {
-            y = 0;
-        } else {
-            y = bpt.maxY;
-        }
+        int y = stepY == 1 ? 0 : filledTemplate.getMax().getY();
 
         int xLower = 0;
-        int xUpper = bpt.maxX;
+        int xUpper = filledTemplate.getMax().getX();
         int zLower = 0;
-        int zUpper = bpt.maxZ;
+        int zUpper = filledTemplate.getMax().getZ();
 
-        while (y >= 0 && y <= bpt.maxY) {
-            bpt.fillAreaXZ(xLower, xUpper, y, zLower, zUpper);
+        while (y >= 0 && y <= filledTemplate.getMax().getY()) {
+            filledTemplate.setAreaXZ(xLower, xUpper, y, zLower, zUpper, true);
 
             xLower += dir.xLowerDiff;
             xUpper += dir.xUpperDiff;
@@ -111,7 +95,6 @@ public class PatternPyramid extends Pattern {
                 break;
             }
         }
-
-        return bpt;
+        return true;
     }
 }

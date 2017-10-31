@@ -16,7 +16,6 @@ import buildcraft.core.BCCoreStatements;
 import buildcraft.core.statements.BCStatement;
 
 public abstract class Pattern extends BCStatement implements IFillerPattern, IActionExternal {
-
     private final String desc;
 
     public Pattern(String tag) {

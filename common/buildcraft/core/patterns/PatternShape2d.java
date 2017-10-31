@@ -5,17 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import buildcraft.api.core.IBox;
-import buildcraft.api.filler.FilledTemplate;
-import buildcraft.api.filler.FilledTemplate.TemplateState;
+import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.PathIterator2d;
 
 public abstract class PatternShape2d extends Pattern {
-
     public PatternShape2d(String tag) {
         super(tag);
     }
@@ -44,17 +40,14 @@ public abstract class PatternShape2d extends Pattern {
     }
 
     @Override
-    public FilledTemplate createTemplate(IFillerStatementContainer filler, IStatementParameter[] params) {
-        IBox box = filler.getBox();
-        FilledTemplate template = new FilledTemplate(box);
-
+    public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
         PatternParameterAxis axis = getParam(0, params, PatternParameterAxis.Y);
         PatternParameterRotation dir = getParam(2, params, PatternParameterRotation.NONE);
 
-        PathIterator2d iterator = getIterator(template, axis);
+        PathIterator2d iterator = getIterator(filledTemplate, axis);
 
-        int maxA = axis == PatternParameterAxis.X ? template.maxY : template.maxX;
-        int maxB = axis == PatternParameterAxis.Z ? template.maxY : template.maxZ;
+        int maxA = axis == PatternParameterAxis.X ? filledTemplate.getMax().getY() : filledTemplate.getMax().getX();
+        int maxB = axis == PatternParameterAxis.Z ? filledTemplate.getMax().getY() : filledTemplate.getMax().getZ();
 
         int normMaxA = maxA;
         int normMaxB = maxB;
@@ -95,8 +88,8 @@ public abstract class PatternShape2d extends Pattern {
                     fillA = maxA - fillA;
                     fillB = maxB - fillB;
                 }
-                iterator = getIterator(template, axis);
-                PositionGetter getter = getFillGetter(template, axis);
+                iterator = getIterator(filledTemplate, axis);
+                PositionGetter getter = getFillGetter(filledTemplate, axis);
 
                 if (filled.outerFilled) {
                     iterator = (a, b) -> {};
@@ -131,7 +124,7 @@ public abstract class PatternShape2d extends Pattern {
                 }
 
                 if (filled.outerFilled) {
-                    iterator = getIterator(template, axis);
+                    iterator = getIterator(filledTemplate, axis);
                     for (int a = 0; a <= maxA; a++) {
                         for (int b = 0; b <= maxB; b++) {
                             if (visited.contains(new Point(a, b))) {
@@ -143,7 +136,7 @@ public abstract class PatternShape2d extends Pattern {
                 }
             }
         }
-        return template;
+        return true;
     }
 
     @FunctionalInterface
@@ -151,27 +144,27 @@ public abstract class PatternShape2d extends Pattern {
         boolean isFilled(int a, int b);
     }
 
-    private static PathIterator2d getIterator(FilledTemplate template, PatternParameterAxis axis) {
+    private static PathIterator2d getIterator(IFilledTemplate filledTemplate, PatternParameterAxis axis) {
         switch (axis) {
             case X:
-                return template::fillAxisX;
+                return (y, z) -> filledTemplate.setLineX(0, filledTemplate.getMax().getX(), y, z, true);
             case Y:
-                return template::fillAxisY;
+                return (x, z) -> filledTemplate.setLineY(x, 0, filledTemplate.getMax().getY(), z, true);
             case Z:
-                return template::fillAxisZ;
+                return (x, y) -> filledTemplate.setLineZ(x, y, 0, filledTemplate.getMax().getZ(), true);
             default:
                 throw new IllegalArgumentException("Unknown axis " + axis);
         }
     }
 
-    private static PositionGetter getFillGetter(FilledTemplate template, PatternParameterAxis axis) {
+    private static PositionGetter getFillGetter(IFilledTemplate filledTemplate, PatternParameterAxis axis) {
         switch (axis) {
             case X:
-                return (a, b) -> template.get(0, a, b) == TemplateState.FILL;
+                return (a, b) -> filledTemplate.get(0, a, b);
             case Y:
-                return (a, b) -> template.get(a, 0, b) == TemplateState.FILL;
+                return (a, b) -> filledTemplate.get(a, 0, b);
             case Z:
-                return (a, b) -> template.get(a, b, 0) == TemplateState.FILL;
+                return (a, b) -> filledTemplate.get(a, b, 0);
             default:
                 throw new IllegalArgumentException("Unknown axis " + axis);
         }

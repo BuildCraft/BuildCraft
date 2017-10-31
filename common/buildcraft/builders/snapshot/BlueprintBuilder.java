@@ -54,10 +54,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     private ISchematicBlock getSchematicBlock(BlockPos blockPos) {
-        BlockPos snapshotPos = getBuildingInfo().fromWorld(blockPos);
-        return getBuildingInfo().box.contains(blockPos) ? getBuildingInfo().rotatedPalette.get(
-            getBuildingInfo().getSnapshot().data[getBuildingInfo().getSnapshot().posToIndex(snapshotPos)]
-        ) : null;
+        return getBuildingInfo().box.contains(blockPos)
+            ?
+            getBuildingInfo().rotatedPalette.get(
+                getBuildingInfo().getSnapshot().data[getBuildingInfo().getSnapshot().posToIndex(
+                    getBuildingInfo().fromWorld(blockPos)
+                )]
+            )
+            : null;
     }
 
     @Override

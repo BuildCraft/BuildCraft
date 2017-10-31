@@ -9,44 +9,51 @@ package buildcraft.builders.addon;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.model.ModelLoader;
 
-import buildcraft.api.filler.FilledTemplate.TemplateState;
-
-import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 
 public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
     @Override
     public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
-        Template.BuildingInfo buildingInfo = addon.buildingInfo;
-        if (buildingInfo == null) {
+        if (addon.buildingInfo == null) {
             return;
         }
-        Profiler prof = Minecraft.getMinecraft().mcProfiler;
-        prof.startSection("filler_planner");
-        prof.startSection("iter");
-        List<BlockPos> list = new ArrayList<>();
-        for (BlockPos p : BlockPos.getAllInBoxMutable(buildingInfo.box.min(), buildingInfo.box.max())) {
-            if (buildingInfo.getSnapshot().data.getOffset(buildingInfo.fromWorld(p)) == TemplateState.FILL && player.world.isAirBlock(p)) {
-                list.add(p.toImmutable());
-            }
-        }
+        Minecraft.getMinecraft().mcProfiler.startSection("filling_planner");
 
-        prof.endStartSection("sort");
+        Minecraft.getMinecraft().mcProfiler.startSection("iter");
+        List<BlockPos> list = StreamSupport.stream(
+            BlockPos.getAllInBoxMutable(addon.buildingInfo.box.min(), addon.buildingInfo.box.max()).spliterator(),
+            false
+        )
+            .filter(blockPos ->
+                addon.buildingInfo.getSnapshot().data.get(
+                    addon.buildingInfo.getSnapshot().posToIndex(
+                        addon.buildingInfo.fromWorld(blockPos)
+                    )
+                )
+            )
+            .filter(player.world::isAirBlock)
+            .map(BlockPos.MutableBlockPos::toImmutable)
+            .collect(Collectors.toCollection(ArrayList::new));
+        Minecraft.getMinecraft().mcProfiler.endSection();
+
+        Minecraft.getMinecraft().mcProfiler.startSection("sort");
         list.sort(Comparator.<BlockPos>comparingDouble(p -> player.getPositionVector().squareDistanceTo(new Vec3d(p))).reversed());
+        Minecraft.getMinecraft().mcProfiler.endSection();
 
-        prof.endStartSection("render");
+        Minecraft.getMinecraft().mcProfiler.startSection("render");
         for (BlockPos p : list) {
             AxisAlignedBB bb = new AxisAlignedBB(p, p.add(1, 1, 1)).expandXyz(-0.1);
             TextureAtlasSprite s = ModelLoader.White.INSTANCE;
@@ -81,7 +88,8 @@ public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFill
             vb.pos(bb.maxX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
             vb.pos(bb.maxX, bb.minY, bb.maxZ).color(153, 153, 153, 127).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
         }
-        prof.endSection();
-        prof.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 }
