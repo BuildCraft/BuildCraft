@@ -59,10 +59,10 @@ public class PatternStairs extends Pattern {
         while (y != yEnd) {
             filledTemplate.setAreaXZ(fx, tx, y, fz, tz, true);
 
-            fx += Integer.signum(xzDir.dir.getFrontOffsetX());
-            fz += Integer.signum(xzDir.dir.getFrontOffsetZ());
-            tx += Integer.signum(xzDir.dir.getFrontOffsetX());
-            tz += Integer.signum(xzDir.dir.getFrontOffsetZ());
+            fx += xzDir.dir.getFrontOffsetX() > 0 ? 1 : 0;
+            fz += xzDir.dir.getFrontOffsetZ() > 0 ? 1 : 0;
+            tx += xzDir.dir.getFrontOffsetX() < 0 ? -1 : 0;
+            tz += xzDir.dir.getFrontOffsetZ() < 0 ? -1 : 0;
             y += yStep;
 
             if (fx > tx) break;

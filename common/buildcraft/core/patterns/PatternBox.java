@@ -71,7 +71,7 @@ public class PatternBox extends Pattern {
         );
         filledTemplate.setAreaXY(
             0,
-            filledTemplate.getMax().getY(),
+            filledTemplate.getMax().getX(),
             0,
             filledTemplate.getMax().getY(),
             filledTemplate.getMax().getZ(),
