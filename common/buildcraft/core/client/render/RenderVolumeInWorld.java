@@ -6,9 +6,7 @@
 
 package buildcraft.core.client.render;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
@@ -19,7 +17,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.client.render.DetachedRenderer;
@@ -87,52 +84,40 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
     }
 
     private static void makeLaserBox(Box box, LaserType type, double scale) {
-        BlockPos min = box.min();
-        BlockPos max = box.max();
-
-        if (min.equals(box.lastMin) && max.equals(box.lastMax) && box.laserData != null) {
+        if (box.min().equals(box.lastMin) && box.max().equals(box.lastMax) && box.laserData != null) {
             return;
         }
+        box.lastMin = box.min();
+        box.lastMax = box.max();
 
-        List<LaserData_BC8> datas = new ArrayList<>();
+        Vec3d min = new Vec3d(box.min());
+        Vec3d max = new Vec3d(box.max()).add(VecUtil.VEC_ONE);
+        Vec3d[][][] poses = new Vec3d[2][2][2];
+        poses[0][0][0] = new Vec3d(min.xCoord, min.yCoord, min.zCoord);
+        poses[0][0][1] = new Vec3d(min.xCoord, min.yCoord, max.zCoord);
+        poses[0][1][0] = new Vec3d(min.xCoord, max.yCoord, min.zCoord);
+        poses[0][1][1] = new Vec3d(min.xCoord, max.yCoord, max.zCoord);
+        poses[1][0][0] = new Vec3d(max.xCoord, min.yCoord, min.zCoord);
+        poses[1][0][1] = new Vec3d(max.xCoord, min.yCoord, max.zCoord);
+        poses[1][1][0] = new Vec3d(max.xCoord, max.yCoord, min.zCoord);
+        poses[1][1][1] = new Vec3d(max.xCoord, max.yCoord, max.zCoord);
 
-        Vec3d[][][] vecs = new Vec3d[2][2][2];
-        vecs[0][0][0] = new Vec3d(min);
-        vecs[1][0][0] = new Vec3d(new BlockPos(max.getX(), min.getY(), min.getZ()));
-        vecs[0][1][0] = new Vec3d(new BlockPos(min.getX(), max.getY(), min.getZ()));
-        vecs[1][1][0] = new Vec3d(new BlockPos(max.getX(), max.getY(), min.getZ()));
-        vecs[0][0][1] = new Vec3d(new BlockPos(min.getX(), min.getY(), max.getZ()));
-        vecs[1][0][1] = new Vec3d(new BlockPos(max.getX(), min.getY(), max.getZ()));
-        vecs[0][1][1] = new Vec3d(new BlockPos(min.getX(), max.getY(), max.getZ()));
-        vecs[1][1][1] = new Vec3d(max);
+        box.laserData = new LaserData_BC8[] {
+            makeLaser(type, poses[0][0][0], poses[1][0][0], Axis.X, scale),
+            makeLaser(type, poses[0][0][1], poses[1][0][1], Axis.X, scale),
+            makeLaser(type, poses[0][1][0], poses[1][1][0], Axis.X, scale),
+            makeLaser(type, poses[0][1][1], poses[1][1][1], Axis.X, scale),
 
-        for (int x = 0; x < 2; x++) {
-            for (int y = 0; y < 2; y++) {
-                for (int z = 0; z < 2; z++) {
-                    Vec3d offset = new Vec3d((16 * x) / 16D, (16 * y) / 16D, (16 * z) / 16D);
-                    vecs[x][y][z] = vecs[x][y][z].add(offset);
-                }
-            }
-        }
+            makeLaser(type, poses[0][0][0], poses[0][1][0], Axis.Y, scale),
+            makeLaser(type, poses[0][0][1], poses[0][1][1], Axis.Y, scale),
+            makeLaser(type, poses[1][0][0], poses[1][1][0], Axis.Y, scale),
+            makeLaser(type, poses[1][0][1], poses[1][1][1], Axis.Y, scale),
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X, scale));
-        datas.add(makeLaser(type, vecs[0][1][0], vecs[1][1][0], Axis.X, scale));
-        datas.add(makeLaser(type, vecs[0][1][1], vecs[1][1][1], Axis.X, scale));
-        datas.add(makeLaser(type, vecs[0][0][1], vecs[1][0][1], Axis.X, scale));
-
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][1][0], Axis.Y, scale));
-        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][1][0], Axis.Y, scale));
-        datas.add(makeLaser(type, vecs[1][0][1], vecs[1][1][1], Axis.Y, scale));
-        datas.add(makeLaser(type, vecs[0][0][1], vecs[0][1][1], Axis.Y, scale));
-
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][0][1], Axis.Z, scale));
-        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][0][1], Axis.Z, scale));
-        datas.add(makeLaser(type, vecs[1][1][0], vecs[1][1][1], Axis.Z, scale));
-        datas.add(makeLaser(type, vecs[0][1][0], vecs[0][1][1], Axis.Z, scale));
-
-        box.laserData = datas.toArray(new LaserData_BC8[datas.size()]);
-        box.lastMin = min;
-        box.lastMax = max;
+            makeLaser(type, poses[0][0][0], poses[0][0][1], Axis.Z, scale),
+            makeLaser(type, poses[0][1][0], poses[0][1][1], Axis.Z, scale),
+            makeLaser(type, poses[1][0][0], poses[1][0][1], Axis.Z, scale),
+            makeLaser(type, poses[1][1][0], poses[1][1][1], Axis.Z, scale)
+        };
     }
 
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale) {
