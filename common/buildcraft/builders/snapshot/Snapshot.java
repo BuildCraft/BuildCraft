@@ -327,8 +327,8 @@ public abstract class Snapshot {
             this.basePos = basePos;
             this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;
-            this.box.setMin(toWorld(BlockPos.ORIGIN));
-            this.box.setMax(toWorld(size.subtract(VecUtil.POS_ONE)));
+            this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
+            this.box.extendToEncompass(toWorld(size.subtract(VecUtil.POS_ONE)));
         }
 
         public BlockPos toWorld(BlockPos blockPos) {
