@@ -33,7 +33,7 @@ import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock.Target.TargetUsedByMachine;
 import buildcraft.core.marker.volume.Lock.Target.TargetUsedByMachine.EnumType;
 
-public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
+public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     private static final double OFFSET_BY = 2 / 16.0;

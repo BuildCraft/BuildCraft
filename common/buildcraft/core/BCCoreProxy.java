@@ -19,7 +19,7 @@ import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.core.client.RenderTickListener;
-import buildcraft.core.client.render.RenderVolumeInWorld;
+import buildcraft.core.client.render.RenderVolumeBoxes;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
@@ -74,7 +74,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             super.fmlPreInit();
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
-            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
+            DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeBoxes.INSTANCE);
             MessageManager.addType(MessageId.BC_CORE_VOLUME_BOX, MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER,
                 Side.CLIENT);
         }
