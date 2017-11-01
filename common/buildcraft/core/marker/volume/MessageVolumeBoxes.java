@@ -74,7 +74,7 @@ public class MessageVolumeBoxes implements IMessage {
                 }
                 PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
                 volumeBox.toBytes(buf);
-                return Pair.of(buffer, volumeBox);
+                return Pair.of(buf, volumeBox);
             })
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
