@@ -40,16 +40,16 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
         ClientVolumeBoxes.INSTANCE.boxes.forEach(box -> {
             RenderLaserBox.renderDynamic(
                 box.box,
-                !box.isEditingBy(player)
-                    ?
+                box.isEditingBy(player)
+                    ? BuildCraftLaserManager.MARKER_VOLUME_SIGNAL
+                    :
                     box.getLockTargetsStream()
                         .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
                         .map(Lock.Target.TargetUsedByMachine.class::cast)
                         .map(target -> target.type)
                         .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
                         .findFirst()
-                        .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED)
-                    : BuildCraftLaserManager.MARKER_VOLUME_SIGNAL,
+                        .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED),
                 vb,
                 box.isEditingBy(player) ? HIGHLIGHT_SCALE : NORMAL_SCALE,
                 false
