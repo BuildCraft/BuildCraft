@@ -22,13 +22,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 
-import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
@@ -36,11 +32,6 @@ import buildcraft.lib.misc.VecUtil;
 
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox {
-    @SideOnly(Side.CLIENT)
-    public LaserData_BC8[] laserData;
-    @SideOnly(Side.CLIENT)
-    public BlockPos lastMin, lastMax;
-
     private BlockPos min, max;
 
     public Box() {

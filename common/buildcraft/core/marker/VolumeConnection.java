@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.RenderLaserBox;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
@@ -166,6 +166,6 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     @Override
     @SideOnly(Side.CLIENT)
     public void renderInWorld() {
-        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
+        RenderLaserBox.renderStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
     }
 }

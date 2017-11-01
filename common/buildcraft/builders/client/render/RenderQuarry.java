@@ -22,7 +22,7 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.RenderLaserBox;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
@@ -160,7 +160,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + yOffset, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0));
             } else {
-                LaserBoxRenderer.renderLaserBoxStatic(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, true);
+                RenderLaserBox.renderStatic(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, true);
             }
             profiler.endSection();
         }

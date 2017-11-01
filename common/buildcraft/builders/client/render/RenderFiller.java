@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.VertexBuffer;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.RenderLaserBox;
 
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.core.client.BuildCraftLaserManager;
@@ -33,7 +33,7 @@ public class RenderFiller extends FastTESR<TileFiller> {
         Minecraft.getMinecraft().mcProfiler.startSection("box");
         if (tile.markerBox) {
             vb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb, false);
+            RenderLaserBox.renderDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, vb, false);
             vb.setTranslation(0, 0, 0);
         }
         Minecraft.getMinecraft().mcProfiler.endSection();
