@@ -25,13 +25,13 @@ import buildcraft.lib.misc.data.Box;
 
 public class RenderLaserBox {
     private static final double DEFAULT_SCALE = 1 / 16D;
-    private static final LoadingCache<Args, List<LaserData_BC8>> CACHE = CacheBuilder.newBuilder()
+    private static final LoadingCache<Key, List<LaserData_BC8>> CACHE = CacheBuilder.newBuilder()
         .expireAfterAccess(10, TimeUnit.SECONDS)
         .build(CacheLoader.from(RenderLaserBox::createData));
 
-    private static List<LaserData_BC8> createData(Args args) {
-        Vec3d min = new Vec3d(args.box.min()).add(args.center ? VecUtil.VEC_HALF : Vec3d.ZERO);
-        Vec3d max = new Vec3d(args.box.max()).add(args.center ? VecUtil.VEC_HALF : VecUtil.VEC_ONE);
+    private static List<LaserData_BC8> createData(Key key) {
+        Vec3d min = new Vec3d(key.box.min()).add(key.center ? VecUtil.VEC_HALF : Vec3d.ZERO);
+        Vec3d max = new Vec3d(key.box.max()).add(key.center ? VecUtil.VEC_HALF : VecUtil.VEC_ONE);
         Vec3d[][][] poses = new Vec3d[2][2][2];
         poses[0][0][0] = new Vec3d(min.xCoord, min.yCoord, min.zCoord);
         poses[0][0][1] = new Vec3d(min.xCoord, min.yCoord, max.zCoord);
@@ -44,10 +44,10 @@ public class RenderLaserBox {
 
         TriFunction<Vec3d, Vec3d, EnumFacing.Axis, LaserData_BC8> makeLaser = (minPos, maxPos, axis) ->
             new LaserData_BC8(
-                args.laserType,
+                key.laserType,
                 minPos.add(new Vec3d(VecUtil.getFacing(axis, true).getDirectionVec()).scale(1 / 16D)),
                 maxPos.add(new Vec3d(VecUtil.getFacing(axis, false).getDirectionVec()).scale(1 / 16D)),
-                args.scale,
+                key.scale,
                 false,
                 false,
                 0
@@ -76,7 +76,7 @@ public class RenderLaserBox {
                                               boolean center) {
         return box == null || box.min() == null || box.max() == null
             ? Collections.emptyList()
-            : CACHE.getUnchecked(new Args(box, laserType, scale, center));
+            : CACHE.getUnchecked(new Key(box, laserType, scale, center));
     }
 
     private static List<LaserData_BC8> render(Box box,
@@ -118,16 +118,16 @@ public class RenderLaserBox {
     }
 
     @SuppressWarnings("WeakerAccess")
-    private static class Args {
+    private static class Key {
         public final Box box;
         public final LaserData_BC8.LaserType laserType;
         public final double scale;
         public final boolean center;
 
-        private Args(Box box,
-                     LaserData_BC8.LaserType laserType,
-                     double scale,
-                     boolean center) {
+        private Key(Box box,
+                    LaserData_BC8.LaserType laserType,
+                    double scale,
+                    boolean center) {
             this.box = box;
             this.laserType = laserType;
             this.scale = scale;
@@ -139,10 +139,10 @@ public class RenderLaserBox {
             return this == o ||
                 o != null &&
                     getClass() == o.getClass() &&
-                    Double.compare(((Args) o).scale, scale) == 0 &&
-                    center == ((Args) o).center &&
-                    box.equals(((Args) o).box) &&
-                    laserType.equals(((Args) o).laserType);
+                    Double.compare(((Key) o).scale, scale) == 0 &&
+                    center == ((Key) o).center &&
+                    box.equals(((Key) o).box) &&
+                    laserType.equals(((Key) o).laserType);
 
         }
     }
