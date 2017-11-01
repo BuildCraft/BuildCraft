@@ -38,12 +38,12 @@ public enum EnumAddonSlot {
         directions.put(EnumFacing.Axis.Z, z);
     }
 
-    public AxisAlignedBB getBoundingBox(VolumeBox box) {
-        AxisAlignedBB boxBB = box.box.getBoundingBox();
+    public AxisAlignedBB getBoundingBox(VolumeBox volumeBox) {
+        AxisAlignedBB aabb = volumeBox.box.getBoundingBox();
         Vec3d boxOffset = new Vec3d(
-                directions.get(EnumFacing.Axis.X) == EnumFacing.AxisDirection.POSITIVE ? boxBB.maxX : boxBB.minX,
-                directions.get(EnumFacing.Axis.Y) == EnumFacing.AxisDirection.POSITIVE ? boxBB.maxY : boxBB.minY,
-                directions.get(EnumFacing.Axis.Z) == EnumFacing.AxisDirection.POSITIVE ? boxBB.maxZ : boxBB.minZ
+            directions.get(EnumFacing.Axis.X) == EnumFacing.AxisDirection.POSITIVE ? aabb.maxX : aabb.minX,
+            directions.get(EnumFacing.Axis.Y) == EnumFacing.AxisDirection.POSITIVE ? aabb.maxY : aabb.minY,
+            directions.get(EnumFacing.Axis.Z) == EnumFacing.AxisDirection.POSITIVE ? aabb.maxZ : aabb.minZ
         );
         return new AxisAlignedBB(
             boxOffset.xCoord,
@@ -55,35 +55,28 @@ public enum EnumAddonSlot {
         ).expandXyz(1 / 16D);
     }
 
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, List<VolumeBox> boxes) {
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingVolumeBoxAndSlot(EntityPlayer player,
+                                                                              List<VolumeBox> volumeBoxes) {
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d end = start.add(player.getLookVec().scale(4));
-        VolumeBox bestBox = null;
+        VolumeBox bestVolumeBox = null;
         EnumAddonSlot bestSlot = null;
-        double bestDist = 10000;
+        double bestDist = Double.MAX_VALUE;
 
-        for (VolumeBox box : boxes) {
+        for (VolumeBox volumeBox : volumeBoxes) {
             for (EnumAddonSlot slot : values()) {
-                RayTraceResult ray = slot.getBoundingBox(box).calculateIntercept(start, end);
+                RayTraceResult ray = slot.getBoundingBox(volumeBox).calculateIntercept(start, end);
                 if (ray != null) {
                     double dist = ray.hitVec.distanceTo(start);
                     if (bestDist > dist) {
                         bestDist = dist;
-                        bestBox = box;
+                        bestVolumeBox = volumeBox;
                         bestSlot = slot;
                     }
                 }
             }
         }
 
-        return Pair.of(bestBox, bestSlot);
-    }
-
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, WorldSavedDataVolumeBoxes volumeBoxes) {
-        return getSelectingBoxAndSlot(player, volumeBoxes.boxes);
-    }
-
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingBoxAndSlot(EntityPlayer player, ClientVolumeBoxes clientVolumeBoxes) {
-        return getSelectingBoxAndSlot(player, clientVolumeBoxes.boxes);
+        return Pair.of(bestVolumeBox, bestSlot);
     }
 }

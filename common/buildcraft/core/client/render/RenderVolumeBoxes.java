@@ -37,13 +37,13 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
 
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
-        ClientVolumeBoxes.INSTANCE.boxes.forEach(box -> {
+        ClientVolumeBoxes.INSTANCE.volumeBoxes.forEach(volumeBox -> {
             RenderLaserBox.renderDynamic(
-                box.box,
-                box.isEditingBy(player)
+                volumeBox.box,
+                volumeBox.isEditingBy(player)
                     ? BuildCraftLaserManager.MARKER_VOLUME_SIGNAL
                     :
-                    box.getLockTargetsStream()
+                    volumeBox.getLockTargetsStream()
                         .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
                         .map(Lock.Target.TargetUsedByMachine.class::cast)
                         .map(target -> target.type)
@@ -51,12 +51,12 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
                         .findFirst()
                         .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED),
                 vb,
-                box.isEditingBy(player) ? HIGHLIGHT_SCALE : NORMAL_SCALE,
+                volumeBox.isEditingBy(player) ? HIGHLIGHT_SCALE : NORMAL_SCALE,
                 false
             );
 
             // noinspection unchecked
-            box.addons.values().forEach(addon ->
+            volumeBox.addons.values().forEach(addon ->
                 ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, vb)
             );
         });

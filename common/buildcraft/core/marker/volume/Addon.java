@@ -18,21 +18,27 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.net.PacketBufferBC;
 
 public abstract class Addon {
-    public VolumeBox box;
+    public VolumeBox volumeBox;
 
     @SideOnly(Side.CLIENT)
     public abstract IFastAddonRenderer<? extends Addon> getRenderer();
 
     public EnumAddonSlot getSlot() {
-        return box.addons.entrySet().stream().filter(slotAddon -> slotAddon.getValue() == this).findFirst().orElse(null).getKey();
+        return volumeBox.addons.entrySet().stream()
+            .filter(slotAddon -> slotAddon.getValue() == this)
+            .findFirst()
+            .orElseThrow(IllegalStateException::new)
+            .getKey();
     }
 
     public AxisAlignedBB getBoundingBox() {
-        return getSlot().getBoundingBox(box);
+        return getSlot().getBoundingBox(volumeBox);
     }
 
-    public boolean canBePlaceInto(VolumeBox box) {
-        return !(this instanceof ISingleAddon) || box.addons.values().stream().noneMatch(addon -> addon.getClass() == getClass());
+    @SuppressWarnings("WeakerAccess")
+    public boolean canBePlaceInto(VolumeBox volumeBox) {
+        return !(this instanceof ISingleAddon &&
+            volumeBox.addons.values().stream().anyMatch(addon -> addon.getClass() == getClass()));
     }
 
     public void onAdded() {
@@ -41,7 +47,7 @@ public abstract class Addon {
     public void onRemoved() {
     }
 
-    public void onBoxSizeChange() {
+    public void onVolumeBoxSizeChange() {
     }
 
     public void onPlayerRightClick(EntityPlayer player) {

@@ -24,6 +24,7 @@ public abstract class ItemAddon extends ItemBC_Neptune {
 
     public abstract Addon createAddon();
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
@@ -31,16 +32,19 @@ public abstract class ItemAddon extends ItemBC_Neptune {
         }
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
-        Pair<VolumeBox, EnumAddonSlot> selectingBoxAndSlot = EnumAddonSlot.getSelectingBoxAndSlot(player, volumeBoxes);
-        VolumeBox box = selectingBoxAndSlot.getLeft();
-        EnumAddonSlot slot = selectingBoxAndSlot.getRight();
-        if (box != null && slot != null) {
-            if (!box.addons.containsKey(slot)) {
+        Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(
+            player,
+            volumeBoxes.volumeBoxes
+        );
+        VolumeBox volumeBox = selectingVolumeBoxAndSlot.getLeft();
+        EnumAddonSlot slot = selectingVolumeBoxAndSlot.getRight();
+        if (volumeBox != null && slot != null) {
+            if (!volumeBox.addons.containsKey(slot)) {
                 Addon addon = createAddon();
-                if (addon.canBePlaceInto(box)) {
-                    addon.box = box;
-                    box.addons.put(slot, addon);
-                    box.addons.get(slot).onAdded();
+                if (addon.canBePlaceInto(volumeBox)) {
+                    addon.volumeBox = volumeBox;
+                    volumeBox.addons.put(slot, addon);
+                    volumeBox.addons.get(slot).onAdded();
                     volumeBoxes.markDirty();
                     return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
                 }

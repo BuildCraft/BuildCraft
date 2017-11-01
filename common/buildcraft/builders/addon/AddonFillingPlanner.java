@@ -47,8 +47,8 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     public void updateBuildingInfo() {
         buildingInfo = Filling.createBuildingInfo(
-            box.box.min(),
-            box.box.size(),
+            volumeBox.box.min(),
+            volumeBox.box.size(),
             patternStatement,
             IntStream.range(0, patternStatement.maxParams)
                 .mapToObj(patternStatement::get)
@@ -58,7 +58,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     }
 
     @Override
-    public void onBoxSizeChange() {
+    public void onVolumeBoxSizeChange() {
         updateBuildingInfo();
     }
 
@@ -126,7 +126,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     @Override
     public World getFillerWorld() {
-        return box.world;
+        return volumeBox.world;
     }
 
     @Override
@@ -136,7 +136,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
 
     @Override
     public IBox getBox() {
-        return box.box;
+        return volumeBox.box;
     }
 
     @Override

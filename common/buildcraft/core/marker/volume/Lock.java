@@ -41,7 +41,8 @@ public class Lock {
         this.targets.addAll(Arrays.asList(targets));
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
         NBTTagCompound causeTag = new NBTTagCompound();
         causeTag.setTag("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
         causeTag.setTag("data", cause.writeToNBT(new NBTTagCompound()));

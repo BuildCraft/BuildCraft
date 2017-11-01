@@ -118,7 +118,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         IBlockState blockState = world.getBlockState(pos);
         BlockPos offsetPos = pos.offset(blockState.getValue(BlockArchitectTable.PROP_FACING).getOpposite());
-        VolumeBox volumeBox = volumeBoxes.getBoxAt(offsetPos);
+        VolumeBox volumeBox = volumeBoxes.getVolumeBoxAt(offsetPos);
         TileEntity tile = world.getTileEntity(offsetPos);
         if (volumeBox != null) {
             box.reset();
