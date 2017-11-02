@@ -247,6 +247,5 @@ public final class PatternSpherePart extends Pattern {
         }
 
         return tpl;
-
     }
 }

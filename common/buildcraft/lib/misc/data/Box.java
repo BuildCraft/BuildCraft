@@ -189,13 +189,6 @@ public class Box implements IBox {
         return new Vec3d(size()).scale(0.5).add(new Vec3d(min()));
     }
 
-    public Box rotateLeft() {
-        Matrix4i mat = Matrix4i.makeRotLeftTranslatePositive(this);
-        BlockPos newMin = mat.multiplyPosition(min);
-        BlockPos newMax = mat.multiplyPosition(max);
-        return new Box(newMin, newMax);
-    }
-
     @Override
     public String toString() {
         return "Box[min = " + min + ", max = " + max + "]";
