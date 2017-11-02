@@ -90,8 +90,7 @@ import buildcraft.core.marker.VolumeSubCache;
 import buildcraft.core.tile.TileMarkerVolume;
 
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
-
-    private static final long MAX_MJ_PER_TICK = 64 * MjAPI.MJ;
+    private static final long MAX_POWER_PER_TICK = 64 * MjAPI.MJ;
 
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     public final Box frameBox = new Box();
@@ -412,10 +411,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long max = MAX_MJ_PER_TICK;
+            long max = MAX_POWER_PER_TICK;
             max *= battery.getStored() + max;
             max /= battery.getCapacity() / 2;
-            max = Math.min(max, MAX_MJ_PER_TICK);
+            max = Math.min(max, MAX_POWER_PER_TICK);
             debugPowerRate = max;
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {

@@ -60,6 +60,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     private static final byte REQUIRED_TRUE = 1;
     private static final byte REQUIRED_FALSE = 2;
     private static final int CHECKS_PER_TICK = 10;
+    private static final long MAX_POWER_PER_TICK = 10 * MjAPI.MJ;
 
     protected final T tile;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
@@ -393,7 +394,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                             target - breakTask.power,
                             tile.getBattery().getStored() / breakTasks.size()
                         ),
-                        10 * MjAPI.MJ
+                        MAX_POWER_PER_TICK
                     )
                 );
                 if (breakTask.power >= target) {
@@ -448,7 +449,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                             target - placeTask.power,
                             tile.getBattery().getStored() / placeTasks.size()
                         ),
-                        10 * MjAPI.MJ
+                        MAX_POWER_PER_TICK
                     )
                 );
                 if (placeTask.power >= target) {
