@@ -51,8 +51,8 @@ public class JsonVariableObject {
                 }
             }
 
-            if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()) {
-                throw new JsonSyntaxException("Expected a string, got " + value + " for the variable '" + name + "'");
+            if (!value.isJsonPrimitive()) {
+                throw new JsonSyntaxException("Expected a primitive, got " + value + " for the variable '" + name + "'");
             }
             NodeStateful stateful = null;
             FunctionContext fnCtxValue = new FunctionContext("Value Object", fnCtx);
