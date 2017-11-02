@@ -185,12 +185,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         ItemStack current = stacks.get(slot);
         if (current.isEmpty() || current.getCount() < min) return StackUtil.EMPTY;
         if (filter.matches(asValid(current))) {
-            if (simulate) {
-                ItemStack copy = current.copy();
-                return copy.splitStack(max);
+            ItemStack copy = current.copy();
+            ItemStack split = copy.splitStack(max);
+            if (!simulate) {
+                setStackInternal(slot, copy);
             }
-            ItemStack split = current.splitStack(max);
-            setStackInternal(slot, current.copy());
             return split;
         }
         return StackUtil.EMPTY;
