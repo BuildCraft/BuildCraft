@@ -156,6 +156,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 )
                 : Optional.empty();
         if (!simulate) {
+            extractRequiredCache.remove(Pair.of(requiredItems, requiredFluids));
             return function.get();
         }
         return extractRequiredCache.computeIfAbsent(
