@@ -8,6 +8,7 @@ package buildcraft.lib.misc;
 
 import java.util.BitSet;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -33,8 +34,11 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.BCLog;
 
 public final class NBTUtilBC {
-    /** Deactivate constructor */
-    private NBTUtilBC() {
+    @SuppressWarnings("WeakerAccess")
+    public static final NBTTagCompound NBT_NULL = new NBTTagCompound();
+
+    public static <N extends NBTBase> Optional<N> toOptional(N value) {
+        return value == NBTUtilBC.NBT_NULL ? Optional.empty() : Optional.of(value);
     }
 
     public static NBTBase merge(NBTBase destination, NBTBase source) {
@@ -52,7 +56,7 @@ public final class NBTUtilBC {
             )) {
                 if (!((NBTTagCompound) source).hasKey(key)) {
                     result.setTag(key, ((NBTTagCompound) destination).getTag(key));
-                } else if (((NBTTagCompound) source).getTag(key) != null) {
+                } else if (((NBTTagCompound) source).getTag(key) != NBT_NULL) {
                     if (!((NBTTagCompound) destination).hasKey(key)) {
                         result.setTag(key, ((NBTTagCompound) source).getTag(key));
                     } else {

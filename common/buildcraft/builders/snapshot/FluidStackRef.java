@@ -28,8 +28,18 @@ public class FluidStackRef {
 
     public FluidStack get(NBTBase nbt) {
         return new FluidStack(
-            Objects.requireNonNull(FluidRegistry.getFluid(fluid.get(nbt).getString())),
-            Optional.ofNullable(amount).map(ref -> ref.get(nbt)).map(NBTTagInt::getInt).orElse(Fluid.BUCKET_VOLUME)
+            Objects.requireNonNull(
+                FluidRegistry.getFluid(
+                    fluid
+                        .get(nbt)
+                        .orElseThrow(NullPointerException::new)
+                        .getString()
+                )
+            ),
+            Optional.ofNullable(amount)
+                .flatMap(ref -> ref.get(nbt))
+                .map(NBTTagInt::getInt)
+                .orElse(Fluid.BUCKET_VOLUME)
         );
     }
 }
