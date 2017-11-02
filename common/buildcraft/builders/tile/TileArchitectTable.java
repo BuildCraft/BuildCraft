@@ -216,7 +216,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (templateScannedBlocks == null || blueprintScannedData == null) {
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
             templateScannedBlocks = new FilledTemplate(BlockPos.ORIGIN, size);
-            blueprintScannedData = new int[size.getX() * size.getY() * size.getZ()];
+            blueprintScannedData = new int[Snapshot.getDataSize(size)];
         }
 
         // Read from world

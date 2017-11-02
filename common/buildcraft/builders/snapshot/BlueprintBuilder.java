@@ -42,6 +42,7 @@ import buildcraft.lib.net.PacketBufferBC;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
     private static final double MAX_ENTITY_DISTANCE = 0.1D;
+    private static final String FLUID_STACK_KEY = "BuilderFluidStack";
 
     private List<ItemStack>[] remainingDisplayRequiredBlocks;
     private List<ItemStack> remainingDisplayRequiredBlocksConcat = Collections.emptyList();
@@ -54,10 +55,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     }
 
     private ISchematicBlock getSchematicBlock(BlockPos blockPos) {
-        BlockPos snapshotPos = getBuildingInfo().fromWorld(blockPos);
-        return getBuildingInfo().box.contains(blockPos) ? getBuildingInfo().rotatedPalette.get(
-            getBuildingInfo().getSnapshot().data[getBuildingInfo().getSnapshot().posToIndex(snapshotPos)]
-        ) : null;
+        return getBuildingInfo().box.contains(blockPos)
+            ?
+            getBuildingInfo().rotatedPalette.get(
+                getBuildingInfo().getSnapshot().data[getBuildingInfo().getSnapshot().posToIndex(
+                    getBuildingInfo().fromWorld(blockPos)
+                )]
+            )
+            : null;
     }
 
     @Override
@@ -75,8 +80,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
     public void updateSnapshot() {
         super.updateSnapshot();
         // noinspection unchecked
-        remainingDisplayRequiredBlocks = (List<ItemStack>[])
-            new List<?>[getBuildingInfo().box.size().getX() * getBuildingInfo().box.size().getY() * getBuildingInfo().box.size().getZ()];
+        remainingDisplayRequiredBlocks = (List<ItemStack>[]) new List<?>[getBuildingInfo().getSnapshot().getDataSize()];
         Arrays.fill(remainingDisplayRequiredBlocks, Collections.emptyList());
     }
 
@@ -142,7 +146,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                     }
                                     // noinspection ConstantConditions
                                     stack.getTagCompound().setTag(
-                                        "BuilderFluidStack",
+                                        FLUID_STACK_KEY,
                                         fluidStack.writeToNBT(new NBTTagCompound())
                                     );
                                     return stack;
@@ -198,12 +202,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         super.cancelPlaceTask(placeTask);
         // noinspection ConstantConditions
         placeTask.items.stream()
-            .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().hasKey("BuilderFluidStack"))
+            .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().hasKey(FLUID_STACK_KEY))
             .forEach(stack -> tile.getInvResources().insert(stack, false, false));
         // noinspection ConstantConditions
         placeTask.items.stream()
-            .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey("BuilderFluidStack"))
-            .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompoundTag("BuilderFluidStack")))
+            .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey(FLUID_STACK_KEY))
+            .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompoundTag(FLUID_STACK_KEY)))
             .map(countNbt -> {
                 FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());
                 if (fluidStack != null) {

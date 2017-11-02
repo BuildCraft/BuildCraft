@@ -24,7 +24,11 @@ public abstract class Addon {
     public abstract IFastAddonRenderer<? extends Addon> getRenderer();
 
     public EnumAddonSlot getSlot() {
-        return box.addons.entrySet().stream().filter(slotAddon -> slotAddon.getValue() == this).findFirst().orElse(null).getKey();
+        return box.addons.entrySet().stream()
+            .filter(slotAddon -> slotAddon.getValue() == this)
+            .findFirst()
+            .orElseThrow(IllegalStateException::new)
+            .getKey();
     }
 
     public AxisAlignedBB getBoundingBox() {

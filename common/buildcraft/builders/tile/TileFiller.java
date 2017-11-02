@@ -59,7 +59,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import buildcraft.builders.addon.AddonFillingPlanner;
 import buildcraft.builders.filler.FillerType;
-import buildcraft.builders.filler.Filling;
+import buildcraft.builders.filler.FillerUtil;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.ItemBlocks;
 import buildcraft.builders.snapshot.SnapshotBuilder;
@@ -305,7 +305,7 @@ public class TileFiller extends TileBC_Neptune
 
     private void updateBuildingInfo() {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
-        buildingInfo = (hasBox() && addon == null) ? Filling.createBuildingInfo(
+        buildingInfo = (hasBox() && addon == null) ? FillerUtil.createBuildingInfo(
             box.min(),
             box.size(),
             patternStatement,

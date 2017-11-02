@@ -495,8 +495,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
         nbt.setTag("battery", battery.serializeNBT());
         if (currentTask != null) {
-            nbt.setByte("currentTaskId", (byte) Arrays.stream(EnumTaskType.values())
-                .filter(type -> type.clazz == currentTask.getClass()).findFirst().orElse(null).ordinal());
+            nbt.setByte("currentTaskId",
+                (byte) Arrays.stream(EnumTaskType.values())
+                    .filter(type -> type.clazz == currentTask.getClass())
+                    .findFirst().orElseThrow(IllegalStateException::new)
+                    .ordinal()
+            );
             nbt.setTag("currentTaskData", currentTask.serializeNBT());
         }
         if (drillPos != null) {
@@ -536,8 +540,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
                 buffer.writeBoolean(currentTask != null);
                 if (currentTask != null) {
-                    buffer.writeByte((byte) Arrays.stream(EnumTaskType.values())
-                        .filter(type -> type.clazz == currentTask.getClass()).findFirst().orElse(null).ordinal());
+                    buffer.writeByte(
+                        (byte) Arrays.stream(EnumTaskType.values())
+                            .filter(type -> type.clazz == currentTask.getClass())
+                            .findFirst()
+                            .orElseThrow(IllegalStateException::new)
+                            .ordinal()
+                    );
                     for (int i = 0; i < 2; i++) {
                         currentTask.toBytes(buffer);
                     }

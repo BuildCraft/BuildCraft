@@ -70,7 +70,7 @@ public enum RenderVolumeInWorld implements DetachedRenderer.IDetachedRenderer {
                     laserType = BuildCraftLaserManager.STRIPES_WRITE;
                 }
             } else {
-                laserType = BuildCraftLaserManager.MARKER_VOLUME_CONNECTED;
+                laserType = BuildCraftLaserManager.MARKER_VOLUME_SIGNAL;
             }
             makeLaserBox(box.box, laserType, scale);
 

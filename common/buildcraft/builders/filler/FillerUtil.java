@@ -19,7 +19,7 @@ import buildcraft.lib.statement.FullStatement;
 
 import buildcraft.builders.snapshot.Template;
 
-public class Filling {
+public class FillerUtil {
     public static Template.BuildingInfo createBuildingInfo(BlockPos basePos,
                                                            BlockPos size,
                                                            FullStatement<IFillerPattern> patternStatement,
