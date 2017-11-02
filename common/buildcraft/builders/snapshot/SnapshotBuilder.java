@@ -11,7 +11,6 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -60,6 +59,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     private static final byte REQUIRED_UNKNOWN = 0;
     private static final byte REQUIRED_TRUE = 1;
     private static final byte REQUIRED_FALSE = 2;
+    private static final int CHECKS_PER_TICK = 10;
 
     protected final T tile;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
@@ -84,12 +84,13 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     public final Queue<PlaceTask> clientPlaceTasks = new ArrayDeque<>();
     @SuppressWarnings("WeakerAccess")
     public final Queue<PlaceTask> prevClientPlaceTasks = new ArrayDeque<>();
-    private final LinkedList<BlockPos> toCheck = new LinkedList<>();
     @SuppressWarnings("WeakerAccess")
     protected byte[] checkResults;
     private byte[] requiredCache;
     private int[] breakOrder;
     private int[] placeOrder;
+    private int[] checkOrder;
+    private int currentCheckIndex;
     public Vec3d robotPos = null;
     public Vec3d prevRobotPos = null;
     public int leftToBreak = 0;
@@ -168,12 +169,6 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
     public void updateSnapshot() {
         tile.getWorldBC().profiler.startSection("init");
-        toCheck.addAll(getBuildingInfo().box.getBlocksInArea());
-        toCheck.sort(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
-            Math.pow(blockPos.getX() - getBuildingInfo().box.center().getX(), 2) +
-                Math.pow(blockPos.getY() - getBuildingInfo().box.center().getY(), 2) +
-                Math.pow(blockPos.getZ() - getBuildingInfo().box.center().getZ(), 2)
-        )));
         checkResults = new byte[
             getBuildingInfo().box.size().getX() *
                 getBuildingInfo().box.size().getY() *
@@ -202,6 +197,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
             )))
             .mapToInt(this::posToIndex)
             .toArray();
+        checkOrder = getBuildingInfo().box.getBlocksInArea().stream()
+            .sorted(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(blockPos ->
+                Math.pow(blockPos.getX() - getBuildingInfo().box.center().getX(), 2) +
+                    Math.pow(blockPos.getY() - getBuildingInfo().box.center().getY(), 2) +
+                    Math.pow(blockPos.getZ() - getBuildingInfo().box.center().getZ(), 2)
+            )))
+            .mapToInt(this::posToIndex)
+            .toArray();
         tile.getWorldBC().profiler.endSection();
     }
 
@@ -218,11 +221,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         placeTasks.clear();
         clientPlaceTasks.clear();
         prevClientPlaceTasks.clear();
-        toCheck.clear();
         checkResults = null;
         requiredCache = null;
         breakOrder = null;
         placeOrder = null;
+        checkOrder = null;
+        currentCheckIndex = 0;
         robotPos = null;
         prevRobotPos = null;
         leftToBreak = 0;
@@ -274,14 +278,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         boolean checkResultsChanged = false;
 
         tile.getWorldBC().profiler.startSection("scan");
-        if (!toCheck.isEmpty()) {
-            for (int i = 0; i < 10; i++) {
-                BlockPos blockPos = toCheck.pollFirst();
-                if (check(blockPos)) {
-                    checkResultsChanged = true;
-                }
-                toCheck.addLast(blockPos);
+        for (int i = 0; i < CHECKS_PER_TICK; i++) {
+            if (check(indexToPos(currentCheckIndex))) {
+                checkResultsChanged = true;
             }
+            currentCheckIndex = (currentCheckIndex + 1) % checkOrder.length;
         }
         tile.getWorldBC().profiler.endSection();
 
@@ -530,23 +531,22 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("toCheck", NBTUtilBC.writeCompoundList(toCheck.stream().map(NBTUtil::createPosTag)));
         nbt.setByteArray("checkResults", checkResults);
         nbt.setTag("breakTasks", NBTUtilBC.writeCompoundList(breakTasks.stream().map(BreakTask::writeToNBT)));
         nbt.setTag("placeTasks", NBTUtilBC.writeCompoundList(placeTasks.stream().map(PlaceTask::writeToNBT)));
+        nbt.setInteger("currentCheckIndex", currentCheckIndex);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         updateSnapshot();
-        toCheck.clear();
-        NBTUtilBC.readCompoundList(nbt.getTag("toCheck")).map(NBTUtil::getPosFromTag).forEach(toCheck::add);
         checkResults = nbt.getByteArray("checkResults");
         breakTasks.clear();
         NBTUtilBC.readCompoundList(nbt.getTag("breakTasks")).map(BreakTask::new).forEach(breakTasks::add);
         placeTasks.clear();
         NBTUtilBC.readCompoundList(nbt.getTag("placeTasks")).map(PlaceTask::new).forEach(placeTasks::add);
+        currentCheckIndex = nbt.getInteger("currentCheckIndex");
     }
 
     public class BreakTask {
