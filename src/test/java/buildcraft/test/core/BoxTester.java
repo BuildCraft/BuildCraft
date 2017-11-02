@@ -82,16 +82,6 @@ public class BoxTester {
     }
 
     @Test
-    public void testRotateLeft() {
-        Box box = new Box(MIN, MAX);
-        Box rotated = box.rotateLeft();
-        BlockPos rotMin = rotated.min();
-        BlockPos rotMax = rotated.max();
-        assertEquals(ROTATED_MIN, rotMin);
-        assertEquals(ROTATED_MAX, rotMax);
-    }
-
-    @Test
     public void testIntersection1() {
         Box box1 = new Box(new BlockPos(0, 0, 0), new BlockPos(2, 2, 2));
         Box box2 = new Box(new BlockPos(1, 1, 1), new BlockPos(3, 3, 3));
