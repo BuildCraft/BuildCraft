@@ -1,7 +1,7 @@
 {
 	"size": [176,81],
 	"parent": "buildcraftbuilders:gui/filler_base",
-	"texture": "buildcraftbuilders:gui/filling_planner",
+	"texture": "buildcraftbuilders:gui/filler_planner",
 	"elements_below": {
 		"background": {
 			"type": "buildcraftlib:drawable",
@@ -11,7 +11,7 @@
 	"elements": {
 		"title": {
 			"type": "buildcraftlib:text",
-			"text": "item.filling_planner.name",
+			"text": "item.filler_planner.name",
 			"pos": [88,10],
 			"colour": "0x40_40_40",
 			"centered": true

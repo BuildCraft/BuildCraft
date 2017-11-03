@@ -87,7 +87,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 return new ContainerReplacer(player, replacer);
             }
         }
-        if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
+        if (id == BCBuildersGuis.FILLER_PLANNER.ordinal()) {
             return new ContainerFillerPlanner(player);
         }
         return null;
@@ -151,7 +151,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                     return new GuiReplacer(new ContainerReplacer(player, replacer));
                 }
             }
-            if (id == BCBuildersGuis.FILLING_PLANNER.ordinal()) {
+            if (id == BCBuildersGuis.FILLER_PLANNER.ordinal()) {
                 return new GuiFillerPlanner(new ContainerFillerPlanner(player));
             }
             return null;

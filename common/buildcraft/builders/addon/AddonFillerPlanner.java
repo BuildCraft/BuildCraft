@@ -35,7 +35,7 @@ import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
 
-public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerStatementContainer {
+public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerStatementContainer {
     public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
         FillerType.INSTANCE,
         4,
@@ -63,9 +63,9 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     }
 
     @Override
-    public IFastAddonRenderer<AddonFillingPlanner> getRenderer() {
-        return new AddonDefaultRenderer<AddonFillingPlanner>(BCBuildersSprites.FILLING_PLANNER.getSprite())
-            .then(new AddonRendererFillingPlanner());
+    public IFastAddonRenderer<AddonFillerPlanner> getRenderer() {
+        return new AddonDefaultRenderer<AddonFillerPlanner>(BCBuildersSprites.FILLER_PLANNER.getSprite())
+            .then(new AddonRendererFillerPlanner());
     }
 
     @Override
@@ -83,7 +83,7 @@ public class AddonFillingPlanner extends Addon implements ISingleAddon, IFillerS
     @Override
     public void onPlayerRightClick(EntityPlayer player) {
         super.onPlayerRightClick(player);
-        BCBuildersGuis.FILLING_PLANNER.openGUI(player);
+        BCBuildersGuis.FILLER_PLANNER.openGUI(player);
     }
 
     @Override

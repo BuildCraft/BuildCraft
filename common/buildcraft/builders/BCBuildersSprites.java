@@ -10,11 +10,11 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public class BCBuildersSprites {
-    public static final SpriteHolder FILLING_PLANNER;
+    public static final SpriteHolder FILLER_PLANNER;
     public static final SpriteHolder ROBOT;
 
     static {
-        FILLING_PLANNER = getHolder("addons/filling_planner");
+        FILLER_PLANNER = getHolder("addons/filler_planner");
         ROBOT = getHolder("robot");
     }
 

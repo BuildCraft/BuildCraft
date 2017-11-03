@@ -24,13 +24,13 @@ import net.minecraftforge.client.model.ModelLoader;
 
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 
-public class AddonRendererFillingPlanner implements IFastAddonRenderer<AddonFillingPlanner> {
+public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFillerPlanner> {
     @Override
-    public void renderAddonFast(AddonFillingPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
+    public void renderAddonFast(AddonFillerPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
         if (addon.buildingInfo == null) {
             return;
         }
-        Minecraft.getMinecraft().mcProfiler.startSection("filling_planner");
+        Minecraft.getMinecraft().mcProfiler.startSection("filler_planner");
 
         Minecraft.getMinecraft().mcProfiler.startSection("iter");
         List<BlockPos> list = StreamSupport.stream(

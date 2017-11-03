@@ -57,7 +57,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.filler.FillerType;
 import buildcraft.builders.filler.Filling;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
@@ -105,7 +105,7 @@ public class TileFiller extends TileBC_Neptune
     private Mode mode = Mode.ON;
 
     public final Box box = new Box();
-    public AddonFillingPlanner addon;
+    public AddonFillerPlanner addon;
     public boolean markerBox = false;
 
     public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
@@ -133,10 +133,10 @@ public class TileFiller extends TileBC_Neptune
         VolumeBox volumeBox = volumeBoxes.getVolumeBoxAt(offsetPos);
         TileEntity tile = world.getTileEntity(offsetPos);
         if (volumeBox != null) {
-            addon = (AddonFillingPlanner) volumeBox.addons
+            addon = (AddonFillerPlanner) volumeBox.addons
                 .values()
                 .stream()
-                .filter(AddonFillingPlanner.class::isInstance)
+                .filter(AddonFillerPlanner.class::isInstance)
                 .findFirst()
                 .orElse(null);
             if (addon != null) {
@@ -284,7 +284,7 @@ public class TileFiller extends TileBC_Neptune
                             .findFirst()
                             .orElseThrow(NullPointerException::new)
                         : WorldSavedDataVolumeBoxes.get(world).getVolumeBoxFromId(volumeBoxId);
-                    addon = (AddonFillingPlanner) volumeBox
+                    addon = (AddonFillerPlanner) volumeBox
                         .addons
                         .get(buffer.readEnumValue(EnumAddonSlot.class));
                 }
@@ -363,7 +363,7 @@ public class TileFiller extends TileBC_Neptune
         mode = Optional.ofNullable(NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class)).orElse(Mode.ON);
         box.initialize(nbt.getCompoundTag("box"));
         if (nbt.hasKey("addonSlot")) {
-            addon = (AddonFillingPlanner) WorldSavedDataVolumeBoxes.get(world)
+            addon = (AddonFillerPlanner) WorldSavedDataVolumeBoxes.get(world)
                 .getVolumeBoxFromId(nbt.getUniqueId("addonVolumeBoxId"))
                 .addons
                 .get(NBTUtilBC.readEnum(nbt.getTag("addonSlot"), EnumAddonSlot.class));
