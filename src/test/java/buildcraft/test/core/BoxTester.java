@@ -1,5 +1,7 @@
 package buildcraft.test.core;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -19,16 +21,12 @@ import buildcraft.lib.misc.data.Box;
 
 import buildcraft.test.TestHelper;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(Theories.class)
 public class BoxTester {
     private static final BlockPos MIN = new BlockPos(1, 2, 3), MAX = new BlockPos(4, 5, 6);
     private static final BlockPos SIZE = new BlockPos(4, 4, 4);
     private static final BlockPos CENTER = new BlockPos(3, 4, 5);
     private static final Vec3d CENTER_EXACT = new Vec3d(3, 4, 5);
-    private static final BlockPos ROTATED_MIN = new BlockPos(1, 2, 3);
-    private static final BlockPos ROTATED_MAX = new BlockPos(4, 5, 6);
 
     @DataPoints("testContainsVec3d")
     public static Set<Entry<Vec3d, Boolean>> dataContainsVec3d() {
@@ -48,8 +46,6 @@ public class BoxTester {
         boolean expected = entry.getValue();
         assertEquals(expected, box.contains(in));
     }
-
-    public static final BlockPos[] containsBlockPosTests = {};
 
     @Test
     public void testMin() {
