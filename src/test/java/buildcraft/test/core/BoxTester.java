@@ -1,7 +1,5 @@
 package buildcraft.test.core;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -20,6 +18,8 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.lib.misc.data.Box;
 
 import buildcraft.test.TestHelper;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Theories.class)
 public class BoxTester {
@@ -79,16 +79,6 @@ public class BoxTester {
     public void testCenterExact() {
         Box box = new Box(MIN, MAX);
         TestHelper.assertVec3dEquals(CENTER_EXACT, box.centerExact());
-    }
-
-    @Test
-    public void testRotateLeft() {
-        Box box = new Box(MIN, MAX);
-        Box rotated = box.rotateLeft();
-        BlockPos rotMin = rotated.min();
-        BlockPos rotMax = rotated.max();
-        assertEquals(ROTATED_MIN, rotMin);
-        assertEquals(ROTATED_MAX, rotMax);
     }
 
     @Test

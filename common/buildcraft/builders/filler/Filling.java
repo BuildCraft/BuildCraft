@@ -29,10 +29,10 @@ public class Filling {
                                                            boolean inverted) {
         Template.FilledTemplate filledTemplate = (Template.FilledTemplate) patternStatement.get().createTemplate(
             filler,
-            size -> {
+            (pos, size) -> {
                 Template template = new Template();
                 template.size = size;
-                template.offset = BlockPos.ORIGIN;
+                template.offset = pos;
                 template.data = new BitSet(Snapshot.getDataSize(size));
                 return template.getFilledTemplate();
             },
@@ -44,6 +44,6 @@ public class Filling {
         if (inverted) {
             filledTemplate.getTemplate().invert();
         }
-        return filledTemplate.getTemplate().new BuildingInfo(basePos, Rotation.NONE);
+        return filledTemplate.getTemplate().new BuildingInfo(BlockPos.ORIGIN, Rotation.NONE);
     }
 }
