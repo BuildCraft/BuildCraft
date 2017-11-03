@@ -47,7 +47,6 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
 
     public void updateBuildingInfo() {
         buildingInfo = Filling.createBuildingInfo(
-            volumeBox.box.min(),
             this,
             patternStatement,
             IntStream.range(0, patternStatement.maxParams)
