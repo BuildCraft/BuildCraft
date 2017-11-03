@@ -18,6 +18,6 @@ public class BCBuildersItems {
     public static void preInit() {
         schematicSingle = ItemManager.register(new ItemSchematicSingle("item.schematic.single"));
         snapshot = ItemManager.register(new ItemSnapshot("item.snapshot"));
-        fillingPlanner = ItemManager.register(new ItemFillingPlanner("item.filling_planner"));
+        fillingPlanner = ItemManager.register(new ItemFillingPlanner("item.filler_planner"));
     }
 }
