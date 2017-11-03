@@ -29,54 +29,12 @@ public class PatternBox extends Pattern {
 
     @Override
     public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
-        filledTemplate.setAreaYZ(
-            0,
-            0,
-            filledTemplate.getMax().getY(),
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setAreaYZ(
-            filledTemplate.getMax().getX(),
-            0,
-            filledTemplate.getMax().getY(),
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setAreaXZ(
-            0,
-            filledTemplate.getMax().getX(),
-            0,
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setAreaXZ(
-            0,
-            filledTemplate.getMax().getX(),
-            filledTemplate.getMax().getY(),
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setAreaXY(
-            0,
-            filledTemplate.getMax().getX(),
-            0,
-            filledTemplate.getMax().getY(),
-            0,
-            true
-        );
-        filledTemplate.setAreaXY(
-            0,
-            filledTemplate.getMax().getX(),
-            0,
-            filledTemplate.getMax().getY(),
-            filledTemplate.getMax().getZ(),
-            true
-        );
+        filledTemplate.setPlaneYZ(0, true);
+        filledTemplate.setPlaneYZ(filledTemplate.getMax().getX(), true);
+        filledTemplate.setPlaneXZ(0, true);
+        filledTemplate.setPlaneXZ(filledTemplate.getMax().getY(), true);
+        filledTemplate.setPlaneXY(0, true);
+        filledTemplate.setPlaneXY(filledTemplate.getMax().getZ(), true);
         return true;
     }
 }

@@ -3,6 +3,8 @@ package buildcraft.core.patterns;
 import java.util.EnumMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -86,6 +88,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
         return BCCoreSprites.PARAM_XZ_DIR.get(dir);
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

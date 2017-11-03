@@ -65,33 +65,6 @@ public class Template extends Snapshot {
             }
 
             @Override
-            public void setAreaXY(int fromX, int toX, int fromY, int toY, int z, boolean value) {
-                checkPos(fromX, fromY, z);
-                checkPos(toX, toY, z);
-                for (int y = fromY; y <= toY; y++) {
-                    setLineX(fromX, toX, y, z, true);
-                }
-            }
-
-            @Override
-            public void setAreaYZ(int x, int fromY, int toY, int fromZ, int toZ, boolean value) {
-                checkPos(x, fromY, fromZ);
-                checkPos(x, toY, toZ);
-                for (int z = fromZ; z <= toZ; z++) {
-                    setLineY(x, fromY, toY, z, value);
-                }
-            }
-
-            @Override
-            public void setAreaXZ(int fromX, int toX, int y, int fromZ, int toZ, boolean value) {
-                checkPos(fromX, y, fromZ);
-                checkPos(toX, y, toZ);
-                for (int z = fromZ; z <= toZ; z++) {
-                    setLineX(fromX, toX, y, z, true);
-                }
-            }
-
-            @Override
             public void setLineX(int fromX, int toX, int y, int z, boolean value) {
                 checkPos(fromX, y, z);
                 checkPos(toX, y, z);
@@ -114,6 +87,51 @@ public class Template extends Snapshot {
                 for (int z = fromZ; z <= toZ; z++) {
                     set(x, y, z, value);
                 }
+            }
+
+            @Override
+            public void setAreaYZ(int x, int fromY, int toY, int fromZ, int toZ, boolean value) {
+                checkPos(x, fromY, fromZ);
+                checkPos(x, toY, toZ);
+                for (int z = fromZ; z <= toZ; z++) {
+                    setLineY(x, fromY, toY, z, value);
+                }
+            }
+
+            @Override
+            public void setAreaXZ(int fromX, int toX, int y, int fromZ, int toZ, boolean value) {
+                checkPos(fromX, y, fromZ);
+                checkPos(toX, y, toZ);
+                for (int z = fromZ; z <= toZ; z++) {
+                    setLineX(fromX, toX, y, z, true);
+                }
+            }
+
+            @Override
+            public void setAreaXY(int fromX, int toX, int fromY, int toY, int z, boolean value) {
+                checkPos(fromX, fromY, z);
+                checkPos(toX, toY, z);
+                for (int y = fromY; y <= toY; y++) {
+                    setLineX(fromX, toX, y, z, true);
+                }
+            }
+
+            @Override
+            public void setPlaneYZ(int x, boolean value) {
+                checkPos(x, 0, 0);
+                setAreaYZ(x, 0, max.getY(), 0, max.getZ(), value);
+            }
+
+            @Override
+            public void setPlaneXZ(int y, boolean value) {
+                checkPos(0, y, 0);
+                setAreaXZ(0, max.getX(), y, 0, max.getZ(), value);
+            }
+
+            @Override
+            public void setPlaneXY(int z, boolean value) {
+                checkPos(0, 0, z);
+                data.set(posToIndex(0, 0, z), posToIndex(max.getX(), max.getY(), z) + 1, value);
             }
 
             @Override

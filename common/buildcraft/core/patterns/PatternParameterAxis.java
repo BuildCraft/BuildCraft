@@ -2,6 +2,8 @@ package buildcraft.core.patterns;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -25,7 +27,7 @@ public enum PatternParameterAxis implements IStatementParameter {
 
     public final EnumFacing.Axis axis;
 
-    private PatternParameterAxis(Axis axis) {
+    PatternParameterAxis(Axis axis) {
         this.axis = axis;
     }
 
@@ -55,6 +57,7 @@ public enum PatternParameterAxis implements IStatementParameter {
         return BCCoreSprites.PARAM_AXIS.get(axis);
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;
@@ -71,6 +74,7 @@ public enum PatternParameterAxis implements IStatementParameter {
         nbt.setByte("a", (byte) ordinal());
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     @Override
     public IStatementParameter rotateLeft() {
         switch (this) {

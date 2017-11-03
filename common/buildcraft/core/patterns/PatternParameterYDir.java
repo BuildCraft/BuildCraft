@@ -1,5 +1,7 @@
 package buildcraft.core.patterns;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -46,6 +48,7 @@ public enum PatternParameterYDir implements IStatementParameter {
         return "buildcraft:fillerParameterYDir";
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

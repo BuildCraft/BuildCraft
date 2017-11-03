@@ -1,5 +1,7 @@
 package buildcraft.core.patterns;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -64,6 +66,7 @@ public enum PatternParameterCenter implements IStatementParameter {
         return BCCoreSprites.PARAM_CENTER.get(this);
     }
 
+    @Nonnull
     @Override
     public ItemStack getItemStack() {
         return StackUtil.EMPTY;

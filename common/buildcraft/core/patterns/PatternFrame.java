@@ -23,92 +23,24 @@ public class PatternFrame extends Pattern {
 
     @Override
     public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
-        filledTemplate.setLineX(
-            0,
-            filledTemplate.getMax().getX(),
-            0,
-            0,
-            true
-        );
-        filledTemplate.setLineX(
-            0,
-            filledTemplate.getMax().getX(),
-            filledTemplate.getMax().getY(),
-            0,
-            true
-        );
-        filledTemplate.setLineX(
-            0,
-            filledTemplate.getMax().getX(),
-            filledTemplate.getMax().getY(),
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setLineX(
-            0,
-            filledTemplate.getMax().getX(),
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
+        int maxX = filledTemplate.getMax().getX();
+        int maxY = filledTemplate.getMax().getY();
+        int maxZ = filledTemplate.getMax().getZ();
 
-        filledTemplate.setLineY(
-            0,
-            0,
-            filledTemplate.getMax().getY(),
-            0,
-            true
-        );
-        filledTemplate.setLineY(
-            filledTemplate.getMax().getX(),
-            0,
-            filledTemplate.getMax().getY(),
-            0,
-            true
-        );
-        filledTemplate.setLineY(
-            filledTemplate.getMax().getX(),
-            0,
-            filledTemplate.getMax().getY(),
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setLineY(
-            0,
-            0,
-            filledTemplate.getMax().getY(),
-            filledTemplate.getMax().getZ(),
-            true
-        );
+        filledTemplate.setLineX(0, maxX, 0, 0, true);
+        filledTemplate.setLineX(0, maxX, maxY, 0, true);
+        filledTemplate.setLineX(0, maxX, maxY, maxZ, true);
+        filledTemplate.setLineX(0, maxX, 0, maxZ, true);
 
-        filledTemplate.setLineZ(
-            0,
-            0,
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setLineZ(
-            filledTemplate.getMax().getX(),
-            0,
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setLineZ(
-            filledTemplate.getMax().getX(),
-            filledTemplate.getMax().getY(),
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
-        filledTemplate.setLineZ(
-            0,
-            filledTemplate.getMax().getY(),
-            0,
-            filledTemplate.getMax().getZ(),
-            true
-        );
+        filledTemplate.setLineY(0, 0, maxY, 0, true);
+        filledTemplate.setLineY(maxX, 0, maxY, 0, true);
+        filledTemplate.setLineY(maxX, 0, maxY, maxZ, true);
+        filledTemplate.setLineY(0, 0, maxY, maxZ, true);
+
+        filledTemplate.setLineZ(0, 0, 0, maxZ, true);
+        filledTemplate.setLineZ(maxX, 0, 0, maxZ, true);
+        filledTemplate.setLineZ(maxX, maxY, 0, maxZ, true);
+        filledTemplate.setLineZ(0, maxY, 0, maxZ, true);
 
         return true;
     }
