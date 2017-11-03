@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 import buildcraft.api.filler.IFilledTemplate;
+import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.PathIterator2d;
 
-public abstract class PatternShape2d extends Pattern {
+public abstract class PatternShape2d extends Pattern implements IFillerPatternShape {
     public PatternShape2d(String tag) {
         super(tag);
     }

@@ -5,7 +5,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dTriangle extends PatternShape2d {
-
     public PatternShape2dTriangle() {
         super("2d_triangle");
     }

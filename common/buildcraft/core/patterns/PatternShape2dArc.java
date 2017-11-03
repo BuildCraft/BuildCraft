@@ -5,7 +5,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dArc extends PatternShape2d {
-
     public PatternShape2dArc() {
         super("2d_arc");
     }

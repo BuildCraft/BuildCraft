@@ -7,7 +7,6 @@ import buildcraft.lib.BCLibSprites;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dHexagon extends PatternShape2d {
-
     public PatternShape2dHexagon() {
         super("2d_hexagon");
     }

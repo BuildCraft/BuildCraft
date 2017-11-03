@@ -5,7 +5,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dPentagon extends PatternShape2d {
-
     private static final double DIST_HORIZONTAL = StrictMath.sin(Math.toRadians(108 - 90));
     private static final double DIST_VERTICAL;
 

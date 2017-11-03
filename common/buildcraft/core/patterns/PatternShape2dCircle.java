@@ -5,7 +5,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dCircle extends PatternShape2d {
-
     public PatternShape2dCircle() {
         super("2d_circle");
     }

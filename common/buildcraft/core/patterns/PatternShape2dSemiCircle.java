@@ -5,7 +5,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dSemiCircle extends PatternShape2d {
-
     public PatternShape2dSemiCircle() {
         super("2d_semi_circle");
     }

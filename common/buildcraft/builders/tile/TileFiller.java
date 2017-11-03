@@ -308,7 +308,7 @@ public class TileFiller extends TileBC_Neptune
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         buildingInfo = (hasBox() && addon == null) ? Filling.createBuildingInfo(
             box.min(),
-            box.size(),
+            this,
             patternStatement,
             IntStream.range(0, patternStatement.maxParams)
                 .mapToObj(patternStatement::get)

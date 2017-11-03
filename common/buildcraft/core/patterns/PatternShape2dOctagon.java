@@ -5,7 +5,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.core.BCCoreSprites;
 
 public class PatternShape2dOctagon extends PatternShape2d {
-
     public PatternShape2dOctagon() {
         super("2d_octagon");
     }

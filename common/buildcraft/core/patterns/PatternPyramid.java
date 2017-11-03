@@ -8,13 +8,14 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import buildcraft.api.filler.IFilledTemplate;
+import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 import buildcraft.core.BCCoreSprites;
 
-public class PatternPyramid extends Pattern {
+public class PatternPyramid extends Pattern implements IFillerPatternShape {
     private static final Map<PatternParameterCenter, PyramidDir> PYRAMID_DIRS = new EnumMap<>(PatternParameterCenter.class);
 
     private static class PyramidDir {

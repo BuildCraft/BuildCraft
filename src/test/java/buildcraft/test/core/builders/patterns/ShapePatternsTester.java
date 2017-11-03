@@ -1,9 +1,11 @@
 package buildcraft.test.core.builders.patterns;
 
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -15,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFilledTemplate;
+import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.misc.StringUtilBC;
@@ -24,16 +27,14 @@ import buildcraft.lib.registry.FillerRegistry;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.core.BCCoreStatements;
-import buildcraft.core.patterns.Pattern;
 import buildcraft.core.patterns.PatternParameterFacing;
 import buildcraft.core.patterns.PatternParameterHollow;
 import buildcraft.test.VanillaSetupBaseTester;
 
 @RunWith(Theories.class)
-public class DefaultPatternTester extends VanillaSetupBaseTester {
-
+public class ShapePatternsTester extends VanillaSetupBaseTester {
     @DataPoints
-    public static Pattern[] patterns;
+    public static List<IFillerPatternShape> patterns;
 
     /** Some randomly chosen sizes. Ideally we would test all possibilities, but that would take too long so here are 4.
      * (Hopefully enough to show up regressions). */
@@ -49,14 +50,14 @@ public class DefaultPatternTester extends VanillaSetupBaseTester {
     @BeforeClass
     public static void setupRegistries() {
         FillerManager.registry = FillerRegistry.INSTANCE;
-        patterns = BCCoreStatements.PATTERNS;
+        patterns = Arrays.stream(BCCoreStatements.PATTERNS)
+            .filter(IFillerPatternShape.class::isInstance)
+            .map(IFillerPatternShape.class::cast)
+            .collect(Collectors.toList());
     }
 
     @Theory
-    public void testTinyTemplate(Pattern pattern, BlockPos size) {
-        // Horizon and flattern works a little differently, so don't test them here
-        Assume.assumeFalse(pattern.getUniqueTag().contains("horizon"));
-        Assume.assumeFalse(pattern.getUniqueTag().contains("flatten"));
+    public void testTinyTemplate(IFillerPatternShape pattern, BlockPos size) {
         System.out.print("Testing pattern " + pattern.getUniqueTag() + " in " + StringUtilBC.blockPosToString(size));
 
         try {
@@ -136,6 +137,6 @@ public class DefaultPatternTester extends VanillaSetupBaseTester {
             }
         }
 
-        // Test quarters
+        // TODO: Test quarters
     }
 }
