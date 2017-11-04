@@ -229,40 +229,6 @@ public class JsonUtil {
 
     public static GsonBuilder registerNbtSerializersDeserializers(GsonBuilder gsonBuilder) {
         return gsonBuilder
-            .registerTypeAdapter(
-                NBTBase.class,
-                (JsonSerializer<NBTBase>) (src, typeOfSrc, context) -> {
-                    if (src == NBTUtilBC.NBT_NULL) {
-                        return JsonNull.INSTANCE;
-                    }
-                    switch (src.getId()) {
-                        case Constants.NBT.TAG_BYTE:
-                            return context.serialize(src, NBTTagByte.class);
-                        case Constants.NBT.TAG_SHORT:
-                            return context.serialize(src, NBTTagShort.class);
-                        case Constants.NBT.TAG_INT:
-                            return context.serialize(src, NBTTagInt.class);
-                        case Constants.NBT.TAG_LONG:
-                            return context.serialize(src, NBTTagLong.class);
-                        case Constants.NBT.TAG_FLOAT:
-                            return context.serialize(src, NBTTagFloat.class);
-                        case Constants.NBT.TAG_DOUBLE:
-                            return context.serialize(src, NBTTagDouble.class);
-                        case Constants.NBT.TAG_BYTE_ARRAY:
-                            return context.serialize(src, NBTTagByteArray.class);
-                        case Constants.NBT.TAG_STRING:
-                            return context.serialize(src, NBTTagString.class);
-                        case Constants.NBT.TAG_LIST:
-                            return context.serialize(src, NBTTagList.class);
-                        case Constants.NBT.TAG_COMPOUND:
-                            return context.serialize(src, NBTTagCompound.class);
-                        case Constants.NBT.TAG_INT_ARRAY:
-                            return context.serialize(src, NBTTagIntArray.class);
-                        default:
-                            throw new IllegalArgumentException(src.toString());
-                    }
-                }
-            )
             .registerTypeAdapterFactory(new TypeAdapterFactory() {
                 @Override
                 public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
