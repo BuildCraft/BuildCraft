@@ -370,8 +370,8 @@ public class TileFiller extends TileBC_Neptune
         }
         markerBox = nbt.getBoolean("markerBox");
         patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
+        updateBuildingInfo();
         if (nbt.hasKey("builder")) {
-            updateBuildingInfo();
             Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
         }
     }
