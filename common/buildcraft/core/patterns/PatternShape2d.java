@@ -63,8 +63,9 @@ public abstract class PatternShape2d extends Pattern {
             int maxT = maxA;
             maxA = maxB;
             maxB = maxT;
+            final int max_b = maxB;
             final PathIterator2d old = iterator;
-            iterator = (a, b) -> old.iterate(b, a);
+            iterator = (a, b) -> old.iterate(max_b - b,  a);
         }
         if (dir.rotationCount > 1) {
             final PathIterator2d old = iterator;
