@@ -147,6 +147,10 @@ public class TagManager {
         }
     }
 
+    public static TagEntry getTag(String id) {
+        return idsToEntry.get(id);
+    }
+
     public static TagEntry registerTag(String id) {
         TagEntry entry = new TagEntry(id);
         idsToEntry.put(id, entry);

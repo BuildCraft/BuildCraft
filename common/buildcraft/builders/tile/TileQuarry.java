@@ -503,7 +503,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             nbt.setByte("currentTaskId",
                 (byte) Arrays.stream(EnumTaskType.values())
                     .filter(type -> type.clazz == currentTask.getClass())
-                    .findFirst().orElseThrow(IllegalArgumentException::new)
+                    .findFirst()
+                    .orElseThrow(IllegalStateException::new)
                     .ordinal()
             );
             nbt.setTag("currentTaskData", currentTask.serializeNBT());
@@ -549,7 +550,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                         (byte) Arrays.stream(EnumTaskType.values())
                             .filter(type -> type.clazz == currentTask.getClass())
                             .findFirst()
-                            .orElseThrow(IllegalArgumentException::new)
+                            .orElseThrow(IllegalStateException::new)
                             .ordinal()
                     );
                     for (int i = 0; i < 2; i++) {

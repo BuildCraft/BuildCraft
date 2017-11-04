@@ -18,6 +18,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import com.google.gson.JsonObject;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -37,6 +39,8 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
+import buildcraft.lib.client.resource.DataMetadataSection;
+import buildcraft.lib.client.resource.MetadataLoader;
 import buildcraft.lib.misc.SpriteUtil;
 
 @SideOnly(Side.CLIENT)
@@ -129,6 +133,7 @@ public class SpriteHolderRegistry {
     public static class SpriteHolder implements ISprite {
         public final ResourceLocation spriteLocation;
         private TextureAtlasSprite sprite;
+        private DataMetadataSection extraData = null;
         private boolean hasCalled = false;
 
         private SpriteHolder(ResourceLocation spriteLocation) {
@@ -136,8 +141,13 @@ public class SpriteHolderRegistry {
         }
 
         protected void onTextureStitchPre(TextureMap map) {
-            map.setTextureEntry(AtlasSpriteVariants.createForConfig(spriteLocation));
-            sprite = map.registerSprite(spriteLocation);
+            extraData = null;
+            AtlasSpriteVariants varSprite = AtlasSpriteVariants.createForConfig(spriteLocation);
+            if (map.setTextureEntry(varSprite)) {
+                sprite = varSprite;
+            } else {
+                sprite = map.getTextureExtry(varSprite.getIconName());
+            }
         }
 
         private TextureAtlasSprite getSpriteChecking() {
@@ -172,6 +182,17 @@ public class SpriteHolderRegistry {
         @Override
         public void bindTexture() {
             SpriteUtil.bindBlockTextureMap();
+        }
+
+        public DataMetadataSection getExtraData(boolean samePack) {
+            if (extraData == null) {
+                ResourceLocation actualLocation = SpriteUtil.transformLocation(spriteLocation);
+                extraData = MetadataLoader.getData(actualLocation, samePack);
+            }
+            if (extraData == null) {
+                extraData = new DataMetadataSection(new JsonObject());
+            }
+            return extraData;
         }
     }
 }

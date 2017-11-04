@@ -67,6 +67,10 @@ import buildcraft.lib.expression.node.func.NodeFuncObjectObjectObjectObjectToObj
 // AUTO_GENERATED FILE, DO NOT EDIT MANUALLY!
 public abstract class NodeTypeBase<T> extends FunctionContext {
 
+    public NodeTypeBase(String name) {
+        super("Type: " + name);
+    }
+
     protected abstract Class<T> getType();
 
     // put_o_l

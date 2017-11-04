@@ -6,7 +6,6 @@
 
 package buildcraft.lib.client.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -25,19 +24,13 @@ public class ResourceLoaderContext {
     private final Set<ResourceLocation> loaded = new HashSet<>();
     private final Deque<ResourceLocation> loadingStack = new ArrayDeque<>();
 
-    public InputStreamReader startLoading(ResourceLocation location) throws JsonSyntaxException {
+    public InputStreamReader startLoading(ResourceLocation location) throws IOException {
         if (!loaded.add(location)) {
             throw new JsonSyntaxException("Already loaded " + location + " from " + loadingStack.peek());
         }
         loadingStack.push(location);
-        try {
-            IResource res = Minecraft.getMinecraft().getResourceManager().getResource(location);
-            return new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8);
-        } catch (FileNotFoundException e) {
-            throw new JsonSyntaxException("Did not find the file " + location, e);
-        } catch (IOException io) {
-            throw new JsonSyntaxException(io);
-        }
+        IResource res = Minecraft.getMinecraft().getResourceManager().getResource(location);
+        return new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8);
     }
 
     public void finishLoading() {

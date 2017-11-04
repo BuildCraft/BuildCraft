@@ -373,20 +373,20 @@ public class StackUtil {
         return stack.serializeNBT().hashCode();
     }
 
-    public static List<ItemStack> mergeSameItems(List<ItemStack> items) {
-        List<ItemStack> stacks = new ArrayList<>();
-        items.forEach(toAdd -> {
+    public static NonNullList<ItemStack> mergeSameItems(List<ItemStack> items) {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+        for (ItemStack toAdd : items) {
             boolean found = false;
             for (ItemStack stack : stacks) {
-                if (StackUtil.canMerge(stack, toAdd)) {
-                    stack.setCount(stack.getCount() + toAdd.getCount());
+                if (canMerge(stack, toAdd)) {
+                    stack.grow(toAdd.getCount());
                     found = true;
                 }
             }
             if (!found) {
                 stacks.add(toAdd.copy());
             }
-        });
+        }
         return stacks;
     }
 }

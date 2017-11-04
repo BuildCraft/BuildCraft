@@ -28,7 +28,7 @@ import buildcraft.lib.statement.FullStatement;
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.filler.FillerType;
-import buildcraft.builders.filler.Filling;
+import buildcraft.builders.filler.FillerUtil;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
@@ -46,7 +46,7 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
     public Template.BuildingInfo buildingInfo;
 
     public void updateBuildingInfo() {
-        buildingInfo = Filling.createBuildingInfo(
+        buildingInfo = FillerUtil.createBuildingInfo(
             this,
             patternStatement,
             IntStream.range(0, patternStatement.maxParams)

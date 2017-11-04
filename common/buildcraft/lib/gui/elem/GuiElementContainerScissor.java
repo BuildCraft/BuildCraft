@@ -1,7 +1,5 @@
 package buildcraft.lib.gui.elem;
 
-import net.minecraft.client.gui.Gui;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -40,7 +38,6 @@ public class GuiElementContainerScissor extends GuiElementContainer2 {
 
     @Override
     public void drawBackground(float partialTicks) {
-        Gui.drawRect((int) getX(), (int) getY(), (int) getEndX(), (int) getEndY(), hashCode() | 0xFF_00_00_00);
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement elem : getChildElements()) {
                 elem.drawBackground(partialTicks);

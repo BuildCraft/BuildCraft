@@ -17,7 +17,7 @@ import buildcraft.lib.statement.FullStatement;
 
 import buildcraft.builders.snapshot.Template;
 
-public class Filling {
+public class FillerUtil {
     public static Template.BuildingInfo createBuildingInfo(IFillerStatementContainer filler,
                                                            FullStatement<IFillerPattern> patternStatement,
                                                            IStatementParameter[] params,

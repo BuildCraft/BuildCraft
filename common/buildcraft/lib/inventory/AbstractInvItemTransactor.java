@@ -6,6 +6,8 @@
 
 package buildcraft.lib.inventory;
 
+import java.util.Arrays;
+
 import javax.annotation.Nonnull;
 
 import gnu.trove.list.array.TIntArrayList;
@@ -148,12 +150,21 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             for (int slot : valids.toArray()) {
                 ItemStack extracted = extract(slot, filter, 1, max - total.getCount(), simulate);
                 if (total.isEmpty()) {
-                    total = extracted;
+                    total = extracted.copy();
                 } else {
                     total.grow(extracted.getCount());
                 }
             }
         }
         return total;
+    }
+
+    @Override
+    public String toString() {
+        ItemStack[] stacks = new ItemStack[getSlots()];
+        for (int i = 0; i < stacks.length; i++) {
+            stacks[i] = extract(i, StackFilter.ALL, 1, Integer.MAX_VALUE, true);
+        }
+        return Arrays.toString(stacks);
     }
 }

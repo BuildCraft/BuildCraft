@@ -21,6 +21,10 @@ import buildcraft.lib.expression.node.func.StringFunctionHex;
 {$AutoGenWarning}
 public abstract class NodeTypeBase<T> extends FunctionContext {
 
+    public NodeTypeBase(String name) {
+        super("Type: " + name);
+    }
+
     protected abstract Class<T> getType();
 {$PutMethods}
 }

@@ -256,7 +256,6 @@ public class TileBuilder extends TileBC_Neptune
         world.profiler.startSection("main");
         world.profiler.startSection("power");
         battery.tick(getWorld(), getPos());
-        battery.addPowerChecking(64 * MjAPI.MJ, false);
         world.profiler.endStartSection("builder");
         SnapshotBuilder<?> builder = getBuilder();
         if (builder != null) {

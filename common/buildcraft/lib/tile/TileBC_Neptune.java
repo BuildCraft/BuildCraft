@@ -424,6 +424,19 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
+    public final void createAndSendMessage(int id, EntityPlayerMP player, IPayloadWriter writer) {
+        if (hasWorld()) {
+            IMessage message = createMessage(id, writer);
+            MessageManager.sendTo(message, player);
+        }
+    }
+
+    public final void createAndSendGuiMessage(int id, EntityPlayerMP player, IPayloadWriter writer) {
+        if (usingPlayers.contains(player)) {
+            createAndSendMessage(id, player, writer);
+        }
+    }
+
     public final MessageUpdateTile createMessage(int id, IPayloadWriter writer) {
         PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
         buffer.writeShort(id);

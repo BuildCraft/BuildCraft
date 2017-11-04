@@ -14,8 +14,6 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.lib.misc.ReflectionUtil;
-
 /** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with similar bits into a single byte. */
 public class PacketBufferBC extends PacketBuffer {
@@ -263,7 +261,7 @@ public class PacketBufferBC extends PacketBuffer {
 
     @Override
     public PacketBufferBC writeEnumValue(Enum<?> value) {
-        Enum<?>[] possible = ReflectionUtil.getEnumConstants(value.getClass());
+        Enum<?>[] possible = value.getDeclaringClass().getEnumConstants();
         if (possible == null) throw new IllegalArgumentException("Not an enum " + value.getClass());
         if (possible.length == 0) throw new IllegalArgumentException("Tried to write an enum value without any values! How did you do this?");
         if (possible.length == 1) return this;
@@ -273,8 +271,8 @@ public class PacketBufferBC extends PacketBuffer {
 
     @Override
     public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
-        // noinspection unchecked
-        E[] enums = (E[]) ReflectionUtil.getEnumConstants(enumClass);
+        // No need to lookup the declaring class as you cannot refer to sub-classes of Enum.
+        E[] enums = enumClass.getEnumConstants();
         if (enums == null) throw new IllegalArgumentException("Not an enum " + enumClass);
         if (enums.length == 0) throw new IllegalArgumentException("Tried to read an enum value without any values! How did you do this?");
         if (enums.length == 1) return enums[0];

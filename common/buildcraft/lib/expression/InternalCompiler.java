@@ -10,6 +10,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,10 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
+import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
@@ -74,7 +79,7 @@ public class InternalCompiler {
     public static IExpressionNode compileExpression(String expression, FunctionContext context)
         throws InvalidExpressionException {
         if (context == null) {
-            context = new FunctionContext();
+            context = new FunctionContext("default");
         }
         try {
             ExpressionDebugManager.debugPrintln("Compiling " + expression);
@@ -367,7 +372,8 @@ public class InternalCompiler {
                 if (node != null) {
                     stack.push(node);
                 } else {
-                    throw new InvalidExpressionException("Unknown variable '" + op + "'");
+                    String vars = getValidVariablesErrorString(context);
+                    throw new InvalidExpressionException("Unknown variable '" + op + "'" + vars);
                 }
             }
         }
@@ -377,6 +383,32 @@ public class InternalCompiler {
             throw new InvalidExpressionException("Tried to make an expression with too many nodes! (" + stack + ")");
         }
         return node;
+    }
+
+    private static String getValidVariablesErrorString(FunctionContext context) {
+        if (context == null) {
+            return " (No context to get variables from)";
+        }
+        String vars = "\nList of valid variables:";
+        vars += addParentVariables(context);
+        return vars + "\n";
+    }
+
+    private static String addParentVariables(FunctionContext context) {
+        String vars = "";
+        List<String> allVariables = new ArrayList<>();
+        allVariables.addAll(context.getAllVariables());
+        allVariables.sort(Comparator.naturalOrder());
+        if (!allVariables.isEmpty()) {
+            if (!context.name.isEmpty()) {
+                vars += "\n" + context.name + ":";
+            }
+            vars += "\n  " + allVariables.toString().replace("[", "").replace("]", "");
+        }
+        for (FunctionContext parent : context.getParents()) {
+            vars += addParentVariables(parent);
+        }
+        return vars;
     }
 
     public static boolean isValidDouble(String op) {
@@ -579,8 +611,8 @@ public class InternalCompiler {
                 bestClassesTo = ImmutableList.copyOf(functionOrder);
                 ExpressionDebugManager.debugPrintln("Using implicit object equality comparison.");
             } else {
-                throw new InvalidExpressionException(
-                    "No viable function called '" + name + "' found for " + fnOrderNames);
+                throw new InvalidExpressionException("No viable function called '" + name + "' found for "
+                    + fnOrderNames + getValidFunctionsErrorString(context));
             }
         }
 
@@ -615,6 +647,55 @@ public class InternalCompiler {
         realStack.checkAndRemoveRecorder();
 
         stack.push(node);
+    }
+
+    private static String getValidFunctionsErrorString(FunctionContext context) {
+        if (context == null) {
+            return " (No context to get functions from)";
+        }
+        String vars = "\nList of valid functions:";
+        vars += addParentFunctions(context);
+        return vars + "\n";
+    }
+
+    private static String addParentFunctions(FunctionContext context) {
+        String vars = "";
+        List<String> allFunctions = new ArrayList<>();
+        allFunctions.addAll(context.getAllFunctions().rowKeySet());
+        allFunctions.sort(Comparator.naturalOrder());
+        if (!allFunctions.isEmpty()) {
+            if (!context.name.isEmpty()) {
+                vars += "\n" + context.name + ":";
+            }
+            for (String fnName : allFunctions) {
+                Map<List<Class<?>>, INodeFunc> functions = context.getFunctions(fnName);
+                for (Map.Entry<List<Class<?>>, INodeFunc> entry : functions.entrySet()) {
+                    String args = "";
+                    for (Class<?> arg : entry.getKey()) {
+                        if (args.length() > 0) {
+                            args += ", ";
+                        }
+                        args += NodeTypes.getName(arg);
+                    }
+                    INodeFunc function = entry.getValue();
+                    String ret;
+                    if (function instanceof INodeFuncBoolean) {
+                        ret = NodeTypes.getName(boolean.class);
+                    } else if (function instanceof INodeFuncDouble) {
+                        ret = NodeTypes.getName(double.class);
+                    } else if (function instanceof INodeFuncLong) {
+                        ret = NodeTypes.getName(long.class);
+                    } else {
+                        ret = NodeTypes.getName(((INodeFuncObject<?>) function).getType());
+                    }
+                    vars += "\n  " + fnName + "(" + args + ") -> " + ret;
+                }
+            }
+        }
+        for (FunctionContext parent : context.getParents()) {
+            vars += addParentFunctions(parent);
+        }
+        return vars;
     }
 
     private static FunctionContext getContext(String type) throws InvalidExpressionException {

@@ -25,7 +25,7 @@ public class PosIndexTester {
     private static final BlockPos SIZE = new BlockPos(6, 4, 8);
 
     @DataPoints
-    public static final List<BlockPos> POSES;
+    public static final List<BlockPos> POSITIONS;
 
     static {
         ImmutableList.Builder<BlockPos> builder = new ImmutableList.Builder<>();
@@ -36,7 +36,7 @@ public class PosIndexTester {
                 }
             }
         }
-        POSES = builder.build();
+        POSITIONS = builder.build();
     }
 
     @Theory

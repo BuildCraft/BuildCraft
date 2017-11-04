@@ -59,7 +59,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.filler.FillerType;
-import buildcraft.builders.filler.Filling;
+import buildcraft.builders.filler.FillerUtil;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.ItemBlocks;
 import buildcraft.builders.snapshot.SnapshotBuilder;
@@ -306,7 +306,7 @@ public class TileFiller extends TileBC_Neptune
 
     private void updateBuildingInfo() {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
-        buildingInfo = (hasBox() && addon == null) ? Filling.createBuildingInfo(
+        buildingInfo = (hasBox() && addon == null) ? FillerUtil.createBuildingInfo(
             this,
             patternStatement,
             IntStream.range(0, patternStatement.maxParams)
@@ -369,8 +369,8 @@ public class TileFiller extends TileBC_Neptune
         }
         markerBox = nbt.getBoolean("markerBox");
         patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
+        updateBuildingInfo();
         if (nbt.hasKey("builder")) {
-            updateBuildingInfo();
             Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
         }
     }
