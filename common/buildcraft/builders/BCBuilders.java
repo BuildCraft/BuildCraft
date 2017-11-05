@@ -171,7 +171,7 @@ public class BCBuilders {
         // Items
         registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single/");
         registerTag("item.snapshot").reg("snapshot").locale("snapshot").model("snapshot/");
-        registerTag("item.filler_planner").reg("filler_planner").locale("filler_planner").model("filler_planner");
+        registerTag("item.filler_planner").reg("filler_planner").oldReg("filling_planner").locale("filler_planner").model("filler_planner");
         // Item Blocks
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");
