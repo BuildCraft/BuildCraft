@@ -1,4 +1,4 @@
-package buildcraft.core.patterns;
+package buildcraft.builders.snapshot.pattern;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +11,10 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.PathIterator2d;
+
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
 
 public abstract class PatternShape2d extends Pattern implements IFillerPatternShape {
     public PatternShape2d(String tag) {

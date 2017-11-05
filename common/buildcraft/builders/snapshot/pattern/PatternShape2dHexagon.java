@@ -1,8 +1,6 @@
-package buildcraft.core.patterns;
+package buildcraft.builders.snapshot.pattern;
 
 import buildcraft.api.core.render.ISprite;
-
-import buildcraft.lib.BCLibSprites;
 
 import buildcraft.core.BCCoreSprites;
 

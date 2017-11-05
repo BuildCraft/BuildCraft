@@ -1,4 +1,4 @@
-package buildcraft.core.patterns;
+package buildcraft.builders.snapshot.pattern;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

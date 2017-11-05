@@ -13,7 +13,7 @@ import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.statement.StatementContext;
 
 import buildcraft.core.BCCoreStatements;
-import buildcraft.core.patterns.PatternShape2d;
+import buildcraft.builders.snapshot.pattern.PatternShape2d;
 
 public enum FillerStatementContext implements StatementContext<IFillerPattern> {
     CONTEXT_ALL;

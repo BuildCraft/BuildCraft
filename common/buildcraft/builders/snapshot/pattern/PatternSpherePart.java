@@ -1,4 +1,4 @@
-package buildcraft.core.patterns;
+package buildcraft.builders.snapshot.pattern;
 
 import java.util.BitSet;
 import java.util.EnumSet;
@@ -13,11 +13,13 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
 import buildcraft.core.BCCoreSprites;
 
 public final class PatternSpherePart extends Pattern implements IFillerPatternShape {

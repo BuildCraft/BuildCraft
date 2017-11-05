@@ -22,13 +22,13 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.registry.FillerRegistry;
+import buildcraft.builders.registry.FillerRegistry;
 
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.core.BCCoreStatements;
-import buildcraft.core.patterns.PatternParameterFacing;
-import buildcraft.core.patterns.PatternParameterHollow;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
 import buildcraft.test.VanillaSetupBaseTester;
 
 @RunWith(Theories.class)
