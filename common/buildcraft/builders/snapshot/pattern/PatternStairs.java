@@ -13,9 +13,9 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterXZDir;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
-import buildcraft.core.BCCoreSprites;
 
 public class PatternStairs extends Pattern implements IFillerPatternShape {
     public PatternStairs() {
@@ -25,7 +25,7 @@ public class PatternStairs extends Pattern implements IFillerPatternShape {
     @Override
     @SideOnly(Side.CLIENT)
     public SpriteHolder getSprite() {
-        return BCCoreSprites.FILLER_STAIRS;
+        return BCBuildersSprites.FILLER_STAIRS;
     }
 
     @Override

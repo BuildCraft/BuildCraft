@@ -71,6 +71,7 @@ public class BCBuilders {
         BCBuildersRegistries.preInit();
         BCBuildersItems.preInit();
         BCBuildersBlocks.preInit();
+        BCBuildersStatements.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
         AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filler_planner"), AddonFillerPlanner.class);

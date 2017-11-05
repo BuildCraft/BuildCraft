@@ -28,7 +28,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterFacing implements IStatementParameter {
     DOWN(EnumFacing.DOWN),
@@ -74,7 +74,7 @@ public enum PatternParameterFacing implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public ISprite getSprite() {
-        return BCCoreSprites.PARAM_FACE.get(face);
+        return BCBuildersSprites.PARAM_FACE.get(face);
     }
 
     @Nonnull

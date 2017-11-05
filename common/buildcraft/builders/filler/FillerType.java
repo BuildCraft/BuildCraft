@@ -8,13 +8,13 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.StatementType;
 
-import buildcraft.core.BCCoreStatements;
+import buildcraft.builders.BCBuildersStatements;
 
 public class FillerType extends StatementType<IFillerPattern> {
     public static final FillerType INSTANCE = new FillerType();
 
     private FillerType() {
-        super(IFillerPattern.class, BCCoreStatements.PATTERN_NONE);
+        super(IFillerPattern.class, BCBuildersStatements.PATTERN_NONE);
     }
 
     @Override

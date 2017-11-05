@@ -9,7 +9,7 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public class PatternNone extends Pattern implements IFillerPatternShape {
     public PatternNone() {
@@ -19,7 +19,7 @@ public class PatternNone extends Pattern implements IFillerPatternShape {
     @Override
     @SideOnly(Side.CLIENT)
     public SpriteHolder getSprite() {
-        return BCCoreSprites.FILLER_NONE;
+        return BCBuildersSprites.FILLER_NONE;
     }
 
     @Override

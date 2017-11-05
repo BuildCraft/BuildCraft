@@ -22,11 +22,11 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.VecUtil;
-import buildcraft.builders.registry.FillerRegistry;
 
+import buildcraft.builders.BCBuildersStatements;
+import buildcraft.builders.registry.FillerRegistry;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Template;
-import buildcraft.core.BCCoreStatements;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
 import buildcraft.test.VanillaSetupBaseTester;
@@ -50,7 +50,7 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
     @BeforeClass
     public static void setupRegistries() {
         FillerManager.registry = FillerRegistry.INSTANCE;
-        patterns = Arrays.stream(BCCoreStatements.PATTERNS)
+        patterns = Arrays.stream(BCBuildersStatements.PATTERNS)
             .filter(IFillerPatternShape.class::isInstance)
             .map(IFillerPatternShape.class::cast)
             .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
 
             IFilledTemplate filledTemplate = createFilledTemplate(size);
             boolean b = pattern.fillTemplate(filledTemplate, params);
-            if (pattern == BCCoreStatements.PATTERN_NONE) {
+            if (pattern == BCBuildersStatements.PATTERN_NONE) {
                 Assert.assertFalse(b);
             } else {
                 Assert.assertTrue(b);
@@ -102,7 +102,7 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
             PatternParameterHollow.HOLLOW, //
         };
         IFilledTemplate filledTemplateFull = createFilledTemplate(fullSize);
-        Assert.assertTrue(BCCoreStatements.PATTERN_SPHERE.fillTemplate(filledTemplateFull, fullParams));
+        Assert.assertTrue(BCBuildersStatements.PATTERN_SPHERE.fillTemplate(filledTemplateFull, fullParams));
         System.out.println("Full:\n" + filledTemplateFull);
 
         // Test halfs
@@ -113,7 +113,7 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
                 PatternParameterFacing.get(face) //
             };
             IFilledTemplate filledTemplateHalf = createFilledTemplate(halfSize);
-            Assert.assertTrue(BCCoreStatements.PATTERN_HEMI_SPHERE.fillTemplate(filledTemplateHalf, params));
+            Assert.assertTrue(BCBuildersStatements.PATTERN_HEMI_SPHERE.fillTemplate(filledTemplateHalf, params));
             System.out.println("Half:\n" + filledTemplateHalf);
             int dx = face == EnumFacing.WEST ? filledTemplateHalf.getSize().getX() : 0;
             int dy = face == EnumFacing.DOWN ? filledTemplateHalf.getSize().getY() : 0;

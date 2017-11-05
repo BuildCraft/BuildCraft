@@ -23,7 +23,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterCenter implements IStatementParameter {
     NORTH_WEST(-1, -1),
@@ -69,7 +69,7 @@ public enum PatternParameterCenter implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public ISprite getSprite() {
-        return BCCoreSprites.PARAM_CENTER.get(this);
+        return BCBuildersSprites.PARAM_CENTER.get(this);
     }
 
     @Nonnull

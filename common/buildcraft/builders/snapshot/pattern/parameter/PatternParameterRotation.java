@@ -23,6 +23,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.core.BCCoreSprites;
 
 public enum PatternParameterRotation implements IStatementParameter {
@@ -58,7 +59,7 @@ public enum PatternParameterRotation implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public ISprite getSprite() {
-        return BCCoreSprites.PARAM_ROTATION[rotationCount];
+        return BCBuildersSprites.PARAM_ROTATION[rotationCount];
     }
 
     @Nonnull

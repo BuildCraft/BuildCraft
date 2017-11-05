@@ -16,11 +16,11 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.misc.VecUtil;
 
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
-import buildcraft.core.BCCoreSprites;
 
 public final class PatternSpherePart extends Pattern implements IFillerPatternShape {
     public enum SpherePartType {
@@ -72,7 +72,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
 
     @Override
     public ISprite getSprite() {
-        return BCCoreSprites.FILLER_SPHERE_PART.get(type);
+        return BCBuildersSprites.FILLER_SPHERE_PART.get(type);
     }
 
     @Override

@@ -24,7 +24,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterAxis implements IStatementParameter {
     X(Axis.X),
@@ -60,7 +60,7 @@ public enum PatternParameterAxis implements IStatementParameter {
 
     @Override
     public ISprite getSprite() {
-        return BCCoreSprites.PARAM_AXIS.get(axis);
+        return BCBuildersSprites.PARAM_AXIS.get(axis);
     }
 
     @Nonnull

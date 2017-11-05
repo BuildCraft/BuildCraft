@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.transport.statements;
+package buildcraft.transport;
 
 import java.util.Collection;
 
@@ -26,8 +26,9 @@ import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.TriggerPipeSignal;
 
-public enum TransportTriggerProvider implements ITriggerProvider {
+public enum BCTransportTriggerProvider implements ITriggerProvider {
     INSTANCE;
 
     @Override

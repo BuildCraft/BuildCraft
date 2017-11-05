@@ -2,7 +2,7 @@ package buildcraft.builders.snapshot.pattern;
 
 import buildcraft.api.core.render.ISprite;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public class PatternShape2dSquare extends PatternShape2d {
     public PatternShape2dSquare() {
@@ -21,7 +21,7 @@ public class PatternShape2dSquare extends PatternShape2d {
 
     @Override
     public ISprite getSprite() {
-        return BCCoreSprites.FILLER_2D_SQUARE;
+        return BCBuildersSprites.FILLER_2D_SQUARE;
     }
 
     @Override

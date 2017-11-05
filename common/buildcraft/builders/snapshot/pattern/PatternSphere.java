@@ -7,9 +7,9 @@ import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
 
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
-import buildcraft.core.BCCoreSprites;
 
 public class PatternSphere extends Pattern implements IFillerPatternShape {
     public PatternSphere() {
@@ -18,7 +18,7 @@ public class PatternSphere extends Pattern implements IFillerPatternShape {
 
     @Override
     public ISprite getSprite() {
-        return BCCoreSprites.FILLER_SPHERE;
+        return BCBuildersSprites.FILLER_SPHERE;
     }
 
     @Override

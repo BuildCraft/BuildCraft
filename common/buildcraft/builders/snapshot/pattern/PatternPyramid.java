@@ -13,9 +13,9 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterCenter;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
-import buildcraft.core.BCCoreSprites;
 
 public class PatternPyramid extends Pattern implements IFillerPatternShape {
     private static final Map<PatternParameterCenter, PyramidDir> PYRAMID_DIRS = new EnumMap<>(PatternParameterCenter.class);
@@ -44,7 +44,7 @@ public class PatternPyramid extends Pattern implements IFillerPatternShape {
 
     @Override
     public SpriteHolder getSprite() {
-        return BCCoreSprites.FILLER_PYRAMID;
+        return BCBuildersSprites.FILLER_PYRAMID;
     }
 
     @Override

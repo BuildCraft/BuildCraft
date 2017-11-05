@@ -4,10 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.core.statements;
+package buildcraft.core;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
@@ -19,14 +18,13 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionInternalSided;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.TilesAPI;
 
-import buildcraft.core.BCCoreStatements;
+import buildcraft.core.statements.ActionMachineControl;
 
-public enum CoreActionProvider implements IActionProvider {
+public enum BCCoreActionProvider implements IActionProvider {
     INSTANCE;
 
     @Override
@@ -40,7 +38,7 @@ public enum CoreActionProvider implements IActionProvider {
     public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull EnumFacing side) { }
 
     @Override
-    public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
+    public void addExternalActions(Collection<IActionExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
         IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
         if (controllable != null) {
             for (ActionMachineControl action : BCCoreStatements.ACTION_MACHINE_CONTROL) {
@@ -48,9 +46,6 @@ public enum CoreActionProvider implements IActionProvider {
                     res.add(action);
                 }
             }
-        }
-        if (tile instanceof IFillerStatementContainer) {
-            Collections.addAll(res, BCCoreStatements.PATTERNS);
         }
     }
 }

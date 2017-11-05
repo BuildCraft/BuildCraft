@@ -15,7 +15,7 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public class PatternBox extends Pattern implements IFillerPatternShape {
     public PatternBox() {
@@ -25,7 +25,7 @@ public class PatternBox extends Pattern implements IFillerPatternShape {
     @Override
     @SideOnly(Side.CLIENT)
     public SpriteHolder getSprite() {
-        return BCCoreSprites.FILLER_BOX;
+        return BCBuildersSprites.FILLER_BOX;
     }
 
     @Override

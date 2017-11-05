@@ -13,7 +13,7 @@ import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public class PatternFill extends Pattern implements IFillerPatternShape {
     public PatternFill() {
@@ -23,7 +23,7 @@ public class PatternFill extends Pattern implements IFillerPatternShape {
     @Override
     @SideOnly(Side.CLIENT)
     public SpriteHolder getSprite() {
-        return BCCoreSprites.FILLER_FILL;
+        return BCBuildersSprites.FILLER_FILL;
     }
 
     @Override

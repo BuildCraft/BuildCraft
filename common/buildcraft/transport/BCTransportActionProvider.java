@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.transport.statements;
+package buildcraft.transport;
 
 import java.util.Collection;
 
@@ -28,9 +28,10 @@ import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;
+import buildcraft.transport.statements.TriggerPipeSignal;
 import buildcraft.transport.wire.IWireEmitter;
 
-public enum TransportActionProvider implements IActionProvider {
+public enum BCTransportActionProvider implements IActionProvider {
     INSTANCE;
 
     @Override

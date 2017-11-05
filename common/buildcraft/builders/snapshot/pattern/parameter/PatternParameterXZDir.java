@@ -28,7 +28,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterXZDir implements IStatementParameter {
     WEST(EnumFacing.WEST),
@@ -91,7 +91,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public ISprite getSprite() {
-        return BCCoreSprites.PARAM_XZ_DIR.get(dir);
+        return BCBuildersSprites.PARAM_XZ_DIR.get(dir);
     }
 
     @Nonnull

@@ -12,7 +12,7 @@ import buildcraft.api.statements.containers.IFillerStatementContainer;
 
 import buildcraft.lib.misc.LocaleUtil;
 
-import buildcraft.core.BCCoreStatements;
+import buildcraft.builders.BCBuildersStatements;
 import buildcraft.core.statements.BCStatement;
 
 public abstract class Pattern extends BCStatement implements IFillerPattern, IActionExternal {
@@ -40,6 +40,6 @@ public abstract class Pattern extends BCStatement implements IFillerPattern, IAc
 
     @Override
     public IFillerPattern[] getPossible() {
-        return BCCoreStatements.PATTERNS;
+        return BCBuildersStatements.PATTERNS;
     }
 }

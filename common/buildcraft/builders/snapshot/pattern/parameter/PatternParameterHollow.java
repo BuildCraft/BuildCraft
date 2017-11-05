@@ -23,7 +23,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterHollow implements IStatementParameter {
     FILLED_INNER(true, false),
@@ -67,12 +67,12 @@ public enum PatternParameterHollow implements IStatementParameter {
     public ISprite getSprite() {
         if (filled) {
             if (outerFilled) {
-                return BCCoreSprites.PARAM_FILLED_OUTER;
+                return BCBuildersSprites.PARAM_FILLED_OUTER;
             } else {
-                return BCCoreSprites.PARAM_FILLED_INNER;
+                return BCBuildersSprites.PARAM_FILLED_INNER;
             }
         }
-        return BCCoreSprites.PARAM_HOLLOW;
+        return BCBuildersSprites.PARAM_HOLLOW;
     }
 
     @Nonnull

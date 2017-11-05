@@ -12,7 +12,7 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.statement.StatementContext;
 
-import buildcraft.core.BCCoreStatements;
+import buildcraft.builders.BCBuildersStatements;
 import buildcraft.builders.snapshot.pattern.PatternShape2d;
 
 public enum FillerStatementContext implements StatementContext<IFillerPattern> {
@@ -39,8 +39,8 @@ public enum FillerStatementContext implements StatementContext<IFillerPattern> {
         for (Group group : Group.values()) {
             group.patterns.sort(Comparator.comparing(IFillerPattern::getUniqueTag));
         }
-        if (Group.DEFAULT.patterns.remove(BCCoreStatements.PATTERN_NONE)) {
-            Group.DEFAULT.patterns.add(0, BCCoreStatements.PATTERN_NONE);
+        if (Group.DEFAULT.patterns.remove(BCBuildersStatements.PATTERN_NONE)) {
+            Group.DEFAULT.patterns.add(0, BCBuildersStatements.PATTERN_NONE);
         }
     }
 

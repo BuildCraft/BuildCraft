@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.core.statements;
+package buildcraft.core;
 
 import java.util.Collection;
 
@@ -27,9 +27,11 @@ import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.misc.CapUtil;
 
-import buildcraft.core.BCCoreStatements;
+import buildcraft.core.statements.IBlockDefaultTriggers;
+import buildcraft.core.statements.TriggerEnginePowerStage;
+import buildcraft.core.statements.TriggerPower;
 
-public enum CoreTriggerProvider implements ITriggerProvider {
+public enum BCCoreTriggerProvider implements ITriggerProvider {
     INSTANCE;
 
     @Override

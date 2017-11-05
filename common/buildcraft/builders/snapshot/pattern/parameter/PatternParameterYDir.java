@@ -23,7 +23,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.core.BCCoreSprites;
+import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterYDir implements IStatementParameter {
     UP(true),
@@ -89,6 +89,6 @@ public enum PatternParameterYDir implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public ISprite getSprite() {
-        return up ? BCCoreSprites.PARAM_STAIRS_UP : BCCoreSprites.PARAM_STAIRS_DOWN;
+        return up ? BCBuildersSprites.PARAM_STAIRS_UP : BCBuildersSprites.PARAM_STAIRS_DOWN;
     }
 }
