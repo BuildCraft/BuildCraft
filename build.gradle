@@ -81,7 +81,7 @@ minecraft {
         replace "\${git_commit_hash}" , System.getenv("GIT_COMMIT_HASH")
     }
     if (System.getenv("GIT_COMMIT_MSG") != null) {
-        replace "\${git_commit_msg}" , System.getenv("GIT_COMMIT_MSG")
+        replace "\${git_commit_msg}" , System.getenv("GIT_COMMIT_MSG").replace("\"", "\\\"")
     }
     if (System.getenv("GIT_COMMIT_AUTHOR") != null) {
         replace "\${git_commit_author}" , System.getenv("GIT_COMMIT_AUTHOR")
