@@ -9,7 +9,7 @@ package buildcraft.lib.client.render.laser;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class LaserCompiledBuffer {
@@ -26,7 +26,7 @@ public class LaserCompiledBuffer {
     }
 
     /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
-    public void render(VertexBuffer buffer) {
+    public void render(BufferBuilder buffer) {
         for (int i = 0; i < vertices; i++) {
             // POSITION_3F
             buffer.pos(da[DOUBLE_STRIDE * i + 0], da[DOUBLE_STRIDE * i + 1], da[DOUBLE_STRIDE * i + 2]);

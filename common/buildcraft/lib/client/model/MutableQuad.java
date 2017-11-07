@@ -12,7 +12,7 @@ import javax.vecmath.Tuple2f;
 import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -152,7 +152,7 @@ public class MutableQuad {
         return this;
     }
 
-    public void render(VertexBuffer vb) {
+    public void render(BufferBuilder vb) {
         vertex_0.render(vb);
         vertex_1.render(vb);
         vertex_2.render(vb);
@@ -293,7 +293,7 @@ public class MutableQuad {
 
     /** Sets the normal for all vertices to the specified {@link Vec3d}. */
     public MutableQuad normalvd(Vec3d vec) {
-        return normald(vec.xCoord, vec.yCoord, vec.zCoord);
+        return normald(vec.x, vec.y, vec.z);
     }
 
     /** Sets the normal for all vertices to the specified {@link VecDouble}, using
@@ -474,7 +474,7 @@ public class MutableQuad {
     }
 
     public MutableQuad translatevd(Vec3d vec) {
-        return translated(vec.xCoord, vec.yCoord, vec.zCoord);
+        return translated(vec.x, vec.y, vec.z);
     }
 
     public MutableQuad scalef(float scale) {

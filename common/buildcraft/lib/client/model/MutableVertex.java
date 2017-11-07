@@ -15,7 +15,7 @@ import javax.vecmath.Tuple3f;
 import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -155,7 +155,7 @@ public class MutableVertex {
 
     // Rendering
 
-    public void render(VertexBuffer vb) {
+    public void render(BufferBuilder vb) {
         VertexFormat vf = vb.getVertexFormat();
         if (vf == DefaultVertexFormats.BLOCK) {
             renderAsBlock(vb);
@@ -173,11 +173,11 @@ public class MutableVertex {
         }
     }
 
-    /** Renders this vertex into the given {@link VertexBuffer}, assuming that the {@link VertexFormat} is
+    /** Renders this vertex into the given {@link BufferBuilder}, assuming that the {@link VertexFormat} is
      * {@link DefaultVertexFormats#BLOCK}.
      * <p>
-     * Slight performance increase over {@link #render(VertexBuffer)}. */
-    public void renderAsBlock(VertexBuffer vb) {
+     * Slight performance increase over {@link #render(BufferBuilder)}. */
+    public void renderAsBlock(BufferBuilder vb) {
         renderPosition(vb);
         renderColour(vb);
         renderTex(vb);
@@ -185,27 +185,27 @@ public class MutableVertex {
         vb.endVertex();
     }
 
-    public void renderPosition(VertexBuffer vb) {
+    public void renderPosition(BufferBuilder vb) {
         vb.pos(position_x, position_y, position_z);
     }
 
-    public void renderNormal(VertexBuffer vb) {
+    public void renderNormal(BufferBuilder vb) {
         vb.normal(normal_x, normal_y, normal_z);
     }
 
-    public void renderColour(VertexBuffer vb) {
+    public void renderColour(BufferBuilder vb) {
         vb.color(colour_r, colour_g, colour_b, colour_a);
     }
 
-    public void renderTex(VertexBuffer vb) {
+    public void renderTex(BufferBuilder vb) {
         vb.tex(tex_u, tex_v);
     }
 
-    public void renderTex(VertexBuffer vb, ISprite sprite) {
+    public void renderTex(BufferBuilder vb, ISprite sprite) {
         vb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
     }
 
-    public void renderLightMap(VertexBuffer vb) {
+    public void renderLightMap(BufferBuilder vb) {
         vb.lightmap(light_sky << 4, light_block << 4);
     }
 
@@ -246,7 +246,6 @@ public class MutableVertex {
         return this;
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public MutableVertex normali(int combined) {
         normal_x = ((combined >> 0) & 0xFF) / 0x7f;
         normal_y = ((combined >> 8) & 0xFF) / 0x7f;
@@ -298,7 +297,6 @@ public class MutableVertex {
         return new Point4f(colour_r / 255f, colour_g / 255f, colour_b / 255f, colour_a / 255f);
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public int colourRGBA() {
         int rgba = 0;
         rgba |= (colour_r & 0xFF) << 0;
@@ -308,7 +306,6 @@ public class MutableVertex {
         return rgba;
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public int colourABGR() {
         int rgba = 0;
         rgba |= (colour_r & 0xFF) << 24;
@@ -435,7 +432,7 @@ public class MutableVertex {
     }
 
     public MutableVertex translatevd(Vec3d vec) {
-        return translated(vec.xCoord, vec.yCoord, vec.zCoord);
+        return translated(vec.x, vec.y, vec.z);
     }
 
     public MutableVertex scalef(float scale) {

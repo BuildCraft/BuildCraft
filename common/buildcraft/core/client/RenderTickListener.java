@@ -30,18 +30,16 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.client.render.laser.RenderLaserBox;
 import buildcraft.lib.debug.ClientDebuggables;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
@@ -54,7 +52,6 @@ import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemMarkerConnector;
 
-@SideOnly(Side.CLIENT)
 public class RenderTickListener {
     private static final Vec3d[][][] MAP_LOCATION_POINT = new Vec3d[6][][];
     private static final String DIFF_START, DIFF_HEADER_FORMATTING;
@@ -188,7 +185,7 @@ public class RenderTickListener {
             IBox box = ItemMapLocation.getAreaBox(stack);
             LAST_RENDERED_MAP_LOC.reset();
             LAST_RENDERED_MAP_LOC.initialize(box);
-            RenderLaserBox.renderStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, false);
+            LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, true);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
