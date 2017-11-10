@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2017, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -274,7 +274,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		BCLog.logger.info("Starting BuildCraft " + Version.getVersion());
-		BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2015");
+		BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
 		BCLog.logger.info("http://www.mod-buildcraft.com");
 
 		new BCCreativeTab("main");

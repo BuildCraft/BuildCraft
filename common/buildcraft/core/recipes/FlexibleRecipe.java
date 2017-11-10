@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2017, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -22,7 +22,9 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.recipes.IFlexibleRecipeIngredient;
 import buildcraft.api.recipes.IFlexibleRecipeViewable;
+
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
@@ -95,12 +97,19 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 		setContents(id, output, iEnergyCost, craftingTime, input);
 	}
 
-	public void setContents(String iid, Object ioutput, int iEnergyCost, long iCraftingTime, Object... input) {
+	public void setContents(String iid, Object iioutput, int iEnergyCost, long iCraftingTime, Object... input) {
 		id = iid;
 
-		if (ioutput == null) {
+		Object ioutput = null;
+		if (iioutput == null) {
 			throw new IllegalArgumentException("The output of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
-		} else if (ioutput instanceof ItemStack) {
+		} else if (iioutput instanceof IFlexibleRecipeIngredient) {
+			ioutput = ((IFlexibleRecipeIngredient) iioutput).getIngredient();
+		} else {
+			ioutput = iioutput;
+		}
+
+		if (ioutput instanceof ItemStack) {
 			output = (T) ioutput;
 		} else if (ioutput instanceof Item) {
 			output = (T) new ItemStack((Item) ioutput);
@@ -115,10 +124,17 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 		energyCost = iEnergyCost;
 		craftingTime = iCraftingTime;
 
-		for (Object i : input) {
-			if (i == null) {
+		for (Object ii : input) {
+			Object i = null;
+			if (ii == null) {
 				throw new IllegalArgumentException("An input of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
-			} else if (i instanceof ItemStack) {
+			} else if (ii instanceof IFlexibleRecipeIngredient) {
+				i = ((IFlexibleRecipeIngredient) ii).getIngredient();
+			} else {
+				i = ii;
+			}
+
+			if (i instanceof ItemStack) {
 				inputItems.add((ItemStack) i);
 			} else if (i instanceof Item) {
 				inputItems.add(new ItemStack((Item) i));

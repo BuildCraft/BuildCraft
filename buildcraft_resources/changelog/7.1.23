@@ -1,0 +1,4 @@
+Bugs fixed:
+
+* [#3839] Attempt to work around potential world corruption?
+* [#3837] Oil spawn in mid-air on superflat, f

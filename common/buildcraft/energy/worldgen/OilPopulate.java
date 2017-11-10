@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2017, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -130,6 +130,10 @@ public final class OilPopulate {
 
 			// Generate a spherical cave deposit
 			int wellY = 20 + rand.nextInt(10);
+
+			if (wellY > groundLevel) {
+				return;
+			}
 
 			int radius;
 			if (type == GenType.LARGE) {
