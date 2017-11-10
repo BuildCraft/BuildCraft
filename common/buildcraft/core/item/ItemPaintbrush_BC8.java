@@ -196,8 +196,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
                 ParticleUtil.showChangeColour(world, hitPos, colour);
                 SoundUtil.playChangeColour(world, pos, colour);
 
-                boolean isHolderCreative = player.isCreative();
-                if (!isHolderCreative) {
+                if (!player.isCreative()) {
                     usesLeft--;
                 }
 
