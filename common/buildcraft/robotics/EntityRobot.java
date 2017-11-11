@@ -104,10 +104,11 @@ public class EntityRobot extends EntityRobotBase implements
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation(
 			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
 	public static final int MAX_WEARABLES = 8;
+	public static final int TRANSFER_INV_SLOTS = 4;
 
 	private static Set<Integer> blacklistedItemsForUpdate = Sets.newHashSet();
 
-	public LaserData laser = new LaserData();
+    public LaserData laser = new LaserData();
 	public DockingStation linkedDockingStation;
 	public BlockIndex linkedDockingStationIndex;
 	public ForgeDirection linkedDockingStationSide;
@@ -131,7 +132,7 @@ public class EntityRobot extends EntityRobotBase implements
 	private List<ItemStack> wearables = new ArrayList<ItemStack>();
 
 	private boolean needsUpdate = false;
-	private ItemStack[] inv = new ItemStack[4];
+	private ItemStack[] inv = new ItemStack[TRANSFER_INV_SLOTS];
 	private FluidStack tank;
 	private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	private ResourceLocation texture;

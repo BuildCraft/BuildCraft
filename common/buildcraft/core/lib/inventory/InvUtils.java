@@ -8,6 +8,8 @@
  */
 package buildcraft.core.lib.inventory;
 
+import java.util.Iterator;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
@@ -237,5 +239,56 @@ public final class InvUtils {
 		}
 
 		return null;
+	}
+
+	public static Iterable<IInvSlot> getItems(final IInventory inv, final IStackFilter filter) {
+		return new Iterable<IInvSlot>() {
+			@Override
+			public Iterator<IInvSlot> iterator() {
+				return new Iterator<IInvSlot>() {
+					private final Iterator<IInvSlot> parent = InventoryIterator.getIterable(inv).iterator();
+					private boolean searched = false;
+					private IInvSlot next;
+
+					private void find() {
+						next = null;
+						searched = true;
+
+						while (parent.hasNext()) {
+							IInvSlot s = parent.next();
+							if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot())) {
+								next = s;
+								return;
+							}
+						}
+					}
+
+					@Override
+					public boolean hasNext() {
+						if (!searched) {
+							find();
+						}
+
+						return next != null;
+					}
+
+					@Override
+					public IInvSlot next() {
+						if (!searched) {
+							find();
+						}
+
+						IInvSlot current = next;
+						find();
+						return current;
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException("Remove not supported.");
+					}
+				};
+			}
+		};
 	}
 }

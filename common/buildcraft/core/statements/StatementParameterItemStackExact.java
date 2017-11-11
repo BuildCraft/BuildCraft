@@ -11,8 +11,16 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 public class StatementParameterItemStackExact implements IStatementParameter {
-
 	protected ItemStack stack;
+	private int availableSlots;
+
+	public StatementParameterItemStackExact() {
+		this(-1);
+	}
+
+	public StatementParameterItemStackExact(int availableSlots) {
+		this.availableSlots = availableSlots;
+	}
 
 	@Override
 	public IIcon getIcon() {
@@ -30,8 +38,10 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 			if (areItemsEqual(this.stack, stack)) {
 				if (mouse.getButton() == 0) {
 					this.stack.stackSize += (mouse.isShift()) ? 16 : 1;
-					if (this.stack.stackSize > this.stack.getMaxStackSize()) {
-						this.stack.stackSize = this.stack.getMaxStackSize();
+
+					int maxSize = availableSlots < 0 ? 64 : Math.min(64, this.stack.getMaxStackSize() * availableSlots);
+					if (this.stack.stackSize > maxSize) {
+						this.stack.stackSize = maxSize;
 					}
 				} else {
 					this.stack.stackSize -= (mouse.isShift()) ? 16 : 1;
@@ -46,8 +56,10 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 			if (this.stack != null) {
 				if (mouse.getButton() == 0) {
 					this.stack.stackSize += (mouse.isShift()) ? 16 : 1;
-					if (this.stack.stackSize > this.stack.getMaxStackSize()) {
-						this.stack.stackSize = this.stack.getMaxStackSize();
+
+					int maxSize = availableSlots < 0 ? 64 : Math.min(64, this.stack.getMaxStackSize() * availableSlots);
+					if (this.stack.stackSize > maxSize) {
+						this.stack.stackSize = maxSize;
 					}
 				} else {
 					this.stack.stackSize -= (mouse.isShift()) ? 16 : 1;
@@ -66,10 +78,15 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 			stack.writeToNBT(tagCompound);
 			compound.setTag("stack", tagCompound);
 		}
+
+		compound.setInteger("availableSlots", availableSlots);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		if (compound.hasKey("availableSlots")) {
+			availableSlots = compound.getInteger("availableSlots");
+		}
 		stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
 	}
 
