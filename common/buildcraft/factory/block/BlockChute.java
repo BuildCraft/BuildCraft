@@ -13,7 +13,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +23,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.BCFactoryGuis;
 import buildcraft.factory.tile.TileChute;
@@ -36,12 +36,13 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TileChute();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             BCFactoryGuis.CHUTE.openGUI(player, pos);
         }
@@ -67,7 +68,8 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         for (EnumFacing side : EnumFacing.VALUES) {
-            state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty()) && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
+            state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty())
+                && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
         }
         return state;
     }
@@ -75,7 +77,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     // IBlockWithFacing
 
     @Override
-    public boolean canPlacedVertical() {
+    public boolean canFaceVertically() {
         return true;
     }
 }

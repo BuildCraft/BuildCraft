@@ -8,15 +8,18 @@ package buildcraft.lib.client.render.tile;
 
 import javax.vecmath.Point3f;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.MutableVertex;
 
 /** A variable sized element (like LED) that can render somewhere in a TESR. Passing a resolver instance will let you
  * modify the location, colour, lightmap, and size of the single element. This does not allow for different textures. */
+@SideOnly(Side.CLIENT)
 public class RenderPartCube {
     /** The centre of this element. */
     public final MutableVertex center = new MutableVertex();
@@ -39,7 +42,7 @@ public class RenderPartCube {
 
     /** Renders an element, without changing the vertex. However this does ignore the "normal" and "texture" components
      * of the vertex. */
-    public void render(VertexBuffer vb) {
+    public void render(BufferBuilder bb) {
         Point3f pos = center.positionvf();
         double x = pos.x;
         double y = pos.y;
@@ -49,38 +52,38 @@ public class RenderPartCube {
         double rY = sizeY / 2;
         double rZ = sizeZ / 2;
 
-        vertex(vb, center, x - rX, y + rY, z + rZ);
-        vertex(vb, center, x + rX, y + rY, z + rZ);
-        vertex(vb, center, x + rX, y + rY, z - rZ);
-        vertex(vb, center, x - rX, y + rY, z - rZ);
+        vertex(bb, center, x - rX, y + rY, z + rZ);
+        vertex(bb, center, x + rX, y + rY, z + rZ);
+        vertex(bb, center, x + rX, y + rY, z - rZ);
+        vertex(bb, center, x - rX, y + rY, z - rZ);
 
-        vertex(vb, center, x - rX, y - rY, z - rZ);
-        vertex(vb, center, x + rX, y - rY, z - rZ);
-        vertex(vb, center, x + rX, y - rY, z + rZ);
-        vertex(vb, center, x - rX, y - rY, z + rZ);
+        vertex(bb, center, x - rX, y - rY, z - rZ);
+        vertex(bb, center, x + rX, y - rY, z - rZ);
+        vertex(bb, center, x + rX, y - rY, z + rZ);
+        vertex(bb, center, x - rX, y - rY, z + rZ);
 
-        vertex(vb, center, x - rX, y - rY, z + rZ);
-        vertex(vb, center, x - rX, y + rY, z + rZ);
-        vertex(vb, center, x - rX, y + rY, z - rZ);
-        vertex(vb, center, x - rX, y - rY, z - rZ);
+        vertex(bb, center, x - rX, y - rY, z + rZ);
+        vertex(bb, center, x - rX, y + rY, z + rZ);
+        vertex(bb, center, x - rX, y + rY, z - rZ);
+        vertex(bb, center, x - rX, y - rY, z - rZ);
 
-        vertex(vb, center, x + rX, y - rY, z - rZ);
-        vertex(vb, center, x + rX, y + rY, z - rZ);
-        vertex(vb, center, x + rX, y + rY, z + rZ);
-        vertex(vb, center, x + rX, y - rY, z + rZ);
+        vertex(bb, center, x + rX, y - rY, z - rZ);
+        vertex(bb, center, x + rX, y + rY, z - rZ);
+        vertex(bb, center, x + rX, y + rY, z + rZ);
+        vertex(bb, center, x + rX, y - rY, z + rZ);
 
-        vertex(vb, center, x - rX, y - rY, z - rZ);
-        vertex(vb, center, x - rX, y + rY, z - rZ);
-        vertex(vb, center, x + rX, y + rY, z - rZ);
-        vertex(vb, center, x + rX, y - rY, z - rZ);
+        vertex(bb, center, x - rX, y - rY, z - rZ);
+        vertex(bb, center, x - rX, y + rY, z - rZ);
+        vertex(bb, center, x + rX, y + rY, z - rZ);
+        vertex(bb, center, x + rX, y - rY, z - rZ);
 
-        vertex(vb, center, x + rX, y - rY, z + rZ);
-        vertex(vb, center, x + rX, y + rY, z + rZ);
-        vertex(vb, center, x - rX, y + rY, z + rZ);
-        vertex(vb, center, x - rX, y - rY, z + rZ);
+        vertex(bb, center, x + rX, y - rY, z + rZ);
+        vertex(bb, center, x + rX, y + rY, z + rZ);
+        vertex(bb, center, x - rX, y + rY, z + rZ);
+        vertex(bb, center, x - rX, y - rY, z + rZ);
     }
 
-    private static void vertex(VertexBuffer vb, MutableVertex center, double x, double y, double z) {
+    private static void vertex(BufferBuilder vb, MutableVertex center, double x, double y, double z) {
         // Using DefaultVertexFormats.BLOCK
         // -- POSITION_3F // pos
         // -- COLOR_4UB // colour

@@ -1,0 +1,49 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "bmb",
+    "ycy",
+    "dsd"
+  ],
+  "key": {
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    "m": {
+      "item": "buildcraftcore:marker_volume"
+    },
+    "y": {
+      "type": "forge:ore_dict",
+      "ore": "dyeYellow"
+    },
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "gearDiamond"
+    },
+    "s": {
+      "item": "buildcraftbuilders:snapshot",
+      "data": 2
+    }
+  },
+  "result": {
+    "item": "buildcraftbuilders:architect"
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:architect"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftbuilders:snapshot"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftcore:marker_volume"
+    }
+  ]
+}

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.world;
 
 import net.minecraft.block.state.IBlockState;
@@ -52,7 +58,7 @@ public class SingleBlockAccess implements IBlockAccess {
 
     @Override
     public WorldType getWorldType() {
-        return WorldType.DEBUG_WORLD;
+        return WorldType.DEBUG_ALL_BLOCK_STATES;
     }
 
     @Override

@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.recipes.AssemblyRecipe;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -21,6 +19,7 @@ import buildcraft.lib.gui.pos.PositionAbsolute;
 
 import buildcraft.silicon.EnumAssemblyRecipeState;
 import buildcraft.silicon.container.ContainerAssemblyTable;
+import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.transport.gui.LedgerTablePower;
 
 public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
@@ -93,11 +92,11 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (mouseButton == 0) {
             for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-                AssemblyRecipe recipe = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
+                TileAssemblyTable.AssemblyInstruction instruction = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
                 EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
                 if (getArea(i).contains(mouseX, mouseY)) {
                     container.tile.sendRecipeStateToServer(
-                            recipe,
+                            instruction,
                             state == EnumAssemblyRecipeState.POSSIBLE
                                     ? EnumAssemblyRecipeState.SAVED
                                     : EnumAssemblyRecipeState.POSSIBLE

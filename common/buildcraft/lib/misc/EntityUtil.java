@@ -37,7 +37,7 @@ public class EntityUtil {
         for (EntityItem ent : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
             if (!ent.isDead) {
                 ent.isDead = true;
-                stacks.add(ent.getEntityItem());
+                stacks.add(ent.getItem());
             }
         }
         return stacks;
@@ -48,7 +48,7 @@ public class EntityUtil {
     }
 
     public static void setVec(Entity entity, Vec3d vec) {
-        entity.setPosition(vec.xCoord, vec.yCoord, vec.zCoord);
+        entity.setPosition(vec.x, vec.y, vec.z);
     }
 
     public static EnumHand getWrenchHand(EntityLivingBase entity) {

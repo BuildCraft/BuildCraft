@@ -1,0 +1,21 @@
+[
+  {
+    "name": "dustRedstone",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "dustRedstone"
+      }
+    ]
+  },
+
+  {
+    "name": "gearDiamond",
+    "ingredient": [
+      {
+        "type": "forge:ore_dict",
+        "ore": "gearDiamond"
+      }
+    ]
+  }
+]

@@ -16,17 +16,15 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -36,11 +34,13 @@ import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.core.IEngineType;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
+import buildcraft.lib.tile.TileBC_Neptune;
 
-public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> extends BlockBCTile_Neptune implements ICustomRotationHandler {
-    private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
+public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> extends BlockBCTile_Neptune
+    implements ICustomRotationHandler {
+    private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors =
+        new EnumMap<>(getEngineProperty().getValueClass());
 
     public BlockEngineBase_BC8(Material material, String id) {
         super(material, id);
@@ -49,7 +49,8 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // Engine directly related methods
 
     public void registerEngine(E type, Supplier<? extends TileEngineBase_BC8> constructor) {
-        if (RegistryHelper.isEnabled("engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT), getUnlocalizedName(type))) {
+        if (RegistryConfig.isEnabled("engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT),
+            getUnlocalizedName(type))) {
             engineTileConstructors.put(type, constructor);
         }
     }
@@ -106,6 +107,20 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase_BC8) {
+            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
+            if (side == engine.currentDirection.getOpposite()) {
+                return BlockFaceShape.SOLID;
+            } else {
+                return BlockFaceShape.UNDEFINED;
+            }
+        }
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
@@ -121,8 +136,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        IBlockState state = getStateFromMeta(meta);
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         E engineType = state.getValue(getEngineProperty());
         Supplier<? extends TileEngineBase_BC8> constructor = engineTileConstructors.get(engineType);
         if (constructor == null) {
@@ -134,25 +148,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
         for (E engine : getEngineProperty().getAllowedValues()) {
             if (engineTileConstructors.containsKey(engine)) {
-                list.add(new ItemStack(item, 1, engine.ordinal()));
+                list.add(new ItemStack(this, 1, engine.ordinal()));
             }
         }
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (EntityUtil.getWrenchHand(player) != null && !player.isSneaking()) {
-            return false;
-        }
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEngineBase_BC8) {
-            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
-            return engine.onActivated(player, hand, side, hitX, hitY, hitZ);
-        }
-        return false;
     }
 
     @Override

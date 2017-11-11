@@ -6,14 +6,17 @@ package buildcraft.energy;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCEnergyItems {
-    public static ItemBC_Neptune globOfOil;
+
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
+    public static ItemBC_Neptune globOil;
 
     public static void preInit() {
         if (BCLib.DEV) {
-            globOfOil = ItemManager.register(new ItemBC_Neptune("item.glob.oil"));
+            globOil = HELPER.addItem(new ItemBC_Neptune("item.glob.oil"));
         }
     }
 }

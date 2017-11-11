@@ -6,9 +6,7 @@ package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
 
-import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.builders.block.BlockArchitectTable;
 import buildcraft.builders.block.BlockBuilder;
@@ -25,33 +23,35 @@ import buildcraft.builders.tile.TileQuarry;
 import buildcraft.builders.tile.TileReplacer;
 
 public class BCBuildersBlocks {
-    public static BlockArchitectTable architect;
-    public static BlockBuilder builder;
+
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
     public static BlockFiller filler;
+    public static BlockBuilder builder;
+    public static BlockArchitectTable architect;
     public static BlockElectronicLibrary library;
     public static BlockReplacer replacer;
 
     public static BlockFrame frame;
     public static BlockQuarry quarry;
 
-    public static void preInit() {
-        architect = BlockBCBase_Neptune.register(new BlockArchitectTable(Material.IRON, "block.architect"));
-        builder = BlockBCBase_Neptune.register(new BlockBuilder(Material.IRON, "block.builder"));
-        filler = BlockBCBase_Neptune.register(new BlockFiller(Material.IRON, "block.filler"));
-        library = BlockBCBase_Neptune.register(new BlockElectronicLibrary(Material.IRON, "block.library"));
-        if (BCLib.DEV) {
-            replacer = BlockBCBase_Neptune.register(new BlockReplacer(Material.IRON, "block.replacer"));
-        }
-        frame = BlockBCBase_Neptune.register(new BlockFrame(Material.ROCK, "block.frame"));
-        quarry = BlockBCBase_Neptune.register(new BlockQuarry(Material.ROCK, "block.quarry"));
+    public static void fmlPreInit() {
+        filler = HELPER.addBlockAndItem(new BlockFiller(Material.IRON, "block.filler"));
+        builder = HELPER.addBlockAndItem(new BlockBuilder(Material.IRON, "block.builder"));
+        architect = HELPER.addBlockAndItem(new BlockArchitectTable(Material.IRON, "block.architect"));
+        library = HELPER.addBlockAndItem(new BlockElectronicLibrary(Material.IRON, "block.library"));
+        replacer = HELPER.addBlockAndItem(new BlockReplacer(Material.IRON, "block.replacer"));
 
-        TileBC_Neptune.registerTile(TileArchitectTable.class, "tile.architect");
-        TileBC_Neptune.registerTile(TileBuilder.class, "tile.builder");
-        TileBC_Neptune.registerTile(TileFiller.class, "tile.filler");
-        TileBC_Neptune.registerTile(TileElectronicLibrary.class, "tile.library");
-        if (BCLib.DEV) {
-            TileBC_Neptune.registerTile(TileReplacer.class, "tile.replacer");
-        }
-        TileBC_Neptune.registerTile(TileQuarry.class, "tile.quarry");
+        frame = HELPER.addBlockAndItem(new BlockFrame(Material.IRON, "block.frame"));
+        quarry = HELPER.addBlockAndItem(new BlockQuarry(Material.IRON, "block.quarry"));
+    }
+
+    public static void fmlInit() {
+        HELPER.registerTile(TileFiller.class, "tile.filler");
+        HELPER.registerTile(TileBuilder.class, "tile.builder");
+        HELPER.registerTile(TileArchitectTable.class, "tile.architect");
+        HELPER.registerTile(TileElectronicLibrary.class, "tile.library");
+        HELPER.registerTile(TileReplacer.class, "tile.replacer");
+        HELPER.registerTile(TileQuarry.class, "tile.quarry");
     }
 }

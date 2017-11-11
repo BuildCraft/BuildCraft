@@ -23,7 +23,7 @@ import buildcraft.lib.BCLib;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -48,14 +48,16 @@ public class BCTransport {
     @Mod.Instance(MODID)
     public static BCTransport INSTANCE = null;
 
+    private static CreativeTabBC tabPipes;
+    private static CreativeTabBC tabPlugs;
     private static CreativeTabBC tabFacades;
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+        RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        CreativeTabBC tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
-        CreativeTabBC tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
+        tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
+        tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
         tabFacades = CreativeTabManager.createTab("buildcraft.facades");
 
         BCTransportRegistries.preInit();
@@ -86,7 +88,7 @@ public class BCTransport {
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
         BCTransportRegistries.init();
-        BCTransportRecipes.init();
+        FacadeStateManager.init();
     }
 
     @Mod.EventHandler
@@ -99,7 +101,6 @@ public class BCTransport {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlPostInit();
-        FacadeStateManager.postInit();
         if (BCTransportItems.plugFacade != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FacadeInstance inst = FacadeInstance.createSingle(state, false);

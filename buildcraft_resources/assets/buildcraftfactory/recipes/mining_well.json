@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "buildcraftfactory:mining_well"
+  },
+  "pattern": [
+    "iri",
+    "igi",
+    "ipi"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "p": {
+      "item": "minecraft:iron_pickaxe"
+    },
+    "r": {
+      "item": "#dustRedstone"
+    },
+    "g": {
+      "item": "#gearIron"
+    },
+    "i": {
+      "item": "#ingotIron"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:mining_well"
+    }
+  ]
+}

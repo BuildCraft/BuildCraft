@@ -13,6 +13,9 @@ import javax.vecmath.Vector4f;
 
 import net.minecraft.util.math.Vec3d;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.lib.client.model.MutableQuad;
 
 public class LaserContext {
@@ -30,9 +33,9 @@ public class LaserContext {
         this.drawBothSides = isCullEnabled;
         this.minBlockLight = data.minBlockLight;
         Vec3d delta = data.start.subtract(data.end);
-        double dx = delta.xCoord;
-        double dy = delta.yCoord;
-        double dz = delta.zCoord;
+        double dx = delta.x;
+        double dy = delta.y;
+        double dz = delta.z;
 
         final double angleY, angleZ;
 
@@ -65,9 +68,9 @@ public class LaserContext {
 
         // // Step 4
         Vector3f translation = new Vector3f();
-        translation.x = (float) data.start.xCoord;
-        translation.y = (float) data.start.yCoord;
-        translation.z = (float) data.start.zCoord;
+        translation.x = (float) data.start.x;
+        translation.y = (float) data.start.y;
+        translation.z = (float) data.start.z;
         holding.setTranslation(translation);
         matrix.mul(holding);
         holding.setIdentity();
@@ -90,6 +93,7 @@ public class LaserContext {
         holding.setIdentity();
     }
 
+    @SideOnly(Side.CLIENT)
     public void setFaceNormal(double nx, double ny, double nz) {
         if (useNormalColour) {
             normal.x = (float) nx;
@@ -114,6 +118,7 @@ public class LaserContext {
     private final float[] n = { 0, 1, 0 };
     private float diffuse;
 
+    @SideOnly(Side.CLIENT)
     public void addPoint(double xIn, double yIn, double zIn, double uIn, double vIn) {
         point.x = (float) xIn;
         point.y = (float) yIn;

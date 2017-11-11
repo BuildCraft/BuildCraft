@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartItem;
@@ -37,15 +38,15 @@ public class GuideCrafting extends GuidePartItem {
     private final ChangingItemStack[][] input;
     private final ChangingItemStack output;
 
-    GuideCrafting(GuiGuide gui, NonNullMatrix<ItemStack> input, @Nonnull ItemStack output) {
+    GuideCrafting(GuiGuide gui, NonNullMatrix<Ingredient> input, @Nonnull ItemStack output) {
         super(gui);
         this.input = new ChangingItemStack[input.getWidth()][input.getHeight()];
         for (int x = 0; x < input.getWidth(); x++) {
             for (int y = 0; y < input.getHeight(); y++) {
-                this.input[x][y] = ChangingItemStack.create(input.get(x, y));
+                this.input[x][y] = new ChangingItemStack(input.get(x, y));
             }
         }
-        this.output = ChangingItemStack.create(output);
+        this.output = new ChangingItemStack(output);
     }
 
     GuideCrafting(GuiGuide gui, ChangingItemStack[][] input, ChangingItemStack output) {

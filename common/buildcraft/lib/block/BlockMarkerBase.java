@@ -77,7 +77,7 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileMarker) {
             TileMarker<?> marker = (TileMarker<?>) tile;
             state = state.withProperty(BuildCraftProperties.ACTIVE, marker.isActiveForRender());

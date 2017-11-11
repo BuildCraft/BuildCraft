@@ -41,8 +41,9 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 
-/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper functions. Can
- * optionally specify a filter to only allow a limited types of fluids in the tank. */
+/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper functions.
+ * 
+ * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
 public class Tank extends FluidTank implements IFluidHandlerAdv {
     public static final String DEFAULT_HELP_KEY = "buildcraft.help.tank.generic";
 
@@ -251,7 +252,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     /** Attempts to transfer the given stack to this tank.
-     * 
+     *
      * @return The left over item after attempting to add the stack to this tank. */
     public ItemStack transferStackToTank(ContainerBC_Neptune container, ItemStack stack) {
         EntityPlayer player = container.player;

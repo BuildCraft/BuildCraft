@@ -8,17 +8,21 @@ package buildcraft.lib.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.pos.IGuiArea;
 
+@SideOnly(Side.CLIENT)
 public class GuiIcon implements ISimpleDrawable {
     public final ISprite sprite;
     public final int textureSize;
@@ -147,7 +151,7 @@ public class GuiIcon implements ISimpleDrawable {
         double vMax = sprite.getInterpV(displayHeight / height);
 
         Tessellator tess = Tessellator.getInstance();
-        VertexBuffer vb = tess.getBuffer();
+        BufferBuilder vb = tess.getBuffer();
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         vertex(vb, xMin, yMax, uMin, vMax);
@@ -176,7 +180,7 @@ public class GuiIcon implements ISimpleDrawable {
         double vMax = sprite.getInterpV(1);
 
         Tessellator tess = Tessellator.getInstance();
-        VertexBuffer vb = tess.getBuffer();
+        BufferBuilder vb = tess.getBuffer();
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         vertex(vb, xMin, yMax, uMin, vMax);
@@ -187,7 +191,7 @@ public class GuiIcon implements ISimpleDrawable {
         tess.draw();
     }
 
-    private static void vertex(VertexBuffer vb, double x, double y, double u, double v) {
+    private static void vertex(BufferBuilder vb, double x, double y, double u, double v) {
         vb.pos(x, y, 0);
         vb.tex(u, v);
         vb.endVertex();

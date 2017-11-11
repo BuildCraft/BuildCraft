@@ -73,6 +73,8 @@ public class GuiGate extends GuiJson<ContainerGate> {
             String aName = "gate.action/" + i;
             properties.put(tName, gate.statements[i].trigger);
             properties.put(aName, gate.statements[i].action);
+            properties.put(tName, container.possibleTriggersContext);
+            properties.put(aName, container.possibleActionsContext);
         }
 
         for (int c = 0; c < gate.connections.length; c++) {

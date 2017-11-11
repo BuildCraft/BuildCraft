@@ -6,9 +6,7 @@ package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
 
-import buildcraft.lib.BCLib;
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.factory.block.BlockAutoWorkbenchItems;
 import buildcraft.factory.block.BlockChute;
@@ -31,6 +29,9 @@ import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
 
 public class BCFactoryBlocks {
+
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
     public static BlockMiningWell miningWell;
     public static BlockPump pump;
@@ -39,37 +40,32 @@ public class BCFactoryBlocks {
     public static BlockTank tank;
     public static BlockChute chute;
     public static BlockDistiller distiller;
-    public static BlockHeatExchange heatExchangeStart, heatExchangeMiddle, heatExchangeEnd;
+    public static BlockHeatExchange heatExchange;
 
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
     // public static BlockPlastic plastic;
     public static BlockWaterGel waterGel;
 
-    public static void preInit() {
-        // plastic = BlockBuildCraftBase_BC8.register(new BlockPlastic("block.plastic"), ItemPlastic::new);
-        autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
-        pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
-        tube = BlockBCBase_Neptune.register(new BlockTube(Material.IRON, "block.tube"), null);
-        floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
-        tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
-        chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
-        distiller = BlockBCBase_Neptune.register(new BlockDistiller(Material.IRON, "block.distiller"));
-        heatExchangeStart = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.start", BlockHeatExchange.Part.START));
-        heatExchangeMiddle = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.middle", BlockHeatExchange.Part.MIDDLE));
-        heatExchangeEnd = BlockBCBase_Neptune.register(new BlockHeatExchange(Material.IRON, "block.heat_exchange.end", BlockHeatExchange.Part.END));
-        if (BCLib.DEV) {
-            waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
-        }
+    public static void fmlPreInit() {
+        autoWorkbenchItems = HELPER.addBlockAndItem(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
+        miningWell = HELPER.addBlockAndItem(new BlockMiningWell(Material.IRON, "block.mining_well"));
+        pump = HELPER.addBlockAndItem(new BlockPump(Material.IRON, "block.pump"));
+        tube = HELPER.addBlock(new BlockTube(Material.IRON, "block.tube"));
+        floodGate = HELPER.addBlockAndItem(new BlockFloodGate(Material.IRON, "block.flood_gate"));
+        tank = HELPER.addBlockAndItem(new BlockTank(Material.IRON, "block.tank"));
+        chute = HELPER.addBlockAndItem(new BlockChute(Material.IRON, "block.chute"));
+        distiller = HELPER.addBlockAndItem(new BlockDistiller(Material.IRON, "block.distiller"));
+        heatExchange = HELPER.addBlockAndItem(new BlockHeatExchange(Material.IRON, "block.heat_exchange"));
+        waterGel = HELPER.addBlock(new BlockWaterGel(Material.CLAY, "block.water_gel"));
 
-        TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
-        TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
-        TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
-        TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
-        TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
-        TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
-        TileBC_Neptune.registerTile(TileDistiller_BC8.class, "tile.distiller");
-        TileBC_Neptune.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
-        TileBC_Neptune.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
+        HELPER.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
+        HELPER.registerTile(TileMiningWell.class, "tile.mining_well");
+        HELPER.registerTile(TilePump.class, "tile.pump");
+        HELPER.registerTile(TileFloodGate.class, "tile.flood_gate");
+        HELPER.registerTile(TileTank.class, "tile.tank");
+        HELPER.registerTile(TileChute.class, "tile.chute");
+        HELPER.registerTile(TileDistiller_BC8.class, "tile.distiller");
+        HELPER.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
+        HELPER.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
     }
 }

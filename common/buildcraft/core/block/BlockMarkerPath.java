@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockMarkerBase;
 import buildcraft.lib.misc.PermissionUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.tile.TileMarkerPath;
 
@@ -24,7 +25,7 @@ public class BlockMarkerPath extends BlockMarkerBase {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
         return new TileMarkerPath();
     }
 

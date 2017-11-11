@@ -1,0 +1,34 @@
+{
+  "result": {
+    "item": "buildcraftsilicon:advanced_crafting_table"
+  },
+  "pattern": [
+    "OtO",
+    "OcO",
+    "OrO"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "buildcraftsilicon:redstone_chipset",
+      "data": 0
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "chestWood"
+    },
+    "t": {
+      "type": "forge:ore_dict",
+      "ore": "craftingTableWood"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftsilicon:advanced_crafting_table"
+    }
+  ]
+}

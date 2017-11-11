@@ -18,8 +18,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 /** Dispatches "detached renderer elements" - rendering that does not require a specific tile or entity in the world
  * (perhaps held item HUD elements) */
+@SideOnly(Side.CLIENT)
 public enum DetachedRenderer {
     INSTANCE;
 
@@ -96,7 +100,7 @@ public enum DetachedRenderer {
         Vec3d diff = new Vec3d(0, 0, 0);
         diff = diff.subtract(player.getPositionEyes(partialTicks));
         diff = diff.addVector(0, player.getEyeHeight(), 0);
-        GL11.glTranslated(diff.xCoord, diff.yCoord, diff.zCoord);
+        GL11.glTranslated(diff.x, diff.y, diff.z);
     }
 
     public static void fromWorldOriginPost() {

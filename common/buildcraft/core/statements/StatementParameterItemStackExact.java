@@ -10,7 +10,6 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

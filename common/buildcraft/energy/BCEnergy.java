@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.MigrationManager;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -32,6 +32,7 @@ import buildcraft.core.BCCore;
 //@formatter:on
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
+
     static {
         FluidRegistry.enableUniversalBucket();
     }
@@ -41,13 +42,12 @@ public class BCEnergy {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+        RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
         BCEnergyConfig.preInit();
-        BCEnergyItems.preInit();
+        BCEnergyEntities.preInit();
         BCEnergyFluids.preInit();
         BCEnergyBlocks.preInit();
-        BCEnergyEntities.preInit();
-        BCEnergyWorldGen.preInit();
+        BCEnergyItems.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
 
@@ -57,6 +57,7 @@ public class BCEnergy {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCEnergyRecipes.init();
+        BCEnergyWorldGen.init();
         BCEnergyProxy.getProxy().fmlInit();
     }
 
@@ -77,7 +78,7 @@ public class BCEnergy {
     static {
         startBatch();
         // Items
-        registerTag("item.glob.oil").reg("glob_oil").locale("globOil").model("glob_oil");
+        registerTag("item.glob.oil").reg("glob_of_oil").oldReg("glob_oil").locale("globOil").model("glob_oil");
 
         // Item Blocks
 

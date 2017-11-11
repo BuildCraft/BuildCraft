@@ -20,12 +20,12 @@ import buildcraft.lib.misc.RotationUtil;
 /** Marker interface used by {@link BlockBCBase_Neptune} to automatically add an {@link EnumFacing} property to blocks,
  * and go to and from meta. */
 public interface IBlockWithFacing extends ICustomRotationHandler {
-    default boolean canPlacedVertical() {
+    default boolean canFaceVertically() {
         return false;
     }
 
     default IProperty<EnumFacing> getFacingProperty() {
-        return this.canPlacedVertical() ? BlockBCBase_Neptune.BLOCK_FACING_6 : BlockBCBase_Neptune.PROP_FACING;
+        return canFaceVertically() ? BlockBCBase_Neptune.BLOCK_FACING_6 : BlockBCBase_Neptune.PROP_FACING;
     }
 
     default boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
@@ -38,7 +38,7 @@ public interface IBlockWithFacing extends ICustomRotationHandler {
             return EnumActionResult.FAIL;
         }
         EnumFacing currentFacing = state.getValue(getFacingProperty());
-        EnumFacing newFacing = canPlacedVertical() ? RotationUtil.rotateAll(currentFacing) : currentFacing.rotateY();
+        EnumFacing newFacing = canFaceVertically() ? RotationUtil.rotateAll(currentFacing) : currentFacing.rotateY();
         world.setBlockState(pos, state.withProperty(getFacingProperty(), newFacing));
         return EnumActionResult.SUCCESS;
     }

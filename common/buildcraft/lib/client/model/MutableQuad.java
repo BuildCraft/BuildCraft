@@ -152,11 +152,11 @@ public class MutableQuad {
         return this;
     }
 
-    public void render(BufferBuilder vb) {
-        vertex_0.render(vb);
-        vertex_1.render(vb);
-        vertex_2.render(vb);
-        vertex_3.render(vb);
+    public void render(BufferBuilder bb) {
+        vertex_0.render(bb);
+        vertex_1.render(bb);
+        vertex_2.render(bb);
+        vertex_3.render(bb);
     }
 
     public Vector3f getCalculatedNormal() {

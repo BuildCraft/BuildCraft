@@ -10,12 +10,15 @@ import java.util.Collections;
 
 import javax.vecmath.Point3f;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.render.ItemRenderUtil;
@@ -29,16 +32,17 @@ import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.core.client.BuildCraftLaserManager;
 
+@SideOnly(Side.CLIENT)
 public class RenderSnapshotBuilder {
     public static <T extends ITileForSnapshotBuilder> void render(
-        SnapshotBuilder<T> snapshotBuilder,
-        World world,
-        BlockPos tilePos,
-        double x,
-        double y,
-        double z,
-        float partialTicks,
-        VertexBuffer vb
+            SnapshotBuilder<T> snapshotBuilder,
+            World world,
+            BlockPos tilePos,
+            double x,
+            double y,
+            double z,
+            float partialTicks,
+            BufferBuilder bb
     ) {
         for (SnapshotBuilder<T>.PlaceTask placeTask : snapshotBuilder.clientPlaceTasks) {
             Vec3d prevPos = snapshotBuilder.prevClientPlaceTasks.stream()
@@ -49,13 +53,13 @@ public class RenderSnapshotBuilder {
             Vec3d pos = prevPos.add(snapshotBuilder.getPlaceTaskItemPos(placeTask).subtract(prevPos).scale(partialTicks));
             for (ItemStack item : placeTask.items) {
                 ItemRenderUtil.renderItemStack(
-                    x - tilePos.getX() + pos.xCoord,
-                    y - tilePos.getY() + pos.yCoord,
-                    z - tilePos.getZ() + pos.zCoord,
+                    x - tilePos.getX() + pos.x,
+                    y - tilePos.getY() + pos.y,
+                    z - tilePos.getZ() + pos.z,
                     item,
                     world.getCombinedLight(new BlockPos(pos), 0),
                     EnumFacing.SOUTH,
-                    vb
+                    bb
                 );
             }
             ItemRenderUtil.endItemBatch();
@@ -67,13 +71,13 @@ public class RenderSnapshotBuilder {
                 robotPos = snapshotBuilder.prevRobotPos.add(robotPos.subtract(snapshotBuilder.prevRobotPos).scale(partialTicks));
             }
 
-            vb.setTranslation(x - tilePos.getX(), y - tilePos.getY(), z - tilePos.getZ());
+            bb.setTranslation(x - tilePos.getX(), y - tilePos.getY(), z - tilePos.getZ());
 
             int i = 0;
             for (EnumFacing face : EnumFacing.VALUES) {
                 ModelUtil.createFace(
                     face,
-                    new Point3f((float) robotPos.xCoord, (float) robotPos.yCoord, (float) robotPos.zCoord),
+                    new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
                     new Point3f(4 / 16F, 4 / 16F, 4 / 16F),
                     new ModelUtil.UvFaceData(
                         BCBuildersSprites.ROBOT.getInterpU((i * 8) / 64D),
@@ -83,7 +87,7 @@ public class RenderSnapshotBuilder {
                     )
                 )
                     .lighti(world.getCombinedLight(new BlockPos(robotPos), 0))
-                    .render(vb);
+                    .render(bb);
                 i++;
             }
 
@@ -101,11 +105,11 @@ public class RenderSnapshotBuilder {
                         new Vec3d(breakTask.pos).add(VecUtil.VEC_HALF),
                         1 / 16D
                     ),
-                    vb
+                    bb
                 );
             }
         }
 
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
     }
 }

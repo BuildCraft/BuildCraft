@@ -12,6 +12,10 @@ import gnu.trove.list.array.TIntArrayList;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class LaserCompiledBuffer {
     private static final int DOUBLE_STRIDE = 5;
     private static final int INT_STRIDE = 2;

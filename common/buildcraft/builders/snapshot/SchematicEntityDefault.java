@@ -165,9 +165,9 @@ public class SchematicEntityDefault implements ISchematicEntity {
         if (entity != null) {
             if (rotate) {
                 entity.setLocationAndAngles(
-                    placePos.xCoord,
-                    placePos.yCoord,
-                    placePos.zCoord,
+                    placePos.x,
+                    placePos.y,
+                    placePos.z,
                     entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
                     entity.rotationPitch
                 );

@@ -250,7 +250,7 @@ public class GuiGuide extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        lastPartialTicks = partialTicks;
+        lastPartialTicks = partialTicks = mc.getRenderPartialTicks();
         minX = (width - PAGE_LEFT.width * 2) / 2;
         minY = (height - BOOK_COVER.height) / 2;
         mouse.setMousePosition(mouseX, mouseY);

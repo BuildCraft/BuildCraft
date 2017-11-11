@@ -1,0 +1,35 @@
+{
+  "result": {
+    "item": "buildcraftfactory:flood_gate"
+  },
+  "pattern": [
+    "igi",
+    "btb",
+    "ibi"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:iron_bars"
+    },
+    "t": {
+      "item": "buildcraftfactory:tank"
+    },
+    "g": {
+      "item": "#gearIron"
+    },
+    "i": {
+      "item": "#ingotIron"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:flood_gate"
+    },
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:tank"
+    }
+  ]
+}

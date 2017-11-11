@@ -756,3 +756,139 @@ command.buildcraft.buildcraft.op.format=Format: /%s
 command.buildcraft.buildcraft.deop.desc=- %s : Deop FakePlayer
 command.buildcraft.buildcraft.deop.help=Ungives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
 command.buildcraft.buildcraft.deop.format=Format: /%s
+
+#advancements
+advancements.buildcraftcore.root.title=Welcome to Buildcraft!
+advancements.buildcraftcore.root.description=For all your engineering needs
+
+advancements.buildcraftcore.guide.title=How does this work again?
+advancements.buildcraftcore.guide.description=Check out the guide
+
+advancements.buildcraftcore.gears.title=Gearing up
+advancements.buildcraftcore.gears.description=Get one of each gear
+
+advancements.buildcraftcore.wrenched.title=Wrenched!
+advancements.buildcraftcore.wrenched.description=Use the wrench
+
+advancements.buildcraftcore.freePowar.title=Free Power!
+advancements.buildcraftcore.freePowar.description=Generate free power
+
+advancements.buildcraftcore.list.title=Sorting all the things
+advancements.buildcraftcore.list.description=Discover the advanced capabilities of the list
+
+advancements.buildcraftcore.engine.title=My first engine
+advancements.buildcraftcore.engine.description=Get your first engine
+
+advancements.buildcraftcore.markers.title=Marking your territory
+advancements.buildcraftcore.markers.description=Use volume markers to mark out an area
+
+advancements.buildcraftcore.path_markers.title=Defining the trail
+advancements.buildcraftcore.path_markers.description=Define a path
+
+advancements.buildcraftcore.paper.title=Paper collector
+advancements.buildcraftcore.paper.description=Use every piece of paper
+
+advancements.buildcraftenergy.poweringUp.title=Powering Up!
+advancements.buildcraftenergy.poweringUp.description=Activate a Stirling/Combustion engine with a redstone signal
+
+advancements.buildcraftenergy.lava_power.title=Lava Power
+advancements.buildcraftenergy.lava_power.description=Power a strling engine with a lava bucket
+
+advancements.buildcraftenergy.to_much_power.title=To much power!
+advancements.buildcraftenergy.to_much_power.description=Make an engine overheat and wackit it with a wrench
+
+advancements.buildcraftenergy.ice_cool.title=Ice cool
+advancements.buildcraftenergy.ice_cool.description=Cool a combustion engine with something else then water (if available)
+
+advancements.buildcraftenergy.sticky_dipping.title=Sticky dipping
+advancements.buildcraftenergy.sticky_dipping.description=Discover the sticky nature of oil
+
+advancements.buildcraftenergy.fine_riches.title=Fine riches
+advancements.buildcraftenergy.fine_riches.description=Find an oil biome
+
+advancements.buildcraftenergy.refine_and_redefine.title=Refine and redefine
+advancements.buildcraftenergy.refine_and_redefine.description=Produce a tank full of every single type of oil and fuel
+
+advancements.buildcraftfactory.fluid_storage.title=Fluid storage
+advancements.buildcraftfactory.fluid_storage.description=Store fluid in a tank
+
+advancements.buildcraftfactory.lazy_crafting.title=Lazy crafting
+advancements.buildcraftfactory.lazy_crafting.description=Make the autoworkbench work for you
+
+advancements.buildcraftfactory.retired_hopper.title=Retired hopper
+advancements.buildcraftfactory.retired_hopper.description=Put the chute back to work
+
+advancements.buildcraftfactory.flooding_the_world.title=Flooding the world
+advancements.buildcraftfactory.flooding_the_world.description=Flood the area with a floodgate
+
+advancements.buildcraftfactory.draining_the_world.title=Draining the world
+advancements.buildcraftfactory.draining_the_world.description=Use a pump to drain fluids from the world
+
+advancements.buildcraftfactory.oil_platform.title=Oil platform
+advancements.buildcraftfactory.oil_platform.description=Start Pumping up an oil spout
+
+advancements.buildcraftfactory.heating_and_distilling.title=Heating and Distilling
+advancements.buildcraftfactory.heating_and_distilling.description=Create a complete oil refining setup with a Distiller and a Heat Exchanger
+
+advancements.buildcraftfactory.black_gold.title=Black gold
+advancements.buildcraftfactory.black_gold.description=Completely pump out a large oil spout
+
+advancements.buildcraftsilicon.laser_power.title=Laser power
+advancements.buildcraftsilicon.laser_power.description=Make a laser
+
+advancements.buildcraftsilicon.precision_crafting.title=Precision crafting
+advancements.buildcraftsilicon.precision_crafting.description=Start crafting with an assembly table
+
+advancements.buildcrafttransport.pipe_dream.title=Pipe dream
+advancements.buildcrafttransport.pipe_dream.description=Place a pipe
+
+advancements.buildcrafttransport.pipe_diversification.title=Pipe diversification
+advancements.buildcrafttransport.pipe_diversification.description=Place a item, fluid, kinesis and structure pipe
+
+advancements.buildcrafttransport.plugging_the_gap.title=Plugging the gap
+advancements.buildcrafttransport.plugging_the_gap.description=Plug a pipe
+
+advancements.buildcrafttransport.logic_transportation.title=Logic transportation
+advancements.buildcrafttransport.logic_transportation.description=Connect pipe wires
+
+advancements.buildcrafttransport.extended_logic.title=Extended logic
+advancements.buildcrafttransport.extended_logic.description=Use a gate with extra slots
+
+advancements.buildcrafttransport.sealing_fluids.title=Sealing fluids
+advancements.buildcrafttransport.sealing_fluids.description=Smelt a cactus and craft is dye to produce pipe sealant
+
+advancements.buildcrafttransport.pipe_logic.title=Pipe logic
+advancements.buildcrafttransport.pipe_logic.description=Place a gate on a pipe
+
+advancements.buildcrafttransport.all_plugged_up.title=All plugged up
+advancements.buildcrafttransport.all_plugged_up.description=Attach one of each unique pluggable to a pipe
+
+advancements.buildcrafttransport.pipe_fanatic.title=Pipe fanatic
+advancements.buildcrafttransport.pipe_fanatic.description=Place down one of each type of pipe
+
+advancements.buildcrafttransport.categorizing_with_colors.title=Categorizing with colors
+advancements.buildcrafttransport.categorizing_with_colors.description=Setup a sorting setup using the power of colouring
+
+advancements.buildcrafttransport.colorful_electrician.title=Colorful electrician
+advancements.buildcrafttransport.colorful_electrician.description=Use 16 of each color of pipe wire to make your piping system more robust
+
+advancements.buildcraftbuilders.shaping_the_world.title=Shaping the world
+advancements.buildcraftbuilders.shaping_the_world.description=Craft and place a Quarry
+
+advancements.buildcraftbuilders.architect.title=Architect
+advancements.buildcraftbuilders.architect.description=Scan an area with an architect table and record it in a blueprint/template
+
+advancements.buildcraftbuilders.paving_the_way.title=Paving the way
+advancements.buildcraftbuilders.paving_the_way.description=Utilize the builder with a pathmarker to create a path
+
+advancements.buildcraftbuilders.diggy.title=Diggy diggy hole
+advancements.buildcraftbuilders.diggy.description=Have a 64x64 quarry finish
+
+advancements.buildcraftbuilders.start_of_something_big.title=Start of something big
+advancements.buildcraftbuilders.start_of_something_big.description=Build an extra-large structure with the builder
+
+advancements.buildcraftbuilders.building_for_the_future.title=Building for the future
+advancements.buildcraftbuilders.building_for_the_future.description=Set a filler on a loop for long term automation
+
+advancements.buildcraftbuilders.destroying_the_world.title=Destorying the world
+advancements.buildcraftbuilders.destroying_the_world.description=Have two or more 64 x 64 sized quarries running at once at full speed

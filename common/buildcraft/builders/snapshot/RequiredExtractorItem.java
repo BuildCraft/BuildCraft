@@ -9,7 +9,6 @@ package buildcraft.builders.snapshot;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,8 +16,6 @@ import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.lib.misc.NBTUtilBC;
 
 public class RequiredExtractorItem extends RequiredExtractor {
     private NbtPath path = null;

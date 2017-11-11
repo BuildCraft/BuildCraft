@@ -14,10 +14,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+@SideOnly(Side.CLIENT)
 public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;
 
@@ -33,7 +37,7 @@ public class LaserBoxRenderer {
         }
     }
 
-    public static void renderLaserBoxDynamic(Box box, LaserType type, BufferBuilder vb, boolean center) {
+    public static void renderLaserBoxDynamic(Box box, LaserType type, BufferBuilder bb, boolean center) {
         if (box == null || box.min() == null || box.max() == null) {
             return;
         }
@@ -41,7 +45,7 @@ public class LaserBoxRenderer {
         makeLaserBox(box, type, center);
 
         for (LaserData_BC8 data : box.laserData) {
-            LaserRenderer_BC8.renderLaserDynamic(data, vb);
+            LaserRenderer_BC8.renderLaserDynamic(data, bb);
         }
     }
 
@@ -51,9 +55,9 @@ public class LaserBoxRenderer {
             return;
         }
 
-        int sizeX = box.size().getX();
-        int sizeY = box.size().getY();
-        int sizeZ = box.size().getZ();
+        boolean renderX = center ? box.size().getX() > 1 : true;
+        boolean renderY = center ? box.size().getY() > 1 : true;
+        boolean renderZ = center ? box.size().getZ() > 1 : true;
 
         Vec3d min = new Vec3d(box.min()).add(center ? VecUtil.VEC_HALF : Vec3d.ZERO);
         Vec3d max = new Vec3d(box.max()).add(center ? VecUtil.VEC_HALF : VecUtil.VEC_ONE);
@@ -70,41 +74,41 @@ public class LaserBoxRenderer {
         vecs[0][1][1] = new Vec3d(min.x, max.y, max.z);
         vecs[1][1][1] = new Vec3d(max.x, max.y, max.z);
 
-        if (sizeX > 1) {
+        if (renderX) {
             datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X));
-            if (sizeY > 1) {
+            if (renderY) {
                 datas.add(makeLaser(type, vecs[0][1][0], vecs[1][1][0], Axis.X));
-                if (sizeZ > 1) {
+                if (renderZ) {
                     datas.add(makeLaser(type, vecs[0][1][1], vecs[1][1][1], Axis.X));
                 }
             }
-            if (sizeZ > 1) {
+            if (renderZ) {
                 datas.add(makeLaser(type, vecs[0][0][1], vecs[1][0][1], Axis.X));
             }
         }
 
-        if (sizeY > 1) {
+        if (renderY) {
             datas.add(makeLaser(type, vecs[0][0][0], vecs[0][1][0], Axis.Y));
-            if (sizeX > 1) {
+            if (renderX) {
                 datas.add(makeLaser(type, vecs[1][0][0], vecs[1][1][0], Axis.Y));
-                if (sizeZ > 1) {
+                if (renderZ) {
                     datas.add(makeLaser(type, vecs[1][0][1], vecs[1][1][1], Axis.Y));
                 }
             }
-            if (sizeZ > 1) {
+            if (renderZ) {
                 datas.add(makeLaser(type, vecs[0][0][1], vecs[0][1][1], Axis.Y));
             }
         }
 
-        if (box.size().getZ() > 1) {
+        if (renderZ) {
             datas.add(makeLaser(type, vecs[0][0][0], vecs[0][0][1], Axis.Z));
-            if (sizeX > 1) {
+            if (renderX) {
                 datas.add(makeLaser(type, vecs[1][0][0], vecs[1][0][1], Axis.Z));
-                if (sizeY > 0) {
+                if (renderY) {
                     datas.add(makeLaser(type, vecs[1][1][0], vecs[1][1][1], Axis.Z));
                 }
             }
-            if (sizeY > 0) {
+            if (renderY) {
                 datas.add(makeLaser(type, vecs[0][1][0], vecs[0][1][1], Axis.Z));
             }
         }

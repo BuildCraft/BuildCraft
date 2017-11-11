@@ -5,14 +5,11 @@ import java.util.List;
 
 import net.minecraft.client.renderer.GlStateManager;
 
-import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
-import buildcraft.api.statements.IStatementParameter;
 
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IMenuElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -80,6 +77,9 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
 
     @Override
     public void drawBackground(float partialTicks) {
+        GlStateManager.pushMatrix();
+        // Render above items in the players inventory
+        GlStateManager.translate(0, 0, 1000);
         GlStateManager.color(1, 1, 1);
         SELECTION_HOVER.draw(this);
         iteratePossible((pos, slot) -> {
@@ -87,6 +87,7 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
             double y = pos.getY();
             GuiElementStatementSource.drawGuiSlot(slot, x, y);
         });
+        GlStateManager.popMatrix();
     }
 
     @Override

@@ -6,10 +6,16 @@
 
 package buildcraft.energy.generation;
 
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDesert;
 
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import buildcraft.energy.BCEnergy;
+
 public final class BiomeOilDesert extends BiomeDesert {
-    public static final BiomeOilDesert INSTANCE = new BiomeOilDesert();
+    @GameRegistry.ObjectHolder(BCEnergy.MODID + ":oil_desert")
+    public static final Biome INSTANCE = null;
 
     public BiomeOilDesert() {
         super(

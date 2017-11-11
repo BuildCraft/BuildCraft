@@ -4,23 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.StreamSupport;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.BlockBanner;
-import net.minecraft.block.BlockVine;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemBanner;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -31,24 +15,15 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-import buildcraft.api.schematics.SchematicEntityFactoryRegistry;
-
 import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
-import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.RulesLoader;
-import buildcraft.builders.snapshot.SchematicBlockAir;
-import buildcraft.builders.snapshot.SchematicBlockDefault;
-import buildcraft.builders.snapshot.SchematicBlockFluid;
-import buildcraft.builders.snapshot.SchematicEntityDefault;
 import buildcraft.core.BCCore;
-import buildcraft.core.marker.volume.AddonsRegistry;
 
 //@formatter:off
 @Mod(
@@ -66,84 +41,15 @@ public class BCBuilders {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+        RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCBuildersRegistries.preInit();
-        BCBuildersItems.preInit();
-        BCBuildersBlocks.preInit();
+        BCBuildersItems.fmlPreInit();
+        BCBuildersBlocks.fmlPreInit();
         BCBuildersStatements.preInit();
+        BCBuildersSchematics.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
-        AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filler_planner"), AddonFillerPlanner.class);
-
-        SchematicBlockFactoryRegistry.registerFactory(
-            "air",
-            0,
-            SchematicBlockAir::predicate,
-            SchematicBlockAir::new
-        );
-        SchematicBlockFactoryRegistry.registerFactory(
-            "default",
-            100,
-            SchematicBlockDefault::predicate,
-            SchematicBlockDefault::new
-        );
-        SchematicBlockFactoryRegistry.registerFactory(
-            "fluid",
-            200,
-            SchematicBlockFluid::predicate,
-            SchematicBlockFluid::new
-        );
-        SchematicBlockFactoryRegistry.registerFactory(
-            "banner",
-            300,
-            context -> context.block instanceof BlockBanner,
-            new Supplier<SchematicBlockDefault>() {
-                @Override
-                public SchematicBlockDefault get() {
-                    return new SchematicBlockDefault() {
-                        @Nonnull
-                        @Override
-                        public List<ItemStack> computeRequiredItems() {
-                            return Collections.singletonList(
-                                ItemBanner.makeBanner(
-                                    EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")),
-                                    tileNbt.getTagList("Patterns", 10)
-                                )
-                            );
-                        }
-                    };
-                }
-            }
-        );
-        SchematicBlockFactoryRegistry.registerFactory(
-            "vine",
-            300,
-            context -> context.block instanceof BlockVine,
-            new Supplier<SchematicBlockDefault>() {
-                @Override
-                public SchematicBlockDefault get() {
-                    return new SchematicBlockDefault() {
-                        @Override
-                        public boolean isReadyToBuild(World world, BlockPos blockPos) {
-                            return super.isReadyToBuild(world, blockPos) &&
-                                (world.getBlockState(blockPos.up()).getBlock() instanceof BlockVine ||
-                                    StreamSupport.stream(EnumFacing.Plane.HORIZONTAL.spliterator(), false)
-                                        .map(blockPos::offset)
-                                        .map(world::getBlockState)
-                                        .anyMatch(state -> state.isFullCube() && state.getMaterial().blocksMovement()));
-                        }
-                    };
-                }
-            }
-        );
-
-        SchematicEntityFactoryRegistry.registerFactory(
-            "default",
-            100,
-            SchematicEntityDefault::predicate,
-            SchematicEntityDefault::new
-        );
 
         BCBuildersProxy.getProxy().fmlPreInit();
 
@@ -155,6 +61,7 @@ public class BCBuilders {
         BCBuildersProxy.getProxy().fmlInit();
         BCBuildersRegistries.init();
         BCBuildersRecipes.init();
+        BCBuildersBlocks.fmlInit();
     }
 
     @Mod.EventHandler
@@ -163,7 +70,7 @@ public class BCBuilders {
     }
 
     @Mod.EventHandler
-    public void onServerStarting(FMLServerStartingEvent event) {
+    public static void onServerStarting(FMLServerStartingEvent event) {
         GlobalSavedDataSnapshots.reInit(Side.SERVER);
     }
 
@@ -172,7 +79,7 @@ public class BCBuilders {
         // Items
         registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single/");
         registerTag("item.snapshot").reg("snapshot").locale("snapshot").model("snapshot/");
-        registerTag("item.filler_planner").reg("filler_planner").oldReg("filling_planner").locale("fillerPlannerItem").model("filler_planner");
+        registerTag("item.filler_planner").reg("filler_planner").oldReg("filling_planner").locale("filler_planner").model("filler_planner");
         // Item Blocks
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");

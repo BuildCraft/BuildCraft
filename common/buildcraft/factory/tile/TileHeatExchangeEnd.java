@@ -74,7 +74,7 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeEnd);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
         if (state == null) {
             return null;
         }

@@ -17,6 +17,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.chunkload.IChunkLoadingTile;
+import buildcraft.lib.chunkload.IChunkLoadingTile.LoadType;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -148,5 +149,19 @@ public class BCLibConfig {
 
         /** All {@link TileEntity}'s in the world. */
         ALL_TILES;
+
+        public boolean canLoad(LoadType loadType) {
+            switch (this) {
+                case NONE:
+                    return false;
+                case STRICT_TILES:
+                    return loadType == LoadType.HARD;
+                case SELF_TILES:
+                case ALL_TILES:
+                    return true;
+                default:
+                    throw new IllegalStateException("Unknown ChunkLoaderLevel " + this);
+            }
+        }
     }
 }

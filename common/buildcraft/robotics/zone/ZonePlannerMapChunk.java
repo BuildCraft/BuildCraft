@@ -9,6 +9,7 @@ package buildcraft.robotics.zone;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -16,12 +17,12 @@ public class ZonePlannerMapChunk {
     private final MapColourData[][] data = new MapColourData[16][16];
 
     public ZonePlannerMapChunk(World world, ZonePlannerMapChunkKey key) {
-        Chunk chunk = world.getChunkFromChunkCoords(key.chunkPos.chunkXPos, key.chunkPos.chunkZPos);
+        Chunk chunk = world.getChunkFromChunkCoords(key.chunkPos.x, key.chunkPos.z);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // Scan down from the max height value of a chunk until we find a block
                 for (int y = key.level * ZonePlannerMapChunkKey.LEVEL_HEIGHT; y > 0; y--) {
-                    int colour = chunk.getBlockState(x, y, z).getMapColor().colorValue;
+                    int colour = chunk.getBlockState(x, y, z).getMapColor(world, new BlockPos(x, y, z)).colorValue;
                     if (colour != 0) {
                         data[x][z] = new MapColourData(y, colour);
                         break;

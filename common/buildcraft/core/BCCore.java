@@ -7,7 +7,9 @@ package buildcraft.core;
 import java.io.File;
 import java.util.function.Consumer;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -15,23 +17,20 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
+import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
-import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.volume.MessageVolumeBoxes;
 
 //@formatter:off
 @Mod(
@@ -61,27 +60,35 @@ public class BCCore {
 
         CreativeTabBC tab = CreativeTabManager.createTab("buildcraft.main");
 
-        BCCoreItems.preInit();
         BCCoreBlocks.preInit();
+        BCCoreItems.preInit();
         BCCoreStatements.preInit();
 
         BCCoreProxy.getProxy().fmlPreInit();
 
         tab.setItem(BCCoreItems.wrench);
 
+        setItemTab(BCLibItems.guide, tab);
+        setItemTab(BCLibItems.guideNote, tab);
+        setItemTab(BCLibItems.debugger, tab);
+
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
-        MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+    }
+
+    private static void setItemTab(Item item, CreativeTabBC tab) {
+        if (item != null) {
+            item.setCreativeTab(tab);
+        }
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        BCCoreProxy.getProxy().fmlInit();
+        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
 
-        BCCoreRecipes.init();
-        BCAchievements.init();
+        BCCoreProxy.getProxy().fmlInit();
 
         MarkerCache.registerCache(VolumeCache.INSTANCE);
         MarkerCache.registerCache(PathCache.INSTANCE);

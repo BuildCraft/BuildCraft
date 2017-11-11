@@ -9,7 +9,6 @@ package buildcraft.silicon.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -22,6 +21,7 @@ import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.mj.ILaserTargetBlock;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.silicon.BCSiliconGuis;
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
@@ -54,7 +54,7 @@ public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTarget
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         switch(type) {
             case ASSEMBLY_TABLE:
                 return new TileAssemblyTable();

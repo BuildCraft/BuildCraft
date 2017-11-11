@@ -6,17 +6,24 @@
 
 package buildcraft.builders;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.template.TemplateApi;
 
+import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.registry.FillerRegistry;
 import buildcraft.builders.snapshot.TemplateHandlerDefault;
 import buildcraft.builders.snapshot.TemplateRegistry;
+import buildcraft.core.marker.volume.AddonsRegistry;
 
 public class BCBuildersRegistries {
     public static void preInit() {
         TemplateApi.templateRegistry = TemplateRegistry.INSTANCE;
         FillerManager.registry = FillerRegistry.INSTANCE;
+
+        AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders:filler_planner"),
+            AddonFillerPlanner.class);
     }
 
     public static void init() {
