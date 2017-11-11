@@ -30,13 +30,13 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 			if (areItemsEqual(this.stack, stack)) {
 				if (mouse.getButton() == 0) {
 					this.stack.stackSize += (mouse.isShift()) ? 16 : 1;
-					if (this.stack.stackSize > 64) {
-						this.stack.stackSize = 64;
+					if (this.stack.stackSize > this.stack.getMaxStackSize()) {
+						this.stack.stackSize = this.stack.getMaxStackSize();
 					}
 				} else {
 					this.stack.stackSize -= (mouse.isShift()) ? 16 : 1;
-					if (this.stack.stackSize < 0) {
-						this.stack.stackSize = 0;
+					if (this.stack.stackSize <= 0) {
+						this.stack = null;
 					}
 				}
 			} else {
@@ -46,12 +46,12 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 			if (this.stack != null) {
 				if (mouse.getButton() == 0) {
 					this.stack.stackSize += (mouse.isShift()) ? 16 : 1;
-					if (this.stack.stackSize > 64) {
-						this.stack.stackSize = 64;
+					if (this.stack.stackSize > this.stack.getMaxStackSize()) {
+						this.stack.stackSize = this.stack.getMaxStackSize();
 					}
 				} else {
 					this.stack.stackSize -= (mouse.isShift()) ? 16 : 1;
-					if (this.stack.stackSize < 0) {
+					if (this.stack.stackSize <= 0) {
 						this.stack = null;
 					}
 				}
