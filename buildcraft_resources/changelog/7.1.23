@@ -1,4 +1,5 @@
 Bugs fixed:
 
 * [#3839] Attempt to work around potential world corruption?
-* [#3837] Oil spawn in mid-air on superflat, f
+* [#3837] Oil spawn in mid-air on superflat
+* Potential direction statement parameter crash in gate GUI
