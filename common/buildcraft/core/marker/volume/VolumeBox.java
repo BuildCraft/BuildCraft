@@ -20,13 +20,10 @@ import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.Constants;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.Box;
@@ -69,13 +66,12 @@ public class VolumeBox {
         if (nbt.hasKey("oldMax")) {
             oldMax = NBTUtil.getPosFromTag(nbt.getCompoundTag("oldMax"));
         }
-        NBTTagList addonsTag = nbt.getTagList("addons", Constants.NBT.TAG_COMPOUND);
-        IntStream.range(0, addonsTag.tagCount()).mapToObj(addonsTag::getCompoundTagAt).forEach(addonsEntryTag -> {
+        NBTUtilBC.readCompoundList(nbt.getTag("addons")).forEach(addonsEntryTag -> {
             Class<? extends Addon> addonClass =
                 AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(addonsEntryTag.getString("addonClass")));
             try {
                 Addon addon = addonClass.newInstance();
-                addon.box = this;
+                addon.volumeBox = this;
                 addon.readFromNBT(addonsEntryTag.getCompoundTag("addonData"));
                 EnumAddonSlot slot = NBTUtilBC.readEnum(addonsEntryTag.getTag("slot"), EnumAddonSlot.class);
                 addons.put(slot, addon);
@@ -84,8 +80,7 @@ public class VolumeBox {
                 e.printStackTrace();
             }
         });
-        NBTTagList locksTag = nbt.getTagList("locks", Constants.NBT.TAG_COMPOUND);
-        IntStream.range(0, locksTag.tagCount()).mapToObj(locksTag::getCompoundTagAt).map(lockTag -> {
+        NBTUtilBC.readCompoundList(nbt.getTag("locks")).map(lockTag -> {
             Lock lock = new Lock();
             lock.readFromNBT(lockTag);
             return lock;
@@ -120,7 +115,7 @@ public class VolumeBox {
     public void confirmEditing() {
         player = null;
         resetEditing();
-        addons.values().forEach(Addon::onBoxSizeChange);
+        addons.values().forEach(Addon::onVolumeBoxSizeChange);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -139,11 +134,11 @@ public class VolumeBox {
     }
 
     public boolean isEditingBy(EntityPlayer player) {
-        return this.player != null && Objects.equals(this.player, player.getGameProfile().getId());
+        return player != null && Objects.equals(this.player, player.getGameProfile().getId());
     }
 
     public boolean isPausedEditingBy(EntityPlayer player) {
-        return this.oldPlayer != null && Objects.equals(this.oldPlayer, player.getGameProfile().getId());
+        return oldPlayer != null && Objects.equals(oldPlayer, player.getGameProfile().getId());
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -192,18 +187,21 @@ public class VolumeBox {
         if (oldMax != null) {
             nbt.setTag("oldMax", NBTUtil.createPosTag(oldMax));
         }
-        NBTTagList addonsTag = new NBTTagList();
-        addons.forEach((slot, addon) -> {
-            NBTTagCompound addonsEntryTag = new NBTTagCompound();
-            addonsEntryTag.setTag("slot", NBTUtilBC.writeEnum(slot));
-            addonsEntryTag.setString("addonClass", AddonsRegistry.INSTANCE.getNameByClass(addon.getClass()).toString());
-            addonsEntryTag.setTag("addonData", addon.writeToNBT(new NBTTagCompound()));
-            addonsTag.appendTag(addonsEntryTag);
-        });
-        nbt.setTag("addons", addonsTag);
-        NBTTagList locksTag = new NBTTagList();
-        locks.stream().map(lock -> lock.writeToNBT(new NBTTagCompound())).forEach(locksTag::appendTag);
-        nbt.setTag("locks", locksTag);
+        nbt.setTag(
+            "addons",
+            NBTUtilBC.writeCompoundList(
+                addons.entrySet().stream().map(entry -> {
+                    NBTTagCompound addonsEntryTag = new NBTTagCompound();
+                    addonsEntryTag.setTag("slot", NBTUtilBC.writeEnum(entry.getKey()));
+                    addonsEntryTag.setString(
+                        "addonClass",
+                        AddonsRegistry.INSTANCE.getNameByClass(entry.getValue().getClass()).toString()
+                    );
+                    addonsEntryTag.setTag("addonData", entry.getValue().writeToNBT(new NBTTagCompound()));
+                    return addonsEntryTag;
+                })
+            ));
+        nbt.setTag("locks", NBTUtilBC.writeCompoundList(locks.stream().map(Lock::writeToNBT)));
         return nbt;
     }
 
@@ -240,7 +238,7 @@ public class VolumeBox {
                     throw new IOException("Unknown addon class " + rl);
                 }
                 Addon addon = addonClass.newInstance();
-                addon.box = this;
+                addon.volumeBox = this;
                 addon.onAdded();
                 addon.fromBytes(buf);
                 newAddons.put(slot, addon);

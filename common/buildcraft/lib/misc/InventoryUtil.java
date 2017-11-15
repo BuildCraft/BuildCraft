@@ -60,6 +60,10 @@ public class InventoryUtil {
         Block.spawnAsEntity(world, pos, stack);
     }
 
+    public static void drop(World world, Vec3d vec, @Nonnull ItemStack stack) {
+        drop(world, vec.xCoord, vec.yCoord, vec.zCoord, stack);
+    }
+
     public static void drop(World world, double x, double y, double z, @Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
             return;

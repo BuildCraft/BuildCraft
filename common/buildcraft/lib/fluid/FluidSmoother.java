@@ -56,7 +56,7 @@ public class FluidSmoother implements IDebuggable {
         if (data instanceof _Server) {
             ((_Server) data).writeMessage(buffer);
         } else {
-            throw new IllegalStateException("You can only call this on the client!");
+            throw new IllegalStateException("You can only call this on the server!");
         }
     }
 

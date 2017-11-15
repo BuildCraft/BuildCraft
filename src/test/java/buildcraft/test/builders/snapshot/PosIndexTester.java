@@ -6,44 +6,42 @@
 
 package buildcraft.test.builders.snapshot;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.builders.snapshot.Snapshot;
 
-@SuppressWarnings("DefaultAnnotationParam")
-@RunWith(Parameterized.class)
+@RunWith(Theories.class)
 public class PosIndexTester {
     private static final BlockPos SIZE = new BlockPos(6, 4, 8);
-    @Parameterized.Parameter(0)
-    public int x;
-    @Parameterized.Parameter(1)
-    public int y;
-    @Parameterized.Parameter(2)
-    public int z;
 
-    @Parameterized.Parameters
-    public static Iterable<Object[]> data() {
-        ImmutableList.Builder<Object[]> builder = new ImmutableList.Builder<>();
+    @DataPoints
+    public static final List<BlockPos> POSITIONS;
+
+    static {
+        ImmutableList.Builder<BlockPos> builder = new ImmutableList.Builder<>();
         for (int z = 0; z < SIZE.getZ(); z++) {
             for (int y = 0; y < SIZE.getY(); y++) {
                 for (int x = 0; x < SIZE.getX(); x++) {
-                    builder.add(new Object[] {x, y, z});
+                    builder.add(new BlockPos(x, y, z));
                 }
             }
         }
-        return builder.build();
+        POSITIONS = builder.build();
     }
 
-    @Test
-    public void test() {
-        BlockPos pos = new BlockPos(x, y, z);
+    @Theory
+    public void test(BlockPos pos) {
+        System.out.println("Testing " + pos + " with size " + SIZE);
         Assert.assertEquals(
             Integer.toString(Snapshot.posToIndex(SIZE, pos)),
             pos,

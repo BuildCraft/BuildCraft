@@ -6,11 +6,12 @@ public final class NodeType<T> extends NodeTypeBase<T> {
     public final Class<T> type;
     public final T defaultValue;
 
-    public NodeType(T defaultValue) {
-        this((Class<T>) defaultValue.getClass(), defaultValue);
+    public NodeType(String name, T defaultValue) {
+        this(name, (Class<T>) defaultValue.getClass(), defaultValue);
     }
 
-    public NodeType(Class<T> type, T defaultValue) {
+    public NodeType(String name, Class<T> type, T defaultValue) {
+        super(name);
         this.type = type;
         this.defaultValue = defaultValue;
     }

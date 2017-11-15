@@ -75,13 +75,6 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
         }
     }
 
-    private static float[] bakePosition(INodeDouble[] in) {
-        float x = (float) in[0].evaluate() / 16f;
-        float y = (float) in[1].evaluate() / 16f;
-        float z = (float) in[2].evaluate() / 16f;
-        return new float[] { x, y, z };
-    }
-
     protected abstract VariableFaceData getFaceData(EnumFacing side, ITextureGetter spriteLookup);
 
     public static class VariableFaceData {

@@ -16,15 +16,15 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
 
-import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.filler.FillerType;
-import buildcraft.core.marker.volume.ClientVolumeBoxes;
+import buildcraft.core.BCCoreProxy;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class ContainerFillerPlanner extends ContainerBC_Neptune implements IContainerFilling {
-    public final AddonFillingPlanner addon;
+    public final AddonFillerPlanner addon;
     private final FullStatement<IFillerPattern> patternStatementClient = new FullStatement<>(
         FillerType.INSTANCE,
         4,
@@ -33,15 +33,13 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune implements ICont
 
     public ContainerFillerPlanner(EntityPlayer player) {
         super(player);
-        Pair<VolumeBox, EnumAddonSlot> selectingBoxAndSlot = EnumAddonSlot.getSelectingBoxAndSlot(
+        Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(
             player,
-            !player.world.isRemote
-                ? WorldSavedDataVolumeBoxes.get(player.world).boxes
-                : ClientVolumeBoxes.INSTANCE.boxes
+            BCCoreProxy.getProxy().getVolumeBoxes(player.world)
         );
-        addon = Optional.ofNullable(selectingBoxAndSlot.getLeft())
-            .map(volumeBox -> volumeBox.addons.get(selectingBoxAndSlot.getRight()))
-            .map(AddonFillingPlanner.class::cast)
+        addon = Optional.ofNullable(selectingVolumeBoxAndSlot.getLeft())
+            .map(volumeBox -> volumeBox.addons.get(selectingVolumeBoxAndSlot.getRight()))
+            .map(AddonFillerPlanner.class::cast)
             .orElseThrow(IllegalStateException::new);
         init();
     }

@@ -32,10 +32,10 @@ public class ItemVolumeBox extends ItemBC_Neptune {
         BlockPos offset = pos.offset(facing);
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
-        VolumeBox current = volumeBoxes.getBoxAt(offset);
+        VolumeBox current = volumeBoxes.getVolumeBoxAt(offset);
 
         if (current == null) {
-            volumeBoxes.addBox(offset);
+            volumeBoxes.addVolumeBox(offset);
             volumeBoxes.markDirty();
             return EnumActionResult.SUCCESS;
         }

@@ -6,14 +6,17 @@
 
 package buildcraft.builders;
 
+import buildcraft.api.filler.FillerManager;
 import buildcraft.api.template.TemplateApi;
 
+import buildcraft.builders.registry.FillerRegistry;
 import buildcraft.builders.snapshot.TemplateHandlerDefault;
 import buildcraft.builders.snapshot.TemplateRegistry;
 
 public class BCBuildersRegistries {
     public static void preInit() {
         TemplateApi.templateRegistry = TemplateRegistry.INSTANCE;
+        FillerManager.registry = FillerRegistry.INSTANCE;
     }
 
     public static void init() {

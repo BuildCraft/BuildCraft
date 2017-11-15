@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import com.google.common.collect.HashBasedTable;
@@ -51,26 +52,49 @@ import buildcraft.lib.expression.node.value.NodeVariableObject;
 public class FunctionContext extends FunctionContextBase {
     public static final String FUNCTION_ARG_SEPARATOR = "@";
 
+    public final String name;
     private final FunctionContext[] parents;
     private final Map<String, IExpressionNode> variables = new HashMap<>();
     private final Table<String, List<Class<?>>, INodeFunc> functions = HashBasedTable.create();
 
+    @Deprecated
+    public FunctionContext() {
+        this("");
+    }
+
+    @Deprecated
+    public FunctionContext(FunctionContext parent) {
+        this("", parent);
+    }
+
+    @Deprecated
+    public FunctionContext(FunctionContext... parents) {
+        this("", parents);
+    }
+
     /** Creates a function context with no parents. You probably DON'T want this, as it doesn't have any of the useful
      * functions found in {@link DefaultContexts} */
-    public FunctionContext() {
+    public FunctionContext(String name) {
+        this.name = name;
         this.parents = new FunctionContext[0];
     }
 
     /** Constructs a function context that will delegate to the parent to find functions and variables if they don't
      * exist in this context. */
-    public FunctionContext(FunctionContext parent) {
+    public FunctionContext(String name, FunctionContext parent) {
+        this.name = name;
         this.parents = new FunctionContext[] { parent };
     }
 
     /** Constructs a function context that will delegate to the parents, in order, to find functions and variables if
      * they don't exist in this context. */
-    public FunctionContext(FunctionContext... parents) {
+    public FunctionContext(String name, FunctionContext... parents) {
+        this.name = name;
         this.parents = parents.clone();
+    }
+
+    public FunctionContext[] getParents() {
+        return parents;
     }
 
     // Variable getter/setters
@@ -194,6 +218,10 @@ public class FunctionContext extends FunctionContextBase {
         } else {
             putConstant(name, String.class, value);
         }
+    }
+
+    public Set<String> getAllVariables() {
+        return variables.keySet();
     }
 
     // Function getter/setters

@@ -86,7 +86,7 @@ public class Blueprint extends Snapshot {
             // schematics through mod additions/deletions)
             palette.add(SchematicBlockManager.readFromNBT(schematicBlockTag));
         }
-        data = new int[size.getX() * size.getY() * size.getZ()];
+        data = new int[Snapshot.getDataSize(size)];
         NBTTagList serializedDataList = nbt.hasKey("data", Constants.NBT.TAG_LIST)
             ? nbt.getTagList("data", Constants.NBT.TAG_INT)
             : null;
@@ -99,11 +99,11 @@ public class Blueprint extends Snapshot {
         int serializedDataLength = serializedDataList == null
             ? serializedDataIntArray.length
             : serializedDataList.tagCount();
-        if (serializedDataLength != size.getX() * size.getY() * size.getZ()) {
+        if (serializedDataLength != getDataSize()) {
             throw new InvalidInputDataException(
                 "Serialized data has length of " + serializedDataLength +
                     ", but we expected " +
-                    size.getX() * size.getY() * size.getZ() + " (" + size.toString() + ")"
+                    getDataSize() + " (" + size.toString() + ")"
             );
         }
         for (int z = 0; z < size.getZ(); z++) {
@@ -138,9 +138,9 @@ public class Blueprint extends Snapshot {
         public BuildingInfo(BlockPos basePos, Rotation rotation) {
             super(basePos, rotation);
             // noinspection unchecked
-            toPlaceRequiredItems = (List<ItemStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
+            toPlaceRequiredItems = (List<ItemStack>[]) new List<?>[getDataSize()];
             // noinspection unchecked
-            toPlaceRequiredFluids = (List<FluidStack>[]) new List<?>[size.getX() * size.getY() * size.getZ()];
+            toPlaceRequiredFluids = (List<FluidStack>[]) new List<?>[getDataSize()];
             rotatedPalette = ImmutableList.copyOf(
                 palette.stream()
                     .map(schematicBlock -> schematicBlock.getRotated(rotation))

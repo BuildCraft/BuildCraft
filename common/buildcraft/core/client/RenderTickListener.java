@@ -38,10 +38,10 @@ import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.RenderLaserBox;
 import buildcraft.lib.debug.ClientDebuggables;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
@@ -188,7 +188,7 @@ public class RenderTickListener {
             IBox box = ItemMapLocation.getAreaBox(stack);
             LAST_RENDERED_MAP_LOC.reset();
             LAST_RENDERED_MAP_LOC.initialize(box);
-            LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, false);
+            RenderLaserBox.renderStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, false);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);

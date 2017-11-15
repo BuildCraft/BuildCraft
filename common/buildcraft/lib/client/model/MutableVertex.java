@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -458,6 +459,48 @@ public class MutableVertex {
 
     public MutableVertex scaled(double x, double y, double z) {
         return scalef((float) x, (float) y, (float) z);
+    }
+
+    /** Rotates around the X axis by angle. */
+    public void rotateX(float angle) {
+        float cos = MathHelper.cos(angle);
+        float sin = MathHelper.sin(angle);
+        rotateDirectlyX(cos, sin);
+    }
+
+    /** Rotates around the Y axis by angle. */
+    public void rotateY(float angle) {
+        float cos = MathHelper.cos(angle);
+        float sin = MathHelper.sin(angle);
+        rotateDirectlyY(cos, sin);
+    }
+
+    /** Rotates around the Z axis by angle. */
+    public void rotateZ(float angle) {
+        float cos = MathHelper.cos(angle);
+        float sin = MathHelper.sin(angle);
+        rotateDirectlyZ(cos, sin);
+    }
+
+    public void rotateDirectlyX(float cos, float sin) {
+        float y = position_y;
+        float z = position_z;
+        position_y = y * cos - z * sin;
+        position_z = y * sin + z * cos;
+    }
+
+    public void rotateDirectlyY(float cos, float sin) {
+        float x = position_x;
+        float z = position_z;
+        position_x = x * cos - z * sin;
+        position_z = x * sin + z * cos;
+    }
+
+    public void rotateDirectlyZ(float cos, float sin) {
+        float x = position_x;
+        float y = position_y;
+        position_x = x * cos + y * sin;
+        position_y = x * -sin + y * cos;
     }
 
     /** Rotates this vertex around the X axis 90 degrees.

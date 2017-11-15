@@ -19,9 +19,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
+
+import buildcraft.core.client.BuildCraftLaserManager;
 
 public class Lock {
     public Cause cause;
@@ -35,7 +41,8 @@ public class Lock {
         this.targets.addAll(Arrays.asList(targets));
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
         NBTTagCompound causeTag = new NBTTagCompound();
         causeTag.setTag("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
         causeTag.setTag("data", cause.writeToNBT(new NBTTagCompound()));
@@ -260,8 +267,23 @@ public class Lock {
             }
 
             public enum EnumType {
-                STRIPES_WRITE,
-                STRIPES_READ;
+                STRIPES_WRITE {
+                    @SideOnly(Side.CLIENT)
+                    @Override
+                    public LaserData_BC8.LaserType getLaserType() {
+                        return BuildCraftLaserManager.STRIPES_WRITE;
+                    }
+                },
+                STRIPES_READ {
+                    @SideOnly(Side.CLIENT)
+                    @Override
+                    public LaserData_BC8.LaserType getLaserType() {
+                        return BuildCraftLaserManager.STRIPES_READ;
+                    }
+                };
+
+                @SideOnly(Side.CLIENT)
+                public abstract LaserData_BC8.LaserType getLaserType();
             }
         }
 

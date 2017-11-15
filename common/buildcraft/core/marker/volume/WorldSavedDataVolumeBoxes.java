@@ -14,73 +14,74 @@ import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 
-import net.minecraftforge.common.util.Constants;
-
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.MessageManager;
 
 public class WorldSavedDataVolumeBoxes extends WorldSavedData {
-    public static final String DATA_NAME = "buildcraft_volume_boxes";
+    private static final String DATA_NAME = "buildcraft_volume_boxes";
     private static World currentWorld;
     public World world = currentWorld;
-    public final List<VolumeBox> boxes = new ArrayList<>();
+    public final List<VolumeBox> volumeBoxes = new ArrayList<>();
 
     public WorldSavedDataVolumeBoxes() {
         super(DATA_NAME);
     }
 
+    @SuppressWarnings("unused")
     public WorldSavedDataVolumeBoxes(String name) {
         super(name);
     }
 
-    public VolumeBox getBoxAt(BlockPos pos) {
-        return boxes.stream().filter(box -> box.box.contains(pos)).findFirst().orElse(null);
+    public VolumeBox getVolumeBoxAt(BlockPos pos) {
+        return volumeBoxes.stream().filter(volumeBox -> volumeBox.box.contains(pos)).findFirst().orElse(null);
     }
 
-    public VolumeBox addBox(BlockPos pos) {
-        VolumeBox box = new VolumeBox(world, pos);
-        boxes.add(box);
-        return box;
+    public void addVolumeBox(BlockPos pos) {
+        volumeBoxes.add(new VolumeBox(world, pos));
     }
 
-    public VolumeBox getBoxFromId(UUID id) {
-        return boxes.stream().filter(box -> box.id.equals(id)).findFirst().orElse(null);
+    public VolumeBox getVolumeBoxFromId(UUID id) {
+        return volumeBoxes.stream().filter(volumeBox -> volumeBox.id.equals(id)).findFirst().orElse(null);
     }
 
     public VolumeBox getCurrentEditing(EntityPlayer player) {
-        return boxes.stream().filter(box -> box.isEditingBy(player)).findFirst().orElse(null);
+        return volumeBoxes.stream().filter(volumeBox -> volumeBox.isEditingBy(player)).findFirst().orElse(null);
     }
 
     public void tick() {
         AtomicBoolean dirty = new AtomicBoolean(false);
-        boxes.stream().filter(VolumeBox::isEditing).forEach(box -> {
-            EntityPlayer player = box.getPlayer(world);
+        volumeBoxes.stream().filter(VolumeBox::isEditing).forEach(volumeBox -> {
+            EntityPlayer player = volumeBox.getPlayer(world);
             if (player == null) {
-                box.pauseEditing();
+                volumeBox.pauseEditing();
                 dirty.set(true);
             } else {
-                AxisAlignedBB oldBox = box.box.getBoundingBox();
-                box.box.reset();
-                box.box.extendToEncompass(box.getHeld());
-                BlockPos lookingAt = new BlockPos(player.getPositionVector().addVector(0, player.getEyeHeight(), 0).add(player.getLookVec().scale(box.getDist())));
-                box.box.extendToEncompass(lookingAt);
-                if (!box.box.getBoundingBox().equals(oldBox)) {
+                AxisAlignedBB oldAabb = volumeBox.box.getBoundingBox();
+                volumeBox.box.reset();
+                volumeBox.box.extendToEncompass(volumeBox.getHeld());
+                BlockPos lookingAt = new BlockPos(
+                    player.getPositionVector()
+                        .addVector(0, player.getEyeHeight(), 0)
+                        .add(player.getLookVec().scale(volumeBox.getDist()))
+                );
+                volumeBox.box.extendToEncompass(lookingAt);
+                if (!volumeBox.box.getBoundingBox().equals(oldAabb)) {
                     dirty.set(true);
                 }
             }
         });
-        for (VolumeBox box : boxes) {
-            List<Lock> locksToRemove = new ArrayList<>(box.locks).stream()
-                    .filter(lock -> !lock.cause.stillWorks(world))
-                    .collect(Collectors.toList());
+        for (VolumeBox volumeBox : volumeBoxes) {
+            List<Lock> locksToRemove = new ArrayList<>(volumeBox.locks).stream()
+                .filter(lock -> !lock.cause.stillWorks(world))
+                .collect(Collectors.toList());
             if (!locksToRemove.isEmpty()) {
-                box.locks.removeAll(locksToRemove);
+                volumeBox.locks.removeAll(locksToRemove);
                 dirty.set(true);
             }
         }
@@ -92,24 +93,23 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     @Override
     public void markDirty() {
         super.markDirty();
-        MessageManager.sendToDimension(new MessageVolumeBoxes(boxes), world.provider.getDimension());
+        MessageManager.sendToDimension(new MessageVolumeBoxes(volumeBoxes), world.provider.getDimension());
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        NBTTagList boxesTag = new NBTTagList();
-        boxes.stream().map(VolumeBox::writeToNBT).forEach(boxesTag::appendTag);
-        nbt.setTag("boxes", boxesTag);
+        nbt.setTag("volumeBoxes", NBTUtilBC.writeCompoundList(volumeBoxes.stream().map(VolumeBox::writeToNBT)));
         return nbt;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        boxes.clear();
-        NBTTagList boxesTag = nbt.getTagList("boxes", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < boxesTag.tagCount(); i++) {
-            boxes.add(new VolumeBox(world, boxesTag.getCompoundTagAt(i)));
-        }
+        volumeBoxes.clear();
+        NBTUtilBC.readCompoundList(nbt.getTag("volumeBoxes"))
+            .map(volumeBoxTag -> new VolumeBox(world, volumeBoxTag))
+            .forEach(volumeBoxes::add);
     }
 
     public static WorldSavedDataVolumeBoxes get(World world) {
@@ -118,9 +118,10 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
         }
         MapStorage storage = world.getPerWorldStorage();
         currentWorld = world;
-        WorldSavedDataVolumeBoxes instance = (WorldSavedDataVolumeBoxes) storage.getOrLoadData(WorldSavedDataVolumeBoxes.class, DATA_NAME);
+        WorldSavedDataVolumeBoxes instance = (WorldSavedDataVolumeBoxes)
+            storage.getOrLoadData(WorldSavedDataVolumeBoxes.class, DATA_NAME);
         currentWorld = null;
-        if(instance == null) {
+        if (instance == null) {
             instance = new WorldSavedDataVolumeBoxes();
             storage.setData(DATA_NAME, instance);
         }

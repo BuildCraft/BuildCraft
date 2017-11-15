@@ -9,10 +9,13 @@ package buildcraft.core.marker.volume;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -21,74 +24,83 @@ import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class MessageVolumeBoxes implements IMessage {
-    private final List<PacketBufferBC> boxes;
+    private final List<PacketBufferBC> buffers;
 
     @SuppressWarnings("unused")
     public MessageVolumeBoxes() {
-        boxes = new ArrayList<>();
+        buffers = new ArrayList<>();
     }
 
-    public MessageVolumeBoxes(List<VolumeBox> boxes) {
-        this.boxes = boxes.stream().map(box -> {
-            PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
-            box.toBytes(buffer);
-            return buffer;
-        }).collect(Collectors.toList());
+    public MessageVolumeBoxes(List<VolumeBox> volumeBoxes) {
+        this.buffers = volumeBoxes.stream()
+            .map(volumeBox -> {
+                PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+                volumeBox.toBytes(buffer);
+                return buffer;
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
     public void toBytes(ByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-        buf.writeInt(boxes.size());
-        for (PacketBufferBC buf2 : boxes) {
-            buf.writeVarInt(buf2.readableBytes());
-            buf.writeBytes(buf2, 0, buf2.readableBytes());
+        buf.writeInt(buffers.size());
+        for (PacketBufferBC localBuffer : buffers) {
+            buf.writeVarInt(localBuffer.readableBytes());
+            buf.writeBytes(localBuffer, 0, localBuffer.readableBytes());
         }
     }
 
     @Override
     public void fromBytes(ByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-        boxes.clear();
+        buffers.clear();
         int count = buf.readInt();
         for (int i = 0; i < count; i++) {
             int bytes = buf.readVarInt();
             PacketBufferBC packet = new PacketBufferBC(buf.readBytes(bytes));
-            boxes.add(packet);
+            buffers.add(packet);
         }
     }
 
     public static final IMessageHandler<MessageVolumeBoxes, IMessage> HANDLER = (message, ctx) -> {
-        ClientVolumeBoxes.INSTANCE.boxes.removeIf(box -> !message.boxes.contains(box));
-        try {
-            for (PacketBufferBC packet : message.boxes) {
-                VolumeBox box = new VolumeBox(BCLibProxy.getProxy().getClientWorld(), packet);
-                PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
-                box.toBytes(buf);
-                boolean wasContained = false;
-                for (VolumeBox clientBox : ClientVolumeBoxes.INSTANCE.boxes) {
-                    if (clientBox.equals(box)) {
-                        try {
-                            clientBox.fromBytes(buf);
-                        } catch (IOException io) {
-                            throw new RuntimeException(io);
-                        }
-                        wasContained = true;
-                        break;
-                    }
+        Map<PacketBufferBC, VolumeBox> volumeBoxes = message.buffers.stream()
+            .map(buffer -> {
+                VolumeBox volumeBox;
+                try {
+                    volumeBox = new VolumeBox(BCLibProxy.getProxy().getClientWorld(), buffer);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-                if (!wasContained) {
-                    ClientVolumeBoxes.INSTANCE.boxes.add(box);
-                    for (Addon addon : box.addons.values()) {
-                        if (addon != null) {
-                            addon.onAdded();
-                        }
+                PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
+                volumeBox.toBytes(buf);
+                return Pair.of(buf, volumeBox);
+            })
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+
+        ClientVolumeBoxes.INSTANCE.volumeBoxes.removeIf(volumeBox -> !volumeBoxes.values().contains(volumeBox));
+        for (Map.Entry<PacketBufferBC, VolumeBox> entry : volumeBoxes.entrySet()) {
+            boolean wasContained = false;
+            for (VolumeBox clientVolumeBox : ClientVolumeBoxes.INSTANCE.volumeBoxes) {
+                if (clientVolumeBox.equals(entry.getValue())) {
+                    try {
+                        clientVolumeBox.fromBytes(entry.getKey());
+                    } catch (IOException io) {
+                        throw new RuntimeException(io);
+                    }
+                    wasContained = true;
+                    break;
+                }
+            }
+            if (!wasContained) {
+                ClientVolumeBoxes.INSTANCE.volumeBoxes.add(entry.getValue());
+                for (Addon addon : entry.getValue().addons.values()) {
+                    if (addon != null) {
+                        addon.onAdded();
                     }
                 }
             }
-            return null;
-        } catch (IOException io) {
-            throw new RuntimeException(io);
         }
+        return null;
     };
 }

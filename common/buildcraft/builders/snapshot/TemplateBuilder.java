@@ -31,10 +31,10 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean isAir(BlockPos blockPos) {
         return !getBuildingInfo().box.contains(blockPos) ||
-            !getBuildingInfo().getSnapshot().data.shouldFill(
-                getBuildingInfo().fromWorld(blockPos).getX(),
-                getBuildingInfo().fromWorld(blockPos).getY(),
-                getBuildingInfo().fromWorld(blockPos).getZ()
+            !getBuildingInfo().getSnapshot().data.get(
+                getBuildingInfo().getSnapshot().posToIndex(
+                    getBuildingInfo().fromWorld(blockPos)
+                )
             );
     }
 
@@ -82,6 +82,6 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return  !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
+        return !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
     }
 }

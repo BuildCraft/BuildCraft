@@ -49,15 +49,15 @@ public class NodeTypes {
     public static final BiMap<Class<?>, NodeType<?>> typesByClass = HashBiMap.create();
 
     static {
-        LONG = new FunctionContext();
-        DOUBLE = new FunctionContext();
-        BOOLEAN = new FunctionContext();
-        STRING = new NodeType<>("");
-        VEC_LONG = new NodeType<>(VecLong.ZERO);
-        VEC_DOUBLE = new NodeType<>(VecDouble.ZERO);
-        NODE_LONG = new NodeType<>(INodeLong.class, NodeConstantLong.ZERO);
-        NODE_DOUBLE = new NodeType<>(INodeDouble.class, NodeConstantDouble.ZERO);
-        NODE_BOOLEAN = new NodeType<>(INodeBoolean.class, NodeConstantBoolean.FALSE);
+        LONG = new FunctionContext("Type: Long");
+        DOUBLE = new FunctionContext("Type: Double");
+        BOOLEAN = new FunctionContext("Type: Boolean");
+        STRING = new NodeType<>("String", "");
+        VEC_LONG = new NodeType<>("Long Vector", VecLong.ZERO);
+        VEC_DOUBLE = new NodeType<>("Double Vector",VecDouble.ZERO);
+        NODE_LONG = new NodeType<>("Long Node", INodeLong.class, NodeConstantLong.ZERO);
+        NODE_DOUBLE = new NodeType<>("Double Node", INodeDouble.class, NodeConstantDouble.ZERO);
+        NODE_BOOLEAN = new NodeType<>("Boolean Node", INodeBoolean.class, NodeConstantBoolean.FALSE);
 
         typesByName.put("long", long.class);
         typesByName.put("double", double.class);

@@ -40,7 +40,7 @@ import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 
-import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.builders.snapshot.SchematicBlockAir;
@@ -71,9 +71,10 @@ public class BCBuilders {
         BCBuildersRegistries.preInit();
         BCBuildersItems.preInit();
         BCBuildersBlocks.preInit();
+        BCBuildersStatements.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
-        AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filling_planner"), AddonFillingPlanner.class);
+        AddonsRegistry.INSTANCE.register(new ResourceLocation("buildcraftbuilders", "filler_planner"), AddonFillerPlanner.class);
 
         SchematicBlockFactoryRegistry.registerFactory(
             "air",
@@ -171,7 +172,7 @@ public class BCBuilders {
         // Items
         registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single/");
         registerTag("item.snapshot").reg("snapshot").locale("snapshot").model("snapshot/");
-        registerTag("item.filling_planner").reg("filling_planner").locale("fillingPlannerItem").model("filling_planner");
+        registerTag("item.filler_planner").reg("filler_planner").oldReg("filling_planner").locale("fillerPlannerItem").model("filler_planner");
         // Item Blocks
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");

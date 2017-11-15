@@ -32,14 +32,24 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     // Function-called stuff (helpers etc)
     private StackInsertionChecker checker;
     private StackInsertionFunction inserter;
+
     @Nullable
-    private final StackChangeCallback callback;
+    private StackChangeCallback callback;
 
     // Actual item stacks used
     public final NonNullList<ItemStack> stacks;
 
     // Transactor speedup (small)
     private int firstUsed = Integer.MAX_VALUE;
+
+    public ItemHandlerSimple(int size) {
+        this(size, (slot, stack) -> true, StackInsertionFunction.getDefaultInserter(), null);
+    }
+
+    public ItemHandlerSimple(int size, int maxStackSize) {
+        this(size);
+        setLimitedInsertor(maxStackSize);
+    }
 
     public ItemHandlerSimple(int size, @Nullable StackChangeCallback callback) {
         this(size, (slot, stack) -> true, StackInsertionFunction.getDefaultInserter(), callback);
@@ -63,6 +73,10 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
 
     public void setLimitedInsertor(int maxStackSize) {
         setInsertor(StackInsertionFunction.getInsertionFunction(maxStackSize));
+    }
+
+    public void setCallback(StackChangeCallback callback) {
+        this.callback = callback;
     }
 
     @Override
@@ -164,13 +178,21 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 return asValid(current.copy());
             }
             setStackInternal(slot, StackUtil.EMPTY);
+            if (callback != null) {
+                callback.onStackChange(this, slot, current, StackUtil.EMPTY);
+            }
             // no need to copy as we no longer have it
             return current;
         } else {
+            ItemStack before = current;
             current = current.copy();
             ItemStack split = current.splitStack(amount);
             if (!simulate) {
+                if (current.getCount() <= 0) current = StackUtil.EMPTY;
                 setStackInternal(slot, current);
+                if (callback != null) {
+                    callback.onStackChange(this, slot, before, current);
+                }
             }
             return split;
         }
@@ -183,14 +205,20 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         if (min <= 0) min = 1;
         if (max < min) return StackUtil.EMPTY;
         ItemStack current = stacks.get(slot);
-        if (current.isEmpty() || current.getCount() < min) return StackUtil.EMPTY;
+        ItemStack before = current.copy();
+        if (current.getCount() < min) return StackUtil.EMPTY;
         if (filter.matches(asValid(current))) {
             if (simulate) {
                 ItemStack copy = current.copy();
                 return copy.splitStack(max);
             }
             ItemStack split = current.splitStack(max);
-            setStackInternal(slot, current.copy());
+            if (current.getCount() <= 0) {
+                stacks.set(slot, StackUtil.EMPTY);
+            }
+            if (callback != null) {
+                callback.onStackChange(this, slot, before, stacks.get(slot));
+            }
             return split;
         }
         return StackUtil.EMPTY;
@@ -203,7 +231,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
             throw new IndexOutOfBoundsException("Slot index out of range: " + slot);
         }
         if (canSet(slot, stack)) {
+            ItemStack before = stacks.get(slot);
             setStackInternal(slot, stack);
+            if (callback != null) {
+                callback.onStackChange(this, slot, before, asValid(stack));
+            }
         } else {
             // Someone miss-called this. Woops. Looks like they didn't call insert.
             // If this is *somehow* called from vanilla code then its probably a vanilla bug
@@ -222,7 +254,6 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     }
 
     private void setStackInternal(int slot, @Nonnull ItemStack stack) {
-        ItemStack before = stacks.get(slot);
         stacks.set(slot, asValid(stack));
         // Transactor calc
         if (stack.isEmpty() && firstUsed == slot) {
@@ -238,20 +269,15 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         } else if (!stack.isEmpty() && firstUsed > slot) {
             firstUsed = slot;
         }
-        fireCallback(slot, before);
-    }
-
-    private void fireCallback(int slot, @Nonnull ItemStack before) {
-        ItemStack after = stacks.get(slot);
-        if (!ItemStack.areItemStacksEqual(before, after)) {
-            if (callback != null) {
-                callback.onStackChange(this, slot, before, after);
-            }
-        }
     }
 
     @Override
     public int getSlotLimit(int slot) {
         return 64;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemHandlerSimple " + stacks;
     }
 }

@@ -8,11 +8,10 @@ package buildcraft.builders.tile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -28,12 +27,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.api.filler.FilledTemplate;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicBlockContext;
@@ -94,7 +91,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     private EnumSnapshotType snapshotType = EnumSnapshotType.BLUEPRINT;
     public final Box box = new Box();
     public boolean markerBox = false;
-    private FilledTemplate templateScannedBlocks;
+    private BitSet templateScannedBlocks;
     private final List<ISchematicBlock> blueprintScannedPalette = new ArrayList<>();
     private int[] blueprintScannedData;
     private final List<ISchematicEntity> blueprintScannedEntities = new ArrayList<>();
@@ -113,19 +110,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler,
-                                int slot,
-                                @Nonnull ItemStack before,
-                                @Nonnull ItemStack after) {
-        super.onSlotChange(handler, slot, before, after);
-        if (handler == invSnapshotIn) {
-            if (invSnapshotOut.getStackInSlot(0).isEmpty() && after.getItem() instanceof ItemSnapshot) {
-                snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(after).snapshotType;
-            }
-        }
-    }
-
-    @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         if (placer.world.isRemote) {
@@ -134,7 +118,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         IBlockState blockState = world.getBlockState(pos);
         BlockPos offsetPos = pos.offset(blockState.getValue(BlockArchitectTable.PROP_FACING).getOpposite());
-        VolumeBox volumeBox = volumeBoxes.getBoxAt(offsetPos);
+        VolumeBox volumeBox = volumeBoxes.getVolumeBoxAt(offsetPos);
         TileEntity tile = world.getTileEntity(offsetPos);
         if (volumeBox != null) {
             box.reset();
@@ -181,6 +165,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
         if (!invSnapshotIn.getStackInSlot(0).isEmpty() && invSnapshotOut.getStackInSlot(0).isEmpty() && isValid) {
             if (!scanning) {
+                snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(
+                    invSnapshotIn.getStackInSlot(0)
+                ).snapshotType;
                 int size = box.size().getX() * box.size().getY() * box.size().getZ();
                 size /= snapshotType.maxPerTick;
                 deltaProgress.addDelta(0, size, 1);
@@ -215,15 +202,15 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         BlockPos size = box.size();
         if (templateScannedBlocks == null || blueprintScannedData == null) {
             boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
-            templateScannedBlocks = new FilledTemplate(BlockPos.ORIGIN, size);
-            blueprintScannedData = new int[size.getX() * size.getY() * size.getZ()];
+            templateScannedBlocks = new BitSet(Snapshot.getDataSize(size));
+            blueprintScannedData = new int[Snapshot.getDataSize(size)];
         }
 
         // Read from world
         BlockPos worldScanPos = boxIterator.getCurrent();
         BlockPos schematicPos = worldScanPos.subtract(box.min());
         if (snapshotType == EnumSnapshotType.TEMPLATE) {
-            templateScannedBlocks.set(schematicPos, !world.isAirBlock(worldScanPos));
+            templateScannedBlocks.set(Snapshot.posToIndex(box.size(), schematicPos), !world.isAirBlock(worldScanPos));
         }
         if (snapshotType == EnumSnapshotType.BLUEPRINT) {
             ISchematicBlock schematicBlock = readSchematicBlock(worldScanPos);

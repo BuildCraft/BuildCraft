@@ -7,10 +7,11 @@
 package buildcraft.lib.client.model;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import com.google.gson.JsonParseException;
 
@@ -21,16 +22,10 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.model.ModelUtil.TexturedFace;
-import buildcraft.lib.client.model.json.JsonModelRule;
 import buildcraft.lib.client.model.json.JsonTexture;
 import buildcraft.lib.client.model.json.JsonVariableModel;
-import buildcraft.lib.client.model.json.JsonVariableModelPart;
-import buildcraft.lib.client.reload.ReloadManager;
-import buildcraft.lib.client.reload.ReloadSource;
-import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.ITickableNode;
-import buildcraft.lib.misc.SpriteUtil;
 
 import buildcraft.transport.BCTransportModels;
 
@@ -41,6 +36,7 @@ import buildcraft.transport.BCTransportModels;
  * The json model definition of a variable model matches the vanilla format, except that any of the static numbers may
  * be replaced with an expression, that may use any of the variables you have defined. */
 public class ModelHolderVariable extends ModelHolder {
+    public final Map<String, TextureAtlasSprite> customSprites = new HashMap<>();
     private final FunctionContext context;
     private JsonVariableModel rawModel;
     private boolean unseen = true;
@@ -72,26 +68,7 @@ public class ModelHolderVariable extends ModelHolder {
             BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because ", io);
         }
         if (rawModel != null) {
-            if (ModelHolderRegistry.DEBUG) {
-                BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
-            }
-            ReloadSource srcModel = new ReloadSource(modelLocation, SourceType.MODEL);
-            for (Entry<String, JsonTexture> entry : rawModel.textures.entrySet()) {
-                JsonTexture lookup = entry.getValue();
-                String location = lookup.location;
-                if (location.startsWith("#")) {
-                    // its somewhere else in the map so we don't need to register it twice
-                    continue;
-                }
-                ResourceLocation textureLoc = new ResourceLocation(location);
-                toRegisterSprites.add(textureLoc);
-                // Allow transitive deps
-                ReloadSource srcSprite = new ReloadSource(SpriteUtil.transformLocation(textureLoc), SourceType.SPRITE);
-                ReloadManager.INSTANCE.addDependency(srcSprite, srcModel);
-                if (ModelHolderRegistry.DEBUG) {
-                    BCLog.logger.info("[lib.model.holder]  - " + location);
-                }
-            }
+            rawModel.onTextureStitchPre(modelLocation, toRegisterSprites);
         }
     }
 
@@ -100,22 +77,10 @@ public class ModelHolderVariable extends ModelHolder {
         // NO-OP: we bake every time get{Cutout/Translucent}Quads is called as this is a variable model
     }
 
-    private MutableQuad[] bakePart(JsonVariableModelPart[] a) {
-        List<MutableQuad> list = new ArrayList<>();
-        for (JsonVariableModelPart part : a) {
-            part.addQuads(list, this::lookupTexture);
-        }
-        for (JsonModelRule rule : rawModel.rules) {
-            if (rule.when.evaluate()) {
-                rule.apply(list);
-            }
-        }
-        return list.toArray(new MutableQuad[list.size()]);
-    }
-
     private TexturedFace lookupTexture(String lookup) {
         int attempts = 0;
         JsonTexture texture = new JsonTexture(lookup);
+        TextureAtlasSprite sprite;
         while (texture.location.startsWith("#") && attempts < 10) {
             JsonTexture tex = rawModel.textures.get(texture.location);
             if (tex == null) break;
@@ -123,7 +88,14 @@ public class ModelHolderVariable extends ModelHolder {
             attempts++;
         }
         lookup = texture.location;
-        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+        if (lookup.startsWith("~")) {
+            sprite = customSprites.get(lookup.substring(1));
+            if (sprite == null) {
+                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+            }
+        } else {
+            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+        }
         TexturedFace face = new TexturedFace();
         face.sprite = sprite;
         face.faceData = texture.faceData;
@@ -142,6 +114,14 @@ public class ModelHolderVariable extends ModelHolder {
         }
     }
 
+    @Nullable
+    public JsonVariableModel getModel() {
+        if (rawModel == null) {
+            printNoModelWarning();
+        }
+        return rawModel;
+    }
+
     public ITickableNode[] createTickableNodes() {
         if (rawModel == null) {
             printNoModelWarning();
@@ -155,7 +135,7 @@ public class ModelHolderVariable extends ModelHolder {
             printNoModelWarning();
             return MutableQuad.EMPTY_ARRAY;
         }
-        return bakePart(rawModel.cutoutElements);
+        return rawModel.bakePart(rawModel.cutoutElements, this::lookupTexture);
     }
 
     public MutableQuad[] getTranslucentQuads() {
@@ -163,6 +143,6 @@ public class ModelHolderVariable extends ModelHolder {
             printNoModelWarning();
             return MutableQuad.EMPTY_ARRAY;
         }
-        return bakePart(rawModel.translucentElements);
+        return rawModel.bakePart(rawModel.translucentElements, this::lookupTexture);
     }
 }

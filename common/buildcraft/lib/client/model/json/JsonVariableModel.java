@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -23,14 +24,25 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.client.model.ModelHolderRegistry;
 import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.TexturedFace;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.client.reload.ReloadManager;
+import buildcraft.lib.client.reload.ReloadSource;
+import buildcraft.lib.client.reload.SourceType;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.misc.SpriteUtil;
 
 /** {@link JsonModel} but any element can change depending on variables. */
 public class JsonVariableModel extends JsonVariableObject {
@@ -40,11 +52,13 @@ public class JsonVariableModel extends JsonVariableObject {
     public final JsonModelRule[] rules;
     public final JsonVariableModelPart[] cutoutElements, translucentElements;
 
-    public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx) throws JsonParseException, IOException {
+    public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx)
+        throws JsonParseException, IOException {
         return deserialize(from, fnCtx, new ResourceLoaderContext());
     }
 
-    public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx, ResourceLoaderContext ctx) throws JsonParseException, IOException {
+    public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx, ResourceLoaderContext ctx)
+        throws JsonParseException, IOException {
         try (InputStreamReader isr = ctx.startLoading(from)) {
             return new JsonVariableModel(JsonUtil.inlineCustom(new Gson().fromJson(isr, JsonObject.class)), fnCtx, ctx);
         } finally {
@@ -52,7 +66,8 @@ public class JsonVariableModel extends JsonVariableObject {
         }
     }
 
-    private static JsonVariableModelPart[] deserializePartArray(JsonObject json, String member, FunctionContext fnCtx, ResourceLoaderContext ctx, boolean require) {
+    static JsonVariableModelPart[] deserializePartArray(JsonObject json, String member, FunctionContext fnCtx,
+        ResourceLoaderContext ctx, boolean require) {
         if (!json.has(member)) {
             if (require) {
                 throw new JsonSyntaxException("Did not have '" + member + "' in '" + json + "'");
@@ -141,6 +156,39 @@ public class JsonVariableModel extends JsonVariableObject {
         rules = rulesP.toArray(new JsonModelRule[rulesP.size()]);
     }
 
+    /** Creates a half copy of this -- textures are fully copied, but everything else is taken dierctly (as its
+     * effectivly immutable) */
+    public JsonVariableModel(JsonVariableModel from) {
+        textures = new HashMap<>(from.textures);
+        cutoutElements = from.cutoutElements;
+        translucentElements = from.translucentElements;
+        rules = from.rules;
+        ambientOcclusion = from.ambientOcclusion;
+    }
+
+    public void onTextureStitchPre(ResourceLocation modelLocation, Set<ResourceLocation> toRegisterSprites) {
+        if (ModelHolderRegistry.DEBUG) {
+            BCLog.logger.info("[lib.model] The model " + modelLocation + " requires these sprites:");
+        }
+        ReloadSource srcModel = new ReloadSource(modelLocation, SourceType.MODEL);
+        for (Entry<String, JsonTexture> entry : textures.entrySet()) {
+            JsonTexture lookup = entry.getValue();
+            String location = lookup.location;
+            if (location.startsWith("#") || location.startsWith("~")) {
+                // its somewhere else in the map so we don't need to register it twice
+                continue;
+            }
+            ResourceLocation textureLoc = new ResourceLocation(location);
+            toRegisterSprites.add(textureLoc);
+            // Allow transitive deps
+            ReloadSource srcSprite = new ReloadSource(SpriteUtil.transformLocation(textureLoc), SourceType.SPRITE);
+            ReloadManager.INSTANCE.addDependency(srcSprite, srcModel);
+            if (ModelHolderRegistry.DEBUG) {
+                BCLog.logger.info("[lib.model]  - " + location);
+            }
+        }
+    }
+
     private void deserializeTextures(JsonElement elem) {
         if (elem == null) return;
         if (!elem.isJsonObject()) {
@@ -161,6 +209,45 @@ public class JsonVariableModel extends JsonVariableObject {
             }
             textures.put(name, texture);
         }
+    }
+
+    private TexturedFace lookupTexture(String lookup) {
+        int attempts = 0;
+        JsonTexture texture = new JsonTexture(lookup);
+        TextureAtlasSprite sprite;
+        while (texture.location.startsWith("#") && attempts < 10) {
+            JsonTexture tex = textures.get(texture.location);
+            if (tex == null) break;
+            else texture = texture.inParent(tex);
+            attempts++;
+        }
+        lookup = texture.location;
+        sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+        TexturedFace face = new TexturedFace();
+        face.sprite = sprite;
+        face.faceData = texture.faceData;
+        return face;
+    }
+
+    public MutableQuad[] bakePart(JsonVariableModelPart[] a, ITextureGetter spriteLookup) {
+        List<MutableQuad> list = new ArrayList<>();
+        for (JsonVariableModelPart part : a) {
+            part.addQuads(list, spriteLookup);
+        }
+        for (JsonModelRule rule : rules) {
+            if (rule.when.evaluate()) {
+                rule.apply(list);
+            }
+        }
+        return list.toArray(new MutableQuad[list.size()]);
+    }
+
+    public MutableQuad[] getCutoutQuads() {
+        return bakePart(cutoutElements, this::lookupTexture);
+    }
+
+    public MutableQuad[] getTranslucentQuads() {
+        return bakePart(translucentElements, this::lookupTexture);
     }
 
     public interface ITextureGetter {

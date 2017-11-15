@@ -27,8 +27,6 @@ public class BoxTester {
     private static final BlockPos SIZE = new BlockPos(4, 4, 4);
     private static final BlockPos CENTER = new BlockPos(3, 4, 5);
     private static final Vec3d CENTER_EXACT = new Vec3d(3, 4, 5);
-    private static final BlockPos ROTATED_MIN = new BlockPos(1, 2, 3);
-    private static final BlockPos ROTATED_MAX = new BlockPos(4, 5, 6);
 
     @DataPoints("testContainsVec3d")
     public static Set<Entry<Vec3d, Boolean>> dataContainsVec3d() {
@@ -48,8 +46,6 @@ public class BoxTester {
         boolean expected = entry.getValue();
         assertEquals(expected, box.contains(in));
     }
-
-    public static final BlockPos[] containsBlockPosTests = {};
 
     @Test
     public void testMin() {
@@ -79,16 +75,6 @@ public class BoxTester {
     public void testCenterExact() {
         Box box = new Box(MIN, MAX);
         TestHelper.assertVec3dEquals(CENTER_EXACT, box.centerExact());
-    }
-
-    @Test
-    public void testRotateLeft() {
-        Box box = new Box(MIN, MAX);
-        Box rotated = box.rotateLeft();
-        BlockPos rotMin = rotated.min();
-        BlockPos rotMax = rotated.max();
-        assertEquals(ROTATED_MIN, rotMin);
-        assertEquals(ROTATED_MAX, rotMax);
     }
 
     @Test

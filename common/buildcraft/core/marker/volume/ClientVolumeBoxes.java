@@ -12,5 +12,5 @@ import java.util.List;
 public enum ClientVolumeBoxes {
     INSTANCE;
 
-    public final List<VolumeBox> boxes = new ArrayList<>();
+    public final List<VolumeBox> volumeBoxes = new ArrayList<>();
 }

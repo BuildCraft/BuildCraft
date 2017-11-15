@@ -22,7 +22,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
 /** Provides a simple way of rendering an item model with just a list of quads. This provides some transforms to use
- * that make it simple to render as a block, item (todo) or tool (todo) */
+ * that make it simple to render as a block, item or tool (todo) */
 @SuppressWarnings("deprecation")
 public class ModelItemSimple implements IBakedModel {
     public static final ItemCameraTransforms TRANSFORM_DEFAULT = ItemCameraTransforms.DEFAULT;
@@ -30,34 +30,48 @@ public class ModelItemSimple implements IBakedModel {
     public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM;
     public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM_BIGGER;
     public static final ItemCameraTransforms TRANSFORM_PLUG_AS_BLOCK;
-    // TODO: TRANSFORM_ITEM
+    public static final ItemCameraTransforms TRANSFORM_ITEM;
     // TODO: TRANSFORM_TOOL
 
     static {
         // Values taken from "minecraft:models/block/block.json"
-        ItemTransformVec3f thirdperson_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
-        ItemTransformVec3f thirdperson_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
-        ItemTransformVec3f firstperson_left = def(0, 45, 0, 0, 0, 0, 0.4);
-        ItemTransformVec3f firstperson_right = def(0, 225, 0, 0, 0, 0, 0.4);
+        ItemTransformVec3f thirdp_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
+        ItemTransformVec3f thirdp_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
+        ItemTransformVec3f firstp_left = def(0, 135, 0, 0, 0, 0, 0.4);
+        ItemTransformVec3f firstp_right = def(0, 135, 0, 0, 0, 0, 0.4);
         ItemTransformVec3f head = def(0, 0, 0, 0, 0, 0, 1);
         ItemTransformVec3f gui = def(30, 225, 0, 0, 0, 0, 0.625);
         ItemTransformVec3f ground = def(0, 0, 0, 0, 3, 0, 0.25);
         ItemTransformVec3f fixed = def(0, 0, 0, 0, 0, 0, 0.5);
-        TRANSFORM_BLOCK = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+        TRANSFORM_BLOCK =
+            new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
 
         ItemTransformVec3f item_head = def(0, 0, 0, 0, 0, 0, 1);
         ItemTransformVec3f item_gui = def(0, 90, 0, 0, 0, 0, 1);
         ItemTransformVec3f item_ground = def(0, 0, 0, 0, 3, 0, 0.5);
         ItemTransformVec3f item_fixed = def(0, 0, 0, 0, 0, 0, 0.85);
-        TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, item_head, item_gui, item_ground, item_fixed);
+        TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right,
+            item_head, item_gui, item_ground, item_fixed);
         TRANSFORM_PLUG_AS_ITEM_BIGGER = scale(TRANSFORM_PLUG_AS_ITEM, 1.8);
 
-        thirdperson_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
-        thirdperson_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
-        firstperson_left = def(0, 45, 0, 0, 0, 0, 0.4);
-        firstperson_right = def(0, 225, 0, 0, 0, 0, 0.4);
+        thirdp_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
+        thirdp_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
+        firstp_left = def(0, 45, 0, 0, 0, 0, 0.4);
+        firstp_right = def(0, 225, 0, 0, 0, 0, 0.4);
         gui = def(30, 135, 0, -3, 1.5, 0, 0.625);
-        TRANSFORM_PLUG_AS_BLOCK = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+        TRANSFORM_PLUG_AS_BLOCK =
+            new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
+
+        ground = def(0, 0, 0, 0, 2, 0, 0.5);
+        head = def(0, 180, 0, 0, 13, 7, 1);
+        thirdp_right = def(0, 0, 0, 0, 3, 1, 0.55);
+        firstp_right = def(0, -90, 25, 1.13, 3.2, 1.13, 0.68);
+        thirdp_left = thirdp_right;
+        firstp_left = firstp_right;
+        fixed = def(0, 180, 0, 0, 0, 0, 1);
+        gui = def(0, 0, 0, 0, 0, 0, 1);
+        TRANSFORM_ITEM =
+            new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
     }
 
     private static ItemCameraTransforms scale(ItemCameraTransforms from, double by) {
@@ -87,12 +101,15 @@ public class ModelItemSimple implements IBakedModel {
         return new ItemTransformVec3f(from.rotation, nTranslation, from.scale);
     }
 
-    private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz, double scale) {
+    private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz,
+        double scale) {
         return def((float) rx, (float) ry, (float) rz, (float) tx, (float) ty, (float) tz, (float) scale);
     }
 
     private static ItemTransformVec3f def(float rx, float ry, float rz, float tx, float ty, float tz, float scale) {
-        return new ItemTransformVec3f(new Vector3f(rx, ry, rz), new Vector3f(tx / 16f, ty / 16f, tz / 16f), new Vector3f(scale, scale, scale));
+        Vector3f rot = new Vector3f(rx, ry, rz);
+        Vector3f translate = new Vector3f(tx / 16f, ty / 16f, tz / 16f);
+        return new ItemTransformVec3f(rot, translate, new Vector3f(scale, scale, scale));
     }
 
     private final List<BakedQuad> quads;

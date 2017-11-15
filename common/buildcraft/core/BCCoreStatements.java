@@ -8,37 +8,16 @@ import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable.Mode;
 
-import buildcraft.core.patterns.Pattern;
-import buildcraft.core.patterns.PatternBox;
-import buildcraft.core.patterns.PatternClear;
-import buildcraft.core.patterns.PatternFill;
-import buildcraft.core.patterns.PatternFrame;
-import buildcraft.core.patterns.PatternNone;
-import buildcraft.core.patterns.PatternParameterAxis;
-import buildcraft.core.patterns.PatternParameterCenter;
-import buildcraft.core.patterns.PatternParameterFacing;
-import buildcraft.core.patterns.PatternParameterHollow;
-import buildcraft.core.patterns.PatternParameterRotation;
-import buildcraft.core.patterns.PatternParameterXZDir;
-import buildcraft.core.patterns.PatternParameterYDir;
-import buildcraft.core.patterns.PatternPyramid;
-import buildcraft.core.patterns.PatternShape2dArc;
-import buildcraft.core.patterns.PatternShape2dCircle;
-import buildcraft.core.patterns.PatternShape2dHexagon;
-import buildcraft.core.patterns.PatternShape2dOctagon;
-import buildcraft.core.patterns.PatternShape2dPentagon;
-import buildcraft.core.patterns.PatternShape2dSemiCircle;
-import buildcraft.core.patterns.PatternShape2dSquare;
-import buildcraft.core.patterns.PatternShape2dTriangle;
-import buildcraft.core.patterns.PatternSphere;
-import buildcraft.core.patterns.PatternSpherePart;
-import buildcraft.core.patterns.PatternSpherePart.SpherePartType;
-import buildcraft.core.patterns.PatternStairs;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterCenter;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterXZDir;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.core.statements.CoreActionProvider;
-import buildcraft.core.statements.CoreTriggerProvider;
 import buildcraft.core.statements.StatementParamGateSideOnly;
 import buildcraft.core.statements.TriggerEnginePowerStage;
 import buildcraft.core.statements.TriggerFluidContainer;
@@ -107,36 +86,6 @@ public class BCCoreStatements {
     public static final BCStatement[] TRIGGER_INVENTORY_ALL;
     public static final BCStatement[] TRIGGER_FLUID_ALL;
 
-    public static final PatternNone PATTERN_NONE = new PatternNone();
-    public static final PatternClear PATTERN_CLEAR = new PatternClear();
-    public static final PatternFill PATTERN_FILL = new PatternFill();
-    public static final PatternBox PATTERN_BOX = new PatternBox();
-    public static final PatternFrame PATTERN_FRAME = new PatternFrame();
-    // public static final PatternHorizon PATTERN_HORIZON = new PatternHorizon(); // broken ATM
-    public static final PatternPyramid PATTERN_PYRAMID = new PatternPyramid();
-    public static final PatternStairs PATTERN_STAIRS = new PatternStairs();
-    // public static final PatternFlatten PATTERN_FLATTEN = new PatternFlatten(); // broken ATM
-    public static final PatternShape2dTriangle PATTERN_TRIANGLE = new PatternShape2dTriangle();
-    public static final PatternShape2dSquare PATTERN_SQUARE = new PatternShape2dSquare();
-    public static final PatternShape2dPentagon PATTERN_PENTAGON = new PatternShape2dPentagon();
-    public static final PatternShape2dHexagon PATTERN_HEXAGON = new PatternShape2dHexagon();
-    public static final PatternShape2dOctagon PATTERN_OCTAGON = new PatternShape2dOctagon();
-    public static final PatternShape2dArc PATTERN_ARC = new PatternShape2dArc();
-    public static final PatternShape2dSemiCircle PATTERN_SEMI_CIRCLE = new PatternShape2dSemiCircle();
-    public static final PatternShape2dCircle PATTERN_CIRCLE = new PatternShape2dCircle();
-    public static final PatternSphere PATTERN_SPHERE = new PatternSphere();
-    public static final PatternSpherePart PATTERN_HEMI_SPHERE = new PatternSpherePart(SpherePartType.HALF);
-    public static final PatternSpherePart PATTERN_QUARTER_SPHERE = new PatternSpherePart(SpherePartType.QUARTER);
-    public static final PatternSpherePart PATTERN_EIGHTH_SPHERE = new PatternSpherePart(SpherePartType.EIGHTH);
-
-    public static final Pattern[] PATTERNS = { //
-        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME, //
-        /* PATTERN_HORIZON, PATTERN_FLATTEN, */ PATTERN_PYRAMID, PATTERN_STAIRS, //
-        PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON, PATTERN_HEXAGON, //
-        PATTERN_OCTAGON, PATTERN_ARC, PATTERN_SEMI_CIRCLE, PATTERN_CIRCLE, //
-        PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE, //
-        PATTERN_EIGHTH_SPHERE //
-    };
 
     static {
         TRIGGER_INVENTORY_EMPTY = new TriggerInventory(TriggerInventory.State.EMPTY);
@@ -195,7 +144,7 @@ public class BCCoreStatements {
     }
 
     public static void preInit() {
-        StatementManager.registerTriggerProvider(CoreTriggerProvider.INSTANCE);
-        StatementManager.registerActionProvider(CoreActionProvider.INSTANCE);
+        StatementManager.registerTriggerProvider(BCCoreTriggerProvider.INSTANCE);
+        StatementManager.registerActionProvider(BCCoreActionProvider.INSTANCE);
     }
 }

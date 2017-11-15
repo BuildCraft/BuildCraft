@@ -57,9 +57,9 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-import buildcraft.builders.addon.AddonFillingPlanner;
+import buildcraft.builders.addon.AddonFillerPlanner;
 import buildcraft.builders.filler.FillerType;
-import buildcraft.builders.filler.Filling;
+import buildcraft.builders.filler.FillerUtil;
 import buildcraft.builders.snapshot.ITileForTemplateBuilder;
 import buildcraft.builders.snapshot.ItemBlocks;
 import buildcraft.builders.snapshot.SnapshotBuilder;
@@ -105,7 +105,7 @@ public class TileFiller extends TileBC_Neptune
     private Mode mode = Mode.ON;
 
     public final Box box = new Box();
-    public AddonFillingPlanner addon;
+    public AddonFillerPlanner addon;
     public boolean markerBox = false;
 
     public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
@@ -130,13 +130,13 @@ public class TileFiller extends TileBC_Neptune
         IBlockState blockState = world.getBlockState(pos);
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         BlockPos offsetPos = pos.offset(blockState.getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite());
-        VolumeBox volumeBox = volumeBoxes.getBoxAt(offsetPos);
+        VolumeBox volumeBox = volumeBoxes.getVolumeBoxAt(offsetPos);
         TileEntity tile = world.getTileEntity(offsetPos);
         if (volumeBox != null) {
-            addon = (AddonFillingPlanner) volumeBox.addons
+            addon = (AddonFillerPlanner) volumeBox.addons
                 .values()
                 .stream()
-                .filter(AddonFillingPlanner.class::isInstance)
+                .filter(AddonFillerPlanner.class::isInstance)
                 .findFirst()
                 .orElse(null);
             if (addon != null) {
@@ -244,7 +244,7 @@ public class TileFiller extends TileBC_Neptune
                 buffer.writeBoolean(markerBox);
                 buffer.writeBoolean(addon != null);
                 if (addon != null) {
-                    buffer.writeUniqueId(addon.box.id);
+                    buffer.writeUniqueId(addon.volumeBox.id);
                     buffer.writeEnumValue(addon.getSlot());
                 }
             } else if (id == NET_CAN_EXCAVATE) {
@@ -276,14 +276,15 @@ public class TileFiller extends TileBC_Neptune
                 box.readData(buffer);
                 markerBox = buffer.readBoolean();
                 if (buffer.readBoolean()) {
-                    UUID boxId = buffer.readUniqueId();
+                    UUID volumeBoxId = buffer.readUniqueId();
                     VolumeBox volumeBox = world.isRemote
-                        ? ClientVolumeBoxes.INSTANCE.boxes.stream()
-                        .filter(localVolumeBox -> localVolumeBox.id.equals(boxId))
-                        .findFirst()
-                        .orElseThrow(NullPointerException::new)
-                        : WorldSavedDataVolumeBoxes.get(world).getBoxFromId(boxId);
-                    addon = (AddonFillingPlanner) volumeBox
+                        ?
+                        ClientVolumeBoxes.INSTANCE.volumeBoxes.stream()
+                            .filter(localVolumeBox -> localVolumeBox.id.equals(volumeBoxId))
+                            .findFirst()
+                            .orElseThrow(NullPointerException::new)
+                        : WorldSavedDataVolumeBoxes.get(world).getVolumeBoxFromId(volumeBoxId);
+                    addon = (AddonFillerPlanner) volumeBox
                         .addons
                         .get(buffer.readEnumValue(EnumAddonSlot.class));
                 }
@@ -305,11 +306,9 @@ public class TileFiller extends TileBC_Neptune
 
     private void updateBuildingInfo() {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
-        buildingInfo = (hasBox() && addon == null) ? Filling.createBuildingInfo(
-            box.min(),
-            box.size(),
-            patternStatement,
+        buildingInfo = (hasBox() && addon == null) ? FillerUtil.createBuildingInfo(
             this,
+            patternStatement,
             IntStream.range(0, patternStatement.maxParams)
                 .mapToObj(patternStatement::get)
                 .toArray(IStatementParameter[]::new),
@@ -343,7 +342,7 @@ public class TileFiller extends TileBC_Neptune
         nbt.setTag("mode", NBTUtilBC.writeEnum(mode));
         nbt.setTag("box", box.writeToNBT());
         if (addon != null) {
-            nbt.setUniqueId("addonBoxId", addon.box.id);
+            nbt.setUniqueId("addonVolumeBoxId", addon.volumeBox.id);
             nbt.setTag("addonSlot", NBTUtilBC.writeEnum(addon.getSlot()));
         }
         nbt.setBoolean("markerBox", markerBox);
@@ -363,15 +362,15 @@ public class TileFiller extends TileBC_Neptune
         mode = Optional.ofNullable(NBTUtilBC.readEnum(nbt.getTag("mode"), Mode.class)).orElse(Mode.ON);
         box.initialize(nbt.getCompoundTag("box"));
         if (nbt.hasKey("addonSlot")) {
-            addon = (AddonFillingPlanner) WorldSavedDataVolumeBoxes.get(world)
-                .getBoxFromId(nbt.getUniqueId("addonBoxId"))
+            addon = (AddonFillerPlanner) WorldSavedDataVolumeBoxes.get(world)
+                .getVolumeBoxFromId(nbt.getUniqueId("addonVolumeBoxId"))
                 .addons
                 .get(NBTUtilBC.readEnum(nbt.getTag("addonSlot"), EnumAddonSlot.class));
         }
         markerBox = nbt.getBoolean("markerBox");
         patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
+        updateBuildingInfo();
         if (nbt.hasKey("builder")) {
-            updateBuildingInfo();
             Optional.ofNullable(getBuilder()).ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
         }
     }
@@ -388,7 +387,7 @@ public class TileFiller extends TileBC_Neptune
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(pos, addon != null ? addon.box.box : box);
+        return BoundingBoxUtil.makeFrom(pos, addon != null ? addon.volumeBox.box : box);
     }
 
     @Override
@@ -487,7 +486,7 @@ public class TileFiller extends TileBC_Neptune
         if (!hasBox()) {
             throw new IllegalStateException("Called getBox() when hasBox() returned false!");
         }
-        return addon != null ? addon.box.box : box;
+        return addon != null ? addon.volumeBox.box : box;
     }
 
     @Override
