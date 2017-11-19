@@ -37,8 +37,8 @@ public class ModelItemSimple implements IBakedModel {
         // Values taken from "minecraft:models/block/block.json"
         ItemTransformVec3f thirdp_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
         ItemTransformVec3f thirdp_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
-        ItemTransformVec3f firstp_left = def(0, 135, 0, 0, 0, 0, 0.4);
-        ItemTransformVec3f firstp_right = def(0, 135, 0, 0, 0, 0, 0.4);
+        ItemTransformVec3f firstp_left = def(0, 225, 0, 0, 0, 0, 0.4);
+        ItemTransformVec3f firstp_right = def(0, 45, 0, 0, 0, 0, 0.4);
         ItemTransformVec3f head = def(0, 0, 0, 0, 0, 0, 1);
         ItemTransformVec3f gui = def(30, 225, 0, 0, 0, 0, 0.625);
         ItemTransformVec3f ground = def(0, 0, 0, 0, 3, 0, 0.25);
@@ -50,6 +50,8 @@ public class ModelItemSimple implements IBakedModel {
         ItemTransformVec3f item_gui = def(0, 90, 0, 0, 0, 0, 1);
         ItemTransformVec3f item_ground = def(0, 0, 0, 0, 3, 0, 0.5);
         ItemTransformVec3f item_fixed = def(0, 0, 0, 0, 0, 0, 0.85);
+        firstp_left = def(0, 225, 0, 0, 0, -4, 0.4);
+        firstp_right = def(0, 45, 0, 0, 0, -4, 0.4);
         TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right,
             item_head, item_gui, item_ground, item_fixed);
         TRANSFORM_PLUG_AS_ITEM_BIGGER = scale(TRANSFORM_PLUG_AS_ITEM, 1.8);
@@ -83,7 +85,8 @@ public class ModelItemSimple implements IBakedModel {
         ItemTransformVec3f gui = scale(from.gui, by);
         ItemTransformVec3f ground = scale(from.ground, by);
         ItemTransformVec3f fixed = scale(from.fixed, by);
-        return new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+        return new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head,
+            gui, ground, fixed);
     }
 
     private static ItemTransformVec3f scale(ItemTransformVec3f from, double by) {
