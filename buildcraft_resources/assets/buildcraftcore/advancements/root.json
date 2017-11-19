@@ -24,10 +24,5 @@
         ]
       }
     }
-  },
-  "rewards": {
-    "recipes": [
-      "buildcraftcore:gear_wood"
-    ]
   }
 }

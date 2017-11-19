@@ -248,7 +248,12 @@ public class MessageUtil {
     public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
         int readableBytes = buf.readableBytes();
         int rb = readableBytes;
-        if ( readableBytes > 0) {
+
+        if (buf instanceof PacketBufferBC) {
+            // TODO: Find a way of checking if the partial bits have been fully read!
+        }
+
+        if (readableBytes > 0) {
             int ri = buf.readerIndex();
             // Get a (small) bit of the data
             byte[] selection = new byte[buf.writerIndex()];

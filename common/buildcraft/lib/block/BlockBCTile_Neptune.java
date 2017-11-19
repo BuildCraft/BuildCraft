@@ -6,6 +6,7 @@ package buildcraft.lib.block;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -87,5 +88,15 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
             tileBC.addDrops(drops, fortune);
         }
         super.getDrops(drops, world, pos, state, fortune);
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+        super.neighborChanged(state, world, pos, block, fromPos);
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileBC_Neptune) {
+            TileBC_Neptune tileBC = (TileBC_Neptune) tile;
+            tileBC.onNeighbourBlockChanged(block, fromPos);
+        }
     }
 }

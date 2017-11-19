@@ -56,7 +56,7 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     @Override
     public ChangingItemStack[] getRecipeInputs() {
         ChangingItemStack[] inputs = new ChangingItemStack[2];
-        inputs[0] = ChangingItemStack.create(new ItemStack(BCTransportItems.pipeStructure, 3));
+        inputs[0] = new ChangingItemStack(new ItemStack(BCTransportItems.pipeStructure, 3));
         NonNullList<ItemStack> list = NonNullList.create();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
             if (info.isVisible) {

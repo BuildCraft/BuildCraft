@@ -15,9 +15,9 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.misc.JsonUtil;
 
 public class VariablePartCuboid extends VariablePartCuboidBase {
     public final Map<EnumFacing, JsonVariableFaceUV> faces = new HashMap<>();
@@ -26,6 +26,14 @@ public class VariablePartCuboid extends VariablePartCuboidBase {
         super(obj, fnCtx);
         if (!obj.has("faces")) {
             throw new JsonSyntaxException("Expected between 1 and 6 faces, got nothing");
+        }
+        String invertDefault = null;
+        if (obj.has("invert")) {
+            invertDefault = JsonUtil.getAsString(obj.get("invert"));
+        }
+        String bothSides = null;
+        if (obj.has("both_sides")) {
+            bothSides = JsonUtil.getAsString(obj.get("both_sides"));
         }
         JsonElement elem = obj.get("faces");
         if (!elem.isJsonObject()) {
@@ -38,7 +46,14 @@ public class VariablePartCuboid extends VariablePartCuboidBase {
                 if (!jFace.isJsonObject()) {
                     throw new JsonSyntaxException("Expected an object, but got " + jFace);
                 }
-                faces.put(face, new JsonVariableFaceUV(jFace.getAsJsonObject(), fnCtx));
+                JsonObject jFaceObj = jFace.getAsJsonObject();
+                if (invertDefault != null && !jFaceObj.has("invert")) {
+                    jFaceObj.addProperty("invert", invertDefault);
+                }
+                if (bothSides != null && !jFaceObj.has("both_sides")) {
+                    jFaceObj.addProperty("both_sides", bothSides);
+                }
+                faces.put(face, new JsonVariableFaceUV(jFaceObj, fnCtx));
             }
         }
         if (faces.size() == 0) {

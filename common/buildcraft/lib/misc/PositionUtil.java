@@ -23,6 +23,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 public class PositionUtil {
+    /** @return The exact direction from the first position to the second. Returns null if more than one axis value is
+     *         different, or they are the same position. */
     @Nullable
     public static EnumFacing getDirectFacingOffset(BlockPos from, BlockPos to) {
         BlockPos diff = to.subtract(from);
@@ -33,6 +35,22 @@ public class PositionUtil {
         if (x) return diff.getX() > 0 ? EnumFacing.EAST : EnumFacing.WEST;
         if (y) return diff.getY() > 0 ? EnumFacing.UP : EnumFacing.DOWN;
         if (z) return diff.getZ() > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH;
+        return null;
+    }
+
+    /** @return An integer representing the offset between the block positions, or null if
+     *         {@link #getDirectFacingOffset(BlockPos, BlockPos)} returned null. The distance will be negative if
+     *         returned {@link EnumFacing} is negative. */
+    @Nullable
+    public static Integer getDirectFacingDistance(BlockPos from, BlockPos to) {
+        BlockPos diff = to.subtract(from);
+        boolean x = diff.getX() != 0;
+        boolean y = diff.getY() != 0;
+        boolean z = diff.getZ() != 0;
+        if (x && y || x && z || y && z) return null;
+        if (x) return diff.getX();
+        if (y) return diff.getY();
+        if (z) return diff.getZ();
         return null;
     }
 

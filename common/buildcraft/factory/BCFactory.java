@@ -73,7 +73,7 @@ public class BCFactory {
         registerTag("item.block.tank").reg("tank").locale("tankBlock").model("tank");
         registerTag("item.block.chute").reg("chute").locale("chuteBlock").model("chute");
         registerTag("item.block.distiller").reg("distiller").locale("distiller").model("distiller");
-        TagEntry tag= registerTag("item.block.heat_exchange").reg("heat_exchange").locale("heat_exchange");
+        TagEntry tag = registerTag("item.block.heat_exchange").reg("heat_exchange").locale("heat_exchange");
         tag.model("heat_exchange").oldReg("heat_exchange_start", "heat_exchange_middle", "heat_exchange_end");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
@@ -96,9 +96,7 @@ public class BCFactory {
         registerTag("tile.tank").reg("tank");
         registerTag("tile.chute").reg("chute");
         registerTag("tile.distiller").reg("distiller");
-        registerTag("tile.heat_exchange.start").reg("heat_exchange.start");
-        registerTag("tile.heat_exchange.middle").reg("heat_exchange.middle");
-        registerTag("tile.heat_exchange.end").reg("heat_exchange.end");
+        registerTag("tile.heat_exchange").reg("heat_exchange").oldReg("heat_exchange.start", "heat_exchange.end");
 
         endBatch(TagManager.prependTags("buildcraftfactory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
     }

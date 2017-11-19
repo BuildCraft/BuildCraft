@@ -10,7 +10,7 @@
       "translate": "advancements.buildcrafttransport.pipe_logic.description"
     }
   },
-  "parent": "buildcrafttransport:pipe_dream",
+  "parent": "buildcrafttransport:plugging_the_gap",
   "criteria": {
     "code_trigger": {
       "trigger": "minecraft:impossible"

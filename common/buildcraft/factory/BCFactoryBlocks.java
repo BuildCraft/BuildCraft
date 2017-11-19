@@ -22,8 +22,7 @@ import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.factory.tile.TileFloodGate;
-import buildcraft.factory.tile.TileHeatExchangeEnd;
-import buildcraft.factory.tile.TileHeatExchangeStart;
+import buildcraft.factory.tile.TileHeatExchange;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
@@ -43,7 +42,6 @@ public class BCFactoryBlocks {
     public static BlockHeatExchange heatExchange;
 
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
-    // public static BlockPlastic plastic;
     public static BlockWaterGel waterGel;
 
     public static void fmlPreInit() {
@@ -65,7 +63,6 @@ public class BCFactoryBlocks {
         HELPER.registerTile(TileTank.class, "tile.tank");
         HELPER.registerTile(TileChute.class, "tile.chute");
         HELPER.registerTile(TileDistiller_BC8.class, "tile.distiller");
-        HELPER.registerTile(TileHeatExchangeStart.class, "tile.heat_exchange.start");
-        HELPER.registerTile(TileHeatExchangeEnd.class, "tile.heat_exchange.end");
+        HELPER.registerTile(TileHeatExchange.class, "tile.heat_exchange");
     }
 }

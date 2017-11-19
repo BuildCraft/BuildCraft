@@ -54,7 +54,7 @@ public class NodeTypes {
         BOOLEAN = new FunctionContext("Type: Boolean");
         STRING = new NodeType<>("String", "");
         VEC_LONG = new NodeType<>("Long Vector", VecLong.ZERO);
-        VEC_DOUBLE = new NodeType<>("Double Vector",VecDouble.ZERO);
+        VEC_DOUBLE = new NodeType<>("Double Vector", VecDouble.ZERO);
         NODE_LONG = new NodeType<>("Long Node", INodeLong.class, NodeConstantLong.ZERO);
         NODE_DOUBLE = new NodeType<>("Double Node", INodeDouble.class, NodeConstantDouble.ZERO);
         NODE_BOOLEAN = new NodeType<>("Boolean Node", INodeBoolean.class, NodeConstantBoolean.FALSE);
@@ -197,6 +197,10 @@ public class NodeTypes {
         if (clazz == double.class) return DOUBLE;
         if (clazz == boolean.class) return BOOLEAN;
         return typesByClass.get(clazz);
+    }
+
+    public static <T> void addType(NodeType<T> type) {
+        addType(type.name, type);
     }
 
     public static <T> void addType(String key, NodeType<T> type) {

@@ -1,9 +1,9 @@
 {
   "result": {
-    "item": "buildcraftfactory:heat_exchange_end"
+    "item": "buildcraftfactory:heat_exchange"
   },
   "pattern": [
-    "g#g",
+    "igi",
     "###",
     "igi"
   ],
@@ -17,13 +17,13 @@
     },
     "#": {
       "type": "forge:ore_dict",
-      "ore": "blockGlass"
+      "ore": "blockGlassColorless"
     }
   },
   "conditions": [
     {
       "type": "minecraft:item_exists",
-      "item": "buildcraftfactory:heat_exchange_end"
+      "item": "buildcraftfactory:heat_exchange"
     }
   ]
 }

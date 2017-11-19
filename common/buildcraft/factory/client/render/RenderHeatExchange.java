@@ -31,14 +31,16 @@ import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileHeatExchangeEnd;
-import buildcraft.factory.tile.TileHeatExchangeStart;
-import buildcraft.factory.tile.TileHeatExchangeStart.EnumProgressState;
+import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange.EnumProgressState;
+import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionEnd;
+import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionStart;
 
-public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatExchangeStart> {
+public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchange> {
     private static final Map<EnumFacing, TankSideData> TANK_SIDES = new EnumMap<>(EnumFacing.class);
     private static final TankSize TANK_BOTTOM, TANK_TOP;
 
@@ -71,8 +73,16 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
     }
 
     @Override
-    public void render(TileHeatExchangeStart tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(TileHeatExchange tile, double x, double y, double z, float partialTicks, int destroyStage,
+        float alpha) {
         super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
+
+        if (!tile.isStart()) {
+            return;
+        }
+
+        ExchangeSectionStart section = (ExchangeSectionStart) tile.getSection();
+        ExchangeSectionEnd sectionEnd = section.getEndSection();
 
         IBlockState state = tile.getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
         if (state == null) {
@@ -98,29 +108,27 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
 
         profiler.startSection("tank");
 
-        EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
         TankSideData sideTank = TANK_SIDES.get(face);
 
-        renderTank(TANK_BOTTOM, tile.smoothedHeatableIn, combinedLight, partialTicks, bb);
-        renderTank(sideTank.start, tile.smoothedCoolableOut, combinedLight, partialTicks, bb);
+        renderTank(TANK_BOTTOM, section.smoothedTankInput, combinedLight, partialTicks, bb);
+        renderTank(sideTank.start, section.smoothedTankOutput, combinedLight, partialTicks, bb);
 
-        TileHeatExchangeEnd end = tile.getOtherTile();
-        int middles = 0;
-        if (end != null) {
+        int middles = section.middleCount + 3;
+        if (sectionEnd != null) {
             // TODO: Move this into the other renderer!
-            BlockPos diff = end.getPos().subtract(tile.getPos());
-            middles = Math.abs(VecUtil.getValue(diff, face.getAxis()));
+            BlockPos diff = sectionEnd.tile.getPos().subtract(tile.getPos());
             bb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
-            renderTank(TANK_TOP, end.smoothedHeatableOut, combinedLight, partialTicks, bb);
-            renderTank(sideTank.end, end.smoothedCoolableIn, combinedLight, partialTicks, bb);
+            renderTank(TANK_TOP, sectionEnd.smoothedTankOutput, combinedLight, partialTicks, bb);
+            renderTank(sideTank.end, sectionEnd.smoothedTankInput, combinedLight, partialTicks, bb);
             bb.setTranslation(x, y, z);
         }
 
         profiler.endStartSection("flow");
 
         if (middles > 0) {
-            EnumProgressState progressState = tile.getProgressState();
-            double progress = tile.getProgress(partialTicks);
+            EnumProgressState progressState = section.getProgressState();
+            double progress = section.getProgress(partialTicks);
             if (progress > 0) {
                 double length = middles + 1 - 4 / 16.0 - 0.02;
                 double p0 = 2 / 16.0 + 0.01;
@@ -143,9 +151,9 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
                 double otherEnd = flip ? p0 + length * progress : p1;
                 Vec3d vDiff = new Vec3d(diff).addVector(x, y, z);
                 renderFlow(vDiff, face, bb, progressStart + 0.01, progressEnd - 0.01,
-                    end.smoothedCoolableIn.getFluidForRender(), 4, partialTicks);
+                    sectionEnd.smoothedTankInput.getFluidForRender(), 4, partialTicks);
                 renderFlow(vDiff, face.getOpposite(), bb, otherStart, otherEnd,
-                    tile.smoothedHeatableIn.getFluidForRender(), 2, partialTicks);
+                    section.smoothedTankInput.getFluidForRender(), 2, partialTicks);
             }
         }
 
@@ -221,7 +229,7 @@ public class RenderHeatExchangeStart extends TileEntitySpecialRenderer<TileHeatE
     }
 
     @Override
-    public boolean isGlobalRenderer(TileHeatExchangeStart tile) {
-        return tile.getOtherTile() != null;
+    public boolean isGlobalRenderer(TileHeatExchange tile) {
+        return tile.isStart();
     }
 }

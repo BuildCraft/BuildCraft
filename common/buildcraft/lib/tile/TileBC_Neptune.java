@@ -263,6 +263,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return tankManager.onActivated(player, getPos(), hand);
     }
 
+    public void onNeighbourBlockChanged(Block block, BlockPos nehighbour) {
+
+    }
+
     @Override
     public final boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
@@ -466,9 +470,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
         try {
             int id = buf.readUnsignedShort();
-            readPayload(id, new PacketBufferBC(buf), world.isRemote ? Side.CLIENT : Side.SERVER, null);
+            PacketBufferBC buffer = new PacketBufferBC(buf);
+            readPayload(id, buffer, world.isRemote ? Side.CLIENT : Side.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
-            MessageUtil.ensureEmpty(buf, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
+            MessageUtil.ensureEmpty(buffer, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
             spawnReceiveParticles(id);
         } catch (IOException e) {
             throw new RuntimeException(e);

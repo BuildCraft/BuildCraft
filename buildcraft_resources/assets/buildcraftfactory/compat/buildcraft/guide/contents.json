@@ -15,26 +15,8 @@
             }
         },
         {
-            "title": "tile.heat_exchange_start.name",
-            "item_stack": "(buildcraftfactory:heat_exchange_start)",
-            "page": "heat_exchange.md",
-            "type_tags": {
-                "type": "block",
-                "sub_type": "refining"
-            }
-        },
-        {
-            "title": "tile.heat_exchange_middle.name",
-            "item_stack": "(buildcraftfactory:heat_exchange_middle)",
-            "page": "heat_exchange.md",
-            "type_tags": {
-                "type": "block",
-                "sub_type": "refining"
-            }
-        },
-        {
-            "title": "tile.heat_exchange_end.name",
-            "item_stack": "(buildcraftfactory:heat_exchange_end)",
+            "title": "tile.heat_exchange.name",
+            "item_stack": "(buildcraftfactory:heat_exchange)",
             "page": "heat_exchange.md",
             "type_tags": {
                 "type": "block",

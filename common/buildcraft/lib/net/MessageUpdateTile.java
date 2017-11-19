@@ -8,8 +8,6 @@ package buildcraft.lib.net;
 
 import java.io.IOException;
 
-import com.google.common.base.Throwables;
-
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,8 +28,7 @@ public class MessageUpdateTile implements IMessage {
     private PacketBufferBC payload;
 
     @SuppressWarnings("unused")
-    public MessageUpdateTile() {
-    }
+    public MessageUpdateTile() {}
 
     public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;
@@ -70,7 +67,7 @@ public class MessageUpdateTile implements IMessage {
             try {
                 return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
             } catch (IOException io) {
-                throw Throwables.propagate(io);
+                throw new RuntimeException(io);
             }
         } else {
             BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos

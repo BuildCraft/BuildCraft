@@ -38,6 +38,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.BCFactoryBlocks;
 
+@Deprecated
 public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchangeEnd");
     public static final int NET_TANK_HEATABLE_OUT = IDS.allocId("TANK_HEATABLE_OUT");

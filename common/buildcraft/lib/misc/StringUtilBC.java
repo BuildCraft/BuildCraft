@@ -17,6 +17,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextFormatting;
 
+import net.minecraftforge.fluids.FluidStack;
+
 public final class StringUtilBC {
 
     public static final Splitter newLineSplitter = Splitter.on("\\n");
@@ -79,6 +81,13 @@ public final class StringUtilBC {
 
     public static String blockPosAsSizeToString(BlockPos pos) {
         return pos.getX() + "x" + pos.getY() + "x" + pos.getZ();
+    }
+
+    public static String fluidToString(FluidStack fluid) {
+        if (fluid == null) {
+            return "null";
+        }
+        return fluid.amount + "mb " + fluid.getFluid().getName();
     }
 
     // Displaying objects

@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.factory.client.render.RenderDistiller;
-import buildcraft.factory.client.render.RenderHeatExchangeStart;
+import buildcraft.factory.client.render.RenderHeatExchange;
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
 import buildcraft.factory.client.render.RenderTank;
@@ -65,7 +65,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
 
     public void fmlInit() {}
 
-    public void fmlPreInit(){}
+    public void fmlPreInit() {}
 
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCFactoryProxy {
@@ -101,11 +101,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
 
         @Override
         public void fmlInit() {
-            ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
-            ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
-            ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchangeStart.class, new RenderHeatExchangeStart());
+            BCFactoryModels.fmlInit();
         }
     }
 }

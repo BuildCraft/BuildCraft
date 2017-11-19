@@ -41,9 +41,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 
-/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper functions.
- * 
- * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
+/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper functions. Can
+ * optionally specify a filter to only allow a limited types of fluids in the tank. */
 public class Tank extends FluidTank implements IFluidHandlerAdv {
     public static final String DEFAULT_HELP_KEY = "buildcraft.help.tank.generic";
 
@@ -60,7 +59,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     private final String name;
 
     @Nonnull
-    private final Predicate<FluidStack> filter;
+    private Predicate<FluidStack> filter;
 
     NetworkedFluidStackCache.Link clientFluid = null;
     int clientAmount = 0;
@@ -85,6 +84,13 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         this.filter = filter == null ? ((f) -> true) : filter;
         helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
             DEFAULT_HELP_KEY);
+    }
+
+    public void setFilter(Predicate<FluidStack> filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter");
+        }
+        this.filter = filter;
     }
 
     @Nonnull
@@ -182,11 +188,6 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             return drain(maxDrain, doDrain);
         }
         return null;
-    }
-
-    @Override
-    public void setFluid(FluidStack fluid) {
-        super.setFluid(fluid);
     }
 
     @Override
