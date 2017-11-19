@@ -68,7 +68,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
         Brush brush = new Brush(stack);
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
-        if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing)) {
+        if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing, player)) {
             ItemStack newStack = brush.save(stack);
             if (!newStack.isEmpty()) {
                 player.setHeldItem(hand, newStack);
@@ -184,7 +184,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             return (usesLeft <= 0 || colour == null) ? 0 : colour.getMetadata() + 1;
         }
 
-        public boolean useOnBlock(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing side) {
+        public boolean useOnBlock(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing side, EntityPlayer player) {
             if (colour != null && usesLeft <= 0) {
                 return false;
             }
@@ -194,7 +194,11 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             if (result == EnumActionResult.SUCCESS) {
                 ParticleUtil.showChangeColour(world, hitPos, colour);
                 SoundUtil.playChangeColour(world, pos, colour);
-                usesLeft--;
+
+                if (!player.isCreative()) {
+                    usesLeft--;
+                }
+
                 if (usesLeft <= 0) {
                     colour = null;
                     usesLeft = 0;
