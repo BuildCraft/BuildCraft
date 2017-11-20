@@ -1,9 +1,9 @@
 <chapter name="item.volume_box.name"/>
 <lore>
-Land Marks can be awkward at times: they are tedious when having to constantly needing to readjust them and them having only have a 64 block limit.
+Land Marks can be awkward at times: they require a lot of break breaking and replacing in order to change the size. The Volume Marker provides a simpler solution: each corner of the box can be moved easily.
 </lore>
 <no_lore>
-Volumes Marker is basically simple Land Marks, without their annoyances.
+Volumes Markers simplify the land marker process, without requiring block breaking and placing in order to change their size.
 </no_lore>
 <chapter name="Information"/>
 The Volume Marker is a laser box which is controlled with a Marker Connector.

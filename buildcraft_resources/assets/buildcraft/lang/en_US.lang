@@ -756,7 +756,7 @@ command.buildcraft.buildcraft.deop.help=Ungives OP rights to the BC FakePlayer (
 command.buildcraft.buildcraft.deop.format=Format: /%s
 
 #advancements
-advancements.buildcraftcore.root.title=Welcome to Buildcraft!
+advancements.buildcraftcore.root.title=Buildcraft
 advancements.buildcraftcore.root.description=For all your engineering needs
 
 advancements.buildcraftcore.guide.title=How does this work again?
