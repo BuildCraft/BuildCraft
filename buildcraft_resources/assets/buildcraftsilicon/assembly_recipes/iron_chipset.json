@@ -1,9 +1,9 @@
 {
   "result": {
     "item": "buildcraftsilicon:redstone_chipset",
-    "data": 2
+    "data": 1
   },
-  "MJ": 40000,
+  "MJ": 20000,
   "components": [
     {
       "ingredient": {
@@ -14,14 +14,8 @@
     {
       "ingredient": {
         "type": "forge:ore_dict",
-        "ore": "ingotGold"
-      }
-    }, {
-      "ingredient": {
-        "item": "buildcraftsilicon:redstone_chipset",
-        "data": 1
+        "ore": "ingotIron"
       }
     }
   ]
-
 }

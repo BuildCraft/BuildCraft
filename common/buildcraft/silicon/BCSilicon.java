@@ -19,15 +19,8 @@ import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
-import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.BCCore;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.silicon.tile.TileChargingTable;
-import buildcraft.silicon.tile.TileIntegrationTable;
-import buildcraft.silicon.tile.TileLaser;
-import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 //@formatter:off
 @Mod(

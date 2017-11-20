@@ -51,7 +51,7 @@ public class BCSiliconRecipes {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         Loader.instance().getActiveModList().forEach((mod) -> {
             JsonContext ctx = new JsonContext(mod.getModId());
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/assemblyRecipes", null,
+            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/assembly_recipes", null,
                 (root, file) -> {
                     String path = root.relativize(file).toString();
                     if (!FilenameUtils.getExtension(file.toString()).equals("json"))
@@ -89,7 +89,7 @@ public class BCSiliconRecipes {
                     return true;
                 });
 
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/integrationRecipes", null,
+            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/integration_recipes", null,
                 (root, file) -> {
                     String path = root.relativize(file).toString();
                     if (!FilenameUtils.getExtension(file.toString()).equals("json"))

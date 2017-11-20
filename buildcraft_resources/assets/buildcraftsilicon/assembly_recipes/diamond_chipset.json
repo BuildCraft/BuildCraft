@@ -16,12 +16,6 @@
         "type": "forge:ore_dict",
         "ore": "gemDiamond"
       }
-    }, {
-      "ingredient": {
-        "item": "buildcraftsilicon:redstone_chipset",
-        "data": 3
-      }
     }
   ]
-
 }
