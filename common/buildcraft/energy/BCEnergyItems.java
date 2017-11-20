@@ -4,7 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy;
 
-import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.registry.RegistrationHelper;
 
@@ -15,8 +14,6 @@ public class BCEnergyItems {
     public static ItemBC_Neptune globOil;
 
     public static void preInit() {
-        if (BCLib.DEV) {
-            globOil = HELPER.addItem(new ItemBC_Neptune("item.glob.oil"));
-        }
+        globOil = HELPER.addItem(new ItemBC_Neptune("item.glob.oil"));
     }
 }
