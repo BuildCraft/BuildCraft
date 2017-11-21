@@ -22,7 +22,7 @@ public class BCRecipeShaped extends ShapedOreRecipe {
 
     @Override
     public boolean matches(@Nonnull InventoryCrafting inventory, @Nonnull World world) {
-        return enabled &&  super.matches(inventory, world);
+        return enabled && super.matches(inventory, world);
     }
 
     @Nonnull
@@ -32,9 +32,7 @@ public class BCRecipeShaped extends ShapedOreRecipe {
     }
 
     @Override
-    public boolean isHidden() {
+    public boolean isDynamic() {
         return !enabled;
     }
-
-
 }
