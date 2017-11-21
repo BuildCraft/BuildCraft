@@ -196,7 +196,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     /** @return The heat of the current biome, in celsius. */
     protected float getBiomeHeat() {
         Biome biome = getBiome();
-        float temp = biome.getFloatTemperature(getPos());
+        float temp = biome.getTemperature(getPos());
         return Math.max(0, Math.min(30, temp * 15f));
     }
 

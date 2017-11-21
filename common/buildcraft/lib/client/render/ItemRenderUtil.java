@@ -132,7 +132,7 @@ public class ItemRenderUtil {
                     q.scaled(scale);
                     q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
                     if (quad.hasTintIndex()) {
-                        int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
+                        int colour = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, quad.getTintIndex());
                         if (EntityRenderer.anaglyphEnable) {
                             colour = TextureUtil.anaglyphColor(colour);
                         }

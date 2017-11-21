@@ -86,14 +86,14 @@ minecraft {
    	replace "(gradle_replace_mcversion,)", "[" + version + "]"
    	replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
 
-   	// Git versioning stuffs
-   	if (grgit != null) {
-       	def repo = grgit.open()
+    // Git versioning stuffs
+    if (grgit != null) {
+        def repo = grgit.open()
         replace "\${git_commit_hash}", repo.head().id
         replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\"").split("\n")[0]
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
-   	}
+    }
 }
 
 // configure  the source folders

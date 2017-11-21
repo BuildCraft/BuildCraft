@@ -7,7 +7,6 @@ package buildcraft.core;
 import java.io.File;
 import java.util.function.Consumer;
 
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 
@@ -21,7 +20,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
-import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
@@ -37,6 +35,7 @@ import buildcraft.core.marker.VolumeCache;
     modid = BCCore.MODID,
     name = "BuildCraft Core",
     version = BCLib.VERSION,
+    updateJSON = "https://mod-buildcraft.com/version/versions.json",
     dependencies = "required-after:buildcraftlib@[" + BCLib.VERSION + "]",
     guiFactory = "buildcraft.core.client.ConfigGuiFactoryBC"
 )

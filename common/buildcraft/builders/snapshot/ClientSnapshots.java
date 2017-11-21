@@ -169,7 +169,7 @@ public enum ClientSnapshots {
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {
             Vec3d pos = entity.getPositionVector();
             GlStateManager.pushAttrib();
-            Minecraft.getMinecraft().getRenderManager().doRenderEntity(
+            Minecraft.getMinecraft().getRenderManager().renderEntity(
                 entity,
                 pos.x - FakeWorld.BLUEPRINT_OFFSET.getX(),
                 pos.y - FakeWorld.BLUEPRINT_OFFSET.getY(),

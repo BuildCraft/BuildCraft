@@ -1,10 +1,10 @@
 
 Changes:
 
+* Updated to minecraft 1.12.2
 * The heat exchange is now a single item, rather than 3. It's still placed in the same way as before though.
   * Existing heat exchangers probably won't load up properly. 
   * In addition, its default texture is now closer to iron and quartz pipes than tanks
-* Updated to minecraft 1.12.2
 
 Bugs fixed:
 

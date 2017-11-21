@@ -37,13 +37,14 @@ import buildcraft.lib.registry.TagManager.TagEntry;
     modid = BCLib.MODID,
     name = "BuildCraft Lib",
     version = BCLib.VERSION,
+    updateJSON = "https://mod-buildcraft.com/version/versions.json",
     acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
     dependencies = "required-after:forge@(gradle_replace_forgeversion,)"
 )
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "${version}";
+    public static final String VERSION = "7.99.11";
     public static final String MC_VERSION = "${mcversion}";
     public static final String GIT_BRANCH = "${git_branch}";
     public static final String GIT_COMMIT_HASH = "${git_commit_hash}";
