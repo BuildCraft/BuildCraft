@@ -7,6 +7,7 @@
 package buildcraft.transport.client.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,16 +50,22 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     @Override
     public void onTextureStitchPre(TextureMap map) {
         SPRITES.clear();
+        Map<String, TextureAtlasSprite> sprites = new HashMap<>();
         for (PipeDefinition def : PipeApi.pipeRegistry.getAllRegisteredPipes()) {
             TextureAtlasSprite[] array = new TextureAtlasSprite[def.textures.length];
             for (int i = 0; i < array.length; i++) {
-                AtlasSpriteVariants sprite = AtlasSpriteVariants.createForConfig(new ResourceLocation(def.textures[i]));
-                if (map.setTextureEntry(sprite)) {
-                    array[i] = sprite;
-                } else {
-                    array[i] = map.getAtlasSprite(def.textures[i]);
-                    BCLog.logger.warn("Couldn't override " + def.textures[i] + ", using existing sprite " + array[i].getClass());
+                String name = def.textures[i];
+                TextureAtlasSprite sprite = sprites.get(name);
+                if (sprite == null) {
+                    sprite = map.getTextureExtry(name);
+                    if (sprite == null) {
+                        sprite = AtlasSpriteVariants.createForConfig(new ResourceLocation(name));
+                        map.setTextureEntry(sprite);
+                    } else {
+                        BCLog.logger.warn("Couldn't override " + name + ", using existing sprite " + sprite.getClass());
+                    }
                 }
+                array[i] = sprite;
             }
             SPRITES.put(def, array);
         }
