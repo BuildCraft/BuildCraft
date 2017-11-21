@@ -18,12 +18,14 @@ buildscript {
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
+        classpath "org.ajoberstar:grgit:2.1.0"
     }
 }
 
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'maven-publish' // for uploading to a maven repo
+apply plugin: "org.ajoberstar.grgit"
 
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
 	apply plugin: "checkstyle"
@@ -77,17 +79,14 @@ minecraft {
     // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
    	replace "(gradle_replace_mcversion,)", "[" + version + "]"
    	replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
-    if (System.getenv("GIT_COMMIT_HASH") != null) {
-        replace "\${git_commit_hash}" , System.getenv("GIT_COMMIT_HASH")
-    }
-    if (System.getenv("GIT_COMMIT_MSG") != null) {
-        replace "\${git_commit_msg}" , System.getenv("GIT_COMMIT_MSG").replace("\"", "\\\"")
-    }
-    if (System.getenv("GIT_COMMIT_AUTHOR") != null) {
-        replace "\${git_commit_author}" , System.getenv("GIT_COMMIT_AUTHOR")
-    }
-    if (System.getenv("GIT_BRANCH") != null) {
-        replace "\${git_branch}" , System.getenv("GIT_BRANCH")
+
+    // Git versioning stuffs
+    if (grgit != null) {
+        def repo = grgit.open()
+        replace "\${git_commit_hash}", repo.head().id
+        replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\"").split("\n")[0]
+        replace "\${git_commit_author}", repo.head().author.name
+        replace "\${git_branch}", repo.branch.current().getName()
     }
 }
 
