@@ -456,7 +456,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
             super.readPayload(id, buffer, side, ctx);
             if (side == Side.CLIENT) {
-                if (id == NET_ID_STATE) {
+                if (id == NET_ID_CHANGE_SECTION) {
+                    middleCount = buffer.readUnsignedByte();
+                } else if (id == NET_ID_STATE) {
                     progressState = buffer.readEnumValue(EnumProgressState.class);
                 }
             }
@@ -466,7 +468,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         void writePayload(int id, PacketBufferBC buffer, Side side) {
             super.writePayload(id, buffer, side);
             if (side == Side.SERVER) {
-                if (id == NET_ID_STATE) {
+                if (id == NET_ID_CHANGE_SECTION) {
+                    buffer.writeByte(middleCount);
+                } else if (id == NET_ID_STATE) {
                     buffer.writeEnumValue(progressState);
                 }
             }

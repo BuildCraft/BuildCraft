@@ -114,7 +114,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         renderTank(TANK_BOTTOM, section.smoothedTankInput, combinedLight, partialTicks, bb);
         renderTank(sideTank.start, section.smoothedTankOutput, combinedLight, partialTicks, bb);
 
-        int middles = section.middleCount + 3;
+        int middles = section.middleCount;
         if (sectionEnd != null) {
             // TODO: Move this into the other renderer!
             BlockPos diff = sectionEnd.tile.getPos().subtract(tile.getPos());
