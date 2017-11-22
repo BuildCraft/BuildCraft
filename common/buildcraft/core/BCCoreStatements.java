@@ -18,6 +18,8 @@ import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.BCStatement;
+import buildcraft.core.statements.CoreActionProvider;
+import buildcraft.core.statements.CoreTriggerProvider;
 import buildcraft.core.statements.StatementParamGateSideOnly;
 import buildcraft.core.statements.TriggerEnginePowerStage;
 import buildcraft.core.statements.TriggerFluidContainer;
@@ -144,7 +146,7 @@ public class BCCoreStatements {
     }
 
     public static void preInit() {
-        StatementManager.registerTriggerProvider(BCCoreTriggerProvider.INSTANCE);
-        StatementManager.registerActionProvider(BCCoreActionProvider.INSTANCE);
+        StatementManager.registerTriggerProvider(CoreTriggerProvider.INSTANCE);
+        StatementManager.registerActionProvider(CoreActionProvider.INSTANCE);
     }
 }

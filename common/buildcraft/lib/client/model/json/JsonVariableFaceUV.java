@@ -28,6 +28,8 @@ public class JsonVariableFaceUV {
     final INodeDouble[] uv;
     final INodeLong textureRotation;
     final INodeBoolean visible;
+    final INodeBoolean invert;
+    final INodeBoolean bothSides;
     final INodeObject<String> texture;
 
     public JsonVariableFaceUV(JsonObject json, FunctionContext fnCtx) {
@@ -36,6 +38,16 @@ public class JsonVariableFaceUV {
             visible = JsonVariableModelPart.readVariableBoolean(json, "visible", fnCtx);
         } else {
             visible = NodeConstantBoolean.TRUE;
+        }
+        if (json.has("invert")) {
+            invert = JsonVariableModelPart.readVariableBoolean(json, "invert", fnCtx);
+        } else {
+            invert = NodeConstantBoolean.FALSE;
+        }
+        if (json.has("both_sides")) {
+            bothSides = JsonVariableModelPart.readVariableBoolean(json, "both_sides", fnCtx);
+        } else {
+            bothSides = NodeConstantBoolean.FALSE;
         }
         texture = readVariableString(json, "texture", fnCtx);
         if (json.has("rotation")) {
@@ -85,6 +97,8 @@ public class JsonVariableFaceUV {
         data.uvs.maxU = (float) (uv[2].evaluate() / 16.0);
         data.uvs.maxV = (float) (uv[3].evaluate() / 16.0);
         data.uvs = data.uvs.inParent(face.faceData);
+        data.invertNormal = invert.evaluate();
+        data.bothSides = bothSides.evaluate();
         return data;
     }
 }

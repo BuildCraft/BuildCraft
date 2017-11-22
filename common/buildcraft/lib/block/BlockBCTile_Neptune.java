@@ -4,9 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,9 +23,18 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.tile.TileBC_Neptune;
 
-public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements ITileEntityProvider {
+public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     public BlockBCTile_Neptune(Material material, String id) {
         super(material, id);
+    }
+
+    @Override
+    @Nullable
+    public abstract TileBC_Neptune createTileEntity(World world, IBlockState state);
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
     }
 
     @Override
@@ -71,14 +80,23 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
+        int fortune) {
         TileEntity tile = world.getTileEntity(pos);
-        NonNullList<ItemStack> toDrop = NonNullList.create();
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
-            tileBC.addDrops(toDrop, fortune);
+            tileBC.addDrops(drops, fortune);
         }
-        toDrop.addAll(super.getDrops(world, pos, state, fortune));
-        return toDrop;
+        super.getDrops(drops, world, pos, state, fortune);
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+        super.neighborChanged(state, world, pos, block, fromPos);
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileBC_Neptune) {
+            TileBC_Neptune tileBC = (TileBC_Neptune) tile;
+            tileBC.onNeighbourBlockChanged(block, fromPos);
+        }
     }
 }

@@ -50,13 +50,13 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TileFloodGate();
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFloodGate) {
             for (EnumFacing side : CONNECTED_MAP.keySet()) {
                 state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
@@ -66,7 +66,8 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (heldItem.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {

@@ -77,27 +77,36 @@ public class AdvModelCache {
         variables.addAll(modelCtxInfo.variables.values());
 
         // First try to make an indexed cache
-        boolean indexedIsFull = true;
         int[] multipliers = new int[variables.size()];
+        List<VariableInfo<?>> missKeys = new ArrayList<>();
         int m = 1;
         for (int i = 0; i < variables.size(); i++) {
             multipliers[i] = m;
             VariableInfo<?> info = variables.get(i);
-            indexedIsFull &= info.setIsComplete;
             m *= info.getPossibleValues().size();
+            if (!info.setIsComplete) {
+                missKeys.add(info);
+            }
         }
         CacheIndexed indexedCache = new CacheIndexed(multipliers, m);
 
-        if (!indexedIsFull) {
-            BCLog.logger.warn("[lib.model.adv_cache] Creating an indexed cache despite knowing that there will be cache misses!");
+        if (!missKeys.isEmpty()) {
+            BCLog.logger.warn(
+                "[lib.model.adv_cache] Creating an indexed cache despite knowing that there will be cache misses!");
+            for (VariableInfo<?> info : missKeys) {
+                BCLog.logger.warn("[lib.model.adv_cache]  - " + info.node + " (" + info.cacheType + ", "
+                    + info.getPossibleValues() + ")");
+            }
         }
 
         // if (indexedIsFull) {
         return indexedCache;
         // }
         // TODO: Fallback to a complex cache
-        /* TODO: Add a cache that will split up the model based on dependencies to variables! (sub-cache for different
-         * model parts) */
+        /*
+         * TODO: Add a cache that will split up the model based on dependencies to variables! (sub-cache for different
+         * model parts)
+         */
     }
 
     abstract class CacheBase {
@@ -121,7 +130,9 @@ public class AdvModelCache {
             if (index < 0 || index >= values.length) {
                 if (index == MODEL_INDEX_INCORRECT) {
                     // Uh-oh! incorrect creation of this cache!
-                    BCLog.logger.warn("[lib.model.adv_cache] Cache miss for indexed cache - this should be impossible! (index = " + index + ", length = " + values.length + ")");
+                    BCLog.logger.warn(
+                        "[lib.model.adv_cache] Cache miss for indexed cache - this should be impossible! (index = "
+                            + index + ", length = " + values.length + ")");
                     for (VariableInfo<?> var : variables) {
                         BCLog.logger.warn("            - " + var);
                     }

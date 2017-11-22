@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -37,12 +37,12 @@ public class BCSilicon {
     public static BCSilicon INSTANCE = null;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+    public static void preInit(FMLPreInitializationEvent evt) {
+        RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCSiliconConfig.preInit();
-        BCSiliconItems.preInit();
         BCSiliconBlocks.preInit();
+        BCSiliconItems.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCSiliconProxy.getProxy());
 
@@ -50,13 +50,12 @@ public class BCSilicon {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         BCSiliconProxy.getProxy().fmlInit();
-        BCSiliconRecipes.init();
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
 
     }
 

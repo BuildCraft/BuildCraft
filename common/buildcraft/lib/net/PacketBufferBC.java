@@ -285,6 +285,11 @@ public class PacketBufferBC extends PacketBuffer {
      * Reads string of any possible length
      */
     public String readString() {
-        return new String(readBytes(readVarInt()).array(), Charsets.UTF_8);
+        int length = readVarInt();
+        byte[] array = new byte[length];
+        for (int i =0; i < length; i++) {
+            array[i] = readByte();
+        }
+        return new String(array, Charsets.UTF_8);
     }
 }

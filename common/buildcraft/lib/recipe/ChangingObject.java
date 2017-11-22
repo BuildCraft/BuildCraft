@@ -16,6 +16,9 @@ public class ChangingObject<T> {
     private int timeGap = 1000;
 
     public ChangingObject(T[] options) {
+        if (options.length == 0) {
+            throw new IllegalStateException("Must provide at least 1 option!");
+        }
         this.options = options;
         hash = computeHash();
     }

@@ -1,7 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
 package buildcraft;
 
 import java.io.File;
@@ -113,7 +114,6 @@ import buildcraft.lib.config.RestartRequirement;
 import buildcraft.lib.list.*;
 import buildcraft.lib.misc.DebuggingTools;
 import buildcraft.lib.misc.data.XorShift128Random;
-import buildcraft.lib.registry.AchievementPageManager;
 
 //@Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
 //        dependencies = "required-after:Forge@[11.15.1.1764,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",

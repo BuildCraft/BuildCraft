@@ -167,6 +167,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
                 MessageSnapshotRequest.HANDLER, Side.SERVER);
             MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REPLY, MessageSnapshotResponse.class,
                 MessageSnapshotResponse.HANDLER, Side.CLIENT);
+            RenderQuarry.init();
         }
 
         @Override

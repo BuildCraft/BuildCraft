@@ -15,7 +15,7 @@ import javax.vecmath.Tuple3f;
 import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -26,9 +26,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.core.render.ISprite;
 
-/** Holds all of the information necessary to make one of the vertices in a {@link BakedQuad}. This provides a variety
+/**
+ * Holds all of the information necessary to make one of the verticies in a {@link BakedQuad}. This provides a variety
  * of methods to quickly set or get different elements. This should be used with {@link MutableQuad} to make a face, or
  * by itself if you only need to define a single vertex. <br>
  * This currently holds the 3D position, normal, colour, 2D texture, skylight and blocklight. Note that you don't have
@@ -36,7 +40,9 @@ import buildcraft.api.core.render.ISprite;
  * All of the mutating methods are in the form {@literal <element><type>}, where {@literal <element>} is the element to
  * set/get, and {@literal <type>} is the type that they should be set as. So {@link #positiond(double, double, double)}
  * will take in 3 doubles and set them to the position element, and {@link #colouri(int, int, int, int)} will take in 4
- * int's and set them to the colour elements. */
+ * int's and set them to the colour elements.
+ */
+@SideOnly(Side.CLIENT)
 public class MutableVertex {
     /** The position of this vertex. */
     public float position_x, position_y, position_z;
@@ -155,58 +161,58 @@ public class MutableVertex {
 
     // Rendering
 
-    public void render(VertexBuffer vb) {
-        VertexFormat vf = vb.getVertexFormat();
+    public void render(BufferBuilder bb) {
+        VertexFormat vf = bb.getVertexFormat();
         if (vf == DefaultVertexFormats.BLOCK) {
-            renderAsBlock(vb);
+            renderAsBlock(bb);
         } else {
             for (VertexFormatElement vfe : vf.getElements()) {
-                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(vb);
-                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(vb);
-                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(vb);
+                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(bb);
+                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(bb);
+                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(bb);
                 else if (vfe.getUsage() == EnumUsage.UV) {
-                    if (vfe.getIndex() == 0) renderTex(vb);
-                    else if (vfe.getIndex() == 1) renderLightMap(vb);
+                    if (vfe.getIndex() == 0) renderTex(bb);
+                    else if (vfe.getIndex() == 1) renderLightMap(bb);
                 }
             }
-            vb.endVertex();
+            bb.endVertex();
         }
     }
 
-    /** Renders this vertex into the given {@link VertexBuffer}, assuming that the {@link VertexFormat} is
+    /** Renders this vertex into the given {@link BufferBuilder}, assuming that the {@link VertexFormat} is
      * {@link DefaultVertexFormats#BLOCK}.
      * <p>
-     * Slight performance increase over {@link #render(VertexBuffer)}. */
-    public void renderAsBlock(VertexBuffer vb) {
-        renderPosition(vb);
-        renderColour(vb);
-        renderTex(vb);
-        renderLightMap(vb);
-        vb.endVertex();
+     * Slight performance increase over {@link #render(BufferBuilder)}. */
+    public void renderAsBlock(BufferBuilder bb) {
+        renderPosition(bb);
+        renderColour(bb);
+        renderTex(bb);
+        renderLightMap(bb);
+        bb.endVertex();
     }
 
-    public void renderPosition(VertexBuffer vb) {
-        vb.pos(position_x, position_y, position_z);
+    public void renderPosition(BufferBuilder bb) {
+        bb.pos(position_x, position_y, position_z);
     }
 
-    public void renderNormal(VertexBuffer vb) {
-        vb.normal(normal_x, normal_y, normal_z);
+    public void renderNormal(BufferBuilder bb) {
+        bb.normal(normal_x, normal_y, normal_z);
     }
 
-    public void renderColour(VertexBuffer vb) {
-        vb.color(colour_r, colour_g, colour_b, colour_a);
+    public void renderColour(BufferBuilder bb) {
+        bb.color(colour_r, colour_g, colour_b, colour_a);
     }
 
-    public void renderTex(VertexBuffer vb) {
-        vb.tex(tex_u, tex_v);
+    public void renderTex(BufferBuilder bb) {
+        bb.tex(tex_u, tex_v);
     }
 
-    public void renderTex(VertexBuffer vb, ISprite sprite) {
-        vb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
+    public void renderTex(BufferBuilder bb, ISprite sprite) {
+        bb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
     }
 
-    public void renderLightMap(VertexBuffer vb) {
-        vb.lightmap(light_sky << 4, light_block << 4);
+    public void renderLightMap(BufferBuilder bb) {
+        bb.lightmap(light_sky << 4, light_block << 4);
     }
 
     // Mutating
@@ -246,7 +252,6 @@ public class MutableVertex {
         return this;
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public MutableVertex normali(int combined) {
         normal_x = ((combined >> 0) & 0xFF) / 0x7f;
         normal_y = ((combined >> 8) & 0xFF) / 0x7f;
@@ -298,7 +303,6 @@ public class MutableVertex {
         return new Point4f(colour_r / 255f, colour_g / 255f, colour_b / 255f, colour_a / 255f);
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public int colourRGBA() {
         int rgba = 0;
         rgba |= (colour_r & 0xFF) << 0;
@@ -308,7 +312,6 @@ public class MutableVertex {
         return rgba;
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
     public int colourABGR() {
         int rgba = 0;
         rgba |= (colour_r & 0xFF) << 24;
@@ -435,7 +438,7 @@ public class MutableVertex {
     }
 
     public MutableVertex translatevd(Vec3d vec) {
-        return translated(vec.xCoord, vec.yCoord, vec.zCoord);
+        return translated(vec.x, vec.y, vec.z);
     }
 
     public MutableVertex scalef(float scale) {

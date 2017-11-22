@@ -66,10 +66,22 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         lowerRightLedgerPos = rootElement.getPosition(1, -1).offset(0, 5);
 
         if (container instanceof ContainerBCTile<?>) {
-            shownElements.add(new LedgerOwnership((GuiBC8<? extends ContainerBCTile<?>>) this, true));
+            shownElements.add(new LedgerOwnership(this, ((ContainerBCTile<?>) container).tile, true));
         }
         if (shouldAddHelpLedger()) {
             shownElements.add(new LedgerHelp(this, false));
+        }
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        boolean drawEverything = currentMenu == null || !currentMenu.shouldFullyOverride();
+        if (drawEverything) {
+            this.drawDefaultBackground();
+        }
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        if (drawEverything) {
+            this.renderHoveredToolTip(mouseX, mouseY);
         }
     }
 
@@ -159,6 +171,11 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+
+        // FIX FOR MC-121719 // https://bugs.mojang.com/browse/MC-121719
+        partialTicks = mc.getRenderPartialTicks();
+        // END FIX
+
         GlStateManager.color(1, 1, 1, 1);
         if (isDebuggingShown.evaluate()) {
             SPRITE_DEBUG.drawAt(0, 0);
@@ -213,9 +230,8 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         IMenuElement m = currentMenu;
         if (m != null) {
             if (m.shouldFullyOverride()) {
-                int c = 0x20_00_00_00;
                 GlStateManager.disableDepth();
-                drawGradientRect(0, 0, this.width, this.height, c, c);
+                drawDefaultBackground();
                 GlStateManager.enableDepth();
             }
             m.drawBackground(lastPartialTicks);

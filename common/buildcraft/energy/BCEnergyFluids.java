@@ -7,12 +7,7 @@
 package buildcraft.energy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-
-import com.google.common.math.IntMath;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.util.ResourceLocation;
@@ -49,17 +44,17 @@ public class BCEnergyFluids {
     public static void preInit() {
         int[][] data = { //@formatter:off
             // Tabular form of all the fluid values
-            // density, viscosity, boil, spread,  tex_light, tex_dark
-            {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05 },// Crude Oil
-            {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42 },// Residue
-            {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20 },// Heavy Oil
-            {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24 },// Dense Oil
-            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00 },// Distilled Oil
-            {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00 },// Dense Fuel
-            {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00 },// Mixed Heavy Fuels
-            {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00 },// Light Fuel
-            {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00 },// Mixed Light Fuels
-            {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00 },// Gas Fuel
+            // density, viscosity, boil, spread,  tex_light, tex_dark, sticky
+            {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05, 1 },// Crude Oil
+            {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42, 1 },// Residue
+            {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20, 1 },// Heavy Oil
+            {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24, 1 },// Dense Oil
+            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00, 0 },// Distilled Oil
+            {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00, 0 },// Dense Fuel
+            {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00, 0 },// Mixed Heavy Fuels
+            {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00, 0 },// Light Fuel
+            {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00, 0 },// Mixed Light Fuels
+            {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00, 0 },// Gas Fuel
         };//@formatter:on
         if (BCModules.FACTORY.isLoaded()) {
             int index = 0;
@@ -104,25 +99,17 @@ public class BCEnergyFluids {
         final int baseQuanta = data[3];
         final int texLight = data[4];
         final int texDark = data[5];
+        final boolean sticky = data[6] == 1;
 
         String fullName = name + (heat == 0 ? "" : "_heat_" + heat);
         int tempAdjustedViscosity = baseViscosity * (4 - heat) / 4;
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
-        BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"), new ResourceLocation(fluidTexture + "_flow"));
+        BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"),
+            new ResourceLocation(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
-        def.setMapColour(
-            Arrays.stream(MapColor.COLORS)
-                .filter(Objects::nonNull)
-                .filter(mapColor -> mapColor.colorValue != 0)
-                .min(Comparator.comparingInt(mapColor ->
-                    IntMath.pow((mapColor.colorValue >> 16 & 0xFF) - (texLight >> 16 & 0xFF), 2) +
-                    IntMath.pow((mapColor.colorValue >> 8 & 0xFF) - (texLight >> 8 & 0xFF), 2) +
-                    IntMath.pow((mapColor.colorValue & 0xFF) - (texLight & 0xFF), 2)
-                ))
-                .orElseThrow(IllegalArgumentException::new)
-        );
+        def.setMapColour(getMapColour(texLight));
         def.setFlammable(true);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
@@ -132,10 +119,11 @@ public class BCEnergyFluids {
         def.setGaseous(def.getDensity() < 0);
         def.setColour(texLight, texDark);
         def.setHeatable(true);
-        FluidManager.register(def, true);
+        FluidManager.register(def);
 
         BCFluidBlock block = (BCFluidBlock) def.getBlock();
         block.setLightOpacity(3);
+        block.setSticky(sticky);
         // Distance that the fluid will travel: 1->16
         // Higher heat values travel a little further
         block.setQuantaPerBlock(baseQuanta + (baseQuanta > 6 ? heat : heat / 2));
@@ -144,4 +132,33 @@ public class BCEnergyFluids {
         return def;
     }
 
+    private static MapColor getMapColour(int colour) {
+        MapColor bestColor = MapColor.BLACK;
+        int currentDifference = Integer.MAX_VALUE;
+
+        int r = (colour >> 16) & 0xFF;
+        int g = (colour >> 8) & 0xFF;
+        int b = (colour >> 0) & 0xFF;
+
+        for (MapColor map : MapColor.COLORS) {
+            if (map == null || map.colorValue == 0) {
+                continue;
+            }
+            int mr = (map.colorValue >> 16) & 0xFF;
+            int mg = (map.colorValue >> 8) & 0xFF;
+            int mb = (map.colorValue >> 0) & 0xFF;
+
+            int dr = mr - r;
+            int dg = mg - g;
+            int db = mb - b;
+
+            int difference = dr * dr + dg * dg * db + db;
+
+            if (difference < currentDifference) {
+                currentDifference = difference;
+                bestColor = map;
+            }
+        }
+        return bestColor;
+    }
 }

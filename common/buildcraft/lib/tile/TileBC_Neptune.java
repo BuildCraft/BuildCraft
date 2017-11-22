@@ -37,13 +37,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -73,9 +73,6 @@ import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
@@ -134,12 +131,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public TileBC_Neptune() {
         caps.addProvider(itemManager);
-    }
-
-    public static <T extends TileEntity> void registerTile(Class<T> tileClass, String id) {
-        String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
-        String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
-        GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
     }
 
     // ##################################################
@@ -231,7 +222,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         InventoryUtil.dropAll(world, pos, toDrop);
     }
 
-    /** Called whenever {@link Block#getDrops(net.minecraft.world.IBlockAccess, BlockPos, IBlockState, int)}, or
+    /** Called whenever {@link Block#getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}, or
      * {@link #onRemove()} is called (by default). */
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         itemManager.addDrops(toDrop);
@@ -270,6 +261,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
         return tankManager.onActivated(player, getPos(), hand);
+    }
+
+    public void onNeighbourBlockChanged(Block block, BlockPos nehighbour) {
+
     }
 
     @Override
@@ -475,9 +470,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
         try {
             int id = buf.readUnsignedShort();
-            readPayload(id, new PacketBufferBC(buf), world.isRemote ? Side.CLIENT : Side.SERVER, null);
+            PacketBufferBC buffer = new PacketBufferBC(buf);
+            readPayload(id, buffer, world.isRemote ? Side.CLIENT : Side.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
-            MessageUtil.ensureEmpty(buf, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
+            MessageUtil.ensureEmpty(buffer, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
             spawnReceiveParticles(id);
         } catch (IOException e) {
             throw new RuntimeException(e);

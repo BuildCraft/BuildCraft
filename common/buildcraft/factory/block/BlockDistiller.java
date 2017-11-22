@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.tile.TileDistiller_BC8;
 
@@ -30,7 +31,7 @@ public class BlockDistiller extends BlockBCTile_Neptune implements IBlockWithFac
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
         return new TileDistiller_BC8();
     }
 
@@ -45,7 +46,8 @@ public class BlockDistiller extends BlockBCTile_Neptune implements IBlockWithFac
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileDistiller_BC8) {
             return ((TileDistiller_BC8) tile).onActivated(player, hand, facing, hitX, hitY, hitZ);

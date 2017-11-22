@@ -58,16 +58,16 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
-        return new AxisAlignedBB(from.xCoord, from.yCoord, from.zCoord, to.xCoord, to.yCoord, to.zCoord);
+        return new AxisAlignedBB(from.x, from.y, from.z, to.x, to.y, to.z);
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
-        return makeFrom(from, to).expandXyz(radius);
+        return makeFrom(from, to).grow(radius);
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {
-        return new AxisAlignedBB(around.xCoord, around.yCoord, around.zCoord, around.xCoord, around.yCoord,
-            around.zCoord).expandXyz(radius);
+        return new AxisAlignedBB(around.x, around.y, around.z, around.x, around.y,
+            around.z).grow(radius);
     }
 
     public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {

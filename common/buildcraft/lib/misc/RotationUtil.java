@@ -36,11 +36,11 @@ public class RotationUtil {
             default:
                 return vec;
             case CLOCKWISE_90:
-                return new Vec3d(1 - vec.zCoord, vec.yCoord, vec.xCoord);
+                return new Vec3d(1 - vec.z, vec.y, vec.x);
             case CLOCKWISE_180:
-                return new Vec3d(1 - vec.xCoord, vec.yCoord, 1 - vec.zCoord);
+                return new Vec3d(1 - vec.x, vec.y, 1 - vec.z);
             case COUNTERCLOCKWISE_90:
-                return new Vec3d(vec.zCoord, vec.yCoord, 1 - vec.xCoord);
+                return new Vec3d(vec.z, vec.y, 1 - vec.x);
         }
     }
 

@@ -8,11 +8,11 @@ package buildcraft.silicon.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.silicon.tile.TileLaser;
 
@@ -22,12 +22,12 @@ public class BlockLaser extends BlockBCTile_Neptune implements IBlockWithFacing 
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TileLaser();
     }
 
     @Override
-    public boolean canPlacedVertical() {
+    public boolean canFaceVertically() {
         return true;
     }
 

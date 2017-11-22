@@ -52,7 +52,7 @@ public class PipeEventBus {
             if (superCls != null) {
                 list.addAll(getHandlers(superCls));
             }
-            for (Method m : cls.getMethods()) {
+            for (Method m : cls.getDeclaredMethods()) {
                 PipeEventHandler annot = m.getAnnotation(PipeEventHandler.class);
                 if (annot == null) {
                     continue;

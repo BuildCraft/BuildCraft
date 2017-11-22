@@ -7,7 +7,6 @@
 package buildcraft.lib.client.render;
 
 import java.util.concurrent.TimeUnit;
-
 import javax.vecmath.Vector3f;
 
 import com.google.common.cache.CacheBuilder;
@@ -18,11 +17,11 @@ import com.google.common.cache.RemovalNotification;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
@@ -33,12 +32,16 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ItemStackKey;
 
+@SideOnly(Side.CLIENT)
 public class ItemRenderUtil {
 
     private static final LoadingCache<ItemStackKey, Integer> glListCache;
@@ -92,7 +95,7 @@ public class ItemRenderUtil {
             dummyEntityItem.hoverStart = (float) (45 * Math.PI / 180);
         }
 
-        dummyEntityItem.setEntityItemStack(stack);
+        dummyEntityItem.setItem(stack);
         customItemRenderer.doRender(dummyEntityItem, x, y, z, 0, 0);
 
         GL11.glPopMatrix();
@@ -104,7 +107,7 @@ public class ItemRenderUtil {
 
     /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
      * You must call {@link #endItemBatch()} after your have rendered all of the items. */
-    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, VertexBuffer vb) {
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, BufferBuilder bb) {
         if (stack.isEmpty()) {
             return;
         }
@@ -117,8 +120,8 @@ public class ItemRenderUtil {
         model = model.getOverrides().handleItemState(model, stack, null, null);
         boolean requireGl = stack.hasEffect() || model.isBuiltInRenderer();
 
-        if (vb != null && !requireGl) {
-            vb.setTranslation(x, y, z);
+        if (bb != null && !requireGl) {
+            bb.setTranslation(x, y, z);
             float scale = 0.30f;
 
             MutableQuad q = new MutableQuad(-1, null);
@@ -129,7 +132,7 @@ public class ItemRenderUtil {
                     q.scaled(scale);
                     q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
                     if (quad.hasTintIndex()) {
-                        int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
+                        int colour = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, quad.getTintIndex());
                         if (EntityRenderer.anaglyphEnable) {
                             colour = TextureUtil.anaglyphColor(colour);
                         }
@@ -139,11 +142,11 @@ public class ItemRenderUtil {
                     Vector3f normal = q.getCalculatedNormal();
                     q.normalvf(normal);
                     q.multShade();
-                    q.render(vb);
+                    q.render(bb);
                 }
             }
 
-            vb.setTranslation(0, 0, 0);
+            bb.setTranslation(0, 0, 0);
             return;
         }
 

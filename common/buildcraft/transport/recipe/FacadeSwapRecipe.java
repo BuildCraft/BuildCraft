@@ -10,6 +10,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.ForgeHooks;
@@ -18,6 +19,7 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
 
+import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeBlockStateInfo;
@@ -45,11 +47,13 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
                 list2.add(stack);
             }
         }
-        INPUTS[0] = new ChangingItemStack(list1);
-        INPUTS[0].setTimeGap(TIME_GAP);
+        if (!list1.isEmpty()) {
+            INPUTS[0] = new ChangingItemStack(list1);
+            INPUTS[0].setTimeGap(TIME_GAP);
 
-        OUTPUTS = new ChangingItemStack(list2);
-        OUTPUTS.setTimeGap(TIME_GAP);
+            OUTPUTS = new ChangingItemStack(list2);
+            OUTPUTS.setTimeGap(TIME_GAP);
+        }
     }
 
     @Override
@@ -76,11 +80,6 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
         FacadeInstance states = ItemPluggableFacade.getStates(stackIn);
         states = states.withSwappedIsHollow();
         return BCTransportItems.plugFacade.createItemStack(states);
-    }
-
-    @Override
-    public int getRecipeSize() {
-        return 1;
     }
 
     @Override
@@ -122,5 +121,25 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
     @Override
     public int getRecipeHeight() {
         return 1;
+    }
+
+    @Override
+    public IRecipe setRegistryName(ResourceLocation name) {
+        return this;
+    }
+
+    @Override
+    public ResourceLocation getRegistryName() {
+        return new ResourceLocation(BCTransport.MODID, "facade_swap");
+    }
+
+    @Override
+    public Class<IRecipe> getRegistryType() {
+        return IRecipe.class;
+    }
+
+    @Override
+    public boolean canFit(int width, int height) {
+        return width >= 1 && height >= 1;
     }
 }

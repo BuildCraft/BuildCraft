@@ -7,11 +7,14 @@ package buildcraft.lib;
 import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.item.ItemGuide;
 import buildcraft.lib.item.ItemGuideNote;
-import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCLibItems {
+
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
     public static ItemGuide guide;
-    public static ItemGuideNote note;
+    public static ItemGuideNote guideNote;
     public static ItemDebugger debugger;
 
     private static boolean enableGuide, enableDebugger;
@@ -24,13 +27,21 @@ public class BCLibItems {
         enableDebugger = true;
     }
 
+    public static boolean isGuideEnabled() {
+        return enableGuide;
+    }
+
+    public static boolean isDebuggerEnabled() {
+        return enableDebugger;
+    }
+
     public static void fmlPreInit() {
-        if (enableGuide) {
-            guide = ItemManager.register(new ItemGuide("item.guide"), true);
-            note = ItemManager.register(new ItemGuideNote("item.guide.note"), true);
+        if (isGuideEnabled()) {
+            guide = HELPER.addForcedItem(new ItemGuide("item.guide"));
+            guideNote = HELPER.addForcedItem(new ItemGuideNote("item.guide.note"));
         }
-        if (enableDebugger) {
-            debugger = ItemManager.register(new ItemDebugger("item.debugger"), true);
+        if (isDebuggerEnabled()) {
+            debugger = HELPER.addForcedItem(new ItemDebugger("item.debugger"));
         }
     }
 }

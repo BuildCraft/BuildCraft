@@ -17,6 +17,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextFormatting;
 
+import net.minecraftforge.fluids.FluidStack;
+
 public final class StringUtilBC {
 
     public static final Splitter newLineSplitter = Splitter.on("\\n");
@@ -81,12 +83,19 @@ public final class StringUtilBC {
         return pos.getX() + "x" + pos.getY() + "x" + pos.getZ();
     }
 
+    public static String fluidToString(FluidStack fluid) {
+        if (fluid == null) {
+            return "null";
+        }
+        return fluid.amount + "mb " + fluid.getFluid().getName();
+    }
+
     // Displaying objects
     public static String vec3ToDispString(Vec3d vec) {
         if (vec == null) return "null";
-        return displayDecimalFormat.format(vec.xCoord) + ", " +
-            displayDecimalFormat.format(vec.yCoord) + ", " +
-            displayDecimalFormat.format(vec.zCoord);
+        return displayDecimalFormat.format(vec.x) + ", " +
+            displayDecimalFormat.format(vec.y) + ", " +
+            displayDecimalFormat.format(vec.z);
     }
 
     public static String vec3ToDispString(Vec3i vec) {

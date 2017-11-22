@@ -22,7 +22,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileBuilder;
@@ -45,7 +45,7 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBuilder) {
             return state
                     .withProperty(
@@ -59,7 +59,7 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
     // Others
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TileBuilder();
     }
 

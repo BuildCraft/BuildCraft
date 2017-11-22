@@ -30,8 +30,8 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     }
 
     public GuideAssemblyFactory(ItemStack[] input, ItemStack output, long mjCost) {
-        this.input = ArrayUtil.map(input, ChangingItemStack::create, ChangingItemStack[]::new);
-        this.output = ChangingItemStack.create(output);
+        this.input = ArrayUtil.map(input, ChangingItemStack::new, ChangingItemStack[]::new);
+        this.output = new ChangingItemStack(output);
         this.mjCost = new ChangingObject<>(new Long[] { mjCost });
         this.hash = computeHash();
     }

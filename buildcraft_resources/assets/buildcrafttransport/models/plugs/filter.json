@@ -3,7 +3,7 @@
     "textures": {
         "#main": "buildcrafttransport:pipes/filter"
     },
-    "variables": {
+    "values": {
         "isFilter":"true"
     },
     "cutout": [

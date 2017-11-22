@@ -27,9 +27,9 @@ public class ContextInfo {
         this.fnCtx = fnCtx;
     }
 
-    public <T> VariableInfoObject<T> createInfoObject(String name, NodeVariableObject<T> node) {
+    public <T> VariableInfoObject<T> createInfoObject(NodeVariableObject<T> node) {
         VariableInfoObject<T> info = new VariableInfoObject<>(node);
-        variables.put(name, info);
+        variables.put(node.name, info);
         return info;
     }
 
@@ -41,9 +41,9 @@ public class ContextInfo {
         return null;
     }
 
-    public VariableInfoDouble createInfoDouble(String name, NodeVariableDouble node) {
+    public VariableInfoDouble createInfoDouble(NodeVariableDouble node) {
         VariableInfoDouble info = new VariableInfoDouble(node);
-        variables.put(name, info);
+        variables.put(node.name, info);
         return info;
     }
 
@@ -55,9 +55,9 @@ public class ContextInfo {
         return null;
     }
 
-    public VariableInfoLong createInfoLong(String name, NodeVariableLong node) {
+    public VariableInfoLong createInfoLong(NodeVariableLong node) {
         VariableInfoLong info = new VariableInfoLong(node);
-        variables.put(name, info);
+        variables.put(node.name, info);
         return info;
     }
 
@@ -69,9 +69,9 @@ public class ContextInfo {
         return null;
     }
 
-    public VariableInfoBoolean createInfoBoolean(String name, NodeVariableBoolean node) {
+    public VariableInfoBoolean createInfoBoolean(NodeVariableBoolean node) {
         VariableInfoBoolean info = new VariableInfoBoolean(node);
-        variables.put(name, info);
+        variables.put(node.name, info);
         return info;
     }
 

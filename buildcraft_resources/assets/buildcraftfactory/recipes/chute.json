@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "buildcraftfactory:chute"
+  },
+  "pattern": [
+    "ici",
+    "igi",
+    " i "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "g": {
+      "item": "#gearStone"
+    },
+    "i": {
+      "item": "#ingotIron"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:chute"
+    }
+  ]
+}

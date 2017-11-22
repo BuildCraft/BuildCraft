@@ -100,12 +100,12 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_MANUAL = MODEL_FUNC_CTX.putVariableBoolean("manual");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX);
-        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject("side", MODEL_SIDE);
+        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
         infoSide.possibleValues.addAll(Arrays.asList(EnumFacing.VALUES));
 
-        VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble("stage", MODEL_STAGE);
+        VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble(MODEL_STAGE);
         infoStage.cacheType = CacheType.IN_SET;
         infoStage.setIsComplete = false;
         infoStage.possibleValues.add(0);

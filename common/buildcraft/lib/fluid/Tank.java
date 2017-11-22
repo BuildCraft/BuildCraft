@@ -59,7 +59,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     private final String name;
 
     @Nonnull
-    private final Predicate<FluidStack> filter;
+    private Predicate<FluidStack> filter;
 
     NetworkedFluidStackCache.Link clientFluid = null;
     int clientAmount = 0;
@@ -84,6 +84,13 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         this.filter = filter == null ? ((f) -> true) : filter;
         helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
             DEFAULT_HELP_KEY);
+    }
+
+    public void setFilter(Predicate<FluidStack> filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter");
+        }
+        this.filter = filter;
     }
 
     @Nonnull
@@ -184,11 +191,6 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     @Override
-    public void setFluid(FluidStack fluid) {
-        super.setFluid(fluid);
-    }
-
-    @Override
     public String toString() {
         return "Tank [" + getContentsString() + "]";
     }
@@ -251,7 +253,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     /** Attempts to transfer the given stack to this tank.
-     * 
+     *
      * @return The left over item after attempting to add the stack to this tank. */
     public ItemStack transferStackToTank(ContainerBC_Neptune container, ItemStack stack) {
         EntityPlayer player = container.player;

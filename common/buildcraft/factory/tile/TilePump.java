@@ -99,8 +99,8 @@ public class TilePump extends TileMiner {
                 }
                 fluidConnection = posToCheck;
                 break;
-            } else if (!world.isAirBlock(posToCheck)
-                && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(posToCheck) &&
+                world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
@@ -235,10 +235,10 @@ public class TilePump extends TileMiner {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                    if (drain != null
-                        && paths.get(currentPos).stream()
-                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null)
-                        && canDrain(currentPos)) {
+                    if (drain != null &&
+                        paths.get(currentPos).stream()
+                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
+                        canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         if (isInfiniteWaterSource) {

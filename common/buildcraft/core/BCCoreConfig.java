@@ -27,7 +27,7 @@ import buildcraft.lib.BCLibConfig.TimeGap;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.misc.ConfigUtil;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
 
 public class BCCoreConfig {
     private static final List<Consumer<EnumRestartRequirement>> reloadListeners = new ArrayList<>();
@@ -62,7 +62,7 @@ public class BCCoreConfig {
 
     public static void preInit(File cfgFolder) {
         config = new Configuration(new File(cfgFolder, "main.cfg"));
-        objConfig = RegistryHelper.setRegistryConfig(BCCore.MODID, new File(cfgFolder, "objects.cfg"));
+        objConfig = RegistryConfig.setRegistryConfig(BCCore.MODID, new File(cfgFolder, "objects.cfg"));
         BCLibConfig.guiConfigFile = new File(cfgFolder, "gui.json");
 
         detailedConfigManager = new FileConfigManager(

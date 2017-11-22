@@ -8,18 +8,19 @@ package buildcraft.robotics;
 
 import net.minecraft.block.material.Material;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.robotics.block.BlockZonePlanner;
 import buildcraft.robotics.tile.TileZonePlanner;
 
 public class BCRoboticsBlocks {
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
     public static BlockZonePlanner zonePlanner;
 
     public static void preInit() {
-        zonePlanner = BlockBCBase_Neptune.register(new BlockZonePlanner(Material.ROCK, "block.zone_planner"));
+        zonePlanner = HELPER.addBlockAndItem(new BlockZonePlanner(Material.IRON, "block.zone_planner"));
 
-        TileBC_Neptune.registerTile(TileZonePlanner.class, "tile.zone_planner");
+        HELPER.registerTile(TileZonePlanner.class, "tile.zone_planner");
     }
 }

@@ -8,6 +8,7 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.statement.GuiElementStatement;
 import buildcraft.lib.statement.FullStatement;
+import buildcraft.lib.statement.StatementContext;
 
 public class ElementTypeStatementSlot extends ElementType {
     public static final String NAME = "buildcraftlib:statement/slot";
@@ -57,6 +58,7 @@ public class ElementTypeStatementSlot extends ElementType {
         if (fullStatement == null) {
             throw new JsonSyntaxException("Can't find a statement called '" + source + "'");
         }
-        return new GuiElementStatement<>(gui, area, fullStatement, draw);
+        StatementContext<?> context = gui.properties.get(source, StatementContext.class);
+        return new GuiElementStatement<>(gui, area, fullStatement, context, draw);
     }
 }

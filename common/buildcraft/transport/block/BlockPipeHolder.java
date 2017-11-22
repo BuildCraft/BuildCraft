@@ -64,6 +64,7 @@ import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemWire;
@@ -100,7 +101,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TilePipeHolder();
     }
 
@@ -360,7 +361,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (part >= 1 + 6 + 6) {
             return aabb.offset(pos);
         } else {
-            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.expandXyz(1 / 32.0)).offset(pos);
+            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.grow(1 / 32.0)).offset(pos);
         }
     }
 
@@ -470,8 +471,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get((trace.hitVec.xCoord % 1 + 1) % 1 > 0.5, (trace.hitVec.yCoord % 1 + 1)
-                    % 1 > 0.5, (trace.hitVec.zCoord % 1 + 1) % 1 > 0.5);
+                wirePart = EnumWirePart.get((trace.hitVec.x % 1 + 1) % 1 > 0.5, (trace.hitVec.y % 1 + 1)
+                    % 1 > 0.5, (trace.hitVec.z % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
                 boolean attached = attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));

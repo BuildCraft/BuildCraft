@@ -7,13 +7,14 @@
 package buildcraft.lib.list;
 
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;
@@ -104,6 +105,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         return s;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
@@ -113,7 +115,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
                 NonNullList<ItemStack> tempStack = NonNullList.create();
-                stack.getItem().getSubItems(stack.getItem(), CreativeTabs.MISC, tempStack);
+                stack.getItem().getSubItems(CreativeTabs.SEARCH, tempStack);
                 for (ItemStack is : tempStack) {
                     if (is.getItem() == stack.getItem()) {
                         stacks.add(is);
@@ -153,7 +155,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         }
         for (ItemStack is : wildcard) {
             NonNullList<ItemStack> wll = NonNullList.create();
-            is.getItem().getSubItems(is.getItem(), CreativeTabs.MISC, wll);
+            is.getItem().getSubItems(CreativeTabs.MISC, wll);
             if (wll.size() > 0) {
                 stacks.remove(is);
                 stacks.addAll(wll);

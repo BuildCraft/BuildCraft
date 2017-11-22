@@ -4,7 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.item;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 import buildcraft.lib.registry.TagManager;
 
@@ -20,5 +23,21 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     @Override
     public String id() {
         return id;
+    }
+
+    @Override
+    public final void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (isInCreativeTab(tab)) {
+            addSubItems(tab, items);
+        }
+    }
+
+    /** Identical to {@link #getSubItems(CreativeTabs, NonNullList)} in every way, EXCEPT that this is only called if
+     * this is actually in the given creative tab.
+     * 
+     * @param tab The {@link CreativeTabs} to display the items in. This is provided just in case an item has multiple
+     *            subtypes, split across different tabs */
+    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        items.add(new ItemStack(this));
     }
 }

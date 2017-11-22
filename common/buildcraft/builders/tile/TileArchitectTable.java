@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
@@ -39,6 +40,7 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
@@ -73,6 +75,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     public static final int NET_BOX = IDS.allocId("BOX");
     @SuppressWarnings("WeakerAccess")
     public static final int NET_SCAN = IDS.allocId("SCAN");
+    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:architect");
 
     public final ItemHandlerSimple invSnapshotIn = itemManager.addInvHandler(
         "in",
@@ -302,6 +305,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         blueprintScannedEntities.clear();
         boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);
+        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT);
     }
 
     @Override

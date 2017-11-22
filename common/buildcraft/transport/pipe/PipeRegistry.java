@@ -22,8 +22,6 @@ import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.lib.item.ItemManager;
-
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {
@@ -33,27 +31,29 @@ public enum PipeRegistry implements IPipeRegistry {
     private final Map<PipeDefinition, IItemPipe> pipeItems = new IdentityHashMap<>();
 
     @Override
-    public ItemPipeHolder registerPipeAndItem(PipeDefinition definition) {
-        registerPipe(definition);
-        ItemPipeHolder item = new ItemPipeHolder(definition);
-        ItemManager.register(item);
-        setItemForPipe(definition, item);
-        return item;
-    }
-
-    @Override
     public void registerPipe(PipeDefinition definition) {
         definitions.put(definition.identifier, definition);
     }
 
     @Override
-    public void setItemForPipe(PipeDefinition definition, IItemPipe item) {
-        if (definition == null) throw new NullPointerException("definition");
+    public void setItemForPipe(PipeDefinition definition, @Nullable IItemPipe item) {
+        if (definition == null) {
+            throw new NullPointerException("definition");
+        }
         if (item == null) {
             pipeItems.remove(definition);
         } else {
             pipeItems.put(definition, item);
         }
+    }
+
+    @Override
+    public ItemPipeHolder createItemForPipe(PipeDefinition definition) {
+         ItemPipeHolder item = new ItemPipeHolder(definition);
+         if (definitions.values().contains(definition)) {
+             setItemForPipe(definition, item);
+         }
+         return item;
     }
 
     @Override

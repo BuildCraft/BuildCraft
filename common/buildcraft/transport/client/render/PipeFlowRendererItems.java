@@ -12,12 +12,15 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
@@ -32,6 +35,7 @@ import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.TravellingItem;
 
+@SideOnly(Side.CLIENT)
 public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
     INSTANCE;
 
@@ -56,7 +60,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
     }
 
     @Override
-    public void render(PipeFlowItems flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PipeFlowItems flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
         World world = flow.pipe.getHolder().getPipeWorld();
         long now = world.getTotalWorldTime();
         int lightc = world.getCombinedLight(flow.pipe.getHolder().getPipePos(), 0);
@@ -72,11 +76,11 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
                     stack = stack.copy();
                     stack.setCount(item.stackSize);
                 }
-                ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
-                        stack, lightc, item.getRenderDirection(now, partialTicks), vb);
+                ItemRenderUtil.renderItemStack(x + pos.x, y + pos.y, z + pos.z,//
+                        stack, lightc, item.getRenderDirection(now, partialTicks), bb);
             }
             if (item.colour != null) {
-                vb.setTranslation(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);
+                bb.setTranslation(x + pos.x, y + pos.y, z + pos.z);
                 int col = ColourUtil.getLightHex(item.colour);
                 int r = (col >> 16) & 0xFF;
                 int g = (col >> 8) & 0xFF;
@@ -85,9 +89,9 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
                     MutableQuad q2 = new MutableQuad(q);
                     q2.lighti(lightc);
                     q2.multColouri(r, g, b, 255);
-                    q2.render(vb);
+                    q2.render(bb);
                 }
-                vb.setTranslation(0, 0, 0);
+                bb.setTranslation(0, 0, 0);
             }
         }
 

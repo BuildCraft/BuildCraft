@@ -28,6 +28,7 @@ import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.transport.client.PipeRegistryClient;
+import buildcraft.transport.client.render.PipeWireRenderer;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
@@ -159,6 +160,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
             BCTransportSprites.fmlPreInit();
             BCTransportModels.fmlPreInit();
             PipeApiClient.registry = PipeRegistryClient.INSTANCE;
+            PipeWireRenderer.init();
 
             MessageManager.addType(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
             MessageManager.addType(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
@@ -189,7 +191,13 @@ public abstract class BCTransportProxy implements IGuiHandler {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
                 FacadeInstance states = ItemPluggableFacade.getStates(item);
                 FacadePhasedState state = states.getCurrentStateForStack();
-                return Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state);
+                int color = -1;
+                try {
+                    color = Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state, null, null);
+                } catch (NullPointerException ex) {
+                    //the block didn't like the null world or player
+                }
+                return color;
             }, BCTransportItems.plugFacade);
         }
 

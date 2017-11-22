@@ -54,7 +54,7 @@ public class BCCoreModels {
     private static final ModelHolderVariable ENGINE_CREATIVE;
 
     static {
-        FunctionContext fnCtx =  new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
+        FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
         ENGINE_FACING = fnCtx.putVariableObject("direction", EnumFacing.class);
@@ -69,13 +69,15 @@ public class BCCoreModels {
 
     public static void fmlPreInit() {
         MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
-        ModelLoader.setCustomStateMapper(BCCoreBlocks.engine, b -> ImmutableMap.of());
     }
 
     public static void fmlInit() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineRedstone_BC8.class, RenderEngineWood.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineCreative.class, RenderEngineCreative.INSTANCE);
+        if (BCCoreBlocks.engine != null) {
+            ModelLoader.setCustomStateMapper(BCCoreBlocks.engine, b -> ImmutableMap.of());
+        }
     }
 
     @SubscribeEvent

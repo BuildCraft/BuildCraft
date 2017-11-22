@@ -27,6 +27,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.tile.TileTank;
 
@@ -39,7 +40,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TileTank();
     }
 

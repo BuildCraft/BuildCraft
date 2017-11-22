@@ -23,6 +23,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 public class PositionUtil {
+    /** @return The exact direction from the first position to the second. Returns null if more than one axis value is
+     *         different, or they are the same position. */
     @Nullable
     public static EnumFacing getDirectFacingOffset(BlockPos from, BlockPos to) {
         BlockPos diff = to.subtract(from);
@@ -33,6 +35,22 @@ public class PositionUtil {
         if (x) return diff.getX() > 0 ? EnumFacing.EAST : EnumFacing.WEST;
         if (y) return diff.getY() > 0 ? EnumFacing.UP : EnumFacing.DOWN;
         if (z) return diff.getZ() > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH;
+        return null;
+    }
+
+    /** @return An integer representing the offset between the block positions, or null if
+     *         {@link #getDirectFacingOffset(BlockPos, BlockPos)} returned null. The distance will be negative if
+     *         returned {@link EnumFacing} is negative. */
+    @Nullable
+    public static Integer getDirectFacingDistance(BlockPos from, BlockPos to) {
+        BlockPos diff = to.subtract(from);
+        boolean x = diff.getX() != 0;
+        boolean y = diff.getY() != 0;
+        boolean z = diff.getZ() != 0;
+        if (x && y || x && z || y && z) return null;
+        if (x) return diff.getX();
+        if (y) return diff.getY();
+        if (z) return diff.getZ();
         return null;
     }
 
@@ -69,7 +87,7 @@ public class PositionUtil {
     }
 
     /** Checks to see if the given position is a corner for the box given by min and max
-     * 
+     *
      * @param min The minimum co-ordinate of the box
      * @param max The maximum co-ordinate of the box
      * @param pos The position to test
@@ -79,7 +97,7 @@ public class PositionUtil {
     }
 
     /** Checks to see if the given position is on one of the edges of the box given by min and max
-     * 
+     *
      * @param min The minimum co-ordinate of the box
      * @param max The maximum co-ordinate of the box
      * @param pos The position to test
@@ -89,7 +107,7 @@ public class PositionUtil {
     }
 
     /** Checks to see if the given position is on one of the faces of the box given by min and max
-     * 
+     *
      * @param min The minimum co-ordinate of the box
      * @param max The maximum co-ordinate of the box
      * @param pos The position to test
@@ -152,9 +170,9 @@ public class PositionUtil {
     public static Vec3d rotateVec(Vec3d from, Axis axis, Rotation rotation) {
         Vec3d rotated = new Vec3d(0, 0, 0);
 
-        double numEast = from.xCoord;
-        double numUp = from.yCoord;
-        double numSouth = from.zCoord;
+        double numEast = from.x;
+        double numUp = from.y;
+        double numSouth = from.z;
 
         EnumFacing newEast = PositionUtil.rotateFacing(EnumFacing.EAST, axis, rotation);
         EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);
@@ -447,7 +465,7 @@ public class PositionUtil {
     }
 
     public static void forAllOnArc2d(int a, int b, int degrees, PathIterator2d iter) {
-        
+
     }
 
     @FunctionalInterface

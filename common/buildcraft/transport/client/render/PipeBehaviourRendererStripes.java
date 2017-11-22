@@ -6,8 +6,11 @@
 
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
 
@@ -16,21 +19,22 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
 
+@SideOnly(Side.CLIENT)
 public enum PipeBehaviourRendererStripes implements IPipeBehaviourRenderer<PipeBehaviourStripes> {
     INSTANCE;
 
     @Override
-    public void render(PipeBehaviourStripes stripes, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PipeBehaviourStripes stripes, double x, double y, double z, float partialTicks, BufferBuilder bb) {
         EnumFacing dir = stripes.direction;
         if (dir == null) return;
         MutableQuad[] quads = BCTransportModels.getStripesDynQuads(dir);
-        vb.setTranslation(x, y, z);
+        bb.setTranslation(x, y, z);
         int light = stripes.pipe.getHolder().getPipeWorld().getCombinedLight(stripes.pipe.getHolder().getPipePos(), 0);
         for (MutableQuad q : quads) {
             q.multShade();
             q.lighti(light);
-            q.render(vb);
+            q.render(bb);
         }
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
     }
 }

@@ -36,7 +36,7 @@ public class TransactorEntityItem implements IItemExtractable {
         if (max < min) {
             return StackUtil.EMPTY;
         }
-        ItemStack current = entity.getEntityItem();
+        ItemStack current = entity.getItem();
         if (current.isEmpty() || current.getCount() < min) {
             return StackUtil.EMPTY;
         }
@@ -47,7 +47,7 @@ public class TransactorEntityItem implements IItemExtractable {
                 if (current.getCount() == 0) {
                     entity.setDead();
                 } else {
-                    entity.setEntityItemStack(current);
+                    entity.setItem(current);
                 }
             }
             return extracted;

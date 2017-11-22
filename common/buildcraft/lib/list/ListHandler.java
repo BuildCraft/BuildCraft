@@ -9,7 +9,6 @@ package buildcraft.lib.list;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,6 +19,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListRegistry;
@@ -165,6 +166,7 @@ public final class ListHandler {
             }
         }
 
+        @SideOnly(Side.CLIENT)
         public NonNullList<ItemStack> getExamples() {
             ItemStack firstStack = stacks.get(0);
             if (firstStack.isEmpty()) {
@@ -187,7 +189,7 @@ public final class ListHandler {
             if (handlersCustom.size() > 0) {
                 for (Item i : ForgeRegistries.ITEMS) {
                     NonNullList<ItemStack> examples = NonNullList.create();
-                    i.getSubItems(i, CreativeTabs.MISC, examples);
+                    i.getSubItems(CreativeTabs.MISC, examples);
                     for (ItemStack s : examples) {
                         for (ListMatchHandler mh : handlersCustom) {
                             if (mh.matches(type, firstStack, s, false)) {

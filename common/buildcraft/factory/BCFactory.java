@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -36,30 +36,29 @@ public class BCFactory {
     public static BCFactory INSTANCE = null;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
+    public static void preInit(FMLPreInitializationEvent evt) {
+        RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
-        BCFactoryItems.preInit();
-        BCFactoryBlocks.preInit();
+        BCFactoryBlocks.fmlPreInit();
+        BCFactoryItems.fmlPreInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCFactoryProxy.getProxy());
-
         MinecraftForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
+
+        BCFactoryProxy.getProxy().fmlPreInit();
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         BCFactoryProxy.getProxy().fmlInit();
-        BCFactoryRecipes.init();
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
 
     }
 
     static {
-
         startBatch();// factory
         // BC Factory Items
         registerTag("item.plastic.sheet").reg("plastic_sheet").locale("plasticSheet").oldReg("plasticSheet").model("plastic_sheet");
@@ -74,9 +73,8 @@ public class BCFactory {
         registerTag("item.block.tank").reg("tank").locale("tankBlock").model("tank");
         registerTag("item.block.chute").reg("chute").locale("chuteBlock").model("chute");
         registerTag("item.block.distiller").reg("distiller").locale("distiller").model("distiller");
-        registerTag("item.block.heat_exchange.start").reg("heat_exchange_start").locale("heat_exchange_start").model("heat_exchange_start");
-        registerTag("item.block.heat_exchange.middle").reg("heat_exchange_middle").locale("heat_exchange_middle").model("heat_exchange_middle");
-        registerTag("item.block.heat_exchange.end").reg("heat_exchange_end").locale("heat_exchange_end").model("heat_exchange_end");
+        TagEntry tag = registerTag("item.block.heat_exchange").reg("heat_exchange").locale("heat_exchange");
+        tag.model("heat_exchange").oldReg("heat_exchange_start", "heat_exchange_middle", "heat_exchange_end");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
         registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
@@ -88,9 +86,8 @@ public class BCFactory {
         registerTag("block.chute").reg("chute").oldReg("chuteBlock").locale("chuteBlock").model("chute");
         registerTag("block.water_gel").reg("water_gel").locale("waterGel").model("water_gel");
         registerTag("block.distiller").reg("distiller").locale("distiller").model("distiller");
-        registerTag("block.heat_exchange.start").reg("heat_exchange_start").locale("heat_exchange_start").model("heat_exchange_start");
-        registerTag("block.heat_exchange.middle").reg("heat_exchange_middle").locale("heat_exchange_middle").model("heat_exchange_middle");
-        registerTag("block.heat_exchange.end").reg("heat_exchange_end").locale("heat_exchange_end").model("heat_exchange_end");
+        tag = registerTag("block.heat_exchange").reg("heat_exchange").locale("heat_exchange").model("heat_exchange");
+        tag.oldReg("heat_exchange_start", "heat_exchange_middle", "heat_exchange_end");
         // BC Factory Tiles
         registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
         registerTag("tile.mining_well").reg("mining_well");
@@ -99,9 +96,7 @@ public class BCFactory {
         registerTag("tile.tank").reg("tank");
         registerTag("tile.chute").reg("chute");
         registerTag("tile.distiller").reg("distiller");
-        registerTag("tile.heat_exchange.start").reg("heat_exchange.start");
-        registerTag("tile.heat_exchange.middle").reg("heat_exchange.middle");
-        registerTag("tile.heat_exchange.end").reg("heat_exchange.end");
+        registerTag("tile.heat_exchange").reg("heat_exchange").oldReg("heat_exchange.start", "heat_exchange.end");
 
         endBatch(TagManager.prependTags("buildcraftfactory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
     }

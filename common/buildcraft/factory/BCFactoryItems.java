@@ -6,20 +6,23 @@ package buildcraft.factory;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.factory.item.ItemWaterGel;
 
 public class BCFactoryItems {
+
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
     public static ItemBC_Neptune plasticSheet;
     public static ItemWaterGel waterGel;
     public static ItemBC_Neptune gelledWater;
 
-    public static void preInit() {
+    public static void fmlPreInit() {
         if (BCLib.DEV) {
-            plasticSheet = ItemManager.register(new ItemBC_Neptune("item.plastic.sheet"));
+            plasticSheet = HELPER.addItem(new ItemBC_Neptune("item.plastic.sheet"));
         }
-        waterGel = ItemManager.register(new ItemWaterGel("item.water_gel_spawn"));
-        gelledWater = ItemManager.register(new ItemBC_Neptune("item.gel"));
+        waterGel = HELPER.addItem(new ItemWaterGel("item.water_gel_spawn"));
+        gelledWater = HELPER.addItem(new ItemBC_Neptune("item.gel"));
     }
 }

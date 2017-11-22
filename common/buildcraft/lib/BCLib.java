@@ -11,7 +11,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -24,11 +23,11 @@ import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
-import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.registry.MigrationManager;
+import buildcraft.lib.registry.RegistrationHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
@@ -38,6 +37,7 @@ import buildcraft.lib.registry.TagManager.TagEntry;
     modid = BCLib.MODID,
     name = "BuildCraft Lib",
     version = BCLib.VERSION,
+    updateJSON = "https://mod-buildcraft.com/version/versions.json",
     acceptedMinecraftVersions = "(gradle_replace_mcversion,)",
     dependencies = "required-after:forge@(gradle_replace_forgeversion,)"
 )
@@ -83,6 +83,7 @@ public class BCLib {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
+        MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
 
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }
@@ -96,9 +97,7 @@ public class BCLib {
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();
 
-        ItemManager.fmlInit();
-
-        BCLibRecipes.fmlInit();
+        RegistrationHelper.registerOredictEntries();
     }
 
     @Mod.EventHandler
@@ -107,11 +106,6 @@ public class BCLib {
         BuildCraftObjectCaches.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
-    }
-
-    @Mod.EventHandler
-    public static void missingMappings(FMLMissingMappingsEvent evt) {
-        MigrationManager.INSTANCE.missingMappingEvent(evt);
     }
 
     static {

@@ -6,7 +6,11 @@
 
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
+
+import net.minecraft.client.renderer.BufferBuilder;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 
@@ -16,6 +20,7 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.plug.PluggablePulsar;
 
+@SideOnly(Side.CLIENT)
 public enum PlugPulsarRenderer implements IPlugDynamicRenderer<PluggablePulsar> {
     INSTANCE;
 
@@ -26,16 +31,16 @@ public enum PlugPulsarRenderer implements IPlugDynamicRenderer<PluggablePulsar> 
     }
 
     @Override
-    public void render(PluggablePulsar pulsar, double x, double y, double z, float partialTicks, VertexBuffer vb) {
-        vb.setTranslation(x, y, z);
+    public void render(PluggablePulsar pulsar, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+        bb.setTranslation(x, y, z);
         if (pulsar.clientModelData.hasNoNodes()) {
             pulsar.clientModelData.setNodes(BCTransportModels.PULSAR_DYNAMIC.createTickableNodes());
         }
         pulsar.setModelVariables(partialTicks);
         pulsar.clientModelData.refresh();
         for (MutableQuad q : cache.getCutoutQuads()) {
-            q.render(vb);
+            q.render(bb);
         }
-        vb.setTranslation(0, 0, 0);
+        bb.setTranslation(0, 0, 0);
     }
 }

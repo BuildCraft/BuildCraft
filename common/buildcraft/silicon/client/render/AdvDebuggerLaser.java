@@ -9,12 +9,15 @@ package buildcraft.silicon.client.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
@@ -45,16 +48,17 @@ public enum AdvDebuggerLaser implements IDetachedRenderer {
         return INSTANCE;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void render(EntityPlayer player, float partialTicks) {
         if (pos == null || face == null) {
             return;
         }
-        VertexBuffer vb = Tessellator.getInstance().getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         VolumeUtil.iterateCone(player.world, pos, face, 6, true, (world, start, p, visible) -> {
             int colour = visible ? COLOUR_VISIBLE : COLOUR_NOT_VISIBLE;
-            DebugRenderHelper.renderSmallCuboid(vb, p, colour);
+            DebugRenderHelper.renderSmallCuboid(bb, p, colour);
         });
         Tessellator.getInstance().draw();
     }

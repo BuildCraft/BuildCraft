@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 // DON'T TOUCH THE BUILDSCRIPT[] BLOCK
 // its special, and it is only there to make ForgeGradle work correctly.
 
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
-            name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
         maven {
@@ -17,16 +23,18 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath "org.ajoberstar:grgit:2.1.0"
     }
 }
 
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'maven-publish' // for uploading to a maven repo
+apply plugin: "org.ajoberstar.grgit"
 
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
-	apply plugin: "checkstyle"
+    apply plugin: "checkstyle"
 }
 
 ext.configFile = file "build.properties"
@@ -55,7 +63,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-	// Testing
+    // Testing
     testCompile "junit:junit:4.12"
 }
 
@@ -75,19 +83,16 @@ minecraft {
     replace "\${version}", project.version
     replace "\${mcversion}", version
     // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
-   	replace "(gradle_replace_mcversion,)", "[" + version + "]"
-   	replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
-    if (System.getenv("GIT_COMMIT_HASH") != null) {
-        replace "\${git_commit_hash}" , System.getenv("GIT_COMMIT_HASH")
-    }
-    if (System.getenv("GIT_COMMIT_MSG") != null) {
-        replace "\${git_commit_msg}" , System.getenv("GIT_COMMIT_MSG").replace("\"", "\\\"")
-    }
-    if (System.getenv("GIT_COMMIT_AUTHOR") != null) {
-        replace "\${git_commit_author}" , System.getenv("GIT_COMMIT_AUTHOR")
-    }
-    if (System.getenv("GIT_BRANCH") != null) {
-        replace "\${git_branch}" , System.getenv("GIT_BRANCH")
+    replace "(gradle_replace_mcversion,)", "[" + version + "]"
+    replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
+
+    // Git versioning stuffs
+    if (grgit != null) {
+        def repo = grgit.open()
+        replace "\${git_commit_hash}", repo.head().id
+        replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\"").split("\n")[0]
+        replace "\${git_commit_author}", repo.head().author.name
+        replace "\${git_branch}", repo.branch.current().getName()
     }
 }
 
@@ -107,25 +112,25 @@ sourceSets {
         }
     }
     api {
-		java {
-			srcDir "BuildCraftAPI/api"
-		}
+        java {
+            srcDir "BuildCraftAPI/api"
+        }
     }
 }
 
 
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
-	checkstyle {
-		configFile = file("guidelines/buildcraft.checkstyle")
+    checkstyle {
+        configFile = file("guidelines/buildcraft.checkstyle")
         toolVersion = "7.2"
-	}
+    }
 
-	task checkstyle {}
-	tasks["checkstyle"].dependsOn checkstyleApi
-	tasks["checkstyle"].dependsOn checkstyleMain
+    task checkstyle {}
+    tasks["checkstyle"].dependsOn checkstyleApi
+    tasks["checkstyle"].dependsOn checkstyleMain
 
-	tasks["checkstyleApi"].enabled = true
-	tasks["checkstyleMain"].enabled = true
+    tasks["checkstyleApi"].enabled = true
+    tasks["checkstyleMain"].enabled = true
 }
 
 runClient.jvmArgs += "-Dbuildcraft.dev=true"
@@ -384,7 +389,7 @@ sourceJar.destinationDir = libsDir
 
 // add api classes to main package
 jar {
-	from sourceSets.api.output
+    from sourceSets.api.output
 }
 
 // make sure all of these happen when we run build

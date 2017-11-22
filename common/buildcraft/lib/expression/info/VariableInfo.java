@@ -185,6 +185,7 @@ public abstract class VariableInfo<N extends IVariableNode> {
         public VariableInfoBoolean(NodeVariableBoolean node) {
             super(node);
             cacheType = CacheType.ALWAYS;
+            setIsComplete = true;
         }
 
         @Override

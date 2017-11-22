@@ -41,7 +41,7 @@ public enum CropHandlerPlantable implements ICropHandler {
         }
 
         if (stack.getItem() instanceof ItemBlock) {
-            Block block = ((ItemBlock) stack.getItem()).block;
+            Block block = ((ItemBlock) stack.getItem()).getBlock();
             if (block instanceof IPlantable && block != Blocks.REEDS) {
                 return true;
             }
@@ -58,8 +58,8 @@ public enum CropHandlerPlantable implements ICropHandler {
             return block.canSustainPlant(state, world, pos, EnumFacing.UP, (IPlantable) seed.getItem()) && world.isAirBlock(pos.up());
         } else {
             Block block = state.getBlock();
-            IPlantable plantable = (IPlantable) ((ItemBlock) seed.getItem()).block;
-            return block.canSustainPlant(state, world, pos, EnumFacing.UP, plantable) && block != ((ItemBlock) seed.getItem()).block && world.isAirBlock(pos.up());
+            IPlantable plantable = (IPlantable) ((ItemBlock) seed.getItem()).getBlock();
+            return block.canSustainPlant(state, world, pos, EnumFacing.UP, plantable) && block != ((ItemBlock) seed.getItem()).getBlock() && world.isAirBlock(pos.up());
         }
     }
 

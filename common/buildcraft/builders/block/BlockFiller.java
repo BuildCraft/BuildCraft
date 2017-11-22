@@ -19,22 +19,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumFillerPattern;
-import buildcraft.api.properties.BuildCraftProperties;
-
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileFiller;
 
 public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
+    // public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
     public BlockFiller(Material material, String id) {
         super(material, id);
-        setDefaultState(getDefaultState().withProperty(PATTERN, EnumFillerPattern.NONE));
+        // setDefaultState(getDefaultState().withProperty(PATTERN, EnumFillerPattern.NONE));
     }
 
     // BlockState
@@ -42,15 +39,15 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
         super.addProperties(properties);
-        properties.add(PATTERN);
+        // properties.add(PATTERN);
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = BlockUtil.getTileEntityForGetActualState(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
-            return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
+            // return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
         }
         return state;
     }
@@ -58,12 +55,13 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     // Others
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
         return new TileFiller();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFiller) {
             if (!((TileFiller) tile).hasBox()) {

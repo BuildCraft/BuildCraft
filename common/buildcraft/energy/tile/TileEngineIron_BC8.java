@@ -136,9 +136,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         float hitZ) {
         ItemStack current = player.getHeldItem(hand).copy();
         if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
-            if (!ItemStack.areItemStacksEqual(current, player.getHeldItem(hand))) {
-                return true;
-            }
+            return true;
         }
         if (!current.isEmpty()) {
             if (EntityUtil.getWrenchHand(player) != null) {

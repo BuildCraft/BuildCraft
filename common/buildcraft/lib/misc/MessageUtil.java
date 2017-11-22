@@ -137,9 +137,9 @@ public class MessageUtil {
     }
 
     public static void writeVec3d(PacketBuffer buffer, Vec3d vec) {
-        buffer.writeDouble(vec.xCoord);
-        buffer.writeDouble(vec.yCoord);
-        buffer.writeDouble(vec.zCoord);
+        buffer.writeDouble(vec.x);
+        buffer.writeDouble(vec.y);
+        buffer.writeDouble(vec.z);
     }
 
     public static Vec3d readVec3d(PacketBuffer buffer) {
@@ -248,7 +248,12 @@ public class MessageUtil {
     public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
         int readableBytes = buf.readableBytes();
         int rb = readableBytes;
-        if ( readableBytes > 0) {
+
+        if (buf instanceof PacketBufferBC) {
+            // TODO: Find a way of checking if the partial bits have been fully read!
+        }
+
+        if (readableBytes > 0) {
             int ri = buf.readerIndex();
             // Get a (small) bit of the data
             byte[] selection = new byte[buf.writerIndex()];

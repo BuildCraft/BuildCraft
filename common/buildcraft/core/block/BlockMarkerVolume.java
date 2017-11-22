@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockMarkerBase;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.core.tile.TileMarkerVolume;
 
@@ -26,7 +27,7 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
         return new TileMarkerVolume();
     }
 
@@ -57,7 +58,8 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileMarkerVolume) {

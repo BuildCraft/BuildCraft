@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -66,8 +67,9 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
+    public void addInformation(ItemStack stack, World world, List<String> strings, ITooltipFlag flag) {
         stack = StackUtil.asNonNull(stack);
         NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
 
@@ -92,7 +94,8 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                 break;
             }
             case AREA: {
-                if (cpt.hasKey("xMin") && cpt.hasKey("yMin") && cpt.hasKey("zMin") && cpt.hasKey("xMax") && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
+                if (cpt.hasKey("xMin") && cpt.hasKey("yMin") && cpt.hasKey("zMin") && cpt.hasKey("xMax")
+                    && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
                     int x = cpt.getInteger("xMin");
                     int y = cpt.getInteger("yMin");
                     int z = cpt.getInteger("zMin");
@@ -100,7 +103,8 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int yLength = cpt.getInteger("yMax") - y + 1;
                     int zLength = cpt.getInteger("zMax") - z + 1;
 
-                    strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                    strings.add(LocaleUtil.localize(
+                        "{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
                 }
                 break;
             }
@@ -112,7 +116,8 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     if (pathNBT.tagCount() > 0) {
                         BlockPos first = NBTUtilBC.readBlockPos(pathNBT.get(0));
                         if (first != null) {
-                            strings.add(StringUtilBC.blockPosToString(first) + (pathNBT.tagCount() - 1) + " elements");
+                            strings.add("{"+
+                                StringUtilBC.blockPosToString(first) + "}, (+" + (pathNBT.tagCount() - 1) + " elements)");
                         }
                     }
                 }
@@ -155,7 +160,8 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+        float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
@@ -331,7 +337,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                 NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
                 for (int i = 0; i < pathNBT.tagCount(); i++) {
                     BlockPos pos = NBTUtilBC.readBlockPos(pathNBT.get(i));
-                    if (pos != null){
+                    if (pos != null) {
                         indexList.add(pos);
                     }
                 }

@@ -66,7 +66,9 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
                     quad.texFromSprite(data.sprite);
                     quad.setSprite(data.sprite);
                     quad.setShade(s);
-                    if (data.invertNormal) {
+                    if (data.bothSides) {
+                        addTo.add(quad.copyAndInvertNormal());
+                    } else if (data.invertNormal) {
                         quad = quad.copyAndInvertNormal();
                     }
                     addTo.add(quad);
@@ -82,5 +84,6 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
         public TextureAtlasSprite sprite;
         public int rotations = 0;
         public boolean invertNormal = false;
+        public boolean bothSides = false;
     }
 }

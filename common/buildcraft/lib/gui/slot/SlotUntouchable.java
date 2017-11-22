@@ -11,9 +11,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
@@ -39,12 +36,6 @@ public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
     @Override
     public boolean canShift() {
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean canBeHovered() {
         return false;
     }
 }

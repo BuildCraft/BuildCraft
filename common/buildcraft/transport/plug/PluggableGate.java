@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,27 +95,27 @@ public class PluggableGate extends PipePluggable {
         MODEL_IS_ON = MODEL_FUNC_CTX_DYNAMIC.putVariableBoolean("on");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX_DYNAMIC);
-        VariableInfoObject<String> infoMaterial = MODEL_VAR_INFO.createInfoObject("material", MODEL_MATERIAL);
+        VariableInfoObject<String> infoMaterial = MODEL_VAR_INFO.createInfoObject(MODEL_MATERIAL);
         infoMaterial.cacheType = CacheType.ALWAYS;
         infoMaterial.setIsComplete = true;
         infoMaterial.possibleValues.addAll(Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
-        VariableInfoObject<String> infoModifier = MODEL_VAR_INFO.createInfoObject("modifier", MODEL_MODIFIER);
+        VariableInfoObject<String> infoModifier = MODEL_VAR_INFO.createInfoObject(MODEL_MODIFIER);
         infoModifier.cacheType = CacheType.ALWAYS;
         infoModifier.setIsComplete = true;
         infoModifier.possibleValues.addAll(Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
-        VariableInfoObject<String> infoLogic = MODEL_VAR_INFO.createInfoObject("logic", MODEL_LOGIC);
+        VariableInfoObject<String> infoLogic = MODEL_VAR_INFO.createInfoObject(MODEL_LOGIC);
         infoLogic.cacheType = CacheType.ALWAYS;
         infoLogic.setIsComplete = true;
         infoLogic.possibleValues.addAll(Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
-        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject("side", MODEL_SIDE);
+        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
         Collections.addAll(infoSide.possibleValues, EnumFacing.VALUES);
 
-        VariableInfoBoolean infoIsOn = MODEL_VAR_INFO.createInfoBoolean("on", MODEL_IS_ON);
+        VariableInfoBoolean infoIsOn = MODEL_VAR_INFO.createInfoBoolean(MODEL_IS_ON);
         infoIsOn.cacheType = CacheType.ALWAYS;
         infoIsOn.setIsComplete = true;
         infoIsOn.possibleValues = BooleanPossibilities.FALSE_TRUE;

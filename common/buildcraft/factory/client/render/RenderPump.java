@@ -9,7 +9,7 @@ package buildcraft.factory.client.render;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
@@ -106,7 +106,7 @@ public class RenderPump extends FastTESR<TilePump> {
     public RenderPump() {}
 
     @Override
-    public void renderTileEntityFast(@Nonnull TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
+    public void renderTileEntityFast(@Nonnull TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("pump");
 
@@ -138,7 +138,7 @@ public class RenderPump extends FastTESR<TilePump> {
             // TODO: fluid rendering
         }
 
-        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
+        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
@@ -147,5 +147,9 @@ public class RenderPump extends FastTESR<TilePump> {
     @Override
     public boolean isGlobalRenderer(TilePump tile) {
         return true;
+    }
+
+    public static void init() {
+        //force the static block to run before texture stitching
     }
 }

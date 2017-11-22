@@ -1,6 +1,7 @@
 package buildcraft.lib.gui.statement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -19,6 +20,8 @@ import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.FullStatement;
+import buildcraft.lib.statement.StatementContext;
+import buildcraft.lib.statement.StatementContext.StatementGroup;
 
 public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<GuiJson<?>>
     implements IInteractionElement, IReference<S> {
@@ -42,11 +45,14 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
     }
 
     private final FullStatement<S> ref;
+    private final StatementContext<?> ctx;
     private final boolean draw;
 
-    public GuiElementStatement(GuiJson<?> gui, IGuiArea element, FullStatement<S> ref, boolean draw) {
+    public GuiElementStatement(GuiJson<?> gui, IGuiArea element, FullStatement<S> ref, StatementContext<?> ctx,
+        boolean draw) {
         super(gui, element);
         this.ref = ref;
+        this.ctx = ctx;
         this.draw = draw;
     }
 
@@ -111,7 +117,8 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
             if (s == null) {
                 return;
             }
-            IStatement[] possible = s.getPossible();
+            List<IStatement> possible = new ArrayList<>();
+            Collections.addAll(possible, s.getPossible());
             if (!s.isPossibleOrdered()) {
                 List<IStatement> list = new ArrayList<>();
                 list.add(null);
@@ -120,9 +127,19 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
                         list.add(p2);
                     }
                 }
-                possible = list.toArray(new IStatement[0]);
+                possible = list;
             }
-            gui.currentMenu = GuiElementStatementVariant.create(this, this, possible);
+            if (ctx != null) {
+                possible.removeIf(f -> {
+                    for (StatementGroup<?> group : ctx.getAllPossible()) {
+                        if (group.getValues().contains(f)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+            gui.currentMenu = GuiElementStatementVariant.create(this, this, possible.toArray(new IStatement[0]));
         }
     }
 }

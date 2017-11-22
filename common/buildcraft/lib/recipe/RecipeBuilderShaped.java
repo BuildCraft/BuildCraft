@@ -17,7 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.lib.misc.StackUtil;
@@ -77,6 +77,19 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
+    public Object[] createRecipeObjectArrayNBT() {
+        Object[] objs = new Object[shape.size() + objects.size() * 2];
+        Object[] original = createRecipeObjectArray();
+        for (int i = 0; i < objs.length; i++) {
+            Object o = original[i];
+            if (o instanceof ItemStack) {
+                o = new IngredientNBTBC((ItemStack) o);
+            }
+            objs[i] = o;
+        }
+        return objs;
+    }
+
     public ShapedOreRecipe buildRotated() {
         int fromRows = shape.size();
         int toRows = shape.get(0).length();
@@ -98,7 +111,7 @@ public class RecipeBuilderShaped {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
-        return new ShapedOreRecipe(result, objs);
+        return new ShapedOreRecipe(result.getItem().getRegistryName(), result, objs);
     }
 
     private void ensureValid() {
@@ -109,16 +122,16 @@ public class RecipeBuilderShaped {
 
     public void register() {
         ensureValid();
-        GameRegistry.addRecipe(new ShapedOreRecipe(result, createRecipeObjectArray()));
+        ForgeRegistries.RECIPES.register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArray()));
     }
 
     public void registerNbtAware() {
         ensureValid();
-        GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()));
+        ForgeRegistries.RECIPES.register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT()).setRegistryName(result.getItem().getRegistryName()));
     }
 
     public void registerRotated() {
         ensureValid();
-        GameRegistry.addRecipe(buildRotated());
+        ForgeRegistries.RECIPES.register(buildRotated().setRegistryName(result.getItem().getRegistryName()));
     }
 }

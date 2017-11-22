@@ -6,23 +6,23 @@ package buildcraft.lib.item;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public interface IItemBuildCraft {
     String id();
-    
+
     default void init() {
         Item thisItem = (Item) this;
         thisItem.setUnlocalizedName(TagManager.getTag(id(), EnumTagType.UNLOCALIZED_NAME));
@@ -44,16 +44,17 @@ public interface IItemBuildCraft {
     }
 
     @SideOnly(Side.CLIENT)
-    default void postRegisterClient() {
+    default void registerVariants() {
         Item thisItem = (Item) this;
         TIntObjectHashMap<ModelResourceLocation> variants = new TIntObjectHashMap<>();
         addModelVariants(variants);
         for (int key : variants.keys()) {
             ModelResourceLocation variant = variants.get(key);
-            if (ItemManager.DEBUG) {
-                BCLog.logger.info("[lib.item][" + thisItem.getRegistryName() + "] Registering a variant " + variant + " for damage " + key);
+            if (RegistryConfig.DEBUG) {
+                BCLog.logger.info("[lib.registry][" + thisItem.getRegistryName() + "] Registering a variant " + variant
+                    + " for damage " + key);
             }
-            ModelBakery.registerItemVariants(thisItem, variant);
+            ModelLoader.setCustomModelResourceLocation(thisItem, key, variant);
         }
     }
 }

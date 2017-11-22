@@ -6,10 +6,13 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
@@ -19,6 +22,7 @@ import buildcraft.lib.misc.SpriteUtil;
  * as well.<br>
  * For fluid rendering look at {@link FluidRenderer} - it deals with fluid types so that you don't have to manage the
  * sprite collection. */
+@SideOnly(Side.CLIENT)
 public class CuboidRenderer {
     // ##############
     //
@@ -26,7 +30,7 @@ public class CuboidRenderer {
     //
     // ##############
 
-    public static void renderCuboid(TextureAtlasSprite sprite, Vec3d min, Vec3d max, Vec3d offset, VertexBuffer vb, boolean[] sideRender) {
+    public static void renderCuboid(TextureAtlasSprite sprite, Vec3d min, Vec3d max, Vec3d offset, BufferBuilder bb, boolean[] sideRender) {
         if (sprite == null) {
             sprite = SpriteUtil.missingSprite();
         }
@@ -35,15 +39,15 @@ public class CuboidRenderer {
         }
 
         CuboidRenderContext ctx = new CuboidRenderContext();
-        ctx.buffer = vb;
+        ctx.buffer = bb;
 
-        final double xs = min.xCoord;
-        final double ys = min.yCoord;
-        final double zs = min.zCoord;
+        final double xs = min.x;
+        final double ys = min.y;
+        final double zs = min.z;
 
-        final double xb = max.xCoord;
-        final double yb = max.yCoord;
-        final double zb = max.zCoord;
+        final double xb = max.x;
+        final double yb = max.y;
+        final double zb = max.z;
 
         // if (type == FluidSpriteType.FROZEN) {
         // if (min.xCoord > 1) {
@@ -125,7 +129,7 @@ public class CuboidRenderer {
 
     public static class CuboidRenderContext {
         public final MutableVertex vertex = new MutableVertex();
-        VertexBuffer buffer;
+        BufferBuilder buffer;
         TextureAtlasSprite sprite;
         TexMap texmap;
         boolean invertU, invertV;

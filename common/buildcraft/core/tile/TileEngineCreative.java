@@ -116,7 +116,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
-        if (EntityUtil.getWrenchHand(player) != null && player.isSneaking()) {
+        if (EntityUtil.getWrenchHand(player) != null /*&& player.isSneaking()*/) {
             if (!world.isRemote) {
                 currentOutputIndex++;
                 currentOutputIndex %= outputs.length;
@@ -126,7 +126,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
             }
             return true;
         }
-        return false;
+        return true;
     }
 
     @Override

@@ -52,8 +52,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.block.BlockHeatExchange;
 
+@Deprecated
 public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, IDebuggable {
 
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchangeStart");
@@ -77,8 +77,8 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     private TileHeatExchangeEnd tileEnd;
     private int middles;
     private int progress = 0;
-    private EnumProgressState progressState = EnumProgressState.OFF;
-    private EnumProgressState lastSentState = EnumProgressState.OFF;
+    private TileHeatExchange.EnumProgressState progressState = TileHeatExchange.EnumProgressState.OFF;
+    private TileHeatExchange.EnumProgressState lastSentState = TileHeatExchange.EnumProgressState.OFF;
     private int heatProvided = 0;
     private int coolingProvided = 0;
 
@@ -103,12 +103,12 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
         if (state == null) {
             return null;
         }
         EnumFacing thisFacing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
-        if (side != thisFacing.getOpposite()) {
+        if (side != thisFacing.rotateY()) {
             return null;
         }
         return tankCoolableOut;
@@ -172,7 +172,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             } else if (id == NET_TANK_COOLABLE_OUT) {
                 smoothedCoolableOut.handleMessage(getWorld(), buffer);
             } else if (id == NET_STATE) {
-                progressState = buffer.readEnumValue(EnumProgressState.class);
+                progressState = buffer.readEnumValue(TileHeatExchange.EnumProgressState.class);
             }
         }
     }
@@ -189,8 +189,8 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
         if (tileEnd != null) {
             craft();
-        } else if (progressState != EnumProgressState.OFF) {
-            progressState = EnumProgressState.STOPPING;
+        } else if (progressState != TileHeatExchange.EnumProgressState.OFF) {
+            progressState = TileHeatExchange.EnumProgressState.STOPPING;
         }
         output();
         if (progressState != lastSentState) {
@@ -206,7 +206,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                 progress--;
                 if (progress <= 0) {
                     progress = 0;
-                    progressState = EnumProgressState.OFF;
+                    progressState = TileHeatExchange.EnumProgressState.OFF;
                 }
                 return;
             }
@@ -216,7 +216,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                 progress++;
                 if (progress >= lag) {
                     progress = lag;
-                    progressState = EnumProgressState.RUNNING;
+                    progressState = TileHeatExchange.EnumProgressState.RUNNING;
                 }
                 return;
             }
@@ -229,39 +229,32 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     private void findEnd() {
         // TODO (AlexIIL): Make this check passive, not active.
         tileEnd = null;
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
         if (state == null) {
             // BCLog.logger.warn("Null state");
             return;
         }
-        BlockHeatExchange block = (BlockHeatExchange) state.getBlock();
-        EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        EnumFacing stateFacing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        EnumFacing facing = stateFacing.rotateYCCW();
         middles = 0;
         BlockPos search = getPos();
-        for (int i = 0; i <= 3; i++) {
+        for (int i = 0; i <= 4; i++) {
             search = search.offset(facing);
             state = getLocalState(search);
-            if (state.getBlock() != BCFactoryBlocks.heatExchangeMiddle) {
+            if (state.getBlock() != BCFactoryBlocks.heatExchange) {
                 // BCLog.logger.warn("Not middle @ " + search + " (" + i + ")");
+                search = search.offset(facing.getOpposite());
+                state = getLocalState(search);
                 break;
             }
-            block = BCFactoryBlocks.heatExchangeMiddle;
-            if (block.part.getAxis(state) != facing.getAxis()) {
-                // BCLog.logger.warn("Wrong axis!");
+            if (state.getValue(BlockBCBase_Neptune.PROP_FACING) != stateFacing) {
+                BCLog.logger.warn("Wrong axis!");
                 return;
             }
             middles++;
         }
         if (middles == 0) {
             // BCLog.logger.warn("No middles!");
-            return;
-        }
-        if (state.getBlock() != BCFactoryBlocks.heatExchangeEnd) {
-            // BCLog.logger.warn("Not end @ " + search);
-            return;
-        }
-        if (state.getValue(BlockBCBase_Neptune.PROP_FACING) != facing.getOpposite()) {
-            // BCLog.logger.warn("Wrong EnumFacing");
             return;
         }
         TileEntity tile = getLocalTile(search);
@@ -281,12 +274,12 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         ICoolableRecipe c_recipe = reg.getCoolableRegistry().getRecipeForInput(c_in.getFluid());
         IHeatableRecipe h_recipe = reg.getHeatableRegistry().getRecipeForInput(h_in.getFluid());
         if (h_recipe == null || c_recipe == null) {
-            progressState = EnumProgressState.STOPPING;
+            progressState = TileHeatExchange.EnumProgressState.STOPPING;
             return;
         }
         if (c_recipe.heatFrom() <= h_recipe.heatFrom()) {
             BCLog.logger.warn("Invalid heat values!");
-            progressState = EnumProgressState.STOPPING;
+            progressState = TileHeatExchange.EnumProgressState.STOPPING;
             return;
         }
         int c_diff = c_recipe.heatFrom() - c_recipe.heatTo();
@@ -304,9 +297,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         FluidStack h_in_f = setAmount(h_recipe.in(), mult);
         FluidStack h_out_f = setAmount(h_recipe.out(), mult);
         if (canFill(c_out, c_out_f) && canFill(h_out, h_out_f) && canDrain(c_in, c_in_f) && canDrain(h_in, h_in_f)) {
-            if (progressState == EnumProgressState.OFF) {
-                progressState = EnumProgressState.PREPARING;
-            } else if (progressState == EnumProgressState.RUNNING) {
+            if (progressState == TileHeatExchange.EnumProgressState.OFF) {
+                progressState = TileHeatExchange.EnumProgressState.PREPARING;
+            } else if (progressState == TileHeatExchange.EnumProgressState.RUNNING) {
                 heatProvided--;
                 coolingProvided--;
                 if (needs_c) {
@@ -322,12 +315,12 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
                 }
             }
         } else {
-            progressState = EnumProgressState.STOPPING;
+            progressState = TileHeatExchange.EnumProgressState.STOPPING;
         }
     }
 
     private void spawnParticles() {
-        if (progressState == EnumProgressState.RUNNING) {
+        if (progressState == TileHeatExchange.EnumProgressState.RUNNING) {
             TileHeatExchangeEnd end = tileEnd;
             if (end == null) {
                 return;
@@ -335,7 +328,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             Vec3d from = VecUtil.convertCenter(getPos());
             FluidStack c_in_f = end.smoothedCoolableIn.getFluidForRender();
             if (c_in_f != null && c_in_f.getFluid() == FluidRegistry.LAVA) {
-                IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+                IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
                 if (state != null) {
                     EnumFacing dir = state.getValue(BlockBCBase_Neptune.PROP_FACING);
                     spewForth(from, dir.getOpposite(), EnumParticleTypes.SMOKE_LARGE);
@@ -355,9 +348,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         Vec3d vecDir = new Vec3d(dir.getDirectionVec());
         from = from.add(VecUtil.scale(vecDir, 0.5));
 
-        double x = from.xCoord;
-        double y = from.yCoord;
-        double z = from.zCoord;
+        double x = from.x;
+        double y = from.y;
+        double z = from.z;
 
         Vec3d motion = VecUtil.scale(vecDir, 0.4);
         int particleCount = Minecraft.getMinecraft().gameSettings.particleSetting;
@@ -367,9 +360,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         }
         particleCount = particleCount == 0 ? 5 : 2;
         for (int i = 0; i < particleCount; i++) {
-            double dx = motion.xCoord + (Math.random() - 0.5) * 0.1;
-            double dy = motion.yCoord + (Math.random() - 0.5) * 0.1;
-            double dz = motion.zCoord + (Math.random() - 0.5) * 0.1;
+            double dx = motion.x + (Math.random() - 0.5) * 0.1;
+            double dy = motion.y + (Math.random() - 0.5) * 0.1;
+            double dz = motion.z + (Math.random() - 0.5) * 0.1;
             double interp = i / (double) particleCount;
             x -= dx * interp;
             y -= dy * interp;
@@ -426,11 +419,11 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
 
     @Nullable
     private IFluidHandler getFluidAutoOutputTarget() {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchangeStart);
+        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
         if (state == null) {
             return null;
         }
-        EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
         TileEntity tile = getNeighbourTile(facing.getOpposite());
         if (tile == null) {
             return null;
@@ -446,7 +439,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         return MathUtil.interp(partialTicks, progressLast, progress) / 120.0;
     }
 
-    public EnumProgressState getProgressState() {
+    public TileHeatExchange.EnumProgressState getProgressState() {
         return this.progressState;
     }
 
@@ -478,16 +471,5 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         smoothedHeatableIn.getDebugInfo(left, right, side);
         left.add("coolable_out:");
         smoothedCoolableOut.getDebugInfo(left, right, side);
-    }
-
-    public enum EnumProgressState {
-        /** Progress is at 0, not moving. */
-        OFF,
-        /** Progress is increasing from 0 to max */
-        PREPARING,
-        /** progress stays at max */
-        RUNNING,
-        /** Progress is decreasing from max to 0. */
-        STOPPING;
     }
 }

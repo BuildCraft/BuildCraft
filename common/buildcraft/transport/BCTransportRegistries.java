@@ -7,9 +7,6 @@
 package buildcraft.transport;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemMinecart;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.MinecraftForge;

@@ -12,10 +12,10 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry.Type;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public enum MigrationManager {
     INSTANCE;
@@ -25,41 +25,53 @@ public enum MigrationManager {
 
     public void addItemMigration(Item to, String... oldNames) {
         // If we mistakenly try to migrate null then it must have been disabled.
-        if (to == null || ForgeRegistries.ITEMS.getKey(to) == null) return;
+        if (to == null) {
+            return;
+        }
         for (String old : oldNames) {
             String oldLowerCase = old.toLowerCase(Locale.ROOT);
-            if (itemMigrations.containsKey(oldLowerCase)) throw new IllegalArgumentException("Already registered item migration \"" + oldLowerCase + "\"!");
+            if (itemMigrations.containsKey(oldLowerCase)) {
+                throw new IllegalArgumentException("Already registered item migration \"" + oldLowerCase + "\"!");
+            }
             itemMigrations.put(oldLowerCase, to);
         }
     }
 
     public void addBlockMigration(Block to, String... oldNames) {
         // If we mistakenly try to migrate null then it must have been disabled.
-        if (to == null) return;
+        if (to == null) {
+            return;
+        }
         for (String old : oldNames) {
             String oldLowerCase = old.toLowerCase(Locale.ROOT);
-            if (blockMigrations.containsKey(oldLowerCase)) throw new IllegalArgumentException("Already registered block migration \"" + oldLowerCase + "\"!");
+            if (blockMigrations.containsKey(oldLowerCase)) {
+                throw new IllegalArgumentException("Already registered block migration \"" + oldLowerCase + "\"!");
+            }
             blockMigrations.put(oldLowerCase, to);
         }
     }
 
-    public void missingMappingEvent(FMLMissingMappingsEvent missing) {
-        for (MissingMapping mapping : missing.getAll()) {
-            ResourceLocation loc = mapping.resourceLocation;
+    @SubscribeEvent
+    public void onMissingBlocks(RegistryEvent.MissingMappings<Block> missing) {
+        onMissingMappings(missing, blockMigrations);
+    }
+
+    @SubscribeEvent
+    public void onMissingItems(RegistryEvent.MissingMappings<Item> missing) {
+        onMissingMappings(missing, itemMigrations);
+    }
+
+    private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(MissingMappings<T> missing,
+        Map<String, T> migrations) {
+        for (MissingMappings.Mapping<T> mapping : missing.getAllMappings()) {
+            ResourceLocation loc = mapping.key;
             String domain = loc.getResourceDomain();
             String path = loc.getResourcePath().toLowerCase(Locale.ROOT);
             // TECHNICALLY this can pick up non-bc mods, but generally only addons
             if (!domain.startsWith("buildcraft")) continue;
-            if (mapping.type == Type.ITEM) {
-                if (itemMigrations.containsKey(path)) {
-                    Item to = itemMigrations.get(path);
-                    mapping.remap(to);
-                }
-            } else if (mapping.type == Type.BLOCK) {
-                if (blockMigrations.containsKey(path)) {
-                    Block to = blockMigrations.get(path);
-                    mapping.remap(to);
-                }
+            T to = migrations.get(path);
+            if (to != null) {
+                mapping.remap(to);
             }
         }
     }

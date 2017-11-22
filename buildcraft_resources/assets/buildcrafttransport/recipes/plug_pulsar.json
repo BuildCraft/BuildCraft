@@ -1,0 +1,40 @@
+{
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "engine_registered",
+        "engineType": "WOOD"
+      }
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "buildcraftsilicon"
+      }
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:plug_pulsar"
+  },
+  "pattern": [
+    "rer",
+    "gpg"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "#dustRedstone"
+    },
+    "e": {
+      "item": "minecraft:redstone_block"
+    },
+    "g": {
+      "item": "#gearIron"
+    },
+    "p": {
+      "item": "#pulsarPart"
+    }
+  }
+}
