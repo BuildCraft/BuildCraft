@@ -8,13 +8,6 @@ import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable.Mode;
 
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterCenter;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterXZDir;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.BCStatement;
@@ -136,13 +129,6 @@ public class BCCoreStatements {
         System.arraycopy(TRIGGER_FLUID_LEVEL, 0, TRIGGER_FLUID_ALL, 4, 3);
 
         StatementManager.registerParameter(StatementParamGateSideOnly::readFromNbt);
-        StatementManager.registerParameter(PatternParameterXZDir::readFromNbt);
-        StatementManager.registerParameter(PatternParameterRotation::readFromNbt);
-        StatementManager.registerParameter(PatternParameterFacing::readFromNbt);
-        StatementManager.registerParameter(PatternParameterYDir::readFromNbt);
-        StatementManager.registerParameter(PatternParameterCenter::readFromNbt);
-        StatementManager.registerParameter(PatternParameterHollow::readFromNbt);
-        StatementManager.registerParameter(PatternParameterAxis::readFromNbt);
     }
 
     public static void preInit() {

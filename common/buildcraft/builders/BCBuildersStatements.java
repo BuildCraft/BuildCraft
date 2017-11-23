@@ -26,6 +26,13 @@ import buildcraft.builders.snapshot.pattern.PatternShape2dTriangle;
 import buildcraft.builders.snapshot.pattern.PatternSphere;
 import buildcraft.builders.snapshot.pattern.PatternSpherePart;
 import buildcraft.builders.snapshot.pattern.PatternStairs;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterCenter;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterXZDir;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
 
 public class BCBuildersStatements {
     public static final PatternNone PATTERN_NONE = new PatternNone();
@@ -58,6 +65,16 @@ public class BCBuildersStatements {
         PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE, //
         PATTERN_EIGHTH_SPHERE //
     };
+
+    static {
+        StatementManager.registerParameter(PatternParameterXZDir::readFromNbt);
+        StatementManager.registerParameter(PatternParameterRotation::readFromNbt);
+        StatementManager.registerParameter(PatternParameterFacing::readFromNbt);
+        StatementManager.registerParameter(PatternParameterYDir::readFromNbt);
+        StatementManager.registerParameter(PatternParameterCenter::readFromNbt);
+        StatementManager.registerParameter(PatternParameterHollow::readFromNbt);
+        StatementManager.registerParameter(PatternParameterAxis::readFromNbt);
+    }
 
     public static void preInit() {
         StatementManager.registerActionProvider(BCBuildersActionProvider.INSTANCE);
