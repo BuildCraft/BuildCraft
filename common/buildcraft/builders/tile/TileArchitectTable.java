@@ -315,8 +315,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_BOX, buffer, side);
                 buffer.writeString(name);
-            }
-            if (id == NET_BOX) {
+            } else if (id == NET_BOX) {
                 box.writeData(buffer);
                 buffer.writeBoolean(markerBox);
             }
@@ -330,12 +329,10 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_BOX, buffer, side, ctx);
                 name = buffer.readString();
-            }
-            if (id == NET_BOX) {
+            } else if (id == NET_BOX) {
                 box.readData(buffer);
                 markerBox = buffer.readBoolean();
-            }
-            if (id == NET_SCAN) {
+            } else if (id == NET_SCAN) {
                 ClientArchitectTables.SCANNED_BLOCKS.put(
                     MessageUtil.readBlockPos(buffer),
                     ClientArchitectTables.START_SCANNED_BLOCK_VALUE
