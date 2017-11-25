@@ -33,7 +33,7 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         this.left = left;
         this.ctx = ctx;
         if (left) {
-            position = gui.lowerLeftLedgerPos.offset(-getWidth(), 0);
+            position = gui.lowerLeftLedgerPos.offset(() -> -getWidth(), 0);
             gui.lowerLeftLedgerPos = getPosition(1, 1);
         } else {
             position = gui.lowerRightLedgerPos;
@@ -65,16 +65,22 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     @Override
     public double getWidth() {
-        return 4 * 18;
+        int width = 0;
+        for (StatementGroup<S> group : ctx.getAllPossible()) {
+            int count = group.getValues().size();
+            width = Math.max(width, count);
+        }
+        return Math.min(4, width) * 18;
     }
 
     @Override
     public double getHeight() {
-        int size = 0;
+        int height = 0;
         for (StatementGroup<S> group : ctx.getAllPossible()) {
-            size += group.getValues().size();
+            int count = group.getValues().size();
+            height += (count + 3) / 4;
         }
-        return size / 4 * 18 + 4;
+        return height * 18 + 4;
     }
 
     private void iterateSlots(ISlotIter<S> iter) {
