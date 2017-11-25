@@ -385,8 +385,6 @@ task allSrcJar(type: Jar, dependsOn:reobfJar) {
     }
 }
 
-sourceJar.destinationDir = libsDir
-
 // add api classes to main package
 jar {
     from sourceSets.api.output
