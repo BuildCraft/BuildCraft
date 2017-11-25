@@ -70,11 +70,12 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     @Override
     public double getHeight() {
-        int size = 0;
+        int height = 0;
         for (StatementGroup<S> group : ctx.getAllPossible()) {
-            size += group.getValues().size();
+            int count = group.getValues().size();
+            height += (count + 3) / 4;
         }
-        return size / 4 * 18 + 4;
+        return height * 18 + 4;
     }
 
     private void iterateSlots(ISlotIter<S> iter) {
