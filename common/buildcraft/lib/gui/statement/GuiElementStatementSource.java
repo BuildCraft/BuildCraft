@@ -65,7 +65,12 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
 
     @Override
     public double getWidth() {
-        return 4 * 18;
+        int width = 0;
+        for (StatementGroup<S> group : ctx.getAllPossible()) {
+            int count = group.getValues().size();
+            width = Math.max(width, count);
+        }
+        return Math.min(4, width) * 18;
     }
 
     @Override
