@@ -33,7 +33,7 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         this.left = left;
         this.ctx = ctx;
         if (left) {
-            position = gui.lowerLeftLedgerPos.offset(-getWidth(), 0);
+            position = gui.lowerLeftLedgerPos.offset(() -> -getWidth(), 0);
             gui.lowerLeftLedgerPos = getPosition(1, 1);
         } else {
             position = gui.lowerRightLedgerPos;
@@ -69,10 +69,6 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
         for (StatementGroup<S> group : ctx.getAllPossible()) {
             int count = group.getValues().size();
             width = Math.max(width, count);
-        }
-        if (width <= 1) {
-            // Otherwise this breaks on init
-            return 4 * 18;
         }
         return Math.min(4, width) * 18;
     }
