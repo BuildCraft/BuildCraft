@@ -55,7 +55,7 @@ public class ModelHeatExchange extends ModelItemSimple {
     private final List<List<BakedQuad>> cache = new ArrayList<>();
 
     public ModelHeatExchange() {
-        super(ImmutableList.of(), TRANSFORM_BLOCK);
+        super(ImmutableList.of(), TRANSFORM_BLOCK, false);
 
         VAR_CONNECTED_DOWN.value = false;
         VAR_CONNECTED_UP.value = false;

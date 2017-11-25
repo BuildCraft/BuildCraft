@@ -83,7 +83,7 @@ public class BCEnergyModels {
             quads.add(quad.toBakedItem());
         }
         registerModel(modelRegistry, EnumEngineType.STONE.getItemModelLocation() + "#inventory",
-            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK, true));
 
         quads = new ArrayList<>();
         varData.setNodes(ENGINE_IRON.createTickableNodes());
@@ -93,7 +93,7 @@ public class BCEnergyModels {
             quads.add(quad.toBakedItem());
         }
         registerModel(modelRegistry, EnumEngineType.IRON.getItemModelLocation() + "#inventory",
-            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK, true));
 
         for (BCFluid fluid : BCEnergyFluids.allFluids) {
             String mrl = "buildcraftenergy:fluid_block_" + fluid.getBlockName();

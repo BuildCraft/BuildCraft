@@ -95,7 +95,7 @@ public class BCCoreModels {
             quads.add(quad.toBakedItem());
         }
         registerModel(modelRegistry, EnumEngineType.WOOD.getItemModelLocation() + "#inventory",
-            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK, true));
 
         quads = new ArrayList<>();
         ENGINE_STAGE.value = EnumPowerStage.BLACK;
@@ -106,7 +106,7 @@ public class BCCoreModels {
             quads.add(quad.toBakedItem());
         }
         registerModel(modelRegistry, EnumEngineType.CREATIVE.getItemModelLocation() + "#inventory",
-            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK));
+            new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK, true));
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg,
