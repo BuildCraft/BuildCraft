@@ -70,6 +70,10 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
             int count = group.getValues().size();
             width = Math.max(width, count);
         }
+        if (width <= 1) {
+            // Otherwise this breaks on init
+            return 4 * 18;
+        }
         return Math.min(4, width) * 18;
     }
 
