@@ -56,8 +56,6 @@ public abstract class BCLibProxy implements IGuiHandler {
         return proxy;
     }
 
-    public void postRegisterFluid(BCFluid fluid) {}
-
     void fmlPreInit() {
         MessageManager.addType(MessageId.BC_LIB_TILE_UPDATE, MessageUpdateTile.class, MessageUpdateTile.HANDLER);
         MessageManager.addType(MessageId.BC_LIB_CONTAINER, MessageContainer.class, MessageContainer.HANDLER);
@@ -106,11 +104,6 @@ public abstract class BCLibProxy implements IGuiHandler {
 
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCLibProxy {
-
-        @Override
-        public void postRegisterFluid(BCFluid fluid) {
-            FluidManager.postRegisterFluid(fluid);
-        }
 
         @Override
         void fmlPreInit() {
