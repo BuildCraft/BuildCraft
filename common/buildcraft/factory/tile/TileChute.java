@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -57,6 +57,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
         EnumAccess.INSERT,
         EnumPipePart.VALUES
     );
+    @SuppressWarnings("PointlessArithmeticExpression")
     private final MjBattery battery = new MjBattery(1 * MjAPI.MJ);
     private int progress = 0;
 
@@ -110,7 +111,8 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
                 .map(side -> Pair.of(side, world.getTileEntity(pos.offset(side)))),
             sides.stream()
                 .flatMap(side ->
-                    world.getEntitiesWithinAABB(EntityMinecart.class, new AxisAlignedBB(pos.offset(side))).stream()
+                    world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.offset(side))).stream()
+                        .filter(entity -> !(entity instanceof EntityLivingBase))
                         .map(entity -> Pair.of(side, entity))
                 )
         )
