@@ -35,7 +35,6 @@
     <module name="ArrayTypeStyle"/>
     <module name="UpperEll"/>
     <module name="OuterTypeFilename"/>
-    <module name="FileContentsHolder"/>
     <module name="RegexpSinglelineJava">
         <property name="format" value="System\.(out|err)\.print(ln|f){0,1}\(.*\)"/>
         <property name="ignoreComments" value="true"/>
