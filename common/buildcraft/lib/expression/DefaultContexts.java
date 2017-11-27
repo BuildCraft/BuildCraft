@@ -8,7 +8,6 @@ package buildcraft.lib.expression;
 
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.misc.MathUtil;
 
 public class DefaultContexts {
     public static final FunctionContext MATH_SCALAR = new FunctionContext("Math: Scalar");
@@ -74,8 +73,8 @@ public class DefaultContexts {
         MATH_SCALAR.put_dd_d("max", Math::max);
         MATH_SCALAR.put_dd_d("pow", Math::pow);
 
-        MATH_SCALAR.put_ddd_d("clamp", MathUtil::clamp);
-        MATH_SCALAR.put_lll_l("clamp", MathUtil::clamp);
+        MATH_SCALAR.put_ddd_d("clamp", (c, min, max) -> Math.max(Math.min(c, max), min));
+        MATH_SCALAR.put_lll_l("clamp", (c, min, max) -> Math.max(Math.min(c, max), min));
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);
         // MATH_VECTOR.putConstantVecLong("vec_zero", VecLong.ZERO);
