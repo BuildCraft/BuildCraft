@@ -8,6 +8,8 @@ import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
 
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -17,6 +19,8 @@ import buildcraft.lib.gui.pos.PositionAbsolute;
 import buildcraft.lib.misc.ColourUtil;
 
 public class ExpressionCompat {
+
+    public static final FunctionContext RENDERING = DefaultContexts.RENDERING;
 
     // Minecraft Types
     public static final NodeType<Axis> ENUM_AXIS;
@@ -89,9 +93,24 @@ public class ExpressionCompat {
         GUI_AREA.put_to_t("expand", INodeDouble.class, IGuiArea::expand);
         GUI_AREA.put_too_t("expand", INodeDouble.class, INodeDouble.class, IGuiArea::expand);
         GUI_AREA.put_too_t("resize", INodeDouble.class, INodeDouble.class, IGuiArea::resize);
+
+        RENDERING.put_s_l("convertColourToAbgr", ExpressionCompat::convertColourToAbgr);
+        RENDERING.put_s_l("convertColourToArgb", ExpressionCompat::convertColourToArgb);
     }
 
     public static void setup() {
         // Just to call the above static initializer
+    }
+
+    private static long convertColourToAbgr(String c) {
+        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
+        if (colour == null) return 0xFF_FF_FF_FF;
+        return 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(colour));
+    }
+
+    private static long convertColourToArgb(String c) {
+        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
+        if (colour == null) return 0xFF_FF_FF_FF;
+        return 0xFF_00_00_00 | ColourUtil.getLightHex(colour);
     }
 }
