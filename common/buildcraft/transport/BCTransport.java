@@ -185,8 +185,7 @@ public class BCTransport {
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock")
             .model("filtered_buffer");
         // Blocks
-        registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock")
-            .locale("filteredBufferBlock").model("filtered_buffer");
+        registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock").locale("filteredBufferBlock").model("filtered_buffer");
         registerTag("block.pipe_holder").reg("pipe_holder").locale("pipeHolder");
         // Tiles
         registerTag("tile.filtered_buffer").reg("filtered_buffer");

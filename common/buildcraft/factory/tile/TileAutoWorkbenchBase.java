@@ -22,11 +22,10 @@ import buildcraft.api.tiles.TilesAPI;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.craft.IAutoCraft;
+import buildcraft.lib.tile.craft.WorkbenchCrafting;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.factory.util.IAutoCraft;
-import buildcraft.factory.util.WorkbenchCrafting;
 
 public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IDebuggable, IAutoCraft {
     public final ItemHandlerSimple invBlueprint;

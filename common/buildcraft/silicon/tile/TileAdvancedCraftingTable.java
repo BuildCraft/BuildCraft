@@ -16,11 +16,10 @@ import net.minecraft.world.World;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
 
+import buildcraft.lib.tile.craft.IAutoCraft;
+import buildcraft.lib.tile.craft.WorkbenchCrafting;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.factory.util.IAutoCraft;
-import buildcraft.factory.util.WorkbenchCrafting;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAutoCraft {
     private static final long POWER_REQ = 500 * MjAPI.MJ;
