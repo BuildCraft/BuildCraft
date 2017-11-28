@@ -53,22 +53,6 @@ import buildcraft.transport.wire.WireManager;
 public enum PipeExtensionManager implements IPipeExtensionManager {
     INSTANCE;
 
-    private class PipeExtensionRequest {
-        public final BlockPos pos;
-        public final EnumFacing dir;
-        public final IStripesActivator stripes;
-        public final PipeDefinition pipeDef;
-        public final ItemStack stack;
-
-        private PipeExtensionRequest(BlockPos pos, EnumFacing dir, IStripesActivator stripes, PipeDefinition pipeDef, ItemStack stack) {
-            this.pos = pos;
-            this.dir = dir;
-            this.stripes = stripes;
-            this.pipeDef = pipeDef;
-            this.stack = stack;
-        }
-    }
-
     private final Int2ObjectOpenHashMap<List<PipeExtensionRequest>> requests = new Int2ObjectOpenHashMap<>();
     private final Set<PipeDefinition> retractionPipeDefs = new HashSet<>();
 
@@ -131,7 +115,8 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
         // Step 2: Remove previous pipe
         IBlockState state = w.getBlockState(p);
-        List<ItemStack> list = state.getBlock().getDrops(w, p, state, 0);
+        NonNullList<ItemStack> list = NonNullList.create();
+        state.getBlock().getDrops(list, w, p, state, 0);
 
         BlockSnapshot blockSnapshot = BlockSnapshot.getBlockSnapshot(w, p);
         w.setBlockToAir(p);
@@ -151,6 +136,10 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         boolean canceled;
         if (canceled = placeEvent.isCanceled()) {
             blockSnapshot.restore(true);
+            TileEntity tile = w.getTileEntity(r.pos);
+            if (tile != null) {
+                tile.onLoad();
+            }
         } else {
             SoundUtil.playBlockBreak(w, p, state);
             if (list != null) {
@@ -165,6 +154,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             w.setBlockToAir(r.pos);
         }
 
+        // Step 4: Hope for the best, clean up.
         TileEntity stripesTileNew = w.getTileEntity(canceled ? r.pos : p);
         if (!canceled) {
             stripesTileNew.readFromNBT(stripesNBTOld);
@@ -180,7 +170,6 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                 }
             }
 
-            // Step 4: Hope for the best, clean up.
             PipeBehaviour behaviour = stripesPipeHolderNew.getPipe().getBehaviour();
             if (behaviour instanceof IStripesActivator) {
                 IStripesActivator stripesNew = (IStripesActivator) behaviour;
@@ -234,6 +223,10 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         boolean canceled;
         if (canceled = result != EnumActionResult.SUCCESS) {
             blockSnapshot1.restore(true);
+            TileEntity tile = w.getTileEntity(r.pos);
+            if (tile != null) {
+                tile.onLoad();
+            }
         }
 
         // Step 3: Place stripes pipe back
@@ -249,10 +242,16 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             BlockEvent.PlaceEvent placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshot2, r.dir.getOpposite(), EnumHand.MAIN_HAND);
             if (canceled = placeEvent.isCanceled()) {
                 blockSnapshot1.restore(true);
+                TileEntity tile = w.getTileEntity(r.pos);
+                if (tile != null) {
+                    tile.onLoad();
+                }
+
                 blockSnapshot2.restore(true);
             }
         }
 
+        // Step 4: Hope for the best, clean up.
         TileEntity stripesTileNew = w.getTileEntity(canceled ? r.pos : p);
         if (!canceled) {
             stripesTileNew.readFromNBT(stripesNBTOld);
@@ -268,7 +267,6 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
                 }
             }
 
-            // Step 4: Hope for the best, clean up.
             PipeBehaviour behaviour = stripesPipeHolderNew.getPipe().getBehaviour();
             if (behaviour instanceof IStripesActivator) {
                 IStripesActivator stripesNew = (IStripesActivator) behaviour;
@@ -283,6 +281,22 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             }
         } else {
             InventoryUtil.dropAll(w, p, stacksToSendBack);
+        }
+    }
+
+    private class PipeExtensionRequest {
+        public final BlockPos pos;
+        public final EnumFacing dir;
+        public final IStripesActivator stripes;
+        public final PipeDefinition pipeDef;
+        public final ItemStack stack;
+
+        private PipeExtensionRequest(BlockPos pos, EnumFacing dir, IStripesActivator stripes, PipeDefinition pipeDef, ItemStack stack) {
+            this.pos = pos;
+            this.dir = dir;
+            this.stripes = stripes;
+            this.pipeDef = pipeDef;
+            this.stack = stack;
         }
     }
 }
