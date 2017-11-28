@@ -11,9 +11,6 @@ import java.util.function.Function;
 
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.function.PentaFunction;
-import buildcraft.lib.function.QuadFunction;
-import buildcraft.lib.function.TriFunction;
 
 public class NodeInliningHelper {
     /** Attempts to inline a specified node with only 1 input (a unary node)
@@ -147,5 +144,17 @@ public class NodeInliningHelper {
             ExpressionDebugManager.debugEnd("Partially inlined to " + to);
             return to;
         }
+    }
+
+    public interface TriFunction<A, B, C, R> {
+        R apply(A a, B b, C c);
+    }
+
+    public interface QuadFunction<A, B, C, D, R> {
+        R apply(A a, B b, C c, D d);
+    }
+
+    public interface PentaFunction<A, B, C, D, E, R> {
+        R apply(A a, B b, C c, D d, E e);
     }
 }

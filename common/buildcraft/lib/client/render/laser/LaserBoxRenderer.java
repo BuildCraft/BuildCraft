@@ -116,6 +116,7 @@ public class LaserBoxRenderer {
         box.laserData = datas.toArray(new LaserData_BC8[0]);
         box.lastMin = box.min();
         box.lastMax = box.max();
+        box.lastType = type;
     }
 
     private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis) {

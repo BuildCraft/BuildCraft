@@ -23,6 +23,7 @@ import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
+import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -84,6 +85,7 @@ public class BCLib {
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
         MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(FluidManager.class);
 
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }

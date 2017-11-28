@@ -6,12 +6,8 @@
 
 package buildcraft.lib.expression;
 
-import net.minecraft.item.EnumDyeColor;
-
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.MathUtil;
 
 public class DefaultContexts {
     public static final FunctionContext MATH_SCALAR = new FunctionContext("Math: Scalar");
@@ -77,8 +73,8 @@ public class DefaultContexts {
         MATH_SCALAR.put_dd_d("max", Math::max);
         MATH_SCALAR.put_dd_d("pow", Math::pow);
 
-        MATH_SCALAR.put_ddd_d("clamp", MathUtil::clamp);
-        MATH_SCALAR.put_lll_l("clamp", MathUtil::clamp);
+        MATH_SCALAR.put_ddd_d("clamp", (c, min, max) -> Math.max(Math.min(c, max), min));
+        MATH_SCALAR.put_lll_l("clamp", (c, min, max) -> Math.max(Math.min(c, max), min));
 
         // MATH_VECTOR.putConstantVecLong("origin", VecLong.ZERO);
         // MATH_VECTOR.putConstantVecLong("vec_zero", VecLong.ZERO);
@@ -164,20 +160,6 @@ public class DefaultContexts {
         // MATH_VECTOR.put_vdddd_vd("div", (a, b, c, d) -> a.div(b, c, d, 0));
         // MATH_VECTOR.put_vddddd_vd("div", (a, b, c, d, e) -> a.div(b, c, d, e));
 
-        RENDERING.put_s_l("convertColourToAbgr", DefaultContexts::convertColourToAbgr);
-        RENDERING.put_s_l("convertColourToArgb", DefaultContexts::convertColourToArgb);
         RENDER_PARTIAL_TICKS = RENDERING.putVariableDouble("partial_ticks");
-    }
-
-    private static long convertColourToAbgr(String c) {
-        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
-        if (colour == null) return 0xFF_FF_FF_FF;
-        return 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(colour));
-    }
-
-    private static long convertColourToArgb(String c) {
-        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
-        if (colour == null) return 0xFF_FF_FF_FF;
-        return 0xFF_00_00_00 | ColourUtil.getLightHex(colour);
     }
 }

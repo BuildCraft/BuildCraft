@@ -41,7 +41,7 @@ public enum ModelFacadeItem implements IBakedModel {
 
     private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder()//
         .expireAfterAccess(1, TimeUnit.MINUTES)//
-        .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK)));
+        .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK, false)));
 
     public static void onModelBake() {
         cache.invalidateAll();

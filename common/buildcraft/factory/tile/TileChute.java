@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -111,6 +112,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             sides.stream()
                 .flatMap(side ->
                     world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.offset(side))).stream()
+                        .filter(entity -> !(entity instanceof EntityLivingBase))
                         .map(entity -> Pair.of(side, entity))
                 )
         )

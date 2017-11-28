@@ -181,7 +181,7 @@ public enum ModelPipeItem implements IBakedModel {
                 bottom = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureBottom);
             }
             List<BakedQuad> quads = getQuads(center, top, bottom, stack.getMetadata());
-            return new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK);
+            return new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK, true);
         }
     }
 }

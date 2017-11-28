@@ -108,7 +108,7 @@ public enum ModelLensItem implements IBakedModel {
 
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            return new ModelItemSimple(getQuads(stack.getItemDamage()), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM);
+            return new ModelItemSimple(getQuads(stack.getItemDamage()), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM, false);
         }
     }
 }

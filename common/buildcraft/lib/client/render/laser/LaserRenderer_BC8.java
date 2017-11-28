@@ -161,7 +161,6 @@ public class LaserRenderer_BC8 {
         profiler.startSection("compute");
         LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);
         profiler.endStartSection("render");
-        SpriteUtil.bindBlockTextureMap();
         compiled.render(buffer);
         profiler.endSection();
     }

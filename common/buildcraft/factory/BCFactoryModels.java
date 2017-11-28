@@ -73,7 +73,7 @@ public class BCFactoryModels {
         ModelHeatExchange fullModel = new ModelHeatExchange();
         registerModel(modelRegistry, start + "heat_exchange#normal", fullModel);
 
-        ModelItemSimple itemModel = new ModelItemSimple(fullModel.itemQuads, ModelItemSimple.TRANSFORM_BLOCK);
+        ModelItemSimple itemModel = new ModelItemSimple(fullModel.itemQuads, ModelItemSimple.TRANSFORM_BLOCK, true);
         registerModel(modelRegistry, start + "heat_exchange#inventory", itemModel);
     }
 

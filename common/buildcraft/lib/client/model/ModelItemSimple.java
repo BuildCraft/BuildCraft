@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import org.lwjgl.util.vector.Vector3f;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -115,12 +116,14 @@ public class ModelItemSimple implements IBakedModel {
         return new ItemTransformVec3f(rot, translate, new Vector3f(scale, scale, scale));
     }
 
+    private final boolean isGui3d;
     private final List<BakedQuad> quads;
     private final TextureAtlasSprite particle;
     private final ItemCameraTransforms transforms;
 
-    public ModelItemSimple(List<BakedQuad> quads, ItemCameraTransforms transforms) {
+    public ModelItemSimple(List<BakedQuad> quads, ItemCameraTransforms transforms, boolean isGui3d) {
         this.quads = quads;
+        this.isGui3d = isGui3d;
         if (quads.isEmpty()) {
             particle = null;
         } else {
@@ -141,7 +144,7 @@ public class ModelItemSimple implements IBakedModel {
 
     @Override
     public boolean isGui3d() {
-        return false;
+        return isGui3d;
     }
 
     @Override
