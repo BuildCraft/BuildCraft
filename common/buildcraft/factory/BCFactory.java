@@ -76,7 +76,6 @@ public class BCFactory {
         TagEntry tag = registerTag("item.block.heat_exchange").reg("heat_exchange").locale("heat_exchange");
         tag.model("heat_exchange").oldReg("heat_exchange_start", "heat_exchange_middle", "heat_exchange_end");
         // BC Factory Blocks
-        registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
         registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
         registerTag("block.mining_well").reg("mining_well").oldReg("miningWellBlock").locale("miningWellBlock").model("mining_well");
         registerTag("block.pump").reg("pump").oldReg("pumpBlock").locale("pumpBlock").model("pump");

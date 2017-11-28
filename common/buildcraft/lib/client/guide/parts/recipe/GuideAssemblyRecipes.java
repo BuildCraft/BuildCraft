@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import buildcraft.api.BCBlocks;
 import buildcraft.api.recipes.AssemblyRecipe;
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
@@ -24,15 +25,13 @@ import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
 
-import buildcraft.silicon.BCSiliconBlocks;
-
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
     public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
-        boolean all = stack.getItem() == Item.getItemFromBlock(BCSiliconBlocks.assemblyTable);
+        boolean all = stack.getItem() == Item.getItemFromBlock(BCBlocks.Silicon.ASSEMBLY_TABLE);
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values()) {
             for (ItemStack output: recipe.getOutputPreviews()) {
                 if (all || recipe.getInputsFor(output).stream().anyMatch((definition) -> definition.ingredient.apply(stack))) {

@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.factory.util;
+package buildcraft.lib.tile.craft;
 
 import java.util.List;
 
