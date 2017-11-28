@@ -40,6 +40,11 @@ public enum BCTransportEventDist {
 
     @SubscribeEvent
     public void onBlockPlace(BlockEvent.PlaceEvent event) {
-        event.setCanceled(true);
+        //event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
+        //event.setCanceled(true);
     }
 }
