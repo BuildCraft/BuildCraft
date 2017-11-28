@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.client.Minecraft;
 import org.lwjgl.util.vector.Vector3f;
 
 import net.minecraft.block.state.IBlockState;
@@ -122,10 +123,10 @@ public class ModelItemSimple implements IBakedModel {
     private final ItemCameraTransforms transforms;
 
     public ModelItemSimple(List<BakedQuad> quads, ItemCameraTransforms transforms, boolean isGui3d) {
-        this.quads = quads;
+        this.quads = quads == null ? ImmutableList.of() : quads;
         this.isGui3d = isGui3d;
         if (quads.isEmpty()) {
-            particle = null;
+            particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         } else {
             particle = quads.get(0).getSprite();
         }
