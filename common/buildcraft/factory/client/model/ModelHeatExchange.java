@@ -6,7 +6,9 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -52,6 +54,7 @@ public class ModelHeatExchange extends ModelItemSimple {
     }
 
     public final List<BakedQuad> itemQuads = new ArrayList<>();
+    private final TextureAtlasSprite particle;
     private final List<List<BakedQuad>> cache = new ArrayList<>();
 
     public ModelHeatExchange() {
@@ -66,6 +69,12 @@ public class ModelHeatExchange extends ModelItemSimple {
         for (MutableQuad quad : BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()) {
             quad.multShade();
             itemQuads.add(quad.toBakedItem());
+        }
+
+        if (itemQuads.isEmpty()) {
+            particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        } else {
+            particle = itemQuads.get(0).getSprite();
         }
 
         for (int i = 0; i < 4 * 8 * 3; i++) {
@@ -86,6 +95,11 @@ public class ModelHeatExchange extends ModelItemSimple {
 
             cache.add(quads);
         }
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return particle;
     }
 
     @Override
