@@ -22,6 +22,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.registry.RegistrationHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class FluidManager {
 
@@ -49,6 +51,7 @@ public class FluidManager {
         return fluid;
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onModelBake(ModelBakeEvent event) {
