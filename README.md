@@ -129,7 +129,7 @@ dependencies {
 If you want to depend on the whole of buildcraft do this:
 ```
 dependencies {
-    deobfCompile "com.mod-buildcraft:buildcraft-lib:7.99.12"
+    deobfCompile "com.mod-buildcraft:buildcraft:7.99.12"
 }
 ```
 Where `7.99.12` is the desired version of BuildCraft.
