@@ -18,6 +18,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.registry.RegistrationHelper;
 
@@ -48,6 +50,7 @@ public class FluidManager {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onModelBake(ModelBakeEvent event) {
         for (BCFluidBlock fluid : fluidBlocks) {
             event.getModelManager().getBlockModelShapes().registerBlockWithStateMapper(fluid,
