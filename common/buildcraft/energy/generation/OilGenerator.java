@@ -150,10 +150,10 @@ public enum OilGenerator implements IWorldGenerator {
 
             int height;
             if (type == GenType.LARGE) {
-                height = 5 + rand.nextInt(6);
+                height = 9 + rand.nextInt(10);
                 radius = 1;
             } else {
-                height = 4 + rand.nextInt(4);
+                height = 6 + rand.nextInt(7);
                 radius = 0;
             }
             structures.add(createSpout(new BlockPos(x, wellY, z), height, radius));
@@ -241,7 +241,7 @@ public enum OilGenerator implements IWorldGenerator {
         }
 
         int depth = rand.nextDouble() < 0.5 ? 1 : 2;
-        return OilGenStructure.FlatPattern.create(start, ReplaceType.IS_FOR_LAKE, pattern, depth);
+        return OilGenStructure.PatternTerrainHeight.create(start, ReplaceType.IS_FOR_LAKE, pattern, depth);
     }
 
     private static void fillPatternIfProba(Random rand, float proba, int x, int z, boolean[][] pattern) {

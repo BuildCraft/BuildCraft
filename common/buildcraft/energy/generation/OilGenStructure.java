@@ -146,6 +146,61 @@ public abstract class OilGenStructure {
         }
     }
 
+    public static class PatternTerrainHeight extends OilGenStructure {
+        private final boolean[][] pattern;
+        private final int depth;
+
+        private PatternTerrainHeight(Box containingBox, ReplaceType replaceType, boolean[][] pattern, int depth) {
+            super(containingBox, replaceType);
+            this.pattern = pattern;
+            this.depth = depth;
+        }
+
+        public static PatternTerrainHeight create(BlockPos start, ReplaceType replaceType, boolean[][] pattern,
+            int depth) {
+            BlockPos min = VecUtil.replaceValue(start, Axis.Y, 1);
+            BlockPos max = min.add(pattern.length - 1, 255, pattern.length == 0 ? 0 : pattern[0].length - 1);
+            Box box = new Box(min, max);
+            return new PatternTerrainHeight(box, replaceType, pattern, depth);
+        }
+
+        @Override
+        protected void generateWithin(World world, Box intersect) {
+            for (int x = intersect.min().getX(); x <= intersect.max().getX(); x++) {
+                int px = x - box.min().getX();
+
+                for (int z = intersect.min().getZ(); z <= intersect.max().getZ(); z++) {
+                    int pz = z - box.min().getZ();
+
+                    if (pattern[px][pz]) {
+                        BlockPos upper = world.getHeight(new BlockPos(x, 0, z)).down();
+                        if (canReplaceForOil(world, upper)) {
+                            for (int y = 0; y < 5; y++) {
+                                world.setBlockToAir(upper.up(y));
+                            }
+                            for (int y = 0; y < depth; y++) {
+                                setOilIfCanReplace(world, upper.down(y));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        protected int countOilBlocks() {
+            int count = 0;
+            for (int x = 0; x < pattern.length; x++) {
+                for (int z = 0; z < pattern[x].length; z++) {
+                    if (pattern[x][z]) {
+                        count++;
+                    }
+                }
+            }
+            return count * depth;
+        }
+    }
+
     public static class Spout extends OilGenStructure {
         // FIXME (AlexIIL): This won't support cubic chunks - we'll have to do this differently in compat
         // TODO: Use a terrain generator from mc terrain generation to get the height of the world
@@ -243,7 +298,12 @@ public abstract class OilGenStructure {
             }
             spring.totalSources = count;
             if (BCLib.DEV)
-                BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile)); //  TODO: This might not work properly!
+                BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile)); // TODO:
+                                                                                                                   // This
+                                                                                                                   // might
+                                                                                                                   // not
+                                                                                                                   // work
+                                                                                                                   // properly!
         }
     }
 }
