@@ -191,7 +191,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
             return microJoules;
         }
         EnumFacing openFace = getOpenFace();
-        if(openFace == null) {
+        if (openFace == null) {
             return microJoules;
         }
 
