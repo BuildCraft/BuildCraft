@@ -191,22 +191,22 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
             return microJoules;
         }
         EnumFacing openFace = getOpenFace();
-        if(openFace != null){
-            for (int d = 1; d < 5; d++) {
-                AxisAlignedBB aabb = getSuckingBox(openFace, d);
-                List<Entity> discoveredEntities = pipe.getHolder().getPipeWorld().getEntitiesWithinAABB(Entity.class, aabb);
-
-                for (Entity entity : discoveredEntities) {
-                    long leftOver = trySuckEntity(entity, openFace, microJoules, simulate);
-                    if (leftOver < microJoules) {
-                        return leftOver;
-                    }
-                }
-            }
-            return microJoules - MjAPI.MJ;
-        }else{
+        if(openFace == null) {
             return microJoules;
         }
+
+        for (int d = 1; d < 5; d++) {
+            AxisAlignedBB aabb = getSuckingBox(openFace, d);
+            List<Entity> discoveredEntities = pipe.getHolder().getPipeWorld().getEntitiesWithinAABB(Entity.class, aabb);
+
+            for (Entity entity : discoveredEntities) {
+                long leftOver = trySuckEntity(entity, openFace, microJoules, simulate);
+                if (leftOver < microJoules) {
+                    return leftOver;
+                }
+            }
+        }
+        return microJoules - MjAPI.MJ;
     }
 
     @Override
