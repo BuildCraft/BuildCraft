@@ -31,7 +31,7 @@ import buildcraft.lib.registry.RegistryConfig;
 
 public class BCCoreConfig {
     private static final List<Consumer<EnumRestartRequirement>> reloadListeners = new ArrayList<>();
-    
+
     public static Configuration config;
     public static Configuration objConfig;
     public static FileConfigManager detailedConfigManager;
@@ -41,6 +41,7 @@ public class BCCoreConfig {
     public static boolean minePlayerProtected;
     public static boolean hidePower;
     public static boolean hideFluid;
+    public static boolean pumpsConsumeWater;
     public static int markerMaxDistance;
     public static int networkUpdateRate = 10;
 
@@ -57,6 +58,7 @@ public class BCCoreConfig {
     private static Property propUseLongLocalizedName;
     private static Property propDisplayTimeGap;
     private static Property propItemLifespan;
+    private static Property propPumpsConsumeWater;
     private static Property propMarkerMaxDistance;
     private static Property propNetworkUpdateRate;
 
@@ -92,8 +94,8 @@ public class BCCoreConfig {
         game.setTo(propWorldGenWaterSpring);
 
         propMinePlayerProtected = config.get(general, "miningBreaksPlayerProtectedBlocks", false);
-        propMinePlayerProtected.setComment(
-            "Should BuildCraft miners be allowed to break blocks using player-specific protection?");
+        propMinePlayerProtected
+            .setComment("Should BuildCraft miners be allowed to break blocks using player-specific protection?");
         none.setTo(propMinePlayerProtected);
 
         propUseColouredLabels = config.get(display, "useColouredLabels", true);
@@ -101,8 +103,8 @@ public class BCCoreConfig {
         none.setTo(propUseColouredLabels);
 
         propUseHighContrastColouredLabels = config.get(display, "useHighContrastColouredLabels", false);
-        propUseHighContrastColouredLabels.setComment(
-            "Should colours displayed in tooltips use higher-contrast colours?");
+        propUseHighContrastColouredLabels
+            .setComment("Should colours displayed in tooltips use higher-contrast colours?");
         none.setTo(propUseHighContrastColouredLabels);
 
         propHidePower = config.get(display, "hidePowerValues", false);
@@ -135,9 +137,13 @@ public class BCCoreConfig {
 
         propItemLifespan = config.get(general, "itemLifespan", 60);
         propItemLifespan.setMinValue(5).setMaxValue(600);
-        propItemLifespan.setComment(
-            "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)");
+        propItemLifespan.setComment("How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)");
         none.setTo(propItemLifespan);
+
+        propPumpsConsumeWater = config.get(general, "pumpsConsumeWater", false);
+        propPumpsConsumeWater.setComment("Should pumps consume water? Enabling this will disable"
+            + " minor optimisations, but work properly with finite water mods.");
+        none.setTo(propPumpsConsumeWater);
 
         propMarkerMaxDistance = config.get(general, "markerMaxDistance", 64);
         propMarkerMaxDistance.setMinValue(16).setMaxValue(256);
@@ -194,9 +200,11 @@ public class BCCoreConfig {
         BCLibConfig.useBucketsFlow = propUseBucketsFlow.getBoolean();
         BCLibConfig.useLongLocalizedName = propUseLongLocalizedName.getBoolean();
         BCLibConfig.itemLifespan = propItemLifespan.getInt();
+        pumpsConsumeWater = propPumpsConsumeWater.getBoolean();
         markerMaxDistance = propMarkerMaxDistance.getInt();
         BCLibConfig.colourBlindMode = propColourBlindMode.getBoolean();
-        BCLibConfig.displayTimeGap = ConfigUtil.parseEnumForConfig(propDisplayTimeGap.getString(), TimeGap.values(), TimeGap.TICKS);
+        BCLibConfig.displayTimeGap =
+            ConfigUtil.parseEnumForConfig(propDisplayTimeGap.getString(), TimeGap.values(), TimeGap.TICKS);
 
         if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
             worldGen = propWorldGen.getBoolean();
