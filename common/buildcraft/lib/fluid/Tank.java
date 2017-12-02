@@ -259,7 +259,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         EntityPlayer player = container.player;
         // first try to fill this tank from the item
 
-        if (!player.isServerWorld()) {
+        if (player.world.isRemote) {
             return stack;
         }
 
