@@ -23,7 +23,6 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.energy.BCEnergyConfig;
 import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
 import buildcraft.energy.generation.OilGenStructure.ReplaceType;
-import buildcraft.energy.generation.OilGenStructure.Spring;
 
 public enum OilGenerator implements IWorldGenerator {
     INSTANCE;
@@ -35,6 +34,10 @@ public enum OilGenerator implements IWorldGenerator {
      * generating chunk. This should be large enough that all oil generation can fit inside this radius. If this number
      * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
+
+    private static final double CHANCE_LARGE = 0.0004;
+    private static final double CHANCE_MEDIUM = 0.001;
+    private static final double CHANCE_LAKE = 0.02;
 
     public enum GenType {
         LARGE,
@@ -68,7 +71,7 @@ public enum OilGenerator implements IWorldGenerator {
                 for (OilGenStructure struct : structures) {
                     struct.generate(world, box);
                     if (struct instanceof OilGenStructure.Spring) {
-                        spring = (Spring) struct;
+                        spring = (OilGenStructure.Spring) struct;
                     }
                 }
                 if (spring != null && box.contains(spring.pos)) {
@@ -105,13 +108,13 @@ public enum OilGenerator implements IWorldGenerator {
             bonus *= 30.0;
         }
         final GenType type;
-        if (rand.nextDouble() <= 0.0004 * bonus) {
+        if (rand.nextDouble() <= CHANCE_LARGE * bonus) {
             // 0.04%
             type = GenType.LARGE;
-        } else if (rand.nextDouble() <= 0.001 * bonus) {
+        } else if (rand.nextDouble() <= CHANCE_MEDIUM * bonus) {
             // 0.1%
             type = GenType.MEDIUM;
-        } else if (oilBiome && rand.nextDouble() <= 0.02 * bonus) {
+        } else if (oilBiome && rand.nextDouble() <= CHANCE_LAKE * bonus) {
             // 2%
             type = GenType.LAKE;
         } else {
