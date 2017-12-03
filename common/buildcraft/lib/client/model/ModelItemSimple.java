@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 import org.lwjgl.util.vector.Vector3f;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -122,10 +122,10 @@ public class ModelItemSimple implements IBakedModel {
     private final ItemCameraTransforms transforms;
 
     public ModelItemSimple(List<BakedQuad> quads, ItemCameraTransforms transforms, boolean isGui3d) {
-        this.quads = quads;
+        this.quads = quads == null ? ImmutableList.of() : quads;
         this.isGui3d = isGui3d;
         if (quads.isEmpty()) {
-            particle = null;
+            particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         } else {
             particle = quads.get(0).getSprite();
         }

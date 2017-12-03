@@ -49,6 +49,7 @@ import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreConfig;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.energy.tile.TileSpringOil;
 import buildcraft.factory.BCFactoryBlocks;
@@ -109,8 +110,7 @@ public class TilePump extends TileMiner {
             return;
         }
         world.profiler.endStartSection("build");
-        boolean isWater =
-            /* BCFactoryConfig.consumeWaterSources && */ FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
+        boolean isWater = !BCCoreConfig.pumpsConsumeWater && FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
@@ -242,8 +242,8 @@ public class TilePump extends TileMiner {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         if (isInfiniteWaterSource) {
-                            if (!FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
-                                // The pump must have re-used the water queue for some other fluid.
+                            if (BCCoreConfig.pumpsConsumeWater || !FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
+                                // The pump must have re-used the water queue for some other fluid. Or the config value changed.
                                 isInfiniteWaterSource = false;
                             }
                         }

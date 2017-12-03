@@ -423,6 +423,8 @@ item.plasticSheet.name=Plastic Sheet
 item.markerConnector.name=Marker Connector
 item.pulsar.name=Pipe Pulsar
 item.fragile_fluid_shard.name=Fragile %s Shard
+item.waterGel.name=Water Gelifier
+item.gel.name=Gelled Water
 
 item.buildcraft_pipe_wood_item.name=Wooden Transport Pipe
 item.buildcraft_pipe_cobblestone_item.name=Cobblestone Transport Pipe

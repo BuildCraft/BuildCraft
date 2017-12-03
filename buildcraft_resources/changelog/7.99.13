@@ -1,0 +1,19 @@
+
+Additions:
+
+* [#3857] Re-added the config option to disallow infinite water pumping. Useful if a finite water mod is installed.
+
+Bugs fixed:
+
+* [#3833] Missing lang entry for "Gelled Water" (item.gel.name) and "Water Gelifier" (item.waterGel.name)
+* [#3853] Pipe item models have the incorrect lighting.
+  * This might be altered in the future, as they are very dark now. Voice feedback on this please!
+* [#3854] The architect table crashes if placed next to landmarks.
+* [#3867] The chute inserts into living entities (so players or zombies, for example)
+* Some modules accidently had hard dependencies on others when they shouldn't
+  * [#3858] Core depends on Builders
+  * [#3873] Lib depends on Silicon
+    * Silicon depends on factory
+* [#3874] Crash when breaking the heat exchanger
+* [#3882] All fluid blocks except for one showed the missing texture.
+* [#3884] Powering an obsidian transport pipe without any pipe connections crashes.

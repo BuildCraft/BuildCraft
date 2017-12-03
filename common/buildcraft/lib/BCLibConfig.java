@@ -84,19 +84,19 @@ public class BCLibConfig {
         }
 
         public int convertTicksToGap(int ticks) {
-            return ticks / ticksInGap;
+            return ticks * ticksInGap;
         }
 
         public long convertTicksToGap(long ticks) {
-            return ticks / ticksInGap;
+            return ticks * ticksInGap;
         }
 
         public float convertTicksToGap(float ticks) {
-            return ticks / ticksInGap;
+            return ticks * ticksInGap;
         }
 
         public double convertTicksToGap(double ticks) {
-            return ticks / ticksInGap;
+            return ticks * ticksInGap;
         }
     }
 

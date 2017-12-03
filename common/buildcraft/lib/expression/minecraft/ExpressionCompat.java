@@ -7,9 +7,9 @@ import net.minecraft.util.EnumFacing.Axis;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
 
-import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.gui.pos.GuiRectangle;
