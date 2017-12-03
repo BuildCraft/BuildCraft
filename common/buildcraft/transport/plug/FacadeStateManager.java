@@ -23,12 +23,16 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.netty.buffer.Unpooled;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -36,6 +40,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.IFluidBlock;
@@ -53,6 +58,7 @@ import buildcraft.api.facades.IFacadeState;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.recipe.FacadeSwapRecipe;
 
@@ -138,7 +144,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
      *         {@link #isValidFacadeState(IBlockState)}</li>
      *         <li>OR {@link #STR_SUCCESS} if every state of the block is valid for a facade.
      *         </ul>
-    */
+     */
     private static String isValidFacadeBlock(Block block) {
         String disablingMod = disabledBlocks.get(block);
         if (disablingMod != null) {
@@ -161,7 +167,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
      *         <li>A string describing the problem with this state (if it is not valid for a facade)</li>
      *         <li>OR {@link #STR_SUCCESS} if this state is valid for a facade.
      *         </ul>
-    */
+     */
     private static String isValidFacadeState(IBlockState state) {
         if (state.getBlock().hasTileEntity(state)) {
             return "it has a tile entity";
@@ -244,16 +250,41 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     }
                 }
             }
+            PacketBufferBC testingBuffer = PacketBufferBC.asPacketBufferBc(Unpooled.buffer());
             for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
                 IBlockState state = entry.getKey();
                 ItemStack stack = entry.getValue();
                 Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
                 vars.values().removeIf(Objects::nonNull);
-                FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, ImmutableSet.copyOf(vars.keySet()));
-                validFacadeStates.put(state, info);
-                if (!info.requiredStack.isEmpty()) {
-                    ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
-                    stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
+                try {
+                    ImmutableSet<IProperty<?>> varSet = ImmutableSet.copyOf(vars.keySet());
+                    FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, varSet);
+                    validFacadeStates.put(state, info);
+                    if (!info.requiredStack.isEmpty()) {
+                        ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
+                        stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
+                    }
+
+                    // Test to make sure that we can read + write it
+                    FacadePhasedState phasedState = info.createPhased(false, null);
+                    FacadePhasedState read = FacadePhasedState.readFromNbt(phasedState.writeToNbt());
+                    if (read.stateInfo != info) {
+                        throw new IllegalStateException("Read (from NBT) state was different!");
+                    }
+                    phasedState.writeToBuffer(testingBuffer);
+                    read = FacadePhasedState.readFromBuffer(testingBuffer);
+                    if (read.stateInfo != info) {
+                        throw new IllegalStateException("Read (from buffer) state was different!");
+                    }
+                    testingBuffer.clear();
+                } catch (Throwable t) {
+                    CrashReport report = CrashReport.makeCrashReport(t, "Scanning facade states");
+                    CrashReportCategory category = report.makeCategory("entry");
+                    category.addCrashSection("state", state);
+                    category.addDetail("block", () -> state.getBlock().getRegistryName().toString());
+                    category.addCrashSection("stack", stack);
+                    category.addCrashSection("varying-properties", vars);
+                    throw new ReportedException(report);
                 }
             }
         }

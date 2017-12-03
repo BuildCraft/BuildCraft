@@ -3,10 +3,13 @@ package buildcraft.transport.plug;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ReportedException;
 
 import buildcraft.api.facades.IFacadePhasedState;
 import buildcraft.api.facades.IFacadeState;
@@ -47,7 +50,14 @@ public class FacadePhasedState implements IFacadePhasedState {
 
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
+        try {
+            nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
+        } catch (Throwable t) {
+            CrashReport report = new CrashReport("Writing facade block state", t);
+            CrashReportCategory category = report.makeCategory("facade");
+            category.addCrashSection("state", stateInfo.state);
+            throw new ReportedException(report);
+        }
         nbt.setBoolean("isHollow", isHollow);
         if (activeColour != null) {
             nbt.setTag("activeColour", NBTUtilBC.writeEnum(activeColour));
@@ -67,7 +77,14 @@ public class FacadePhasedState implements IFacadePhasedState {
     }
 
     public void writeToBuffer(PacketBufferBC buf) {
-        MessageUtil.writeBlockState(buf, stateInfo.state);
+        try {
+            MessageUtil.writeBlockState(buf, stateInfo.state);
+        } catch (Throwable t) {
+            CrashReport report = new CrashReport("Writing facade block state", t);
+            CrashReportCategory category = report.makeCategory("facade");
+            category.addCrashSection("state", stateInfo.state);
+            throw new ReportedException(report);
+        }
         buf.writeBoolean(isHollow);
         MessageUtil.writeEnumOrNull(buf, activeColour);
     }
