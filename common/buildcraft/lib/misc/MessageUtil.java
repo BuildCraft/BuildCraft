@@ -8,6 +8,9 @@ package buildcraft.lib.misc;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,6 +20,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.util.internal.StringUtil;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -170,15 +174,51 @@ public class MessageUtil {
 
     /** Writes a block state using the block ID and its metadata. Not suitable for full states. */
     public static void writeBlockState(PacketBuffer buf, IBlockState state) {
-        buf.writeVarInt(Block.REGISTRY.getIDForObject(state.getBlock()));
-        buf.writeVarInt(state.getBlock().getMetaFromState(state));
+        Block block = state.getBlock();
+        buf.writeVarInt(Block.REGISTRY.getIDForObject(block));
+        int meta = block.getMetaFromState(state);
+        buf.writeByte(meta);
+        IBlockState readState = block.getStateFromMeta(meta);
+        if (readState != state) {
+            buf.writeBoolean(true);
+            Map<IProperty, Comparable<?>> differingProperties = new HashMap<>();
+            for (IProperty<?> property : state.getPropertyKeys()) {
+                Comparable<?> inputValue = state.getValue(property);
+                Comparable<?> readValue = readState.getValue(property);
+                if (!inputValue.equals(readValue)) {
+                    differingProperties.put(property, inputValue);
+                }
+            }
+            buf.writeByte(differingProperties.size());
+            for (Entry<IProperty, Comparable<?>> entry : differingProperties.entrySet()) {
+                buf.writeString(entry.getKey().getName());
+                buf.writeString(entry.getKey().getName(entry.getValue()));
+            }
+        } else {
+            buf.writeBoolean(false);
+        }
     }
 
     public static IBlockState readBlockState(PacketBuffer buf) {
         int id = buf.readVarInt();
-        int meta = buf.readVarInt();
         Block block = Block.REGISTRY.getObjectById(id);
-        return block.getStateFromMeta(meta);
+        int meta = buf.readUnsignedByte();
+        IBlockState state = block.getStateFromMeta(meta);
+        if (buf.readBoolean()) {
+            int count = buf.readByte();
+            for (int p = 0; p < count; p++) {
+                String name = buf.readString(256);
+                String value = buf.readString(256);
+                IProperty<?> prop = state.getBlock().getBlockState().getProperty(name);
+                state = propertyReadHelper(state, value, prop);
+            }
+        }
+        return state;
+    }
+
+    private static <T extends Comparable<T>> IBlockState propertyReadHelper(IBlockState state, String value,
+        IProperty<T> prop) {
+        return state.withProperty(prop, prop.parseValue(value).orNull());
     }
 
     /** {@link PacketBuffer#writeEnumValue(Enum)} can only write *actual* enum values - so not null. This method allows

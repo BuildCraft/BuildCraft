@@ -92,6 +92,11 @@ public class FacadePhasedState implements IFacadePhasedState {
         return stateInfo.isSideSolid[side.ordinal()];
     }
 
+    @Override
+    public String toString() {
+        return (activeColour == null ? "" : activeColour + " ") + (isHollow ? "hollow " : "") + getState();
+    }
+
     // IFacadePhasedState
 
     @Override

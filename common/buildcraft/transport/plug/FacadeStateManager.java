@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 import io.netty.buffer.Unpooled;
@@ -53,6 +54,7 @@ import buildcraft.api.facades.IFacadePhasedState;
 import buildcraft.api.facades.IFacadeRegistry;
 import buildcraft.api.facades.IFacadeState;
 
+import buildcraft.lib.BCLib;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
@@ -196,16 +198,28 @@ public enum FacadeStateManager implements IFacadeRegistry {
     public static void init() {
         defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
+
+            // Check to make sure that all the properties work properly
+            // Fixes a bug in extra utilities who doesn't serialise and deserialise properties properly
+
+            boolean allPropertiesOk = true;
+            for (IProperty<?> property : block.getBlockState().getProperties()) {
+                allPropertiesOk &= doesPropertyConform(property);
+            }
+            if (!allPropertiesOk) {
+                continue;
+            }
+
             String result = isValidFacadeBlock(block);
             // These strings are hardcoded, so we can get away with not needing the .equals check
-            if (!result.equals(STR_PASS) && !result.equals(STR_SUCCESS)) {
+            if (result != STR_PASS && result != STR_SUCCESS) {
                 if (DEBUG) {
                     BCLog.logger
                         .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result);
                 }
                 continue;
             } else if (DEBUG) {
-                if (result.equals(STR_SUCCESS)) {
+                if (result == STR_SUCCESS) {
                     BCLog.logger.info("[transport.facade] Allowed block " + block.getRegistryName());
                 }
             }
@@ -213,13 +227,13 @@ public enum FacadeStateManager implements IFacadeRegistry {
             Map<IBlockState, ItemStack> usedStates = new HashMap<>();
             Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
             for (IBlockState state : block.getBlockState().getValidStates()) {
-                state = block.getStateFromMeta(block.getMetaFromState(state));
-                if (!checkedStates.add(state)) {
-                    continue;
-                }
-                if (!result.equals(STR_SUCCESS)) {
+                // state = block.getStateFromMeta(block.getMetaFromState(state));
+                // if (!checkedStates.add(state)) {
+                // continue;
+                // }
+                if (result != STR_SUCCESS) {
                     result = isValidFacadeState(state);
-                    if (result.equals(STR_SUCCESS)) {
+                    if (result == STR_SUCCESS) {
                         if (DEBUG) {
                             BCLog.logger.info("[transport.facade] Allowed state " + state);
                         }
@@ -249,11 +263,25 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 }
             }
             PacketBufferBC testingBuffer = PacketBufferBC.asPacketBufferBc(Unpooled.buffer());
+            varyingProperties.entrySet().forEach(entry -> {
+                Map<IProperty<?>, Comparable<?>> vars = entry.getValue();
+                if (DEBUG) {
+                BCLog.logger.info("[transport.facade]   pre-" + entry.getKey() + ":");
+                vars.keySet().forEach(p -> {
+                    BCLog.logger.info("[transport.facade]       " + p);
+                });}
+                vars.values().removeIf(Objects::nonNull);
+                if (DEBUG && !vars.isEmpty()) {
+                    BCLog.logger.info("[transport.facade]   " + entry.getKey() + ":");
+                    vars.keySet().forEach(p -> {
+                        BCLog.logger.info("[transport.facade]       " + p);
+                    });
+                }
+            });
             for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
                 IBlockState state = entry.getKey();
                 ItemStack stack = entry.getValue();
                 Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(new ItemStackKey(stack));
-                vars.values().removeIf(Objects::nonNull);
                 try {
                     ImmutableSet<IProperty<?>> varSet = ImmutableSet.copyOf(vars.keySet());
                     FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, varSet);
@@ -265,16 +293,20 @@ public enum FacadeStateManager implements IFacadeRegistry {
 
                     // Test to make sure that we can read + write it
                     FacadePhasedState phasedState = info.createPhased(false, null);
-                    FacadePhasedState read = FacadePhasedState.readFromNbt(phasedState.writeToNbt());
+                    NBTTagCompound nbt = phasedState.writeToNbt();
+                    FacadePhasedState read = FacadePhasedState.readFromNbt(nbt);
                     if (read.stateInfo != info) {
-                        throw new IllegalStateException("Read (from NBT) state was different!");
+                        throw new IllegalStateException("Read (from NBT) state was different! (\n\t" + read.stateInfo
+                            + "\n !=\n\t" + info + "\n\tNBT = " + nbt + "\n)");
                     }
                     phasedState.writeToBuffer(testingBuffer);
                     read = FacadePhasedState.readFromBuffer(testingBuffer);
                     if (read.stateInfo != info) {
-                        throw new IllegalStateException("Read (from buffer) state was different!");
+                        throw new IllegalStateException("Read (from buffer) state was different! (\n\t" + read.stateInfo
+                            + "\n !=\n\t" + info + "\n)");
                     }
                     testingBuffer.clear();
+                    BCLog.logger.info("[transport.facade]   Added " + info);
                 } catch (Throwable t) {
                     String msg = "Scanning facade states";
                     msg += "\n\tState = " + state;
@@ -291,6 +323,43 @@ public enum FacadeStateManager implements IFacadeRegistry {
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
         FacadeSwapRecipe.genRecipes();
+    }
+
+    private static <V extends Comparable<V>> boolean doesPropertyConform(IProperty<V> property) {
+        boolean allFine = true;
+        for (V value : property.getAllowedValues()) {
+            String name = property.getName(value);
+            Optional<V> optional = property.parseValue(name);
+            V parsed = optional == null ? null : optional.orNull();
+            if (!Objects.equals(value, parsed)) {
+                allFine = false;
+                // A property is *wrong*
+                // this is a big problem
+                String message = "Invalid property value detected!";
+                message += "\n  Property class = " + property.getClass();
+                message += "\n  Property = " + property;
+                message += "\n  Value Name = " + name;
+                message += "\n  Value (original) = " + value;
+                message += "\n  Value (parsed) = " + parsed;
+                message += "\n  Value class (original) = " + (value == null ? null : value.getClass());
+                message += "\n  Value class (parsed) = " + (parsed == null ? null : parsed.getClass());
+                if (optional == null) {
+                    // Massive issue
+                    message += "\n  IProperty.parseValue() -> Null com.google.common.base.Optional!!";
+                }
+                message += "\n";
+                // This check *intentionally* crashes on a new MC version
+                // or in a dev environment
+                // as this really needs to be fixed
+                RuntimeException exception = new RuntimeException(message);
+                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+                    throw exception;
+                } else {
+                    BCLog.logger.error("[transport.facade] Invalid property!", exception);
+                }
+            }
+        }
+        return allFine;
     }
 
     private static String safeToString(Callable<Object> callable) {
