@@ -266,10 +266,11 @@ public enum FacadeStateManager implements IFacadeRegistry {
             varyingProperties.entrySet().forEach(entry -> {
                 Map<IProperty<?>, Comparable<?>> vars = entry.getValue();
                 if (DEBUG) {
-                BCLog.logger.info("[transport.facade]   pre-" + entry.getKey() + ":");
-                vars.keySet().forEach(p -> {
-                    BCLog.logger.info("[transport.facade]       " + p);
-                });}
+                    BCLog.logger.info("[transport.facade]   pre-" + entry.getKey() + ":");
+                    vars.keySet().forEach(p -> {
+                        BCLog.logger.info("[transport.facade]       " + p);
+                    });
+                }
                 vars.values().removeIf(Objects::nonNull);
                 if (DEBUG && !vars.isEmpty()) {
                     BCLog.logger.info("[transport.facade]   " + entry.getKey() + ":");
@@ -306,7 +307,9 @@ public enum FacadeStateManager implements IFacadeRegistry {
                             + "\n !=\n\t" + info + "\n)");
                     }
                     testingBuffer.clear();
-                    BCLog.logger.info("[transport.facade]   Added " + info);
+                    if (DEBUG) {
+                        BCLog.logger.info("[transport.facade]   Added " + info);
+                    }
                 } catch (Throwable t) {
                     String msg = "Scanning facade states";
                     msg += "\n\tState = " + state;
