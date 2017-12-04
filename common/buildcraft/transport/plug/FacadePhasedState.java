@@ -3,13 +3,10 @@ package buildcraft.transport.plug;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ReportedException;
 
 import buildcraft.api.facades.IFacadePhasedState;
 import buildcraft.api.facades.IFacadeState;
@@ -53,10 +50,7 @@ public class FacadePhasedState implements IFacadePhasedState {
         try {
             nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
         } catch (Throwable t) {
-            CrashReport report = new CrashReport("Writing facade block state", t);
-            CrashReportCategory category = report.makeCategory("facade");
-            category.addCrashSection("state", stateInfo.state);
-            throw new ReportedException(report);
+            throw new IllegalStateException("Writing facade block state\n\tState = " + stateInfo.state, t);
         }
         nbt.setBoolean("isHollow", isHollow);
         if (activeColour != null) {
@@ -80,10 +74,7 @@ public class FacadePhasedState implements IFacadePhasedState {
         try {
             MessageUtil.writeBlockState(buf, stateInfo.state);
         } catch (Throwable t) {
-            CrashReport report = new CrashReport("Writing facade block state", t);
-            CrashReportCategory category = report.makeCategory("facade");
-            category.addCrashSection("state", stateInfo.state);
-            throw new ReportedException(report);
+            throw new IllegalStateException("Writing facade block state\n\tState = " + stateInfo.state, t);
         }
         buf.writeBoolean(isHollow);
         MessageUtil.writeEnumOrNull(buf, activeColour);

@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
 
@@ -31,8 +32,6 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -40,7 +39,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.IFluidBlock;
@@ -278,18 +276,29 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     }
                     testingBuffer.clear();
                 } catch (Throwable t) {
-                    CrashReport report = CrashReport.makeCrashReport(t, "Scanning facade states");
-                    CrashReportCategory category = report.makeCategory("entry");
-                    category.addCrashSection("state", state);
-                    category.addDetail("block", () -> state.getBlock().getRegistryName().toString());
-                    category.addCrashSection("stack", stack);
-                    category.addCrashSection("varying-properties", vars);
-                    throw new ReportedException(report);
+                    String msg = "Scanning facade states";
+                    msg += "\n\tState = " + state;
+                    msg += "\n\tBlock = " + safeToString(() -> state.getBlock().getRegistryName());
+                    msg += "\n\tStack = " + stack;
+                    msg += "\n\tvarying-properties: {";
+                    for (Entry<IProperty<?>, Comparable<?>> varEntry : vars.entrySet()) {
+                        msg += "\n\t\t" + varEntry.getKey() + " = " + varEntry.getValue();
+                    }
+                    msg += "\n\t}";
+                    throw new IllegalStateException(msg.replace("\t", "    "), t);
                 }
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
         FacadeSwapRecipe.genRecipes();
+    }
+
+    private static String safeToString(Callable<Object> callable) {
+        try {
+            return Objects.toString(callable.call());
+        } catch (Throwable t) {
+            return "~~ERROR~~" + t.getMessage();
+        }
     }
 
     // IFacadeRegistry
