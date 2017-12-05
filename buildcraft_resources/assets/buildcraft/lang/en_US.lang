@@ -498,7 +498,7 @@ item.package.name=Package
 item.buildcraft.guide.name=BuildCraft Guide Book
 item.buildcraft.guide_note.name=BuildCraft Guide Note
 item.buildcraft.robot_goggles.name=Robot Goggles
-item.buildcraft.fillerPlannerItem.name=Filling Planner
+item.buildcraft.filler_planner.name=Filler Planner
 
 itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft
