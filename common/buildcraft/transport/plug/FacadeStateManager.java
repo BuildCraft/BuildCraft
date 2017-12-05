@@ -336,11 +336,13 @@ public enum FacadeStateManager implements IFacadeRegistry {
             return false;
         }
 
+        boolean allFine = true;
         for (V value : property.getAllowedValues()) {
             String name = property.getName(value);
             Optional<V> optional = property.parseValue(name);
             V parsed = optional == null ? null : optional.orNull();
             if (!Objects.equals(value, parsed)) {
+                allFine = false;
                 // A property is *wrong*
                 // this is a big problem
                 String message = "Invalid property value detected!";
@@ -368,7 +370,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 }
             }
         }
-        return true;
+        return allFine;
     }
 
     private static String safeToString(Callable<Object> callable) {
