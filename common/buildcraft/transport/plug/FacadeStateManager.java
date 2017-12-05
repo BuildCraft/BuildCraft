@@ -341,6 +341,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 String message = "Invalid property value detected!";
                 message += "\n  Property class = " + property.getClass();
                 message += "\n  Property = " + property;
+                message += "\n  Possible Values = " + property.getAllowedValues();
                 message += "\n  Value Name = " + name;
                 message += "\n  Value (original) = " + value;
                 message += "\n  Value (parsed) = " + parsed;
