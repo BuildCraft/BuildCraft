@@ -106,7 +106,7 @@ public class TileFiller extends TileBC_Neptune
 
     public final Box box = new Box();
     public AddonFillerPlanner addon;
-    public boolean markerBox = false;
+    public boolean markerBox = true;
 
     public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
         FillerType.INSTANCE,
@@ -152,6 +152,7 @@ public class TileFiller extends TileBC_Neptune
                 );
                 volumeBoxes.markDirty();
                 addon.updateBuildingInfo();
+                markerBox = false;
             } else {
                 box.reset();
                 box.setMin(volumeBox.box.min());
@@ -166,13 +167,13 @@ public class TileFiller extends TileBC_Neptune
                     )
                 );
                 volumeBoxes.markDirty();
+                markerBox = false;
             }
         } else if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
             box.reset();
             box.setMin(provider.min());
             box.setMax(provider.max());
-            markerBox = true;
             provider.removeFromWorld();
         }
         updateBuildingInfo();
@@ -405,6 +406,7 @@ public class TileFiller extends TileBC_Neptune
         left.add("is_finished = " + finished);
         left.add("lockedTicks = " + lockedTicks);
         left.add("addon = " + addon);
+        left.add("markerBox = " + markerBox);
     }
 
     @Override

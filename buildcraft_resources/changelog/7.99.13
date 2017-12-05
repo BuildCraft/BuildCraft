@@ -14,6 +14,7 @@ Bugs fixed:
   * This might be altered in the future, as they are very dark now. Voice feedback on this please!
 * [#3854] The architect table crashes if placed next to landmarks.
 * [#3867] The chute inserts into living entities (so players or zombies, for example)
+* [#3861] The filler has the missing block model in-world.
 * Some modules accidently had hard dependencies on others when they shouldn't
   * [#3858] Core depends on Builders
   * [#3873] Lib depends on Silicon
