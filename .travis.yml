@@ -12,7 +12,7 @@ jobs:
   include:
     - stage: build
       install: ./gradlew setupCiWorkspace
-      script: ./gradlew build 
+      script: ./gradlew build publish
     - stage: checkstyle
       install: echo "skipping default ./gradlew assemble"
       script: ./gradlew checkstyle
