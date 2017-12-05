@@ -71,8 +71,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     private static final int COOLDOWN_INPUT = -DIRECTION_COOLDOWN;
     private static final int COOLDOWN_OUTPUT = DIRECTION_COOLDOWN;
 
-    private static final ActionResult<FluidStack> FAILED_EXTRACT = ActionResult.newResult(EnumActionResult.FAIL, null);
-    private static final ActionResult<FluidStack> PASSED_EXTRACT = ActionResult.newResult(EnumActionResult.PASS, null);
+    private static final ActionResult<FluidStack> FAILED_EXTRACT = new ActionResult<>(EnumActionResult.FAIL, null);
+    private static final ActionResult<FluidStack> PASSED_EXTRACT = new ActionResult<>(EnumActionResult.PASS, null);
 
     public static final int NET_FLUID_AMOUNTS = 2;
 
@@ -254,7 +254,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
                 + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
-        return ActionResult.newResult(EnumActionResult.SUCCESS, toAdd);
+        return new ActionResult<>(EnumActionResult.SUCCESS, toAdd);
     }
 
     private static FluidStack extractSimple(int millibuckets, FluidStack filter, IFluidHandler handler,
