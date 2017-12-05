@@ -218,6 +218,7 @@ public class BCCoreConfig {
         if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
             worldGen = propWorldGen.getBoolean();
             worldGenWaterSpring = propWorldGenWaterSpring.getBoolean();
+            BCLibConfig.useSwappableSprites = propUseSwappableSprites.getBoolean();
         }
         BCLibConfig.refreshConfigs();
         if (config.hasChanged()) {

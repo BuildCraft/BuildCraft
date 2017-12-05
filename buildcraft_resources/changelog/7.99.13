@@ -2,6 +2,8 @@
 Additions:
 
 * [#3857] Re-added the config option to disallow infinite water pumping. Useful if a finite water mod is installed.
+* Added a new config option: "display.useSwappableSprites". This disables sprite swapping functionality, which is used by other config options (such as colourblind mode)
+  * Fixes [#3894] Optifine texture incompatibility
 
 Changes:
 
