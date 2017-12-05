@@ -142,7 +142,7 @@ public class SpriteHolderRegistry {
 
         protected void onTextureStitchPre(TextureMap map) {
             extraData = null;
-            AtlasSpriteVariants varSprite = AtlasSpriteVariants.createForConfig(spriteLocation);
+            TextureAtlasSprite varSprite = AtlasSpriteVariants.createForConfig(spriteLocation);
             if (map.setTextureEntry(varSprite)) {
                 sprite = varSprite;
             } else {
