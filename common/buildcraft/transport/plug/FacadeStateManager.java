@@ -329,7 +329,22 @@ public enum FacadeStateManager implements IFacadeRegistry {
     }
 
     private static <V extends Comparable<V>> boolean doesPropertyConform(IProperty<V> property) {
+        try {
+            property.parseValue("");
+        } catch (AbstractMethodError error) {
+            String message = "Invalid IProperty object detected!";
+            message += "\n  Class = " + property.getClass();
+            message += "\n  Method not overriden: IProperty.parseValue(String)";
+            RuntimeException exception = new RuntimeException(message, error);
+            if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+                throw exception;
+            } else {
+                BCLog.logger.error("[transport.facade] Invalid property!", exception);
+            }
+            return false;
+        }
         boolean allFine = true;
+
         for (V value : property.getAllowedValues()) {
             String name = property.getName(value);
             Optional<V> optional = property.parseValue(name);
