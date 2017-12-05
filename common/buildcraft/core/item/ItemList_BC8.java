@@ -46,7 +46,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
         BCCoreGuis.LIST.openGUI(player);
-        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override
