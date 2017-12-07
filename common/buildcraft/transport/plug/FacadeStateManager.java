@@ -39,6 +39,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 
@@ -69,9 +71,6 @@ public enum FacadeStateManager implements IFacadeRegistry {
     public static final SortedMap<IBlockState, FacadeBlockStateInfo> validFacadeStates;
     public static final Map<ItemStackKey, List<FacadeBlockStateInfo>> stackFacades;
     public static FacadeBlockStateInfo defaultState, previewState;
-
-    private static final String STR_SUCCESS = "success";
-    private static final String STR_PASS = "pass";
 
     private static final Map<Block, String> disabledBlocks = new HashMap<>();
     private static final Map<IBlockState, ItemStack> customBlocks = new HashMap<>();
@@ -139,46 +138,45 @@ public enum FacadeStateManager implements IFacadeRegistry {
 
     /** @return One of:
      *         <ul>
-     *         <li>A string describing the problem with this block (if it is not valid for a facade)</li>
-     *         <li>OR {@link #STR_PASS} if every metadata needs to be checked by
-     *         {@link #isValidFacadeState(IBlockState)}</li>
-     *         <li>OR {@link #STR_SUCCESS} if every state of the block is valid for a facade.
+     *         <li>{@link EnumActionResult#SUCCESS} if every state of the block is valid for a facade.
+     *         <li>{@link EnumActionResult#PASS} if every metadata needs to be checked by {@link #isValidFacadeState(IBlockState)}</li>
+     *         <li>{@link EnumActionResult#FAIL} with string describing the problem with this block (if it is not valid for a facade)</li>
      *         </ul>
      */
-    private static String isValidFacadeBlock(Block block) {
+    private static ActionResult<String> isValidFacadeBlock(Block block) {
         String disablingMod = disabledBlocks.get(block);
         if (disablingMod != null) {
-            return "it has been disabled by " + disablingMod;
+            return new ActionResult<>(EnumActionResult.FAIL, "it has been disabled by " + disablingMod);
         }
         if (block instanceof IFluidBlock || block instanceof BlockLiquid) {
-            return "it is a fluid block";
+            return new ActionResult<>(EnumActionResult.FAIL, "it is a fluid block");
         }
         // if (block instanceof BlockSlime) {
         // return "it is a slime block";
         // }
         if (block instanceof BlockGlass || block instanceof BlockStainedGlass) {
-            return STR_SUCCESS;
+            return new ActionResult<>(EnumActionResult.SUCCESS, "");
         }
-        return STR_PASS;
+        return new ActionResult<>(EnumActionResult.PASS, "");
     }
 
     /** @return Any of:
      *         <ul>
-     *         <li>A string describing the problem with this state (if it is not valid for a facade)</li>
-     *         <li>OR {@link #STR_SUCCESS} if this state is valid for a facade.
+     *         <li>{@link EnumActionResult#SUCCESS} if this state is valid for a facade.
+     *         <li>{@link EnumActionResult#FAIL} with string describing the problem with this state (if it is not valid for a facade)</li>
      *         </ul>
      */
-    private static String isValidFacadeState(IBlockState state) {
+    private static ActionResult<String> isValidFacadeState(IBlockState state) {
         if (state.getBlock().hasTileEntity(state)) {
-            return "it has a tile entity";
+            return new ActionResult<>(EnumActionResult.FAIL, "it has a tile entity");
         }
         if (state.getRenderType() != EnumBlockRenderType.MODEL) {
-            return "it doesn't have a normal model";
+            return new ActionResult<>(EnumActionResult.FAIL, "it doesn't have a normal model");
         }
         if (!state.isFullCube()) {
-            return "it isn't a full cube";
+            return new ActionResult<>(EnumActionResult.FAIL, "it isn't a full cube");
         }
-        return STR_SUCCESS;
+        return new ActionResult<>(EnumActionResult.SUCCESS, "");
     }
 
     @Nonnull
@@ -189,7 +187,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
         }
         Block block = state.getBlock();
         Item item = Item.getItemFromBlock(block);
-        if (item == Items.AIR || item == null) {
+        if (item == Items.AIR) {
             item = block.getItemDropped(state, new Random(0), 0);
         }
         return new ItemStack(item, 1, block.damageDropped(state));
@@ -210,16 +208,16 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 continue;
             }
 
-            String result = isValidFacadeBlock(block);
+            ActionResult<String> result = isValidFacadeBlock(block);
             // These strings are hardcoded, so we can get away with not needing the .equals check
-            if (result != STR_PASS && result != STR_SUCCESS) {
+            if (result.getType() != EnumActionResult.PASS && result.getType() != EnumActionResult.SUCCESS) {
                 if (DEBUG) {
                     BCLog.logger
                         .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result);
                 }
                 continue;
             } else if (DEBUG) {
-                if (result == STR_SUCCESS) {
+                if (result.getType() == EnumActionResult.SUCCESS) {
                     BCLog.logger.info("[transport.facade] Allowed block " + block.getRegistryName());
                 }
             }
@@ -231,9 +229,9 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 // if (!checkedStates.add(state)) {
                 // continue;
                 // }
-                if (result != STR_SUCCESS) {
+                if (result.getType() != EnumActionResult.SUCCESS) {
                     result = isValidFacadeState(state);
-                    if (result == STR_SUCCESS) {
+                    if (result.getType() == EnumActionResult.SUCCESS) {
                         if (DEBUG) {
                             BCLog.logger.info("[transport.facade] Allowed state " + state);
                         }
@@ -249,8 +247,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 ItemStackKey stackKey = new ItemStackKey(stack);
                 Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
                 if (vars == null) {
-                    vars = new HashMap<>();
-                    vars.putAll(state.getProperties());
+                    vars = new HashMap<>(state.getProperties());
                     varyingProperties.put(stackKey, vars);
                 } else {
                     for (Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
@@ -263,20 +260,15 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 }
             }
             PacketBufferBC testingBuffer = PacketBufferBC.asPacketBufferBc(Unpooled.buffer());
-            varyingProperties.entrySet().forEach(entry -> {
-                Map<IProperty<?>, Comparable<?>> vars = entry.getValue();
+            varyingProperties.forEach((key, vars) -> {
                 if (DEBUG) {
-                    BCLog.logger.info("[transport.facade]   pre-" + entry.getKey() + ":");
-                    vars.keySet().forEach(p -> {
-                        BCLog.logger.info("[transport.facade]       " + p);
-                    });
+                    BCLog.logger.info("[transport.facade]   pre-" + key + ":");
+                    vars.keySet().forEach(p -> BCLog.logger.info("[transport.facade]       " + p));
                 }
                 vars.values().removeIf(Objects::nonNull);
                 if (DEBUG && !vars.isEmpty()) {
-                    BCLog.logger.info("[transport.facade]   " + entry.getKey() + ":");
-                    vars.keySet().forEach(p -> {
-                        BCLog.logger.info("[transport.facade]       " + p);
-                    });
+                    BCLog.logger.info("[transport.facade]   " + key + ":");
+                    vars.keySet().forEach(p -> BCLog.logger.info("[transport.facade]       " + p));
                 }
             });
             for (Entry<IBlockState, ItemStack> entry : usedStates.entrySet()) {
@@ -343,8 +335,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
             }
             return false;
         }
-        boolean allFine = true;
 
+        boolean allFine = true;
         for (V value : property.getAllowedValues()) {
             String name = property.getName(value);
             Optional<V> optional = property.parseValue(name);
