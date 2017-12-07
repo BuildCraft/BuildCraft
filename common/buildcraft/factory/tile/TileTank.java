@@ -249,6 +249,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         if (gas) {
             Collections.reverse(tanks);
         }
+        resource = resource.copy();
         for (TileTank t : tanks) {
             int tankFilled = t.tank.fill(resource, doFill);
             if (tankFilled > 0) {

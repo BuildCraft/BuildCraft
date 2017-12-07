@@ -30,8 +30,8 @@ import buildcraft.lib.misc.SpriteUtil;
 
 /** A type of {@link AtlasSpriteSwappable} that will switch between multiple different */
 public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReloadable {
-    public static final IVariantType VARIANT_COLOUR_BLIND = loc ->
-            ImmutableList.of(loc, new ResourceLocation(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
+    public static final IVariantType VARIANT_COLOUR_BLIND =
+        loc -> ImmutableList.of(loc, new ResourceLocation(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
     public static final IntSupplier INDEX_COLOUR_BLIND = () -> BCLibConfig.colourBlindMode ? 1 : 0;
 
     private final List<ResourceLocation> variantNames;
@@ -61,17 +61,25 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
         return builder.build();
     }
 
-    public static AtlasSpriteVariants createForConfig(ResourceLocation baseName) {
-        AtlasSpriteVariants sprite = new AtlasSpriteVariants(baseName, VARIANT_COLOUR_BLIND, INDEX_COLOUR_BLIND);
-        ReloadSource to = new ReloadSource(SpriteUtil.transformLocation(baseName), SourceType.SPRITE);
-        ReloadManager.INSTANCE.addDependency(ReloadManager.CONFIG_COLOUR_BLIND, sprite, to);
-        ReloadManager.INSTANCE.addDependency(new ReloadSource(sprite.variantNames.get(0), SourceType.FILE), sprite, to);
-        ReloadManager.INSTANCE.addDependency(new ReloadSource(sprite.variantNames.get(1), SourceType.FILE), sprite, to);
-        return sprite;
+    public static TextureAtlasSprite createForConfig(ResourceLocation baseName) {
+        if (BCLibConfig.useSwappableSprites) {
+            AtlasSpriteVariants sprite = new AtlasSpriteVariants(baseName, VARIANT_COLOUR_BLIND, INDEX_COLOUR_BLIND);
+            ReloadSource to = new ReloadSource(SpriteUtil.transformLocation(baseName), SourceType.SPRITE);
+            ReloadManager manager = ReloadManager.INSTANCE;
+            manager.addDependency(ReloadManager.CONFIG_COLOUR_BLIND, sprite, to);
+            manager.addDependency(new ReloadSource(sprite.variantNames.get(0), SourceType.FILE), sprite, to);
+            manager.addDependency(new ReloadSource(sprite.variantNames.get(1), SourceType.FILE), sprite, to);
+            return sprite;
+        } else {
+            int index = INDEX_COLOUR_BLIND.getAsInt();
+            ResourceLocation location = VARIANT_COLOUR_BLIND.getAllPossibleVariants(baseName).get(index);
+            return new AtlasSpriteDirect(location.toString());
+        }
     }
 
     @Override
-    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
+    public boolean load(IResourceManager manager, ResourceLocation location,
+        Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
         for (int i = 0; i < variantNames.size(); i++) {
             ResourceLocation loc = variantNames.get(i);
             variants[i] = loadSprite(manager, getIconName(), loc, i == 0);
@@ -92,7 +100,8 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
                         if (s.getIconWidth() == width && s.getIconHeight() == height) {
                             variants[i] = s;
                         } else {
-                            BCLog.logger.warn("Unable to reload " + loc + " as the new sprite was a different width and height!");
+                            BCLog.logger.warn(
+                                "Unable to reload " + loc + " as the new sprite was a different width and height!");
                         }
                     }
                 }

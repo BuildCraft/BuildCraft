@@ -23,12 +23,11 @@ public class PageEntry {
     private final boolean containsMeta, containsNbt;
 
     public PageEntry(JsonEntry entry) {
-        this.title = entry.title;
         this.page = entry.page;
         this.typeTags = entry.typeTags;
         // parse item stack
         if (StringUtils.isNullOrEmpty(entry.itemStack)) {
-            stack = null;
+            stack = ItemStack.EMPTY;
             containsMeta = false;
             containsNbt = false;
         } else if (entry.itemStack.startsWith("(") && entry.itemStack.endsWith(")")) {
@@ -38,7 +37,7 @@ public class PageEntry {
                 stack = new ItemStack(item);
             } else {
                 BCLog.logger.warn("[lib.markdown] " + inner + " was not a valid item!");
-                stack = null;
+                stack = ItemStack.EMPTY;
             }
             containsMeta = false;
             containsNbt = false;
@@ -50,9 +49,18 @@ public class PageEntry {
             containsNbt = split.length >= 4;
         } else {
             // print warning
-            stack = null;
+            stack = ItemStack.EMPTY;
             containsMeta = false;
             containsNbt = false;
+        }
+        if (entry.title == null || entry.title.length() == 0) {
+            if (stack.isEmpty()) {
+                this.title = "Unknown!";
+            } else {
+                this.title = stack.getDisplayName();
+            }
+        } else {
+            this.title = entry.title;
         }
     }
 
@@ -78,7 +86,7 @@ public class PageEntry {
     }
 
     public ItemStack getItemStack() {
-        return stack == null ? null : stack.copy();
+        return stack == null ? ItemStack.EMPTY : stack.copy();
     }
 
     @Override

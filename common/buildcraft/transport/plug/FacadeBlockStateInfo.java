@@ -41,6 +41,11 @@ public class FacadeBlockStateInfo implements IFacadeState {
         return new FacadePhasedState(this, isHollow, activeColour);
     }
 
+    @Override
+    public String toString() {
+        return "StateInfo [id=" + System.identityHashCode(this) + " " + state.toString() + "]";
+    }
+
     // IFacadeState
 
     @Override

@@ -57,6 +57,7 @@ public class BCCoreConfig {
     private static Property propUseBucketsFlow;
     private static Property propUseLongLocalizedName;
     private static Property propDisplayTimeGap;
+    private static Property propUseSwappableSprites;
     private static Property propItemLifespan;
     private static Property propPumpsConsumeWater;
     private static Property propMarkerMaxDistance;
@@ -131,13 +132,21 @@ public class BCCoreConfig {
         none.setTo(propUseLongLocalizedName);
 
         propDisplayTimeGap = config.get(display, "timeGap", TimeGap.TICKS.name().toLowerCase(Locale.ROOT));
-        propDisplayTimeGap.setComment("Should localised strings be displayed in terms of seconds (1 MJ/s) or ticks (20 MJ/t)");
+        propDisplayTimeGap
+            .setComment("Should localised strings be displayed in terms of seconds (1 MJ/s) or ticks (20 MJ/t)");
         ConfigUtil.setEnumProperty(propDisplayTimeGap, TimeGap.values());
         none.setTo(propDisplayTimeGap);
 
+        propUseSwappableSprites = config.get(display, "useSwappableSprites", true);
+        propUseSwappableSprites.setComment(
+            "Disable this if you get texture errors with optifine. Disables some texture switching functionality "
+                + "when changing config options such as colour blind mode.");
+        game.setTo(propUseSwappableSprites);
+
         propItemLifespan = config.get(general, "itemLifespan", 60);
         propItemLifespan.setMinValue(5).setMaxValue(600);
-        propItemLifespan.setComment("How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)");
+        propItemLifespan
+            .setComment("How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)");
         none.setTo(propItemLifespan);
 
         propPumpsConsumeWater = config.get(general, "pumpsConsumeWater", false);
@@ -209,6 +218,7 @@ public class BCCoreConfig {
         if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
             worldGen = propWorldGen.getBoolean();
             worldGenWaterSpring = propWorldGenWaterSpring.getBoolean();
+            BCLibConfig.useSwappableSprites = propUseSwappableSprites.getBoolean();
         }
         BCLibConfig.refreshConfigs();
         if (config.hasChanged()) {

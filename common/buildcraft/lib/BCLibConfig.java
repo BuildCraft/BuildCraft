@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +19,8 @@ import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.chunkload.IChunkLoadingTile.LoadType;
+import buildcraft.lib.client.sprite.AtlasSpriteSwappable;
+import buildcraft.lib.client.sprite.AtlasSpriteVariants;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -54,6 +57,12 @@ public class BCLibConfig {
     /** If true then fluidstacks and Mj will be localized with longer names (for example "1.2 Buckets per second" rather
      * than "60mB/t") */
     public static boolean useLongLocalizedName = false;
+
+    /** If true then {@link AtlasSpriteVariants#createForConfig(net.minecraft.util.ResourceLocation)} will retun
+     * {@link AtlasSpriteSwappable}, allowing for instant reloads when switching between colourblind modes and other
+     * changable things. If false it will return a normal {@link TextureAtlasSprite}. Disabling this might help if you
+     * get sprite issues with mods like optifine. */
+    public static boolean useSwappableSprites = true;
 
     public static TimeGap displayTimeGap = TimeGap.SECONDS;
 

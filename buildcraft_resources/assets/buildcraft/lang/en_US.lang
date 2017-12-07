@@ -495,10 +495,10 @@ item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
-item.guide.name=Guide Book
-item.guide_note.name=Guide Note
-item.robot_goggles.name=Robot Goggles
-item.fillerPlannerItem.name=Filling Planner
+item.buildcraft.guide.name=BuildCraft Guide Book
+item.buildcraft.guide_note.name=BuildCraft Guide Note
+item.buildcraft.robot_goggles.name=Robot Goggles
+item.buildcraft.filler_planner.name=Filler Planner
 
 itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft
