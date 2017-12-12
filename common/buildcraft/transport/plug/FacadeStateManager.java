@@ -7,6 +7,7 @@
 package buildcraft.transport.plug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,6 +76,15 @@ public enum FacadeStateManager implements IFacadeRegistry {
     private static final Map<Block, String> disabledBlocks = new HashMap<>();
     private static final Map<IBlockState, ItemStack> customBlocks = new HashMap<>();
 
+    /** An array containing all mods that fail the {@link #doesPropertyConform(IProperty)} check, and any others.
+     * <p>
+     * Note: Mods should ONLY be added to this list AFTER it has been reported to them, and taken off the list once a
+     * version has been released with the fix. */
+    private static final List<String> KNOWN_INVALID_REPORTED_MODS = Arrays.asList(new String[] { //
+        "integrateddynamics", //
+        "codechickenlib",//
+    });
+
     static {
         validFacadeStates = new TreeMap<>(BlockUtil.blockStateComparator());
         stackFacades = new HashMap<>();
@@ -139,8 +149,10 @@ public enum FacadeStateManager implements IFacadeRegistry {
     /** @return One of:
      *         <ul>
      *         <li>{@link EnumActionResult#SUCCESS} if every state of the block is valid for a facade.
-     *         <li>{@link EnumActionResult#PASS} if every metadata needs to be checked by {@link #isValidFacadeState(IBlockState)}</li>
-     *         <li>{@link EnumActionResult#FAIL} with string describing the problem with this block (if it is not valid for a facade)</li>
+     *         <li>{@link EnumActionResult#PASS} if every metadata needs to be checked by
+     *         {@link #isValidFacadeState(IBlockState)}</li>
+     *         <li>{@link EnumActionResult#FAIL} with string describing the problem with this block (if it is not valid
+     *         for a facade)</li>
      *         </ul>
      */
     private static ActionResult<String> isValidFacadeBlock(Block block) {
@@ -163,7 +175,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
     /** @return Any of:
      *         <ul>
      *         <li>{@link EnumActionResult#SUCCESS} if this state is valid for a facade.
-     *         <li>{@link EnumActionResult#FAIL} with string describing the problem with this state (if it is not valid for a facade)</li>
+     *         <li>{@link EnumActionResult#FAIL} with string describing the problem with this state (if it is not valid
+     *         for a facade)</li>
      *         </ul>
      */
     private static ActionResult<String> isValidFacadeState(IBlockState state) {
@@ -196,6 +209,13 @@ public enum FacadeStateManager implements IFacadeRegistry {
     public static void init() {
         defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
+            if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getResourceDomain())) {
+                if (BCLib.VERSION.startsWith("7.99")) {
+                    BCLog.logger.warn(
+                        "[transport.facade] Skipping " + block + " as it has been added to the list of broken mods!");
+                    continue;
+                }
+            }
 
             // Check to make sure that all the properties work properly
             // Fixes a bug in extra utilities who doesn't serialise and deserialise properties properly
