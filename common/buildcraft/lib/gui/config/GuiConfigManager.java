@@ -1,10 +1,11 @@
 package buildcraft.lib.gui.config;
 
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -13,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -63,6 +65,7 @@ public class GuiConfigManager {
                         String str = gson.toJson(json);
                         bw.write(str);
                         bw.flush();
+                        bw.close();
                     }
                 } catch (IOException io) {
                     BCLog.logger.warn("[lib.gui.cfg] Failed to write the config file! " + io.getMessage());
@@ -76,10 +79,33 @@ public class GuiConfigManager {
     public static void loadFromConfigFile() {
         if (BCLibConfig.guiConfigFile != null) {
             Gson gson = new Gson();
-            try (FileReader fr = new FileReader(BCLibConfig.guiConfigFile)) {
-                readFromJson(gson.fromJson(fr, JsonObject.class));
+            List<String> lines;
+            try {
+                lines = Files.readAllLines(BCLibConfig.guiConfigFile.toPath());
             } catch (IOException io) {
                 BCLog.logger.warn("[lib.gui.cfg] Failed to read the config file! " + io.getMessage());
+                return;
+            }
+            StringBuilder allLines = new StringBuilder();
+            for (String line : lines) {
+                allLines.append(line);
+                allLines.append('\n');
+            }
+            try {
+                readFromJson(gson.fromJson(allLines.toString(), JsonObject.class));
+                return;
+            } catch (JsonSyntaxException jse) {
+                BCLog.logger.warn("[lib.gui.cfg] There's a problem with the config file: try fixing it manually, "
+                    + "or deleting it to let buildcraft overwrite it on save." + jse.getMessage());
+            } catch (ClassCastException cce) {
+                // This happens occasionally, and its a bit wierd
+                BCLog.logger.warn("[lib.gui.cfg] There's a major problem with the config file: try fixing it manually, "
+                    + "or deleting it to let buildcraft overwrite it on save." + cce.getMessage());
+
+            }
+            BCLog.logger.info("File contents:");
+            for (String line : lines) {
+                BCLog.logger.info(line.replace("\0", "\\0"));
             }
         }
     }
