@@ -81,8 +81,6 @@ public enum FacadeStateManager implements IFacadeRegistry {
      * Note: Mods should ONLY be added to this list AFTER it has been reported to them, and taken off the list once a
      * version has been released with the fix. */
     private static final List<String> KNOWN_INVALID_REPORTED_MODS = Arrays.asList(new String[] { //
-        "integrateddynamics", //
-        "codechickenlib",//
     });
 
     static {
