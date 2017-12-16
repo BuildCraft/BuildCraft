@@ -15,6 +15,8 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
@@ -37,18 +39,23 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private static final float ki = 0.05f;
     private static final long eLimit = (MAX_OUTPUT - MIN_OUTPUT) * 20;
 
+    public final DeltaInt deltaFuelLeft = deltaManager.addDelta("fuel_left", EnumNetworkVisibility.GUI_ONLY);
+    public final ItemHandlerSimple invFuel;
+
     int burnTime = 0;
     int totalBurnTime = 0;
     long esum = 0;
 
-    public final DeltaInt deltaFuelLeft = deltaManager.addDelta("fuel_left", EnumNetworkVisibility.GUI_ONLY);
-    public final ItemHandlerSimple invFuel = itemManager.addInvHandler(
-        "fuel",
-        1,
-        (slot, stack) -> TileEntityFurnace.getItemBurnTime(stack) > 0,
-        EnumAccess.BOTH,
-        EnumPipePart.VALUES
-    );
+    private boolean isForceInserting = false;
+
+    public TileEngineStone_BC8() {
+        invFuel = itemManager.addInvHandler("fuel", 1, this::isValidFuel, EnumAccess.BOTH, EnumPipePart.VALUES);
+    }
+
+    private boolean isValidFuel(int slot, ItemStack stack) {
+        // Always allow inserting container items if they aren't fuel
+        return isForceInserting || getItemBurnTime(stack) > 0;
+    }
 
     // TileEntity overrides
 
@@ -69,10 +76,21 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         return nbt;
     }
 
+    @Override
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
+        @Nonnull ItemStack after) {
+        if (handler == invFuel) {
+            if (isForceInserting && after.isEmpty()) {
+                isForceInserting = false;
+            }
+        }
+    }
+
     // Engine overrides
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
+        float hitZ) {
         if (!world.isRemote) {
             BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
         }
@@ -110,8 +128,17 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
                 ItemStack fuel = invFuel.extractItem(0, 1, false);
                 ItemStack container = fuel.getItem().getContainerItem(fuel);
                 if (!container.isEmpty()) {
-                    ItemStack leftover = invFuel.insert(container, false, false);
-                    InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, leftover);
+                    if (invFuel.getStackInSlot(0).isEmpty()) {
+                        isForceInserting = false;
+                        ItemStack leftover = invFuel.insert(container, false, false);
+                        if (!leftover.isEmpty()) {
+                            isForceInserting = true;
+                            invFuel.setStackInSlot(0, leftover);
+                        }
+                    } else {
+                        // Not good!
+                        InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, container);
+                    }
                 }
             }
         }
