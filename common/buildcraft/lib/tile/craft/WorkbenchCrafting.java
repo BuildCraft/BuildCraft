@@ -124,10 +124,9 @@ public class WorkbenchCrafting extends InventoryCrafting {
         if (areMaterialsDirty) {
             areMaterialsDirty = false;
             switch (recipeType) {
-                case INGREDIENTS: {
+                case INGREDIENTS:
                     // cachedHasRequirements = hasIngredients();
                     // break;
-                }
                 case EXACT_STACKS: {
                     cachedHasRequirements = hasExactStacks();
                     break;
@@ -152,9 +151,8 @@ public class WorkbenchCrafting extends InventoryCrafting {
         }
 
         switch (recipeType) {
-            case INGREDIENTS: {
+            case INGREDIENTS:
                 // return craftByIngredients();
-            }
             case EXACT_STACKS: {
                 return craftExact();
             }
