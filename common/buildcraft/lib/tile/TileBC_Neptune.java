@@ -7,6 +7,7 @@
 package buildcraft.lib.tile;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -274,7 +275,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        return caps.getCapability(capability, facing);
+        return Optional.ofNullable(caps.getCapability(capability, facing))
+            .orElseGet(() -> super.getCapability(capability, facing));
     }
 
     // Item caps
