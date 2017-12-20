@@ -23,6 +23,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.BCModules;
 
 import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
+import buildcraft.lib.BCLibConfig.RenderRotation;
 import buildcraft.lib.BCLibConfig.TimeGap;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
@@ -58,6 +60,8 @@ public class BCCoreConfig {
     private static Property propUseLongLocalizedName;
     private static Property propDisplayTimeGap;
     private static Property propUseSwappableSprites;
+    private static Property propChunkLoadLevel;
+    private static Property propItemRenderRotation;
     private static Property propItemLifespan;
     private static Property propPumpsConsumeWater;
     private static Property propMarkerMaxDistance;
@@ -80,6 +84,7 @@ public class BCCoreConfig {
         String worldgen = "worldgen";
 
         EnumRestartRequirement none = EnumRestartRequirement.NONE;
+        EnumRestartRequirement world = EnumRestartRequirement.WORLD;
         EnumRestartRequirement game = EnumRestartRequirement.GAME;
 
         propColourBlindMode = config.get(display, "colorBlindMode", false);
@@ -142,6 +147,19 @@ public class BCCoreConfig {
             "Disable this if you get texture errors with optifine. Disables some texture switching functionality "
                 + "when changing config options such as colour blind mode.");
         game.setTo(propUseSwappableSprites);
+
+        propItemRenderRotation =
+            config.get(display, "itemRenderRotation", RenderRotation.ENABLED.name().toLowerCase(Locale.ROOT));
+        propItemRenderRotation.setComment(
+            "The rotation that items use when travelling through pipes. Set to 'enabled' for full rotation, "
+                + "'disabled' for no rotation, or 'horizontals_only' to only rotate items when going horizontally.");
+        ConfigUtil.setEnumProperty(propItemRenderRotation, RenderRotation.values());
+
+        propChunkLoadLevel =
+            config.get(general, "chunkLoadLevel", ChunkLoaderLevel.SELF_TILES.name().toLowerCase(Locale.ROOT));
+        propChunkLoadLevel.setComment("");
+        ConfigUtil.setEnumProperty(propChunkLoadLevel, ChunkLoaderLevel.values());
+        world.setTo(propChunkLoadLevel);
 
         propItemLifespan = config.get(general, "itemLifespan", 60);
         propItemLifespan.setMinValue(5).setMaxValue(600);
@@ -214,11 +232,18 @@ public class BCCoreConfig {
         BCLibConfig.colourBlindMode = propColourBlindMode.getBoolean();
         BCLibConfig.displayTimeGap =
             ConfigUtil.parseEnumForConfig(propDisplayTimeGap.getString(), TimeGap.values(), TimeGap.TICKS);
+        BCLibConfig.rotateTravelingItems = ConfigUtil.parseEnumForConfig(propItemRenderRotation.getString(),
+            RenderRotation.values(), RenderRotation.ENABLED);
 
-        if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
-            worldGen = propWorldGen.getBoolean();
-            worldGenWaterSpring = propWorldGenWaterSpring.getBoolean();
-            BCLibConfig.useSwappableSprites = propUseSwappableSprites.getBoolean();
+        if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
+            BCLibConfig.chunkLoadingLevel = ConfigUtil.parseEnumForConfig(propChunkLoadLevel.getString(),
+                ChunkLoaderLevel.values(), ChunkLoaderLevel.SELF_TILES);
+
+            if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
+                worldGen = propWorldGen.getBoolean();
+                worldGenWaterSpring = propWorldGenWaterSpring.getBoolean();
+                BCLibConfig.useSwappableSprites = propUseSwappableSprites.getBoolean();
+            }
         }
         BCLibConfig.refreshConfigs();
         if (config.hasChanged()) {
