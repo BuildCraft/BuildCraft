@@ -191,13 +191,21 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
         BlockPos areaPos = pos.offset(facing.getOpposite());
         TileEntity tile = world.getTileEntity(areaPos);
-        BlockPos min, max;
+        BlockPos min = null, max = null;
         if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
             min = provider.min();
             max = provider.max();
-            provider.removeFromWorld();
-        } else {
+            int dx = max.getX() - min.getX();
+            int dz = max.getZ() - min.getZ();
+            if (dx < 3 || dz < 3) {
+                min = null;
+                max = null;
+            } else {
+                provider.removeFromWorld();
+            }
+        }
+        if (min == null || max == null) {
             min = null;
             max = null;
             VolumeSubCache cache = VolumeCache.INSTANCE.getSubCache(getWorld());
@@ -220,6 +228,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     continue;
                 }
                 if (box2.contains(pos)) {
+                    continue;
+                }
+                if (box2.size().getX() < 3 || box2.size().getZ() < 3) {
                     continue;
                 }
                 box2.expand(1);
