@@ -718,7 +718,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             if (neighbour == null) {
                 return null;
             }
-            return neighbour.getCapability(CapUtil.CAP_FLUIDS, facing);
+            return neighbour.getCapability(CapUtil.CAP_FLUIDS, facing.rotateYCCW());
         }
 
         @Override
