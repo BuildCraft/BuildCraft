@@ -140,11 +140,17 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
 
     /** Writes some additional information to the nbt, for example {@link SingleUseTank} will write out the filtering
      * fluid. */
-    protected void writeTankToNBT(NBTTagCompound nbt) {}
+    protected void writeTankToNBT(NBTTagCompound nbt) {
+        nbt.setInteger("Capacity", getCapacity());
+    }
 
     /** Reads some additional information to the nbt, for example {@link SingleUseTank} will read in the filtering
      * fluid. */
-    protected void readTankFromNBT(NBTTagCompound nbt) {}
+    protected void readTankFromNBT(NBTTagCompound nbt) {
+        if (nbt.hasKey("Capacity")) {
+            setCapacity(nbt.getInteger("Capacity"));
+        }
+    }
 
     public ToolTip getToolTip() {
         return toolTip;
