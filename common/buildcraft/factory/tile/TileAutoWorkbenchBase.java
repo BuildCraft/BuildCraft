@@ -29,11 +29,12 @@ import buildcraft.api.tiles.TilesAPI;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.craft.IAutoCraft;
 import buildcraft.lib.tile.craft.WorkbenchCrafting;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IHasWork, IMjRedstoneReceiver {
+public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
 
     /** A redstone engine generates <code> 1 * {@link MjAPI#MJ}</code> per tick. This makes it a lot slower without one
      * powering it. */
@@ -162,5 +163,17 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
             powerStored += taken;
         }
         return microJoules - taken;
+    }
+
+    // IAutoCraft
+
+    @Override
+    public ItemStack getCurrentRecipeOutput() {
+        return crafting.getAssumedResult();
+    }
+
+    @Override
+    public ItemHandlerSimple getInvBlueprint() {
+        return invBlueprint;
     }
 }
