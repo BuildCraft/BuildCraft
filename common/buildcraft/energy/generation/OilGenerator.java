@@ -59,29 +59,6 @@ public enum OilGenerator implements IWorldGenerator {
         int z = chunkZ * 16 + 8;
         BlockPos min = new BlockPos(x, 0, z);
         Box box = new Box(min, min.add(15, world.getHeight(), 15));
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        // TODO: Simple height check here!
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
         for (int cdx = -MAX_CHUNK_RADIUS; cdx <= MAX_CHUNK_RADIUS; cdx++) {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {

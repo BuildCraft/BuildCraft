@@ -82,7 +82,7 @@ public class BCEnergyConfig {
     public static void reloadConfig(EnumRestartRequirement restarted) {
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
 
-            addBiomeNames(propExcludedBiomes, excessiveBiomes);
+            addBiomeNames(propExcludedBiomes, excludedBiomes);
             addBiomeNames(propExcessiveBiomes, excessiveBiomes);
             addBiomeNames(propSurfaceDepositBiomes, surfaceDepositBiomes);
             excludedDimensions.clear();
