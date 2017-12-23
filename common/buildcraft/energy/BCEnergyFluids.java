@@ -45,16 +45,16 @@ public class BCEnergyFluids {
         int[][] data = { //@formatter:off
             // Tabular form of all the fluid values
             // density, viscosity, boil, spread,  tex_light, tex_dark, sticky
-            {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05, 1 },// Crude Oil
-            {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42, 1 },// Residue
-            {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20, 1 },// Heavy Oil
-            {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24, 1 },// Dense Oil
-            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00, 0 },// Distilled Oil
-            {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00, 0 },// Dense Fuel
-            {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00, 0 },// Mixed Heavy Fuels
-            {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00, 0 },// Light Fuel
-            {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00, 0 },// Mixed Light Fuels
-            {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00, 0 },// Gas Fuel
+            {      900,      2000,    3,      6, 0xd48239, 0x300e05, 1 },// Crude Oil -- Raw Chocolate Mix
+            {     1200,      4000,    3,      4, 0xd48239, 0xd87d33, 1 },// Residue -- Caramel Excess
+            {      850,      1800,    3,      6, 0xd48239, 0x5a1d0c, 1 },// Heavy Oil
+            {      950,      1600,    3,      5, 0xd48239, 0x300e05, 1 },// Dense Oil
+            {      750,      1400,    2,      8, 0xc0_75_34, 0x5a1d0c, 0 },// Distilled Oil -- Mixed Chocolates
+            {      600,       800,    2,      7, 0x4f332f, 0x300e05, 0 },// Dense Fuel -- Dark Chocolate
+            {      700,      1000,    2,      7, 0x88442d, 0x5a1d0c, 0 },// Mixed Heavy Fuels
+            {      400,       600,    1,      8, 0x9b6139, 0x945931, 0 },// Light Fuel -- Milk Chocolate -- COLOURED
+            {      650,       900,    1,      9, 0xc0_75_34, 0xb3_68_2c, 0 },// Mixed Light Fuels
+            {      300,       500,    0,     10, 0xd6c990, 0xcfbf8e, 0 },// Gas Fuel -- White Chocolate
         };//@formatter:on
         if (BCModules.FACTORY.isLoaded()) {
             int index = 0;
@@ -103,7 +103,7 @@ public class BCEnergyFluids {
 
         String fullName = name + (heat == 0 ? "" : "_heat_" + heat);
         int tempAdjustedViscosity = baseViscosity * (4 - heat) / 4;
-        int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
+        int boilAdjustedDensity = density;// * (heat >= boilPoint ? -1 : 1);
 
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
         BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"),
@@ -116,7 +116,7 @@ public class BCEnergyFluids {
         def.setTemperature(300 + 20 * heat);
         def.setViscosity(tempAdjustedViscosity);
         def.setDensity(boilAdjustedDensity);
-        def.setGaseous(def.getDensity() < 0);
+//        def.setGaseous(def.getDensity() < 0);
         def.setColour(texLight, texDark);
         def.setHeatable(true);
         FluidManager.register(def);
