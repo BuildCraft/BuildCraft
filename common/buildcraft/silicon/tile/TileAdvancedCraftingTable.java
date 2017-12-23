@@ -21,11 +21,12 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.craft.IAutoCraft;
 import buildcraft.lib.tile.craft.WorkbenchCrafting;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public class TileAdvancedCraftingTable extends TileLaserTableBase {
+public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAutoCraft {
     private static final long POWER_REQ = 500 * MjAPI.MJ;
 
     public final ItemHandlerSimple invBlueprint;
@@ -98,5 +99,17 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase {
 
     public InventoryCrafting getWorkbenchCrafting() {
         return crafting;
+    }
+
+    // IAutoCraft
+
+    @Override
+    public ItemStack getCurrentRecipeOutput() {
+        return crafting.getAssumedResult();
+    }
+
+    @Override
+    public ItemHandlerSimple getInvBlueprint() {
+        return invBlueprint;
     }
 }
