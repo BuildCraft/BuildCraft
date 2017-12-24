@@ -227,10 +227,8 @@ task apiJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = libsDir
     appendix = "api"
 
-    doFirst {
-        from(project.ext.jarFile) {
-            includes.addAll(["buildcraft/api/**"])
-        }
+    from(project.ext.jarFile) {
+        includes.addAll(["buildcraft/api/**"])
     }
 }
 
@@ -239,20 +237,16 @@ task apiSrcJar(type: Jar, dependsOn: build) {
     appendix = "api"
     classifier = 'sources'
 
-    doFirst {
-        from sourceSets.api.allSource
-    }
+    from sourceSets.api.allSource
 }
 
 task libJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = 'lib'
 
-    doFirst {
-        from(createMCModInfo(0, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
-        }
+    from(createMCModInfo(0, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
     }
 }
 
@@ -261,11 +255,9 @@ task libSrcJar(type: Jar, dependsOn: build) {
     appendix = "lib"
     classifier = "sources"
 
-    doFirst {
-        from sourceSets.api.allSource
-        from (sourceSets.main.allSource) {
-            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "LICENSE**"])
-        }
+    from sourceSets.api.allSource
+    from (sourceSets.main.allSource) {
+        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "LICENSE**"])
     }
 }
 
@@ -273,11 +265,9 @@ task coreJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "core"
 
-    doFirst {
-        from(createMCModInfo(1, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "assets/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
-        }
+    from(createMCModInfo(1, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "assets/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
     }
 }
 
@@ -286,11 +276,9 @@ task buildersJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "builders"
 
-    doFirst {
-        from(createMCModInfo(2, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "LICENSE"])
-        }
+    from(createMCModInfo(2, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "LICENSE"])
     }
 }
 
@@ -299,11 +287,9 @@ task energyJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "energy"
 
-    doFirst {
-        from(createMCModInfo(3, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "LICENSE"])
-        }
+    from(createMCModInfo(3, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "LICENSE"])
     }
 }
 
@@ -312,11 +298,9 @@ task factoryJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "factory"
 
-    doFirst {
-        from(createMCModInfo(4, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "LICENSE"])
-        }
+    from(createMCModInfo(4, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "LICENSE"])
     }
 }
 
@@ -325,11 +309,9 @@ task siliconJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "silicon"
 
-    doFirst {
-        from(createMCModInfo(5, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "LICENSE"])
-        }
+    from(createMCModInfo(5, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "LICENSE"])
     }
 }
 
@@ -338,11 +320,9 @@ task transportJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "transport"
 
-    doFirst {
-        from(createMCModInfo(6, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "LICENSE"])
-        }
+    from(createMCModInfo(6, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "LICENSE"])
     }
 }
 
@@ -351,21 +331,17 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "robotics"
 
-    doFirst {
-        from(createMCModInfo(7, name).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "LICENSE"])
-        }
+    from(createMCModInfo(7, name).parentFile)
+    from(project.ext.jarFile) {
+        includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "LICENSE"])
     }
 }
 
 task allJar(type: Jar, dependsOn:reobfJar) {
     destinationDir = libsDir
 
-    doFirst {
-        from(project.ext.jarFile) {
-            includes.addAll("**")
-        }
+    from(project.ext.jarFile) {
+        includes.addAll("**")
     }
 }
 
@@ -373,10 +349,8 @@ task allSrcJar(type: Jar, dependsOn:reobfJar) {
     destinationDir = libsDir
     classifier = "sources"
 
-    doFirst {
-        from sourceSets.api.allSource
-        from sourceSets.main.allSource
-    }
+    from sourceSets.api.allSource
+    from sourceSets.main.allSource
 }
 
 sourceJar.destinationDir = libsDir
