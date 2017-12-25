@@ -1,4 +1,5 @@
 
 Bugs fixed:
 
+* [#3891] The quarry sometimes goes into an infinite loop when calculating frame positions.
 * [#3937] Disabling the facade item crashes the game.

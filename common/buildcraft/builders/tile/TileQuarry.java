@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,7 +19,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,7 +73,6 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
@@ -152,30 +151,109 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         return new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
     }
 
-    private List<BlockPos> getFramePoses(IBlockState state) {
-        List<BlockPos> framePositions = PositionUtil.getAllOnEdge(frameBox.min(), frameBox.max());
+    /** Gets the current positions where frame blocks should be placed, in order.
+     * <p>
+     * Assumes that {@link #frameBox} is correct for the current position. Does not take into account the current facing
+     * of the quarry, as that is assumed to be involved in the {@link #frameBox} itself.
+     * 
+     * @return An ordered list of the positions that the frame should be placed in. The list is in placement order.
+     * @throws IllegalStateException if something went wrong during iteration, or the current {@link #frameBox} was
+     *             incorrect compared to {@link #getPos()} */
+    private List<BlockPos> getFramePositions() {
 
-        framePositions = new ArrayList<>(new HashSet<>(framePositions));
+        // visitedSet and framePositions are considered the same
+        // - both should contain the same elements
+        // - neither should contain duplicate elements
+        // - vistedSet is used as an optimisation, as set.contains is likely to be faster than list.contains
+        Set<BlockPos> visitedSet = new HashSet<>();
+        List<BlockPos> framePositions = new ArrayList<>();
 
-        framePositions.sort(Comparator.comparing(blockPos -> Math.pow(blockPos.getX() - pos.getX(), 2)
-            + Math.pow(blockPos.getY() - pos.getY(), 2) + Math.pow(blockPos.getZ() - pos.getZ(), 2)));
+        List<BlockPos> openSet = new ArrayList<>();
+        List<BlockPos> nextOpenSet = new ArrayList<>();
 
-        List<BlockPos> framePositionsSorted = new ArrayList<>();
-        EnumFacing facing = state.getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite();
-        framePositionsSorted.add(pos.offset(facing));
-        while (framePositions.size() != framePositionsSorted.size()) {
-            for (BlockPos blockPos : framePositions) {
-                if (!framePositionsSorted.contains(blockPos)) {
-                    if (framePositionsSorted.stream()
-                        .flatMap(blockPosLocal -> Arrays.stream(EnumFacing.VALUES).map(blockPosLocal::offset))
-                        .anyMatch(Predicate.isEqual(blockPos))) {
-                        framePositionsSorted.add(blockPos);
-                        break;
+        // Assume that frameBox is right next to the quarries position
+        // If it's not then its not that big of a problem, as the iteration will
+        // not add any of the frame positions. However we will end up with a list
+        // containing no elements, which isn't ideal.
+        openSet.add(getPos());
+
+        // Hold on to the array of orders, as we shuffle it on each iteration
+        EnumFacing[] order = EnumFacing.values();
+        // Also hold on to it as a list, so that we don't have to re-create it all the time
+        List<EnumFacing> orderAsList = Arrays.asList(order);
+
+        // This is technically higher than the number of iterations needed as
+        // most of the iterations will add more than one edge block.
+        int maxIterationCount = frameBox.getBlocksOnEdgeCount();
+        int iterationCount = 0;
+        do {
+            for (BlockPos p : openSet) {
+                Collections.shuffle(orderAsList);
+                for (EnumFacing face : order) {
+                    BlockPos next = p.offset(face);
+                    // Each iteration we add the *next* positions, rather than the current position
+                    // Then we can just add the quarries position once (which isn't part of the frame)
+                    if (frameBox.isOnEdge(next) && visitedSet.add(next)) {
+                        nextOpenSet.add(next);
+                        framePositions.add(next);
                     }
                 }
             }
+            // Clear openSet and swap it with nextOpenSet
+            // Chances are that the arrays will only ever get bigger
+            // So its useful to avoid lots of allocation every iteration.
+            openSet.clear();
+            List<BlockPos> t = openSet;
+            openSet = nextOpenSet;
+            nextOpenSet = t;
+
+            // Shuffle the open set each time, to avoid the
+            // (odd) order that it frames are normally built in.
+            Collections.shuffle(openSet);
+
+            // Sanity Check: Ensure that openSet isn't huge
+            // the (theoretical) maximum size would be if all
+            // 8 corners were visited in the same iteration,
+            // and somehow were the first 8 added.
+            if (openSet.size() > 8 * 3) {
+                String msg = "OpenSet got too big!";
+                msg += "\n  Position = " + pos;
+                msg += "\n  Frame Box = " + frameBox;
+                msg += "\n  Iteration Count = " + iterationCount;
+                msg += "\n  OpenSet = [";
+                for (BlockPos p : openSet) {
+                    msg += "\n  " + p;
+                }
+                msg += "]";
+                throw new IllegalStateException(msg);
+            }
+
+            // Ensure that we aren't going infinitely
+            iterationCount++;
+            if (iterationCount >= maxIterationCount) {
+                // We definitely failed. As maxIterationCount is an over-estimate
+                String msg = "Failed to generate a correct list of frame positions! Was the frame box wrong?";
+                msg += "\n  Position = " + pos;
+                msg += "\n  Frame Box = " + frameBox;
+                msg += "\n  Iteration Count = " + iterationCount;
+                msg += "\n  OpenSet = [";
+                for (BlockPos p : openSet) {
+                    msg += "\n  " + p;
+                }
+                msg += "]";
+                throw new IllegalStateException(msg);
+            }
+        } while (!openSet.isEmpty());
+
+        if (framePositions.isEmpty()) {
+            // We failed. Perhaps frameBox wasn't actually right next to the position of the quarry?
+            String msg = "Failed to generate a correct list of frame positions! Was the frame box wrong?";
+            msg += "\n  Position = " + pos;
+            msg += "\n  Frame Box = " + frameBox;
+            throw new IllegalStateException(msg);
         }
-        return framePositionsSorted;
+
+        return framePositions;
     }
 
     private boolean shouldBeFrame(BlockPos p) {
@@ -394,7 +472,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             List<BlockPos> blocksInArea = frameBox.getBlocksInArea();
             frameBoxPosesCount = blocksInArea.size();
             toCheck.addAll(blocksInArea);
-            framePoses.addAll(getFramePoses(state));
+            framePoses.addAll(getFramePositions());
             ChunkLoaderManager.loadChunksForTile(this);
         }
     }
