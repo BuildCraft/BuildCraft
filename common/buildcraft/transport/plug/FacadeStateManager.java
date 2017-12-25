@@ -335,7 +335,9 @@ public enum FacadeStateManager implements IFacadeRegistry {
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
-        FacadeSwapRecipe.genRecipes();
+        if (FacadeAPI.facadeItem != null) {
+            FacadeSwapRecipe.genRecipes();
+        }
     }
 
     private static <V extends Comparable<V>> boolean doesPropertyConform(IProperty<V> property) {
