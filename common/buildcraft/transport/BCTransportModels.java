@@ -29,8 +29,11 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 
+import buildcraft.transport.client.FacadeItemColours;
+import buildcraft.transport.client.PipeBlockColours;
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
@@ -150,6 +153,11 @@ public class BCTransportModels {
         PipeApiClient.registry.registerRenderer(PipeFlowPower.class, PipeFlowRendererPower.INSTANCE);
 
         PipeApiClient.registry.registerRenderer(PipeBehaviourStripes.class, PipeBehaviourRendererStripes.INSTANCE);
+    }
+
+    public static void fmlPostInit() {
+        RenderUtil.registerBlockColour(BCTransportBlocks.pipeHolder, PipeBlockColours.INSTANCE);
+        RenderUtil.registerItemColour(BCTransportItems.plugFacade, FacadeItemColours.INSTANCE);
     }
 
     @SubscribeEvent
