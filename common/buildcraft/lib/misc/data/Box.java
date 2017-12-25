@@ -283,6 +283,14 @@ public class Box implements IBox {
         return null;
     }
 
+    /** Calculates the total number of blocks on the edge. This is identical to (but faster than) calling
+     * {@link #getBlocksOnEdge()}.{@link List#size() size()}
+     * 
+     * @return The size of the list returned by {@link #getBlocksOnEdge()}. */
+    public int getBlocksOnEdgeCount() {
+        return PositionUtil.getCountOnEdge(min(), max());
+    }
+
     public void readData(PacketBuffer stream) {
         if (stream.readBoolean()) {
             min = MessageUtil.readBlockPos(stream);

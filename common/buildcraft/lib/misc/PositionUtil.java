@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -74,14 +75,32 @@ public class PositionUtil {
             return 0;
         }
         int same = 0;
-        if (min.getX() == pos.getX() || max.getX() == pos.getX()) {
+
+        int x = pos.getX();
+        int minX = min.getX();
+        int maxX = max.getX();
+        if (minX == x || maxX == x) {
             same++;
+        } else if (minX > x || maxX < x) {
+            return 0;
         }
-        if (min.getY() == pos.getY() || max.getY() == pos.getY()) {
+
+        int y = pos.getY();
+        int minY = min.getY();
+        int maxY = max.getY();
+        if (minY == y || maxY == y) {
             same++;
+        } else if (minY > y || maxY < y) {
+            return 0;
         }
-        if (min.getZ() == pos.getZ() || max.getZ() == pos.getZ()) {
+
+        int z = pos.getZ();
+        int minZ = min.getZ();
+        int maxZ = max.getZ();
+        if (minZ == z || maxZ == z) {
             same++;
+        } else if (minZ > z || maxZ < z) {
+            return 0;
         }
         return same;
     }
@@ -288,7 +307,8 @@ public class PositionUtil {
                 if (addZ) {
                     list.add(new BlockPos(x, max.getY(), max.getZ()));
                 }
-            } else if (addZ) {
+            }
+            if (addZ) {
                 list.add(new BlockPos(x, min.getY(), max.getZ()));
             }
         }
@@ -300,7 +320,8 @@ public class PositionUtil {
                     if (addZ) {
                         list.add(new BlockPos(max.getX(), y, max.getZ()));
                     }
-                } else if (addZ) {
+                }
+                if (addZ) {
                     list.add(new BlockPos(min.getX(), y, max.getZ()));
                 }
             }
@@ -313,7 +334,8 @@ public class PositionUtil {
                     if (addY) {
                         list.add(new BlockPos(max.getX(), max.getY(), z));
                     }
-                } else {
+                }
+                if (addY) {
                     list.add(new BlockPos(min.getX(), max.getY(), z));
                 }
             }
@@ -342,6 +364,58 @@ public class PositionUtil {
             list.add(new BlockPos(min.getX(), max.getY(), z));
         }
         return list.build();
+    }
+
+    /** Calculates the total number of blocks on the edge. This is identical to (but faster than) calling
+     * {@link #getAllOnEdge(BlockPos, BlockPos)}.{@link List#size() size()}
+     * 
+     * @return The size of the list returned by {@link #getAllOnEdge(BlockPos, BlockPos)}. */
+    public static int getCountOnEdge(BlockPos min, BlockPos max) {
+
+        int dx = Math.abs(max.getX() - min.getX());
+        int dy = Math.abs(max.getY() - min.getY());
+        int dz = Math.abs(max.getZ() - min.getZ());
+
+        boolean addX = dx > 0;
+        boolean addY = dy > 0;
+        boolean addZ = dz > 0;
+
+        int count = dx + 1;
+        if (dy > 0) {
+            count += dx + 1;
+            if (addZ) {
+                count += dx + 1;
+            }
+        }
+        if (addZ) {
+            count += dx + 1;
+        }
+
+        if (addY) {
+            count += dy - 1;
+            if (addX) {
+                count += dy - 1;
+                if (addZ) {
+                    count += dy - 1;
+                }
+            }
+            if (addZ) {
+                count += dy - 1;
+            }
+        }
+        if (addZ) {
+            count += dz - 1;
+            if (addX) {
+                count += dz - 1;
+                if (addY) {
+                    count += dz - 1;
+                }
+            }
+            if (addY) {
+                count += dz - 1;
+            }
+        }
+        return count;
     }
 
     /** Returns a list of all the block positions between from and to (mostly).
