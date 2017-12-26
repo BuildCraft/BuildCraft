@@ -68,19 +68,21 @@ public abstract class BCSiliconProxy implements IGuiHandler {
         return null;
     }
 
-    public void fmlPreInit() {}
+    public void fmlPreInit() {
+    }
 
     public void fmlInit() {
-
     }
 
-    public void fmlPostInit() {}
+    public void fmlPostInit() {
+    }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCSiliconProxy {
-
     }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCSiliconProxy {
         @Override

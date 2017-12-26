@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApiClient;
@@ -24,7 +25,6 @@ import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.client.render.PipeWireRenderer;
@@ -129,24 +129,23 @@ public abstract class BCTransportProxy implements IGuiHandler {
         return null;
     }
 
-    public void fmlPreInit() {}
-
-    public void fmlInit() {}
-
-    public void fmlPostInit() {}
-
-    @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BCTransportProxy {
-
-        @Override
-        public void fmlPreInit() {
-            super.fmlPreInit();
-
-            MessageManager.addTypeSent(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class, Side.CLIENT);
-            MessageManager.addTypeSent(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class, Side.CLIENT);
-        }
+    public void fmlPreInit() {
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystems.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystemsPowered.class, Side.CLIENT);
     }
 
+    public void fmlInit() {
+    }
+
+    public void fmlPostInit() {
+    }
+
+    @SuppressWarnings("unused")
+    @SideOnly(Side.SERVER)
+    public static class ServerProxy extends BCTransportProxy {
+    }
+
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCTransportProxy {
         @Override
@@ -157,10 +156,8 @@ public abstract class BCTransportProxy implements IGuiHandler {
             PipeApiClient.registry = PipeRegistryClient.INSTANCE;
             PipeWireRenderer.init();
 
-            MessageManager.addType(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class,
-                MessageWireSystems.HANDLER, Side.CLIENT);
-            MessageManager.addType(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class,
-                MessageWireSystemsPowered.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
         }
 
         @Override

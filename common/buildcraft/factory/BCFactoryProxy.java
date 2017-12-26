@@ -24,8 +24,7 @@ import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
 
 public abstract class BCFactoryProxy implements IGuiHandler {
-
-    @SidedProxy
+    @SidedProxy(modId = BCFactory.MODID)
     private static BCFactoryProxy proxy;
 
     public static BCFactoryProxy getProxy() {
@@ -55,15 +54,21 @@ public abstract class BCFactoryProxy implements IGuiHandler {
         return null;
     }
 
-    public void fmlInit() {}
-
-    public void fmlPreInit() {}
-
-    @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BCFactoryProxy {
-
+    public void fmlPreInit() {
     }
 
+    public void fmlInit() {
+    }
+
+    public void fmlPostInit() {
+    }
+
+    @SuppressWarnings("unused")
+    @SideOnly(Side.SERVER)
+    public static class ServerProxy extends BCFactoryProxy {
+    }
+
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCFactoryProxy {
         @Override
@@ -86,6 +91,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
 
         @Override
         public void fmlPreInit() {
+            super.fmlPreInit();
             RenderPump.init();
             RenderMiningWell.init();
             BCFactoryModels.fmlPreInit();
@@ -93,6 +99,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
 
         @Override
         public void fmlInit() {
+            super.fmlInit();
             BCFactoryModels.fmlInit();
         }
     }

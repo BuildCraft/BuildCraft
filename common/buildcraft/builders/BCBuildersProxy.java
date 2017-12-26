@@ -1,5 +1,5 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
@@ -16,9 +16,10 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
+
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.builders.client.render.RenderArchitectTable;
 import buildcraft.builders.client.render.RenderArchitectTables;
@@ -99,23 +100,22 @@ public abstract class BCBuildersProxy implements IGuiHandler {
     }
 
     public void fmlPreInit() {
-
+        MessageManager.registerMessageClass(BCModules.BUILDERS, MessageSnapshotRequest.class, MessageSnapshotRequest.HANDLER, Side.SERVER);
+        MessageManager.registerMessageClass(BCModules.BUILDERS, MessageSnapshotResponse.class, Side.CLIENT);
     }
 
     public void fmlInit() {
-
     }
 
+    public void fmlPostInit() {
+    }
+
+    @SuppressWarnings("unused")
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCBuildersProxy {
-        @Override
-        public void fmlPreInit() {
-            MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REQUEST, MessageSnapshotRequest.class,
-                MessageSnapshotRequest.HANDLER, Side.SERVER);
-            MessageManager.addTypeSent(MessageId.BC_BUILDERS_SNAPSHOT_REPLY, MessageSnapshotResponse.class, Side.CLIENT);
-        }
     }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCBuildersProxy {
         @Override
@@ -159,15 +159,14 @@ public abstract class BCBuildersProxy implements IGuiHandler {
 
         @Override
         public void fmlPreInit() {
+            super.fmlPreInit();
             if (!Minecraft.getMinecraft().getFramebuffer().isStencilEnabled()) {
                 Minecraft.getMinecraft().getFramebuffer().enableStencil();
             }
             BCBuildersSprites.fmlPreInit();
-            MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REQUEST, MessageSnapshotRequest.class,
-                MessageSnapshotRequest.HANDLER, Side.SERVER);
-            MessageManager.addType(MessageId.BC_BUILDERS_SNAPSHOT_REPLY, MessageSnapshotResponse.class,
-                MessageSnapshotResponse.HANDLER, Side.CLIENT);
             RenderQuarry.init();
+
+            MessageManager.setHandler(MessageSnapshotResponse.class, MessageSnapshotResponse.HANDLER, Side.CLIENT);
         }
 
         @Override

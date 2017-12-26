@@ -17,8 +17,9 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
+
 import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.robotics.client.render.RenderZonePlanner;
 import buildcraft.robotics.container.ContainerZonePlanner;
@@ -52,21 +53,23 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
         return null;
     }
 
-    public void fmlPreInit() {}
-
-    public void fmlInit() {}
-
-    @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BCRoboticsProxy {
-        @Override
-        public void fmlPreInit() {
-            super.fmlPreInit();
-            MessageManager.addType(MessageId.BC_ROBOTICS_ZONE_REQUEST, MessageZoneMapRequest.class,
-                MessageZoneMapRequest.HANDLER, Side.SERVER);
-            MessageManager.addTypeSent(MessageId.BC_ROBOTICS_ZONE_REPLY, MessageZoneMapResponse.class, Side.CLIENT);
-        }
+    public void fmlPreInit() {
+        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
+        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapResponse.class, Side.CLIENT);
     }
 
+    public void fmlInit() {
+    }
+
+    public void fmlPostInit() {
+    }
+
+    @SuppressWarnings("unused")
+    @SideOnly(Side.SERVER)
+    public static class ServerProxy extends BCRoboticsProxy {
+    }
+
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCRoboticsProxy {
         @Override
@@ -84,10 +87,7 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             super.fmlPreInit();
-            MessageManager.addType(MessageId.BC_ROBOTICS_ZONE_REQUEST, MessageZoneMapRequest.class,
-                MessageZoneMapRequest.HANDLER, Side.SERVER);
-            MessageManager.addType(MessageId.BC_ROBOTICS_ZONE_REPLY, MessageZoneMapResponse.class,
-                MessageZoneMapResponse.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
         }
 
         @Override
