@@ -52,14 +52,9 @@ public class WorkbenchCrafting extends InventoryCrafting {
 
     private EnumRecipeType recipeType = null;
 
-    // Ok so this is fairly annoying...
-    // it would be nice to require ingredients rather than hard stacks
-    // and just move the relevant ingredients into the crafting table rather than
-    // anything else
-
     public WorkbenchCrafting(int width, int height, TileBC_Neptune tile, ItemHandlerSimple invBlueprint,
         ItemHandlerSimple invMaterials, ItemHandlerSimple invResult) {
-        super(new ContainerNullEventHandler(), width, height);
+        super(CONTAINER_EVENT_HANDLER, width, height);
         this.tile = tile;
         this.invBlueprint = invBlueprint;
         if (invBlueprint.getSlots() < this.getSizeInventory()) {
