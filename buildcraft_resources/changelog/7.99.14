@@ -1,4 +1,8 @@
 
+API (code) Changes:
+
+* IPipeRegistry.createItemForPipe now registers the returned items with forge, so that addons don't have to.
+
 Bugs fixed:
 
 * [#3891] The quarry sometimes goes into an infinite loop when calculating frame positions.

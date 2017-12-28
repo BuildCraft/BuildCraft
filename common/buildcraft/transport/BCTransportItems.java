@@ -142,8 +142,6 @@ public class BCTransportItems {
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {
-        ItemPipeHolder item = PipeRegistry.INSTANCE.createItemForPipe(def);
-        HELPER.addForcedItem(item);
-        return item;
+        return PipeRegistry.INSTANCE.createItemForPipe(def);
     }
 }
