@@ -55,7 +55,7 @@ public class BCFactory {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-
+        BCFactoryProxy.getProxy().fmlPostInit();
     }
 
     static {
