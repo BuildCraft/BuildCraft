@@ -59,7 +59,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
 
     public WorkbenchCrafting(int width, int height, TileBC_Neptune tile, ItemHandlerSimple invBlueprint,
         ItemHandlerSimple invMaterials, ItemHandlerSimple invResult) {
-        super(CONTAINER_EVENT_HANDLER, width, height);
+        super(new ContainerNullEventHandler(), width, height);
         this.tile = tile;
         this.invBlueprint = invBlueprint;
         if (invBlueprint.getSlots() < this.getSizeInventory()) {
@@ -208,6 +208,12 @@ public class WorkbenchCrafting extends InventoryCrafting {
         }
 
         // Step 3
+        // Some recipes (for example vanilla fireworks) require calling
+        // matches before calling getCraftingResult, as they store the
+        // result of matches for getCraftingResult and getResult.
+        if (!currentRecipe.matches(this, tile.getWorld())) {
+            return false;
+        }
         ItemStack result = currentRecipe.getCraftingResult(this);
         if (result.isEmpty()) {
             // what?
