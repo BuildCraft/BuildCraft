@@ -3,4 +3,5 @@ Bugs fixed:
 
 * [#3891] The quarry sometimes goes into an infinite loop when calculating frame positions.
 * [#3937] Disabling the facade item crashes the game.
+* [#3944] The autoworkbench doesn't clear its old items properly, leading to buggy behaviour with containing items (such as buckets)
 * [#3948] The autoworkbench doesn't craft fireworks properly when multiple things attempt to craft the same item.
