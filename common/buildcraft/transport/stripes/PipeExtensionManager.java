@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.mojang.authlib.GameProfile;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -50,6 +49,8 @@ import buildcraft.lib.misc.SoundUtil;
 
 import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.wire.WireManager;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public enum PipeExtensionManager implements IPipeExtensionManager {
     INSTANCE;
