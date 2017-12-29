@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -38,6 +39,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeBehaviour;
@@ -47,7 +49,7 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SoundUtil;
 
-import buildcraft.transport.BCTransportBlocks;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
 import buildcraft.transport.wire.WireManager;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -95,12 +97,26 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
     }
 
     private void retract(World w, PipeExtensionRequest r) {
-        BlockPos p = r.pos.offset(r.dir.getOpposite());
-        if (w.getBlockState(p).getBlock() != BCTransportBlocks.pipeHolder ||
-            w.getBlockState(p.offset(r.dir.getOpposite())).getBlock() != BCTransportBlocks.pipeHolder) {
-            r.stripes.sendItem(r.stack.copy(), r.dir);
-            return;
+        EnumFacing retractDir = r.dir.getOpposite();
+        if (!isValidRetractionPath(w, r, retractDir)) {
+
+            // check other directions
+            List<EnumFacing> possible = new ArrayList<>();
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (facing.getAxis() != r.dir.getAxis()) {
+                    if (isValidRetractionPath(w, r, facing)) {
+                        possible.add(facing);
+                    }
+                }
+            }
+
+            if (possible.isEmpty()) {
+                r.stripes.sendItem(r.stack.copy(), r.dir);
+                return;
+            }
+            retractDir = possible.get(MathHelper.getInt(w.rand, 0, possible.size() - 1));
         }
+        BlockPos p = r.pos.offset(retractDir);
 
         NonNullList<ItemStack> stacksToSendBack = NonNullList.create();
         // Always send back catalyst pipe
@@ -109,13 +125,20 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         // Step 1: Copy over existing stripes pipe
         BlockSnapshot blockSnapshot1 = BlockSnapshot.getBlockSnapshot(w, r.pos);
         IBlockState stripesStateOld = w.getBlockState(r.pos);
-        NBTTagCompound stripesNBTOld = new NBTTagCompound();
         TileEntity stripesTileOld = w.getTileEntity(r.pos);
         if (!stripesTileOld.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
             BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + stripesTileOld + " was not a pipe tile!");
             return;
         }
-        GameProfile owner = stripesTileOld.getCapability(PipeApi.CAP_PIPE_HOLDER, null).getOwner();
+
+        NBTTagCompound stripesNBTOld = new NBTTagCompound();
+
+        IPipeHolder holder = stripesTileOld.getCapability(PipeApi.CAP_PIPE_HOLDER, null);
+        PipeBehaviour behav = holder.getPipe().getBehaviour();
+        if (behav instanceof PipeBehaviourStripes) {
+            ((PipeBehaviourStripes) behav).direction = retractDir.getOpposite();
+        }
+        GameProfile owner = holder.getOwner();
         stripesTileOld.writeToNBT(stripesNBTOld);
 
         // Step 2: Remove previous pipe
@@ -297,6 +320,31 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         } else {
             InventoryUtil.dropAll(w, p, stacksToSendBack);
         }
+    }
+
+    private boolean isValidRetractionPath(World w, PipeExtensionRequest r, EnumFacing retractDir) {
+        TileEntity tile = w.getTileEntity(r.pos.offset(retractDir));
+        if (tile != null && tile.hasCapability(PipeApi.CAP_PIPE, null)) {
+            IPipe pipe = tile.getCapability(PipeApi.CAP_PIPE, null);
+            boolean connected = false;
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (pipe.getConnectedType(facing) == IPipe.ConnectedType.TILE) {
+                    return false;
+                }
+                if (facing == retractDir.getOpposite() && pipe.getConnectedType(facing) != IPipe.ConnectedType.PIPE) {
+                    return false;
+                }
+                if (facing != retractDir.getOpposite() && connected && pipe.getConnectedType(facing) != null) {
+                    return false;
+                }
+                if (facing != retractDir.getOpposite() && !connected && pipe.getConnectedType(facing) != null) {
+                    connected = true;
+                }
+
+            }
+            return true;
+        }
+        return false;
     }
 
     private class PipeExtensionRequest {
