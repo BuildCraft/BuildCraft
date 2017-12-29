@@ -177,36 +177,7 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         }
 
         // Step 4: Hope for the best, clean up.
-        TileEntity stripesTileNew = w.getTileEntity(canceled ? r.pos : p);
-        if (!canceled) {
-            stripesTileNew.readFromNBT(stripesNBTOld);
-            stripesTileNew.onLoad();
-        }
-
-        if (stripesTileNew.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
-            IPipeHolder stripesPipeHolderNew = stripesTileNew.getCapability(PipeApi.CAP_PIPE_HOLDER, null);
-            if (!canceled) {
-                IWireManager wireManager = stripesPipeHolderNew.getWireManager();
-                if (wireManager instanceof WireManager) {
-                    ((WireManager) wireManager).getWireSystems().rebuildWireSystemsAround(stripesPipeHolderNew);
-                }
-            }
-
-            PipeBehaviour behaviour = stripesPipeHolderNew.getPipe().getBehaviour();
-            if (behaviour instanceof IStripesActivator) {
-                IStripesActivator stripesNew = (IStripesActivator) behaviour;
-                for (ItemStack s : stacksToSendBack) {
-                    s = s.copy();
-                    if (!stripesNew.sendItem(s, r.dir)) {
-                        stripesNew.dropItem(s, r.dir);
-                    }
-                }
-            } else {
-                InventoryUtil.dropAll(w, p, stacksToSendBack);
-            }
-        } else {
-            InventoryUtil.dropAll(w, p, stacksToSendBack);
-        }
+        cleanup(w, r, p, stacksToSendBack, canceled, stripesNBTOld);
     }
 
     private void extend(World w, PipeExtensionRequest r) {
@@ -292,6 +263,10 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         }
 
         // Step 4: Hope for the best, clean up.
+        cleanup(w, r, p, stacksToSendBack, canceled, stripesNBTOld);
+    }
+
+    private void cleanup(World w, PipeExtensionRequest r, BlockPos p, NonNullList<ItemStack> stacksToSendBack, boolean canceled, NBTTagCompound stripesNBTOld) {
         TileEntity stripesTileNew = w.getTileEntity(canceled ? r.pos : p);
         if (!canceled) {
             stripesTileNew.readFromNBT(stripesNBTOld);
