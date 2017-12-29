@@ -75,7 +75,6 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         }
     }
 
-
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
@@ -92,23 +91,27 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if (id == NET_GUI_DATA) {
-            buffer.writeLong(power);
-            double avg = avgPower.getAverage();
-            long pwrAvg = Math.round(avg);
-            long div = pwrAvg / MJ_FLOW_ROUND;
-            long mod = pwrAvg % MJ_FLOW_ROUND;
-            int mj = (int) (div) + ((mod > MJ_FLOW_ROUND / 2) ? 1 : 0);
-            buffer.writeInt(mj);
+        if (side == Side.SERVER) {
+            if (id == NET_GUI_TICK) {
+                buffer.writeLong(power);
+                double avg = avgPower.getAverage();
+                long pwrAvg = Math.round(avg);
+                long div = pwrAvg / MJ_FLOW_ROUND;
+                long mod = pwrAvg % MJ_FLOW_ROUND;
+                int mj = (int) (div) + ((mod > MJ_FLOW_ROUND / 2) ? 1 : 0);
+                buffer.writeInt(mj);
+            }
         }
     }
 
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (id == NET_GUI_DATA) {
-            power = buffer.readLong();
-            avgPowerClient = buffer.readInt() * MJ_FLOW_ROUND;
+        if (side == Side.CLIENT) {
+            if (id == NET_GUI_TICK) {
+                power = buffer.readLong();
+                avgPowerClient = buffer.readInt() * MJ_FLOW_ROUND;
+            }
         }
     }
 
@@ -118,7 +121,8 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
-    protected boolean extract(ItemHandlerSimple inv, Collection<IngredientStack> items, boolean simulate, boolean precise) {
+    protected boolean extract(ItemHandlerSimple inv, Collection<IngredientStack> items, boolean simulate,
+        boolean precise) {
         AtomicLong remainingStacks = new AtomicLong(inv.stacks.stream().filter(stack -> !stack.isEmpty()).count());
         boolean allItemsConsumed = items.stream().allMatch((definition) -> {
             int remaining = definition.count;

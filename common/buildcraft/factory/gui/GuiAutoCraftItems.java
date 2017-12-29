@@ -149,7 +149,9 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
 
-        drawProgress(RECT_PROGRESS, ICON_PROGRESS, container.tile.deltaProgress.getDynamic(partialTicks), 1);
+        double progress = container.tile.getProgress(partialTicks);
+
+        drawProgress(RECT_PROGRESS, ICON_PROGRESS, progress, 1);
     }
 
     @Override

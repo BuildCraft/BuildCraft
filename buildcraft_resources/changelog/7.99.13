@@ -4,6 +4,7 @@ Additions:
 * [#3857] Re-added the config option to disallow infinite water pumping. Useful if a finite water mod is installed.
 * Added a new config option: "display.useSwappableSprites". This disables sprite swapping functionality, which is used by other config options (such as colourblind mode)
   * Fixes [#3894] Optifine texture incompatibility
+* Propely added config options for "itemRenderRotation", and "chunkLoaderLevel". The latter is technically just a boolean choice - only the quarry can chunkload at the moment.
 
 Changes:
 
@@ -24,3 +25,5 @@ Bugs fixed:
 * [#3874] Crash when breaking the heat exchanger
 * [#3882] All fluid blocks except for one showed the missing texture.
 * [#3884] Powering an obsidian transport pipe without any pipe connections crashes.
+* The heat exchanger doesn't output properly.
+* [#3925] Gates do not activate/deactivate redstone signals properly for farther blocks.

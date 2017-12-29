@@ -27,7 +27,7 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
         }
-        addSlotToContainer(new SlotDisplay(i -> tile.getOutput(), 0, 93, 27));
+        addSlotToContainer(new SlotDisplay(i -> tile.resultClient, 0, 93, 27));
 
         addFullPlayerInventory(115);
     }

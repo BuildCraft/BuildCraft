@@ -6,9 +6,28 @@
 
 package buildcraft.lib.misc;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.item.Item;
 
 public class RenderUtil {
+
+    public static void registerBlockColour(@Nullable Block block, IBlockColor colour) {
+        if (block != null) {
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(colour, block);
+        }
+    }
+
+    public static void registerItemColour(@Nullable Item item, IItemColor colour) {
+        if (item != null) {
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(colour, item);
+        }
+    }
 
     /** Takes _RGB (alpha is set to 1) */
     public static void setGLColorFromInt(int color) {

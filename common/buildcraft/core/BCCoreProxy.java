@@ -15,10 +15,11 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
+
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderVolumeBoxes;
@@ -51,24 +52,29 @@ public abstract class BCCoreProxy implements IGuiHandler {
         return null;
     }
 
-    public void fmlPreInit() {}
+    public void fmlPreInit() {
+        MessageManager.registerMessageClass(BCModules.CORE, MessageVolumeBoxes.class, Side.CLIENT);
+    }
 
-    public void fmlInit() {}
+    public void fmlInit() {
+    }
 
-    public void fmlPostInit() {}
+    public void fmlPostInit() {
+    }
 
     public List<VolumeBox> getVolumeBoxes(World world) {
         return WorldSavedDataVolumeBoxes.get(world).volumeBoxes;
     }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCCoreProxy {
         @Override
         public void fmlPreInit() {
-            MessageManager.addTypeSent(MessageId.BC_CORE_VOLUME_BOX, MessageVolumeBoxes.class, Side.CLIENT);
         }
     }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCCoreProxy {
         @Override
@@ -86,8 +92,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             BCCoreModels.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeBoxes.INSTANCE);
             MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
-            MessageManager.addType(MessageId.BC_CORE_VOLUME_BOX, MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER,
-                Side.CLIENT);
+            MessageManager.setHandler(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
         }
 
         @Override

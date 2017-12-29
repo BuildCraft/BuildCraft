@@ -20,6 +20,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -47,14 +48,25 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     private static boolean isPlayerInteracting = false;
 
-    public final Tank tank = new Tank("tank", 16000, this);
-    public final FluidSmoother smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
+    public final Tank tank;
+    public final FluidSmoother smoothedTank;
 
     private int lastComparatorLevel;
 
     public TileTank() {
+        this(16 * Fluid.BUCKET_VOLUME);
+    }
+
+    protected TileTank(int capacity) {
+        this(new Tank("tank", capacity, null));
+    }
+
+    protected TileTank(Tank tank) {
+        tank.setTileEntity(this);
+        this.tank = tank;
         tankManager.add(tank);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
+        smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
     }
 
     @Override

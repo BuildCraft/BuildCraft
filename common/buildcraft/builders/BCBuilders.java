@@ -66,6 +66,7 @@ public class BCBuilders {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
+        BCBuildersProxy.getProxy().fmlPostInit();
         RulesLoader.loadAll();
     }
 

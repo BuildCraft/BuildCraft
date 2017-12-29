@@ -22,6 +22,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import buildcraft.lib.gui.config.GuiConfigManager;
@@ -328,11 +330,12 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     }
 
     public void drawProgress(GuiRectangle rect, GuiIcon icon, double widthPercent, double heightPercent) {
-        int nWidth = MathHelper.ceil(rect.width * Math.abs(widthPercent));
-        int nHeight = MathHelper.ceil(rect.height * Math.abs(heightPercent));
-        icon.offset(widthPercent > 0 ? 0 : rect.width - nWidth, heightPercent > 0 ? 0 : rect.height - nHeight)
-            .drawCutInside(new GuiRectangle(widthPercent > 0 ? rect.x : rect.x + (rect.width - nWidth),
-                heightPercent > 0 ? rect.y : rect.y + (rect.height - nHeight), nWidth, nHeight).offset(rootElement));
+        double nWidth = rect.width * Math.abs(widthPercent);
+        double nHeight = rect.height * Math.abs(heightPercent);
+        ISprite sprite = GuiUtil.subRelative(icon.sprite, 0, 0, widthPercent, heightPercent);
+        double x = rect.x + rootElement.getX();
+        double y = rect.y + rootElement.getY();
+        GuiIcon.draw(sprite, x, y, x + nWidth, y + nHeight);
     }
 
     @Override

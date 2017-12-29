@@ -9,4 +9,3 @@ public class TileAutoWorkbenchItems extends TileAutoWorkbenchBase {
         super(3, 3);
     }
 }
-

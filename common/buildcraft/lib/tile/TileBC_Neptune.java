@@ -274,7 +274,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        return caps.getCapability(capability, facing);
+        T obj = caps.getCapability(capability, facing);
+        if (obj == null) {
+            obj = super.getCapability(capability, facing);
+        }
+        return obj;
     }
 
     // Item caps

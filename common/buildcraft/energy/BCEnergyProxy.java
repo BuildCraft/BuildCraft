@@ -27,18 +27,21 @@ import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 
 public abstract class BCEnergyProxy implements IGuiHandler {
-    @SidedProxy
+    @SidedProxy(modId = BCEnergy.MODID)
     private static BCEnergyProxy proxy;
 
     public static BCEnergyProxy getProxy() {
         return proxy;
     }
 
-    public void fmlPreInit() {}
+    public void fmlPreInit() {
+    }
 
-    public void fmlInit() {}
+    public void fmlInit() {
+    }
 
-    public void fmlPostInit() {}
+    public void fmlPostInit() {
+    }
 
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -68,15 +71,17 @@ public abstract class BCEnergyProxy implements IGuiHandler {
         }
     }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCEnergyProxy {
-
     }
 
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCEnergyProxy {
         @Override
         public void fmlPreInit() {
+            super.fmlPreInit();
             BCEnergyModels.fmlPreInit();
             BCEnergySprites.fmlPreInit();
         }

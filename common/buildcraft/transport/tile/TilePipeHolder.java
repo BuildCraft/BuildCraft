@@ -19,6 +19,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -268,7 +269,14 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
 
         if (!Arrays.equals(redstoneValues, oldRedstoneValues)) {
-            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
+            Block block = world.getBlockState(pos).getBlock();
+            world.notifyNeighborsOfStateChange(pos, block, true);
+            for (int i = 0; i < 6; i++) {
+                EnumFacing face = EnumFacing.VALUES[i];
+                if (oldRedstoneValues[i] != redstoneValues[i]) {
+                    world.notifyNeighborsOfStateChange(pos.offset(face), block, true);
+                }
+            }
             oldRedstoneValues = redstoneValues;
         }
     }

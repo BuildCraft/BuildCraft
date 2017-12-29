@@ -77,6 +77,8 @@ public class BCTransportRecipes {
         addPipeRecipe(BCTransportItems.pipeItemLapis, Blocks.LAPIS_BLOCK);
         addPipeRecipe(BCTransportItems.pipeItemDaizuli, Blocks.LAPIS_BLOCK, Items.DIAMOND);
         addPipeRecipe(BCTransportItems.pipeItemDiaWood, "plankWood", Items.DIAMOND);
+        addPipeRecipe(BCTransportItems.pipeItemStripes, "gearGold");
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeItemEmzuli, Blocks.LAPIS_BLOCK);
 
         Item waterproof = BCTransportItems.waterproof;
         if (waterproof == null) {

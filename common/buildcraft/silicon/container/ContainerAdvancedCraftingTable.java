@@ -21,7 +21,7 @@ public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvanced
         super(player, tile);
         addFullPlayerInventory(153);
 
-        addSlotToContainer(new SlotDisplay(i -> tile.getOutput(), 0, 127, 33));
+        addSlotToContainer(new SlotDisplay(i -> tile.resultClient, 0, 127, 33));
 
         for(int y = 0; y < 3; y++) {
             for(int x = 0; x < 5; x++) {

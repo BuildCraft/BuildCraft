@@ -15,6 +15,8 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.ForgeHooks;
 
+import buildcraft.api.facades.FacadeAPI;
+
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
@@ -35,6 +37,9 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
     private static ChangingItemStack OUTPUTS;
 
     public static void genRecipes() {
+        if (FacadeAPI.facadeItem == null) {
+            throw new IllegalStateException("Don't call FacadeSwapRecipe if the facade item doesn't exist!");
+        }
         NonNullList<ItemStack> list1 = NonNullList.create();
         NonNullList<ItemStack> list2 = NonNullList.create();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {

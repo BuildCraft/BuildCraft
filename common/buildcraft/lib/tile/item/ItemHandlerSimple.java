@@ -153,6 +153,9 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 throw new ReportedException(report);
             } else if (!simulate) {
                 setStackInternal(slot, result.toSet);
+                if (callback != null) {
+                    callback.onStackChange(this, slot, current, result.toSet);
+                }
             }
             return asValid(result.toReturn);
         } else {

@@ -55,7 +55,7 @@ public class BCRobotics {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-
+        BCRoboticsProxy.getProxy().fmlPostInit();
     }
 
     static {

@@ -22,11 +22,14 @@ import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
+import buildcraft.lib.registry.RegistrationHelper;
+
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {
     INSTANCE;
 
+    private final RegistrationHelper helper = new RegistrationHelper();
     private final Map<ResourceLocation, PipeDefinition> definitions = new HashMap<>();
     private final Map<PipeDefinition, IItemPipe> pipeItems = new IdentityHashMap<>();
 
@@ -49,11 +52,12 @@ public enum PipeRegistry implements IPipeRegistry {
 
     @Override
     public ItemPipeHolder createItemForPipe(PipeDefinition definition) {
-         ItemPipeHolder item = new ItemPipeHolder(definition);
-         if (definitions.values().contains(definition)) {
-             setItemForPipe(definition, item);
-         }
-         return item;
+        ItemPipeHolder item = new ItemPipeHolder(definition);
+        helper.addForcedItem(item);
+        if (definitions.values().contains(definition)) {
+            setItemForPipe(definition, item);
+        }
+        return item;
     }
 
     @Override

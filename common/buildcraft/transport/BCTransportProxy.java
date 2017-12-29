@@ -6,7 +6,6 @@
 
 package buildcraft.transport;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +17,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApiClient;
@@ -25,7 +25,6 @@ import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageManager.MessageId;
 
 import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.client.render.PipeWireRenderer;
@@ -39,15 +38,11 @@ import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiEmzuliPipe_BC8;
 import buildcraft.transport.gui.GuiFilteredBuffer;
 import buildcraft.transport.gui.GuiGate;
-import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
-import buildcraft.transport.plug.FacadeInstance;
-import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.tile.TileFilteredBuffer;
-import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
 
@@ -134,24 +129,23 @@ public abstract class BCTransportProxy implements IGuiHandler {
         return null;
     }
 
-    public void fmlPreInit() {}
-
-    public void fmlInit() {}
-
-    public void fmlPostInit() {}
-
-    @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BCTransportProxy {
-
-        @Override
-        public void fmlPreInit() {
-            super.fmlPreInit();
-
-            MessageManager.addTypeSent(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class, Side.CLIENT);
-            MessageManager.addTypeSent(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class, Side.CLIENT);
-        }
+    public void fmlPreInit() {
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystems.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystemsPowered.class, Side.CLIENT);
     }
 
+    public void fmlInit() {
+    }
+
+    public void fmlPostInit() {
+    }
+
+    @SuppressWarnings("unused")
+    @SideOnly(Side.SERVER)
+    public static class ServerProxy extends BCTransportProxy {
+    }
+
+    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCTransportProxy {
         @Override
@@ -162,8 +156,8 @@ public abstract class BCTransportProxy implements IGuiHandler {
             PipeApiClient.registry = PipeRegistryClient.INSTANCE;
             PipeWireRenderer.init();
 
-            MessageManager.addType(MessageId.BC_SILICON_WIRE_NETWORK, MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
-            MessageManager.addType(MessageId.BC_SILICON_WIRE_SWITCH, MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
         }
 
         @Override
@@ -174,31 +168,8 @@ public abstract class BCTransportProxy implements IGuiHandler {
 
         @Override
         public void fmlPostInit() {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, world, pos, tintIndex) -> {
-                if (world != null && pos != null) {
-                    TileEntity tile = world.getTileEntity(pos);
-                    if (tile instanceof TilePipeHolder) {
-                        TilePipeHolder tilePipeHolder = (TilePipeHolder) tile;
-                        EnumFacing side = EnumFacing.getFront(tintIndex % EnumFacing.VALUES.length);
-                        PipePluggable pluggable = tilePipeHolder.getPluggable(side);
-                        if (pluggable != null) {
-                            return pluggable.getBlockColor(tintIndex / 6);
-                        }
-                    }
-                }
-                return -1;
-            }, BCTransportBlocks.pipeHolder);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler((item, tintIndex) -> {
-                FacadeInstance states = ItemPluggableFacade.getStates(item);
-                FacadePhasedState state = states.getCurrentStateForStack();
-                int color = -1;
-                try {
-                    color = Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state, null, null);
-                } catch (NullPointerException ex) {
-                    //the block didn't like the null world or player
-                }
-                return color;
-            }, BCTransportItems.plugFacade);
+            super.fmlPostInit();
+            BCTransportModels.fmlPostInit();
         }
 
         @Override
