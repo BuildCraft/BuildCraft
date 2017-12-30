@@ -37,7 +37,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
-import buildcraft.api.BCModules;
+import buildcraft.api.EnumBuildCraftModule;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
@@ -83,18 +83,18 @@ public enum GuideManager implements IResourceManagerReloadListener {
         // Special sort -- replace mod domains with mod names
 
         // Treat BC modules specially
-        Set<BCModules> modules = EnumSet.noneOf(BCModules.class);
-        for (BCModules module : BCModules.VALUES) {
-            if (loadedDomains.remove(module.getModId())) {
-                modules.add(module);
+        Set<EnumBuildCraftModule> buildCraftModules = EnumSet.noneOf(EnumBuildCraftModule.class);
+        for (EnumBuildCraftModule buildCraftModule : EnumBuildCraftModule.VALUES) {
+            if (loadedDomains.remove(buildCraftModule.getModid())) {
+                buildCraftModules.add(buildCraftModule);
             }
         }
 
-        int moduleCount = modules.size();
-        int maxModuleCount = BCModules.VALUES.length;
+        int moduleCount = buildCraftModules.size();
+        int maxModuleCount = EnumBuildCraftModule.VALUES.length;
         if (moduleCount == maxModuleCount) {
             loadedMods.add("BuildCraft (+Compat)");
-        } else if (moduleCount == maxModuleCount - 1 && !modules.contains(BCModules.COMPAT)) {
+        } else if (moduleCount == maxModuleCount - 1 && !buildCraftModules.contains(EnumBuildCraftModule.COMPAT)) {
             loadedMods.add("BuildCraft");
         } else if (moduleCount > 2) {
             loadedMods.add("BuildCraft (§o" + (moduleCount - 2) + " modules§r)");

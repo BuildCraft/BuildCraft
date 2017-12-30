@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.api.BCModules;
+import buildcraft.api.EnumBuildCraftModule;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
@@ -71,11 +71,17 @@ public class BCLib {
             BCLog.logger.info("    committed by " + GIT_COMMIT_AUTHOR);
         }
         BCLog.logger.info("");
+        for (EnumBuildCraftModule buildCraftModule : EnumBuildCraftModule.VALUES) {
+            if (buildCraftModule.isLoaded()) {
+                BCLog.logger.info("[api.modules] Module " + buildCraftModule.getName() + " is loaded!");
+            } else {
+                BCLog.logger.warn("[api.modules] Module " + buildCraftModule.getName() + " is NOT loaded!");
+            }
+        }
 
         ExpressionDebugManager.logger = BCLog.logger::info;
         ExpressionCompat.setup();
 
-        BCModules.fmlPreInit();
         BCLibRegistries.fmlPreInit();
         BCLibProxy.getProxy().fmlPreInit();
         BCLibItems.fmlPreInit();

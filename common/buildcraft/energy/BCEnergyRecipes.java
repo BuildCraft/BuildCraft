@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.BCModules;
+import buildcraft.api.EnumBuildCraftModule;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -62,7 +62,7 @@ public class BCEnergyRecipes {
 
         addDirtyFuel(BCEnergyFluids.crudeOil, _oil, 3);
 
-        if (BCModules.FACTORY.isLoaded()) {
+        if (EnumBuildCraftModule.FACTORY.isLoaded()) {
             FluidStack[] gas_light_dense_residue = createFluidStack(BCEnergyFluids.crudeOil, _oil);
             FluidStack[] gas_light_dense = createFluidStack(BCEnergyFluids.oilDistilled, _gas_light_dense);
             FluidStack[] gas_light = createFluidStack(BCEnergyFluids.fuelMixedLight, _gas_light);

@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.BCModules;
+import buildcraft.api.EnumBuildCraftModule;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
@@ -29,36 +29,39 @@ import buildcraft.lib.misc.MessageUtil;
 public class MessageManager {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.messages");
 
-    private static final Map<BCModules, SimpleNetworkWrapper> SIMPLE_NETWORK_WRAPPERS = new EnumMap<>(BCModules.class);
-    private static final Map<BCModules, Integer> LAST_IDS = new EnumMap<>(BCModules.class);
-    private static final Map<Class<? extends IMessage>, BCModules> MESSAGE_CLASSES_MODULES = new HashMap<>();
+    private static final Map<EnumBuildCraftModule, SimpleNetworkWrapper> SIMPLE_NETWORK_WRAPPERS = new EnumMap<>(EnumBuildCraftModule.class);
+    private static final Map<EnumBuildCraftModule, Integer> LAST_IDS = new EnumMap<>(EnumBuildCraftModule.class);
+    private static final Map<Class<? extends IMessage>, EnumBuildCraftModule> MESSAGE_CLASSES_BUILD_CRAFT_MODULES = new HashMap<>();
     private static final Map<Class<? extends IMessage>, Integer> MESSAGE_CLASSES_IDS = new HashMap<>();
     private static final Set<Class<? extends IMessage>> MESSAGE_CLASSES_WITH_HANDLER_REGISTERED = new HashSet<>();
 
     static {
-        for (BCModules module : BCModules.VALUES) {
-            SIMPLE_NETWORK_WRAPPERS.put(module, NetworkRegistry.INSTANCE.newSimpleChannel(module.getModId()));
-            LAST_IDS.put(module, 0);
+        for (EnumBuildCraftModule buildCraftModule : EnumBuildCraftModule.VALUES) {
+            SIMPLE_NETWORK_WRAPPERS.put(
+                buildCraftModule,
+                NetworkRegistry.INSTANCE.newSimpleChannel(buildCraftModule.getModid())
+            );
+            LAST_IDS.put(buildCraftModule, 0);
         }
     }
 
     /**
      * Registers a message as one that will not be received, but will be sent.
      */
-    public static <I extends IMessage> void registerMessageClass(BCModules module,
+    public static <I extends IMessage> void registerMessageClass(EnumBuildCraftModule module,
                                                                  Class<I> clazz,
                                                                  Side... sides) {
         registerMessageClass(module, clazz, null, sides);
     }
 
-    public static <I extends IMessage> void registerMessageClass(BCModules module,
+    public static <I extends IMessage> void registerMessageClass(EnumBuildCraftModule module,
                                                                  Class<I> messageClass,
                                                                  IMessageHandler<I, ?> messageHandler,
                                                                  Side... sides) {
-        if (MESSAGE_CLASSES_MODULES.containsKey(messageClass)) {
+        if (MESSAGE_CLASSES_BUILD_CRAFT_MODULES.containsKey(messageClass)) {
             throw new IllegalArgumentException("Already registered message: " + messageClass);
         }
-        MESSAGE_CLASSES_MODULES.put(messageClass, module);
+        MESSAGE_CLASSES_BUILD_CRAFT_MODULES.put(messageClass, module);
         MESSAGE_CLASSES_IDS.put(messageClass, LAST_IDS.get(module));
         LAST_IDS.put(module, LAST_IDS.get(module) + 1);
         if (messageHandler != null) {
@@ -77,13 +80,13 @@ public class MessageManager {
     public static <I extends IMessage> void setHandler(Class<I> messageClass,
                                                        IMessageHandler<I, ?> messageHandler,
                                                        Side side) {
-        if (!MESSAGE_CLASSES_MODULES.containsKey(messageClass)) {
+        if (!MESSAGE_CLASSES_BUILD_CRAFT_MODULES.containsKey(messageClass)) {
             throw new IllegalArgumentException("Can not set handler for unregistered message: " + messageClass);
         }
         if (MESSAGE_CLASSES_WITH_HANDLER_REGISTERED.contains(messageClass)) {
             throw new IllegalArgumentException("Already registered handler for message: " + messageClass);
         }
-        SIMPLE_NETWORK_WRAPPERS.get(MESSAGE_CLASSES_MODULES.get(messageClass)).registerMessage(
+        SIMPLE_NETWORK_WRAPPERS.get(MESSAGE_CLASSES_BUILD_CRAFT_MODULES.get(messageClass)).registerMessage(
             wrapHandler(messageHandler, messageClass),
             messageClass,
             MESSAGE_CLASSES_IDS.get(messageClass),
@@ -126,10 +129,10 @@ public class MessageManager {
 
     private static SimpleNetworkWrapper getSimpleNetworkWrapper(IMessage message) {
         Class<? extends IMessage> messageClass = message.getClass();
-        if (!MESSAGE_CLASSES_MODULES.containsKey(messageClass)) {
+        if (!MESSAGE_CLASSES_BUILD_CRAFT_MODULES.containsKey(messageClass)) {
             throw new IllegalArgumentException("Can not send unregistered message " + messageClass);
         }
-        return SIMPLE_NETWORK_WRAPPERS.get(MESSAGE_CLASSES_MODULES.get(messageClass));
+        return SIMPLE_NETWORK_WRAPPERS.get(MESSAGE_CLASSES_BUILD_CRAFT_MODULES.get(messageClass));
     }
 
     /**
