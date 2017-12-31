@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 /** Stores several types of "tag" (strings) for BuildCraft. A central place for all of them to init in. Refer to the
  * "static" block for all of the tag ID's
- * 
+ * <p>
  * You are free to add your own tags (say for addons) but it is recommended that you include your addon name somewhere
  * near the start - we don't want name clashes between addons or an addon and BC itself. If you want more types of tags
  * keys then just make an issue for it, and it will probably be added. */
@@ -93,7 +93,9 @@ public class TagManager {
         }
 
         public String getSingleTag(EnumTagType type) {
-            if (!tags.containsKey(type)) throw new IllegalArgumentException("Unknown tag type " + type + " for the entry " + id);
+            if (!tags.containsKey(type)) {
+                throw new IllegalArgumentException("Unknown tag type " + type + " for the entry " + id);
+            }
             return tags.get(type);
         }
 

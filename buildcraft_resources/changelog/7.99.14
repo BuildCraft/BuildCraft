@@ -2,6 +2,9 @@
 API (code) Changes:
 
 * IPipeRegistry.createItemForPipe now registers the returned items with forge, so that addons don't have to.
+* Added IPipeRegistry.createUnnamedItemForPipe is similar to IPipeRegistry.createItemForPipe
+  * With one exception: the caller must set the registry, unlocalised, and creative tabs.
+  * This is accomplished by providing a Consumer<Item> in order to set the properties.
 
 Bugs fixed:
 

@@ -20,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -34,6 +35,7 @@ import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.registry.TagManager;
 
 import buildcraft.transport.BCTransportBlocks;
 
@@ -43,13 +45,27 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
     private String unlocalizedName;
     private CreativeTabs creativeTab;
 
-    public ItemPipeHolder(PipeDefinition definition) {
+    protected ItemPipeHolder(PipeDefinition definition, String tagId) {
         super(BCTransportBlocks.pipeHolder);
         this.definition = definition;
-        this.id = "item.pipe." + definition.identifier.getResourceDomain() + "." + definition.identifier.getResourcePath();
+        this.id = tagId;
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
-        init();
+        if (!"".equals(id)) {
+            init();
+        }
+    }
+
+    /** Creates a new {@link ItemPipeHolder} without requiring a tag. */
+    public static ItemPipeHolder create(PipeDefinition definition) {
+        return new ItemPipeHolder(definition, "");
+    }
+
+    /** Creates a new {@link ItemPipeHolder} with a tag that will be taken from {@link TagManager}. */
+    public static ItemPipeHolder createAndTag(PipeDefinition definition) {
+        ResourceLocation reg = definition.identifier;
+        String tagId = "item.pipe." + reg.getResourceDomain() + "." + reg.getResourcePath();
+        return new ItemPipeHolder(definition, tagId);
     }
 
     public ItemPipeHolder registerWithPipeApi() {
