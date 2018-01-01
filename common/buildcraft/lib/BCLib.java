@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.EnumBuildCraftModule;
@@ -74,13 +75,13 @@ public class BCLib {
         BCLog.logger.info("");
         BCLog.logger.info("Loaded Modules:");
         for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
-            if (module.loaded) {
+            if (module.isLoaded()) {
                 BCLog.logger.info("  - " + module.name);
             }
         }
         BCLog.logger.info("Missing Modules:");
         for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
-            if (!module.loaded) {
+            if (!module.isLoaded()) {
                 BCLog.logger.info("  - " + module.name);
             }
         }
@@ -122,6 +123,11 @@ public class BCLib {
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
         MessageManager.fmlPostInit();
+    }
+
+    @Mod.EventHandler
+    public static void serverStarting(FMLServerStartingEvent event) {
+//        event.registerServerCommand(new CommandBuildCraft());
     }
 
     static {

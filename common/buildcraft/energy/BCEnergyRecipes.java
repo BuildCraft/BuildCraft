@@ -62,7 +62,7 @@ public class BCEnergyRecipes {
 
         addDirtyFuel(BCEnergyFluids.crudeOil, _oil, 3);
 
-        if (EnumBuildCraftModule.FACTORY.loaded) {
+        if (EnumBuildCraftModule.FACTORY.isLoaded()) {
             FluidStack[] gas_light_dense_residue = createFluidStack(BCEnergyFluids.crudeOil, _oil);
             FluidStack[] gas_light_dense = createFluidStack(BCEnergyFluids.oilDistilled, _gas_light_dense);
             FluidStack[] gas_light = createFluidStack(BCEnergyFluids.fuelMixedLight, _gas_light);
