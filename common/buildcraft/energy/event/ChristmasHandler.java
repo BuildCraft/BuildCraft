@@ -127,8 +127,6 @@ public class ChristmasHandler {
             K key = entry.getKey();
             V altValue = map.get("buildcraft.christmas." + key);
             if (altValue != null) {
-                BCLog.logger.info("[energy.christmas] Replaced lang entry '" + key + "'='" + entry.getValue()
-                    + "' with '" + altValue + "'");
                 entry.setValue(altValue);
             }
         }

@@ -258,7 +258,7 @@ buildcraft.christmas.fluid.fuel_mixed_heavy=Darker Chocolate Mix
 buildcraft.christmas.fluid.fuel_mixed_light=Lighter Chocolate Mix
 buildcraft.christmas.fluid.fuel_dense=Dark Chocolate
 buildcraft.christmas.fluid.fuel_light=Milk Chocolate
-buildcraft.christmas.fluid.fuel_gaseous=While Chocolate
+buildcraft.christmas.fluid.fuel_gaseous=White Chocolate
 
 buildcraft.christmas.buildcraft.fluid.heat_0=§bMelted§r %s
 buildcraft.christmas.buildcraft.fluid.heat_1=§6Bubbling§r %s
