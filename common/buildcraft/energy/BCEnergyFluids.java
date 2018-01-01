@@ -56,7 +56,7 @@ public class BCEnergyFluids {
             {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00, 0 },// Mixed Light Fuels
             {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00, 0 },// Gas Fuel
         };//@formatter:on
-        if (EnumBuildCraftModule.FACTORY.isLoaded()) {
+        if (EnumBuildCraftModule.FACTORY.loaded) {
             int index = 0;
 
             // Add all of the fluid states

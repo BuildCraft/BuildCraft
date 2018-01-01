@@ -83,18 +83,18 @@ public enum GuideManager implements IResourceManagerReloadListener {
         // Special sort -- replace mod domains with mod names
 
         // Treat BC modules specially
-        Set<EnumBuildCraftModule> buildCraftModules = EnumSet.noneOf(EnumBuildCraftModule.class);
-        for (EnumBuildCraftModule buildCraftModule : EnumBuildCraftModule.VALUES) {
-            if (loadedDomains.remove(buildCraftModule.getModid())) {
-                buildCraftModules.add(buildCraftModule);
+        Set<EnumBuildCraftModule> modules = EnumSet.noneOf(EnumBuildCraftModule.class);
+        for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
+            if (loadedDomains.remove(module.modId)) {
+                modules.add(module);
             }
         }
 
-        int moduleCount = buildCraftModules.size();
+        int moduleCount = modules.size();
         int maxModuleCount = EnumBuildCraftModule.VALUES.length;
         if (moduleCount == maxModuleCount) {
             loadedMods.add("BuildCraft (+Compat)");
-        } else if (moduleCount == maxModuleCount - 1 && !buildCraftModules.contains(EnumBuildCraftModule.COMPAT)) {
+        } else if (moduleCount == maxModuleCount - 1 && !modules.contains(EnumBuildCraftModule.COMPAT)) {
             loadedMods.add("BuildCraft");
         } else if (moduleCount > 2) {
             loadedMods.add("BuildCraft (§o" + (moduleCount - 2) + " modules§r)");

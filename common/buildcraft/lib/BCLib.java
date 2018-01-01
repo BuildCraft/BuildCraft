@@ -26,6 +26,7 @@ import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistrationHelper;
@@ -71,13 +72,19 @@ public class BCLib {
             BCLog.logger.info("    committed by " + GIT_COMMIT_AUTHOR);
         }
         BCLog.logger.info("");
-        for (EnumBuildCraftModule buildCraftModule : EnumBuildCraftModule.VALUES) {
-            if (buildCraftModule.isLoaded()) {
-                BCLog.logger.info("[api.modules] Module " + buildCraftModule.getName() + " is loaded!");
-            } else {
-                BCLog.logger.warn("[api.modules] Module " + buildCraftModule.getName() + " is NOT loaded!");
+        BCLog.logger.info("Loaded Modules:");
+        for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
+            if (module.loaded) {
+                BCLog.logger.info("  - " + module.name);
             }
         }
+        BCLog.logger.info("Missing Modules:");
+        for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
+            if (!module.loaded) {
+                BCLog.logger.info("  - " + module.name);
+            }
+        }
+        BCLog.logger.info("");
 
         ExpressionDebugManager.logger = BCLog.logger::info;
         ExpressionCompat.setup();
@@ -114,12 +121,14 @@ public class BCLib {
         BuildCraftObjectCaches.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
+        MessageManager.fmlPostInit();
     }
 
     static {
         startBatch();
         registerTag("item.guide").reg("guide").locale("buildcraft.guide").model("guide").tab("vanilla.misc");
-        registerTag("item.guide.note").reg("guide_note").locale("buildcraft.guide_note").model("guide_note").tab("vanilla.misc");
+        registerTag("item.guide.note").reg("guide_note").locale("buildcraft.guide_note").model("guide_note")
+            .tab("vanilla.misc");
         registerTag("item.debugger").reg("debugger").locale("debugger").model("debugger").tab("vanilla.misc");
         endBatch(TagManager.prependTags("buildcraftlib:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
     }

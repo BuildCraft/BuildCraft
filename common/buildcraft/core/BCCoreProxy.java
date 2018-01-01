@@ -66,15 +66,11 @@ public abstract class BCCoreProxy implements IGuiHandler {
         return WorldSavedDataVolumeBoxes.get(world).volumeBoxes;
     }
 
-    @SuppressWarnings("unused")
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BCCoreProxy {
-        @Override
-        public void fmlPreInit() {
-        }
+
     }
 
-    @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BCCoreProxy {
         @Override
