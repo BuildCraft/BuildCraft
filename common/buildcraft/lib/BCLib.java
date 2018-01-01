@@ -76,13 +76,13 @@ public class BCLib {
         BCLog.logger.info("Loaded Modules:");
         for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
             if (module.isLoaded()) {
-                BCLog.logger.info("  - " + module.name);
+                BCLog.logger.info("  - " + module.lowerCaseName);
             }
         }
         BCLog.logger.info("Missing Modules:");
         for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
             if (!module.isLoaded()) {
-                BCLog.logger.info("  - " + module.name);
+                BCLog.logger.info("  - " + module.lowerCaseName);
             }
         }
         BCLog.logger.info("");

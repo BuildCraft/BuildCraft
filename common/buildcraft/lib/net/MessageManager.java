@@ -47,7 +47,7 @@ public class MessageManager {
 
         PerModHandler(IBuildCraftMod module) {
             this.module = module;
-            this.netWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(module.getNetworkName());
+            this.netWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(module.getModId());
             knownMessages = new TreeMap<>(Comparator.comparing(Class::getName));
         }
     }
@@ -74,7 +74,7 @@ public class MessageManager {
                 return Integer.compare(enumA.ordinal(), enumB.ordinal());
             }
         }
-        return modA.getNetworkName().compareTo(modB.getNetworkName());
+        return modA.getModId().compareTo(modB.getModId());
     }
 
     /** Registers a message as one that will not be received, but will be sent. */
@@ -91,7 +91,7 @@ public class MessageManager {
             modHandler.knownMessages.put(messageClass, messageInfo);
             MESSAGE_HANDLERS.put(messageClass, messageInfo);
         }
-        String netName = module.getNetworkName();
+        String netName = module.getModId();
         if (messageHandler == null) {
             if (DEBUG) {
                 BCLog.logger.info("[lib.messages] Registered message " + messageClass + " for " + netName);
@@ -134,7 +134,7 @@ public class MessageManager {
         }
         for (PerModHandler handler : MOD_HANDLERS.values()) {
             if (DEBUG) {
-                BCLog.logger.info("[lib.messages]  - Module: " + handler.module.getNetworkName());
+                BCLog.logger.info("[lib.messages]  - Module: " + handler.module.getModId());
             }
             int wholeId = 0;
             for (PerMessageInfo<?> info : handler.knownMessages.values()) {
@@ -151,7 +151,7 @@ public class MessageManager {
             if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 // the client should *always* be able to handle everything.
                 throw new IllegalStateException("Found a registered message " + info.messageClass + " for "
-                    + info.modHandler.module.getNetworkName() + " that didn't have any handlers!");
+                    + info.modHandler.module.getModId() + " that didn't have any handlers!");
             }
         }
 
