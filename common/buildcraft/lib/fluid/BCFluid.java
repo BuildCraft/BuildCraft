@@ -36,8 +36,7 @@ public class BCFluid extends Fluid {
     public String getLocalizedName(FluidStack stack) {
         if (heat <= 0 && !isHeatable()) return getBareLocalizedName(stack);
         String name = getBareLocalizedName(stack);
-        String heatString = LocaleUtil.localize("buildcraft.fluid.heat_" + heat);
-        return name + heatString;
+        return LocaleUtil.localize("buildcraft.fluid.heat_" + heat, name);
     }
 
     public void setMapColour(MapColor mapColour) {

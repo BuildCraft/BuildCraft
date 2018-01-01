@@ -230,14 +230,13 @@ public class BCCoreConfig {
         pumpsConsumeWater = propPumpsConsumeWater.getBoolean();
         markerMaxDistance = propMarkerMaxDistance.getInt();
         BCLibConfig.colourBlindMode = propColourBlindMode.getBoolean();
-        BCLibConfig.displayTimeGap =
-            ConfigUtil.parseEnumForConfig(propDisplayTimeGap.getString(), TimeGap.values(), TimeGap.TICKS);
-        BCLibConfig.rotateTravelingItems = ConfigUtil.parseEnumForConfig(propItemRenderRotation.getString(),
-            RenderRotation.values(), RenderRotation.ENABLED);
+        BCLibConfig.displayTimeGap = ConfigUtil.parseEnumForConfig(propDisplayTimeGap, TimeGap.TICKS);
+        BCLibConfig.rotateTravelingItems =
+            ConfigUtil.parseEnumForConfig(propItemRenderRotation, RenderRotation.ENABLED);
 
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
-            BCLibConfig.chunkLoadingLevel = ConfigUtil.parseEnumForConfig(propChunkLoadLevel.getString(),
-                ChunkLoaderLevel.values(), ChunkLoaderLevel.SELF_TILES);
+            BCLibConfig.chunkLoadingLevel =
+                ConfigUtil.parseEnumForConfig(propChunkLoadLevel, ChunkLoaderLevel.SELF_TILES);
 
             if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
                 worldGen = propWorldGen.getBoolean();

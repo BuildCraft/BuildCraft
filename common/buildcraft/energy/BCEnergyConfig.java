@@ -1,10 +1,13 @@
 package buildcraft.energy;
 
+import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import gnu.trove.set.TIntSet;
@@ -20,6 +23,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.misc.ConfigUtil;
 
 import buildcraft.core.BCCoreConfig;
 
@@ -30,12 +34,14 @@ public class BCEnergyConfig {
     public static final Set<ResourceLocation> excessiveBiomes = new HashSet<>();
     public static final Set<ResourceLocation> surfaceDepositBiomes = new HashSet<>();
     public static final Set<ResourceLocation> excludedBiomes = new HashSet<>();
+    public static SpecialEventType christmasEventStatus = SpecialEventType.DAY_ONLY;
 
     private static Property propEnableOilGeneration;
     private static Property propExcessiveBiomes;
     private static Property propSurfaceDepositBiomes;
     private static Property propExcludedBiomes;
     private static Property propExcludedDimensions;
+    private static Property propChristmasEventType;
 
     public static void preInit() {
         EnumRestartRequirement world = EnumRestartRequirement.WORLD;
@@ -75,6 +81,11 @@ public class BCEnergyConfig {
             + " of dimensions that should never generate oil.");
         world.setTo(propExcludedDimensions);
 
+        propChristmasEventType =
+            BCCoreConfig.config.get("events", "christmas_chocolate", SpecialEventType.DAY_ONLY.lowerCaseName);
+        ConfigUtil.setEnumProperty(propChristmasEventType, SpecialEventType.values());
+        game.setTo(propChristmasEventType);
+
         reloadConfig(EnumRestartRequirement.GAME);
         BCCoreConfig.addReloadListener(BCEnergyConfig::reloadConfig);
     }
@@ -90,6 +101,7 @@ public class BCEnergyConfig {
 
             if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
+                christmasEventStatus = ConfigUtil.parseEnumForConfig(propChristmasEventType, SpecialEventType.DAY_ONLY);
             } else {
                 validateBiomeNames();
             }
@@ -148,6 +160,34 @@ public class BCEnergyConfig {
             if (!ForgeRegistries.BIOMES.containsKey(test)) {
                 invalidDest.add(test);
             }
+        }
+    }
+
+    public enum SpecialEventType {
+        DISABLED,
+        DAY_ONLY,
+        MONTH,
+        ENABLED;
+
+        public final String lowerCaseName = name().toLowerCase(Locale.ROOT);
+
+        public boolean isEnabled(MonthDay date) {
+            if (this == DISABLED) {
+                return false;
+            }
+            if (this == ENABLED) {
+                return true;
+            }
+            LocalDateTime now = LocalDateTime.now();
+            if (now.getMonth() != date.getMonth()) {
+                return false;
+            }
+            if (this == MONTH) {
+                return true;
+            }
+            int thisDay = now.getDayOfMonth();
+            int wantedDay = date.getDayOfMonth();
+            return thisDay >= wantedDay - 1 && thisDay <= wantedDay + 1;
         }
     }
 }

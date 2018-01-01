@@ -6,6 +6,12 @@ API (code) Changes:
   * With one exception: the caller must set the registry, unlocalised, and creative tabs.
   * This is accomplished by providing a Consumer<Item> in order to set the properties.
 
+Changes:
+
+* The christmas event is over
+  * Chocolate based names have been replaced with oil based ones.
+  * A config option has been added (events.christmas_chocolate) to enable or disable the event.
+
 Bugs fixed:
 
 * [#3891] The quarry sometimes goes into an infinite loop when calculating frame positions.
