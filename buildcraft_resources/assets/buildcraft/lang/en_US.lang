@@ -675,6 +675,8 @@ chat.buildcraft.quarry.chunkloadInfo=[BuildCraft] The quarry at %d %d %d will ke
 
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
 command.buildcraft.changelog_header=Changelog for BuildCraft %s:
+command.buildcraft.version.fail=Version check failed! Check the log file for details.
+command.buildcraft.version.prerelease=You are using a pre-release build
 
 command.buildcraft.aliases=Aliases: %s
 command.buildcraft.help=Type '%s' for help.

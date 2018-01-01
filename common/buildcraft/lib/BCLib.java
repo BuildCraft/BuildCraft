@@ -8,8 +8,10 @@ import java.util.function.Consumer;
 
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -22,6 +24,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
+import buildcraft.lib.command.CommandBuildCraft;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.fluid.FluidManager;
@@ -59,8 +62,11 @@ public class BCLib {
     @Instance(MODID)
     public static BCLib INSTANCE;
 
+    public static ModContainer MOD_CONTAINER;
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
+        MOD_CONTAINER = Loader.instance().activeModContainer();
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
@@ -127,7 +133,7 @@ public class BCLib {
 
     @Mod.EventHandler
     public static void serverStarting(FMLServerStartingEvent event) {
-//        event.registerServerCommand(new CommandBuildCraft());
+        event.registerServerCommand(new CommandBuildCraft());
     }
 
     static {
