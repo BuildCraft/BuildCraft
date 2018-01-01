@@ -85,7 +85,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         // Treat BC modules specially
         Set<EnumBuildCraftModule> modules = EnumSet.noneOf(EnumBuildCraftModule.class);
         for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
-            if (loadedDomains.remove(module.modId)) {
+            if (loadedDomains.remove(module.getModId())) {
                 modules.add(module);
             }
         }
