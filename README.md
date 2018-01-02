@@ -51,7 +51,7 @@ PR implementing new features or changing large portions of code are helpful. But
  * `gradlew setupDecompWorkspace` to setup a complete development environment.
  * With `Gradle` installed: use `gradle` instead of `gradlew`
  * On Windows: use `gradlew.bat` instead of `gradlew`
-1. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/modules'
+1. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/build/libs/&lt;build number>/modules'
 
 Your directory structure should look like this before running gradle:
 ***
