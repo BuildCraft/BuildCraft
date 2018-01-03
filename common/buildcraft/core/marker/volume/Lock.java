@@ -172,6 +172,25 @@ public class Lock {
 
         public abstract void fromBytes(PacketBuffer buf);
 
+        public static class TargetRemove extends Target {
+            @Override
+            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+                return nbt;
+            }
+
+            @Override
+            public void readFromNBT(NBTTagCompound nbt) {
+            }
+
+            @Override
+            public void toBytes(PacketBuffer buf) {
+            }
+
+            @Override
+            public void fromBytes(PacketBuffer buf) {
+            }
+        }
+
         public static class TargetResize extends Target {
             @Override
             public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
@@ -276,6 +295,7 @@ public class Lock {
         }
 
         enum EnumTarget {
+            REMOVE(TargetRemove::new),
             RESIZE(TargetResize::new),
             ADDON(TargetAddon::new),
             USED_BY_MACHINE(TargetUsedByMachine::new);
