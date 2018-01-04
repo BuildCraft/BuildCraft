@@ -18,3 +18,4 @@ Bugs fixed:
 * [#3937] Disabling the facade item crashes the game.
 * [#3944] The autoworkbench doesn't clear its old items properly, leading to buggy behaviour with containing items (such as buckets)
 * [#3948] The autoworkbench doesn't craft fireworks properly when multiple things attempt to craft the same item.
+* [#3886] The combustion engine doesn't move fluid containers around properly, either duplicating or voiding items and fluids.
