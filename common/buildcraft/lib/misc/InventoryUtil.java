@@ -137,15 +137,13 @@ public class InventoryUtil {
         }
     }
 
-    /** Adds the given {@link ItemStack} to the player's inventory, or drops it in front of them if it was not accepted
-     * 
-     * @param stack */
+    /** Adds the given {@link ItemStack} to the player's inventory, or drops it in front of them if their was not enough
+     * room. */
     public static void addToPlayer(EntityPlayer player, ItemStack stack) {
-        if (player.addItemStackToInventory(stack)) {
+        if (player.inventory.addItemStackToInventory(stack)) {
             player.inventoryContainer.detectAndSendChanges();
         } else {
             player.dropItem(stack, false, false);
-
         }
     }
 
