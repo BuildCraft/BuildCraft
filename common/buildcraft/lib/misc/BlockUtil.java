@@ -75,7 +75,8 @@ public final class BlockUtil {
             return null;
         }
 
-        List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
+        NonNullList<ItemStack> dropsList = NonNullList.create();
+        block.getDrops(dropsList, world, pos, state, 0);
         EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, pos);
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 

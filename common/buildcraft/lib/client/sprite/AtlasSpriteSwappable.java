@@ -42,7 +42,7 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
             return;
         }
         Profiler p = Minecraft.getMinecraft().mcProfiler;
-        p.startSection(getClass());
+        p.startSection(getClass().getSimpleName());
         if (needsSwapping) {
             p.startSection("copy");
             current.copyFrom(this);
