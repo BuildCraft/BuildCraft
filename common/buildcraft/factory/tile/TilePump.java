@@ -111,10 +111,10 @@ public class TilePump extends TileMiner {
         }
         world.profiler.endStartSection("build");
         boolean isWater = !BCCoreConfig.pumpsConsumeWater && FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
+        final int maxLengthSquared = BCCoreConfig.pumpMaxDistance * BCCoreConfig.pumpMaxDistance;
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
-            final int maxLengthSquared = BCCoreConfig.pumpMaxDistance * BCCoreConfig.pumpMaxDistance;
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
                 int count = 0;
                 for (EnumFacing side : SEARCH_DIRECTIONS) {

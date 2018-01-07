@@ -181,7 +181,7 @@ public class BCCoreConfig {
 
         propPumpMaxDistance = config.get(general, "pumpMaxDistance", 64);
         propPumpMaxDistance.setMinValue(16).setMaxValue(256);
-        propPumpMaxDistance.setComment("How far, in minecraft blocks, should pumps reach in water?");
+        propPumpMaxDistance.setComment("How far, in minecraft blocks, should pumps reach in fluids?");
         none.setTo(propPumpMaxDistance);
 
         propNetworkUpdateRate = config.get(general, "updateFactor", networkUpdateRate);
