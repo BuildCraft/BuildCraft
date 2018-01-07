@@ -180,7 +180,7 @@ public class BCCoreConfig {
         none.setTo(propMarkerMaxDistance);
 
         propPumpMaxDistance = config.get(general, "pumpMaxDistance", 64);
-        propPumpMaxDistance.setMinValue(16).setMaxValue(256);
+        propPumpMaxDistance.setMinValue(16).setMaxValue(128);
         propPumpMaxDistance.setComment("How far, in minecraft blocks, should pumps reach in fluids?");
         none.setTo(propPumpMaxDistance);
 
