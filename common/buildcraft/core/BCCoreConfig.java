@@ -45,6 +45,7 @@ public class BCCoreConfig {
     public static boolean hideFluid;
     public static boolean pumpsConsumeWater;
     public static int markerMaxDistance;
+    public static int pumpMaxDistance;
     public static int networkUpdateRate = 10;
 
     private static Property propColourBlindMode;
@@ -65,6 +66,7 @@ public class BCCoreConfig {
     private static Property propItemLifespan;
     private static Property propPumpsConsumeWater;
     private static Property propMarkerMaxDistance;
+    private static Property propPumpMaxDistance;
     private static Property propNetworkUpdateRate;
 
     public static void preInit(File cfgFolder) {
@@ -177,6 +179,11 @@ public class BCCoreConfig {
         propMarkerMaxDistance.setComment("How far, in minecraft blocks, should markers (volume and path) reach?");
         none.setTo(propMarkerMaxDistance);
 
+        propPumpMaxDistance = config.get(general, "pumpMaxDistance", 64);
+        propPumpMaxDistance.setMinValue(16).setMaxValue(128);
+        propPumpMaxDistance.setComment("How far, in minecraft blocks, should pumps reach in fluids?");
+        none.setTo(propPumpMaxDistance);
+
         propNetworkUpdateRate = config.get(general, "updateFactor", networkUpdateRate);
         propNetworkUpdateRate.setMinValue(1).setMaxValue(100);
         propNetworkUpdateRate.setComment(
@@ -229,6 +236,7 @@ public class BCCoreConfig {
         BCLibConfig.itemLifespan = propItemLifespan.getInt();
         pumpsConsumeWater = propPumpsConsumeWater.getBoolean();
         markerMaxDistance = propMarkerMaxDistance.getInt();
+        pumpMaxDistance = propPumpMaxDistance.getInt();
         BCLibConfig.colourBlindMode = propColourBlindMode.getBoolean();
         BCLibConfig.displayTimeGap = ConfigUtil.parseEnumForConfig(propDisplayTimeGap, TimeGap.TICKS);
         BCLibConfig.rotateTravelingItems =
