@@ -114,11 +114,12 @@ public class TilePump extends TileMiner {
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
+            final int maxLengthSquared = BCCoreConfig.pumpMaxDistance * BCCoreConfig.pumpMaxDistance;
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
                 int count = 0;
                 for (EnumFacing side : SEARCH_DIRECTIONS) {
                     BlockPos offsetPos = posToCheck.offset(side);
-                    if (offsetPos.distanceSq(pos) > 64 * 64) {
+                    if (offsetPos.distanceSq(pos) > maxLengthSquared) {
                         continue;
                     }
                     if (checked.add(offsetPos)) {
