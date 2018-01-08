@@ -29,10 +29,11 @@ public class RenderTube extends FastTESR<TileMiner> {
 
     @Override
     public void renderTileEntityFast(@Nonnull TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        double tubeY = tile.getPos().getY() - tile.getLength(partialTicks);
-        if (tubeY == 0) {
+        if (tile.isComplete()) {
             return;
         }
+
+        double tubeY = tile.getPos().getY() - tile.getLength(partialTicks);
 
         BlockPos from = tile.getPos();
         buffer.setTranslation(x - from.getX(), y - from.getY(), z - from.getZ());
