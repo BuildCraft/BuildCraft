@@ -170,6 +170,12 @@ compileJava {
     options.compilerArgs << "-encoding" << "UTF-8"
 }
 
+javadoc {
+    options.setUse(true)
+    options.addStringsOption("Xmaxerrs").setValue(["2"])
+    options.addStringsOption("Xmaxwarns").setValue(["2"])
+}
+
 // --------------------
 // extra jar section
 // -------------------
@@ -199,16 +205,19 @@ def parseConfig(File config) {
     }
 }
 
+def unzippedSourceJar = new File("build/processing/tasks/unzipped_src_jar/unzip")
 def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/", version)
 def modulesDir = new File(libsDir, "modules")
 def modulesDirSrc = new File(modulesDir, "src")
 
-// add a source jar
-//task sourceJar(type: Jar) {
-//    from sourceSets.main.allSource
-//    from sourceSets.api.allSource
-//    classifier = 'sources'
-//}
+// forge (or gradle?) creates a special sourceJar which has been processed
+// This task unzips that created jar, so that partial source jars can be created.
+task unzipSourceJar(type: Copy, dependsOn: sourceJar) {
+    from (zipTree(sourceJar.archivePath)) {
+        include "**"
+    }
+    into unzippedSourceJar
+}
 
 // add api classes to javadoc
 javadoc {
@@ -239,7 +248,7 @@ task apiJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
-task apiSrcJar(type: Jar, dependsOn: build) {
+task apiSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     destinationDir = modulesDirSrc
     appendix = "api"
     classifier = 'sources'
@@ -256,14 +265,14 @@ task libJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
-task libSrcJar(type: Jar, dependsOn: build) {
+task libSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     destinationDir = modulesDirSrc
     appendix = "lib"
     classifier = "sources"
 
     from sourceSets.api.allSource
-    from (sourceSets.main.allSource) {
-        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "LICENSE**"])
+    from (unzippedSourceJar) {
+        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "LICENSE**"])
     }
 }
 
@@ -351,12 +360,14 @@ task allJar(type: Jar, dependsOn:reobfJar) {
     }
 }
 
-task allSrcJar(type: Jar, dependsOn:reobfJar) {
+task allSrcJar(type: Jar, dependsOn:[reobfJar, unzipSourceJar]) {
     destinationDir = libsDir
     classifier = "sources"
 
     from sourceSets.api.allSource
-    from sourceSets.main.allSource
+    from (unzippedSourceJar) {
+        includes.add("**")
+    }
 }
 
 // add api classes to main package

@@ -1,4 +1,9 @@
 
+Additions:
+
+* [#3964] Add a config option to change the max fluid pumping distance (Yuki-nyan).
+  * Currently this is limited between 16 and 128. The default is the old limit - 64.
+
 API (code) Changes:
 
 * IPipeRegistry.createItemForPipe now registers the returned items with forge, so that addons don't have to.
@@ -16,6 +21,8 @@ Bugs fixed:
 
 * [#3891] The quarry sometimes goes into an infinite loop when calculating frame positions.
 * [#3937] Disabling the facade item crashes the game.
-* [#3944] The autoworkbench doesn't clear its old items properly, leading to buggy behaviour with containing items (such as buckets)
+* [#3944, #3965] The autoworkbench doesn't clear its old items properly, leading to buggy behaviour with containing items (such as buckets)
 * [#3948] The autoworkbench doesn't craft fireworks properly when multiple things attempt to craft the same item.
 * [#3886] The combustion engine doesn't move fluid containers around properly, either duplicating or voiding items and fluids.
+* [#3869] Texture flickering and FPS drop on mining well when it's complete - likely turning on and off rapidly
+
