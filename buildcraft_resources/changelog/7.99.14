@@ -32,4 +32,5 @@ Bugs fixed:
 * [#3886] The combustion engine doesn't move fluid containers around properly, either duplicating or voiding items and fluids.
 * [#3869] Texture flickering and FPS drop on mining well when it's complete - likely turning on and off rapidly
 * [#3953] Land and path markers are visible from all dimensions.
+* The obsidian pipe can connect to itself.
 
