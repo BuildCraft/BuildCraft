@@ -29,10 +29,10 @@ import buildcraft.core.client.BuildCraftLaserManager;
 public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
     public VolumeSubCache(World world) {
         super(world, MarkerCache.CACHES.indexOf(VolumeCache.INSTANCE));
-        VolumeSavedData data = (VolumeSavedData) world.loadData(VolumeSavedData.class, VolumeSavedData.NAME);
+        VolumeSavedData data = (VolumeSavedData) world.getPerWorldStorage().getOrLoadData(VolumeSavedData.class, VolumeSavedData.NAME);
         if (data == null) {
             data = new VolumeSavedData();
-            world.setData(VolumeSavedData.NAME, data);
+            world.getPerWorldStorage().setData(VolumeSavedData.NAME, data);
         }
         data.loadInto(this);
     }

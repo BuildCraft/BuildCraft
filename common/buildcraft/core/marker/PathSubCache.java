@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.net.MessageMarker;
 
@@ -20,11 +21,11 @@ import buildcraft.core.client.BuildCraftLaserManager;
 
 public class PathSubCache extends MarkerSubCache<PathConnection> {
     public PathSubCache(World world) {
-        super(world, PathCache.CACHES.indexOf(PathCache.INSTANCE));
-        PathSavedData data = (PathSavedData) world.loadData(PathSavedData.class, PathSavedData.NAME);
+        super(world, MarkerCache.CACHES.indexOf(PathCache.INSTANCE));
+        PathSavedData data = (PathSavedData) world.getPerWorldStorage().getOrLoadData(PathSavedData.class, PathSavedData.NAME);
         if (data == null) {
             data = new PathSavedData();
-            world.setData(PathSavedData.NAME, data);
+            world.getPerWorldStorage().setData(PathSavedData.NAME, data);
         }
         data.loadInto(this);
     }
