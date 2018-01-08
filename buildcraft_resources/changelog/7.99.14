@@ -10,6 +10,12 @@ API (code) Changes:
 * Added IPipeRegistry.createUnnamedItemForPipe is similar to IPipeRegistry.createItemForPipe
   * With one exception: the caller must set the registry, unlocalised, and creative tabs.
   * This is accomplished by providing a Consumer<Item> in order to set the properties.
+* [#3945] Added PipeEventTileState fired by certain functions inside TileEntity
+  * Contained subclasses:
+    * Invalidate: fired during TileEntity.invalidate()
+    * Validate: fired during TileEntity.validate()
+    * ChunkUnload: fired during TileEntity.onChunkUnload()
+  * Added to allow the addon Additional Pipes to properly port the teleport pipe.
 
 Changes:
 

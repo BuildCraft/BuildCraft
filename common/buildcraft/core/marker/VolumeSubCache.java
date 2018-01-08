@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.net.MessageMarker;
 
@@ -27,7 +28,7 @@ import buildcraft.core.client.BuildCraftLaserManager;
 
 public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
     public VolumeSubCache(World world) {
-        super(world, VolumeCache.CACHES.indexOf(VolumeCache.INSTANCE));
+        super(world, MarkerCache.CACHES.indexOf(VolumeCache.INSTANCE));
         VolumeSavedData data = (VolumeSavedData) world.loadData(VolumeSavedData.class, VolumeSavedData.NAME);
         if (data == null) {
             data = new VolumeSavedData();

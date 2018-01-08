@@ -45,6 +45,7 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeEvent;
+import buildcraft.api.transport.pipe.PipeEventTileState;
 import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
@@ -213,7 +214,20 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public void invalidate() {
         super.invalidate();
+        eventBus.fireEvent(new PipeEventTileState.Invalidate(this));
         wireManager.removeParts(new ArrayList<>(wireManager.parts.keySet()));
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        eventBus.fireEvent(new PipeEventTileState.Validate(this));
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        eventBus.fireEvent(new PipeEventTileState.ChunkUnload(this));
     }
 
     @Override
