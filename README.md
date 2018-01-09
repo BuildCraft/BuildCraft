@@ -1,4 +1,4 @@
-## Welcome to Buildcraft on GitHub
+## Welcome to BuildCraft on GitHub
 
 ### Reporting an issue
 
@@ -40,11 +40,11 @@ PR implementing new features or changing large portions of code are helpful. But
   * You are using the dev version on a normal game instance (or vice versa)
 * Render issue (Quarry causes flickering) - Try without OptiFine first! This is a known issue with some versions of OptiFine.
 
-### Compiling and packaging Buildcraft
+### Compiling and packaging BuildCraft
 1. Ensure that `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)), `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
  * Optional: Install `Gradle` (found [here](http://www.gradle.org/downloads))
 1. Create a base directory for the build
-1. Clone the Buildcraft repository into 'baseDir/BuildCraft/'
+1. Clone the BuildCraft repository into 'baseDir/BuildCraft/'
 1. Clone (and update) the submodules into 'baseDir/BuildCraft with 'git submodule init' and 'git submodule update'
 1. Navigate to basedir/BuildCraft in a shell and run one of two commands:
  * `gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
