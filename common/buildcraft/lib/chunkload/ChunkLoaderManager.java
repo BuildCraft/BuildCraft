@@ -15,6 +15,7 @@ import java.util.WeakHashMap;
 import javax.annotation.Nonnull;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
@@ -96,9 +97,14 @@ public class ChunkLoaderManager {
         World world) {
         if (BCLibConfig.chunkLoadingLevel != BCLibConfig.ChunkLoaderLevel.NONE) {
             for (ForgeChunkManager.Ticket ticket : tickets) {
-                TileEntity tile = world.getTileEntity(NBTUtilBC.readBlockPos(ticket.getModData().getTag("location")));
-                if (tile == null || !(tile instanceof IChunkLoadingTile) || !canLoadFor((IChunkLoadingTile) tile))
+                BlockPos pos = NBTUtilBC.readBlockPos(ticket.getModData().getTag("location"));
+                if (pos == null) {
                     continue;
+                }
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile == null || !(tile instanceof IChunkLoadingTile) || !canLoadFor((IChunkLoadingTile) tile)) {
+                    continue;
+                }
                 for (ChunkPos chunkPos : getChunksToLoad((T) tile)) {
                     ForgeChunkManager.forceChunk(ticket, chunkPos);
                 }
