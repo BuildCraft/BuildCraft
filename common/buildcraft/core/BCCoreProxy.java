@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
@@ -53,7 +53,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
     }
 
     public void fmlPreInit() {
-        MessageManager.registerMessageClass(EnumBuildCraftModule.CORE, MessageVolumeBoxes.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.CORE, MessageVolumeBoxes.class, Side.CLIENT);
     }
 
     public void fmlInit() {

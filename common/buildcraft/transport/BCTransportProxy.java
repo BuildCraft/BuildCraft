@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApiClient;
@@ -130,8 +130,8 @@ public abstract class BCTransportProxy implements IGuiHandler {
     }
 
     public void fmlPreInit() {
-        MessageManager.registerMessageClass(EnumBuildCraftModule.TRANSPORT, MessageWireSystems.class, Side.CLIENT);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.TRANSPORT, MessageWireSystemsPowered.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystems.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystemsPowered.class, Side.CLIENT);
     }
 
     public void fmlInit() {

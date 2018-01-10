@@ -12,7 +12,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 
 import buildcraft.lib.config.EnumRestartRequirement;
 
@@ -40,7 +40,7 @@ public class BCSiliconConfig {
 
     @SubscribeEvent
     public static void onConfigChange(OnConfigChangedEvent cce) {
-        if (EnumBuildCraftModule.isBuildCraftMod(cce.getModID())) {
+        if (BCModules.isBcMod(cce.getModID())) {
             reloadConfig(EnumRestartRequirement.NONE);
         }
     }

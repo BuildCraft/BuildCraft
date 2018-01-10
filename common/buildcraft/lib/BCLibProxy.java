@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
@@ -54,13 +54,13 @@ public abstract class BCLibProxy implements IGuiHandler {
     }
 
     void fmlPreInit() {
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageUpdateTile.class, MessageUpdateTile.HANDLER);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageContainer.class, MessageContainer.HANDLER);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageMarker.class, Side.CLIENT);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageObjectCacheRequest.class, MessageObjectCacheRequest.HANDLER, Side.SERVER);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageObjectCacheResponse.class, Side.CLIENT);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageDebugRequest.class,MessageDebugRequest.HANDLER, Side.SERVER);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.LIB, MessageDebugResponse.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageUpdateTile.class, MessageUpdateTile.HANDLER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageContainer.class, MessageContainer.HANDLER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageMarker.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheRequest.class, MessageObjectCacheRequest.HANDLER, Side.SERVER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheResponse.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugRequest.class,MessageDebugRequest.HANDLER, Side.SERVER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugResponse.class, Side.CLIENT);
     }
 
     void fmlInit() {

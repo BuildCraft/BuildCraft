@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
@@ -80,13 +80,13 @@ public class BCLib {
         }
         BCLog.logger.info("");
         BCLog.logger.info("Loaded Modules:");
-        for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
+        for (BCModules module : BCModules.VALUES) {
             if (module.isLoaded()) {
                 BCLog.logger.info("  - " + module.lowerCaseName);
             }
         }
         BCLog.logger.info("Missing Modules:");
-        for (EnumBuildCraftModule module : EnumBuildCraftModule.VALUES) {
+        for (BCModules module : BCModules.VALUES) {
             if (!module.isLoaded()) {
                 BCLog.logger.info("  - " + module.lowerCaseName);
             }

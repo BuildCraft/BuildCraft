@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
@@ -202,7 +202,7 @@ public class BCCoreConfig {
 
     @SubscribeEvent
     public static void onConfigChange(OnConfigChangedEvent cce) {
-        if (EnumBuildCraftModule.isBuildCraftMod(cce.getModID())) {
+        if (BCModules.isBcMod(cce.getModID())) {
             EnumRestartRequirement req = EnumRestartRequirement.NONE;
             if (Loader.instance().isInState(LoaderState.AVAILABLE)) {
                 // The loaders state will be LoaderState.SERVER_STARTED when we are in a world

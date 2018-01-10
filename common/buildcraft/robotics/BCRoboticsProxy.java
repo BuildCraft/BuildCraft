@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.EnumBuildCraftModule;
+import buildcraft.api.BCModules;
 
 import buildcraft.lib.net.MessageManager;
 
@@ -54,8 +54,8 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
     }
 
     public void fmlPreInit() {
-        MessageManager.registerMessageClass(EnumBuildCraftModule.ROBOTICS, MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
-        MessageManager.registerMessageClass(EnumBuildCraftModule.ROBOTICS, MessageZoneMapResponse.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
+        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapResponse.class, Side.CLIENT);
     }
 
     public void fmlInit() {
