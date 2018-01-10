@@ -8,8 +8,6 @@ package buildcraft.builders.client.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,12 +35,9 @@ public class RenderFiller extends FastTESR<TileFiller> {
 
         Minecraft.getMinecraft().mcProfiler.startSection("box");
         if (tile.markerBox) {
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-            LaserBoxRenderer.renderLaserBoxStatic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, true);
-            GlStateManager.popMatrix();
-            RenderHelper.enableStandardItemLighting();
+            bb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+            LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, bb, true);
+            bb.setTranslation(0, 0, 0);
         }
         Minecraft.getMinecraft().mcProfiler.endSection();
 
