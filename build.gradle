@@ -90,7 +90,8 @@ minecraft {
     if (grgit != null) {
         def repo = grgit.open()
         replace "\${git_commit_hash}", repo.head().id
-        replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\"").split("\n")[0]
+        // This is very ugly: we need 7(!) \ to produce a single \ in the final one. 
+        replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
     }

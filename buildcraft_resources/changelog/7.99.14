@@ -4,6 +4,12 @@ Additions:
 * [#3964] Add a config option to change the max fluid pumping distance (Yuki-nyan).
   * Currently this is limited between 16 and 128. The default is the old limit - 64.
 
+Changes:
+
+* The christmas event is over
+  * Chocolate based names have been replaced with oil based ones.
+  * A config option has been added (events.christmas_chocolate) to enable or disable the event.
+
 API (code) Changes:
 
 * IPipeRegistry.createItemForPipe now registers the returned items with forge, so that addons don't have to.
@@ -17,12 +23,6 @@ API (code) Changes:
     * ChunkUnload: fired during TileEntity.onChunkUnload()
   * Added to allow the addon Additional Pipes to properly port the teleport pipe.
 
-Changes:
-
-* The christmas event is over
-  * Chocolate based names have been replaced with oil based ones.
-  * A config option has been added (events.christmas_chocolate) to enable or disable the event.
-
 Bugs fixed:
 
 * [#3891] The quarry sometimes goes into an infinite loop when calculating frame positions.
@@ -33,4 +33,5 @@ Bugs fixed:
 * [#3869] Texture flickering and FPS drop on mining well when it's complete - likely turning on and off rapidly
 * [#3953] Land and path markers are visible from all dimensions.
 * [#3987] The obsidian pipe can connect to itself.
+* [#3970] Disabling chunkloading, quitting, and then re-enabling and loading a world crashes.
 
