@@ -8,11 +8,14 @@ import java.util.function.Consumer;
 
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
@@ -21,11 +24,13 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
+import buildcraft.lib.command.CommandBuildCraft;
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistrationHelper;
@@ -57,8 +62,11 @@ public class BCLib {
     @Instance(MODID)
     public static BCLib INSTANCE;
 
+    public static ModContainer MOD_CONTAINER;
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
+        MOD_CONTAINER = Loader.instance().activeModContainer();
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
@@ -71,11 +79,23 @@ public class BCLib {
             BCLog.logger.info("    committed by " + GIT_COMMIT_AUTHOR);
         }
         BCLog.logger.info("");
+        BCLog.logger.info("Loaded Modules:");
+        for (BCModules module : BCModules.VALUES) {
+            if (module.isLoaded()) {
+                BCLog.logger.info("  - " + module.lowerCaseName);
+            }
+        }
+        BCLog.logger.info("Missing Modules:");
+        for (BCModules module : BCModules.VALUES) {
+            if (!module.isLoaded()) {
+                BCLog.logger.info("  - " + module.lowerCaseName);
+            }
+        }
+        BCLog.logger.info("");
 
         ExpressionDebugManager.logger = BCLog.logger::info;
         ExpressionCompat.setup();
 
-        BCModules.fmlPreInit();
         BCLibRegistries.fmlPreInit();
         BCLibProxy.getProxy().fmlPreInit();
         BCLibItems.fmlPreInit();
@@ -108,12 +128,19 @@ public class BCLib {
         BuildCraftObjectCaches.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
+        MessageManager.fmlPostInit();
+    }
+
+    @Mod.EventHandler
+    public static void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandBuildCraft());
     }
 
     static {
         startBatch();
         registerTag("item.guide").reg("guide").locale("buildcraft.guide").model("guide").tab("vanilla.misc");
-        registerTag("item.guide.note").reg("guide_note").locale("buildcraft.guide_note").model("guide_note").tab("vanilla.misc");
+        registerTag("item.guide.note").reg("guide_note").locale("buildcraft.guide_note").model("guide_note")
+            .tab("vanilla.misc");
         registerTag("item.debugger").reg("debugger").locale("debugger").model("debugger").tab("vanilla.misc");
         endBatch(TagManager.prependTags("buildcraftlib:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
     }

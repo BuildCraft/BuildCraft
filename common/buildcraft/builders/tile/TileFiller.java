@@ -144,6 +144,7 @@ public class TileFiller extends TileBC_Neptune
                     new Lock(
                         new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
                         new Lock.Target.TargetAddon(addon.getSlot()),
+                        new Lock.Target.TargetRemove(),
                         new Lock.Target.TargetResize(),
                         new Lock.Target.TargetUsedByMachine(
                             Lock.Target.TargetUsedByMachine.EnumType.STRIPES_WRITE
@@ -160,6 +161,7 @@ public class TileFiller extends TileBC_Neptune
                 volumeBox.locks.add(
                     new Lock(
                         new Lock.Cause.CauseBlock(pos, blockState.getBlock()),
+                        new Lock.Target.TargetRemove(),
                         new Lock.Target.TargetResize(),
                         new Lock.Target.TargetUsedByMachine(
                             Lock.Target.TargetUsedByMachine.EnumType.STRIPES_WRITE

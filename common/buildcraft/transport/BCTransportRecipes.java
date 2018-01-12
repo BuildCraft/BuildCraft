@@ -155,11 +155,11 @@ public class BCTransportRecipes {
                     GateVariant varOr = new GateVariant(EnumGateLogic.OR, material, modifier);
                     ItemStack resultOr = BCTransportItems.plugGate.getStack(varOr);
 
-                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultOr.getItem().getRegistryName(), resultAnd, "i", 'i', new IngredientNBTBC(resultOr)).setRegistryName(resultOr.getItem().getRegistryName() + "_" + modifier + "_" + material + "_or"));
-                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultAnd.getItem().getRegistryName(), resultOr, "i", 'i', new IngredientNBTBC(resultAnd)).setRegistryName(resultAnd.getItem().getRegistryName() + "_" + modifier + "_" + material + "_and"));
+                    String regNamePrefix = resultOr.getItem().getRegistryName() + "_" + modifier + "_" + material;
+                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultOr.getItem().getRegistryName(), resultAnd, "i", 'i', new IngredientNBTBC(resultOr)).setRegistryName(regNamePrefix + "_or"));
+                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultAnd.getItem().getRegistryName(), resultOr, "i", 'i', new IngredientNBTBC(resultAnd)).setRegistryName(regNamePrefix + "_and"));
                 }
             }
-
         }
 
         if (BCTransportItems.plugPulsar != null) {
@@ -287,7 +287,7 @@ public class BCTransportRecipes {
                                        EnumGateModifier modifier) {
         GateVariant variant = new GateVariant(EnumGateLogic.AND, material, modifier);
         builder.setResult(BCTransportItems.plugGate.getStack(variant));
-        builder.registerNbtAware();
+        builder.registerNbtAware("buildcrafttransport:plug_gate_create_" + material + "_" + modifier);
     }
 
     private static void addPipeRecipe(ItemPipeHolder pipe, Object material) {

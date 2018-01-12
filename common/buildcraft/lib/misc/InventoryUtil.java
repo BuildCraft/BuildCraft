@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -98,7 +99,8 @@ public class InventoryUtil {
      * around. Will make sure that the location from which the items are coming from (identified by the from parameter)
      * isn't used again so that entities doesn't go backwards. Returns true if successful, false otherwise. */
     @Nonnull
-    public static ItemStack addToRandomInjectable(World world, BlockPos pos, EnumFacing ignore, @Nonnull ItemStack stack) {
+    public static ItemStack addToRandomInjectable(World world, BlockPos pos, EnumFacing ignore,
+        @Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
             return StackUtil.EMPTY;
         }
@@ -132,6 +134,16 @@ public class InventoryUtil {
             if (!stack.isEmpty()) {
                 dst.add(stack);
             }
+        }
+    }
+
+    /** Adds the given {@link ItemStack} to the player's inventory, or drops it in front of them if their was not enough
+     * room. */
+    public static void addToPlayer(EntityPlayer player, ItemStack stack) {
+        if (player.inventory.addItemStackToInventory(stack)) {
+            player.inventoryContainer.detectAndSendChanges();
+        } else {
+            player.dropItem(stack, false, false);
         }
     }
 

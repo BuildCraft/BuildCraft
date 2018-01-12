@@ -126,9 +126,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
                 BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
                 world.setBlockState(blockPos, BCFactoryBlocks.tube.getDefaultState());
             }
-            if (wantedLength == 0) {
-                sendNetworkUpdate(NET_RENDER_DATA);
-            }
             currentLength = wantedLength = newLength;
             sendNetworkUpdate(NET_WANTED_Y);
         }

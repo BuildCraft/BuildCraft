@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,39 +25,38 @@ public abstract class LaserCompiledList {
     public abstract void delete();
 
     public static class Builder implements ILaserRenderer {
-        private final Tessellator tess;
-        private final BufferBuilder buffer;
         private final boolean useColour;
 
         public Builder(boolean useNormalColour) {
             this.useColour = useNormalColour;
-            tess = Tessellator.getInstance();
-            buffer = tess.getBuffer();
-            buffer.begin(GL11.GL_QUADS, useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
+            BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+            bufferBuilder.begin(GL11.GL_QUADS, useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
         }
 
         @Override
         public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz, float diffuse) {
-            buffer.pos(x, y, z);
-            buffer.tex(u, v);
-            buffer.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
+            BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+            bufferBuilder.pos(x, y, z);
+            bufferBuilder.tex(u, v);
+            bufferBuilder.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
             if (useColour) {
-                buffer.color(diffuse, diffuse, diffuse, 1.0f);
+                bufferBuilder.color(diffuse, diffuse, diffuse, 1.0f);
             }
-            buffer.endVertex();
+            bufferBuilder.endVertex();
         }
 
         public LaserCompiledList build() {
             if (OpenGlHelper.useVbo()) {
-                net.minecraft.client.renderer.vertex.VertexBuffer vb = new net.minecraft.client.renderer.vertex.VertexBuffer(this.buffer.getVertexFormat());
-                buffer.finishDrawing();
-                buffer.reset();
-                vb.bufferData(buffer.getByteBuffer());
-                return new Vbo(useColour, vb);
+                BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+                VertexBuffer vertexBuffer = new VertexBuffer(bufferBuilder.getVertexFormat());
+                bufferBuilder.finishDrawing();
+                bufferBuilder.reset();
+                vertexBuffer.bufferData(bufferBuilder.getByteBuffer());
+                return new Vbo(useColour, vertexBuffer);
             } else {
                 int glList = GLAllocation.generateDisplayLists(1);
                 GL11.glNewList(glList, GL11.GL_COMPILE);
-                tess.draw();
+                Tessellator.getInstance().draw();
                 GL11.glEndList();
                 return new GlList(glList);
             }
@@ -83,18 +83,18 @@ public abstract class LaserCompiledList {
 
     private static class Vbo extends LaserCompiledList {
         private final boolean useColour;
-        private final net.minecraft.client.renderer.vertex.VertexBuffer buffer;
+        private final VertexBuffer vertexBuffer;
 
-        private Vbo(boolean useColour, net.minecraft.client.renderer.vertex.VertexBuffer buffer) {
+        private Vbo(boolean useColour, VertexBuffer vertexBuffer) {
             this.useColour = useColour;
-            this.buffer = buffer;
+            this.vertexBuffer = vertexBuffer;
         }
 
         @Override
         public void render() {
             final int stride = useColour ? 28 : 24;
 
-            buffer.bindBuffer();
+            vertexBuffer.bindBuffer();
             GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
             GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, stride, 0);
 
@@ -111,8 +111,8 @@ public abstract class LaserCompiledList {
                 GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, stride, 24);
             }
 
-            buffer.drawArrays(GL11.GL_QUADS);
-            buffer.unbindBuffer();
+            vertexBuffer.drawArrays(GL11.GL_QUADS);
+            vertexBuffer.unbindBuffer();
 
             GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
             GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
@@ -128,7 +128,7 @@ public abstract class LaserCompiledList {
 
         @Override
         public void delete() {
-            buffer.deleteGlBuffers();
+            vertexBuffer.deleteGlBuffers();
         }
     }
 }

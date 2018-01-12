@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Queues;
 
 import net.minecraft.client.Minecraft;
@@ -265,7 +264,7 @@ public class GuiGuide extends GuiScreen {
         } catch (Throwable t) {
             // Temporary fix for crash report classes crashing so we can see the ACTUAL error
             t.printStackTrace();
-            throw Throwables.propagate(t);
+            throw new RuntimeException(t);
         }
     }
 

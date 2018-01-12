@@ -51,7 +51,8 @@ public class BCTransportConfig {
 
     public static void preInit() {
         Configuration config = BCCoreConfig.config;
-        propMjPerMillibucket = config.get("general", "pipes.mjPerMillibucket", (int) mjPerMillibucket).setMinValue((int) MJ_REQ_MILLIBUCKET_MIN);
+        propMjPerMillibucket = config.get("general", "pipes.mjPerMillibucket", (int) mjPerMillibucket)
+            .setMinValue((int) MJ_REQ_MILLIBUCKET_MIN);
         EnumRestartRequirement.WORLD.setTo(propMjPerMillibucket);
 
         propMjPerItem = config.get("general", "pipes.mjPerItem", (int) mjPerItem).setMinValue((int) MJ_REQ_ITEM_MIN);
@@ -82,7 +83,7 @@ public class BCTransportConfig {
             baseFlowRate = MathUtil.clamp(propBaseFlowRate.getInt(), 1, 40);
             int basePowerRate = 4;
 
-            lossMode = ConfigUtil.parseEnumForConfig(propLossMode.getString(), PowerLossMode.VALUES, PowerLossMode.DEFAULT);
+            lossMode = ConfigUtil.parseEnumForConfig(propLossMode, PowerLossMode.DEFAULT);
 
             fluidTransfer(BCTransportPipes.cobbleFluid, baseFlowRate, 10);
             fluidTransfer(BCTransportPipes.woodFluid, baseFlowRate, 10);

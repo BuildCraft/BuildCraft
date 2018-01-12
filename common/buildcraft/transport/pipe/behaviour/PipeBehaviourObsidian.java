@@ -81,6 +81,11 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
     }
 
     @Override
+    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+        return !(other instanceof PipeBehaviourObsidian);
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         if (pipe.getHolder().getPipeWorld().isRemote) {
             return;

@@ -121,10 +121,14 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 for (Iterator<VolumeBox> iterator = volumeBoxes.volumeBoxes.iterator(); iterator.hasNext();) {
                     VolumeBox volumeBox = iterator.next();
                     if (volumeBox.box.getBoundingBox().calculateIntercept(start, end) != null) {
-                        volumeBox.addons.values().forEach(Addon::onRemoved);
-                        iterator.remove();
-                        volumeBoxes.markDirty();
-                        return EnumActionResult.SUCCESS;
+                        if (volumeBox.getLockTargetsStream().noneMatch(Lock.Target.TargetResize.class::isInstance)) {
+                            volumeBox.addons.values().forEach(Addon::onRemoved);
+                            iterator.remove();
+                            volumeBoxes.markDirty();
+                            return EnumActionResult.SUCCESS;
+                        } else {
+                            return EnumActionResult.FAIL;
+                        }
                     }
                 }
             } else {

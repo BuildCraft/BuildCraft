@@ -9,6 +9,7 @@ package buildcraft.core.marker.volume;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import net.minecraft.block.Block;
@@ -58,19 +59,11 @@ public class Lock {
 
     public void readFromNBT(NBTTagCompound nbt) {
         NBTTagCompound causeTag = nbt.getCompoundTag("cause");
-        try {
-            cause = NBTUtilBC.readEnum(causeTag.getTag("type"), Cause.EnumCause.class).clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        cause = NBTUtilBC.readEnum(causeTag.getTag("type"), Cause.EnumCause.class).supplier.get();
         cause.readFromNBT(causeTag.getCompoundTag("data"));
         NBTUtilBC.readCompoundList(nbt.getTag("targets")).map(targetTag -> {
             Target target;
-            try {
-                target = NBTUtilBC.readEnum(targetTag.getTag("type"), Target.EnumTarget.class).clazz.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            target = NBTUtilBC.readEnum(targetTag.getTag("type"), Target.EnumTarget.class).supplier.get();
             target.readFromNBT(targetTag.getCompoundTag("data"));
             return target;
         }).forEach(targets::add);
@@ -87,20 +80,12 @@ public class Lock {
     }
 
     public void fromBytes(PacketBuffer buf) {
-        try {
-            cause = new PacketBufferBC(buf).readEnumValue(Cause.EnumCause.class).clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        cause = new PacketBufferBC(buf).readEnumValue(Cause.EnumCause.class).supplier.get();
         cause.fromBytes(buf);
         targets.clear();
         IntStream.range(0, buf.readInt()).mapToObj(i -> {
             Target target;
-            try {
-                target = new PacketBufferBC(buf).readEnumValue(Target.EnumTarget.class).clazz.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            target = new PacketBufferBC(buf).readEnumValue(Target.EnumTarget.class).supplier.get();
             target.fromBytes(buf);
             return target;
         }).forEach(targets::add);
@@ -161,16 +146,19 @@ public class Lock {
         }
 
         enum EnumCause {
-            BLOCK(CauseBlock.class);
+            BLOCK(CauseBlock::new);
 
-            public final Class<? extends Cause> clazz;
+            public final Supplier<? extends Cause> supplier;
 
-            EnumCause(Class<? extends Cause> clazz) {
-                this.clazz = clazz;
+            EnumCause(Supplier<? extends Cause> supplier) {
+                this.supplier = supplier;
             }
 
             public static EnumCause getForClass(Class<? extends Cause> clazz) {
-                return Arrays.stream(values()).filter(enumCause -> enumCause.clazz == clazz).findFirst().orElse(null);
+                return Arrays.stream(values())
+                    .filter(enumCause -> enumCause.supplier.get().getClass() == clazz)
+                    .findFirst()
+                    .orElse(null);
             }
         }
     }
@@ -183,6 +171,25 @@ public class Lock {
         public abstract void toBytes(PacketBuffer buf);
 
         public abstract void fromBytes(PacketBuffer buf);
+
+        public static class TargetRemove extends Target {
+            @Override
+            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+                return nbt;
+            }
+
+            @Override
+            public void readFromNBT(NBTTagCompound nbt) {
+            }
+
+            @Override
+            public void toBytes(PacketBuffer buf) {
+            }
+
+            @Override
+            public void fromBytes(PacketBuffer buf) {
+            }
+        }
 
         public static class TargetResize extends Target {
             @Override
@@ -288,18 +295,22 @@ public class Lock {
         }
 
         enum EnumTarget {
-            RESIZE(TargetResize.class),
-            ADDON(TargetAddon.class),
-            USED_BY_MACHINE(TargetUsedByMachine.class);
+            REMOVE(TargetRemove::new),
+            RESIZE(TargetResize::new),
+            ADDON(TargetAddon::new),
+            USED_BY_MACHINE(TargetUsedByMachine::new);
 
-            public final Class<? extends Target> clazz;
+            public final Supplier<? extends Target> supplier;
 
-            EnumTarget(Class<? extends Target> clazz) {
-                this.clazz = clazz;
+            EnumTarget(Supplier<? extends Target> supplier) {
+                this.supplier = supplier;
             }
 
             public static EnumTarget getForClass(Class<? extends Target> clazz) {
-                return Arrays.stream(values()).filter(enumTarget -> enumTarget.clazz == clazz).findFirst().orElse(null);
+                return Arrays.stream(values())
+                    .filter(enumTarget -> enumTarget.supplier.get().getClass() == clazz)
+                    .findFirst()
+                    .orElse(null);
             }
         }
     }

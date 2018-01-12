@@ -244,9 +244,27 @@ fluid.fuel_dense=Dense Fuel
 fluid.fuel_light=Fuel
 fluid.fuel_gaseous=Gaseous Fuel
 
-buildcraft.fluid.heat_0= (§bCool§r)
-buildcraft.fluid.heat_1= (§6Hot§r)
-buildcraft.fluid.heat_2= (§cSearing§r)
+buildcraft.fluid.heat_0=%s (§bCool§r)
+buildcraft.fluid.heat_1=%s (§6Hot§r)
+buildcraft.fluid.heat_2=%s (§cSearing§r)
+
+buildcraft.christmas.fluid.oil=Raw Chocolate Mix
+buildcraft.christmas.fluid.fuel=Milk Chocolate
+buildcraft.christmas.fluid.oil_distilled=Mixed Chocolates
+buildcraft.christmas.fluid.oil_heavy=Raw Chocolate
+buildcraft.christmas.fluid.oil_dense=Raw Heavy Chocolates
+buildcraft.christmas.fluid.oil_residue=Caramel Excess
+buildcraft.christmas.fluid.fuel_mixed_heavy=Darker Chocolate Mix
+buildcraft.christmas.fluid.fuel_mixed_light=Lighter Chocolate Mix
+buildcraft.christmas.fluid.fuel_dense=Dark Chocolate
+buildcraft.christmas.fluid.fuel_light=Milk Chocolate
+buildcraft.christmas.fluid.fuel_gaseous=White Chocolate
+
+buildcraft.christmas.buildcraft.fluid.heat_0=§bMelted§r %s
+buildcraft.christmas.buildcraft.fluid.heat_1=§6Bubbling§r %s
+buildcraft.christmas.buildcraft.fluid.heat_2=§cSearing§r %s
+
+buildcraft.christmas.tile.engineIron.name=Chocolate Engine
 
 gate.action.extraction=%s Extraction Preset
 gate.action.pipe.item.color=Paint Items %s
@@ -675,6 +693,8 @@ chat.buildcraft.quarry.chunkloadInfo=[BuildCraft] The quarry at %d %d %d will ke
 
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
 command.buildcraft.changelog_header=Changelog for BuildCraft %s:
+command.buildcraft.version.fail=Version check failed! Check the log file for details.
+command.buildcraft.version.prerelease=You are using a pre-release build
 
 command.buildcraft.aliases=Aliases: %s
 command.buildcraft.help=Type '%s' for help.

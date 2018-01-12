@@ -30,7 +30,8 @@ public class RecipeBuilderShaped {
 
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
-            throw new IllegalArgumentException("Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
+            throw new IllegalArgumentException(
+                "Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
         }
         shape.add(row);
         return this;
@@ -122,12 +123,15 @@ public class RecipeBuilderShaped {
 
     public void register() {
         ensureValid();
-        ForgeRegistries.RECIPES.register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArray()));
+        ForgeRegistries.RECIPES
+            .register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArray()));
     }
 
-    public void registerNbtAware() {
+    public void registerNbtAware(String regName) {
         ensureValid();
-        ForgeRegistries.RECIPES.register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT()).setRegistryName(result.getItem().getRegistryName()));
+        ShapedOreRecipe recipe =
+            new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT());
+        ForgeRegistries.RECIPES.register(recipe.setRegistryName(regName));
     }
 
     public void registerRotated() {

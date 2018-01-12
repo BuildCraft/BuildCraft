@@ -231,7 +231,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
             if (result.getType() != EnumActionResult.PASS && result.getType() != EnumActionResult.SUCCESS) {
                 if (DEBUG) {
                     BCLog.logger
-                        .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result);
+                        .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result.getResult());
                 }
                 continue;
             } else if (DEBUG) {
@@ -255,7 +255,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         }
                     } else {
                         if (DEBUG) {
-                            BCLog.logger.info("[transport.facade] Disallowed state " + state + " because " + result);
+                            BCLog.logger.info("[transport.facade] Disallowed state " + state + " because " + result.getResult());
                         }
                         continue;
                     }

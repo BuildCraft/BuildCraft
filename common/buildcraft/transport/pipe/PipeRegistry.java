@@ -9,12 +9,14 @@ package buildcraft.transport.pipe;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.InvalidInputDataException;
@@ -52,7 +54,18 @@ public enum PipeRegistry implements IPipeRegistry {
 
     @Override
     public ItemPipeHolder createItemForPipe(PipeDefinition definition) {
-        ItemPipeHolder item = new ItemPipeHolder(definition);
+        ItemPipeHolder item = ItemPipeHolder.createAndTag(definition);
+        helper.addForcedItem(item);
+        if (definitions.values().contains(definition)) {
+            setItemForPipe(definition, item);
+        }
+        return item;
+    }
+
+    @Override
+    public IItemPipe createUnnamedItemForPipe(PipeDefinition definition, Consumer<Item> postCreate) {
+        ItemPipeHolder item = ItemPipeHolder.create(definition);
+        postCreate.accept(item);
         helper.addForcedItem(item);
         if (definitions.values().contains(definition)) {
             setItemForPipe(definition, item);

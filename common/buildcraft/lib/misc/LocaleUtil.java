@@ -9,6 +9,7 @@ package buildcraft.lib.misc;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.IllegalFormatException;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -88,7 +89,11 @@ public class LocaleUtil {
             }
             return key + " " + Arrays.toString(args);
         }
-        return String.format(localized, args);
+        try {
+            return String.format(localized, args);
+        } catch (IllegalFormatException ife) {
+            return "Bad Format: " + ife.getMessage();
+        }
     }
 
     /** Checks to see if the given key can be localized.

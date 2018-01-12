@@ -42,14 +42,18 @@ public class ConfigUtil {
         prop.setValidValues(validValues);
     }
 
-    public static <E extends Enum<E>> E parseEnumForConfig(String cfgValue, E[] possible, E defaultOption) {
+    public static <E extends Enum<E>> E parseEnumForConfig(Property prop, E defaultOption) {
+        return parseEnumForConfig(prop, defaultOption.getDeclaringClass().getEnumConstants(), defaultOption);
+    }
+
+    public static <E extends Enum<E>> E parseEnumForConfig(Property prop, E[] possible, E defaultOption) {
         Queue<E> match = new LinkedList<>();
         Collections.addAll(match, possible);
         Queue<char[]> lowerCaseNames = new LinkedList<>();
         for (E val : match) {
             lowerCaseNames.add(val.name().toLowerCase(Locale.ROOT).toCharArray());
         }
-        char[] chars = cfgValue.toLowerCase(Locale.ROOT).toCharArray();
+        char[] chars = prop.getString().toLowerCase(Locale.ROOT).toCharArray();
         for (int i = 0; i < chars.length; i++) {
             Iterator<E> iter = match.iterator();
             Iterator<char[]> iterNames = lowerCaseNames.iterator();
@@ -62,15 +66,17 @@ public class ConfigUtil {
                 }
             }
             if (match.size() == 1) {
-                return getAssumingEqual(cfgValue, match.peek());
+                return getAssumingEqual(prop, match.peek());
             }
         }
-        return getAssumingEqual(cfgValue, defaultOption);
+        return getAssumingEqual(prop, defaultOption);
     }
 
-    private static <E extends Enum<E>> E getAssumingEqual(String value, E mode) {
+    private static <E extends Enum<E>> E getAssumingEqual(Property prop, E mode) {
+        String value = prop.getString();
         if (!mode.name().equalsIgnoreCase(value)) {
-            BCLog.logger.warn("[transport.config] Unknown PowerLossMode '" + value + "', assuming " + mode.name());
+            BCLog.logger.warn("[lib.config] Unknown " + mode.getClass().getSimpleName() + " for " + prop.getName()
+                + " '" + value + "', assuming " + mode.name());
         }
         return mode;
     }

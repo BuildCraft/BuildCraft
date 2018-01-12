@@ -34,6 +34,7 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -249,7 +250,11 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         }
         ItemStack stack = transferStackToTank(container, held);
         player.inventory.setItemStack(stack);
+        ((EntityPlayerMP) player).updateHeldItem();
         player.inventoryContainer.detectAndSendChanges();
+        if (player.openContainer != null) {
+            player.openContainer.detectAndSendChanges();
+        }
     }
 
     /** Attempts to transfer the given stack to this tank.
@@ -292,8 +297,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
                     if (stack.isEmpty()) {
                         return result.itemStack;
                     } else if (!result.itemStack.isEmpty()) {
-                        player.inventory.addItemStackToInventory(result.itemStack);
-                        player.inventoryContainer.detectAndSendChanges();
+                        InventoryUtil.addToPlayer(player, result.itemStack);
                         return stack;
                     }
                 }
@@ -301,7 +305,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             }
         }
         // Now try to drain the fluid into the item
-        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack.copy());
+        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(copy);
         if (fluidHandler == null) return stack;
         FluidStack drained = drain(capacity, false);
         if (drained == null || drained.amount <= 0) return stack;
@@ -312,12 +316,19 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
                 throw new IllegalStateException("Somehow drained differently than expected! ( drained = "//
                     + drained + ", filled = " + filled + ", reallyDrained = " + reallyDrained + " )");
             }
-            if (isSurvival) {
-                ItemStack filledContainer = fluidHandler.getContainer();
-                player.inventory.setItemStack(filledContainer);
-                ((EntityPlayerMP) player).updateHeldItem();
-            }
             SoundUtil.playBucketFill(player.world, player.getPosition(), reallyDrained);
+            if (isSurvival) {
+                if (original.getCount() == 1) {
+                    return fluidHandler.getContainer();
+                } else {
+                    ItemStack stackContainer = fluidHandler.getContainer();
+                    if (!stackContainer.isEmpty()) {
+                        InventoryUtil.addToPlayer(player, stackContainer);
+                    }
+                    original.shrink(1);
+                    return original;
+                }
+            }
         }
         return stack;
     }
