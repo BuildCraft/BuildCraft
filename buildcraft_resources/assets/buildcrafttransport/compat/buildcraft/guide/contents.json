@@ -339,6 +339,14 @@
             }
         },
         {
+            "item_stack": "(buildcrafttransport:plug_power_adaptor)",
+            "page": "plug_power_adaptor.md",
+            "type_tags": {
+                "type": "pipe",
+                "sub_type": "pipe_plug"
+            }
+        },
+        {
             "title": "item.Lens.name",
             "item_stack": "(buildcrafttransport:plug_lens)",
             "page": "plug_lens.md",

@@ -249,29 +249,28 @@ public final class Pipe implements IPipe, IDebuggable {
                     continue;
                 }
                 PipePluggable oPlug = oTile.getCapability(PipeApi.CAP_PLUG, facing.getOpposite());
-                if (oPlug != null && oPlug.isBlocking()) {
+                if (oPlug == null || !oPlug.isBlocking()) {
+                    if (canPipesConnect(facing, this, oPipe)) {
+                        connected.put(facing, 0.25f);
+                        types.put(facing, ConnectedType.PIPE);
+                        textures.put(facing, behaviour.getTextureIndex(facing));
+                    }
                     continue;
                 }
-                if (canPipesConnect(facing, this, oPipe)) {
-                    connected.put(facing, 0.25f);
-                    types.put(facing, ConnectedType.PIPE);
-                }
-            } else {
-                BlockPos nPos = holder.getPipePos().offset(facing);
-                IBlockState neighbour = holder.getPipeWorld().getBlockState(nPos);
-
-                ICustomPipeConnection cust = PipeConnectionAPI.getCustomConnection(neighbour.getBlock());
-                if (cust == null) {
-                    cust = DefaultPipeConnection.INSTANCE;
-                }
-                float ext = 0.25f + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
-
-                if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
-                    connected.put(facing, ext);
-                    types.put(facing, ConnectedType.TILE);
-                }
             }
-            if (connected.containsKey(facing)) {
+
+            BlockPos nPos = holder.getPipePos().offset(facing);
+            IBlockState neighbour = holder.getPipeWorld().getBlockState(nPos);
+
+            ICustomPipeConnection cust = PipeConnectionAPI.getCustomConnection(neighbour.getBlock());
+            if (cust == null) {
+                cust = DefaultPipeConnection.INSTANCE;
+            }
+            float ext = 0.25f + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
+
+            if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
+                connected.put(facing, ext);
+                types.put(facing, ConnectedType.TILE);
                 textures.put(facing, behaviour.getTextureIndex(facing));
             }
         }

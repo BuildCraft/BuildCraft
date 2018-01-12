@@ -19,11 +19,13 @@ import buildcraft.transport.plug.PluggableFacade;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.plug.PluggableLens;
 import buildcraft.transport.plug.PluggableLightSensor;
+import buildcraft.transport.plug.PluggablePowerAdaptor;
 import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportPlugs {
 
     public static PluggableDefinition blocker;
+    public static PluggableDefinition powerAdaptor;
     public static PluggableDefinition gate;
     public static PluggableDefinition lens;
     public static PluggableDefinition pulsar;
@@ -32,6 +34,7 @@ public class BCTransportPlugs {
 
     public static void preInit() {
         blocker = register("blocker", PluggableBlocker::new);
+        powerAdaptor = register("power_adaptor", PluggablePowerAdaptor::new);
         gate = register("gate", PluggableGate::new, PluggableGate::new);
         lens = register("lens", PluggableLens::new, PluggableLens::new);
         pulsar = register("pulsar", PluggablePulsar::new, PluggablePulsar::new);
