@@ -28,7 +28,6 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.fluid.Tank;
 
 import buildcraft.factory.tile.TileTank;
 
@@ -61,8 +60,8 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         bb.setTranslation(x, y, z);
 
         boolean[] sideRender = { true, true, true, true, true, true };
-        boolean connectedUp = isFullyConnected(tile, EnumFacing.UP);
-        boolean connectedDown = isFullyConnected(tile, EnumFacing.DOWN);
+        boolean connectedUp = isFullyConnected(tile, EnumFacing.UP, partialTicks);
+        boolean connectedDown = isFullyConnected(tile, EnumFacing.DOWN, partialTicks);
         sideRender[EnumFacing.DOWN.ordinal()] = !connectedDown;
         sideRender[EnumFacing.UP.ordinal()] = !connectedUp;
 
@@ -87,22 +86,26 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    private static boolean isFullyConnected(TileTank thisTank, EnumFacing face) {
+    private static boolean isFullyConnected(TileTank thisTank, EnumFacing face, float partialTicks) {
         BlockPos pos = thisTank.getPos().offset(face);
         TileEntity oTile = thisTank.getWorld().getTileEntity(pos);
         if (oTile instanceof TileTank) {
             TileTank oTank = (TileTank) oTile;
-            Tank t = oTank.tank;
-            FluidStack fluid = t.getFluid();
-            if (t.getFluidAmount() <= 0 || fluid == null) {
+            FluidStackInterp forRender = oTank.getFluidForRender(partialTicks);
+            if (forRender == null) {
                 return false;
-            } else if (!fluid.isFluidEqual(thisTank.tank.getFluid())) {
+            }
+            FluidStack fluid = forRender.fluid;
+            if (fluid == null || forRender.amount <= 0) {
+                return false;
+            } else if (thisTank.getFluidForRender(partialTicks) == null ||
+                !fluid.isFluidEqual(thisTank.getFluidForRender(partialTicks).fluid)) {
                 return false;
             }
             if (fluid.getFluid().isGaseous(fluid)) {
                 face = face.getOpposite();
             }
-            return t.getFluidAmount() >= t.getCapacity() || face == EnumFacing.UP;
+            return forRender.amount >= oTank.tank.getCapacity() || face == EnumFacing.UP;
         } else {
             return false;
         }

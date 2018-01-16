@@ -14,12 +14,15 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 import buildcraft.api.tiles.IDebuggable;
+
+import buildcraft.lib.item.ItemDebugger;
 
 public class MessageDebugRequest implements IMessage {
     private BlockPos pos;
@@ -49,7 +52,9 @@ public class MessageDebugRequest implements IMessage {
 
     public static final IMessageHandler<MessageDebugRequest, MessageDebugResponse> HANDLER = (message, ctx) -> {
         EntityPlayer player = ctx.getServerHandler().player;
-        if (!player.capabilities.isCreativeMode) {
+        if (!player.capabilities.isCreativeMode &&
+            !(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger) &&
+            !(player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger)) {
             return new MessageDebugResponse();
         }
         TileEntity tile = player.world.getTileEntity(message.pos);
