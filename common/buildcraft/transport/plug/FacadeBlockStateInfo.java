@@ -1,5 +1,7 @@
 package buildcraft.transport.plug;
 
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.properties.IProperty;
@@ -24,7 +26,10 @@ public class FacadeBlockStateInfo implements IFacadeState {
 
     public FacadeBlockStateInfo(IBlockState state, ItemStack requiredStack,
         ImmutableSet<IProperty<?>> varyingProperties) {
-        this.state = state;
+        this.state = Objects.requireNonNull(state, "state must not be null!");
+        Objects.requireNonNull(state.getBlock(), "state.getBlock must not be null!");
+        Objects.requireNonNull(state.getBlock().getRegistryName(),
+            "state.getBlock.getRegistryName() must not be null!");
         this.requiredStack = requiredStack;
         this.varyingProperties = varyingProperties;
         this.isTransparent = !state.isOpaqueCube();
@@ -43,7 +48,8 @@ public class FacadeBlockStateInfo implements IFacadeState {
 
     @Override
     public String toString() {
-        return "StateInfo [id=" + System.identityHashCode(this) + " " + state.toString() + "]";
+        return "StateInfo [id=" + System.identityHashCode(this) + ", block = " + state.getBlock() + ", state =  "
+            + state.toString() + "]";
     }
 
     // IFacadeState

@@ -37,7 +37,7 @@ public class FacadePhasedState implements IFacadePhasedState {
                     stateInfo = FacadeStateManager.defaultState;
                 }
             } catch (Throwable t) {
-                t.printStackTrace();
+                throw new RuntimeException("Failed badly when reading a facade state!", t);
             }
         }
         boolean isHollow = nbt.getBoolean("isHollow");
@@ -50,7 +50,9 @@ public class FacadePhasedState implements IFacadePhasedState {
         try {
             nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
         } catch (Throwable t) {
-            throw new IllegalStateException("Writing facade block state\n\tState = " + stateInfo.state, t);
+            throw new IllegalStateException("Writing facade block state"//
+                + "\n\tState = " + stateInfo//
+                + "\n\tBlock = " + stateInfo.state.getBlock(), t);
         }
         nbt.setBoolean("isHollow", isHollow);
         if (activeColour != null) {
