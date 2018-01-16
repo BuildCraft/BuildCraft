@@ -52,7 +52,8 @@ public class FacadePhasedState implements IFacadePhasedState {
         } catch (Throwable t) {
             throw new IllegalStateException("Writing facade block state"//
                 + "\n\tState = " + stateInfo//
-                + "\n\tBlock = " + stateInfo.state.getBlock(), t);
+                + "\n\tBlock = " + stateInfo.state.getBlock()
+                + "\n\tBlock Class = " + stateInfo.state.getBlock().getClass(), t);
         }
         nbt.setBoolean("isHollow", isHollow);
         if (activeColour != null) {
