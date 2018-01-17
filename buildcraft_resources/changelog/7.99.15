@@ -2,3 +2,13 @@
 Additions:
 
 * Ported the power adaptor
+
+Improvements:
+
+* The debugger item can now be used in survival to view the F3 debug info on buildcraft blocks (previously this required creative mode)
+
+Bug fixes:
+
+* Fix torches being placable on pipes (without any pluggables that they could rest on)
+* Fix fluid tanks sometimes leaving a visible gap between the above and below tanks.
+
