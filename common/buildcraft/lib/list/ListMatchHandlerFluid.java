@@ -115,6 +115,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
                         }
                     }
                 }
+                return examples;
             }
         }
         return null;
