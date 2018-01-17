@@ -311,8 +311,6 @@ public class BCTransportRecipes {
             colorRecipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_" + colour));
             ForgeRegistries.RECIPES.register(colorRecipe);
         }
-
-
     }
 
     private static void addPipeUpgradeRecipe(ItemPipeHolder from, ItemPipeHolder to, Object additional) {
