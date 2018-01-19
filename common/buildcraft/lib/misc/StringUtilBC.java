@@ -7,6 +7,7 @@
 package buildcraft.lib.misc;
 
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -45,11 +46,13 @@ public final class StringUtilBC {
     }
 
     private static String formatStringImpl(String string, Function<TextFormatting, TextFormatting> fn) {
-        /* FIXME: Normal usage (changing an item's text from onBlack to onWhite) has the disadvantage that colours will
+        /*
+         * FIXME: Normal usage (changing an item's text from onBlack to onWhite) has the disadvantage that colours will
          * be changed to onBlack FIRST, and then onWhite, which means that BLACK will be changed to GRAY despite BLACK
          * being absolutely fine on white. One possible fix could be to emit ORIGINAL_COLOUR + CHANGED_TO_COLOUR from
          * ColourUtil.convertColourToTextFormat as a pair, and then use the ORIGINAL_COLOUR, but change CHANGED_COLOUR
-         * when calling this. */
+         * when calling this.
+         */
         StringBuilder out = new StringBuilder(string.length());
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
@@ -92,29 +95,40 @@ public final class StringUtilBC {
 
     // Displaying objects
     public static String vec3ToDispString(Vec3d vec) {
-        if (vec == null) return "null";
-        return displayDecimalFormat.format(vec.x) + ", " +
-            displayDecimalFormat.format(vec.y) + ", " +
-            displayDecimalFormat.format(vec.z);
+        if (vec == null) {
+            return "null";
+        }
+        return displayDecimalFormat.format(vec.x) + ", " + displayDecimalFormat.format(vec.y) + ", "
+            + displayDecimalFormat.format(vec.z);
     }
 
     public static String vec3ToDispString(Vec3i vec) {
-        if (vec == null) return "null";
-        return vec.getX() + ", " +
-            vec.getY() + ", " +
-            vec.getZ();
+        if (vec == null) {
+            return "null";
+        }
+        return vec.getX() + ", " + vec.getY() + ", " + vec.getZ();
     }
 
-    public static String replaceCharactersForFilename(String original) {
-        return original
-                .replace("/", "-")
-                .replace("\\", "-")
-                .replace(":", "-")
-                .replace("*", "-")
-                .replace("?", "-")
-                .replace("\"", "-")
-                .replace("<", "-")
-                .replace(">", "-")
-                .replace("|", "-");
+    /** @param keyExtractor An extractor that will map an object to a string.
+     * @return A form of {@link #compareBasicReadable()} that operates on any object that can provide a string. */
+    public static <T> Comparator<T> compareBasicReadable(Function<T, String> keyExtractor) {
+        return Comparator.comparing(keyExtractor, compareBasicReadable());
+    }
+
+    /** @return A comparator that only compares the text that we can see - so this will remove any format codes, and
+     *         ignore case when comparing. */
+    public static Comparator<String> compareBasicReadable() {
+        return BasicReadableStringComparator.INSTANCE;
+    }
+
+    enum BasicReadableStringComparator implements Comparator<String> {
+        INSTANCE;
+
+        @Override
+        public int compare(String o1, String o2) {
+            String __o1 = ColourUtil.stripAllFormatCodes(o1);
+            String __o2 = ColourUtil.stripAllFormatCodes(o2);
+            return __o1.compareToIgnoreCase(__o2);
+        }
     }
 }

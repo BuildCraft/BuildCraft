@@ -6,6 +6,8 @@
 
 package buildcraft.transport.item;
 
+import static buildcraft.transport.plug.FacadeStateManager.getInfoForBlock;
+
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -48,8 +50,6 @@ import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.PluggableFacade;
 
-import static buildcraft.transport.plug.FacadeStateManager.getInfoForBlock;
-
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
     public ItemPluggableFacade(String id) {
         super(id);
@@ -67,6 +67,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     public static FacadeInstance getStates(@Nonnull ItemStack item) {
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
+        if (nbt.getBoolean("preview")) {
+            return FacadeInstance.createSingle(FacadeStateManager.previewState, false);
+        }
         return FacadeInstance.readFromNbt(nbt, "states");
     }
 
@@ -92,12 +95,12 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     @Override
     public void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         // Add a single phased facade as a default
-        //check if the data is present as we only process in post-init
+        // check if the data is present as we only process in post-init
         FacadeBlockStateInfo stone = getInfoForBlock(Blocks.STONE);
         if (stone != null) {
-            FacadePhasedState[] states = {//
-                FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null),//
-                FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED),//
+            FacadePhasedState[] states = { //
+                FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null), //
+                FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED), //
                 FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
             };
             FacadeInstance inst = new FacadeInstance(states);

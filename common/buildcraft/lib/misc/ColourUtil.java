@@ -9,6 +9,7 @@ package buildcraft.lib.misc;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -25,27 +26,29 @@ public class ColourUtil {
     public static final char MINECRAFT_FORMAT_CHAR;
     public static final String COLOUR_SPECIAL_START;
 
-    public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack = ColourUtil::getTextFormatForBlack;
-    public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite = ColourUtil::getTextFormatForWhite;
+    public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack =
+        ColourUtil::getTextFormatForBlack;
+    public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite =
+        ColourUtil::getTextFormatForWhite;
 
     public static final EnumDyeColor[] COLOURS = EnumDyeColor.values();
 
     private static final String[] NAMES = { //
-        "Black", "Red", "Green", "Brown",//
+        "Black", "Red", "Green", "Brown", //
         "Blue", "Purple", "Cyan", "LightGray", //
         "Gray", "Pink", "Lime", "Yellow", //
         "LightBlue", "Magenta", "Orange", "White"//
     };
     private static final int[] DARK_HEX = { //
-        0x2D2D2D, 0xA33835, 0x394C1E, 0x5C3A24,//
-        0x3441A2, 0x843FBF, 0x36809E, 0x888888,//
-        0x444444, 0xE585A0, 0x3FAA36, 0xCFC231,//
+        0x2D2D2D, 0xA33835, 0x394C1E, 0x5C3A24, //
+        0x3441A2, 0x843FBF, 0x36809E, 0x888888, //
+        0x444444, 0xE585A0, 0x3FAA36, 0xCFC231, //
         0x7F9AD1, 0xFF64FF, 0xFF6A00, 0xFFFFFF //
     };
     private static final int[] LIGHT_HEX = { //
-        0x181414, 0xBE2B27, 0x007F0E, 0x89502D,//
-        0x253193, 0x7e34bf, 0x299799, 0xa0a7a7,//
-        0x7A7A7A, 0xD97199, 0x39D52E, 0xFFD91C,//
+        0x181414, 0xBE2B27, 0x007F0E, 0x89502D, //
+        0x253193, 0x7e34bf, 0x299799, 0xa0a7a7, //
+        0x7A7A7A, 0xD97199, 0x39D52E, 0xFFD91C, //
         0x66AAFF, 0xD943C6, 0xEA7835, 0xe4e4e4 //
     };
     private static final String[] DYES = new String[16];
@@ -61,9 +64,11 @@ public class ColourUtil {
     private static final TextFormatting[] REPLACE_FOR_BLACK_HIGH_CONTRAST = new TextFormatting[16];
     private static final TextFormatting[] FACE_TO_FORMAT = new TextFormatting[6];
 
+    private static final Pattern ALL_FORMAT_MATCHER = Pattern.compile("(?i)\u00a7[0-9A-Za-z]");
+
     static {
         MINECRAFT_FORMAT_CHAR = '\u00a7';
-        COLOUR_SPECIAL_START =  MINECRAFT_FORMAT_CHAR + "z" + MINECRAFT_FORMAT_CHAR;
+        COLOUR_SPECIAL_START = MINECRAFT_FORMAT_CHAR + "z" + MINECRAFT_FORMAT_CHAR;
         for (int i = 0; i < 16; i++) {
             DYES[i] = "dye" + NAMES[i];
             REPLACE_FOR_WHITE[i] = REPLACE_FOR_WHITE_HIGH_CONTRAST[i] = FORMATTING_VALUES[i];
@@ -125,7 +130,8 @@ public class ColourUtil {
         replaceColourForBlack(colour, with, with);
     }
 
-    private static void replaceColourForBlack(TextFormatting colour, TextFormatting normal, TextFormatting highContrast) {
+    private static void replaceColourForBlack(TextFormatting colour, TextFormatting normal,
+        TextFormatting highContrast) {
         REPLACE_FOR_BLACK[colour.ordinal()] = normal;
         REPLACE_FOR_BLACK_HIGH_CONTRAST[colour.ordinal()] = highContrast;
     }
@@ -134,7 +140,8 @@ public class ColourUtil {
         replaceColourForWhite(colour, with, with);
     }
 
-    private static void replaceColourForWhite(TextFormatting colour, TextFormatting normal, TextFormatting highContrast) {
+    private static void replaceColourForWhite(TextFormatting colour, TextFormatting normal,
+        TextFormatting highContrast) {
         REPLACE_FOR_WHITE[colour.ordinal()] = normal;
         REPLACE_FOR_WHITE_HIGH_CONTRAST[colour.ordinal()] = highContrast;
     }
@@ -174,7 +181,8 @@ public class ColourUtil {
     public static String getTextFullTooltip(EnumDyeColor colour) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertColourToTextFormat(colour);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour)
+                + TextFormatting.RESET;
         } else {
             return LocaleUtil.localizeColour(colour);
         }
@@ -189,18 +197,19 @@ public class ColourUtil {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertColourToTextFormat(colour);
             return COLOUR_SPECIAL_START + Integer.toHexString(colour.getMetadata())//
-                + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.WHITE;
+                + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.RESET;
         }
         return LocaleUtil.localizeColour(colour);
     }
 
     /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
      * {@link BCLibConfig#useColouredLabels} is true then this will make prefix the string with an appropriate
-     * {@link TextFormatting} colour, and postfix with {@link TextFormatting#RESET} */
+     * {@link TextFormatting} colour, and postfixed with {@link TextFormatting#RESET} */
     public static String getTextFullTooltip(EnumFacing face) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertFaceToTextFormat(face);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeFacing(face) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeFacing(face)
+                + TextFormatting.RESET;
         } else {
             return LocaleUtil.localizeFacing(face);
         }
@@ -280,5 +289,11 @@ public class ColourUtil {
         } else {
             return getPrev(colour);
         }
+    }
+
+    /** Similar to {@link TextFormatting#getTextWithoutFormattingCodes(String)}, but also removes every special char
+     * that {@link #getTextFullTooltipSpecial(EnumDyeColor)} can add. */
+    public static String stripAllFormatCodes(String string) {
+        return ALL_FORMAT_MATCHER.matcher(string).replaceAll("");
     }
 }
