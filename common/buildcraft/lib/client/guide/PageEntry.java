@@ -6,6 +6,10 @@
 
 package buildcraft.lib.client.guide;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StringUtils;
@@ -21,6 +25,7 @@ public class PageEntry {
     public final JsonTypeTags typeTags;
     private final ItemStack stack;
     private final boolean containsMeta, containsNbt;
+    private final List<String> searchTags = new ArrayList<>();
 
     public PageEntry(JsonEntry entry) {
         this.page = entry.page;
@@ -62,10 +67,19 @@ public class PageEntry {
         } else {
             this.title = entry.title;
         }
+
+        searchTags.add(title);
+        searchTags.add(typeTags.mod);
+        searchTags.add(typeTags.subMod);
+        searchTags.add(typeTags.type);
+        searchTags.add(typeTags.subType);
+        if (!stack.isEmpty()) {
+            searchTags.addAll(stack.getTooltip(null, ITooltipFlag.TooltipFlags.ADVANCED));
+        }
     }
 
     public boolean stackMatches(ItemStack test) {
-        if (stack == null || test == null) {
+        if (stack.isEmpty() || test.isEmpty()) {
             return false;
         }
         if (stack.getItem() != test.getItem()) {
@@ -85,8 +99,12 @@ public class PageEntry {
         return true;
     }
 
+    public List<String> getSearchTags() {
+        return searchTags;
+    }
+
     public ItemStack getItemStack() {
-        return stack == null ? ItemStack.EMPTY : stack.copy();
+        return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
     }
 
     @Override

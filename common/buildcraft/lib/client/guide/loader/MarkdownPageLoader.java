@@ -32,7 +32,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         String[] args = line.split(",");
         if (args.length == 0) {
             BCLog.logger.warn("[lib.guide.loader.markdown] " + line + " was not a valid complex item string!");
-            return null;
+            return ItemStack.EMPTY;
         }
         ItemStack stack = null;
         Item item = Item.getByNameOrId(args[0].trim());
@@ -40,10 +40,12 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             stack = new ItemStack(item);
         } else {
             BCLog.logger.warn("[lib.guide.loader.markdown] " + args[0] + " was not a valid item!");
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        if (args.length == 1) return stack;
+        if (args.length == 1) {
+            return stack;
+        }
 
         int stackSize = 1;
         try {
@@ -54,7 +56,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         }
         stack.setCount(stackSize);
 
-        if (args.length == 2) return stack;
+        if (args.length == 2) {
+            return stack;
+        }
 
         try {
             int meta = Integer.parseInt(args[2].trim());
@@ -68,7 +72,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                 "[lib.guide.loader.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
 
-        if (args.length == 3) return stack;
+        if (args.length == 3) {
+            return stack;
+        }
 
         String nbtString = args[3];
         try {
@@ -100,7 +106,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             String post = line.substring("$[special.".length(), end);
             switch (post) {
                 case "new_page": {
-                    BCLog.logger.warn("[lib.guide.markdown] Found deprecated element '" + line + "', it should be replaced with '<new_page/>'");
+                    BCLog.logger.warn("[lib.guide.markdown] Found deprecated element '" + line
+                        + "', it should be replaced with '<new_page/>'");
                     return "<new_page/>";
                 }
                 case "all_crafting": {
@@ -126,7 +133,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                         }
                     }
                     String str = "<recipes_usages stack=\"" + stack + "\"" + additional + "/>";
-                    BCLog.logger.warn("[lib.guide.markdown] Found deprecated element '" + line + "', it should be replaced with '" + str + "'");
+                    BCLog.logger.warn("[lib.guide.markdown] Found deprecated element '" + line
+                        + "', it should be replaced with '" + str + "'");
                     return str;
                 }
                 default:

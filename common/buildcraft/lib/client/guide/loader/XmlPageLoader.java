@@ -85,7 +85,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     static {
-        // Note that text is done seperatly, so its not registered here
+        // Note that text is done separately, so its not registered here
         putDuelMultiPartType("lore", () -> SHOW_LORE);
         putDuelMultiPartType("description", () -> SHOW_DESCRIPTION);
         putDuelMultiPartType("detail", () -> SHOW_DETAIL);
@@ -131,7 +131,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     public GuidePageFactory loadPage(BufferedReader reader, PageEntry entry) throws IOException {
         // Needs to support:
         // - start/end tags (such as <lore></lore>)
-        // - nested tags (such as <lore>Spooky<bold> Skeletens</bold></lore>)
+        // - nested tags (such as <lore>Spooky<bold> Skeletons</bold></lore>)
         // full tag set:
         // - Multi-nestling
         // - - <lore>

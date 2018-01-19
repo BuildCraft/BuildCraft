@@ -4,15 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.lib.client.guide.parts;
+package buildcraft.lib.client.guide.parts.contents;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.SuffixArray;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
@@ -26,7 +25,12 @@ import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.TypeOrder;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
-import buildcraft.lib.client.guide.node.NodePageLine;
+import buildcraft.lib.client.guide.parts.GuideChapter;
+import buildcraft.lib.client.guide.parts.GuidePageBase;
+import buildcraft.lib.client.guide.parts.GuidePageFactory;
+import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuideText;
+import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader.PageLink;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -39,44 +43,28 @@ public class GuidePageContents extends GuidePageBase {
     private static final int ORDER_OFFSET_X = -50;
     private static final int ORDER_OFFSET_Y = 14;
 
-    private final Map<GuidePart, PageEntry> pageEntries = new HashMap<>();
+    private final GuiTextField searchText;
+    private final SuffixArray<PageLink> quickSercher = new SuffixArray<>();
 
-    private NodePageLine parentNode;
+    private final ContentsList contents = new ContentsList();
 
     public GuidePageContents(GuiGuide gui) {
         super(gui);
         loadMainGui();
+        searchText = new GuiTextField(0, gui.mc.fontRenderer, 0, 0, 80, gui.mc.fontRenderer.FONT_HEIGHT + 5);
+        searchText.setEnableBackgroundDrawing(false);
     }
 
     public void loadMainGui() {
-        parentNode = new NodePageLine(null, null);
         TypeOrder order = GuiGuide.SORTING_TYPES[gui.sortingOrderIndex];
 
         for (PageEntry entry : GuideManager.INSTANCE.getAllEntries()) {
-            if (GuideManager.INSTANCE.getFactoryFor(entry) == null) {
-                continue;
-            }
+            GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(entry);
+
             String[] ordered = entry.typeTags.getOrdered(order);
 
-            NodePageLine node = parentNode;
-            int indent = 1;
-            for (String line : ordered) {
-                String translated = TextFormatting.UNDERLINE + I18n.format(line);
-                boolean notFound = true;
-                for (NodePageLine childNode : node.getChildren()) {
-                    if (childNode.part instanceof GuideChapter) {
-                        if (translated.equals(((GuideChapter) childNode.part).chapter.text)) {
-                            node = childNode;
-                            notFound = false;
-                            break;
-                        }
-                    }
-                }
-                if (notFound) {
-                    node = node.addChild(new GuideChapterWithin(gui, indent, translated));
-                }
-                indent++;
-            }
+            String header = TextFormatting.UNDERLINE + LocaleUtil.localize(ordered[0]);
+            String subHeader = TextFormatting.UNDERLINE + LocaleUtil.localize(ordered[1]);
 
             String translatedTitle = I18n.format(entry.title);
             ItemStack stack = entry.getItemStack();
@@ -84,30 +72,23 @@ public class GuidePageContents extends GuidePageBase {
             if (!stack.isEmpty()) {
                 icon = new GuiStack(stack);
             }
-            PageLine line = new PageLine(icon, icon, indent, translatedTitle, true);
+            PageLine line = new PageLine(icon, icon, 2, translatedTitle, true);
             GuideText text = new GuideText(gui, line);
-            node.addChild(text);
-            pageEntries.put(text, entry);
+            contents.getOrAddSubHeader(header, subHeader).addNormalPage(text, entryFactory);
         }
 
-        parentNode.sortChildrenRecursively();
+        contents.sortAll();
     }
 
     @Override
     public void setFontRenderer(IFontRenderer fontRenderer) {
         super.setFontRenderer(fontRenderer);
-        parentNode.setFontRenderer(fontRenderer);
+        contents.setFontRenderer(fontRenderer);
     }
 
     @Override
     public List<GuideChapter> getChapters() {
-        List<GuideChapter> list = new ArrayList<>();
-        for (GuidePart part : parentNode.iterateNonNullLines()) {
-            if (part instanceof GuideChapter && ((GuideChapter) part).chapter.indent == 1) {
-                list.add((GuideChapter) part);
-            }
-        }
-        return list;
+        return contents.getChapters();
     }
 
     @Override
@@ -149,7 +130,7 @@ public class GuidePageContents extends GuidePageBase {
         } else if (index == 1) {
             int _height = GuideManager.loadedMods.size() + 1;
             if (GuideManager.loadedOther.size() > 0) {
-                _height ++;
+                _height++;
                 _height += GuideManager.loadedOther.size();
             }
             int perLineHeight = f.getFontHeight("Ly") + 3;

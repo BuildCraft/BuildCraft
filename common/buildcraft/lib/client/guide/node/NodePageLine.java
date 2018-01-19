@@ -17,9 +17,13 @@ import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuideText;
 
+@Deprecated
 public class NodePageLine implements Comparable<NodePageLine> {
     public final NodePageLine parent;
     public final GuidePart part;
+
+    public boolean visible = true;
+
     private final List<NodePageLine> children = Lists.newArrayList();
 
     public NodePageLine(NodePageLine parent, GuidePart part) {
@@ -88,6 +92,8 @@ public class NodePageLine implements Comparable<NodePageLine> {
     private class NodePartIterator implements Iterator<NodePageLine> {
         private NodePageLine current;
         private int childrenDone = 0;
+
+        // TODO: Somehow make this use "isVisible"
 
         NodePartIterator() {
             current = NodePageLine.this;

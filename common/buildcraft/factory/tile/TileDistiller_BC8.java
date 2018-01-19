@@ -28,6 +28,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.expression.DefaultContexts;
@@ -110,6 +111,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankGasOut, EnumPipePart.UP);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankLiquidOut, EnumPipePart.DOWN);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !tankIn.isEmpty(), EnumPipePart.VALUES);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(mjBattery)));
     }
 
