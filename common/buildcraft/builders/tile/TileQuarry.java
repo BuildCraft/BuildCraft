@@ -115,8 +115,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private List<AxisAlignedBB> collisionboxes = null;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
-        public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState,
-            int flags) {
+        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
+                                      int flags) {
             if (frameBox.isInitialized() && miningBox.isInitialized()) {
                 if (frameBox.contains(pos)) {
                     check(pos);
