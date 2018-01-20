@@ -11,6 +11,7 @@ Improvements:
   * You can now specify "source" and "type" for changing the type.
   * Currently triggers and actions are the only additions. The type is "buildcraft:statement", and the source is a registry name of a statement (trigger or action)
   * Unfortunately the only way of finding out a statement's ID is via the source code. Woops.
+* Added the "has work" capability (and implicitly the has work trigger) to the distiller.
 
 Bug fixes:
 
