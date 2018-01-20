@@ -6,8 +6,6 @@
 
 package buildcraft.transport.item;
 
-import static buildcraft.transport.plug.FacadeStateManager.getInfoForBlock;
-
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -96,7 +94,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     public void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         // Add a single phased facade as a default
         // check if the data is present as we only process in post-init
-        FacadeBlockStateInfo stone = getInfoForBlock(Blocks.STONE);
+        FacadeBlockStateInfo stone = FacadeStateManager.getInfoForBlock(Blocks.STONE);
         if (stone != null) {
             FacadePhasedState[] states = { //
                 FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null), //
