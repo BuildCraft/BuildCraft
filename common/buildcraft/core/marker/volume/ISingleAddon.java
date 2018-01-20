@@ -6,5 +6,9 @@
 
 package buildcraft.core.marker.volume;
 
+/**
+ * Marker interface for {@link Addon} subclasses.
+ * Means that there can be only one addon of this type in {@link VolumeBox}.
+ */
 public interface ISingleAddon {
 }
