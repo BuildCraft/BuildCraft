@@ -21,8 +21,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -52,7 +54,8 @@ public class GuiUtil {
                 if (!stack.isEmpty()) {
                     EntityPlayer player = gui.container.player;
                     boolean advanced = gui.mc.gameSettings.advancedItemTooltips;
-                    delegate().addAll(stack.getTooltip(player, advanced ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL));
+                    delegate().addAll(stack.getTooltip(player,
+                        advanced ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL));
                 }
             }
         };
@@ -345,5 +348,25 @@ public class GuiUtil {
     public interface AutoGlScissor extends AutoCloseable {
         @Override
         void close();
+    }
+
+    public static List<String> getFormattedTooltip(ItemStack stack) {
+        Minecraft mc = Minecraft.getMinecraft();
+        List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
+
+        if (!list.isEmpty()) {
+            list.set(0, stack.getRarity().rarityColor + list.get(0));
+        }
+
+        for (int i = 1; i < list.size(); ++i) {
+            list.set(i, TextFormatting.GRAY + list.get(i));
+        }
+
+        return list;
+    }
+
+    private static ITooltipFlag getTooltipFlags() {
+        boolean adv = Minecraft.getMinecraft().gameSettings.advancedItemTooltips;
+        return adv ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
     }
 }

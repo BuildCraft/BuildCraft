@@ -59,7 +59,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     private static final String DEFAULT_LANG = "en_us";
     private static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
 
-    private final List<PageEntry> entries = new ArrayList<>();
+    private final List<PageEntry<?>> entries = new ArrayList<>();
     private final Map<String, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
@@ -77,7 +77,11 @@ public enum GuideManager implements IResourceManagerReloadListener {
         loadedOther.clear();
         List<JsonEntry> loaded = loadAll(resourceManager);
         for (JsonEntry entry : loaded) {
-            entries.add(new PageEntry(entry));
+            PageEntry<?> pageEntry = PageEntry.createPageEntry(entry);
+            if (pageEntry == null) {
+                continue;
+            }
+            entries.add(pageEntry);
         }
         Collections.sort(loadedDomains);
         // Special sort -- replace mod domains with mod names
@@ -188,7 +192,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang) {
-        for (PageEntry data : entries) {
+        for (PageEntry<?> data : entries) {
             String page = data.page.replaceAll("<lang>", lang);
             String ending = page.substring(page.lastIndexOf('.') + 1);
 
@@ -215,17 +219,17 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
     }
 
-    public ImmutableList<PageEntry> getAllEntries() {
+    public ImmutableList<PageEntry<?>> getAllEntries() {
         return ImmutableList.copyOf(entries);
     }
 
-    public GuidePageFactory getFactoryFor(PageEntry entry) {
+    public GuidePageFactory getFactoryFor(PageEntry<?> entry) {
         return pages.get(entry.page);
     }
 
-    public PageEntry getEntryFor(@Nonnull ItemStack stack) {
-        for (PageEntry entry : entries) {
-            if (entry.stackMatches(stack)) {
+    public PageEntry<?> getEntryFor(Object obj) {
+        for (PageEntry<?> entry : entries) {
+            if (entry.matches(obj)) {
                 return entry;
             }
         }
@@ -234,7 +238,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     @Nonnull
     public GuidePageFactory getPageFor(@Nonnull ItemStack stack) {
-        PageEntry entry = getEntryFor(stack);
+        PageEntry<?> entry = getEntryFor(stack);
         if (entry != null) {
             GuidePageFactory factory = getFactoryFor(entry);
             if (factory != null) {

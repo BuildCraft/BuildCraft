@@ -193,7 +193,13 @@ public class ContentsList {
             }
 
             public PageLinkNormal addNormalPage(GuideText text, GuidePageFactory factory) {
-                PageLinkNormal page = new PageLinkNormal(text, factory);
+                PageLinkNormal page = new PageLinkNormal(text, factory, true);
+                pages.add(page);
+                return page;
+            }
+
+            public PageLinkNormal addUnknownPage(GuideText text, GuidePageFactory factory) {
+                PageLinkNormal page = new PageLinkNormal(text, factory, false);
                 pages.add(page);
                 return page;
             }
@@ -261,8 +267,8 @@ public class ContentsList {
 
                 public final GuidePageFactory factory;
 
-                public PageLinkNormal(GuideText text, GuidePageFactory factory) {
-                    super(text, true);
+                public PageLinkNormal(GuideText text, GuidePageFactory factory, boolean startVisible) {
+                    super(text, startVisible);
                     this.factory = factory;
                 }
 

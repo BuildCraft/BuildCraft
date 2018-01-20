@@ -6,6 +6,11 @@ Additions:
 Improvements:
 
 * The debugger item can now be used in survival to view the F3 debug info on buildcraft blocks (previously this required creative mode)
+* The guide book now has a search bar.
+* Guide book entries can be any object, rather than just item stacks.
+  * You can now specify "source" and "type" for changing the type.
+  * Currently triggers and actions are the only additions. The type is "buildcraft:statement", and the source is a registry name of a statement (trigger or action)
+  * Unfortuntaly the only way of finding out a statement's ID is via the source code. Woops.
 
 Bug fixes:
 

@@ -11,6 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
@@ -24,6 +28,11 @@ import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import buildcraft.api.statements.IAction;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.ITrigger;
+import buildcraft.api.statements.StatementManager;
+
 import buildcraft.lib.BCLib;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
@@ -32,7 +41,9 @@ import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.TypeOrder;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
+import buildcraft.lib.client.guide.loader.entry.ItemStackValueFilter;
 import buildcraft.lib.client.guide.parts.GuideChapter;
+import buildcraft.lib.client.guide.parts.GuidePage;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuideText;
@@ -41,10 +52,11 @@ import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader;
 import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader.PageLink;
 import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader.PageLinkGenerated;
 import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader.PageLinkNormal;
+import buildcraft.lib.client.render.font.ConfigurableFontRenderer;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.statement.GuiElementStatementSource;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
 
@@ -64,20 +76,22 @@ public class GuidePageContents extends GuidePageBase {
         super(gui);
         contents = new ContentsList(gui);
         loadMainGui();
-        FontRenderer fr = gui.mc.fontRenderer;
+        FontRenderer fr = new ConfigurableFontRenderer(gui.mc.fontRenderer).disableShadow();
         searchText = new GuiTextField(0, fr, 0, 0, 80, fr.FONT_HEIGHT + 5);
         searchText.setEnableBackgroundDrawing(false);
+        searchText.setTextColor(0xFF_00_00_00);
     }
 
     public void loadMainGui() {
         TypeOrder order = GuiGuide.SORTING_TYPES[gui.sortingOrderIndex];
         contents.clear();
         quickSearcher = new SuffixArray<>();
+        lastSearchText = "";
 
         Set<Item> itemsAdded = new HashSet<>();
 
         final String underline = TextFormatting.UNDERLINE.toString();
-        for (PageEntry entry : GuideManager.INSTANCE.getAllEntries()) {
+        for (PageEntry<?> entry : GuideManager.INSTANCE.getAllEntries()) {
             GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(entry);
 
             String[] ordered = entry.typeTags.getOrdered(order);
@@ -86,21 +100,24 @@ public class GuidePageContents extends GuidePageBase {
             String subHeader = underline + LocaleUtil.localize(ordered[1]);
 
             String translatedTitle = LocaleUtil.localize(entry.title);
-            ItemStack stack = entry.getItemStack();
-            ISimpleDrawable icon = null;
-            if (!stack.isEmpty()) {
-                icon = new GuiStack(stack);
-                itemsAdded.add(stack.getItem());
-            }
+            ISimpleDrawable icon = entry.createDrawable();
             PageLine line = new PageLine(icon, icon, 2, translatedTitle, true);
             GuideText text = new GuideText(gui, line);
             SubHeader pageHolder = contents.getOrAddSubHeader(header, subHeader);
             if (entryFactory == null) {
-                PageLinkGenerated pageLink = pageHolder.addKnownPage(text, entry.getItemStack());
-                if (pageLink != null) {
-                    quickSearcher.add(pageLink, pageLink.joinedTooltip.toLowerCase(Locale.ROOT));
+                if (entry.value instanceof ItemStackValueFilter) {
+                    ItemStack stack = ((ItemStackValueFilter) entry.value).stack.baseStack;
+                    itemsAdded.add(stack.getItem());
+                    PageLinkGenerated pageLink = pageHolder.addKnownPage(text, stack);
+                    if (pageLink != null) {
+                        quickSearcher.add(pageLink, pageLink.joinedTooltip.toLowerCase(Locale.ROOT));
+                    }
                 }
             } else {
+                if (entry.value instanceof ItemStackValueFilter) {
+                    ItemStack stack = ((ItemStackValueFilter) entry.value).stack.baseStack;
+                    itemsAdded.add(stack.getItem());
+                }
                 PageLinkNormal pageLink = pageHolder.addNormalPage(text, entryFactory);
                 quickSearcher.add(pageLink, pageLink.getName().toLowerCase(Locale.ROOT));
             }
@@ -109,7 +126,8 @@ public class GuidePageContents extends GuidePageBase {
         String localizedGroup = underline + "\u0379" + LocaleUtil.localize("buildcraft.guide.contents.all_group");
         String localizedItems = underline + LocaleUtil.localize("buildcraft.guide.contents.item_stacks");
 
-        SubHeader allHolder = contents.getOrAddSubHeader(localizedGroup, localizedItems);
+        Title allTitle = contents.getOrAddTitle(localizedGroup);
+        SubHeader allHolder = allTitle.getOrAddSubHeader(localizedItems);
         for (Item item : ForgeRegistries.ITEMS) {
             if (itemsAdded.contains(item)) {
                 continue;
@@ -127,6 +145,40 @@ public class GuidePageContents extends GuidePageBase {
                     // most likely the same item
                     break;
                 }
+            }
+        }
+
+        String localizedTriggers = underline + LocaleUtil.localize("buildcraft.guide.contents.triggers");
+        String localizedActions = underline + LocaleUtil.localize("buildcraft.guide.contents.actions");
+        SubHeader triggers = allTitle.getOrAddSubHeader(localizedTriggers);
+        SubHeader actions = allTitle.getOrAddSubHeader(localizedActions);
+        Set<IStatement> added = new HashSet<>();
+        for (IStatement statement : new TreeMap<>(StatementManager.statements).values()) {
+            if (!added.add(statement)) {
+                continue;
+            }
+            if (GuideManager.INSTANCE.getEntryFor(statement) != null) {
+                continue;
+            }
+
+            ISimpleDrawable icon = (x, y) -> GuiElementStatementSource.drawGuiSlot(statement, x, y);
+
+            List<String> tooltip = statement.getTooltip();
+            String title = tooltip.isEmpty() ? statement.getUniqueTag() : tooltip.get(0);
+            GuideText text = new GuideText(gui, new PageLine(icon, icon, 2, title, true));
+
+            final PageLinkNormal pageLink;
+            if (statement instanceof ITrigger) {
+                pageLink = triggers.addUnknownPage(text, g -> new GuidePage(gui, ImmutableList.of(), title));
+            } else if (statement instanceof IAction) {
+                pageLink = actions.addUnknownPage(text, g -> new GuidePage(gui, ImmutableList.of(), title));
+            } else {
+                pageLink = null;
+            }
+            if (pageLink != null) {
+                String joinedTooltip = tooltip.stream().collect(Collectors.joining(" ", "", ""));
+                String searchSr = statement.getUniqueTag() + " " + joinedTooltip;
+                quickSearcher.add(pageLink, searchSr.toLowerCase(Locale.ROOT));
             }
         }
 
@@ -154,7 +206,13 @@ public class GuidePageContents extends GuidePageBase {
     public void updateScreen() {
         super.updateScreen();
         searchText.updateCursorCounter();
-        if (!lastSearchText.equals(searchText.getText())) {
+        if (lastSearchText.equals(searchText.getText())) {
+            if (numPages > 3 && getPage() > numPages) {
+                goToPage(numPages);
+            } else if (getPage() < 2) {
+                searchText.setFocused(false);
+            }
+        } else {
             lastSearchText = searchText.getText().toLowerCase(Locale.ROOT);
             numPages = -1;
             if (lastSearchText.isEmpty()) {
@@ -175,7 +233,7 @@ public class GuidePageContents extends GuidePageBase {
                     }
                 }
                 if (contents.isVisible()) {
-                    searchText.setTextColor(0xFF_FF_FF_FF);
+                    searchText.setTextColor(0xFF_00_00_00);
                 } else {
                     searchText.setTextColor(0xFF_FF_00_00);
                 }
@@ -239,11 +297,16 @@ public class GuidePageContents extends GuidePageBase {
                     _y += perLineHeight;
                 }
             }
-        }
-
-        if (index % 2 == 0) {
-            searchText.x = x + 10;
-            searchText.y = y - 30;
+        } else if (index % 2 == 0) {
+            searchText.x = x + 23;
+            searchText.y = y - 23;
+            if (!searchText.isFocused() && searchText.getText().isEmpty()) {
+                GuiGuide.SEARCH_TAB_CLOSED.drawAt(x + 8, y - 20);
+                GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 19);
+            } else {
+                GuiGuide.SEARCH_TAB_OPEN.drawAt(x - 2, y - 29);
+                GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 25);
+            }
             searchText.drawTextBox();
         }
         RenderUtil.setGLColorFromInt(-1);
@@ -318,7 +381,10 @@ public class GuidePageContents extends GuidePageBase {
                 }
                 oY += 14;
             }
-            searchText.mouseClicked(mouseX, mouseY, mouseButton);
+            if (!searchText.mouseClicked(mouseX, mouseY, mouseButton) && !searchText.isFocused()
+                && new GuiRectangle(x - 2, y - 34, 40, 34).contains(mouseX, mouseY)) {
+                searchText.setFocused(true);
+            }
             if (mouseButton == 1 && mouseX >= searchText.x && mouseX < searchText.x + searchText.width
                 && mouseY >= searchText.y && mouseY < searchText.y + searchText.height) {
                 searchText.setText("");

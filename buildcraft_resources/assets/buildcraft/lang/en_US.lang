@@ -723,12 +723,16 @@ buildcraft.guide.recipe.use.plural=Uses
 buildcraft.guide.chapter.contents=Contents
 
 buildcraft.guide.contents.all_group=Others
-buildcraft.guide.contents.item_stacks=Items
+buildcraft.guide.contents.item_stacks=Items and Blocks
+buildcraft.guide.contents.triggers=Triggers
+buildcraft.guide.contents.actions=Actions
 
 buildcraft.guide.chapter.type.unknown=Unknown Type!
 buildcraft.guide.chapter.type.block=Blocks
 buildcraft.guide.chapter.type.item=Items
 buildcraft.guide.chapter.type.pipe=Pipes
+buildcraft.guide.chapter.type.trigger=Triggers
+buildcraft.guide.chapter.type.action=Actions
 
 buildcraft.guide.chapter.subtype.unknown=Unknown Subtype!
 buildcraft.guide.chapter.subtype.gear=Gears
@@ -741,6 +745,7 @@ buildcraft.guide.chapter.subtype.pipe_fluid=Fluid Transport
 buildcraft.guide.chapter.subtype.pipe_plug=Pluggables
 buildcraft.guide.chapter.subtype.refining=Refining
 buildcraft.guide.chapter.subtype.laser=Laser Power
+buildcraft.guide.chapter.subtype.basic=Basic
 
 buildcraft.guide.chapter.stage.unknown=Unknown Era!
 buildcraft.guide.chapter.stage.base=Basic Resources
