@@ -1,5 +1,7 @@
 package buildcraft.lib.misc;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.advancements.Advancement;
@@ -14,16 +16,18 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.api.core.BCLog;
 
 public class AdvancementUtil {
+    private static final Set<ResourceLocation> UNKNOWN_ADVANCEMENTS = new HashSet<>();
 
     public static void unlockAdvancement(EntityPlayer player, ResourceLocation advancementName) {
         if (player instanceof EntityPlayerMP) {
-            AdvancementManager advancementManager = ((EntityPlayerMP) player).getServerWorld().getAdvancementManager();
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            AdvancementManager advancementManager = playerMP.getServerWorld().getAdvancementManager();
             Advancement advancement = advancementManager.getAdvancement(advancementName);
             if (advancement != null) {
-                //never assume the advancement exists, we create them but they are removable by datapacks
-                ((EntityPlayerMP) player).getAdvancements().grantCriterion(advancement, "code_trigger");
-            } else {
-                BCLog.logger.warn("Attempted to trigger undefined advancement: " + advancementName);
+                // never assume the advancement exists, we create them but they are removable by datapacks
+                playerMP.getAdvancements().grantCriterion(advancement, "code_trigger");
+            } else if (UNKNOWN_ADVANCEMENTS.add(advancementName)) {
+                BCLog.logger.warn("[lib.advancement] Attempted to trigger undefined advancement: " + advancementName);
             }
         }
     }
