@@ -4,8 +4,8 @@ Please fill in all relavant information below.
 Please do not put the entire log here, upload it on pastebin (https://pastebin.com/) or gist (https://gist.github.com/) and paste here the link.
 -->
 
-**BuildCraft** version: 
-**Forge** version: 
+BuildCraft version: 
+Forge version: 
 Link to crash report or log: 
 Singleplayer or multiplayer: 
 Additional information: 
