@@ -20,6 +20,7 @@ import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.entry.PageEntryType;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.misc.ColourUtil;
 
 public class PageEntry<T> {
 
@@ -71,7 +72,7 @@ public class PageEntry<T> {
         String title = entry.title;
         if (title == null || title.isEmpty()) {
             List<String> tooltip = type.getTooltip(value);
-            title = tooltip.get(0);
+            title = ColourUtil.stripAllFormatCodes(tooltip.get(0));
         }
         if (StringUtils.isNullOrEmpty(entry.page)) {
             BCLog.logger.warn("[lib.guide] Invalid page entry: a page is not specified!SSS");
