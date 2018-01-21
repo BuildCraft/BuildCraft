@@ -24,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -105,6 +106,11 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
             subItems.add(createItemStack(inst));
 
             for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
+                if (!ForgeRegistries.BLOCKS.containsValue(info.state.getBlock())) {
+                    // Forge can de-register blocks if the server a client is connected to
+                    // doesn't have the mods that created them.
+                    continue;
+                }
                 if (info.isVisible) {
                     subItems.add(createItemStack(FacadeInstance.createSingle(info, false)));
                     subItems.add(createItemStack(FacadeInstance.createSingle(info, true)));
