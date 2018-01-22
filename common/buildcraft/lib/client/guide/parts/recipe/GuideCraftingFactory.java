@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -166,7 +167,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return new ItemStack[3][3];
     }
 
-    @Nonnull
+    @Nullable
     private static ItemStack oreConvert(Object object) {
         if (object == null) {
             return null;

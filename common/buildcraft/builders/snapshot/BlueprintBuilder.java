@@ -116,7 +116,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                             stack.stackSize,
                             stack.stackSize,
                             true
-                        ) != null
+                        ) == null
                     ) &&
                     FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                         .allMatch(stack ->

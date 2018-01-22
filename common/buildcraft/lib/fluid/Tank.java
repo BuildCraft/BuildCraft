@@ -259,15 +259,14 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     /** Attempts to transfer the given stack to this tank.
      *
      * @return The left over item after attempting to add the stack to this tank. */
-    public ItemStack transferStackToTank(ContainerBC_Neptune container, ItemStack stack) {
+    public ItemStack transferStackToTank(ContainerBC_Neptune container, @Nullable ItemStack stack) {
         EntityPlayer player = container.player;
         // first try to fill this tank from the item
 
-        if (player.world.isRemote) {
+        if (player.world.isRemote || stack == null) {
             return stack;
         }
 
-        ItemStack original = stack;
         ItemStack copy = stack.copy();
         copy.stackSize = 1;
         int space = capacity - getFluidAmount();
@@ -293,14 +292,12 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
                     SoundUtil.playBucketEmpty(player.world, player.getPosition(), fl);
                 }
                 if (isSurvival) {
-                    if (stack == null) {
-                        return result.itemStack;
-                    } else if (result.itemStack != null) {
+                    if (result.itemStack != null) {
                         InventoryUtil.addToPlayer(player, result.itemStack);
                         return stack;
                     }
                 }
-                return original;
+                return stack;
             }
         }
         // Now try to drain the fluid into the item
@@ -317,15 +314,12 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             }
             SoundUtil.playBucketFill(player.world, player.getPosition(), reallyDrained);
             if (isSurvival) {
-                if (original.stackSize == 1) {
+                if (stack.stackSize == 1) {
                     return copy;
                 } else {
-                    ItemStack stackContainer = copy;
-                    if (stackContainer != null) {
-                        InventoryUtil.addToPlayer(player, stackContainer);
-                    }
-                    original.stackSize -= 1;
-                    return original;
+                    InventoryUtil.addToPlayer(player, copy);
+                    stack.stackSize -= 1;
+                    return stack;
                 }
             }
         }
@@ -342,7 +336,6 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         FluidStack drained = fluidHandler.drain(space, true);
         if (drained == null || drained.amount <= 0) return null;
         ItemStack leftOverStack = stack.copy();
-        if (leftOverStack == null) leftOverStack = null;
         return new FluidGetResult(leftOverStack, drained);
     }
 

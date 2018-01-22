@@ -141,8 +141,8 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
-    private static ActionResult<ItemStack> clearMarkerData(@Nonnull ItemStack stack) {
-        if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
+    private static ActionResult<ItemStack> clearMarkerData(ItemStack stack) {
+        if (stack == null || MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
         NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
