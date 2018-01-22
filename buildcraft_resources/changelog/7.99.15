@@ -14,6 +14,7 @@ Improvements:
 * Added the "has work" capability (and implicitly the has work trigger) to the distiller.
 * The autoworkbench now shows its filters per slot, and distributes the filters evenly so that the most number of crafting operations can occur
   * For example, when crafting a dispenser (which needs 8 cobblestone, 1 bow and 1 redstone) this will filter 1 slot for cobblestone, 1 for redstone, and 8 for bows as bows cannot stack.
+* Filtered inventories no longer loose the item when loading from disk if the item does not match the filter. 
 
 Bug fixes:
 
