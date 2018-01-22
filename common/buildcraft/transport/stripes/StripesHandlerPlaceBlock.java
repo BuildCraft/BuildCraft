@@ -31,7 +31,7 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
         if (!world.isAirBlock(pos.offset(direction))) {
             return false;
         }
-        stack.getItem().onItemUse(
+        stack.getItem().onItemUse(stack,
             player,
             world,
             pos.offset(direction),

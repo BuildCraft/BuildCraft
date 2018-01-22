@@ -46,7 +46,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
@@ -55,7 +55,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 }
             }
         }
-        return new ActionResult<>(onItemRightClickVolumeBoxes(world, player), player.getHeldItem(hand));
+        return new ActionResult<>(onItemRightClickVolumeBoxes(world, player), itemStack);
     }
 
     private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player) {

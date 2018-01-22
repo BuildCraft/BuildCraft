@@ -11,10 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 import javax.vecmath.Point3f;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -62,9 +62,9 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             GL11.glStencilMask(0xFF);
             GL11.glDepthMask(false);
             GL11.glColorMask(false, false, false, false);
-            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            VertexBuffer buffer = Tessellator.getInstance().getBuffer();
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb = bb.grow(0.01);
+            bb = bb.expandXyz(0.01);
             buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
             buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
             buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
@@ -106,7 +106,7 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             );
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
             for (BlockPos pos : poses) {
-                if (!bb.intersects(new AxisAlignedBB(pos))) {
+                if (!bb.intersects((double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), (double)(pos.getX() + 1), (double)(pos.getY() + 1), (double)(pos.getZ() + 1))) {
                     continue;
                 }
                 for (EnumFacing face : EnumFacing.VALUES) {

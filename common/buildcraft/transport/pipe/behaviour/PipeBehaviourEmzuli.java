@@ -156,10 +156,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     private boolean filterMatches(@Nonnull ItemStack stack) {
         if (currentSlot == null) return false;
         ItemStack current = invFilters.getStackInSlot(currentSlot.ordinal());
-        if (StackUtil.isMatchingItemOrList(current, stack)) {
-            return true;
-        }
-        return false;
+        return StackUtil.isMatchingItemOrList(current, stack);
     }
 
     @Override
@@ -189,7 +186,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
         int i = SlotIndex.VALUES.length;
         while (i-- > 0) {
             current = current.next();
-            if (activeSlots.contains(current) && !invFilters.getStackInSlot(current.ordinal()).isEmpty()) {
+            if (activeSlots.contains(current) && invFilters.getStackInSlot(current.ordinal()) != null) {
                 return current;
             }
         }

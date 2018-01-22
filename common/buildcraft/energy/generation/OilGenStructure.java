@@ -135,9 +135,9 @@ public abstract class OilGenStructure {
         @Override
         protected int countOilBlocks() {
             int count = 0;
-            for (int x = 0; x < pattern.length; x++) {
-                for (int z = 0; z < pattern[x].length; z++) {
-                    if (pattern[x][z]) {
+            for (boolean[] aPattern : pattern) {
+                for (boolean anAPattern : aPattern) {
+                    if (anAPattern) {
                         count++;
                     }
                 }
@@ -190,9 +190,9 @@ public abstract class OilGenStructure {
         @Override
         protected int countOilBlocks() {
             int count = 0;
-            for (int x = 0; x < pattern.length; x++) {
-                for (int z = 0; z < pattern[x].length; z++) {
-                    if (pattern[x][z]) {
+            for (boolean[] aPattern : pattern) {
+                for (boolean anAPattern : aPattern) {
+                    if (anAPattern) {
                         count++;
                     }
                 }

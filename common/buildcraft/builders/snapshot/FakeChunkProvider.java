@@ -51,9 +51,4 @@ public class FakeChunkProvider implements IChunkProvider {
     public String makeString() {
         return "fake";
     }
-
-    @Override
-    public boolean isChunkGeneratedAt(int x, int z) {
-        return true;
-    }
 }

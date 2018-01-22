@@ -325,24 +325,39 @@ public abstract class Snapshot {
 
         protected BuildingInfo(BlockPos basePos, Rotation rotation) {
             this.basePos = basePos;
-            this.offsetPos = basePos.add(offset.rotate(rotation));
+            this.offsetPos = basePos.add(rotate(offset, rotation));
             this.rotation = rotation;
             this.box.extendToEncompass(toWorld(BlockPos.ORIGIN));
             this.box.extendToEncompass(toWorld(size.subtract(VecUtil.POS_ONE)));
         }
 
         public BlockPos toWorld(BlockPos blockPos) {
-            return blockPos
-                .rotate(rotation)
+            return rotate(blockPos, rotation)
                 .add(offsetPos);
         }
 
         public BlockPos fromWorld(BlockPos blockPos) {
-            return blockPos
-                .subtract(offsetPos)
-                .rotate(RotationUtil.invert(rotation));
+            return rotate(blockPos
+                .subtract(offsetPos), RotationUtil.invert(rotation));
         }
 
         public abstract Snapshot getSnapshot();
+
+        //Copy from 1.11+
+        public BlockPos rotate(BlockPos pos, Rotation rotationIn)
+        {
+            switch (rotationIn)
+            {
+                case NONE:
+                default:
+                    return pos;
+                case CLOCKWISE_90:
+                    return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+                case CLOCKWISE_180:
+                    return new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+                case COUNTERCLOCKWISE_90:
+                    return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+            }
+        }
     }
 }

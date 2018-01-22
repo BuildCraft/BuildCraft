@@ -65,7 +65,6 @@ import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -216,32 +215,32 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             // 8 corners were visited in the same iteration,
             // and somehow were the first 8 added.
             if (openSet.size() > 8 * 3) {
-                String msg = "OpenSet got too big!";
-                msg += "\n  Position = " + pos;
-                msg += "\n  Frame Box = " + frameBox;
-                msg += "\n  Iteration Count = " + iterationCount;
-                msg += "\n  OpenSet = [";
+                StringBuilder msg = new StringBuilder("OpenSet got too big!");
+                msg.append("\n  Position = ").append(pos);
+                msg.append("\n  Frame Box = ").append(frameBox);
+                msg.append("\n  Iteration Count = ").append(iterationCount);
+                msg.append("\n  OpenSet = [");
                 for (BlockPos p : openSet) {
-                    msg += "\n  " + p;
+                    msg.append("\n  ").append(p);
                 }
-                msg += "]";
-                throw new IllegalStateException(msg);
+                msg.append("]");
+                throw new IllegalStateException(msg.toString());
             }
 
             // Ensure that we aren't going infinitely
             iterationCount++;
             if (iterationCount >= maxIterationCount) {
                 // We definitely failed. As maxIterationCount is an over-estimate
-                String msg = "Failed to generate a correct list of frame positions! Was the frame box wrong?";
-                msg += "\n  Position = " + pos;
-                msg += "\n  Frame Box = " + frameBox;
-                msg += "\n  Iteration Count = " + iterationCount;
-                msg += "\n  OpenSet = [";
+                StringBuilder msg = new StringBuilder("Failed to generate a correct list of frame positions! Was the frame box wrong?");
+                msg.append("\n  Position = ").append(pos);
+                msg.append("\n  Frame Box = ").append(frameBox);
+                msg.append("\n  Iteration Count = ").append(iterationCount);
+                msg.append("\n  OpenSet = [");
                 for (BlockPos p : openSet) {
-                    msg += "\n  " + p;
+                    msg.append("\n  ").append(p);
                 }
-                msg += "]";
-                throw new IllegalStateException(msg);
+                msg.append("]");
+                throw new IllegalStateException(msg.toString());
             }
         } while (!openSet.isEmpty());
 
@@ -410,6 +409,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public void onLoad() {
+        super.onLoad();
         if (!world.isRemote) {
             updatePoses();
         }
@@ -467,8 +467,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         firstChecked = false;
         frameBreakBlockPoses.clear();
         framePlaceFramePoses.clear();
-        IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == BCBuildersBlocks.quarry && frameBox.isInitialized()) {
+        //IBlockState state = getWorld().getBlockState(pos);
+        if (frameBox.isInitialized()) {
             List<BlockPos> blocksInArea = frameBox.getBlocksInArea();
             frameBoxPosesCount = blocksInArea.size();
             toCheck.addAll(blocksInArea);
@@ -579,9 +579,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     sendNetworkUpdate(NET_RENDER_DATA);
                 } else {
                     AxisAlignedBB box = miningBox.getBoundingBox();
-                    if (box.maxX - box.minX == 63 && box.maxZ - box.minZ == 63) {
-                        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_COMPLETE);
-                    }
                 }
             }
         }
@@ -688,19 +685,19 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             collisionboxes = new ArrayList<>(3);
             Vec3d min = VecUtil.convertCenter(frameBox.min());
             Vec3d max = VecUtil.convertCenter(frameBox.max());
-            min = VecUtil.replaceValue(min, Axis.Y, max.y);
+            min = VecUtil.replaceValue(min, Axis.Y, max.yCoord);
 
-            Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5);
-            Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5);
+            Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.xCoord + 0.5);
+            Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.xCoord + 0.5);
             collisionboxes.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
 
-            Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5);
-            Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5);
+            Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.zCoord + 0.5);
+            Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.zCoord + 0.5);
             collisionboxes.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
 
             Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
             Vec3d minYAdj = realDrillPos;
-            Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.y);
+            Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.yCoord);
             collisionboxes.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
         }
         return collisionboxes;
@@ -882,10 +879,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 if (drillPos != null) {
                     world.destroyBlock(breakPos, true);
                     for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class,
-                        new AxisAlignedBB(breakPos).grow(1))) {
+                        new AxisAlignedBB(breakPos).expandXyz(1))) {
                         TransactorEntityItem transactor = new TransactorEntityItem(entity);
                         ItemStack stack;
-                        while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
+                        while ((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)) != null) {
                             InventoryUtil.addToBestAcceptor(world, pos, null, stack);
                         }
                     }

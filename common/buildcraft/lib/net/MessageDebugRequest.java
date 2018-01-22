@@ -51,7 +51,7 @@ public class MessageDebugRequest implements IMessage {
     }
 
     public static final IMessageHandler<MessageDebugRequest, MessageDebugResponse> HANDLER = (message, ctx) -> {
-        EntityPlayer player = ctx.getServerHandler().player;
+        EntityPlayer player = ctx.getServerHandler().playerEntity;
         if (!player.capabilities.isCreativeMode &&
             !(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger) &&
             !(player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger)) {

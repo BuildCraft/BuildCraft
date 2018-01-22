@@ -66,10 +66,7 @@ public class PipeModelCacheBase {
             if (getClass() != obj.getClass()) return false;
             PipeBaseCutoutKey other = (PipeBaseCutoutKey) obj;
             if (definition != other.definition) return false;
-            if (centerSprite != other.centerSprite) return false;
-            if (!Arrays.equals(connections, other.connections)) return false;
-            if (!Arrays.equals(sideSprites, other.sideSprites)) return false;
-            return true;
+            return centerSprite == other.centerSprite && Arrays.equals(connections, other.connections) && Arrays.equals(sideSprites, other.sideSprites);
         }
 
         @Override
@@ -111,9 +108,7 @@ public class PipeModelCacheBase {
             PipeBaseTranslucentKey other = (PipeBaseTranslucentKey) obj;
             /* If we don't have any translucency and neither does the other then we don't care what the other variables
              * are and are considered equal to the other one. */
-            if (!shouldRender() && !other.shouldRender()) return true;
-            if (!Arrays.equals(connections, other.connections)) return false;
-            return colour == other.colour;
+            return !shouldRender() && !other.shouldRender() || Arrays.equals(connections, other.connections) && colour == other.colour;
         }
 
         @Override

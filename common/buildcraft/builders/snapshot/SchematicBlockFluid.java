@@ -96,7 +96,7 @@ public class SchematicBlockFluid implements ISchematicBlock {
                 Stream.of(BlockPos.ORIGIN)
             )
                 .map(blockPos::add)
-                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
+                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock()));
             return true;
         }
         return false;

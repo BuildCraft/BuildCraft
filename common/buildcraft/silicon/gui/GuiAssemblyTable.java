@@ -7,6 +7,7 @@ package buildcraft.silicon.gui;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import buildcraft.api.recipes.AssemblyRecipe;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -19,7 +20,6 @@ import buildcraft.lib.gui.pos.PositionAbsolute;
 
 import buildcraft.silicon.EnumAssemblyRecipeState;
 import buildcraft.silicon.container.ContainerAssemblyTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.transport.gui.LedgerTablePower;
 
 public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
@@ -84,19 +84,20 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
     @Override
     protected void drawForegroundLayer() {
         String title = I18n.format("tile.assemblyTableBlock.name");
-        fontRenderer.drawString(title, guiLeft + (xSize - fontRenderer.getStringWidth(title)) / 2, guiTop + 15, 0x404040);
+        fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 15, 0x404040);
     }
+
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (mouseButton == 0) {
             for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-                TileAssemblyTable.AssemblyInstruction instruction = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
+                AssemblyRecipe recipe = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
                 EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
                 if (getArea(i).contains(mouseX, mouseY)) {
                     container.tile.sendRecipeStateToServer(
-                            instruction,
+                            recipe,
                             state == EnumAssemblyRecipeState.POSSIBLE
                                     ? EnumAssemblyRecipeState.SAVED
                                     : EnumAssemblyRecipeState.POSSIBLE

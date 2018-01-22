@@ -69,13 +69,13 @@ public class CreativeTabManager {
         }
 
         public void setItem(ItemStack stack) {
-            if (stack == null || stack.isEmpty()) return;
+            if (stack == null) return;
             item = stack;
         }
 
         @Override
-        public ItemStack getTabIconItem() {
-            return item;
+        public Item getTabIconItem() {
+            return item.getItem();
         }
     }
 }

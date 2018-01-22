@@ -2,10 +2,11 @@ package buildcraft.lib.client.guide.parts;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
-import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 
 public class GuidePartNote extends GuidePartMulti {
 
@@ -67,21 +68,22 @@ public class GuidePartNote extends GuidePartMulti {
             _y = y + current.pixel + 5 - interpOpenStage;
             _w = GuiGuide.NOTE_PAGE.width;
             _h = HEIGHT + interpOpenStage - 5;
-            try (AutoGlScissor scissor = GuiUtil.scissor(_x, _y, _w, _h)) {
-                GuiGuide.NOTE_PAGE.drawAt(_x, _y);
-            }
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GuiUtil.scissor(_x, _y, _w, _h);
+            GuiGuide.NOTE_PAGE.drawAt(_x, _y);
 
             _x += 8;
             _y += 4;
             _w -= 16;
             _h -= 4;
 
-            try (AutoGlScissor scissor = GuiUtil.scissor(_x, _y, _w, _h)) {
-                PagePosition innerPosition = new PagePosition(index, 4);
-                for (GuidePart part : parts) {
-                    innerPosition = part.renderIntoArea(_x, _y, _w, 400, innerPosition, index);
-                }
+            GuiUtil.scissor(_x, _y, _w, _h);
+            PagePosition innerPosition = new PagePosition(index, 4);
+            for (GuidePart part : parts) {
+                innerPosition = part.renderIntoArea(_x, _y, _w, 400, innerPosition, index);
             }
+
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
         return current.nextLine(HEIGHT, height);
     }

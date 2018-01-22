@@ -11,7 +11,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.EnumDyeColor;
@@ -33,7 +32,6 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.BCTransportSprites;
@@ -106,10 +104,10 @@ public class TriggerParameterSignal implements IStatementParameter {
         this.colour = colour;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

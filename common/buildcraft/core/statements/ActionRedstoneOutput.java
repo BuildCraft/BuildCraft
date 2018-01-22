@@ -54,11 +54,10 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     }
 
     protected boolean isSideOnly(IStatementParameter[] parameters) {
-        if (parameters != null && parameters.length >= (getRGSOSlot() + 1) && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly) {
-            return ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isSpecific;
-        }
+        return parameters != null && parameters.length >= (getRGSOSlot() + 1)
+                && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly
+                && ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isSpecific;
 
-        return false;
     }
 
     @Override

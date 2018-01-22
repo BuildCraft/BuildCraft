@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.EnumDyeColor;
@@ -30,7 +29,6 @@ import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.transport.BCTransportSprites;
 
@@ -130,10 +128,10 @@ public class ActionParameterSignal implements IStatementParameter {
         return this;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

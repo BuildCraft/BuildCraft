@@ -6,28 +6,29 @@
 
 package buildcraft.lib.misc.data;
 
+import com.google.common.collect.Lists;
+
 import java.util.AbstractList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
-
-import net.minecraft.util.NonNullList;
 
 /** Defines a non-null 2 dimensional matrix, where the width and height are known at creation time. Note that this
  * matrix cannot be resized. */
 public class NonNullMatrix<T> extends AbstractList<T> {
-    private final NonNullList<T> internalList;
+    private final List<T> internalList;
     private final int width, height;
 
     public NonNullMatrix(int width, int height, @Nonnull T fill) {
         this.width = width;
         this.height = height;
-        internalList = NonNullList.withSize(width * height, fill);
+        internalList = Lists.newArrayListWithCapacity(width * height);
     }
 
     public NonNullMatrix(int width, int height, IEntryFiller<T> filler) {
         this.width = width;
         this.height = height;
-        internalList = NonNullList.withSize(width * height, filler.getEntry(0, 0));
+        internalList = Lists.newArrayListWithCapacity(width * height);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 internalList.set(flatIndexOf(x, y), filler.getEntry(x, y));
@@ -45,7 +46,7 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     public NonNullMatrix(T[][] from, @Nonnull T nullReplacer) {
         this.width = from.length;
         this.height = width == 0 ? 0 : from[0].length;
-        internalList = NonNullList.withSize(width * height, nullReplacer);
+        internalList = Lists.newArrayListWithCapacity(width * height);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 T val = from[x][y];

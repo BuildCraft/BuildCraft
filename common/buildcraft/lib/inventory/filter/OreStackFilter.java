@@ -6,20 +6,15 @@
 
 package buildcraft.lib.inventory.filter;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.recipes.StackDefinition;
 
-import buildcraft.lib.misc.StackUtil;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class OreStackFilter implements IStackFilter {
@@ -49,11 +44,6 @@ public class OreStackFilter implements IStackFilter {
         }
 
         return false;
-    }
-
-    @Override
-    public NonNullList<ItemStack> getExamples() {
-        return Arrays.stream(ores).map(OreDictionary::getOres).flatMap(Collection::stream).distinct().collect(StackUtil.nonNullListCollector());
     }
 
     public static StackDefinition definition(int count, String... ores) {

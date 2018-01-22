@@ -26,7 +26,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     @Nullable
     public TileEntity getTile(World world, BlockPos pos, boolean force) {
         if (direct | force) {
-            if (force || world.isBlockLoaded(pos)) {
+            if (force && world.isBlockLoaded(pos)) {
                 return world.getTileEntity(pos);
             }
             return null;

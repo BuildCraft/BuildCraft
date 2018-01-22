@@ -6,10 +6,10 @@ package buildcraft.lib.item;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -54,7 +54,7 @@ public interface IItemBuildCraft {
                 BCLog.logger.info("[lib.registry][" + thisItem.getRegistryName() + "] Registering a variant " + variant
                     + " for damage " + key);
             }
-            ModelLoader.setCustomModelResourceLocation(thisItem, key, variant);
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(thisItem, key, variant);
         }
     }
 }

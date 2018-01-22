@@ -6,7 +6,7 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
@@ -30,7 +30,7 @@ public class CuboidRenderer {
     //
     // ##############
 
-    public static void renderCuboid(TextureAtlasSprite sprite, Vec3d min, Vec3d max, Vec3d offset, BufferBuilder bb, boolean[] sideRender) {
+    public static void renderCuboid(TextureAtlasSprite sprite, Vec3d min, Vec3d max, Vec3d offset, VertexBuffer bb, boolean[] sideRender) {
         if (sprite == null) {
             sprite = SpriteUtil.missingSprite();
         }
@@ -41,13 +41,13 @@ public class CuboidRenderer {
         CuboidRenderContext ctx = new CuboidRenderContext();
         ctx.buffer = bb;
 
-        final double xs = min.x;
-        final double ys = min.y;
-        final double zs = min.z;
+        final double xs = min.xCoord;
+        final double ys = min.yCoord;
+        final double zs = min.zCoord;
 
-        final double xb = max.x;
-        final double yb = max.y;
-        final double zb = max.z;
+        final double xb = max.xCoord;
+        final double yb = max.yCoord;
+        final double zb = max.zCoord;
 
         // if (type == FluidSpriteType.FROZEN) {
         // if (min.xCoord > 1) {
@@ -129,7 +129,7 @@ public class CuboidRenderer {
 
     public static class CuboidRenderContext {
         public final MutableVertex vertex = new MutableVertex();
-        BufferBuilder buffer;
+        VertexBuffer buffer;
         TextureAtlasSprite sprite;
         TexMap texmap;
         boolean invertU, invertV;

@@ -14,14 +14,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 
+import net.minecraft.client.renderer.*;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
@@ -95,7 +91,7 @@ public class ItemRenderUtil {
             dummyEntityItem.hoverStart = (float) (45 * Math.PI / 180);
         }
 
-        dummyEntityItem.setItem(stack);
+        dummyEntityItem.setEntityItemStack(stack);
         customItemRenderer.doRender(dummyEntityItem, x, y, z, 0, 0);
 
         GL11.glPopMatrix();
@@ -107,8 +103,8 @@ public class ItemRenderUtil {
 
     /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
      * You must call {@link #endItemBatch()} after your have rendered all of the items. */
-    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, BufferBuilder bb) {
-        if (stack.isEmpty()) {
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, VertexBuffer bb) {
+        if (stack == null) {
             return;
         }
         if (dir == null) {
@@ -132,7 +128,7 @@ public class ItemRenderUtil {
                     q.scaled(scale);
                     q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
                     if (quad.hasTintIndex()) {
-                        int colour = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, quad.getTintIndex());
+                        int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
                         if (EntityRenderer.anaglyphEnable) {
                             colour = TextureUtil.anaglyphColor(colour);
                         }

@@ -17,21 +17,18 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import buildcraft.lib.misc.StackUtil;
 
 public class RecipeBuilderShaped {
     @Nonnull
-    private ItemStack result = StackUtil.EMPTY;
+    private ItemStack result = null;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
 
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
-            throw new IllegalArgumentException(
-                "Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
+            throw new IllegalArgumentException("Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
         }
         shape.add(row);
         return this;
@@ -40,7 +37,7 @@ public class RecipeBuilderShaped {
     public RecipeBuilderShaped map(char c, Object... values) {
         boolean put = false;
         for (Object v : values) {
-            if (v != null && v != StackUtil.EMPTY) {
+            if (v != null && v != null) {
                 if (v instanceof Item//
                     || v instanceof Block//
                     || v instanceof ItemStack//
@@ -78,19 +75,6 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
-    public Object[] createRecipeObjectArrayNBT() {
-        Object[] objs = new Object[shape.size() + objects.size() * 2];
-        Object[] original = createRecipeObjectArray();
-        for (int i = 0; i < objs.length; i++) {
-            Object o = original[i];
-            if (o instanceof ItemStack) {
-                o = new IngredientNBTBC((ItemStack) o);
-            }
-            objs[i] = o;
-        }
-        return objs;
-    }
-
     public ShapedOreRecipe buildRotated() {
         int fromRows = shape.size();
         int toRows = shape.get(0).length();
@@ -112,30 +96,27 @@ public class RecipeBuilderShaped {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
-        return new ShapedOreRecipe(result.getItem().getRegistryName(), result, objs);
+        return new ShapedOreRecipe(result, objs);
     }
 
     private void ensureValid() {
-        if (result.isEmpty()) {
+        if (result == null) {
             throw new IllegalStateException("Result hasn't been set yet!");
         }
     }
 
     public void register() {
         ensureValid();
-        ForgeRegistries.RECIPES
-            .register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArray()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(result, createRecipeObjectArray()));
     }
 
-    public void registerNbtAware(String regName) {
+    public void registerNbtAware() {
         ensureValid();
-        ShapedOreRecipe recipe =
-            new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT());
-        ForgeRegistries.RECIPES.register(recipe.setRegistryName(regName));
+        GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, createRecipeObjectArray()));
     }
 
     public void registerRotated() {
         ensureValid();
-        ForgeRegistries.RECIPES.register(buildRotated().setRegistryName(result.getItem().getRegistryName()));
+        GameRegistry.addRecipe(buildRotated());
     }
 }

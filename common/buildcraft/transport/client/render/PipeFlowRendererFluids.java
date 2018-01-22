@@ -8,10 +8,10 @@ package buildcraft.transport.client.render;
 
 import java.util.Arrays;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -44,7 +44,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
     INSTANCE;
 
     @Override
-    public void render(PipeFlowFluids flow, double x, double y, double z, float partialTicks, BufferBuilder vb) {
+    public void render(PipeFlowFluids flow, double x, double y, double z, float partialTicks, VertexBuffer vb) {
         FluidStack forRender = flow.getFluidStackForRender();
         if (forRender == null) {
             return;
@@ -65,7 +65,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 
         FluidRenderer.vertex.lighti(combinedLight);
 
-        BufferBuilder fluidBuffer = Tessellator.getInstance().getBuffer();
+        VertexBuffer fluidBuffer = Tessellator.getInstance().getBuffer();
         fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         fluidBuffer.setTranslation(x, y, z);
 
@@ -88,13 +88,13 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             if (face.getAxis() == Axis.Y) {
                 double perc = amount / flow.capacity;
                 perc = Math.sqrt(perc);
-                radius = new Vec3d(perc * 0.24, radius.y, perc * 0.24);
+                radius = new Vec3d(perc * 0.24, radius.yCoord, perc * 0.24);
             }
 
             Vec3d offset = offsets[face.getIndex()];
             if (offset == null) offset = Vec3d.ZERO;
             center = center.add(offset);
-            fluidBuffer.setTranslation(x - offset.x, y - offset.y, z - offset.z);
+            fluidBuffer.setTranslation(x - offset.xCoord, y - offset.yCoord, z - offset.zCoord);
 
             Vec3d min = center.subtract(radius);
             Vec3d max = center.add(radius);
@@ -112,7 +112,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 
         Vec3d offset = offsets[EnumPipePart.CENTER.getIndex()];
         if (offset == null) offset = Vec3d.ZERO;
-        fluidBuffer.setTranslation(x - offset.x, y - offset.y, z - offset.z);
+        fluidBuffer.setTranslation(x - offset.xCoord, y - offset.yCoord, z - offset.zCoord);
 
         if (horizontal | !vertical) {
             Vec3d min = new Vec3d(0.26, 0.26, 0.26);
@@ -122,7 +122,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             max = max.add(offset);
 
             FluidRenderer.renderFluid(FluidSpriteType.FROZEN, forRender, amount, flow.capacity, min, max, fluidBuffer, sides);
-            horizPos += (max.y - min.y) * amount / flow.capacity;
+            horizPos += (max.yCoord - min.yCoord) * amount / flow.capacity;
         }
 
         if (vertical && horizPos < 0.74) {
@@ -160,7 +160,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 
     }
 
-    private static void drawFluidCenter(FluidStack fluid, double percentage, boolean horizontal, boolean above, BufferBuilder bb) {
+    private static void drawFluidCenter(FluidStack fluid, double percentage, boolean horizontal, boolean above, VertexBuffer bb) {
         boolean[] sides = new boolean[6];
         Arrays.fill(sides, true);
         Vec3d min = new Vec3d(0.26, 0.26, 0.26);

@@ -8,7 +8,7 @@ package buildcraft.core.statements;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,15 +19,13 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.misc.StackUtil;
-
 public class StatementParameterItemStackExact implements IStatementParameter {
     protected ItemStack stack;
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override
@@ -35,14 +33,14 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         if (stack != null) {
             if (areItemsEqual(this.stack, stack)) {
                 if (mouse.getButton() == 0) {
-                    this.stack.setCount(this.stack.getCount() + ((mouse.isShift()) ? 16 : 1));
-                    if (this.stack.getCount() > 64) {
-                        this.stack.setCount(64);
+                    this.stack.stackSize = (this.stack.stackSize + ((mouse.isShift()) ? 16 : 1));
+                    if (this.stack.stackSize > 64) {
+                        this.stack.stackSize = 64;
                     }
                 } else {
-                    this.stack.setCount(this.stack.getCount() - ((mouse.isShift()) ? 16 : 1));
-                    if (this.stack.getCount() < 0) {
-                        this.stack.setCount(0);
+                    this.stack.stackSize = (this.stack.stackSize - ((mouse.isShift()) ? 16 : 1));
+                    if (this.stack.stackSize < 0) {
+                        this.stack.stackSize = 0;
                     }
                 }
             } else {
@@ -51,13 +49,13 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         } else {
             if (this.stack != null) {
                 if (mouse.getButton() == 0) {
-                    this.stack.setCount(this.stack.getCount() + ((mouse.isShift()) ? 16 : 1));
-                    if (this.stack.getCount() > 64) {
-                        this.stack.setCount(64);
+                    this.stack.stackSize = (this.stack.stackSize + ((mouse.isShift()) ? 16 : 1));
+                    if (this.stack.stackSize > 64) {
+                        this.stack.stackSize = 64;
                     }
                 } else {
-                    this.stack.setCount(this.stack.getCount() - ((mouse.isShift()) ? 16 : 1));
-                    if (this.stack.getCount() < 0) {
+                    this.stack.stackSize = (this.stack.stackSize - ((mouse.isShift()) ? 16 : 1));
+                    if (this.stack.stackSize < 0) {
                         this.stack = null;
                     }
                 }
@@ -77,7 +75,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 
     public static StatementParameterItemStackExact readFromNbt(NBTTagCompound nbt) {
         StatementParameterItemStackExact param = new StatementParameterItemStackExact();
-        param.stack = new ItemStack(nbt.getCompoundTag("stack"));
+        param.stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
         return param;
     }
 

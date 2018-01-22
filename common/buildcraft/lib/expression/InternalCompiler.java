@@ -124,7 +124,7 @@ public class InternalCompiler {
         ExpressionDebugManager.debugPrintln("Incoming = " + Arrays.toString(tokens));
 
         for (int i = 0; i < tokens.length; i++) {
-            String before = "";
+            StringBuilder before = new StringBuilder();
             String token = tokens[i];
             int start = i;
             while (true) {
@@ -167,11 +167,11 @@ public class InternalCompiler {
                     break;
                 }
                 // This word wasn't valid -- try the next one?
-                before += token;
+                before.append(token);
                 i++;
                 changed = true;
                 if (i >= tokens.length) {
-                    token = before;
+                    token = before.toString();
                     ExpressionDebugManager.debugPrintln("  - too long!");
                     break;
                 }
@@ -313,12 +313,14 @@ public class InternalCompiler {
         while (!stack.isEmpty()) {
             String operator = stack.pop();
             ExpressionDebugManager.debugPrintln("  - Operator \"" + operator + "\"");
-            if ("(".equals(operator)) {
-                throw new InvalidExpressionException("Too many opening parenthesis!");
-            } else if (")".equals(operator)) {
-                throw new InvalidExpressionException("Too many closing parenthesis!");
-            } else {
-                postfix.add(operator);
+            switch (operator) {
+                case "(":
+                    throw new InvalidExpressionException("Too many opening parenthesis!");
+                case ")":
+                    throw new InvalidExpressionException("Too many closing parenthesis!");
+                default:
+                    postfix.add(operator);
+                    break;
             }
             ExpressionDebugManager.debugPrintln("         Stack=" + stack + ", postfix=" + postfix);
         }
@@ -329,8 +331,8 @@ public class InternalCompiler {
     private static IExpressionNode makeExpression(String[] postfix, FunctionContext context)
         throws InvalidExpressionException {
         NodeStack stack = new NodeStack();
-        for (int i = 0; i < postfix.length; i++) {
-            String op = postfix[i];
+        for (String aPostfix : postfix) {
+            String op = aPostfix;
             if (OPERATORS.contains(op) && !"?".equals(op) && !":".equals(op)) {
                 boolean isNegation = UNARY_NEGATION.equals(op);
                 int count = 2;
@@ -340,7 +342,7 @@ public class InternalCompiler {
                 }
                 String function = op + FUNCTION_ARGS + count;
                 pushFunctionNode(stack, function, context);
-            } else if (":".equals(op)) continue; // NO-OP, all handled by "?"
+            }
             else if ("?".equals(op)) pushConditional(stack);
             else if (isValidLong(op)) {
                 long val = parseValidLong(op);
@@ -394,20 +396,19 @@ public class InternalCompiler {
     }
 
     private static String addParentVariables(FunctionContext context) {
-        String vars = "";
-        List<String> allVariables = new ArrayList<>();
-        allVariables.addAll(context.getAllVariables());
+        StringBuilder vars = new StringBuilder();
+        List<String> allVariables = new ArrayList<>(context.getAllVariables());
         allVariables.sort(Comparator.naturalOrder());
         if (!allVariables.isEmpty()) {
             if (!context.name.isEmpty()) {
-                vars += "\n" + context.name + ":";
+                vars.append("\n").append(context.name).append(":");
             }
-            vars += "\n  " + allVariables.toString().replace("[", "").replace("]", "");
+            vars.append("\n  ").append(allVariables.toString().replace("[", "").replace("]", ""));
         }
         for (FunctionContext parent : context.getParents()) {
-            vars += addParentVariables(parent);
+            vars.append(addParentVariables(parent));
         }
-        return vars;
+        return vars.toString();
     }
 
     public static boolean isValidDouble(String op) {
@@ -440,12 +441,8 @@ public class InternalCompiler {
         try {
             return NodeCasting.castToType(convert, compareClass);
         } catch (InvalidExpressionException iee) {
-            try {
-                NodeCasting.castToType(compare, convertClass);
-                return convert;
-            } catch (InvalidExpressionException iee2) {
-                throw iee2;
-            }
+            NodeCasting.castToType(compare, convertClass);
+            return convert;
         }
     }
 
@@ -658,23 +655,22 @@ public class InternalCompiler {
     }
 
     private static String addParentFunctions(FunctionContext context) {
-        String vars = "";
-        List<String> allFunctions = new ArrayList<>();
-        allFunctions.addAll(context.getAllFunctions().rowKeySet());
+        StringBuilder vars = new StringBuilder();
+        List<String> allFunctions = new ArrayList<>(context.getAllFunctions().rowKeySet());
         allFunctions.sort(Comparator.naturalOrder());
         if (!allFunctions.isEmpty()) {
             if (!context.name.isEmpty()) {
-                vars += "\n" + context.name + ":";
+                vars.append("\n").append(context.name).append(":");
             }
             for (String fnName : allFunctions) {
                 Map<List<Class<?>>, INodeFunc> functions = context.getFunctions(fnName);
                 for (Map.Entry<List<Class<?>>, INodeFunc> entry : functions.entrySet()) {
-                    String args = "";
+                    StringBuilder args = new StringBuilder();
                     for (Class<?> arg : entry.getKey()) {
                         if (args.length() > 0) {
-                            args += ", ";
+                            args.append(", ");
                         }
-                        args += NodeTypes.getName(arg);
+                        args.append(NodeTypes.getName(arg));
                     }
                     INodeFunc function = entry.getValue();
                     String ret;
@@ -687,14 +683,14 @@ public class InternalCompiler {
                     } else {
                         ret = NodeTypes.getName(((INodeFuncObject<?>) function).getType());
                     }
-                    vars += "\n  " + fnName + "(" + args + ") -> " + ret;
+                    vars.append("\n  ").append(fnName).append("(").append(args).append(") -> ").append(ret);
                 }
             }
         }
         for (FunctionContext parent : context.getParents()) {
-            vars += addParentFunctions(parent);
+            vars.append(addParentFunctions(parent));
         }
-        return vars;
+        return vars.toString();
     }
 
     private static FunctionContext getContext(String type) throws InvalidExpressionException {

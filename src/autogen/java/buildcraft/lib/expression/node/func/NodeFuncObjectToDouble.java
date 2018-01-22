@@ -7,9 +7,7 @@
 package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.NodeInliningHelper;
-import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeStack;
@@ -68,12 +66,12 @@ public class NodeFuncObjectToDouble<A> extends NodeFuncBase implements INodeFunc
             if (!canInline) {
                 // Note that we can still inline the arguments, just not *this* function
                 return NodeInliningHelper.tryInline(this, argA,
-                    (a) -> new Func(a),
-                    (a) -> new Func(a)
+                        Func::new,
+                        Func::new
                 );
             }
             return NodeInliningHelper.tryInline(this, argA,
-                (a) -> new Func(a),
+                    Func::new,
                 (a) -> NodeConstantDouble.of(function.apply(a.evaluate()))
             );
         }

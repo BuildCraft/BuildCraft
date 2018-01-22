@@ -13,13 +13,9 @@ import java.util.Map;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
+import net.minecraft.client.renderer.*;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.EnumDyeColor;
@@ -168,18 +164,22 @@ public class PipeWireRenderer {
             boolean swapU = false;
             boolean swapV = false;
 
-            if (aAxis == Axis.X) {
-                swapV = fPositive;
-            } else if (aAxis == Axis.Y) {
-                rotations = 1;
-                swapU = (fAxis == Axis.X) != fPositive;
-                swapV = fAxis == Axis.Z;
-            } else {// aAxis == Axis.Z
-                if (fAxis == Axis.Y) {
+            switch (aAxis) {
+                case X:
+                    swapV = fPositive;
+                    break;
+                case Y:
                     rotations = 1;
-                }
-                swapU = face == EnumFacing.DOWN;
-                swapV = face != EnumFacing.EAST;
+                    swapU = (fAxis == Axis.X) != fPositive;
+                    swapV = fAxis == Axis.Z;
+                    break;
+                default: // aAxis == Axis.Z
+                    if (fAxis == Axis.Y) {
+                        rotations = 1;
+                    }
+                    swapU = face == EnumFacing.DOWN;
+                    swapV = face != EnumFacing.EAST;
+                    break;
             }
 
             if (swapU) {
@@ -203,7 +203,7 @@ public class PipeWireRenderer {
     private static void renderQuads(MutableQuad[] quads, ISprite sprite, int level) {
         VertexFormat vf = DefaultVertexFormats.POSITION_TEX_COLOR;
         Tessellator tessellator = new Tessellator(quads.length * vf.getNextOffset());
-        BufferBuilder bb = tessellator.getBuffer();
+        VertexBuffer bb = tessellator.getBuffer();
         bb.begin(GL11.GL_QUADS, vf);
 
         float vOffset = (level & 0xF) / 16f;
@@ -223,7 +223,7 @@ public class PipeWireRenderer {
         tessellator.draw();
     }
 
-    private static void renderVertex(BufferBuilder bb, MutableVertex vertex, ISprite sprite, float vOffset) {
+    private static void renderVertex(VertexBuffer bb, MutableVertex vertex, ISprite sprite, float vOffset) {
         vertex.renderPosition(bb);
         double u = sprite.getInterpU(vertex.tex_u);
         double v = sprite.getInterpV(vertex.tex_v + vOffset);
@@ -264,7 +264,7 @@ public class PipeWireRenderer {
         return compileQuads(getQuads(between), colour, isOn);
     }
 
-    public static void renderWires(TilePipeHolder pipe, double x, double y, double z, BufferBuilder bb) {
+    public static void renderWires(TilePipeHolder pipe, double x, double y, double z, VertexBuffer bb) {
         int combinedLight = pipe.getWorld().getCombinedLight(pipe.getPipePos(), 0);
         int skyLight = combinedLight >> 16 & 0xFFFF;
         int blockLight = combinedLight & 0xFFFF;

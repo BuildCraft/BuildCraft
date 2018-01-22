@@ -6,6 +6,7 @@ package buildcraft.core;
 
 import java.util.List;
 
+import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -95,6 +96,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
         public void fmlInit() {
             BCCoreModels.fmlInit();
             MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
+            RegistrationHelper.registerModels();
         }
 
         @Override

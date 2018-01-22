@@ -38,9 +38,7 @@ public interface IGuiArea extends IGuiPosition {
         double ty = getY();
         double w = getWidth();
         double h = getHeight();
-        if (x < tx || x >= tx + w) return false;
-        if (y < ty || y >= ty + h) return false;
-        return true;
+        return !(x < tx) && !(x >= tx + w) && !(y < ty) && !(y >= ty + h);
     }
 
     default boolean contains(IGuiPosition position) {
@@ -48,9 +46,7 @@ public interface IGuiArea extends IGuiPosition {
     }
 
     default boolean contains(IGuiArea element) {
-        if (element.getX() < getX() || element.getEndX() >= getEndX()) return false;
-        if (element.getY() < getY() || element.getEndY() >= getEndY()) return false;
-        return true;
+        return !(element.getX() < getX()) && !(element.getEndX() >= getEndX()) && !(element.getY() < getY()) && !(element.getEndY() >= getEndY());
     }
 
     default String rectangleToString() {

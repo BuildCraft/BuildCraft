@@ -44,7 +44,6 @@ import buildcraft.lib.debug.ClientDebuggables;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
@@ -141,8 +140,8 @@ public class RenderTickListener {
         if (player == null) {
             return;
         }
-        ItemStack mainHand = StackUtil.asNonNull(player.getHeldItemMainhand());
-        ItemStack offHand = StackUtil.asNonNull(player.getHeldItemOffhand());
+        ItemStack mainHand = player.getHeldItemMainhand();
+        ItemStack offHand = player.getHeldItemOffhand();
         WorldClient world = mc.world;
 
         mc.mcProfiler.startSection("bc");
@@ -150,13 +149,15 @@ public class RenderTickListener {
 
         DetachedRenderer.fromWorldOriginPre(player, partialTicks);
 
-        Item mainHandItem = mainHand.getItem();
-        Item offHandItem = offHand.getItem();
+        Item mainHandItem = mainHand != null ? mainHand.getItem() : null;
+        Item offHandItem = offHand != null ? offHand.getItem() : null;
 
-        if (mainHandItem == BCCoreItems.mapLocation) {
-            renderMapLocation(mainHand);
-        } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem == BCCoreItems.markerConnector) {
-            renderMarkerConnector(world, player);
+        if (mainHandItem != null) {
+            if (mainHandItem == BCCoreItems.mapLocation) {
+                renderMapLocation(mainHand);
+            } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem != null && offHandItem == BCCoreItems.markerConnector) {
+                renderMarkerConnector(world, player);
+            }
         }
 
         DetachedRenderer.fromWorldOriginPost();
@@ -167,40 +168,47 @@ public class RenderTickListener {
 
     private static void renderMapLocation(@Nonnull ItemStack stack) {
         MapLocationType type = MapLocationType.getFromStack(stack);
-        if (type == MapLocationType.SPOT) {
-            EnumFacing face = ItemMapLocation.getPointFace(stack);
-            IBox box = ItemMapLocation.getPointBox(stack);
-            if (box != null) {
-                Vec3d[][] vectors = MAP_LOCATION_POINT[face.ordinal()];
-                GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
-                for (Vec3d[] vec : vectors) {
-                    LaserData_BC8 laser =
-                        new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
-                    LaserRenderer_BC8.renderLaserStatic(laser);
-                }
-            }
-
-        } else if (type == MapLocationType.AREA) {
-
-            IBox box = ItemMapLocation.getAreaBox(stack);
-            LAST_RENDERED_MAP_LOC.reset();
-            LAST_RENDERED_MAP_LOC.initialize(box);
-            LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, true);
-
-        } else if (type == MapLocationType.PATH) {
-            List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
-            if (path != null && path.size() > 1) {
-                BlockPos last = null;
-                for (BlockPos p : path) {
-                    if (last == null) {
-                        last = p;
+        switch (type) {
+            case SPOT: {
+                EnumFacing face = ItemMapLocation.getPointFace(stack);
+                IBox box = ItemMapLocation.getPointBox(stack);
+                if (box != null) {
+                    Vec3d[][] vectors = MAP_LOCATION_POINT[face.ordinal()];
+                    GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
+                    for (Vec3d[] vec : vectors) {
+                        LaserData_BC8 laser =
+                                new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
+                        LaserRenderer_BC8.renderLaserStatic(laser);
                     }
                 }
-            }
 
-            // TODO!
-        } else if (type == MapLocationType.ZONE) {
-            // TODO!
+                break;
+            }
+            case AREA: {
+
+                IBox box = ItemMapLocation.getAreaBox(stack);
+                LAST_RENDERED_MAP_LOC.reset();
+                LAST_RENDERED_MAP_LOC.initialize(box);
+                LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, true);
+
+                break;
+            }
+            case PATH:
+                List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
+                if (path != null && path.size() > 1) {
+                    BlockPos last = null;
+                    for (BlockPos p : path) {
+                        if (last == null) {
+                            last = p;
+                        }
+                    }
+                }
+
+                // TODO!
+                break;
+            case ZONE:
+                // TODO!
+                break;
         }
     }
 

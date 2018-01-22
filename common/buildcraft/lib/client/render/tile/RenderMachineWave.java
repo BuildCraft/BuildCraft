@@ -6,7 +6,7 @@
 
 package buildcraft.lib.client.render.tile;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,7 +27,7 @@ public class RenderMachineWave {
         // TODO Auto-generated constructor stub
     }
 
-    public void render(BufferBuilder buffer) {
+    public void render(VertexBuffer buffer) {
         // TODO: Sine wave (Make the tile return something?)
     }
 }

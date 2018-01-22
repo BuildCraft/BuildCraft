@@ -29,25 +29,25 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
         if (!inventory.isItemValidForSlot(slot, stack)) {
             return stack;
         }
-        if (current.isEmpty()) {
+        if (current == null) {
             int max = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
             ItemStack split = stack.splitStack(max);
             if (!simulate) {
                 inventory.setInventorySlotContents(slot, split);
             }
-            if (stack.isEmpty()) {
-                return StackUtil.EMPTY;
+            if (stack == null) {
+                return null;
             } else {
                 return stack;
             }
         }
         if (StackUtil.canMerge(current, stack)) {
             ItemStack merged = current.copy();
-            merged.setCount(merged.getCount() + stack.getCount());
+            merged.stackSize += stack.stackSize;
             int size = Math.min(inventory.getInventoryStackLimit(), merged.getMaxStackSize());
-            if (merged.getCount() > size) {
-                stack.setCount(stack.getCount() - (merged.getCount() - size));
-                merged.setCount(size);
+            if (merged.stackSize > size) {
+                stack.stackSize = (stack.stackSize - (merged.stackSize - size));
+                merged.stackSize = size;
                 if (!simulate) {
                     inventory.setInventorySlotContents(slot, merged);
                 }
@@ -56,7 +56,7 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
                 if (!simulate) {
                     inventory.setInventorySlotContents(slot, merged);
                 }
-                return StackUtil.EMPTY;
+                return null;
             }
         }
         return stack;
@@ -66,25 +66,25 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
     @Nonnull
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         ItemStack current = inventory.getStackInSlot(slot);
-        if (current.isEmpty()) {
-            return StackUtil.EMPTY;
+        if (current == null) {
+            return null;
         }
         if (filter.matches(current.copy())) {
-            if (current.getCount() < min) {
-                return StackUtil.EMPTY;
+            if (current.stackSize < min) {
+                return null;
             }
-            int size = Math.min(current.getCount(), max);
+            int size = Math.min(current.stackSize, max);
             current = current.copy();
             ItemStack other = current.splitStack(size);
             if (!simulate) {
-                if (current.getCount() <= 0) {
-                    current = StackUtil.EMPTY;
+                if (current.stackSize <= 0) {
+                    current = null;
                 }
                 inventory.setInventorySlotContents(slot, current);
             }
             return other;
         } else {
-            return StackUtil.EMPTY;
+            return null;
         }
     }
 
@@ -95,6 +95,6 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected boolean isEmpty(int slot) {
-        return inventory.getStackInSlot(slot).isEmpty();
+        return inventory.getStackInSlot(slot) == null;
     }
 }

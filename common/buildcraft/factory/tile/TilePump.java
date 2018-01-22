@@ -82,7 +82,7 @@ public class TilePump extends TileMiner {
     }
 
     private void buildQueue() {
-        world.profiler.startSection("prepare");
+        world.theProfiler.startSection("prepare");
         queue.clear();
         paths.clear();
         Fluid queueFluid = null;
@@ -106,10 +106,10 @@ public class TilePump extends TileMiner {
             }
         }
         if (nextPosesToCheck.isEmpty()) {
-            world.profiler.endSection();
+            world.theProfiler.endSection();
             return;
         }
-        world.profiler.endStartSection("build");
+        world.theProfiler.endStartSection("build");
         boolean isWater = !BCCoreConfig.pumpsConsumeWater && FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
         final int maxLengthSquared = BCCoreConfig.pumpMaxDistance * BCCoreConfig.pumpMaxDistance;
         outer: while (!nextPosesToCheck.isEmpty()) {
@@ -152,7 +152,7 @@ public class TilePump extends TileMiner {
                 }
             }
         }
-        world.profiler.endStartSection("oil_spring_search");
+        world.theProfiler.endStartSection("oil_spring_search");
         if (FluidUtilBC.areFluidsEqual(queueFluid, BCEnergyFluids.crudeOil[0])) {
             List<BlockPos> springPositions = new ArrayList<>();
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
@@ -176,7 +176,7 @@ public class TilePump extends TileMiner {
             }
 
         }
-        world.profiler.endSection();
+        world.theProfiler.endSection();
     }
 
     private boolean canDrain(BlockPos blockPos) {

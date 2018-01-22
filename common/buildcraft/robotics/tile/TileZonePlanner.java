@@ -26,7 +26,6 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
@@ -63,7 +62,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             Optional.ofNullable(stack.getTagCompound())
                 .map(tagCompound -> tagCompound.hasKey("chunkMapping"))
                 .orElse(false) &&
-            stack.getCount() == 1,
+            stack.stackSize == 1,
         EnumAccess.NONE
     );
     public final ItemHandlerSimple invInputResult = itemManager.addInvHandler(
@@ -80,7 +79,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
     public final ItemHandlerSimple invOutputMapLocation = itemManager.addInvHandler(
         "outputMapLocation",
         1,
-        (slot, stack) -> stack.getItem() instanceof ItemMapLocation && stack.getCount() == 1,
+        (slot, stack) -> stack.getItem() instanceof ItemMapLocation && stack.stackSize == 1,
         EnumAccess.NONE
     );
     public final ItemHandlerSimple invOutputResult = itemManager.addInvHandler(
@@ -185,9 +184,9 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
         {
             // noinspection ConstantConditions
-            if (!invInputPaintbrush.getStackInSlot(0).isEmpty() && invInputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 && !invInputMapLocation.getStackInSlot(0).isEmpty()
+            if (invInputPaintbrush.getStackInSlot(0) != null && invInputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 && invInputMapLocation.getStackInSlot(0) != null
                 && invInputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation && invInputMapLocation.getStackInSlot(0).getTagCompound() != null && invInputMapLocation.getStackInSlot(0)
-                    .getTagCompound().hasKey("chunkMapping") && invInputResult.getStackInSlot(0).isEmpty()) {
+                    .getTagCompound().hasKey("chunkMapping") && invInputResult.getStackInSlot(0) == null) {
                 if (progressInput == 0) {
                     deltaProgressInput.addDelta(0, 200, 1);
                     deltaProgressInput.addDelta(200, 205, -1);
@@ -201,7 +200,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                 ZonePlan zonePlan = new ZonePlan();
                 zonePlan.readFromNBT(invInputMapLocation.getStackInSlot(0).getTagCompound());
                 layers[BCCoreItems.paintbrush.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] = zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
-                invInputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
+                invInputMapLocation.setStackInSlot(0, null);
                 invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
                 this.markDirty();
                 this.sendNetworkUpdate(NET_RENDER_DATA);
@@ -212,8 +211,8 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
             }
         }
         {
-            if (!invOutputPaintbrush.getStackInSlot(0).isEmpty() && invOutputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 && !invOutputMapLocation.getStackInSlot(0).isEmpty()
-                && invOutputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation && invOutputResult.getStackInSlot(0).isEmpty()) {
+            if (invOutputPaintbrush.getStackInSlot(0) != null && invOutputPaintbrush.getStackInSlot(0).getItem() instanceof ItemPaintbrush_BC8 && invOutputMapLocation.getStackInSlot(0) != null
+                && invOutputMapLocation.getStackInSlot(0).getItem() instanceof ItemMapLocation && invOutputResult.getStackInSlot(0) == null) {
                 if (progressOutput == 0) {
                     deltaProgressOutput.addDelta(0, 200, 1);
                     deltaProgressOutput.addDelta(200, 205, -1);
@@ -227,7 +226,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                 ItemMapLocation.setZone(invOutputMapLocation.getStackInSlot(0), layers[BCCoreItems.paintbrush.getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
                     .getWithOffset(pos.getX(), pos.getZ()));
                 invOutputResult.setStackInSlot(0, invOutputMapLocation.getStackInSlot(0));
-                invOutputMapLocation.setStackInSlot(0, StackUtil.EMPTY);
+                invOutputMapLocation.setStackInSlot(0, null);
                 progressOutput = 0;
             } else if (progressOutput != -1) {
                 progressOutput = -1;

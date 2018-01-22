@@ -11,8 +11,8 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
 
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -54,7 +54,7 @@ public enum OilGenerator implements IWorldGenerator {
             return;
         }
 
-        world.profiler.startSection("bc_oil");
+        world.theProfiler.startSection("bc_oil");
         int x = chunkX * 16 + 8;
         int z = chunkZ * 16 + 8;
         BlockPos min = new BlockPos(x, 0, z);
@@ -64,10 +64,10 @@ public enum OilGenerator implements IWorldGenerator {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {
                 int cx = chunkX + cdx;
                 int cz = chunkZ + cdz;
-                world.profiler.startSection("scan");
+                world.theProfiler.startSection("scan");
                 List<OilGenStructure> structures = getStructures(world, cx, cz);
                 OilGenStructure.Spring spring = null;
-                world.profiler.endStartSection("gen");
+                world.theProfiler.endStartSection("gen");
                 for (OilGenStructure struct : structures) {
                     struct.generate(world, box);
                     if (struct instanceof OilGenStructure.Spring) {
@@ -81,10 +81,10 @@ public enum OilGenerator implements IWorldGenerator {
                     }
                     spring.generate(world, count);
                 }
-                world.profiler.endSection();
+                world.theProfiler.endSection();
             }
         }
-        world.profiler.endSection();
+        world.theProfiler.endSection();
     }
 
     public static List<OilGenStructure> getStructures(World world, int cx, int cz) {
@@ -124,15 +124,19 @@ public enum OilGenerator implements IWorldGenerator {
         List<OilGenStructure> structures = new ArrayList<>();
         int lakeRadius;
         int tendrilRadius;
-        if (type == GenType.LARGE) {
-            lakeRadius = 4;
-            tendrilRadius = 25 + rand.nextInt(20);
-        } else if (type == GenType.LAKE) {
-            lakeRadius = 6;
-            tendrilRadius = 25 + rand.nextInt(20);
-        } else {
-            lakeRadius = 2;
-            tendrilRadius = 5 + rand.nextInt(10);
+        switch (type) {
+            case LARGE:
+                lakeRadius = 4;
+                tendrilRadius = 25 + rand.nextInt(20);
+                break;
+            case LAKE:
+                lakeRadius = 6;
+                tendrilRadius = 25 + rand.nextInt(20);
+                break;
+            default:
+                lakeRadius = 2;
+                tendrilRadius = 5 + rand.nextInt(10);
+                break;
         }
         structures.add(createTendril(new BlockPos(x, 62, z), lakeRadius, tendrilRadius, rand));
 
@@ -196,9 +200,7 @@ public enum OilGenerator implements IWorldGenerator {
         BlockPos max = VecUtil.replaceValue(center.add(radius, radius, radius), axis, valForAxis + length);
         double radiusSq = radius * radius;
         int toReplace = valForAxis;
-        Predicate<BlockPos> tester = p -> {
-            return VecUtil.replaceValue(p, axis, toReplace).distanceSq(center) <= radiusSq;
-        };
+        Predicate<BlockPos> tester = p -> VecUtil.replaceValue(p, axis, toReplace).distanceSq(center) <= radiusSq;
         return new GenByPredicate(new Box(min, max), ReplaceType.ALWAYS, tester);
     }
 
@@ -255,8 +257,6 @@ public enum OilGenerator implements IWorldGenerator {
     }
 
     private static boolean isSet(boolean[][] pattern, int x, int z) {
-        if (x < 0 || x >= pattern.length) return false;
-        if (z < 0 || z >= pattern[x].length) return false;
-        return pattern[x][z];
+        return x >= 0 && x < pattern.length && z >= 0 && z < pattern[x].length && pattern[x][z];
     }
 }

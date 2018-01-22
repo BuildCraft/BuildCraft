@@ -46,19 +46,20 @@ public abstract class JsonVariableModelPart {
                 throw new JsonSyntaxException("Expected a string, got " + jType);
             }
         }
-        if ("face".equals(type)) {
-            throw new AbstractMethodError("// TODO: Implement face type!");
-        } else if ("led".equals(type)) {
-            return new VariablePartLed(obj, fnCtx);
-        } else if ("texture_expand".equals(type)) {
-            return new VariablePartTextureExpand(obj, fnCtx);
-        } else if ("cuboid".equals(type)) {
-            return new VariablePartCuboid(obj, fnCtx);
-        } else if ("container".equals(type)) {
-            return new VariablePartContainer(obj, fnCtx, ctx);
-        } else {
-            throw new JsonSyntaxException(
-                "Unknown type '" + type + "' -- known types are [ face, led, texture_expand, cuboid, container ]");
+        switch (type) {
+            case "face":
+                throw new AbstractMethodError("// TODO: Implement face type!");
+            case "led":
+                return new VariablePartLed(obj, fnCtx);
+            case "texture_expand":
+                return new VariablePartTextureExpand(obj, fnCtx);
+            case "cuboid":
+                return new VariablePartCuboid(obj, fnCtx);
+            case "container":
+                return new VariablePartContainer(obj, fnCtx, ctx);
+            default:
+                throw new JsonSyntaxException(
+                        "Unknown type '" + type + "' -- known types are [ face, led, texture_expand, cuboid, container ]");
         }
     }
 

@@ -24,8 +24,8 @@ public class TileFilteredBuffer extends TileBC_Neptune {
     public final ItemHandlerSimple invMain = itemManager.addInvHandler(
         "main",
         9,
-        (slot, stack) -> stack.isEmpty() ||
-            !invFilter.getStackInSlot(slot).isEmpty() && StackUtil.canMerge(invFilter.getStackInSlot(slot), stack),
+        (slot, stack) -> stack == null ||
+            invFilter.getStackInSlot(slot) != null && StackUtil.canMerge(invFilter.getStackInSlot(slot), stack),
         EnumAccess.BOTH,
         EnumPipePart.VALUES
     );

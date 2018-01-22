@@ -26,8 +26,6 @@ public enum EnumRestartRequirement {
     }
 
     public boolean hasBeenRestarted(EnumRestartRequirement requirement) {
-        if (restartGame && !requirement.restartGame) return false;
-        if (restartWorld && !requirement.restartWorld) return false;
-        return true;
+        return (!restartGame || requirement.restartGame) && (!restartWorld || requirement.restartWorld);
     }
 }

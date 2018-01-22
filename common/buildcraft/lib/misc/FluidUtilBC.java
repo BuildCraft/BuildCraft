@@ -24,7 +24,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import buildcraft.api.core.IFluidFilter;
@@ -137,21 +136,24 @@ public class FluidUtilBC {
     public static boolean onTankActivated(EntityPlayer player, BlockPos pos, EnumHand hand,
         IFluidHandler fluidHandler) {
         ItemStack held = player.getHeldItem(hand);
-        if (held.isEmpty()) {
+        if (held == null) {
             return false;
         }
         boolean replace = !player.capabilities.isCreativeMode;
-        boolean single = held.getCount() == 1;
-        IFluidHandlerItem flItem;
+        boolean single = held.stackSize == 1;
+        IFluidHandler flItem;
+        ItemStack container;
         if (replace && single) {
             flItem = FluidUtil.getFluidHandler(held);
+            container = held;
         } else {
             // replace and not single - need a copy and count set to 1
             // not replace and single - need a copy, does not need change of count but it should be ok
             // not replace and not single - need a copy count set to 1
             ItemStack copy = held.copy();
-            copy.setCount(1);
+            copy.stackSize = 1;
             flItem = FluidUtil.getFluidHandler(copy);
+            container = copy;
         }
         if (flItem == null) {
             return false;
@@ -173,11 +175,11 @@ public class FluidUtilBC {
         if (changed && replace) {
             if (single) {
                 // if it was the single item, replace with changed one
-                player.setHeldItem(hand, flItem.getContainer());
+                player.setHeldItem(hand, container);
             } else {
                 // if it was part of stack, shrink stack and give / drop the new one
-                held.shrink(1);
-                ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
+                held.stackSize -= 1;
+                ItemHandlerHelper.giveItemToPlayer(player, container);
             }
             player.inventoryContainer.detectAndSendChanges();
         }

@@ -49,7 +49,6 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
-import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -256,18 +255,16 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     public void update() {
-        world.profiler.startSection("main");
-        world.profiler.startSection("power");
+        world.theProfiler.startSection("main");
+        world.theProfiler.startSection("power");
         battery.tick(getWorld(), getPos());
-        world.profiler.endStartSection("builder");
+        world.theProfiler.endStartSection("builder");
         SnapshotBuilder<?> builder = getBuilder();
         if (builder != null) {
             isDone = builder.tick();
             if (isDone) {
                 if (currentBasePosIndex < basePoses.size() - 1) {
                     currentBasePosIndex++;
-                    if (currentBasePosIndex == basePoses.size() && currentBasePosIndex > 1)
-                        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT);
                     if (currentBasePosIndex >= basePoses.size()) {
                         currentBasePosIndex = basePoses.size() - 1;
                     }
@@ -275,10 +272,10 @@ public class TileBuilder extends TileBC_Neptune
                 }
             }
         }
-        world.profiler.endStartSection("net_update");
+        world.theProfiler.endStartSection("net_update");
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
-        world.profiler.endSection();
-        world.profiler.endSection();
+        world.theProfiler.endSection();
+        world.theProfiler.endSection();
     }
 
     // Networking

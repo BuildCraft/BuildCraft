@@ -7,9 +7,10 @@ package buildcraft.lib.item;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.lib.registry.TagManager;
+
+import java.util.List;
 
 public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     /** The tag used to identify this in the {@link TagManager} */
@@ -26,18 +27,18 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     }
 
     @Override
-    public final void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (isInCreativeTab(tab)) {
-            addSubItems(tab, items);
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+        if (getCreativeTab() == tab) {
+            addSubItems(tab, subItems);
         }
     }
 
-    /** Identical to {@link #getSubItems(CreativeTabs, NonNullList)} in every way, EXCEPT that this is only called if
+    /** Identical to {@link #getSubItems(Item, CreativeTabs, List)} in every way, EXCEPT that this is only called if
      * this is actually in the given creative tab.
      * 
      * @param tab The {@link CreativeTabs} to display the items in. This is provided just in case an item has multiple
      *            subtypes, split across different tabs */
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    protected void addSubItems(CreativeTabs tab, List<ItemStack> items) {
         items.add(new ItemStack(this));
     }
 }

@@ -81,7 +81,7 @@ public class GuidePageContents extends GuidePageBase {
             String translatedTitle = I18n.format(entry.title);
             ItemStack stack = entry.getItemStack();
             ISimpleDrawable icon = null;
-            if (!stack.isEmpty()) {
+            if (stack != null) {
                 icon = new GuiStack(stack);
             }
             PageLine line = new PageLine(icon, icon, indent, translatedTitle, true);

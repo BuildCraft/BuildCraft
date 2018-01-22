@@ -6,9 +6,9 @@
 
 package buildcraft.lib.client.sprite;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
@@ -51,7 +51,7 @@ public class SpriteNineSliced {
     public void draw(double x, double y, double width, double height) {
         sprite.bindTexture();
         Tessellator tess = Tessellator.getInstance();
-        BufferBuilder vb = tess.getBuffer();
+        VertexBuffer vb = tess.getBuffer();
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         vb.setTranslation(x, y, 0);
 
@@ -78,7 +78,7 @@ public class SpriteNineSliced {
         vb.setTranslation(0, 0, 0);
     }
 
-    private void quad(BufferBuilder vb, double[] x, double[] y, double[] u, double[] v, int xIndex, int yIndex) {
+    private void quad(VertexBuffer vb, double[] x, double[] y, double[] u, double[] v, int xIndex, int yIndex) {
         int xis = xIndex;
         int xIB = xIndex + 1;
 
@@ -91,7 +91,7 @@ public class SpriteNineSliced {
         vertex(vb, x[xIB], y[yis], u[xIB], v[yis]);
     }
 
-    private void vertex(BufferBuilder vb, double x, double y, double texU, double texV) {
+    private void vertex(VertexBuffer vb, double x, double y, double texU, double texV) {
         vb.pos(x, y, 0);
         vb.tex(sprite.getInterpU(texU), sprite.getInterpV(texV));
         vb.endVertex();

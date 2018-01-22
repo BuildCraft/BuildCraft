@@ -73,7 +73,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     private void pickupItems(EnumFacing currentSide) {
         world.getEntitiesWithinAABB(
             EntityItem.class,
-            new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).grow(PICKUP_RADIUS)
+            new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).expandXyz(PICKUP_RADIUS)
         ).stream()
             .limit(PICKUP_MAX)
             .map(TransactorEntityItem::new)
@@ -87,7 +87,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
                     ),
                     true,
                     true
-                ).isEmpty()) {
+                ) == null) {
                     inv.insert(
                         transactor.extract(
                             StackFilter.ALL,
@@ -122,13 +122,13 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
                 ItemStack item = inv.extract(
                     stack -> {
                         ItemStack leftOver = transactor.insert(stack.copy(), false, true);
-                        return leftOver.isEmpty() || leftOver.getCount() < stack.getCount();
+                        return leftOver == null || leftOver.stackSize < stack.stackSize;
                     },
                     1,
                     1,
                     false
                 );
-                if (!item.isEmpty()) {
+                if (item != null) {
                     transactor.insert(item, false, false);
                 }
             });

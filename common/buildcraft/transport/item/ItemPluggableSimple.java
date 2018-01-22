@@ -35,10 +35,7 @@ public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggabl
      * non-null value for {@link MjAPI#CAP_REDSTONE_RECEIVER}. */
     public static final IPlacementPredicate PIPE_BEHAVIOUR_ACCEPTS_RS_POWER = (item, pipeHolder, side) -> {
         IPipe pipe = pipeHolder.getPipe();
-        if (pipe != null) {
-            return pipe.getBehaviour().getCapability(MjAPI.CAP_REDSTONE_RECEIVER, side) != null;
-        }
-        return false;
+        return pipe != null && pipe.getBehaviour().getCapability(MjAPI.CAP_REDSTONE_RECEIVER, side) != null;
     };
 
     private final PluggableDefinition definition;

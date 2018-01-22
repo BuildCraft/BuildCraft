@@ -12,7 +12,7 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -60,7 +60,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
     }
 
     @Override
-    public void render(PipeFlowItems flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    public void render(PipeFlowItems flow, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         World world = flow.pipe.getHolder().getPipeWorld();
         long now = world.getTotalWorldTime();
         int lightc = world.getCombinedLight(flow.pipe.getHolder().getPipePos(), 0);
@@ -71,16 +71,16 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
             Vec3d pos = item.getRenderPosition(BlockPos.ORIGIN, now, partialTicks);
 
             ItemStack stack = item.clientItemLink.get();
-            if (stack != null && !stack.isEmpty()) {
-                if (item.stackSize != stack.getCount()) {
+            if (stack != null && stack != null) {
+                if (item.stackSize != stack.stackSize) {
                     stack = stack.copy();
-                    stack.setCount(item.stackSize);
+                    stack.stackSize = item.stackSize;
                 }
-                ItemRenderUtil.renderItemStack(x + pos.x, y + pos.y, z + pos.z,//
+                ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
                         stack, lightc, item.getRenderDirection(now, partialTicks), bb);
             }
             if (item.colour != null) {
-                bb.setTranslation(x + pos.x, y + pos.y, z + pos.z);
+                bb.setTranslation(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);
                 int col = ColourUtil.getLightHex(item.colour);
                 int r = (col >> 16) & 0xFF;
                 int g = (col >> 8) & 0xFF;

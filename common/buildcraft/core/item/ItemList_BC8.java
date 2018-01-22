@@ -11,7 +11,6 @@ import javax.annotation.Nonnull;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -29,9 +28,7 @@ import buildcraft.api.items.IList;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
-import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.core.BCCoreGuis;
 
@@ -43,8 +40,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
         BCCoreGuis.LIST.openGUI(player);
         return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
@@ -58,13 +54,14 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public int getMetadata(ItemStack stack) {
-        return ListHandler.hasItems(StackUtil.asNonNull(stack)) ? 1 : 0;
+        return ListHandler.hasItems(stack) ? 1 : 0;
     }
 
-    @Override
+
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        String name = getName(StackUtil.asNonNull(stack));
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+        String name = getName(stack);
         if (StringUtils.isNullOrEmpty(name)) return;
         tooltip.add(TextFormatting.ITALIC + name);
     }

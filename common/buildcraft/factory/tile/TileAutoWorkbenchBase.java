@@ -55,7 +55,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     private long powerStored;
     private long powerStoredLast;
 
-    public ItemStack resultClient = ItemStack.EMPTY;
+    public ItemStack resultClient = null;
 
     public TileAutoWorkbenchBase(int width, int height) {
         int slots = width * height;

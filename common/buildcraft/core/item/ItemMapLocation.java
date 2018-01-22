@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,7 +39,6 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.Box;
 
@@ -56,7 +54,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return MapLocationType.getFromStack(StackUtil.asNonNull(stack)) == MapLocationType.CLEAN ? 16 : 1;
+        return MapLocationType.getFromStack(stack) == MapLocationType.CLEAN ? 16 : 1;
     }
 
     @Override
@@ -69,8 +67,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, World world, List<String> strings, ITooltipFlag flag) {
-        stack = StackUtil.asNonNull(stack);
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
         NBTTagCompound cpt = NBTUtilBC.getItemData(stack);
 
         if (cpt.hasKey("name")) {
@@ -95,7 +92,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             }
             case AREA: {
                 if (cpt.hasKey("xMin") && cpt.hasKey("yMin") && cpt.hasKey("zMin") && cpt.hasKey("xMax")
-                    && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
+                        && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
                     int x = cpt.getInteger("xMin");
                     int y = cpt.getInteger("yMin");
                     int z = cpt.getInteger("zMin");
@@ -104,7 +101,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int zLength = cpt.getInteger("zMax") - z + 1;
 
                     strings.add(LocaleUtil.localize(
-                        "{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                            "{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
                 }
                 break;
             }
@@ -117,7 +114,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                         BlockPos first = NBTUtilBC.readBlockPos(pathNBT.get(0));
                         if (first != null) {
                             strings.add("{"+
-                                StringUtilBC.blockPosToString(first) + "}, (+" + (pathNBT.tagCount() - 1) + " elements)");
+                                    StringUtilBC.blockPosToString(first) + "}, (+" + (pathNBT.tagCount() - 1) + " elements)");
                         }
                     }
                 }
@@ -133,13 +130,13 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
         if (player.isSneaking()) {
-            return clearMarkerData(StackUtil.asNonNull(stack));
+            return clearMarkerData(stack);
         }
         return new ActionResult<>(EnumActionResult.PASS, stack);
     }
@@ -160,23 +157,21 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
-        float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
 
-        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
         if (MapLocationType.getFromStack(stack) != MapLocationType.CLEAN) {
             return EnumActionResult.FAIL;
         }
 
         ItemStack modified = stack;
 
-        if (stack.getCount() > 1) {
+        if (stack.stackSize > 1) {
             modified = stack.copy();
-            stack.setCount(stack.getCount() - 1);
-            modified.setCount(1);
+            stack.stackSize -= 1;
+            modified.stackSize = 1;
         }
 
         TileEntity tile = world.getTileEntity(pos);

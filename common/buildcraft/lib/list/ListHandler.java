@@ -11,12 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.Lists;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,23 +33,22 @@ public final class ListHandler {
     public static final int HEIGHT = 2;
 
     public static class Line {
-        public final NonNullList<ItemStack> stacks;
+        public final List<ItemStack> stacks;
         public boolean precise, byType, byMaterial;
 
         public Line() {
-            stacks = NonNullList.withSize(WIDTH, StackUtil.EMPTY);
+            stacks = Lists.newArrayListWithCapacity(WIDTH);
         }
 
         /** Checks to see if this line is completely blank, and no data would be lost if this line was not saved. */
         public boolean isDefault() {
-            if (precise || byType || byMaterial) return false;
-            return !hasItems();
+            return !precise && !byType && !byMaterial && !hasItems();
         }
 
         /** Checks to see if this line has any items */
         public boolean hasItems() {
             for (ItemStack stack : stacks) {
-                if (!stack.isEmpty()) return true;
+                if (stack != null) return true;
             }
             return false;
         }
@@ -65,7 +64,7 @@ public final class ListHandler {
         public void toggleOption(int id) {
             if (!byType && !byMaterial && (id == 1 || id == 2)) {
                 for (int i = 1; i < stacks.size(); i++) {
-                    stacks.set(i, StackUtil.EMPTY);
+                    stacks.set(i, null);
                 }
             }
             switch (id) {
@@ -83,7 +82,7 @@ public final class ListHandler {
 
         public boolean matches(@Nonnull ItemStack target) {
             if (byType || byMaterial) {
-                if (stacks.get(0).isEmpty()) {
+                if (stacks.get(0) == null) {
                     return false;
                 }
 
@@ -117,7 +116,7 @@ public final class ListHandler {
             if (data != null && data.hasKey("st")) {
                 NBTTagList l = data.getTagList("st", 10);
                 for (int i = 0; i < l.tagCount(); i++) {
-                    line.stacks.set(i, new ItemStack(l.getCompoundTagAt(i)));
+                    line.stacks.set(i, ItemStack.loadItemStackFromNBT(l.getCompoundTagAt(i)));
                 }
 
                 line.precise = data.getBoolean("Fp");
@@ -145,40 +144,39 @@ public final class ListHandler {
             return data;
         }
 
-        public void setStack(int slotIndex, @Nonnull ItemStack stack) {
+        public void setStack(int slotIndex, ItemStack stack) {
             if (slotIndex == 0 || (!byType && !byMaterial)) {
-                if (stack.isEmpty()) {
-                    stacks.set(slotIndex, StackUtil.EMPTY);
+                if (stack == null) {
+                    stacks.set(slotIndex, null);
                 } else {
                     stack = stack.copy();
-                    stack.setCount(1);
+                    stack.stackSize = 1;
                     stacks.set(slotIndex, stack);
                 }
             }
         }
 
-        @Nonnull
         public ItemStack getStack(int i) {
             if (i < 0 || i >= stacks.size()) {
-                return StackUtil.EMPTY;
+                return null;
             } else {
                 return stacks.get(i);
             }
         }
 
         @SideOnly(Side.CLIENT)
-        public NonNullList<ItemStack> getExamples() {
+        public List<ItemStack> getExamples() {
             ItemStack firstStack = stacks.get(0);
-            if (firstStack.isEmpty()) {
-                return NonNullList.withSize(0, StackUtil.EMPTY);
+            if (firstStack == null) {
+                return Lists.newArrayListWithCapacity(0);
             }
-            NonNullList<ItemStack> stackList = NonNullList.create();
+            List<ItemStack> stackList = Lists.newArrayList();
             List<ListMatchHandler> handlers = ListRegistry.getHandlers();
             List<ListMatchHandler> handlersCustom = new ArrayList<>();
             ListMatchHandler.Type type = getSortingType();
             for (ListMatchHandler h : handlers) {
                 if (h.isValidSource(type, firstStack)) {
-                    NonNullList<ItemStack> examples = h.getClientExamples(type, firstStack);
+                    List<ItemStack> examples = h.getClientExamples(type, firstStack);
                     if (examples != null) {
                         stackList.addAll(examples);
                     } else {
@@ -188,8 +186,8 @@ public final class ListHandler {
             }
             if (handlersCustom.size() > 0) {
                 for (Item i : ForgeRegistries.ITEMS) {
-                    NonNullList<ItemStack> examples = NonNullList.create();
-                    i.getSubItems(CreativeTabs.MISC, examples);
+                    List<ItemStack> examples = Lists.newArrayList();
+                    i.getSubItems(i, CreativeTabs.MISC, examples);
                     for (ItemStack s : examples) {
                         for (ListMatchHandler mh : handlersCustom) {
                             if (mh.matches(type, firstStack, s, false)) {

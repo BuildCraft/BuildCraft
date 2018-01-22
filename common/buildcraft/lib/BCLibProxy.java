@@ -78,7 +78,7 @@ public abstract class BCLibProxy implements IGuiHandler {
     }
 
     public EntityPlayer getPlayerForContext(MessageContext ctx) {
-        return ctx.getServerHandler().player;
+        return ctx.getServerHandler().playerEntity;
     }
 
     public void addScheduledTask(World world, Runnable task) {

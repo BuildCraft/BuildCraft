@@ -13,10 +13,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,12 +33,8 @@ public final class RegistrationHelper {
     private static final Map<String, Block> oredictBlocks = new HashMap<>();
     private static final Map<String, Item> oredictItems = new HashMap<>();
 
-    private final List<Block> blocks = new ArrayList<>();
-    private final List<Item> items = new ArrayList<>();
-
-    public RegistrationHelper() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+    private static final List<Block> blocks = new ArrayList<>();
+    private static final List<Item> items = new ArrayList<>();
 
     public static void registerOredictEntries() {
         for (Entry<String, Item> entry : oredictItems.entrySet()) {
@@ -53,23 +45,8 @@ public final class RegistrationHelper {
         }
     }
 
-    @SubscribeEvent
-    public final void onRegisterBlocks(RegistryEvent.Register<Block> event) {
-        for (Block block : blocks) {
-            event.getRegistry().register(block);
-        }
-    }
-
-    @SubscribeEvent
-    public final void onRegisterItems(RegistryEvent.Register<Item> event) {
-        for (Item item : items) {
-            event.getRegistry().register(item);
-        }
-    }
-
-    @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public final void onRegisterModels(ModelRegistryEvent event) {
+    public static void registerModels() {
         for (Item item : items) {
             if (item instanceof IItemBuildCraft) {
                 ((IItemBuildCraft) item).registerVariants();
@@ -92,6 +69,7 @@ public final class RegistrationHelper {
     }
 
     public <I extends Item> I addForcedItem(I item) {
+        GameRegistry.register(item);
         items.add(item);
         if (item instanceof IItemBuildCraft) {
             IItemBuildCraft itemBC = (IItemBuildCraft) item;
@@ -123,6 +101,7 @@ public final class RegistrationHelper {
 
     public <B extends Block> B addForcedBlock(B block) {
         blocks.add(block);
+        GameRegistry.register(block);
         if (block instanceof BlockBCBase_Neptune) {
             String id = ((BlockBCBase_Neptune) block).id;
             if (!id.isEmpty()) {

@@ -91,21 +91,21 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                     switch (side.getAxis()) {
                         case X:
                             return new Vec3d(
-                                positive ? 1 - pos.z : pos.z,
-                                pos.y,
-                                pos.x
+                                positive ? 1 - pos.zCoord : pos.zCoord,
+                                pos.yCoord,
+                                pos.xCoord
                             );
                         case Y:
                             return new Vec3d(
-                                pos.x,
-                                positive ? 1 - pos.z : pos.z,
-                                pos.y
+                                pos.xCoord,
+                                positive ? 1 - pos.zCoord : pos.zCoord,
+                                pos.yCoord
                             );
                         case Z:
                             return new Vec3d(
-                                pos.y,
-                                pos.x,
-                                positive ? 1 - pos.z : pos.z
+                                pos.yCoord,
+                                pos.xCoord,
+                                positive ? 1 - pos.zCoord : pos.zCoord
                             );
                         default:
                             throw new IllegalArgumentException();
@@ -142,24 +142,24 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                     MutableVertex vertex = vertexes.get(
                         getVertexIndex(vertexesPoses, side.getAxis(), minOrMaxPair.getLeft(), minOrMaxPair.getRight())
                     );
-                    vertex.positiond(newPos.x, newPos.y, newPos.z);
+                    vertex.positiond(newPos.xCoord, newPos.yCoord, newPos.zCoord);
                     switch (side.getAxis()) {
                         case X:
                             vertex.texf(
-                                (float) (minU + (maxU - minU) * (positive ? (1 - newPos.z) : newPos.z)),
-                                (float) (minV + (maxV - minV) * (1 - newPos.y))
+                                (float) (minU + (maxU - minU) * (positive ? (1 - newPos.zCoord) : newPos.zCoord)),
+                                (float) (minV + (maxV - minV) * (1 - newPos.yCoord))
                             );
                             break;
                         case Y:
                             vertex.texf(
-                                (float) (minU + (maxU - minU) * newPos.x),
-                                (float) (minV + (maxV - minV) * (positive ? newPos.z : (1 - newPos.z)))
+                                (float) (minU + (maxU - minU) * newPos.xCoord),
+                                (float) (minV + (maxV - minV) * (positive ? newPos.zCoord : (1 - newPos.zCoord)))
                             );
                             break;
                         case Z:
                             vertex.texf(
-                                (float) (minU + (maxU - minU) * (positive ? newPos.x : (1 - newPos.x))),
-                                (float) (minV + (maxV - minV) * (1 - newPos.y))
+                                (float) (minU + (maxU - minU) * (positive ? newPos.xCoord : (1 - newPos.xCoord))),
+                                (float) (minV + (maxV - minV) * (1 - newPos.yCoord))
                             );
                             break;
                     }
@@ -173,13 +173,13 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
     private Vec3d rotate(Vec3d vec, Rotation rotation) {
         switch (rotation) {
             case NONE:
-                return new Vec3d(vec.x, vec.y, vec.z);
+                return new Vec3d(vec.xCoord, vec.yCoord, vec.zCoord);
             case CLOCKWISE_90:
-                return new Vec3d(1 - vec.y, 1 - vec.x, vec.z);
+                return new Vec3d(1 - vec.yCoord, 1 - vec.xCoord, vec.zCoord);
             case CLOCKWISE_180:
-                return new Vec3d(1 - vec.x, 1 - vec.y, vec.z);
+                return new Vec3d(1 - vec.xCoord, 1 - vec.yCoord, vec.zCoord);
             case COUNTERCLOCKWISE_90:
-                return new Vec3d(vec.y, vec.x, vec.z);
+                return new Vec3d(vec.yCoord, vec.xCoord, vec.zCoord);
         }
         throw new IllegalArgumentException();
     }

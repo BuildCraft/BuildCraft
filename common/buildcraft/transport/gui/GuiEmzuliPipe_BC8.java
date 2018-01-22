@@ -138,11 +138,11 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
     @Override
     protected void drawForegroundLayer() {
         String title = LocaleUtil.localize("gui.pipes.emzuli.title");
-        double titleX = rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
-        fontRenderer.drawString(title, (int) titleX, (int) rootElement.getY() + 6, 0x404040);
+        double titleX = rootElement.getX() + (xSize - fontRendererObj.getStringWidth(title)) / 2;
+        fontRendererObj.drawString(title, (int) titleX, (int) rootElement.getY() + 6, 0x404040);
 
         int invX = (int) rootElement.getX() + 8;
         int invY = (int) rootElement.getY() + ySize - 93;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), invX, invY, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), invX, invY, 0x404040);
     }
 }

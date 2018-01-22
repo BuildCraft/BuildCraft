@@ -54,10 +54,7 @@ public class LaserData_BC8 {
         if (!start.equals(other.start)) return false;
         if (!end.equals(other.end)) return false;
         if (Double.compare(scale, other.scale) != 0) return false;
-        if (enableDiffuse != other.enableDiffuse) return false;
-        if (doubleFace != other.doubleFace) return false;
-        if (minBlockLight != other.minBlockLight) return false;
-        return true;
+        return enableDiffuse == other.enableDiffuse && doubleFace == other.doubleFace && minBlockLight == other.minBlockLight;
     }
 
     /** Holds information about a specific type of laser: what textures should be used for different parts. */

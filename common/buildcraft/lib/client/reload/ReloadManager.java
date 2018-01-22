@@ -102,11 +102,7 @@ public enum ReloadManager {
             }
             for (Reloadable r : toReload) {
                 boolean addChildren;
-                if (r.reloadable == null) {
-                    addChildren = true;
-                } else {
-                    addChildren = r.reloadable.reload(allReloadable);
-                }
+                addChildren = r.reloadable == null || r.reloadable.reload(allReloadable);
                 if (r.source != null) {
                     reloaded.add(r.source);
                     if (addChildren) {

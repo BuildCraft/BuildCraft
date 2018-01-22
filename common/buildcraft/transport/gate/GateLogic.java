@@ -484,12 +484,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         public final FullStatement<ActionWrapper> action;
 
         public StatementPair(int index) {
-            IStatementChangeListener tChange = (s, i) -> {
-                sendStatementUpdate(false, index);
-            };
-            IStatementChangeListener aChange = (s, i) -> {
-                sendStatementUpdate(true, index);
-            };
+            IStatementChangeListener tChange = (s, i) -> sendStatementUpdate(false, index);
+            IStatementChangeListener aChange = (s, i) -> sendStatementUpdate(true, index);
             trigger = new FullStatement<>(TriggerType.INSTANCE, variant.numTriggerArgs, tChange);
             action = new FullStatement<>(ActionType.INSTANCE, variant.numActionArgs, aChange);
         }

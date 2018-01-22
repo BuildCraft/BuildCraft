@@ -17,9 +17,7 @@ public class GuiGate extends GuiJson<ContainerGate> {
     public GuiGate(ContainerGate container) {
         super(container, GUI_DEFINITION);
 
-        MessageUtil.doDelayed(() -> {
-            container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
-        });
+        MessageUtil.doDelayed(() -> container.sendMessage(ContainerGate.ID_VALID_STATEMENTS));
     }
 
     @Override
@@ -39,33 +37,13 @@ public class GuiGate extends GuiJson<ContainerGate> {
         properties.put("gate.triggers.possible", container.possibleTriggersContext);
         properties.put("gate.actions.possible", container.possibleActionsContext);
 
-        context.put_l_b("gate.is_connected", (i) -> {
-            if (i < 0 || i >= gate.connections.length) {
-                return false;
-            }
-            return gate.connections[(int) i];
-        }).setNeverInline();
+        context.put_l_b("gate.is_connected", (i) -> i >= 0 && i < gate.connections.length && gate.connections[(int) i]).setNeverInline();
 
-        context.put_l_b("gate.trigger.is_on", (i) -> {
-            if (i < 0 || i >= gate.triggerOn.length) {
-                return false;
-            }
-            return gate.triggerOn[(int) i];
-        }).setNeverInline();
+        context.put_l_b("gate.trigger.is_on", (i) -> i >= 0 && i < gate.triggerOn.length && gate.triggerOn[(int) i]).setNeverInline();
 
-        context.put_l_b("gate.set.is_on", (i) -> {
-            if (i < 0 || i >= gate.triggerOn.length) {
-                return false;
-            }
-            return gate.actionOn[(int) i];
-        }).setNeverInline();
+        context.put_l_b("gate.set.is_on", (i) -> i >= 0 && i < gate.triggerOn.length && gate.actionOn[(int) i]).setNeverInline();
 
-        context.put_l_b("gate.action.is_on", (i) -> {
-            if (i < 0 || i >= gate.actionOn.length) {
-                return false;
-            }
-            return gate.actionOn[(int) i] && gate.statements[(int) i].action.get() != null;
-        }).setNeverInline();
+        context.put_l_b("gate.action.is_on", (i) -> i >= 0 && i < gate.actionOn.length && gate.actionOn[(int) i] && gate.statements[(int) i].action.get() != null).setNeverInline();
 
         for (int s = 0; s < gate.variant.numSlots; s++) {
             final int i = s;
@@ -82,9 +60,7 @@ public class GuiGate extends GuiJson<ContainerGate> {
             String name = "gate.connection/" + c;
             properties.put(name, gate.connections[c]);
             properties.put(name, IButtonBehaviour.TOGGLE);
-            properties.put(name, (IButtonClickEventListener) (b, k) -> {
-                container.setConnected(connection, b.isButtonActive());
-            });
+            properties.put(name, (IButtonClickEventListener) (b, k) -> container.setConnected(connection, b.isButtonActive()));
         }
     }
 }

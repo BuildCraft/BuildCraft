@@ -8,7 +8,7 @@ package buildcraft.lib.client.render.tile;
 
 import javax.vecmath.Point3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import net.minecraftforge.client.model.ModelLoader;
@@ -42,7 +42,7 @@ public class RenderPartCube {
 
     /** Renders an element, without changing the vertex. However this does ignore the "normal" and "texture" components
      * of the vertex. */
-    public void render(BufferBuilder bb) {
+    public void render(VertexBuffer bb) {
         Point3f pos = center.positionvf();
         double x = pos.x;
         double y = pos.y;
@@ -83,7 +83,7 @@ public class RenderPartCube {
         vertex(bb, center, x - rX, y - rY, z + rZ);
     }
 
-    private static void vertex(BufferBuilder vb, MutableVertex center, double x, double y, double z) {
+    private static void vertex(VertexBuffer vb, MutableVertex center, double x, double y, double z) {
         // Using DefaultVertexFormats.BLOCK
         // -- POSITION_3F // pos
         // -- COLOR_4UB // colour

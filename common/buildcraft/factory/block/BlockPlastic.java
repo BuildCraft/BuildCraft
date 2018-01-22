@@ -9,12 +9,14 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+
+import java.util.List;
 
 public class BlockPlastic extends BlockBCBase_Neptune {
     public BlockPlastic(String id) {
@@ -39,7 +41,7 @@ public class BlockPlastic extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         for (EnumDyeColor dye : EnumDyeColor.values()) {
             list.add(new ItemStack(this, 1, dye.getMetadata()));
         }

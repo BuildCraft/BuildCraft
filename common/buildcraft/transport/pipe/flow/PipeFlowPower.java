@@ -272,7 +272,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         for (Section s : sections.values()) {
             s.powerAverage.tick();
             long value = (long) s.powerAverage.getAverage();
-            long temp = Math.min(value * MjAPI.MJ / maxPower, 1 * MjAPI.MJ);
+            long temp = Math.min(value * MjAPI.MJ / maxPower, MjAPI.MJ);
             s.displayPower = (int) (temp);
         }
 

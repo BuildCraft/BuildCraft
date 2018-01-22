@@ -6,10 +6,10 @@
 
 package buildcraft.silicon.client.render;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +54,7 @@ public enum AdvDebuggerLaser implements IDetachedRenderer {
         if (pos == null || face == null) {
             return;
         }
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        VertexBuffer bb = Tessellator.getInstance().getBuffer();
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         VolumeUtil.iterateCone(player.world, pos, face, 6, true, (world, start, p, visible) -> {
             int colour = visible ? COLOUR_VISIBLE : COLOUR_NOT_VISIBLE;

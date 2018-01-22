@@ -13,12 +13,12 @@ import java.util.Map;
 
 import com.google.common.base.Predicates;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -39,7 +39,7 @@ public enum ClientSnapshots {
     private final List<Snapshot> snapshots = new ArrayList<>();
     private final List<Snapshot.Key> pending = new ArrayList<>();
     private final Map<Snapshot.Key, FakeWorld> worlds = new HashMap<>();
-    private final Map<Snapshot.Key, BufferBuilder> buffers = new HashMap<>();
+    private final Map<Snapshot.Key, VertexBuffer> buffers = new HashMap<>();
 
     public Snapshot getSnapshot(Snapshot.Key key) {
         Snapshot found = snapshots.stream().filter(snapshot -> snapshot.key.equals(key)).findFirst().orElse(null);
@@ -74,8 +74,8 @@ public enum ClientSnapshots {
             localWorld.uploadSnapshot(snapshot);
             return localWorld;
         });
-        BufferBuilder bufferBuilder = buffers.computeIfAbsent(snapshot.key, key -> {
-            BufferBuilder localBuffer = new BufferBuilder(1024) {
+        VertexBuffer bufferBuilder = buffers.computeIfAbsent(snapshot.key, key -> {
+            VertexBuffer localBuffer = new VertexBuffer(1024) {
                 @Override
                 public void reset() {
                 }
@@ -152,7 +152,7 @@ public enum ClientSnapshots {
                         BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
                         GlStateManager.pushAttrib();
                         // noinspection ConstantConditions
-                        TileEntityRendererDispatcher.instance.render(
+                        TileEntityRendererDispatcher.instance.renderTileEntityAt(
                             world.getTileEntity(pos),
                             pos.getX() - FakeWorld.BLUEPRINT_OFFSET.getX(),
                             pos.getY() - FakeWorld.BLUEPRINT_OFFSET.getY(),
@@ -169,11 +169,11 @@ public enum ClientSnapshots {
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {
             Vec3d pos = entity.getPositionVector();
             GlStateManager.pushAttrib();
-            Minecraft.getMinecraft().getRenderManager().renderEntity(
+            Minecraft.getMinecraft().getRenderManager().doRenderEntity(
                 entity,
-                pos.x - FakeWorld.BLUEPRINT_OFFSET.getX(),
-                pos.y - FakeWorld.BLUEPRINT_OFFSET.getY(),
-                pos.z - FakeWorld.BLUEPRINT_OFFSET.getZ(),
+                pos.xCoord - FakeWorld.BLUEPRINT_OFFSET.getX(),
+                pos.yCoord - FakeWorld.BLUEPRINT_OFFSET.getY(),
+                pos.zCoord - FakeWorld.BLUEPRINT_OFFSET.getZ(),
                 0,
                 0,
                 true

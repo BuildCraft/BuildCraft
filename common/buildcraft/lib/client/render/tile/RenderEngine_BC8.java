@@ -9,7 +9,7 @@ package buildcraft.lib.client.render.tile;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.profiler.Profiler;
 
 import net.minecraftforge.client.model.animation.FastTESR;
@@ -20,8 +20,9 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends FastTESR<T> {
     // TODO: Cache the model!
 
+
     @Override
-    public void renderTileEntityFast(@Nonnull T engine, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder vb) {
+    public void renderTileEntityFast(@Nonnull T engine, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("bc");
         profiler.startSection("engine");

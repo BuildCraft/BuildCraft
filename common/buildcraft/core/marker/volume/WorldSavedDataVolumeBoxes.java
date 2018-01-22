@@ -17,8 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.MessageManager;

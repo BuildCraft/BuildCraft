@@ -15,13 +15,12 @@ import javax.vecmath.Tuple3f;
 import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -103,7 +102,7 @@ public class MutableVertex {
 
     public void toBakedBlock(int[] data, int offset) {
         // POSITION_3F
-        data[offset + 0] = Float.floatToRawIntBits(position_x);
+        data[offset] = Float.floatToRawIntBits(position_x);
         data[offset + 1] = Float.floatToRawIntBits(position_y);
         data[offset + 2] = Float.floatToRawIntBits(position_z);
         // COLOR_4UB
@@ -117,7 +116,7 @@ public class MutableVertex {
 
     public void toBakedItem(int[] data, int offset) {
         // POSITION_3F
-        data[offset + 0] = Float.floatToRawIntBits(position_x);
+        data[offset] = Float.floatToRawIntBits(position_x);
         data[offset + 1] = Float.floatToRawIntBits(position_y);
         data[offset + 2] = Float.floatToRawIntBits(position_z);
         // COLOR_4UB
@@ -131,7 +130,7 @@ public class MutableVertex {
 
     public void fromBakedBlock(int[] data, int offset) {
         // POSITION_3F
-        position_x = Float.intBitsToFloat(data[offset + 0]);
+        position_x = Float.intBitsToFloat(data[offset]);
         position_y = Float.intBitsToFloat(data[offset + 1]);
         position_z = Float.intBitsToFloat(data[offset + 2]);
         // COLOR_4UB
@@ -146,7 +145,7 @@ public class MutableVertex {
 
     public void fromBakedItem(int[] data, int offset) {
         // POSITION_3F
-        position_x = Float.intBitsToFloat(data[offset + 0]);
+        position_x = Float.intBitsToFloat(data[offset]);
         position_y = Float.intBitsToFloat(data[offset + 1]);
         position_z = Float.intBitsToFloat(data[offset + 2]);
         // COLOR_4UB
@@ -161,29 +160,37 @@ public class MutableVertex {
 
     // Rendering
 
-    public void render(BufferBuilder bb) {
+    public void render(VertexBuffer bb) {
         VertexFormat vf = bb.getVertexFormat();
         if (vf == DefaultVertexFormats.BLOCK) {
             renderAsBlock(bb);
         } else {
             for (VertexFormatElement vfe : vf.getElements()) {
-                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(bb);
-                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(bb);
-                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(bb);
-                else if (vfe.getUsage() == EnumUsage.UV) {
-                    if (vfe.getIndex() == 0) renderTex(bb);
-                    else if (vfe.getIndex() == 1) renderLightMap(bb);
+                switch (vfe.getUsage()) {
+                    case POSITION:
+                        renderPosition(bb);
+                        break;
+                    case NORMAL:
+                        renderNormal(bb);
+                        break;
+                    case COLOR:
+                        renderColour(bb);
+                        break;
+                    case UV:
+                        if (vfe.getIndex() == 0) renderTex(bb);
+                        else if (vfe.getIndex() == 1) renderLightMap(bb);
+                        break;
                 }
             }
             bb.endVertex();
         }
     }
 
-    /** Renders this vertex into the given {@link BufferBuilder}, assuming that the {@link VertexFormat} is
+    /** Renders this vertex into the given {@link VertexBuffer}, assuming that the {@link VertexFormat} is
      * {@link DefaultVertexFormats#BLOCK}.
      * <p>
-     * Slight performance increase over {@link #render(BufferBuilder)}. */
-    public void renderAsBlock(BufferBuilder bb) {
+     * Slight performance increase over {@link #render(VertexBuffer)}. */
+    public void renderAsBlock(VertexBuffer bb) {
         renderPosition(bb);
         renderColour(bb);
         renderTex(bb);
@@ -191,27 +198,27 @@ public class MutableVertex {
         bb.endVertex();
     }
 
-    public void renderPosition(BufferBuilder bb) {
+    public void renderPosition(VertexBuffer bb) {
         bb.pos(position_x, position_y, position_z);
     }
 
-    public void renderNormal(BufferBuilder bb) {
+    public void renderNormal(VertexBuffer bb) {
         bb.normal(normal_x, normal_y, normal_z);
     }
 
-    public void renderColour(BufferBuilder bb) {
+    public void renderColour(VertexBuffer bb) {
         bb.color(colour_r, colour_g, colour_b, colour_a);
     }
 
-    public void renderTex(BufferBuilder bb) {
+    public void renderTex(VertexBuffer bb) {
         bb.tex(tex_u, tex_v);
     }
 
-    public void renderTex(BufferBuilder bb, ISprite sprite) {
+    public void renderTex(VertexBuffer bb, ISprite sprite) {
         bb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
     }
 
-    public void renderLightMap(BufferBuilder bb) {
+    public void renderLightMap(VertexBuffer bb) {
         bb.lightmap(light_sky << 4, light_block << 4);
     }
 
@@ -438,7 +445,7 @@ public class MutableVertex {
     }
 
     public MutableVertex translatevd(Vec3d vec) {
-        return translated(vec.x, vec.y, vec.z);
+        return translated(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
     public MutableVertex scalef(float scale) {

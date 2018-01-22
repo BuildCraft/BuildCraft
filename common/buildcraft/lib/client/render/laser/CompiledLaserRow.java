@@ -142,30 +142,51 @@ public class CompiledLaserRow {
             this.currentRowIndex = i % rows.length;
             double ls = xMin;
             double lb = xMax;
-            if (side == LaserSide.TOP) {
-                context.setFaceNormal(0, 1, 0);
-                context.addPoint(ls, h, -h, texU(0), texV(0));// 1
-                context.addPoint(ls, h, h, texU(0), texV(1));// 2
-                context.addPoint(lb, h, h, texU(1), texV(1));// 3
-                context.addPoint(lb, h, -h, texU(1), texV(0));// 4
-            } else if (side == LaserSide.BOTTOM) {
-                context.setFaceNormal(0, -1, 0);
-                context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
-                context.addPoint(lb, -h, h, texU(1), texV(1));// 3
-                context.addPoint(ls, -h, h, texU(0), texV(1));// 2
-                context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
-            } else if (side == LaserSide.LEFT) {
-                context.setFaceNormal(0, 0, -1);
-                context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
-                context.addPoint(ls, h, -h, texU(0), texV(1));// 2
-                context.addPoint(lb, h, -h, texU(1), texV(1));// 3
-                context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
-            } else if (side == LaserSide.RIGHT) {
-                context.setFaceNormal(0, 0, 1);
-                context.addPoint(lb, -h, h, texU(1), texV(0));// 4
-                context.addPoint(lb, h, h, texU(1), texV(1));// 3
-                context.addPoint(ls, h, h, texU(0), texV(1));// 2
-                context.addPoint(ls, -h, h, texU(0), texV(0));// 1
+            switch (side) {
+                case TOP:
+                    context.setFaceNormal(0, 1, 0);
+                    context.addPoint(ls, h, -h, texU(0), texV(0));// 1
+
+                    context.addPoint(ls, h, h, texU(0), texV(1));// 2
+
+                    context.addPoint(lb, h, h, texU(1), texV(1));// 3
+
+                    context.addPoint(lb, h, -h, texU(1), texV(0));// 4
+
+                    break;
+                case BOTTOM:
+                    context.setFaceNormal(0, -1, 0);
+                    context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
+
+                    context.addPoint(lb, -h, h, texU(1), texV(1));// 3
+
+                    context.addPoint(ls, -h, h, texU(0), texV(1));// 2
+
+                    context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
+
+                    break;
+                case LEFT:
+                    context.setFaceNormal(0, 0, -1);
+                    context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
+
+                    context.addPoint(ls, h, -h, texU(0), texV(1));// 2
+
+                    context.addPoint(lb, h, -h, texU(1), texV(1));// 3
+
+                    context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
+
+                    break;
+                case RIGHT:
+                    context.setFaceNormal(0, 0, 1);
+                    context.addPoint(lb, -h, h, texU(1), texV(0));// 4
+
+                    context.addPoint(lb, h, h, texU(1), texV(1));// 3
+
+                    context.addPoint(ls, h, h, texU(0), texV(1));// 2
+
+                    context.addPoint(ls, -h, h, texU(0), texV(0));// 1
+
+                    break;
             }
             xMin += width;
             xMax += width;

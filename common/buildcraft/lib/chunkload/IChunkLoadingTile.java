@@ -50,7 +50,7 @@ public interface IChunkLoadingTile {
         return list;
     }
 
-    public enum LoadType {
+    enum LoadType {
         /** Softly attempt to chunkload this. If the value of {@link BCLibConfig#chunkLoadingType} is equal to
          * {@link ChunkLoaderLevel#STRICT_TILES} or {@link ChunkLoaderLevel#NONE} then it won't be loaded. */
         SOFT,

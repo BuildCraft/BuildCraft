@@ -373,7 +373,7 @@ public class NbtSquisherTester {
         NbtSquisherTester tester = new NbtSquisherTester();
         Stopwatch watch = Stopwatch.createStarted();
         for (int i = 1; i <= 100_000; i++) {
-            test(false, tester.nbtSmall);
+            test(false, nbtSmall);
             if (i % 10_000 == 0) {
                 watch.stop();
                 System.out.println("Finished test " + i + " in " + watch.elapsed(TimeUnit.MILLISECONDS) + "ms");
@@ -394,7 +394,7 @@ public class NbtSquisherTester {
         // NbtSquisher.debugBuffer = PrintingByteBuf::new;
         for (int i = 0; i < 100; i++) {
             System.out.println("Starting test " + (i + 1));
-            all[i] = test(true, tester.nbt);
+            all[i] = test(true, nbt);
             System.out.println("Finished test " + (i + 1));
             // NbtSquisher.debugBuffer = null;
             try {

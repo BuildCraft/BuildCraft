@@ -6,23 +6,14 @@
 
 package buildcraft.transport.wire;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import com.google.common.base.Predicates;
-
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.WireNode;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.transport.plug.PluggableGate;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,19 +25,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.transport.EnumWirePart;
-import buildcraft.api.transport.WireNode;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-
-import buildcraft.transport.plug.PluggableGate;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class WireSystem {
     public final List<WireElement> elements = new ArrayList<>();
@@ -71,14 +55,9 @@ public class WireSystem {
         if (pipe.isConnected(side)) {
             return true;
         }
-        if ((holder.getPluggable(side) != null && holder.getPluggable(side).isBlocking()) //
-            || (oPipe.getHolder().getPluggable(side.getOpposite()) != null && oPipe.getHolder().getPluggable(side.getOpposite()).isBlocking())) {
-            return false;
-        }
-        if (pipe.getDefinition().flowType == PipeApi.flowStructure || oPipe.getDefinition().flowType == PipeApi.flowStructure) {
-            return pipe.getColour() == null || oPipe.getColour() == null || pipe.getColour() == oPipe.getColour();
-        }
-        return false;
+        //
+        return (holder.getPluggable(side) == null || !holder.getPluggable(side).isBlocking()) //
+                && (oPipe.getHolder().getPluggable(side.getOpposite()) == null || !oPipe.getHolder().getPluggable(side.getOpposite()).isBlocking()) && (pipe.getDefinition().flowType == PipeApi.flowStructure || oPipe.getDefinition().flowType == PipeApi.flowStructure) && (pipe.getColour() == null || oPipe.getColour() == null || pipe.getColour() == oPipe.getColour());
     }
 
     public static List<WireElement> getConnectedElementsOfElement(IPipeHolder holder, WireElement element) {
@@ -154,7 +133,7 @@ public class WireSystem {
     }
 
     public boolean isEmpty() {
-        return elements.stream().filter(element -> element.type == WireElement.Type.WIRE_PART).count() == 0;
+        return elements.stream().noneMatch(element -> element.type == WireElement.Type.WIRE_PART);
     }
 
     public boolean update(WorldSavedDataWireSystems wireSystems) {
@@ -169,8 +148,8 @@ public class WireSystem {
     public boolean isPlayerWatching(EntityPlayerMP player) {
         if (player.world instanceof WorldServer) {
             WorldServer world = (WorldServer) player.world;
-            return getChunkPoses().stream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.x, chunkPos.z)).filter(Objects::nonNull).anyMatch(
-                playerChunkMapEntry -> playerChunkMapEntry.hasPlayerMatching(Predicates.equalTo(player)));
+            return getChunkPoses().stream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.chunkXPos, chunkPos.chunkZPos)).filter(Objects::nonNull).anyMatch(
+                playerChunkMapEntry -> playerChunkMapEntry.hasPlayerMatching(entityPlayerMP -> Objects.equals(entityPlayerMP, player)));
         }
         return false;
     }
@@ -207,10 +186,7 @@ public class WireSystem {
 
         WireSystem that = (WireSystem) o;
 
-        if (!elements.equals(that.elements)) {
-            return false;
-        }
-        return color == that.color;
+        return elements.equals(that.elements) && color == that.color;
     }
 
     @Override
@@ -243,15 +219,19 @@ public class WireSystem {
         public WireElement(PacketBuffer buf) {
             type = Type.values()[buf.readInt()];
             blockPos = MessageUtil.readBlockPos(buf);
-            if (type == Type.WIRE_PART) {
-                wirePart = EnumWirePart.VALUES[buf.readInt()];
-                this.emitterSide = null;
-            } else if (type == Type.EMITTER_SIDE) {
-                this.wirePart = null;
-                emitterSide = EnumFacing.getFront(buf.readInt());
-            } else {
-                this.wirePart = null;
-                this.emitterSide = null;
+            switch (type) {
+                case WIRE_PART:
+                    wirePart = EnumWirePart.VALUES[buf.readInt()];
+                    this.emitterSide = null;
+                    break;
+                case EMITTER_SIDE:
+                    this.wirePart = null;
+                    emitterSide = EnumFacing.getFront(buf.readInt());
+                    break;
+                default:
+                    this.wirePart = null;
+                    this.emitterSide = null;
+                    break;
             }
         }
 
@@ -262,15 +242,19 @@ public class WireSystem {
                 // Oh dear. We probably can't recover from this properly
                 throw new NullPointerException("Cannot read this Wire Systems from NBT!");
             }
-            if (type == Type.WIRE_PART) {
-                wirePart = EnumWirePart.VALUES[nbt.getInteger("wirePart")];
-                this.emitterSide = null;
-            } else if (type == Type.EMITTER_SIDE) {
-                this.wirePart = null;
-                emitterSide = EnumFacing.getFront(nbt.getInteger("emitterSide"));
-            } else {
-                this.wirePart = null;
-                this.emitterSide = null;
+            switch (type) {
+                case WIRE_PART:
+                    wirePart = EnumWirePart.VALUES[nbt.getInteger("wirePart")];
+                    this.emitterSide = null;
+                    break;
+                case EMITTER_SIDE:
+                    this.wirePart = null;
+                    emitterSide = EnumFacing.getFront(nbt.getInteger("emitterSide"));
+                    break;
+                default:
+                    this.wirePart = null;
+                    this.emitterSide = null;
+                    break;
             }
         }
 
@@ -311,16 +295,7 @@ public class WireSystem {
 
             WireElement element = (WireElement) o;
 
-            if (type != element.type) {
-                return false;
-            }
-            if (!blockPos.equals(element.blockPos)) {
-                return false;
-            }
-            if (wirePart != element.wirePart) {
-                return false;
-            }
-            return emitterSide == element.emitterSide;
+            return type == element.type && blockPos.equals(element.blockPos) && wirePart == element.wirePart && emitterSide == element.emitterSide;
         }
 
         @Override

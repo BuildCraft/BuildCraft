@@ -6,14 +6,8 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
@@ -169,10 +163,11 @@ public abstract class GuidePart {
 
         int additional = LINE_HEIGHT - fontRenderer.getFontHeight(toRender) - 3;
         current = current.nextLine(additional, height);
-        if (true) return current;
+        return current;
 
         // OLD:
 
+        /*
         boolean firstLine = true;
         Set<TextFormatting> activeFormats = EnumSet.noneOf(TextFormatting.class);
         TextFormatting colour = null;
@@ -236,7 +231,7 @@ public abstract class GuidePart {
             }
             if (firstLine && icon != null) {
                 int iconX = linkX - 18;
-                /* Minecraft's default font size (The actual pixels) is 6, but fontRenderer.FONT_HEIGHT is 9. */
+                Minecraft's default font size (The actual pixels) is 6, but fontRenderer.FONT_HEIGHT is 9.
                 int iconY = linkY - 5;
                 GuiRectangle iconBox = new GuiRectangle(iconX, iconY, 16, 16);
                 wasIconHovered = iconBox.contains(gui.mouse);
@@ -277,7 +272,7 @@ public abstract class GuidePart {
         }
         additional = LINE_HEIGHT - fontRenderer.getFontHeight(toRender) - 3;
         current = current.nextLine(additional, height);
-        return current;
+        return current;*/
     }
 
     protected PagePosition renderLines(Iterable<PageLine> lines, PagePosition part, int x, int y, int width, int height,

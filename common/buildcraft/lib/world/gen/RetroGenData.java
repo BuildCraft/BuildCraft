@@ -21,8 +21,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.storage.WorldSavedData;
 
+import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCDebugging;
@@ -101,7 +101,7 @@ public class RetroGenData extends WorldSavedData {
     }
 
     private static String serializeChunkPos(ChunkPos pos) {
-        return pos.x + "," + pos.z;
+        return pos.getXCenter() + "," + pos.getZCenter();
     }
 
     @Override

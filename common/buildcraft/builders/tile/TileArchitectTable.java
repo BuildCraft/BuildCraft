@@ -40,7 +40,6 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
@@ -167,7 +166,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             return;
         }
 
-        if (!invSnapshotIn.getStackInSlot(0).isEmpty() && invSnapshotOut.getStackInSlot(0).isEmpty() && isValid) {
+        if (invSnapshotIn.getStackInSlot(0) != null && invSnapshotOut.getStackInSlot(0) == null && isValid) {
             if (!scanning) {
                 snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(
                     invSnapshotIn.getStackInSlot(0)
@@ -284,9 +283,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         snapshot.computeKey();
         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
         ItemStack stackIn = invSnapshotIn.getStackInSlot(0);
-        stackIn.setCount(stackIn.getCount() - 1);
-        if (stackIn.getCount() == 0) {
-            stackIn = ItemStack.EMPTY;
+        stackIn.stackSize -= 1;
+        if (stackIn.stackSize == 0) {
+            stackIn = null;
         }
         invSnapshotIn.setStackInSlot(0, stackIn);
         invSnapshotOut.setStackInSlot(
@@ -306,7 +305,6 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         blueprintScannedEntities.clear();
         boxIterator = null;
         sendNetworkUpdate(NET_RENDER_DATA);
-        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT);
     }
 
     @Override

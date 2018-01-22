@@ -41,7 +41,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
             // GL11.glEnable(GL11.GL_BLEND);
             // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             // GL11.glColor4f(1, 1, 1, 0.5F);
-            if (!stack.isEmpty()) {
+            if (stack != null) {
                 this.itemRender.renderItemAndEffectIntoGUI(this.mc.player, stack, (int) currentX, (int) currentY);
             } else {
                 this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -70,7 +70,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
         int x = guiLeft;
         int y = guiTop;
         String title = I18n.format("tile.filteredBufferBlock.name");
-        int xPos = (xSize - fontRenderer.getStringWidth(title)) / 2;
-        fontRenderer.drawString(title, x + xPos, y + 10, 0x404040);
+        int xPos = (xSize - fontRendererObj.getStringWidth(title)) / 2;
+        fontRendererObj.drawString(title, x + xPos, y + 10, 0x404040);
     }
 }

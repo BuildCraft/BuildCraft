@@ -136,15 +136,20 @@ public final class PluggableHolder {
                 BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
             }
         } else {
-            if (id == ID_REMOVE_PLUG) {
-                holder.eventBus.unregisterHandler(pluggable);
-                pluggable = null;
-            } else if (id == ID_UPDATE_PLUG) {
-                pluggable.readPayload(buffer, netSide, ctx);
-            } else if (id == ID_CREATE_PLUG) {
-                readCreateInternal(buffer);
-            } else {
-                BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+            switch (id) {
+                case ID_REMOVE_PLUG:
+                    holder.eventBus.unregisterHandler(pluggable);
+                    pluggable = null;
+                    break;
+                case ID_UPDATE_PLUG:
+                    pluggable.readPayload(buffer, netSide, ctx);
+                    break;
+                case ID_CREATE_PLUG:
+                    readCreateInternal(buffer);
+                    break;
+                default:
+                    BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+                    break;
             }
         }
     }

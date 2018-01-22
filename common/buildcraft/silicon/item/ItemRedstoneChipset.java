@@ -11,7 +11,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,6 +18,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.enums.EnumRedstoneChipset;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+
+import java.util.List;
 
 public class ItemRedstoneChipset extends ItemBC_Neptune {
     public ItemRedstoneChipset(String id) {
@@ -35,7 +36,7 @@ public class ItemRedstoneChipset extends ItemBC_Neptune {
     }
 
     @Override
-    public void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         for (EnumRedstoneChipset type : EnumRedstoneChipset.values()) {
             subItems.add(new ItemStack(this, 1, type.ordinal()));
         }

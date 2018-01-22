@@ -170,7 +170,7 @@ public class MessageManager {
             return (message, context) -> {
                 if (context.side == Side.SERVER) {
                     // Bad/Buggy client
-                    EntityPlayerMP player = context.getServerHandler().player;
+                    EntityPlayerMP player = context.getServerHandler().playerEntity;
                     BCLog.logger.warn(
                         "[lib.messages] The client " + player.getName() + " (ID = " + player.getGameProfile().getId()
                             + ") sent an invalid message " + messageClass + ", when they should only receive them!");

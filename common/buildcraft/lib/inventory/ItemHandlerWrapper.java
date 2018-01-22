@@ -6,15 +6,13 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
 
 public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
     private final IItemHandler wrapped;
@@ -23,23 +21,22 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
         this.wrapped = handler;
     }
 
-    @Nonnull
     @Override
-    protected ItemStack insert(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    protected ItemStack insert(int slot, ItemStack stack, boolean simulate) {
         return wrapped.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         if (min <= 0) min = 1;
-        if (max < min) return StackUtil.EMPTY;
+        if (max < min) return null;
         ItemStack current = wrapped.getStackInSlot(slot);
-        if (current.isEmpty() || current.getCount() < min) return StackUtil.EMPTY;
-        if (filter.matches(asValid(current))) {
+        if (current == null || current.stackSize < min) return null;
+        if (filter.matches(current)) {
             return wrapped.extractItem(slot, max, simulate);
         }
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override
@@ -49,6 +46,6 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected boolean isEmpty(int slot) {
-        return wrapped.getStackInSlot(slot).isEmpty();
+        return wrapped.getStackInSlot(slot) == null;
     }
 }

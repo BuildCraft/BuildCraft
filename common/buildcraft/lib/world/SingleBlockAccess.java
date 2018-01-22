@@ -58,7 +58,7 @@ public class SingleBlockAccess implements IBlockAccess {
 
     @Override
     public WorldType getWorldType() {
-        return WorldType.DEBUG_ALL_BLOCK_STATES;
+        return WorldType.DEBUG_WORLD;
     }
 
     @Override

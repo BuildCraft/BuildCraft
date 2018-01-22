@@ -18,12 +18,12 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
     public void testSimpleMoving() {
         IItemTransactor trans = new ItemHandlerSimple(2, null);
 
-        Assert.assertTrue(trans.extract(null, 1, 1, false).isEmpty());
+        Assert.assertTrue(trans.extract(null, 1, 1, false) == null);
 
         ItemStack insert = new ItemStack(Items.APPLE);
         ItemStack leftOver = trans.insert(insert.copy(), false, false);
 
-        Assert.assertTrue(leftOver.isEmpty());
+        Assert.assertTrue(leftOver == null);
 
         ItemStack extracted = trans.extract(null, 1, 1, false);
 
@@ -31,7 +31,7 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
 
         extracted = trans.extract(null, 1, 1, false);
 
-        Assert.assertTrue(extracted.isEmpty());
+        Assert.assertTrue(extracted == null);
     }
 
     @Test

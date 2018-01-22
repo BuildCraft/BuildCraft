@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -35,11 +36,10 @@ public class BlockReplacer extends BlockBCTile_Neptune implements IBlockWithFaci
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            BCBuildersGuis.REPLACER.openGUI(player, pos);
-        }
-        return true;
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
+            if (!world.isRemote) {
+                BCBuildersGuis.REPLACER.openGUI(player, pos);
+            }
+            return true;
     }
 }

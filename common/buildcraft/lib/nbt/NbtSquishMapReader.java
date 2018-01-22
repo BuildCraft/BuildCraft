@@ -116,14 +116,18 @@ class NbtSquishMapReader {
             int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
                 int complexType = in.readUnsignedByte();
-                if (complexType == NbtSquishConstants.COMPLEX_COMPOUND) {
-                    map.complex.add(readCompound(type, in));
-                } else if (complexType == NbtSquishConstants.COMPLEX_LIST) {
-                    map.complex.add(readNormalList(type, in));
-                } else if (complexType == NbtSquishConstants.COMPLEX_LIST_PACKED) {
-                    map.complex.add(readPackedList(type, in));
-                } else {
-                    throw new IOException("Unknown complex type " + complexType);
+                switch (complexType) {
+                    case NbtSquishConstants.COMPLEX_COMPOUND:
+                        map.complex.add(readCompound(type, in));
+                        break;
+                    case NbtSquishConstants.COMPLEX_LIST:
+                        map.complex.add(readNormalList(type, in));
+                        break;
+                    case NbtSquishConstants.COMPLEX_LIST_PACKED:
+                        map.complex.add(readPackedList(type, in));
+                        break;
+                    default:
+                        throw new IOException("Unknown complex type " + complexType);
                 }
             }
         }

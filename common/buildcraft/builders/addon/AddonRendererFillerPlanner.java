@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,7 +26,7 @@ import buildcraft.core.marker.volume.IFastAddonRenderer;
 
 public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFillerPlanner> {
     @Override
-    public void renderAddonFast(AddonFillerPlanner addon, EntityPlayer player, float partialTicks, BufferBuilder vb) {
+    public void renderAddonFast(AddonFillerPlanner addon, EntityPlayer player, float partialTicks, VertexBuffer vb) {
         if (addon.buildingInfo == null) {
             return;
         }
@@ -55,7 +55,7 @@ public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFille
 
         Minecraft.getMinecraft().mcProfiler.startSection("render");
         for (BlockPos p : list) {
-            AxisAlignedBB bb = new AxisAlignedBB(p, p.add(1, 1, 1)).grow(-0.1);
+            AxisAlignedBB bb = new AxisAlignedBB(p, p.add(1, 1, 1)).expandXyz(-0.1);
             TextureAtlasSprite s = ModelLoader.White.INSTANCE;
 
             vb.pos(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();

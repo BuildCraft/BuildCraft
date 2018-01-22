@@ -7,6 +7,7 @@
 package buildcraft.lib.engine;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -16,16 +17,15 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -107,20 +107,6 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEngineBase_BC8) {
-            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
-            if (side == engine.currentDirection.getOpposite()) {
-                return BlockFaceShape.SOLID;
-            } else {
-                return BlockFaceShape.UNDEFINED;
-            }
-        }
-        return BlockFaceShape.UNDEFINED;
-    }
-
-    @Override
     public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
@@ -148,7 +134,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         for (E engine : getEngineProperty().getAllowedValues()) {
             if (engineTileConstructors.containsKey(engine)) {
                 list.add(new ItemStack(this, 1, engine.ordinal()));
@@ -162,7 +148,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
         if (world.isRemote) return;
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {

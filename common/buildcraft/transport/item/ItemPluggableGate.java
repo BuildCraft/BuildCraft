@@ -13,14 +13,11 @@ import javax.annotation.Nonnull;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,7 +31,6 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.gate.EnumGateLogic;
@@ -69,14 +65,13 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return getVariant(StackUtil.asNonNull(stack)).getLocalizedName();
+        return getVariant(stack).getLocalizedName();
     }
-
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        GateVariant variant = getVariant(StackUtil.asNonNull(stack));
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+        GateVariant variant = getVariant(stack);
 
         tooltip.add(LocaleUtil.localize("gate.slots", variant.numSlots));
 
@@ -95,7 +90,7 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    protected void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         subItems.add(new ItemStack(this));
         for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
             if (!material.canBeModified) {

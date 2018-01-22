@@ -6,7 +6,6 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collector;
@@ -15,37 +14,26 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
-import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.StackDefinition;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {
 
-    /** A non-null version of {@link ItemStack#EMPTY}. When the original field adds an @Nonnull annotation this should
-     * be inlined. */
-    // Actually the entire MC
-    @Nonnull
-    public static final ItemStack EMPTY;
-
-    static {
-        ItemStack stack = ItemStack.EMPTY;
-        if (stack == null) throw new NullPointerException("Empty ItemStack was null!");
-        EMPTY = stack;
-    }
-
     /** Checks to see if the two input stacks are equal in all but stack size. Note that this doesn't check anything
      * todo with stack size, so if you pass in two stacks of 64 cobblestone this will return true. If you pass in null
      * (at all) then this will only return true if both are null. */
-    public static boolean canMerge(@Nonnull ItemStack a, @Nonnull ItemStack b) {
+    public static boolean canMerge(ItemStack a, ItemStack b) {
+        if (a == null || b == null) return false;
+
         // Checks item, damage
         if (!ItemStack.areItemsEqual(a, b)) {
             return false;
@@ -60,8 +48,8 @@ public class StackUtil {
     public static ItemStack getItemStackForState(IBlockState state) {
         Block b = state.getBlock();
         ItemStack stack = new ItemStack(b);
-        if (stack.isEmpty()) {
-            return StackUtil.EMPTY;
+        if (stack == null) {
+            return null;
         }
         if (stack.getHasSubtypes()) {
             stack = new ItemStack(stack.getItem(), 1, b.getMetaFromState(state));
@@ -71,10 +59,7 @@ public class StackUtil {
 
     /** Checks to see if the given required stack is contained fully in the given container stack. */
     public static boolean contains(@Nonnull ItemStack required, @Nonnull ItemStack container) {
-        if (canMerge(required, container)) {
-            return container.getCount() >= required.getCount();
-        }
-        return false;
+        return canMerge(required, container) && container.stackSize >= required.stackSize;
     }
 
     /** Checks to see if the given required stack is contained fully in a single stack in a list. */
@@ -95,28 +80,14 @@ public class StackUtil {
      * Checks that passed stack meets stack definition requirements
      */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
-        return !stack.isEmpty() && stackDefinition.filter.matches(stack) && stack.getCount() >= stackDefinition.count;
+        return stack != null && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
     }
 
     /**
      * Checks that passed stack definition acceptable for stack collection
      */
-    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull NonNullList<ItemStack> stacks) {
+    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull List<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
-    }
-
-    /**
-     * Checks that passed stack meets stack definition requirements
-     */
-    public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull ItemStack stack) {
-        return !stack.isEmpty() && ingredientStack.ingredient.apply(stack) && stack.getCount() >= ingredientStack.count;
-    }
-
-    /**
-     * Checks that passed stack definition acceptable for stack collection
-     */
-    public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull NonNullList<ItemStack> stacks) {
-        return stacks.stream().anyMatch((stack) -> contains(ingredientStack, stack));
     }
 
     /** Checks to see if the given required stacks are all contained within the collection of containers. Note that this
@@ -127,7 +98,7 @@ public class StackUtil {
                 // Use an explicit null check here as the collection doesn't have @Nonnull applied to its type
                 throw new NullPointerException("Found a null itemstack in " + containers);
             }
-            if (req.isEmpty()) continue;
+            if (req == null) continue;
             if (!contains(req, containers)) {
                 return false;
             }
@@ -151,12 +122,12 @@ public class StackUtil {
         return nbtTarget.equals(nbtWith);
     }
 
-    public static boolean doesEitherStackMatch(@Nonnull ItemStack stackA, @Nonnull ItemStack stackB) {
-        return OreDictionary.itemMatches(stackA, stackB, false) || OreDictionary.itemMatches(stackB, stackA, false);
+    public static boolean doesEitherStackMatch(ItemStack stackA, ItemStack stackB) {
+        return stackA != null && stackB != null && (OreDictionary.itemMatches(stackA, stackB, false) || OreDictionary.itemMatches(stackB, stackA, false));
     }
 
-    public static boolean canStacksOrListsMerge(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
-        if (stack1.isEmpty() || stack2.isEmpty()) {
+    public static boolean canStacksOrListsMerge(ItemStack stack1, ItemStack stack2) {
+        if (stack1 == null || stack2 == null) {
             return false;
         }
 
@@ -182,12 +153,12 @@ public class StackUtil {
         if (!canMerge(mergeSource, mergeTarget)) {
             return 0;
         }
-        int mergeCount = Math.min(mergeTarget.getMaxStackSize() - mergeTarget.getCount(), mergeSource.getCount());
+        int mergeCount = Math.min(mergeTarget.getMaxStackSize() - mergeTarget.stackSize, mergeSource.stackSize);
         if (mergeCount < 1) {
             return 0;
         }
         if (doMerge) {
-            mergeTarget.setCount(mergeTarget.getCount() + mergeCount);
+            mergeTarget.stackSize += mergeCount;
         }
         return mergeCount;
     }
@@ -235,7 +206,7 @@ public class StackUtil {
     }
 
     public static boolean isMatchingItemOrList(final ItemStack base, final ItemStack comparison) {
-        if (base.isEmpty() || comparison.isEmpty()) {
+        if (base == null || comparison == null) {
             return false;
         }
 
@@ -262,11 +233,7 @@ public class StackUtil {
 
     /** This variant also checks damage for damaged items. */
     public static boolean isEqualItem(final @Nonnull ItemStack base, final @Nonnull ItemStack comparison) {
-        if (isMatchingItem(base, comparison, false, true)) {
-            return isWildcard(base) || isWildcard(comparison) || base.getItemDamage() == comparison.getItemDamage();
-        } else {
-            return false;
-        }
+        return isMatchingItem(base, comparison, false, true) && (isWildcard(base) || isWildcard(comparison) || base.getItemDamage() == comparison.getItemDamage());
     }
 
     /** Compares item id, and optionally damage and NBT. Accepts wildcard damage. Ignores damage entirely if the item
@@ -277,8 +244,8 @@ public class StackUtil {
      * @param matchDamage
      * @param matchNBT
      * @return true if matches */
-    public static boolean isMatchingItem(@Nonnull final ItemStack base, @Nonnull final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
-        if (base.isEmpty() || comparison.isEmpty()) {
+    public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
+        if (base == null || comparison == null) {
             return false;
         }
 
@@ -294,16 +261,14 @@ public class StackUtil {
         }
         if (matchNBT) {
             NBTTagCompound baseTag = base.getTagCompound();
-            if (baseTag != null && !baseTag.equals(comparison.getTagCompound())) {
-                return false;
-            }
+            return baseTag == null || baseTag.equals(comparison.getTagCompound());
         }
         return true;
     }
 
     /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
      * the stack will be considered the same as this for recipe purposes.
-     * 
+     *
      * @param stack The stack to check
      * @return True if the stack is a wildcard, false if not. */
     public static boolean isWildcard(@Nonnull ItemStack stack) {
@@ -312,7 +277,7 @@ public class StackUtil {
 
     /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
      * the stack will be considered the same as this for recipe purposes.
-     * 
+     *
      * @param damage The damage to check
      * @return True if the damage does specify a wildcard, false if not. */
     public static boolean isWildcard(int damage) {
@@ -320,45 +285,48 @@ public class StackUtil {
     }
 
     /** @return An empty, nonnull list that cannot be modified (as it cannot be expanded and it has a size of 0) */
-    public static NonNullList<ItemStack> listOf() {
-        return NonNullList.withSize(0, EMPTY);
+    public static List<ItemStack> listOf() {
+        return Lists.newArrayListWithCapacity(0);
     }
 
-    /** Creates a {@link NonNullList} of {@link ItemStack}'s with the elements given in the order that they are given.
-     * 
+    /** Creates a {@link List} of {@link ItemStack}'s with the elements given in the order that they are given.
+     *
      * @param stacks The stacks to put into a list
-     * @return A {@link NonNullList} of all the given items. Note that the returned list of of a specified size, and
+     * @return A {@link List} of all the given items. Note that the returned list of of a specified size, and
      *         cannot be expanded. */
-    public static NonNullList<ItemStack> listOf(ItemStack... stacks) {
+    public static List<ItemStack> listOf(ItemStack... stacks) {
         switch (stacks.length) {
             case 0:
                 return listOf();
             case 1:
-                return NonNullList.withSize(1, stacks[0]);
+                List<ItemStack> list = Lists.newArrayListWithCapacity(1);
+                list.add(0, stacks[0]);
+                return list;
             default:
         }
-        NonNullList<ItemStack> list = NonNullList.withSize(stacks.length, EMPTY);
+        List<ItemStack> list = Lists.newArrayListWithCapacity(stacks.length);
         for (int i = 0; i < stacks.length; i++) {
             list.set(i, stacks[i]);
         }
         return list;
     }
 
+
     /** Takes a {@link Nullable} {@link Object} and checks to make sure that it is really {@link Nonnull}, like it is
      * everywhere else in the codebase. This is only required if some classes do not use the {@link Nonnull} annotation
      * on return values.
-     * 
+     *
      * @param obj The (potentially) null object.
      * @return A {@link Nonnull} object, which will be the input object
      * @throws NullPointerException if the input object was actually null (Although this should never happen, this is
      *             more to catch bugs in dev.) */
-    @Nonnull
+    /*@Nonnull
     public static <T> T asNonNull(@Nullable T obj) {
         if (obj == null) {
             throw new NullPointerException("Object was null!");
         }
         return obj;
-    }
+    }*/
 
     @Nonnull
     public static <T> T asNonNullSoft(@Nullable T obj, @Nonnull T fallback) {
@@ -371,30 +339,30 @@ public class StackUtil {
 
     @Nonnull
     public static ItemStack asNonNullSoft(@Nullable ItemStack stack) {
-        return asNonNullSoft(stack, EMPTY);
+        return asNonNullSoft(stack);
     }
 
-    /** @return A {@link Collector} that will collect the input elements into a {@link NonNullList} */
-    public static <E> Collector<E, ?, NonNullList<E>> nonNullListCollector() {
-        return Collectors.toCollection(NonNullList::create);
+    /** @return A {@link Collector} that will collect the input elements into a {@link List} */
+    public static <E> Collector<E, ?, List<E>> nonNullListCollector() {
+        return Collectors.toCollection(Lists::newArrayList);
     }
 
     /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},
-     * except if {@link ItemStack#isEmpty()} returns true, in which case the hash will be 0. */
+     * except if null returns true, in which case the hash will be 0. */
     public static int hash(@Nonnull ItemStack stack) {
-        if (stack.isEmpty()) {
+        if (stack == null) {
             return 0;
         }
         return stack.serializeNBT().hashCode();
     }
 
-    public static NonNullList<ItemStack> mergeSameItems(List<ItemStack> items) {
-        NonNullList<ItemStack> stacks = NonNullList.create();
+    public static List<ItemStack> mergeSameItems(List<ItemStack> items) {
+        List<ItemStack> stacks = Lists.newArrayList();
         for (ItemStack toAdd : items) {
             boolean found = false;
             for (ItemStack stack : stacks) {
                 if (canMerge(stack, toAdd)) {
-                    stack.grow(toAdd.getCount());
+                    stack.stackSize += toAdd.stackSize;
                     found = true;
                 }
             }

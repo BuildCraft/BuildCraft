@@ -9,11 +9,11 @@ package buildcraft.factory.client.render;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -59,10 +59,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         }
     }
 
-
     @Override
-    public void render(TileDistiller_BC8 tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
+    public void renderTileEntityAt(TileDistiller_BC8 tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
 
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() != BCFactoryBlocks.distiller) {
@@ -84,7 +83,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        VertexBuffer bb = Tessellator.getInstance().getBuffer();
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         bb.setTranslation(x, y, z);
 
@@ -129,7 +128,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.endSection();
     }
 
-    public static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks, BufferBuilder bb) {
+    public static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks, VertexBuffer bb) {
         FluidStackInterp fluid = tank.getFluidForRender(partialTicks);
         if (fluid == null || fluid.amount <= 0) {
             return;
@@ -178,9 +177,9 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
 
         private static Vec3d rotateY(Vec3d vec) {
             return new Vec3d(//
-                1 - vec.z,//
-                vec.y,//
-                vec.x//
+                1 - vec.zCoord,//
+                vec.yCoord,//
+                vec.xCoord//
             );
         }
     }

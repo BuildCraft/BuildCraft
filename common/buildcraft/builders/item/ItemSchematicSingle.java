@@ -7,8 +7,6 @@ package buildcraft.builders.item;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -65,8 +63,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
@@ -83,13 +80,12 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
-        ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
-            NBTTagCompound itemData = NBTUtilBC.getItemData(StackUtil.asNonNull(stack));
+            NBTTagCompound itemData = NBTUtilBC.getItemData(stack);
             itemData.removeTag(NBT_KEY);
             if (itemData.hasNoTags()) {
                 stack.setTagCompound(null);
@@ -101,11 +97,11 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         if (damage != DAMAGE_USED) {
             IBlockState state = world.getBlockState(pos);
             ISchematicBlock schematicBlock = SchematicBlockManager.getSchematicBlock(new SchematicBlockContext(
-                world,
-                pos,
-                pos,
-                state,
-                state.getBlock()
+                    world,
+                    pos,
+                    pos,
+                    state,
+                    state.getBlock()
             ));
             if (schematicBlock.isAir()) {
                 return EnumActionResult.FAIL;
@@ -119,7 +115,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             if (!replaceable) {
                 placePos = placePos.offset(side);
             }
-            if (!world.mayPlace(world.getBlockState(pos).getBlock(), placePos, false, side, null)) {
+            if (!world.canBlockBePlaced(world.getBlockState(pos).getBlock(), placePos, false, side, null, stack)) {
                 return EnumActionResult.FAIL;
             }
             if (replaceable && !world.isAirBlock(placePos)) {
@@ -134,21 +130,21 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                         if (requiredFluids.isEmpty()) {
                             InventoryWrapper itemTransactor = new InventoryWrapper(player.inventory);
                             if (StackUtil.mergeSameItems(requiredItems).stream().noneMatch(s ->
-                                itemTransactor.extract(
-                                    extracted -> StackUtil.canMerge(s, extracted),
-                                    s.getCount(),
-                                    s.getCount(),
-                                    true
-                                ).isEmpty()
+                                    itemTransactor.extract(
+                                            extracted -> StackUtil.canMerge(s, extracted),
+                                            s.stackSize,
+                                            s.stackSize,
+                                            true
+                                    ) == null
                             )) {
                                 if (schematicBlock.build(world, placePos)) {
                                     StackUtil.mergeSameItems(requiredItems).forEach(s ->
-                                        itemTransactor.extract(
-                                            extracted -> StackUtil.canMerge(s, extracted),
-                                            s.getCount(),
-                                            s.getCount(),
-                                            false
-                                        )
+                                            itemTransactor.extract(
+                                                    extracted -> StackUtil.canMerge(s, extracted),
+                                                    s.stackSize,
+                                                    s.stackSize,
+                                                    false
+                                            )
                                     );
                                     SoundUtil.playBlockPlace(world, placePos);
                                     player.swingArm(hand);
@@ -156,27 +152,24 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                                 }
                             } else {
                                 player.sendStatusMessage(
-                                    new TextComponentString(
-                                        "Not enough items. Total needed: " +
-                                            StackUtil.mergeSameItems(requiredItems).stream()
-                                                .map(s -> s.getTextComponent().getFormattedText() + " x " + s.getCount())
-                                                .collect(Collectors.joining(", "))
-                                    ),
-                                    true
+                                        new TextComponentString(
+                                                "Not enough items. Total needed: " +
+                                                        StackUtil.mergeSameItems(requiredItems).stream()
+                                                                .map(s -> s.getTextComponent().getFormattedText() + " x " + s.stackSize)
+                                                                .collect(Collectors.joining(", "))
+                                        )
                                 );
                             }
                         } else {
                             player.sendStatusMessage(
-                                new TextComponentString("Schematic requires fluids"),
-                                true
+                                    new TextComponentString("Schematic requires fluids")
                             );
                         }
                     }
                 }
             } catch (InvalidInputDataException e) {
                 player.sendStatusMessage(
-                    new TextComponentString("Invalid schematic: " + e.getMessage()),
-                    true
+                        new TextComponentString("Invalid schematic: " + e.getMessage())
                 );
                 e.printStackTrace();
             }
@@ -184,14 +177,15 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
         }
     }
 
-    public static ISchematicBlock getSchematic(@Nonnull ItemStack stack) throws InvalidInputDataException {
-        if (stack.getItem() instanceof ItemSchematicSingle) {
+
+    public static ISchematicBlock getSchematic(ItemStack stack) throws InvalidInputDataException {
+        if (stack != null && stack.getItem() instanceof ItemSchematicSingle) {
             return SchematicBlockManager.readFromNBT(NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY));
         }
         return null;
     }
 
-    public static ISchematicBlock getSchematicSafe(@Nonnull ItemStack stack) {
+    public static ISchematicBlock getSchematicSafe(ItemStack stack) {
         try {
             return getSchematic(stack);
         } catch (InvalidInputDataException e) {

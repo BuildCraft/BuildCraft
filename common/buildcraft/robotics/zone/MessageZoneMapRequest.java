@@ -40,7 +40,7 @@ public class MessageZoneMapRequest implements IMessage {
                 new MessageZoneMapResponse(
                         message.key,
                         ZonePlannerMapDataServer.INSTANCE.getChunk(
-                                ctx.getServerHandler().player.world,
+                                ctx.getServerHandler().playerEntity.world,
                                 message.key
                         )
                 )

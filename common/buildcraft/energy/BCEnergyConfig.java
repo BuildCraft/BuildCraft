@@ -3,7 +3,6 @@ package buildcraft.energy;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -127,13 +126,11 @@ public class BCEnergyConfig {
             return;
         }
 
-        List<ResourceLocation> invalidList = new ArrayList<>();
-        invalidList.addAll(invalids);
-        Collections.sort(invalidList, Comparator.comparing(ResourceLocation::toString));
+        List<ResourceLocation> invalidList = new ArrayList<>(invalids);
+        invalidList.sort(Comparator.comparing(ResourceLocation::toString));
 
-        List<ResourceLocation> allValid = new ArrayList<>();
-        allValid.addAll(ForgeRegistries.BIOMES.getKeys());
-        Collections.sort(allValid, Comparator.comparing(ResourceLocation::toString));
+        List<ResourceLocation> allValid = new ArrayList<>(ForgeRegistries.BIOMES.getKeys());
+        allValid.sort(Comparator.comparing(ResourceLocation::toString));
 
         BCLog.logger.warn("****************************************************");
         BCLog.logger.warn("*");

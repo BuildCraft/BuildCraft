@@ -40,7 +40,7 @@ public class ParticleUtil {
         ParticlePosition nPos = new ParticlePosition(new Vec3d(x, y, z), startingMotion);
 
         for (ParticlePosition pp : ParticlePipes.DUPLICATE_SPREAD.pipe(nPos)) {
-            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.x, pp.motion.y, pp.motion.z);
+            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.xCoord, pp.motion.yCoord, pp.motion.zCoord);
         }
     }
 }

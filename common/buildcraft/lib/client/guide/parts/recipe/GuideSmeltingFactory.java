@@ -17,7 +17,6 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
-import buildcraft.lib.misc.StackUtil;
 
 public class GuideSmeltingFactory implements GuidePartFactory {
     @Nonnull
@@ -25,8 +24,8 @@ public class GuideSmeltingFactory implements GuidePartFactory {
     private final int hash;
 
     public GuideSmeltingFactory(ItemStack input, ItemStack output) {
-        this.input = StackUtil.asNonNull(input);
-        this.output = StackUtil.asNonNull(output);
+        this.input = input;
+        this.output = output;
         this.hash = Arrays.hashCode(new int[] { input.serializeNBT().hashCode(), output.serializeNBT().hashCode() });
     }
 
@@ -60,9 +59,8 @@ public class GuideSmeltingFactory implements GuidePartFactory {
         if (obj.getClass() != getClass()) return false;
         GuideSmeltingFactory other = (GuideSmeltingFactory) obj;
         // Shortcut out of this full itemstack comparison as its really expensive
-        if (hash != other.hash) return false;
+        return hash == other.hash && ItemStack.areItemStacksEqual(input, other.input)//
+                && ItemStack.areItemStacksEqual(output, other.output);
 
-        return ItemStack.areItemStacksEqual(input, other.input)//
-            && ItemStack.areItemStacksEqual(output, other.output);
     }
 }

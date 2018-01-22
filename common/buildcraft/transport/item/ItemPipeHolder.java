@@ -13,16 +13,14 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -74,9 +72,9 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (this.isInCreativeTab(tab)) {
-            items.add(new ItemStack(this));
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+        if (getCreativeTab() == tab) {
+            subItems.add(new ItemStack(this));
         }
     }
 
@@ -146,9 +144,9 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
 
     // Misc usefulness
 
+
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
         String tipName = "tip." + unlocalizedName.replace(".name", "").replace("item.", "");
         String localised = I18n.format(tipName);
         if (!localised.equals(tipName)) {

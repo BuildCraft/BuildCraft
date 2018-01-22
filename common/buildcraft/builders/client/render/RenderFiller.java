@@ -7,8 +7,8 @@
 package buildcraft.builders.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,7 +23,7 @@ public class RenderFiller extends FastTESR<TileFiller> {
 
     @Override
     public void renderTileEntityFast(TileFiller tile, double x, double y, double z, float partialTicks,
-        int destroyStage, float partial, BufferBuilder bb) {
+        int destroyStage, VertexBuffer bb) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("filler");
 

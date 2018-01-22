@@ -203,7 +203,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 : collect.stream().flatMap(Collection::stream)
         )
             .flatMap(requiredExtractor -> requiredExtractor.extractItemsFromBlock(blockState, tileNbt).stream())
-            .filter(((Predicate<ItemStack>) ItemStack::isEmpty).negate())
+            .filter(((Predicate<ItemStack>) Objects::isNull).negate())
             .collect(Collectors.toList());
     }
 
@@ -224,7 +224,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
     public SchematicBlockDefault getRotated(Rotation rotation) {
         SchematicBlockDefault schematicBlock = SchematicBlockManager.createCleanCopy(this);
         requiredBlockOffsets.stream()
-            .map(blockPos -> blockPos.rotate(rotation))
+            .map(blockPos -> rotate(blockPos, rotation))
             .forEach(schematicBlock.requiredBlockOffsets::add);
         schematicBlock.blockState = blockState.withRotation(rotation);
         schematicBlock.ignoredProperties.addAll(ignoredProperties);
@@ -232,10 +232,26 @@ public class SchematicBlockDefault implements ISchematicBlock {
         schematicBlock.tileRotation = tileRotation.add(rotation);
         schematicBlock.placeBlock = placeBlock;
         updateBlockOffsets.stream()
-            .map(blockPos -> blockPos.rotate(rotation))
+            .map(blockPos -> rotate(blockPos, rotation))
             .forEach(schematicBlock.updateBlockOffsets::add);
         schematicBlock.canBeReplacedWithBlocks.addAll(canBeReplacedWithBlocks);
         return schematicBlock;
+    }
+
+    public BlockPos rotate(BlockPos pos, Rotation rotationIn)
+    {
+        switch (rotationIn)
+        {
+            case NONE:
+            default:
+                return pos;
+            case CLOCKWISE_90:
+                return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+            case CLOCKWISE_180:
+                return new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+            case COUNTERCLOCKWISE_90:
+                return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+        }
     }
 
     @Override
@@ -249,7 +265,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         if (placeBlock == Blocks.AIR) {
             return true;
         }
-        world.profiler.startSection("prepare block");
+        world.theProfiler.startSection("prepare block");
         IBlockState newBlockState = blockState;
         if (placeBlock != blockState.getBlock()) {
             newBlockState = placeBlock.getDefaultState();
@@ -270,18 +286,18 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 placeBlock.getDefaultState()
             );
         }
-        world.profiler.endSection();
-        world.profiler.startSection("place block");
+        world.theProfiler.endSection();
+        world.theProfiler.startSection("place block");
         boolean b = world.setBlockState(blockPos, newBlockState, 11);
-        world.profiler.endSection();
+        world.theProfiler.endSection();
         if (b) {
-            world.profiler.startSection("notify");
+            world.theProfiler.startSection("notify");
             updateBlockOffsets.stream()
                 .map(blockPos::add)
-                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
-            world.profiler.endSection();
+                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock));
+            world.theProfiler.endSection();
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
-                world.profiler.startSection("prepare tile");
+                world.theProfiler.startSection("prepare tile");
                 Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
                 NBTTagCompound replaceNbt = rules.stream()
                     .map(rule -> rule.replaceNbt)
@@ -297,8 +313,8 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 newTileNbt.setInteger("x", blockPos.getX());
                 newTileNbt.setInteger("y", blockPos.getY());
                 newTileNbt.setInteger("z", blockPos.getZ());
-                world.profiler.endSection();
-                world.profiler.startSection("place tile");
+                world.theProfiler.endSection();
+                world.theProfiler.startSection("place tile");
                 TileEntity tileEntity = TileEntity.create(
                     world,
                     replaceNbt != null
@@ -312,7 +328,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                         tileEntity.rotate(tileRotation);
                     }
                 }
-                world.profiler.endSection();
+                world.theProfiler.endSection();
             }
             return true;
         }

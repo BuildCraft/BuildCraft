@@ -18,9 +18,9 @@ import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderArchitectTable extends TileEntitySpecialRenderer<TileArchitectTable> {
+
     @Override
-    public void render(TileArchitectTable tile, double x, double y, double z, float partialTicks, int destroyStage,
-        float partial) {
+    public void renderTileEntityAt(TileArchitectTable tile, double x, double y, double z, float partialTicks, int destroyStage) {
         if (!tile.markerBox) {
             return;
         }

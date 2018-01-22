@@ -13,10 +13,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
@@ -44,12 +44,12 @@ public enum ZonePlannerMapRenderer {
         }
     }
 
-    private void vertex(BufferBuilder builder, double x, double y, double z) {
+    private void vertex(VertexBuffer builder, double x, double y, double z) {
         vertex.positiond(x, y, z);
         vertex.render(builder);
     }
 
-    public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z, double height, double radius) {
+    public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z, double height, double radius) {
         @SuppressWarnings("UnnecessaryLocalVariable")
         double rX = radius;
         double rY = height * 0.5;
@@ -93,11 +93,11 @@ public enum ZonePlannerMapRenderer {
         vertex.multColourd(1 / 0.8);
     }
 
-    public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z, double height) {
+    public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z, double height) {
         drawBlockCuboid(builder, x, y, z, height, 0.5);
     }
 
-    public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z) {
+    public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z) {
         drawBlockCuboid(builder, x, y, z, 1);
     }
 
@@ -121,7 +121,7 @@ public enum ZonePlannerMapRenderer {
         if (zonePlannerMapChunk == null) {
             return;
         }
-        BufferBuilder builder = Tessellator.getInstance().getBuffer();
+        VertexBuffer builder = Tessellator.getInstance().getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {

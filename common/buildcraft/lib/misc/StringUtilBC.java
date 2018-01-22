@@ -93,9 +93,9 @@ public final class StringUtilBC {
     // Displaying objects
     public static String vec3ToDispString(Vec3d vec) {
         if (vec == null) return "null";
-        return displayDecimalFormat.format(vec.x) + ", " +
-            displayDecimalFormat.format(vec.y) + ", " +
-            displayDecimalFormat.format(vec.z);
+        return displayDecimalFormat.format(vec.xCoord) + ", " +
+            displayDecimalFormat.format(vec.yCoord) + ", " +
+            displayDecimalFormat.format(vec.zCoord);
     }
 
     public static String vec3ToDispString(Vec3i vec) {

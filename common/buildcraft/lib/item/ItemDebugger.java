@@ -6,18 +6,15 @@
 
 package buildcraft.lib.item;
 
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.BCLibItems;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.IAdvDebugTarget;
 
@@ -27,7 +24,7 @@ public class ItemDebugger extends ItemBC_Neptune {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
@@ -41,4 +38,5 @@ public class ItemDebugger extends ItemBC_Neptune {
         }
         return EnumActionResult.FAIL;
     }
+
 }

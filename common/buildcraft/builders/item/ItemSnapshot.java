@@ -6,21 +6,17 @@
 
 package buildcraft.builders.item;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
@@ -54,7 +50,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     public Header getHeader(ItemStack stack) {
-        if (stack.getItem() instanceof ItemSnapshot) {
+        if (stack != null && stack.getItem() instanceof ItemSnapshot) {
             if (EnumItemSnapshotType.getFromStack(stack).used) {
                 NBTTagCompound nbt = stack.getTagCompound();
                 if (nbt != null) {
@@ -73,7 +69,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    protected void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         subItems.add(getClean(EnumSnapshotType.BLUEPRINT));
         subItems.add(getClean(EnumSnapshotType.TEMPLATE));
     }
@@ -97,17 +93,16 @@ public class ItemSnapshot extends ItemBC_Neptune {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
         Snapshot.Header header = getHeader(stack);
         if (header == null) {
             tooltip.add(LocaleUtil.localize("item.blueprint.blank"));
         } else {
             tooltip.add(header.name);
-            EntityPlayer owner = header.getOwnerPlayer(world);
-            if (owner != null) {
-                tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + owner.getName());
+            if (player != null) {
+                tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + player.getName());
             }
-            if (flag.isAdvanced()) {
+            if (advanced) {
                 tooltip.add("Hash: " + HashUtil.convertHashToString(header.key.hash));
                 tooltip.add("Date: " + header.created);
                 tooltip.add("Owner UUID: " + header.owner);
@@ -135,12 +130,13 @@ public class ItemSnapshot extends ItemBC_Neptune {
         }
 
         public static EnumItemSnapshotType get(EnumSnapshotType snapshotType, boolean used) {
-            if (snapshotType == EnumSnapshotType.TEMPLATE) {
-                return !used ? TEMPLATE_CLEAN : TEMPLATE_USED;
-            } else if (snapshotType == EnumSnapshotType.BLUEPRINT) {
-                return !used ? BLUEPRINT_CLEAN : BLUEPRINT_USED;
-            } else {
-                throw new IllegalArgumentException();
+            switch (snapshotType) {
+                case TEMPLATE:
+                    return !used ? TEMPLATE_CLEAN : TEMPLATE_USED;
+                case BLUEPRINT:
+                    return !used ? BLUEPRINT_CLEAN : BLUEPRINT_USED;
+                default:
+                    throw new IllegalArgumentException();
             }
         }
 

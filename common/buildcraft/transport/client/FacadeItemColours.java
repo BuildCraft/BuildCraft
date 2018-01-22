@@ -12,12 +12,12 @@ public enum FacadeItemColours implements IItemColor {
     INSTANCE;
 
     @Override
-    public int colorMultiplier(ItemStack stack, int tintIndex) {
+    public int getColorFromItemstack(ItemStack stack, int tintIndex) {
         FacadeInstance states = ItemPluggableFacade.getStates(stack);
         FacadePhasedState state = states.getCurrentStateForStack();
         int colour = -1;
         try {
-            colour = Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state, null, null);
+            colour = Minecraft.getMinecraft().getBlockColors().getColor(state.stateInfo.state);
         } catch (NullPointerException ex) {
             // the block didn't like the null world or player
         }

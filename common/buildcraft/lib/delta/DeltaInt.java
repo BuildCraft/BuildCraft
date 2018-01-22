@@ -81,32 +81,40 @@ public class DeltaInt {
     }
 
     void receiveData(EnumDeltaMessage type, PacketBuffer buffer) {
-        if (type == EnumDeltaMessage.ADD_SINGLE) {
-            long start = buffer.readLong();
-            long end = buffer.readLong();
-            int delta = buffer.readInt();
-            DeltaIntEntry entry = new DeltaIntEntry(start + tick, end + tick, delta);
-            changingEntries.add(entry);
-        } else if (type == EnumDeltaMessage.SET_VALUE) {
-            changingEntries.clear();
-            int value = buffer.readInt();
-            staticStartValue = value;
-            staticEndValue = value;
-            dynamicValueLast = value;
-            dynamicValueThis = value;
-        } else if (type == EnumDeltaMessage.CURRENT_STATE) {
-            staticStartValue = buffer.readInt();
-            staticEndValue = buffer.readInt();
-            changingEntries.clear();
-            int count = buffer.readUnsignedShort();
-            for (int i = 0; i < count; i++) {
-                long start = buffer.readLong() + tick;
-                long end = buffer.readLong() + tick;
-                int delta = buffer.readInt();
-                DeltaIntEntry entry = new DeltaIntEntry(start, end, delta);
-                entry.hasStarted = buffer.readBoolean();
+        long start;
+        long end;
+        int delta;
+        DeltaIntEntry entry;
+        switch (type) {
+            case ADD_SINGLE:
+                start = buffer.readLong();
+                end = buffer.readLong();
+                delta = buffer.readInt();
+                entry = new DeltaIntEntry(start + tick, end + tick, delta);
                 changingEntries.add(entry);
-            }
+                break;
+            case SET_VALUE:
+                changingEntries.clear();
+                int value = buffer.readInt();
+                staticStartValue = value;
+                staticEndValue = value;
+                dynamicValueLast = value;
+                dynamicValueThis = value;
+                break;
+            case CURRENT_STATE:
+                staticStartValue = buffer.readInt();
+                staticEndValue = buffer.readInt();
+                changingEntries.clear();
+                int count = buffer.readUnsignedShort();
+                for (int i = 0; i < count; i++) {
+                    start = buffer.readLong() + tick;
+                    end = buffer.readLong() + tick;
+                    delta = buffer.readInt();
+                    entry = new DeltaIntEntry(start, end, delta);
+                    entry.hasStarted = buffer.readBoolean();
+                    changingEntries.add(entry);
+                }
+                break;
         }
     }
 

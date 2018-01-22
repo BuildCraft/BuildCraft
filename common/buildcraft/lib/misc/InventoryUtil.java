@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -18,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -35,7 +35,7 @@ public class InventoryUtil {
     // Drops
 
     public static void dropAll(World world, Vec3d vec, IItemHandlerModifiable handler) {
-        dropAll(world, vec.x, vec.y, vec.z, handler);
+        dropAll(world, vec.xCoord, vec.yCoord, vec.zCoord, handler);
     }
 
     public static void dropAll(World world, BlockPos pos, IItemHandlerModifiable handler) {
@@ -48,7 +48,7 @@ public class InventoryUtil {
         }
     }
 
-    public static void dropAll(World world, BlockPos pos, NonNullList<ItemStack> toDrop) {
+    public static void dropAll(World world, BlockPos pos, List<ItemStack> toDrop) {
         for (ItemStack stack : toDrop) {
             if (stack == null) {
                 throw new NullPointerException("Null stack!");
@@ -62,11 +62,11 @@ public class InventoryUtil {
     }
 
     public static void drop(World world, Vec3d vec, @Nonnull ItemStack stack) {
-        drop(world, vec.x, vec.y, vec.z, stack);
+        drop(world, vec.xCoord, vec.yCoord, vec.zCoord, stack);
     }
 
-    public static void drop(World world, double x, double y, double z, @Nonnull ItemStack stack) {
-        if (stack.isEmpty()) {
+    public static void drop(World world, double x, double y, double z, ItemStack stack) {
+        if (stack == null) {
             return;
         }
         EntityItem entity = new EntityItem(world, x, y, z, stack);
@@ -76,10 +76,10 @@ public class InventoryUtil {
     // Sending items around
 
     /** @return The leftover stack */
-    @Nonnull
-    public static ItemStack addToRandomInventory(World world, BlockPos pos, @Nonnull ItemStack stack) {
-        if (stack.isEmpty()) {
-            return StackUtil.EMPTY;
+    @Nullable
+    public static ItemStack addToRandomInventory(World world, BlockPos pos, ItemStack stack) {
+        if (stack == null) {
+            return null;
         }
         List<EnumFacing> toTry = new ArrayList<>(6);
         Collections.addAll(toTry, EnumFacing.VALUES);
@@ -88,8 +88,8 @@ public class InventoryUtil {
             TileEntity tile = world.getTileEntity(pos.offset(face));
             IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, face.getOpposite());
             stack = transactor.insert(stack, false, false);
-            if (stack.isEmpty()) {
-                return StackUtil.EMPTY;
+            if (stack == null) {
+                return null;
             }
         }
         return stack;
@@ -98,11 +98,11 @@ public class InventoryUtil {
     /** Look around the tile given in parameter in all 6 position, tries to add the items to a random injectable tile
      * around. Will make sure that the location from which the items are coming from (identified by the from parameter)
      * isn't used again so that entities doesn't go backwards. Returns true if successful, false otherwise. */
-    @Nonnull
+    @Nullable
     public static ItemStack addToRandomInjectable(World world, BlockPos pos, EnumFacing ignore,
-        @Nonnull ItemStack stack) {
-        if (stack.isEmpty()) {
-            return StackUtil.EMPTY;
+        ItemStack stack) {
+        if (stack == null) {
+            return null;
         }
         List<EnumFacing> toTry = new ArrayList<>(6);
         Collections.addAll(toTry, EnumFacing.VALUES);
@@ -112,8 +112,8 @@ public class InventoryUtil {
             TileEntity tile = world.getTileEntity(pos.offset(face));
             IInjectable injectable = ItemTransactorHelper.getInjectable(tile, face.getOpposite());
             stack = injectable.injectItem(stack, true, face.getOpposite(), null, 0);
-            if (stack.isEmpty()) {
-                return StackUtil.EMPTY;
+            if (stack == null) {
+                return null;
             }
         }
         return stack;
@@ -128,10 +128,10 @@ public class InventoryUtil {
     }
 
     /** Adds every stack from src to dst. Doesn't add empty stacks. */
-    public static void addAll(IItemHandler src, NonNullList<ItemStack> dst) {
+    public static void addAll(IItemHandler src, List<ItemStack> dst) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack stack = src.getStackInSlot(i);
-            if (!stack.isEmpty()) {
+            if (stack != null) {
                 dst.add(stack);
             }
         }

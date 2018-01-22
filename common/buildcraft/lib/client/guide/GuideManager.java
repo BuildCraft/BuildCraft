@@ -153,9 +153,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
             if (contents != null) {
                 GuideManager.loadedDomains.add(domain);
                 contents = contents.inheritMissingTags();
-                for (JsonEntry entry : contents.contents) {
-                    allEntries.add(entry);
-                }
+                Collections.addAll(allEntries, contents.contents);
             }
         }
         return allEntries;

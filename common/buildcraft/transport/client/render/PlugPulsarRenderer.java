@@ -6,9 +6,7 @@
 
 package buildcraft.transport.client.render;
 
-
-import net.minecraft.client.renderer.BufferBuilder;
-
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,7 +29,7 @@ public enum PlugPulsarRenderer implements IPlugDynamicRenderer<PluggablePulsar> 
     }
 
     @Override
-    public void render(PluggablePulsar pulsar, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    public void render(PluggablePulsar pulsar, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         bb.setTranslation(x, y, z);
         if (pulsar.clientModelData.hasNoNodes()) {
             pulsar.clientModelData.setNodes(BCTransportModels.PULSAR_DYNAMIC.createTickableNodes());

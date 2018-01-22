@@ -51,8 +51,7 @@ public class ExpressionTester {
         // I COULD change all these to be in separate functions... except that's really long :/
         bakeAndCallDouble("0", 0);
         bakeAndCallDouble("-1", -1);
-        bakeAndCallDouble("0+1", 0 + 1);
-        bakeAndCallDouble("   0   +    1    ", 1);
+        bakeAndCallDouble("0+1", 1);
         bakeAndCallDouble("3-2", 3 - 2);
         bakeAndCallDouble("1+1+1", 3);
         bakeAndCallDouble("1+2-1", 2);

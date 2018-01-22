@@ -15,13 +15,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import java.util.List;
 
 public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     public BlockBCTile_Neptune(Material material, String id) {
@@ -69,34 +70,34 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             return tileBC.onActivated(player, hand, facing, hitX, hitY, hitZ);
         }
-        return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, facing, hitX, hitY, hitZ);
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
-        int fortune) {
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        List<ItemStack> drops = super.getDrops(world, pos, state, fortune);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.addDrops(drops, fortune);
         }
-        super.getDrops(drops, world, pos, state, fortune);
+        return drops;
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
-        super.neighborChanged(state, world, pos, block, fromPos);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
+        super.neighborChanged(state, world, pos, block);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
-            tileBC.onNeighbourBlockChanged(block, fromPos);
+            tileBC.onNeighbourBlockChanged(block, pos);
         }
     }
 }

@@ -8,7 +8,6 @@ package buildcraft.lib.client.render.laser;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -29,13 +28,13 @@ public abstract class LaserCompiledList {
 
         public Builder(boolean useNormalColour) {
             this.useColour = useNormalColour;
-            BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+            net.minecraft.client.renderer.VertexBuffer bufferBuilder = Tessellator.getInstance().getBuffer();
             bufferBuilder.begin(GL11.GL_QUADS, useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
         }
 
         @Override
         public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz, float diffuse) {
-            BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+            net.minecraft.client.renderer.VertexBuffer bufferBuilder = Tessellator.getInstance().getBuffer();
             bufferBuilder.pos(x, y, z);
             bufferBuilder.tex(u, v);
             bufferBuilder.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
@@ -47,7 +46,7 @@ public abstract class LaserCompiledList {
 
         public LaserCompiledList build() {
             if (OpenGlHelper.useVbo()) {
-                BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+                net.minecraft.client.renderer.VertexBuffer bufferBuilder = Tessellator.getInstance().getBuffer();
                 VertexBuffer vertexBuffer = new VertexBuffer(bufferBuilder.getVertexFormat());
                 bufferBuilder.finishDrawing();
                 bufferBuilder.reset();

@@ -22,8 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import buildcraft.lib.gui.config.GuiConfigManager;
@@ -68,22 +66,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         lowerRightLedgerPos = rootElement.getPosition(1, -1).offset(0, 5);
 
         if (container instanceof ContainerBCTile<?>) {
-            shownElements.add(new LedgerOwnership(this, ((ContainerBCTile<?>) container).tile, true));
+            shownElements.add(new LedgerOwnership((GuiBC8<? extends ContainerBCTile<?>>) this, true));
         }
         if (shouldAddHelpLedger()) {
             shownElements.add(new LedgerHelp(this, false));
-        }
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        boolean drawEverything = currentMenu == null || !currentMenu.shouldFullyOverride();
-        if (drawEverything) {
-            this.drawDefaultBackground();
-        }
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        if (drawEverything) {
-            this.renderHoveredToolTip(mouseX, mouseY);
         }
     }
 
@@ -116,7 +102,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     }
 
     public FontRenderer getFontRenderer() {
-        return fontRenderer;
+        return fontRendererObj;
     }
 
     public float getLastPartialTicks() {
@@ -126,7 +112,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     // Gui -- double -> int
 
     public void drawTexturedModalRect(double posX, double posY, double textureX, double textureY, double width,
-        double height) {
+                                      double height) {
         int x = MathHelper.floor(posX);
         int y = MathHelper.floor(posY);
         int u = MathHelper.floor(textureX);
@@ -173,11 +159,6 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-
-        // FIX FOR MC-121719 // https://bugs.mojang.com/browse/MC-121719
-        partialTicks = mc.getRenderPartialTicks();
-        // END FIX
-
         GlStateManager.color(1, 1, 1, 1);
         if (isDebuggingShown.evaluate()) {
             SPRITE_DEBUG.drawAt(0, 0);
@@ -232,8 +213,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         IMenuElement m = currentMenu;
         if (m != null) {
             if (m.shouldFullyOverride()) {
+                int c = 0x20_00_00_00;
                 GlStateManager.disableDepth();
-                drawDefaultBackground();
+                drawGradientRect(0, 0, this.width, this.height, c, c);
                 GlStateManager.enableDepth();
             }
             m.drawBackground(lastPartialTicks);
@@ -326,16 +308,15 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     private int drawTooltip(ToolTip tooltip, double x, double y) {
         return 4 + GuiUtil.drawHoveringText(tooltip, (int) Math.round(x), (int) Math.round(y), width, height, -1,
-            mc.fontRenderer);
+                mc.fontRendererObj);
     }
 
     public void drawProgress(GuiRectangle rect, GuiIcon icon, double widthPercent, double heightPercent) {
-        double nWidth = rect.width * Math.abs(widthPercent);
-        double nHeight = rect.height * Math.abs(heightPercent);
-        ISprite sprite = GuiUtil.subRelative(icon.sprite, 0, 0, widthPercent, heightPercent);
-        double x = rect.x + rootElement.getX();
-        double y = rect.y + rootElement.getY();
-        GuiIcon.draw(sprite, x, y, x + nWidth, y + nHeight);
+        int nWidth = MathHelper.ceil(rect.width * Math.abs(widthPercent));
+        int nHeight = MathHelper.ceil(rect.height * Math.abs(heightPercent));
+        icon.offset(widthPercent > 0 ? 0 : rect.width - nWidth, heightPercent > 0 ? 0 : rect.height - nHeight)
+                .drawCutInside(new GuiRectangle(widthPercent > 0 ? rect.x : rect.x + (rect.width - nWidth),
+                        heightPercent > 0 ? rect.y : rect.y + (rect.height - nHeight), nWidth, nHeight).offset(rootElement));
     }
 
     @Override

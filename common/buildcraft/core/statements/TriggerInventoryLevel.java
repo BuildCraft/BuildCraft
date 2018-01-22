@@ -76,7 +76,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
             }
             ItemStack searchStack = parameters[0].getItemStack();
 
-            if (searchStack.isEmpty()) {
+            if (searchStack == null) {
                 return false;
             }
 
@@ -84,9 +84,9 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
             int foundItems = 0;
             for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
                 ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-                if (stackInSlot.isEmpty() || StackUtil.canStacksOrListsMerge(stackInSlot, searchStack)) {
+                if (stackInSlot == null || StackUtil.canStacksOrListsMerge(stackInSlot, searchStack)) {
                     stackSpace++;
-                    foundItems += stackInSlot.isEmpty() ? 0 : stackInSlot.getCount();
+                    foundItems += stackInSlot == null ? 0 : stackInSlot.stackSize;
                 }
             }
 

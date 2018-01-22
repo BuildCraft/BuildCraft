@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
@@ -71,7 +71,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
     public RenderMiningWell() {}
 
     @Override
-    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
+    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer buffer) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("miner");
 
@@ -120,7 +120,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
         LED_STATUS.render(buffer);
 
-        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
+        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();

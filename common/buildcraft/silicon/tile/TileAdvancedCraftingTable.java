@@ -34,7 +34,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     public final ItemHandlerSimple invResults;
     private final WorkbenchCrafting crafting;
 
-    public ItemStack resultClient = ItemStack.EMPTY;
+    public ItemStack resultClient = null;
 
     public TileAdvancedCraftingTable() {
         invBlueprint = itemManager.addInvHandler("blueprint", 3 * 3, EnumAccess.PHANTOM);

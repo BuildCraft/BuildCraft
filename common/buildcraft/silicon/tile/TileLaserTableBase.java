@@ -7,9 +7,12 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableCollection;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.recipes.IngredientStack;
+import buildcraft.api.recipes.StackDefinition;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
 
@@ -75,6 +78,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         }
     }
 
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
@@ -91,27 +95,23 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
-            if (id == NET_GUI_TICK) {
-                buffer.writeLong(power);
-                double avg = avgPower.getAverage();
-                long pwrAvg = Math.round(avg);
-                long div = pwrAvg / MJ_FLOW_ROUND;
-                long mod = pwrAvg % MJ_FLOW_ROUND;
-                int mj = (int) (div) + ((mod > MJ_FLOW_ROUND / 2) ? 1 : 0);
-                buffer.writeInt(mj);
-            }
+        if (id == NET_GUI_DATA) {
+            buffer.writeLong(power);
+            double avg = avgPower.getAverage();
+            long pwrAvg = Math.round(avg);
+            long div = pwrAvg / MJ_FLOW_ROUND;
+            long mod = pwrAvg % MJ_FLOW_ROUND;
+            int mj = (int) (div) + ((mod > MJ_FLOW_ROUND / 2) ? 1 : 0);
+            buffer.writeInt(mj);
         }
     }
 
     @Override
     public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
-            if (id == NET_GUI_TICK) {
-                power = buffer.readLong();
-                avgPowerClient = buffer.readInt() * MJ_FLOW_ROUND;
-            }
+        if (id == NET_GUI_DATA) {
+            power = buffer.readLong();
+            avgPowerClient = buffer.readInt() * MJ_FLOW_ROUND;
         }
     }
 
@@ -121,19 +121,18 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
-    protected boolean extract(ItemHandlerSimple inv, Collection<IngredientStack> items, boolean simulate,
-        boolean precise) {
-        AtomicLong remainingStacks = new AtomicLong(inv.stacks.stream().filter(stack -> !stack.isEmpty()).count());
+    protected boolean extract(ItemHandlerSimple inv, ImmutableCollection<StackDefinition> items, boolean simulate, boolean precise) {
+        AtomicLong remainingStacks = new AtomicLong(Stream.of(inv.stacks).filter(Objects::nonNull).count());
         boolean allItemsConsumed = items.stream().allMatch((definition) -> {
             int remaining = definition.count;
             for (int i = 0; i < inv.getSlots() && remaining > 0; i++) {
                 ItemStack slotStack = inv.getStackInSlot(i);
-                if (slotStack.isEmpty()) continue;
-                if (definition.ingredient.apply(slotStack)) {
-                    int spend = Math.min(remaining, slotStack.getCount());
+                if (slotStack == null) continue;
+                if (definition.filter.matches(slotStack)) {
+                    int spend = Math.min(remaining, slotStack.stackSize);
                     remaining -= spend;
                     if (!simulate) {
-                        slotStack.setCount(slotStack.getCount() - spend);
+                        slotStack.stackSize -= spend;
                         inv.setStackInSlot(i, slotStack);
                     }
                 }

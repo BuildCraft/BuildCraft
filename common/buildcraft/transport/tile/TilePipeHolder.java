@@ -285,11 +285,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
         if (!Arrays.equals(redstoneValues, oldRedstoneValues)) {
             Block block = world.getBlockState(pos).getBlock();
-            world.notifyNeighborsOfStateChange(pos, block, true);
+            world.notifyNeighborsOfStateChange(pos, block);
             for (int i = 0; i < 6; i++) {
                 EnumFacing face = EnumFacing.VALUES[i];
                 if (oldRedstoneValues[i] != redstoneValues[i]) {
-                    world.notifyNeighborsOfStateChange(pos.offset(face), block, true);
+                    world.notifyNeighborsOfStateChange(pos.offset(face), block);
                 }
             }
             oldRedstoneValues = redstoneValues;
@@ -441,7 +441,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
-        world.neighborChanged(pos.offset(side), BCTransportBlocks.pipeHolder, pos);
+        world.notifyNeighborsOfStateChange(pos.offset(side), BCTransportBlocks.pipeHolder);
         return old;
     }
 

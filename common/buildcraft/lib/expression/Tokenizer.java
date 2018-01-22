@@ -79,11 +79,11 @@ public class Tokenizer {
             return get(rel, rel + 1).charAt(0);
         }
 
-        public static ITokenizingContext createFromString(String src) {
+        static ITokenizingContext createFromString(String src) {
             return createFromString(0, src);
         }
 
-        public static ITokenizingContext createFromString(int contextStart, String src) {
+        static ITokenizingContext createFromString(int contextStart, String src) {
             return (relStart, relEnd) -> {
                 int start = contextStart + relStart;
                 int end = contextStart + relEnd;

@@ -122,7 +122,7 @@ public class NodeTypes {
         STRING.put_tt_t("&", (a, b) -> a + b, (a, b) -> "(" + a + " + " + b + ")");
         STRING.put_tt_b("<", (a, b) -> a.compareTo(b) < 0, (a, b) -> "(" + a + " < " + b + ")");
         STRING.put_tt_b(">", (a, b) -> a.compareTo(b) > 0, (a, b) -> "(" + a + " > " + b + ")");
-        STRING.put_tt_b("==", (a, b) -> Objects.equal(a, b), (a, b) -> "(" + a + " == " + b + ")");
+        STRING.put_tt_b("==", Objects::equal, (a, b) -> "(" + a + " == " + b + ")");
         STRING.put_tt_b("!=", (a, b) -> !Objects.equal(a, b), (a, b) -> "(" + a + " != " + b + ")");
         STRING.put_tt_b("<=", (a, b) -> a.compareTo(b) <= 0, (a, b) -> "(" + a + " <= " + b + ")");
         STRING.put_tt_b(">=", (a, b) -> a.compareTo(b) >= 0, (a, b) -> "(" + a + " >= " + b + ")");

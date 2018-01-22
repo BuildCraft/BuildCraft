@@ -22,7 +22,6 @@ import buildcraft.api.lists.ListMatchHandler.Type;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -87,15 +86,15 @@ public class ContainerList extends ContainerBC_Neptune {
     @Nonnull
     public ItemStack getListItemStack() {
         ItemStack toTry = player.getHeldItemMainhand();
-        if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
+        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
         toTry = player.getHeldItemOffhand();
-        if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
+        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
-        return StackUtil.EMPTY;
+        return null;
     }
 
     void setStack(final int lineIndex, final int slotIndex, @Nonnull final ItemStack stack) {
@@ -116,7 +115,7 @@ public class ContainerList extends ContainerBC_Neptune {
             if (type == Type.MATERIAL || type == Type.TYPE) {
                 WidgetListSlot[] widgetSlots = slots[lineIndex];
                 for (int i = 1; i < widgetSlots.length; i++) {
-                    widgetSlots[i].setStack(StackUtil.EMPTY, true);
+                    widgetSlots[i].setStack(null, true);
                 }
             }
         }

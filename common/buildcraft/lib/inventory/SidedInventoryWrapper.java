@@ -7,14 +7,13 @@
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
 
 public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
     private final ISidedInventory sided;
@@ -40,7 +39,7 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
         return stack;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     protected ItemStack extract(int externalSlot, IStackFilter filter, int min, int max, boolean simulate) {
         int sidedSlot = slots[externalSlot];
@@ -49,7 +48,7 @@ public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
             // Delegate to the normal inserter - its just easier.
             return normal.extract(sidedSlot, filter, min, max, simulate);
         }
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

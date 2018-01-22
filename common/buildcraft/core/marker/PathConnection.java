@@ -133,20 +133,9 @@ public class PathConnection extends MarkerConnection<PathConnection> {
         }
         boolean contains = positions.contains(toAdd);
         if (positions.getFirst().equals(from)) {
-            if (contains) {
-                return positions.getLast().equals(toAdd);
-            } else {
-                return true;
-            }
-        } else if (positions.getLast().equals(from)) {
-            if (contains) {
-                return positions.getLast().equals(toAdd);
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
+            return !contains || positions.getLast().equals(toAdd);
+        } else
+            return positions.getLast().equals(from) && (!contains || positions.getLast().equals(toAdd));
     }
 
     public boolean mergeWith(PathConnection conTo, BlockPos from, BlockPos to) {

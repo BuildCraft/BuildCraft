@@ -11,7 +11,6 @@ import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
 import buildcraft.lib.expression.node.func.StringFunctionQuad;
 import buildcraft.lib.expression.node.func.StringFunctionPenta;
-import buildcraft.lib.expression.node.func.StringFunctionHex;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToLong.IFuncLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;

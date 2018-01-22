@@ -8,7 +8,7 @@ package buildcraft.builders.snapshot.pattern.parameter;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +22,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.builders.BCBuildersSprites;
 
@@ -63,10 +62,10 @@ public enum PatternParameterAxis implements IStatementParameter {
         return BCBuildersSprites.PARAM_AXIS.get(axis);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

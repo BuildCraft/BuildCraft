@@ -69,8 +69,7 @@ public class MiniChunkGraph {
         /** Checks if this node contains the given position. This will be the world position of the block */
         public boolean contains(BlockPos pos) {
             BlockPos normalised = pos.subtract(min);
-            if (!TaskMiniChunkAnalyser.isValid(normalised)) return false;
-            return graphArray[normalised.getX()][normalised.getY()][normalised.getZ()] == id;
+            return TaskMiniChunkAnalyser.isValid(normalised) && graphArray[normalised.getX()][normalised.getY()][normalised.getZ()] == id;
         }
 
         public int getExpense(BlockPos pos) {

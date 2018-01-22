@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -50,9 +49,10 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.transport.BCTransportStatements;
+
+import java.util.List;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
     private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
@@ -189,7 +189,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                     BreakEvent breakEvent = new BreakEvent(world, offset, world.getBlockState(offset), fakePlayer);
                     MinecraftForge.EVENT_BUS.post(breakEvent);
                     if (!breakEvent.isCanceled()) {
-                        NonNullList<ItemStack> dropped = BlockUtil.getItemStackFromBlock(server, offset, owner);
+                        List<ItemStack> dropped = BlockUtil.getItemStackFromBlock(server, offset, owner);
                         if (dropped != null) {
                             for (ItemStack stack : dropped) {
                                 sendItem(stack, direction);
@@ -219,10 +219,10 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         // set the main hand of the fake player to the stack
         player.inventory.setInventorySlotContents(player.inventory.currentItem, event.getStack());
         if (PipeApi.stripeRegistry.handleItem(world, pos, direction, event.getStack(), player, this)) {
-            event.setStack(StackUtil.EMPTY);
+            event.setStack(null);
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack stack = player.inventory.removeStackFromSlot(i);
-                if (!stack.isEmpty()) {
+                if (stack != null) {
                     sendItem(stack, direction);
                 }
             }

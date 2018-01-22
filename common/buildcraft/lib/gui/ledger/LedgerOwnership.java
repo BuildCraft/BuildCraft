@@ -6,6 +6,7 @@
 
 package buildcraft.lib.gui.ledger;
 
+import buildcraft.lib.gui.ContainerBCTile;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.util.ResourceLocation;
@@ -22,16 +23,15 @@ public class LedgerOwnership extends Ledger_Neptune {
 
     private final TileBC_Neptune tile;
 
-    public LedgerOwnership(GuiBC8<?> gui, TileBC_Neptune tile, boolean expandPositive) {
+    public LedgerOwnership(GuiBC8<? extends ContainerBCTile<?>> gui, boolean expandPositive) {
         super(gui, 0xFF_E0_F0_FF, expandPositive);
         this.title = "gui.ledger.ownership";
-        this.tile = tile;
+        this.tile = gui.container.tile;
 
         appendText(this::getOwnerName, 0);
 
         calculateMaxSize();
-        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"),
-            "ledger.owner.is_open", false));
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"), "ledger.owner.is_open", false));
     }
 
     @Override

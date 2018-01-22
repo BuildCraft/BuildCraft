@@ -33,9 +33,9 @@ public class LaserContext {
         this.drawBothSides = isCullEnabled;
         this.minBlockLight = data.minBlockLight;
         Vec3d delta = data.start.subtract(data.end);
-        double dx = delta.x;
-        double dy = delta.y;
-        double dz = delta.z;
+        double dx = delta.xCoord;
+        double dy = delta.yCoord;
+        double dz = delta.zCoord;
 
         final double angleY, angleZ;
 
@@ -68,9 +68,9 @@ public class LaserContext {
 
         // // Step 4
         Vector3f translation = new Vector3f();
-        translation.x = (float) data.start.x;
-        translation.y = (float) data.start.y;
-        translation.z = (float) data.start.z;
+        translation.x = (float) data.start.xCoord;
+        translation.y = (float) data.start.yCoord;
+        translation.z = (float) data.start.zCoord;
         holding.setTranslation(translation);
         matrix.mul(holding);
         holding.setIdentity();

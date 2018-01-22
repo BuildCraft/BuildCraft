@@ -12,7 +12,7 @@ public interface IVariableNode extends IExpressionNode {
      * not of the correct type. */
     void set(IExpressionNode from);
 
-    public interface IVariableNodeLong extends IVariableNode, INodeLong {
+    interface IVariableNodeLong extends IVariableNode, INodeLong {
         void set(long value);
 
         @Override
@@ -21,7 +21,7 @@ public interface IVariableNode extends IExpressionNode {
         }
     }
 
-    public interface IVariableNodeDouble extends IVariableNode, INodeDouble {
+    interface IVariableNodeDouble extends IVariableNode, INodeDouble {
         void set(double value);
 
         @Override
@@ -30,7 +30,7 @@ public interface IVariableNode extends IExpressionNode {
         }
     }
 
-    public interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {
+    interface IVariableNodeBoolean extends IVariableNode, INodeBoolean {
         void set(boolean value);
 
         @Override
@@ -39,7 +39,7 @@ public interface IVariableNode extends IExpressionNode {
         }
     }
 
-    public interface IVariableNodeObject<T> extends IVariableNode, INodeObject<T> {
+    interface IVariableNodeObject<T> extends IVariableNode, INodeObject<T> {
         void set(T value);
 
         default void setUnchecked(Object to) {

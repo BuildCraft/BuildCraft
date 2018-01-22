@@ -19,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -289,7 +288,7 @@ public final class Pipe implements IPipe, IDebuggable {
         getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
     }
 
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+    public void addDrops(List<ItemStack> toDrop, int fortune) {
         Item item = (Item) PipeApi.pipeRegistry.getItemForPipe(definition);
         if (item != null) {
             toDrop.add(new ItemStack(item, 1, colour == null ? 0 : 1 + colour.ordinal()));

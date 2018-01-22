@@ -6,7 +6,7 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,7 +21,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.builders.BCBuildersSprites;
 
@@ -54,10 +53,10 @@ public enum PatternParameterYDir implements IStatementParameter {
         return "buildcraft:fillerParameterYDir";
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

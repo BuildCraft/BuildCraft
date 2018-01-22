@@ -74,7 +74,6 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         }
         toWaitTicks--;
         if (toWaitTicks > 0) {
-            return;
         } else {
             toWaitTicks = 0;
         }
@@ -115,17 +114,17 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         switch (openFace) {
             default:
             case WEST:
-                return bb.offset(-distance, 0, 0).grow(0.5, distance, distance);
+                return bb.offset(-distance, 0, 0).expand(0.5, distance, distance);
             case EAST:
-                return bb.offset(distance, 0, 0).grow(0.5, distance, distance);
+                return bb.offset(distance, 0, 0).expand(0.5, distance, distance);
             case DOWN:
-                return bb.offset(0, -distance, 0).grow(distance, 0.5, distance);
+                return bb.offset(0, -distance, 0).expand(distance, 0.5, distance);
             case UP:
-                return bb.offset(0, distance, 0).grow(distance, 0.5, distance);
+                return bb.offset(0, distance, 0).expand(distance, 0.5, distance);
             case NORTH:
-                return bb.offset(0, 0, -distance).grow(distance, distance, 0.5);
+                return bb.offset(0, 0, -distance).expand(distance, distance, 0.5);
             case SOUTH:
-                return bb.offset(0, 0, distance).grow(distance, distance, 0.5);
+                return bb.offset(0, 0, distance).expand(distance, distance, 0.5);
         }
     }
 
@@ -159,11 +158,11 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
             int max = power == 0 ? 1 : (int) (power / powerReqPerItem);
             ItemStack extracted = transactor.extract(StackFilter.ALL, 1, max, simulate);
-            if (!extracted.isEmpty()) {
+            if (extracted != null) {
                 if (!simulate) {
                     flowItem.insertItemsForce(extracted, faceFrom, null, INSERT_SPEED);
                 }
-                return power - powerReqPerItem * extracted.getCount();
+                return power - powerReqPerItem * extracted.stackSize;
             }
         }
         if (flowFluid != null) {
