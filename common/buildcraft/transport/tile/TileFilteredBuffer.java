@@ -9,8 +9,8 @@ package buildcraft.transport.tile;
 import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerFiltered;
+import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileFilteredBuffer extends TileBC_Neptune {
