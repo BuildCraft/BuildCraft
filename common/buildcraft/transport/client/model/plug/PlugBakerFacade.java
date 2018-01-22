@@ -19,10 +19,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3d;
 
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -201,6 +204,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
 
     public List<MutableQuad> bakeForKey(KeyPlugFacade key) {
         IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(key.state);
+        BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
+        ForgeHooksClient.setRenderLayer(null);
         List<MutableQuad> quads = new ArrayList<>();
         int pS = PluggableFacade.SIZE;
         int nS = 16 - pS;
@@ -273,6 +278,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
+        ForgeHooksClient.setRenderLayer(renderLayer);
         for (MutableQuad quad : quads) {
             int tint = quad.getTint();
             if (tint != -1) {
