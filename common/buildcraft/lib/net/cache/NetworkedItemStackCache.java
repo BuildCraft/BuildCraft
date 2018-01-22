@@ -18,16 +18,16 @@ import buildcraft.lib.net.PacketBufferBC;
 public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> {
 
     public NetworkedItemStackCache() {
-        super(new ItemStackKey(StackUtil.EMPTY));
+        super(new ItemStackKey(null));
     }
 
     @Override
     protected ItemStackKey getCanonical(ItemStackKey obj) {
-        if (obj.baseStack.isEmpty()) {
+        if (obj.baseStack == null) {
             return ItemStackKey.EMPTY;
         }
         ItemStack stack = obj.baseStack.copy();
-        stack.setCount(1);
+        stack.stackSize = 1;
         if (stack.hasTagCompound()) {
             stack.setTagCompound(StackUtil.stripNonFunctionNbt(stack));
         }
@@ -36,7 +36,7 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStackKey> 
 
     @Override
     protected void writeObject(ItemStackKey obj, PacketBufferBC buffer) {
-        if (obj.baseStack.isEmpty()) {
+        if (obj.baseStack == null) {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);

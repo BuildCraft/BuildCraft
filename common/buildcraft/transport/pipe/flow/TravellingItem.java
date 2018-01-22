@@ -10,6 +10,7 @@ import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -31,7 +32,7 @@ public class TravellingItem {
 
     // Server fields
     /** The server itemstack */
-    @Nonnull
+    @Nullable
     ItemStack stack;
     int id = 0;
     boolean toCenter;
@@ -66,20 +67,20 @@ public class TravellingItem {
      */
     // @formatter:on
 
-    public TravellingItem(@Nonnull ItemStack stack) {
+    public TravellingItem(ItemStack stack) {
         this.stack = stack;
-        clientItemLink = () -> ItemStack.EMPTY;
+        clientItemLink = () -> null;
     }
 
     public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
-        this.clientItemLink = StackUtil.asNonNull(clientStackLink);
+        this.clientItemLink = clientStackLink;
         this.stackSize = count;
-        this.stack = StackUtil.EMPTY;
+        this.stack = null;
     }
 
     public TravellingItem(NBTTagCompound nbt, long tickNow) {
-        clientItemLink = () -> ItemStack.EMPTY;
-        stack = new ItemStack(nbt.getCompoundTag("stack"));
+        clientItemLink = () -> null;
+        stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
         int c = nbt.getByte("colour");
         this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);
         this.toCenter = nbt.getBoolean("toCenter");
@@ -140,15 +141,12 @@ public class TravellingItem {
     }
 
     public boolean canMerge(TravellingItem with) {
-        if (isPhantom || with.isPhantom) {
-            return false;
-        }
-        return toCenter == with.toCenter//
-            && colour == with.colour//
-            && side == with.side//
-            && Math.abs(tickFinished - with.tickFinished) < 10//
-            && stack.getMaxStackSize() >= stack.getCount() + with.stack.getCount()//
-            && StackUtil.canMerge(stack, with.stack);
+        return !isPhantom && !with.isPhantom && toCenter == with.toCenter//
+                && colour == with.colour//
+                && side == with.side//
+                && Math.abs(tickFinished - with.tickFinished) < 10//
+                && stack.getMaxStackSize() >= stack.stackSize + with.stack.stackSize//
+                && StackUtil.canMerge(stack, with.stack);
     }
 
     /** Attempts to merge the two travelling item's together, if they are close enough.
@@ -157,7 +155,7 @@ public class TravellingItem {
      * @return */
     public boolean mergeWith(TravellingItem with) {
         if (canMerge(with)) {
-            this.stack.grow(with.stack.getCount());
+            this.stack.stackSize += with.stack.stackSize;
             return true;
         }
         return false;
@@ -172,9 +170,9 @@ public class TravellingItem {
         if (interpMul <= 0) return start;
         if (interpMul >= 1) return end;
 
-        double x = oneMinus * start.x + interpMul * end.x;
-        double y = oneMinus * start.y + interpMul * end.y;
-        double z = oneMinus * start.z + interpMul * end.z;
+        double x = oneMinus * start.xCoord + interpMul * end.xCoord;
+        double y = oneMinus * start.yCoord + interpMul * end.yCoord;
+        double z = oneMinus * start.zCoord + interpMul * end.zCoord;
         return new Vec3d(x, y, z);
     }
 

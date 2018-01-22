@@ -86,7 +86,7 @@ public enum BCBuildersEventDist {
                 continue;
             }
             for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
-                if (target.intersects(aabb)) {
+                if (target.intersects(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ)) {
                     event.getCollisionBoxesList().add(aabb);
                 }
             }

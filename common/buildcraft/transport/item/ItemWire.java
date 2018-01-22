@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,6 +21,8 @@ import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.ColourUtil;
 
+import java.util.List;
+
 public class ItemWire extends ItemBC_Neptune {
     public ItemWire(String id) {
         super(id);
@@ -29,7 +30,7 @@ public class ItemWire extends ItemBC_Neptune {
     }
 
     @Override
-    public void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         for (int i = 0; i < 16; i++) {
             subItems.add(new ItemStack(this, 1, i));
         }

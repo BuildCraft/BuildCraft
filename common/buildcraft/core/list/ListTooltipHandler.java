@@ -24,9 +24,9 @@ public enum ListTooltipHandler {
     public void itemTooltipEvent(ItemTooltipEvent event) {
         final EntityPlayer player = event.getEntityPlayer();
         final ItemStack stack = event.getItemStack();
-        if (!stack.isEmpty() && player != null && player.openContainer instanceof ContainerList) {
+        if (stack != null && player != null && player.openContainer instanceof ContainerList) {
             ItemStack list = player.getHeldItemMainhand();
-            if (!list.isEmpty() && list.getItem() instanceof IList) {
+            if (list != null && list.getItem() instanceof IList) {
                 if (((IList) list.getItem()).matches(list, stack)) {
                     event.getToolTip().add(TextFormatting.GREEN + LocaleUtil.localize("tip.list.matches"));
                 }

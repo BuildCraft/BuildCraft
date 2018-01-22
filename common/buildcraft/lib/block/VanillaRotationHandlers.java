@@ -47,14 +47,18 @@ public class VanillaRotationHandlers {
         EnumOrientation[] leverFaces = new EnumOrientation[8];
         int index = 0;
         for (EnumFacing face : ROTATE_FACING.getOrder()) {
-            if (face == EnumFacing.DOWN) {
-                leverFaces[index++] = EnumOrientation.DOWN_Z;
-                leverFaces[index++] = EnumOrientation.DOWN_X;
-            } else if (face == EnumFacing.UP) {
-                leverFaces[index++] = EnumOrientation.UP_Z;
-                leverFaces[index++] = EnumOrientation.UP_X;
-            } else {
-                leverFaces[index++] = EnumOrientation.forFacings(face, null);
+            switch (face) {
+                case DOWN:
+                    leverFaces[index++] = EnumOrientation.DOWN_Z;
+                    leverFaces[index++] = EnumOrientation.DOWN_X;
+                    break;
+                case UP:
+                    leverFaces[index++] = EnumOrientation.UP_Z;
+                    leverFaces[index++] = EnumOrientation.UP_X;
+                    break;
+                default:
+                    leverFaces[index++] = EnumOrientation.forFacings(face, null);
+                    break;
             }
         }
         ROTATE_LEVER = new OrderedEnumMap<>(EnumOrientation.class, leverFaces);

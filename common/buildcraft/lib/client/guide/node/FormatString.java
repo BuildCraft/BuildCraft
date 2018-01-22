@@ -22,13 +22,14 @@ public class FormatString {
 
     public FormatString(FormatSegment[] segments) {
         this.segments = segments;
-        String s = "", sf = "";
+        StringBuilder s = new StringBuilder();
+        StringBuilder sf = new StringBuilder();
         for (FormatSegment seg : segments) {
-            s += seg.text;
-            sf += seg.toFormatString();
+            s.append(seg.text);
+            sf.append(seg.toFormatString());
         }
-        unformatted = s;
-        formatted = sf;
+        unformatted = s.toString();
+        formatted = sf.toString();
     }
 
     public String getFormatted() {
@@ -134,9 +135,7 @@ public class FormatString {
                     FormatSegment[] next = new FormatSegment[left];
                     thisLine.add(new FormatSegment(subText, segment.colour, segment.misc));
                     next[0] = new FormatSegment(text.substring(i), segment.colour, segment.misc);
-                    for (int j = 1; j < left; j++) {
-                        next[j] = segments[segmentIndex + j];
-                    }
+                    System.arraycopy(segments, segmentIndex + 1, next, 1, left - 1);
                     return new FormatString[] { //
                         new FormatString(thisLine.toArray(new FormatSegment[0])), //
                         new FormatString(next)//
@@ -144,9 +143,7 @@ public class FormatString {
                 } else {
                     int left = segments.length - segmentIndex;
                     FormatSegment[] next = new FormatSegment[left];
-                    for (int j = 0; j < left; j++) {
-                        next[j] = segments[j + 1];
-                    }
+                    System.arraycopy(segments, 1, next, 0, left);
                     return new FormatString[] { //
                         new FormatString(thisLine.toArray(new FormatSegment[0])), //
                         new FormatString(next)//

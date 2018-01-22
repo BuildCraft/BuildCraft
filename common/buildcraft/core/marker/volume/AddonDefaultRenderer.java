@@ -6,7 +6,7 @@
 
 package buildcraft.core.marker.volume;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,7 +28,7 @@ public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer
     }
 
     @Override
-    public void renderAddonFast(T addon, EntityPlayer player, float partialTicks, BufferBuilder builder) {
+    public void renderAddonFast(T addon, EntityPlayer player, float partialTicks, VertexBuffer builder) {
         AxisAlignedBB bb = addon.getBoundingBox();
 
         builder.pos(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();

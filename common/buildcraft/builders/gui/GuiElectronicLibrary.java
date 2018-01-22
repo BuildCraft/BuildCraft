@@ -71,7 +71,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
             int colour = isSelected ? 0xffffa0 : 0xe0e0e0;
             Header header = key.header;
             String text = header == null ? key.toString() : header.name;
-            drawString(fontRenderer, text, rect.x, rect.y, colour);
+            drawString(fontRendererObj, text, rect.x, rect.y, colour);
         });
         delButton.enabled = getSnapshots().getSnapshot(container.tile.selected) != null;
     }

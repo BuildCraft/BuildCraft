@@ -42,7 +42,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 boolean foundItem = false;
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (compareTo.isEmpty()) continue;
+                    if (compareTo == null) continue;
                     foundItem = true;
                     if (StackUtil.isMatchingItemOrList(compareTo, toCompare)) {
                         sideAllowed = true;
@@ -79,9 +79,9 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 int offset = FILTERS_PER_SIDE * allSides[s].ordinal();
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (compareTo.isEmpty()) continue;
+                    if (compareTo == null) continue;
                     if (StackUtil.isMatchingItemOrList(compareTo, item.stack)) {
-                        int count = compareTo.getCount();
+                        int count = compareTo.stackSize;
                         totalCount += count;
                         countPerSide[s] += count;
                     }
@@ -106,21 +106,21 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
              * making the distribution perfect. */
             ItemEntry[] entries = new ItemEntry[allSides.length];
             ItemStack toSplit = item.stack;
-            if (toSplit.getCount() >= totalCount) {
-                int leftOver = toSplit.getCount() % totalCount;
-                int multiples = (toSplit.getCount() - leftOver) / totalCount;
+            if (toSplit.stackSize >= totalCount) {
+                int leftOver = toSplit.stackSize % totalCount;
+                int multiples = (toSplit.stackSize - leftOver) / totalCount;
                 for (int s = 0; s < allSides.length; s++) {
                     ItemStack toSide = toSplit.copy();
-                    toSide.setCount(countPerSide[s] * multiples);
+                    toSide.stackSize = countPerSide[s] * multiples;
                     entries[s] = new ItemEntry(item.colour, toSide, item.from);
 
                     List<EnumFacing> dests = new ArrayList<>(1);
                     dests.add(allSides[s]);
                     entries[s].to = dests;
                 }
-                toSplit.setCount(leftOver);
+                toSplit.stackSize = leftOver;
             }
-            if (!toSplit.isEmpty()) {
+            if (toSplit != null) {
                 int[] randLookup = new int[totalCount];
                 int j = 0;
                 for (int s = 0; s < allSides.length; s++) {
@@ -129,21 +129,21 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                     j += len;
                 }
 
-                while (!toSplit.isEmpty()) {
+                while (toSplit != null && toSplit.stackSize > 0) {
                     // Pick a random number between 0 and total count.
                     int rand = split.holder.getPipeWorld().rand.nextInt(totalCount);
                     int face = randLookup[rand];
                     if (entries[face] == null) {
                         ItemStack stack = toSplit.copy();
-                        stack.setCount(1);
+                        stack.stackSize = 1;
                         ItemEntry entry = new ItemEntry(item.colour, stack, item.from);
                         List<EnumFacing> dests = entry.to = new ArrayList<>(1);
                         dests.add(allSides[face]);
                         entries[face] = entry;
                     } else {
-                        entries[face].stack.grow(1);
+                        entries[face].stack.stackSize += 1;
                     }
-                    toSplit.shrink(1);
+                    toSplit.stackSize -= 1;
                 }
             }
             for (int s = 0; s < allSides.length; s++) {

@@ -40,7 +40,6 @@ import buildcraft.lib.fluid.TankProperties;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.energy.BCEnergyGuis;
@@ -63,7 +62,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
             if (fluidCoolant == null || fluidCoolant.amount <= 0 || fluidCoolant.amount > space) {
                 return super.map(stack, space);
             }
-            return new FluidGetResult(StackUtil.EMPTY, fluidCoolant);
+            return new FluidGetResult(null, fluidCoolant);
         }
     };
     public final Tank tankResidue = new Tank("residue", MAX_FLUID, this, this::isResidue);
@@ -138,7 +137,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
             return true;
         }
-        if (!current.isEmpty()) {
+        if (current != null) {
             if (EntityUtil.getWrenchHand(player) != null) {
                 return false;
             }
@@ -343,13 +342,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     private boolean isResidue(FluidStack fluid) {
         // If this is the client then we don't have a current fuel- just trust the server that its correct
-        if (world != null && world.isRemote) {
-            return true;
-        }
-        if (currentFuel instanceof IDirtyFuel) {
-            return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
-        }
-        return false;
+        return world != null && world.isRemote || currentFuel instanceof IDirtyFuel && fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
     }
 
     private class InternalFluidHandler implements IFluidHandlerAdv {

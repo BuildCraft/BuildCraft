@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +24,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileArchitectTable;
+
+import javax.annotation.Nullable;
 
 public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<Boolean> PROP_VALID = BuildCraftProperties.VALID;
@@ -58,7 +61,7 @@ public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWi
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             BCBuildersGuis.ARCHITECT.openGUI(player, pos);
         }

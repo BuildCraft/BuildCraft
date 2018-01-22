@@ -6,9 +6,9 @@
 
 package buildcraft.lib.client.sprite;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -86,16 +86,16 @@ public class DynamicTextureBC {
         float f = 1F / widthPow2;
         float f1 = 1F / heightPow2;
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bb = tessellator.getBuffer();
+        VertexBuffer bb = tessellator.getBuffer();
         bb.begin(GL11.GL_QUADS, bb.getVertexFormat());
-        vertexUV(bb, screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
+        vertexUV(bb, screenX, screenY + clipHeight, zLevel, (clipX) * f, (clipY + clipHeight) * f1);
         vertexUV(bb, screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
-        vertexUV(bb, screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);
-        vertexUV(bb, screenX + 0, screenY + 0, zLevel, (clipX + 0) * f, (clipY + 0) * f1);
+        vertexUV(bb, screenX + clipWidth, screenY, zLevel, (clipX + clipWidth) * f, (clipY) * f1);
+        vertexUV(bb, screenX, screenY, zLevel, (clipX) * f, (clipY) * f1);
         tessellator.draw();
     }
 
-    private static void vertexUV(BufferBuilder bb, double x, double y, double z, double u, double v) {
+    private static void vertexUV(VertexBuffer bb, double x, double y, double z, double u, double v) {
         bb.pos(x, y, z);
         bb.tex(u, v);
         bb.endVertex();

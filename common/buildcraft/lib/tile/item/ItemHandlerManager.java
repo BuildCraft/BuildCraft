@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -64,15 +63,21 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
             parts = new EnumPipePart[0];
         }
         IItemHandlerModifiable external = handler;
-        if (access == EnumAccess.NONE || access == EnumAccess.PHANTOM) {
-            external = null;
-            if (parts.length > 0) {
-                throw new IllegalArgumentException("Completely useless to not allow access to multiple sides! Just don't pass any sides!");
-            }
-        } else if (access == EnumAccess.EXTRACT) {
-            external = new WrappedItemHandlerExtract(handler);
-        } else if (access == EnumAccess.INSERT) {
-            external = new WrappedItemHandlerInsert(handler);
+        switch (access) {
+            case NONE:
+                break;
+            case PHANTOM:
+                external = null;
+                if (parts.length > 0) {
+                    throw new IllegalArgumentException("Completely useless to not allow access to multiple sides! Just don't pass any sides!");
+                }
+                break;
+            case EXTRACT:
+                external = new WrappedItemHandlerExtract(handler);
+                break;
+            case INSERT:
+                external = new WrappedItemHandlerInsert(handler);
+                break;
         }
 
         if (external != null) {
@@ -118,7 +123,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         return addInvHandler(key, handler, access, parts);
     }
 
-    public void addDrops(NonNullList<ItemStack> toDrop) {
+    public void addDrops(List<ItemStack> toDrop) {
         for (IItemHandlerModifiable itemHandler : handlersToDrop) {
             InventoryUtil.addAll(itemHandler, toDrop);
         }

@@ -203,9 +203,7 @@ public abstract class PatternShape2d extends Pattern implements IFillerPatternSh
                 return false;
             }
             Point other = (Point) obj;
-            if (this.a != other.a) return false;
-            if (this.b != other.b) return false;
-            return true;
+            return this.a == other.a && this.b == other.b;
         }
     }
 
@@ -300,7 +298,7 @@ public abstract class PatternShape2d extends Pattern implements IFillerPatternSh
 
         final boolean second, all;
 
-        private ArcType(boolean second, boolean all) {
+        ArcType(boolean second, boolean all) {
             this.second = second;
             this.all = all;
         }

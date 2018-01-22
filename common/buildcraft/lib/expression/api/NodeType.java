@@ -28,12 +28,7 @@ public final class NodeType<T> extends NodeTypeBase<T> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return type == ((NodeType<?>) obj).type;
+        return this == obj || obj != null && obj.getClass() == getClass() && type == ((NodeType<?>) obj).type;
     }
 
     public void putConstant(String name, T value) {

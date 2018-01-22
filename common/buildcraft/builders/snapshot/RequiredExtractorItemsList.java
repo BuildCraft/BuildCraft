@@ -28,7 +28,7 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
     public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
         return Optional.ofNullable(path.get(tileNbt))
             .map(NBTUtilBC::readCompoundList)
-            .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
+            .map(stream -> stream.map(ItemStack::loadItemStackFromNBT).collect(Collectors.toList()))
             .map(Collections::unmodifiableList)
             .orElseGet(Collections::emptyList);
     }
@@ -38,7 +38,7 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
     public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
         return Optional.ofNullable(path.get(entityNbt))
             .map(NBTUtilBC::readCompoundList)
-            .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
+            .map(stream -> stream.map(ItemStack::loadItemStackFromNBT).collect(Collectors.toList()))
             .map(Collections::unmodifiableList)
             .orElseGet(Collections::emptyList);
     }

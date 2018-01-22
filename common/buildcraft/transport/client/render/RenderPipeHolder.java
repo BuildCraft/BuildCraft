@@ -9,7 +9,7 @@ package buildcraft.transport.client.render;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 
@@ -27,8 +27,9 @@ import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
+
     @Override
-    public void renderTileEntityFast(@Nonnull TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
+    public void renderTileEntityFast(@Nonnull TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
@@ -46,9 +47,10 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
+
     }
 
-    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable plug = pipe.getPluggable(face);
             if (plug == null) {
@@ -58,16 +60,16 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private static <P extends PipePluggable> void renderPlug(P plug, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static <P extends PipePluggable> void renderPlug(P plug, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         IPlugDynamicRenderer<P> renderer = PipeRegistryClient.getPlugRenderer(plug);
         if (renderer != null) {
-            Minecraft.getMinecraft().mcProfiler.startSection(plug.getClass());
+            Minecraft.getMinecraft().mcProfiler.startSection(plug.getClass().getSimpleName());
             renderer.render(plug, x, y, z, partialTicks, bb);
             Minecraft.getMinecraft().mcProfiler.endSection();
         }
     }
 
-    private static void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         Pipe p = pipe.getPipe();
         if (p == null) {
             return;
@@ -80,19 +82,19 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private static <F extends PipeFlow> void renderFlow(F flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static <F extends PipeFlow> void renderFlow(F flow, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         IPipeFlowRenderer<F> renderer = PipeRegistryClient.getFlowRenderer(flow);
         if (renderer != null) {
-            Minecraft.getMinecraft().mcProfiler.startSection(flow.getClass());
+            Minecraft.getMinecraft().mcProfiler.startSection(flow.getClass().getSimpleName());
             renderer.render(flow, x, y, z, partialTicks, bb);
             Minecraft.getMinecraft().mcProfiler.endSection();
         }
     }
 
-    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         IPipeBehaviourRenderer<B> renderer = PipeRegistryClient.getBehaviourRenderer(behaviour);
         if (renderer != null) {
-            Minecraft.getMinecraft().mcProfiler.startSection(behaviour.getClass());
+            Minecraft.getMinecraft().mcProfiler.startSection(behaviour.getClass().getSimpleName());
             renderer.render(behaviour, x, y, z, partialTicks, bb);
             Minecraft.getMinecraft().mcProfiler.endSection();
         }

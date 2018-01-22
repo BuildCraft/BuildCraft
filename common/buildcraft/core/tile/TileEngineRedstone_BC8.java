@@ -6,18 +6,13 @@ package buildcraft.core.tile;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.misc.AdvancementUtil;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:free_power");
-    private boolean givenAdvancement = false;
 
     public TileEngineRedstone_BC8() {}
 
@@ -37,9 +32,6 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
         super.engineUpdate();
         if (world.getTotalWorldTime() % 16 == 0) {
             this.addPower(MjAPI.MJ);
-            if (isPumping && !givenAdvancement) {
-                givenAdvancement = AdvancementUtil.unlockAdvancement(this.getOwner().getId(), ADVANCEMENT);
-            }
         }
     }
 

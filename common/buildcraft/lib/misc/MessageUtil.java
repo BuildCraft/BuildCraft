@@ -141,9 +141,9 @@ public class MessageUtil {
     }
 
     public static void writeVec3d(PacketBuffer buffer, Vec3d vec) {
-        buffer.writeDouble(vec.x);
-        buffer.writeDouble(vec.y);
-        buffer.writeDouble(vec.z);
+        buffer.writeDouble(vec.xCoord);
+        buffer.writeDouble(vec.yCoord);
+        buffer.writeDouble(vec.zCoord);
     }
 
     public static Vec3d readVec3d(PacketBuffer buffer) {
@@ -329,7 +329,7 @@ public class MessageUtil {
                 }
                 sb.append('\n');
             }
-            sb.append("-- " + rb);
+            sb.append("-- ").append(rb);
 
             IllegalStateException ex = new IllegalStateException("Did not fully read the data! [" + extra + "]" + sb);
             if (throwError) {

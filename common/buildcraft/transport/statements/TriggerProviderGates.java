@@ -40,7 +40,7 @@ public enum TriggerProviderGates implements ITriggerProvider {
 
             for (EnumDyeColor colour : ColourUtil.COLOURS) {
                 if (TriggerPipeSignal.doesGateHaveColour(gate, colour)) {
-                    triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 0]);
+                    triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2]);
                     triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 1]);
                 }
             }

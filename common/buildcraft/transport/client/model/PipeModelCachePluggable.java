@@ -81,8 +81,7 @@ public class PipeModelCachePluggable {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PluggableKey other = (PluggableKey) obj;
-            if (!pluggables.equals(other.pluggables)) return false;
-            return true;
+            return pluggables.equals(other.pluggables);
         }
     }
 }

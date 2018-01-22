@@ -9,7 +9,7 @@ package buildcraft.lib.debug;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +56,7 @@ public enum DebugRenderHelper implements IDetachedRenderer {
         }
     }
 
-    public static void renderSmallCuboid(BufferBuilder bb, BlockPos pos, int colour) {
+    public static void renderSmallCuboid(VertexBuffer bb, BlockPos pos, int colour) {
         bb.setTranslation(pos.getX(), pos.getY(), pos.getZ());
         for (MutableQuad q : smallCuboid) {
             q.texFromSprite(ModelLoader.White.INSTANCE);

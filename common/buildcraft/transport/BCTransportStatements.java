@@ -53,7 +53,7 @@ public class BCTransportStatements {
 
         TRIGGER_PIPE_SIGNAL = new TriggerPipeSignal[2 * ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
-            TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 0] = new TriggerPipeSignal(true, colour);
+            TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2] = new TriggerPipeSignal(true, colour);
             TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 1] = new TriggerPipeSignal(false, colour);
         }
 

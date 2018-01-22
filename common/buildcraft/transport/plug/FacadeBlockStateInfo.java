@@ -33,7 +33,7 @@ public class FacadeBlockStateInfo implements IFacadeState {
         this.requiredStack = requiredStack;
         this.varyingProperties = varyingProperties;
         this.isTransparent = !state.isOpaqueCube();
-        this.isVisible = !requiredStack.isEmpty();
+        this.isVisible = requiredStack != null;
         IBlockAccess access = new SingleBlockAccess(state);
         for (EnumFacing side : EnumFacing.VALUES) {
             isSideSolid[side.ordinal()] = state.isSideSolid(access, BlockPos.ORIGIN, side);

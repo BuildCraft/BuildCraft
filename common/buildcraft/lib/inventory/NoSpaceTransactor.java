@@ -7,14 +7,14 @@
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 
-import buildcraft.lib.misc.StackUtil;
+import java.util.List;
 
 public enum NoSpaceTransactor implements IItemTransactor {
     INSTANCE;
@@ -26,13 +26,13 @@ public enum NoSpaceTransactor implements IItemTransactor {
     }
 
     @Override
-    public NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate) {
+    public List<ItemStack> insert(List<ItemStack> stacks, boolean simulate) {
         return stacks;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
-        return StackUtil.EMPTY;
+        return null;
     }
 }

@@ -166,49 +166,57 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             XmlTag tag = parseTag(line);
             if (tag != null) {
-                if (tag.state == XmlTagState.COMPLETE) {
-                    SpecialParser parser = TAG_FACTORIES.get(tag.name);
-                    if (parser != null) {
-                        List<GuidePartFactory> factories = parser.parse(tag);
-                        if (factories != null) {
-                            nestedParts.peek().addAll(factories);
+                switch (tag.state) {
+                    case COMPLETE:
+                        SpecialParser parser = TAG_FACTORIES.get(tag.name);
+                        if (parser != null) {
+                            List<GuidePartFactory> factories = parser.parse(tag);
+                            if (factories != null) {
+                                nestedParts.peek().addAll(factories);
+                                line = line.substring(tag.originalString.length());
+                            } else {
+                                int len = tag.originalString.length();
+                                line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
+                            }
+                        }
+                        break;
+                    case START: {
+                        MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
+                        if (joiner != null) {
+                            nestedTags.push(tag);
+                            nestedParts.push(new ArrayList<>());
                             line = line.substring(tag.originalString.length());
                         } else {
                             int len = tag.originalString.length();
                             line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
                         }
+                        break;
                     }
-                } else if (tag.state == XmlTagState.START) {
-                    MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
-                    if (joiner != null) {
-                        nestedTags.push(tag);
-                        nestedParts.push(new ArrayList<>());
-                        line = line.substring(tag.originalString.length());
-                    } else {
-                        int len = tag.originalString.length();
-                        line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
-                    }
-                } else /* tag.state == XmlTagState.END */ {
-                    MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
-                    if (joiner != null) {
-                        if (nestedTags.isEmpty()) {
-                            throw new InvalidInputDataException("Tried to close " + tag.name + " before openining it!");
+                    default:
+                        /* tag.state == XmlTagState.END */
+                    {
+                        MultiPartJoiner joiner = GUIDE_PART_MULTIS.get(tag.name);
+                        if (joiner != null) {
+                            if (nestedTags.isEmpty()) {
+                                throw new InvalidInputDataException("Tried to close " + tag.name + " before openining it!");
+                            }
+                            XmlTag name = nestedTags.pop();
+                            if (!tag.name.equals(name.name)) {
+                                throw new InvalidInputDataException(
+                                        "Tried to close " + tag.name + " before instead of " + name.name + "!");
+                            }
+                            List<GuidePartFactory> subParts = nestedParts.pop();
+                            GuidePartFactory joined = joiner.join(name, subParts);
+                            if (joined == null) {
+                                nestedParts.peek().addAll(subParts);
+                                int len = tag.originalString.length();
+                                line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
+                            } else {
+                                nestedParts.peek().add(joined);
+                                line = line.substring(tag.originalString.length());
+                            }
                         }
-                        XmlTag name = nestedTags.pop();
-                        if (!tag.name.equals(name.name)) {
-                            throw new InvalidInputDataException(
-                                "Tried to close " + tag.name + " before instead of " + name.name + "!");
-                        }
-                        List<GuidePartFactory> subParts = nestedParts.pop();
-                        GuidePartFactory joined = joiner.join(name, subParts);
-                        if (joined == null) {
-                            nestedParts.peek().addAll(subParts);
-                            int len = tag.originalString.length();
-                            line = "<red>" + line.substring(0, len) + "</red>" + line.substring(len);
-                        } else {
-                            nestedParts.peek().add(joined);
-                            line = line.substring(tag.originalString.length());
-                        }
+                        break;
                     }
                 }
                 if (line.length() == 0) {
@@ -221,7 +229,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             Set<TextFormatting> formattingElements = EnumSet.noneOf(TextFormatting.class);
             Deque<TextFormatting> formatColours = new ArrayDeque<>();
-            String completeLine = "";
+            StringBuilder completeLine = new StringBuilder();
             int i = 0;
             while (i < line.length()) {
                 char c = line.charAt(i);
@@ -242,23 +250,23 @@ public enum XmlPageLoader implements IPageLoaderText {
                                     formattingElements.add(formatting);
                                 }
                             }
-                            completeLine += TextFormatting.RESET;
+                            completeLine.append(TextFormatting.RESET);
                             if (formatColours.peek() != null) {
-                                completeLine += formatColours.peek();
+                                completeLine.append(formatColours.peek());
                             }
                             for (TextFormatting format : formattingElements) {
-                                completeLine += format;
+                                completeLine.append(format);
                             }
                             i += currentTag.originalString.length();
                             continue;
                         }
                     }
                 }
-                completeLine += c;
+                completeLine.append(c);
                 i++;
             }
 
-            final String modLine = completeLine;
+            final String modLine = completeLine.toString();
             nestedParts.peek().add((gui) -> new GuideText(gui, modLine));
         }
         List<GuidePartFactory> factories = nestedParts.pop();
@@ -352,7 +360,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         /** {@code <tag/>} */
         COMPLETE,
         /** {@code </tag>} */
-        END;
+        END
     }
 
     public static class XmlTag {
@@ -525,7 +533,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             } catch (NumberFormatException nfe) {
                 BCLog.logger.warn("[lib.guide.loader.xml] " + count + " was not a valid number: " + nfe.getMessage());
             }
-            stack.setCount(stackSize);
+            stack.stackSize = stackSize;
         }
 
         if (data != null) {
@@ -535,7 +543,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                     // Use oredict
                     meta = OreDictionary.WILDCARD_VALUE;
                 }
-                stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
+                stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
             } catch (NumberFormatException nfe) {
                 BCLog.logger.warn("[lib.guide.loader.xml] " + data + " was not a valid number: " + nfe.getMessage());
             }

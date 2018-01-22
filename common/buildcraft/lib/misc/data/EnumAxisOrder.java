@@ -51,12 +51,13 @@ public enum EnumAxisOrder {
     }
 
     public static EnumAxisOrder getOrder(Axis first, Axis b) {
-        if (first == Axis.X) {
-            return b == Axis.Y ? XYZ : XZY;
-        } else if (first == Axis.Y) {
-            return b == Axis.X ? YXZ : YZX;
-        } else {
-            return b == Axis.X ? ZXY : ZYX;
+        switch (first) {
+            case X:
+                return b == Axis.Y ? XYZ : XZY;
+            case Y:
+                return b == Axis.X ? YXZ : YZX;
+            default:
+                return b == Axis.X ? ZXY : ZYX;
         }
     }
 

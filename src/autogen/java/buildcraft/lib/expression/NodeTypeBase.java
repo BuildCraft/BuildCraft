@@ -6,16 +6,10 @@
 
 package buildcraft.lib.expression;
 
-import buildcraft.lib.expression.api.INodeFunc;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
-import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.node.func.StringFunctionBi;
 import buildcraft.lib.expression.node.func.StringFunctionTri;
 import buildcraft.lib.expression.node.func.StringFunctionQuad;
 import buildcraft.lib.expression.node.func.StringFunctionPenta;
-import buildcraft.lib.expression.node.func.StringFunctionHex;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong;

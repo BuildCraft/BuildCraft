@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Point3f;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,7 +31,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;
 
     @Override
-    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         double transfer = flow.getMaxTransferForRender(partialTicks);
         if (transfer <= 0) {
             return;

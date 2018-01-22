@@ -17,9 +17,7 @@ import buildcraft.lib.misc.GuiUtil;
 /** Specialised class for rendering {@link IStatementParameter}. */
 public class ParameterRenderer {
 
-    private static final ISimpleDrawable BACKGROUND_DRAWABLE = (x, y) -> {
-        GuiElementStatement.SLOT_COLOUR.drawAt(x, y);
-    };
+    private static final ISimpleDrawable BACKGROUND_DRAWABLE = GuiElementStatement.SLOT_COLOUR;
     private static final Map<DrawType, Function<IStatementParameter, ISimpleDrawable>> drawTypes;
 
     static {
@@ -29,12 +27,8 @@ public class ParameterRenderer {
         drawTypes.put(DrawType.STACK_ONLY_OR_QUESTION_MARK, p -> getStackDrawable(p, true));
         drawTypes.put(DrawType.SPRITE_STACK, p -> getSpriteDrawable(p).andThen(getStackDrawable(p, false)));
         drawTypes.put(DrawType.STACK_SPRITE, p -> getStackDrawable(p, false).andThen(getSpriteDrawable(p)));
-        drawTypes.put(DrawType.SPRITE_STACK_OR_QUESTION_MARK, p -> {
-            return getSpriteDrawable(p).andThen(getStackDrawable(p, true));
-        });
-        drawTypes.put(DrawType.STACK_OR_QUESTION_MARK_THEN_SPRITE, p -> {
-            return getStackDrawable(p, true).andThen(getSpriteDrawable(p));
-        });
+        drawTypes.put(DrawType.SPRITE_STACK_OR_QUESTION_MARK, p -> getSpriteDrawable(p).andThen(getStackDrawable(p, true)));
+        drawTypes.put(DrawType.STACK_OR_QUESTION_MARK_THEN_SPRITE, p -> getStackDrawable(p, true).andThen(getSpriteDrawable(p)));
     }
 
     public static ISimpleDrawable getSpriteDrawable(IStatementParameter param) {
@@ -49,7 +43,7 @@ public class ParameterRenderer {
     public static ISimpleDrawable getStackDrawable(IStatementParameter param, boolean orQuestionMark) {
         return (x, y) -> {
             ItemStack stack = param.getItemStack();
-            if (!stack.isEmpty()) {
+            if (stack != null) {
                 GuiUtil.drawItemStackAt(stack, (int) x + 1, (int) y + 1);
             } else if (orQuestionMark) {
                 GuiElementStatement.ICON_SLOT_NOT_SET.drawAt(x + 1, y + 1);

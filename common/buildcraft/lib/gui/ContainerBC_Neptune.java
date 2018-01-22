@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -22,7 +23,6 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -104,16 +104,16 @@ public abstract class ContainerBC_Neptune extends Container {
         ItemStack playerStack = player.inventory.getItemStack();
         if (slot instanceof IPhantomSlot) {
             IPhantomSlot phantom = (IPhantomSlot) slot;
-            if (playerStack.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
-            } else if (!StackUtil.canMerge(playerStack, StackUtil.asNonNull(slot.getStack()))) {
+            if (playerStack == null) {
+                slot.putStack(null);
+            } else if (!StackUtil.canMerge(playerStack, slot.getStack())) {
                 ItemStack copy = playerStack.copy();
-                copy.setCount(1);
+                copy.stackSize = 1;
                 slot.putStack(copy);
             } else if (phantom.canAdjustCount()) {
                 ItemStack stack = slot.getStack();
-                if (stack.getCount() < stack.getMaxStackSize()) {
-                    stack.grow(1);
+                if (stack.stackSize < stack.getMaxStackSize()) {
+                    stack.stackSize += 1;
                     slot.putStack(stack);
                 }
             }
@@ -124,7 +124,7 @@ public abstract class ContainerBC_Neptune extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
+        ItemStack itemstack = null;
         Slot slot = this.inventorySlots.get(index);
         Slot firstSlot = this.inventorySlots.get(0);
         int playerInventorySize = 36;
@@ -132,32 +132,32 @@ public abstract class ContainerBC_Neptune extends Container {
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
-
-            if (inventorySlots.size() == playerInventorySize) return ItemStack.EMPTY;
-            if (playerInventoryFirst) {
-                if (index < playerInventorySize) {
-                    if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
-                        return ItemStack.EMPTY;
-                    }
-                } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else {
-                if (index < this.inventorySlots.size() - playerInventorySize) {
-                    if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize,
-                        this.inventorySlots.size(), false)) {
-                        return ItemStack.EMPTY;
-                    }
-                } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize,
-                    true)) {
-                    return ItemStack.EMPTY;
-                }
+            if (itemstack1 == null){
+                slot.putStack(null);
             }
+            else {
+                itemstack = itemstack1.copy();
 
-            if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
-            } else {
+                if (inventorySlots.size() == playerInventorySize) return null;
+                if (playerInventoryFirst) {
+                    if (index < playerInventorySize) {
+                        if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
+                            return null;
+                        }
+                    } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
+                        return null;
+                    }
+                } else {
+                    if (index < this.inventorySlots.size() - playerInventorySize) {
+                        if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize,
+                                this.inventorySlots.size(), false)) {
+                            return null;
+                        }
+                    } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize,
+                            true)) {
+                        return null;
+                    }
+                }
                 slot.onSlotChanged();
             }
         }
@@ -254,7 +254,7 @@ public abstract class ContainerBC_Neptune extends Container {
                     // log rather than throw an exception because of bugged/naughty clients
                     String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
                     s2 += "[The item handler disallowed the replacement] (Client = ";
-                    s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
+                    s2 += ctx.getServerHandler().playerEntity.getName() + ", slot_index = " + idx;
                     s2 += ", stack = " + stack + ")";
                     BCLog.logger.warn(s2);
                 }
@@ -265,7 +265,7 @@ public abstract class ContainerBC_Neptune extends Container {
         // log rather than throw an exception because of bugged/naughty clients
         String s2 = "[lib.container] Received an illegal phantom slot setting request! ";
         s2 += "[Didn't find a phantom slot for the given index] (Client = ";
-        s2 += ctx.getServerHandler().player.getName() + ", slot_index = " + idx;
+        s2 += ctx.getServerHandler().playerEntity.getName() + ", slot_index = " + idx;
         s2 += ", stack = " + stack + ")";
         BCLog.logger.warn(s2);
     }
@@ -286,7 +286,7 @@ public abstract class ContainerBC_Neptune extends Container {
                 + "size of the inventory! (list = " + stacks + ", handler = " + handler + ")");
         }
         int[] indexes = new int[stacks.size()];
-        NonNullList<ItemStack> destinationStacks = NonNullList.create();
+        List<ItemStack> destinationStacks = Lists.newArrayList();
         int i2 = 0;
         for (int i = 0; i < stacks.size(); i++) {
             ItemStack stack = stacks.get(i);
@@ -331,7 +331,7 @@ public abstract class ContainerBC_Neptune extends Container {
         });
     }
 
-    private void sendSetPhantomSlots(int[] indexes, NonNullList<ItemStack> stacks) {
+    private void sendSetPhantomSlots(int[] indexes, List<ItemStack> stacks) {
         if (indexes.length != stacks.size()) {
             throw new IllegalArgumentException("Sizes don't match! (" + indexes.length + " vs " + stacks.size() + ")");
         }

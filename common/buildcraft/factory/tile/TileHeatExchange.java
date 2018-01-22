@@ -19,7 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -265,10 +264,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
-        if (section != null) {
-            return section.tankManager.onActivated(player, pos, hand);
-        }
-        return false;
+        return section != null && section.tankManager.onActivated(player, pos, hand);
     }
 
     @Override
@@ -295,7 +291,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
     }
 
     @Override
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+    public void addDrops(List<ItemStack> toDrop, int fortune) {
         super.addDrops(toDrop, fortune);
         if (section != null) {
             section.tankManager.addDrops(toDrop);
@@ -543,7 +539,6 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                     return;
                 }
                 default: {
-                    return;
                 }
             }
         }
@@ -639,9 +634,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             Vec3d vecDir = new Vec3d(dir.getDirectionVec());
             from = from.add(vecDir);
 
-            double x = from.x;
-            double y = from.y;
-            double z = from.z;
+            double x = from.xCoord;
+            double y = from.yCoord;
+            double z = from.zCoord;
 
             Vec3d motion = VecUtil.scale(vecDir, 0.4);
             int particleCount = Minecraft.getMinecraft().gameSettings.particleSetting;
@@ -651,9 +646,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             }
             particleCount = particleCount == 0 ? 5 : 2;
             for (int i = 0; i < particleCount; i++) {
-                double dx = motion.x + (Math.random() - 0.5) * 0.1;
-                double dy = motion.y + (Math.random() - 0.5) * 0.1;
-                double dz = motion.z + (Math.random() - 0.5) * 0.1;
+                double dx = motion.xCoord + (Math.random() - 0.5) * 0.1;
+                double dy = motion.yCoord + (Math.random() - 0.5) * 0.1;
+                double dz = motion.zCoord + (Math.random() - 0.5) * 0.1;
                 double interp = i / (double) particleCount;
                 x -= dx * interp;
                 y -= dy * interp;
@@ -785,6 +780,6 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         /** progress stays at max */
         RUNNING,
         /** Progress is decreasing from max to 0. */
-        STOPPING;
+        STOPPING
     }
 }

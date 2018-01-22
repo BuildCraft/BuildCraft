@@ -195,10 +195,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
 
     private boolean canSpread(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == this) {
-            return true;
-        }
-        return false;
+        return state.getBlock() == this;
     }
 
     // Misc

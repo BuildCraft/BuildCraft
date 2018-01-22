@@ -21,12 +21,6 @@ public class EngineConnector implements IMjConnector {
 
     @Override
     public boolean canConnect(@Nonnull IMjConnector other) {
-        if (other instanceof IMjReceiver && ((IMjReceiver) other).canReceive()) {
-            if (redstoneOnly) {
-                return other instanceof IMjRedstoneReceiver;
-            }
-            return true;
-        }
-        return false;
+        return other instanceof IMjReceiver && ((IMjReceiver) other).canReceive() && (!redstoneOnly || other instanceof IMjRedstoneReceiver);
     }
 }

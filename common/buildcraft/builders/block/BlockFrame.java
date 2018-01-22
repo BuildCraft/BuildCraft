@@ -98,7 +98,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
         IBlockState actualState = state.getActualState(world, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, BASE_AABB);
         CONNECTED_MAP.keySet().stream()

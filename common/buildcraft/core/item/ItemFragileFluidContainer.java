@@ -5,23 +5,18 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IItemFluidShard;
 
@@ -29,7 +24,6 @@ import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
 
 public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFluidShard {
 
@@ -44,11 +38,6 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new FragileFluidHandler(stack);
-    }
-
-    @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        // Never allow this to be displayed in a creative tab -- we don't want to list every single fluid...
     }
 
     @Override
@@ -75,11 +64,10 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         return LocaleUtil.localize(getUnlocalizedName() + ".name", localized);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        NBTTagCompound fluidTag = stack.getSubCompound("fluid");
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, playerIn, tooltip, advanced);
+        NBTTagCompound fluidTag = stack.getSubCompound("fluid", false);
         if (fluidTag != null) {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
             if (fluid != null && fluid.amount > 0) {
@@ -89,7 +77,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     }
 
     @Override
-    public void addFluidDrops(NonNullList<ItemStack> toDrop, FluidStack fluid) {
+    public void addFluidDrops(List<ItemStack> toDrop, FluidStack fluid) {
         if (fluid == null) {
             return;
         }
@@ -118,17 +106,17 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
 
     @Nullable
     static FluidStack getFluid(ItemStack container) {
-        if (container.isEmpty()) {
+        if (container == null) {
             return null;
         }
-        NBTTagCompound fluidNbt = container.getSubCompound("fluid");
+        NBTTagCompound fluidNbt = container.getSubCompound("fluid", false);
         if (fluidNbt == null) {
             return null;
         }
         return FluidStack.loadFluidStackFromNBT(fluidNbt);
     }
 
-    public class FragileFluidHandler implements IFluidHandlerItem, ICapabilityProvider {
+    public class FragileFluidHandler implements IFluidHandler, ICapabilityProvider {
 
         @Nonnull
         private ItemStack container;
@@ -144,8 +132,8 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
 
         @Override
         public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-            if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY
-                || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY
+                    || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
                 return (T) this;
             }
             return null;
@@ -154,7 +142,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         @Override
         public IFluidTankProperties[] getTankProperties() {
             return new IFluidTankProperties[] {
-                new FluidTankProperties(getFluid(container), MAX_FLUID_HELD, false, true) };
+                    new FluidTankProperties(getFluid(container), MAX_FLUID_HELD, false, true) };
         }
 
         @Override
@@ -186,7 +174,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
                 fluid.amount -= toDrain;
                 if (fluid.amount <= 0) {
                     fluid = null;
-                    container = StackUtil.EMPTY;
+                    container = null;
                 } else {
                     setFluid(container, fluid);
                 }
@@ -194,9 +182,5 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
             return f;
         }
 
-        @Override
-        public ItemStack getContainer() {
-            return container;
-        }
     }
 }

@@ -32,11 +32,7 @@ class GuiConfigSet {
     void readFromJson(JsonObject json) {
         for (Entry<String, JsonElement> entry : json.entrySet()) {
             String name = entry.getKey();
-            GuiConfigEntry guiEntry = properties.get(name);
-            if (guiEntry == null) {
-                guiEntry = new GuiConfigEntry(name);
-                properties.put(name, guiEntry);
-            }
+            GuiConfigEntry guiEntry = properties.computeIfAbsent(name, GuiConfigEntry::new);
             JsonElement elem = entry.getValue();
             if (!elem.isJsonObject()) {
                 BCLog.logger.warn("[lib.gui.config] Found a non-object element in '" + name + "'");

@@ -8,7 +8,6 @@ package buildcraft.factory.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -25,6 +24,8 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
 
 import buildcraft.factory.BCFactoryBlocks;
+
+import java.util.List;
 
 public class TileMiningWell extends TileMiner {
     public TileMiningWell() {
@@ -43,7 +44,7 @@ public class TileMiningWell extends TileMiner {
                 BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
                 MinecraftForge.EVENT_BUS.post(breakEvent);
                 if (!breakEvent.isCanceled()) {
-                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, currentPos, getOwner());
+                    List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, currentPos, getOwner());
                     if (stacks != null) {
                         for (ItemStack stack : stacks) {
                             InventoryUtil.addToBestAcceptor(world, pos, null, stack);

@@ -22,7 +22,7 @@ public interface IExpressionNode {
     // common expression types
 
     @FunctionalInterface
-    public interface INodeDouble extends IExpressionNode, DoubleSupplier {
+    interface INodeDouble extends IExpressionNode, DoubleSupplier {
         double evaluate();
 
         @Override
@@ -43,7 +43,7 @@ public interface IExpressionNode {
     }
 
     @FunctionalInterface
-    public interface INodeLong extends IExpressionNode, LongSupplier, IntSupplier {
+    interface INodeLong extends IExpressionNode, LongSupplier, IntSupplier {
         long evaluate();
 
         @Override
@@ -70,7 +70,7 @@ public interface IExpressionNode {
     }
 
     @FunctionalInterface
-    public interface INodeBoolean extends IExpressionNode, BooleanSupplier {
+    interface INodeBoolean extends IExpressionNode, BooleanSupplier {
         boolean evaluate();
 
         @Override
@@ -91,7 +91,7 @@ public interface IExpressionNode {
 
     }
 
-    public interface INodeObject<T> extends IExpressionNode, Supplier<T> {
+    interface INodeObject<T> extends IExpressionNode, Supplier<T> {
         T evaluate();
 
         Class<T> getType();
@@ -112,7 +112,7 @@ public interface IExpressionNode {
             return evaluate();
         }
 
-        public static <T> INodeObject<T> create(Class<T> clazz, Supplier<T> supplier) {
+        static <T> INodeObject<T> create(Class<T> clazz, Supplier<T> supplier) {
             return new INodeObject<T>() {
                 @Override
                 public T evaluate() {
@@ -129,7 +129,7 @@ public interface IExpressionNode {
 
     /** Common object types (Provided as functional interfaces, these should NEVER be tested against with instanceof */
     @FunctionalInterface
-    public interface INodeString extends INodeObject<String> {
+    interface INodeString extends INodeObject<String> {
         @Override
         default Class<String> getType() {
             return String.class;

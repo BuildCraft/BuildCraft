@@ -7,6 +7,7 @@
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 
@@ -34,7 +35,7 @@ public class DelegateItemHandler implements IItemHandlerModifiable {
         return delegate.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return delegate.extractItem(slot, amount, simulate);
@@ -45,8 +46,4 @@ public class DelegateItemHandler implements IItemHandlerModifiable {
         delegate.setStackInSlot(slot, stack);
     }
 
-    @Override
-    public int getSlotLimit(int slot) {
-        return delegate.getSlotLimit(slot);
-    }
 }

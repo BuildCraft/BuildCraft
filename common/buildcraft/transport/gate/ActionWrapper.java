@@ -66,8 +66,8 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
         IStatement[] possible = delegate.getPossible();
         boolean andSides = sourcePart != EnumPipePart.CENTER;
         List<ActionWrapper> list = new ArrayList<>(possible.length + 5);
-        for (int i = 0; i < possible.length; i++) {
-            list.add(wrap(possible[i], sourcePart.face));
+        for (IStatement aPossible : possible) {
+            list.add(wrap(aPossible, sourcePart.face));
         }
         if (andSides) {
             EnumPipePart part = sourcePart;
@@ -75,10 +75,8 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
                 int i = j + possible.length;
                 part = part.next();
                 ActionWrapper action = wrap(delegate, part.face);
-                if (true) {
-                    // TODO: Check the gui container to see if this is a valid action!
-                    list.add(action);
-                }
+                // TODO: Check the gui container to see if this is a valid action!
+                list.add(action);
             }
         }
         return list.toArray(new ActionWrapper[0]);

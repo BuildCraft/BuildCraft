@@ -46,42 +46,46 @@ public abstract class JsonModelRule {
         String type = JsonUtils.getString(obj, "type");
         if (type.startsWith("builtin:")) {
             String builtin = type.substring("builtin:".length());
-            if ("rotate_facing".equals(builtin)) {
-                fnCtx = new FunctionContext(fnCtx, ExpressionCompat.ENUM_FACING);
-                String from = JsonUtils.getString(obj, "from");
-                INodeObject<EnumFacing> nodeFrom = JsonVariableModelPart.convertStringToObjectNode(from, fnCtx, EnumFacing.class);
+            switch (builtin) {
+                case "rotate_facing": {
+                    fnCtx = new FunctionContext(fnCtx, ExpressionCompat.ENUM_FACING);
+                    String from = JsonUtils.getString(obj, "from");
+                    INodeObject<EnumFacing> nodeFrom = JsonVariableModelPart.convertStringToObjectNode(from, fnCtx, EnumFacing.class);
 
-                String to = JsonUtils.getString(obj, "to");
-                INodeObject<EnumFacing> nodeTo = JsonVariableModelPart.convertStringToObjectNode(to, fnCtx, EnumFacing.class);
+                    String to = JsonUtils.getString(obj, "to");
+                    INodeObject<EnumFacing> nodeTo = JsonVariableModelPart.convertStringToObjectNode(to, fnCtx, EnumFacing.class);
 
-                INodeDouble[] origin;
-                if (obj.has("origin")) {
-                    origin = JsonVariableModelPart.readVariablePosition(obj, "origin", fnCtx);
-                } else {
-                    origin = RuleRotateFacing.DEFAULT_ORIGIN;
-                }
+                    INodeDouble[] origin;
+                    if (obj.has("origin")) {
+                        origin = JsonVariableModelPart.readVariablePosition(obj, "origin", fnCtx);
+                    } else {
+                        origin = RuleRotateFacing.DEFAULT_ORIGIN;
+                    }
 
-                return new RuleRotateFacing(nodeWhen, nodeFrom, nodeTo, origin);
-            } else if ("rotate".equals(builtin)) {
-                INodeDouble[] origin;
-                if (obj.has("origin")) {
-                    origin = JsonVariableModelPart.readVariablePosition(obj, "origin", fnCtx);
-                } else {
-                    origin = RuleRotate.DEFAULT_ORIGIN;
+                    return new RuleRotateFacing(nodeWhen, nodeFrom, nodeTo, origin);
                 }
-                INodeDouble[] angles = JsonVariableModelPart.readVariablePosition(obj, "angle", fnCtx);
-                return new RuleRotate(nodeWhen, origin, angles);
-            } else if ("scale".equals(builtin)) {
-                INodeDouble[] origin;
-                if (obj.has("origin")) {
-                    origin = JsonVariableModelPart.readVariablePosition(obj, "origin", fnCtx);
-                } else {
-                    origin = RuleRotate.DEFAULT_ORIGIN;
+                case "rotate": {
+                    INodeDouble[] origin;
+                    if (obj.has("origin")) {
+                        origin = JsonVariableModelPart.readVariablePosition(obj, "origin", fnCtx);
+                    } else {
+                        origin = RuleRotate.DEFAULT_ORIGIN;
+                    }
+                    INodeDouble[] angles = JsonVariableModelPart.readVariablePosition(obj, "angle", fnCtx);
+                    return new RuleRotate(nodeWhen, origin, angles);
                 }
-                INodeDouble[] scales = JsonVariableModelPart.readVariablePosition(obj, "scale", fnCtx);
-                return new RuleScale(nodeWhen, origin, scales);
-            } else {
-                throw new JsonSyntaxException("Unknown built in rule type '" + builtin + "'");
+                case "scale": {
+                    INodeDouble[] origin;
+                    if (obj.has("origin")) {
+                        origin = JsonVariableModelPart.readVariablePosition(obj, "origin", fnCtx);
+                    } else {
+                        origin = RuleRotate.DEFAULT_ORIGIN;
+                    }
+                    INodeDouble[] scales = JsonVariableModelPart.readVariablePosition(obj, "scale", fnCtx);
+                    return new RuleScale(nodeWhen, origin, scales);
+                }
+                default:
+                    throw new JsonSyntaxException("Unknown built in rule type '" + builtin + "'");
             }
         } else {
             throw new JsonSyntaxException("Unknown rule type '" + type + "'");

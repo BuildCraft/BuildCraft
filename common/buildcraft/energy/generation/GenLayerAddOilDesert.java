@@ -9,6 +9,7 @@ package buildcraft.energy.generation;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 
@@ -31,9 +32,6 @@ public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
     @Override
     protected boolean canReplaceBiome(int biomeId) {
         Biome biome = Biome.getBiomeForId(biomeId);
-        if (biome == null) {
-            return false;
-        }
-        return BiomeDictionary.getTypes(biome).containsAll(REQUIRED_TYPES);
+        return biome != null && Lists.newArrayList(BiomeDictionary.getTypesForBiome(biome)).containsAll(REQUIRED_TYPES);
     }
 }

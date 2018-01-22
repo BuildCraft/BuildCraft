@@ -26,31 +26,31 @@ public interface StackInsertionFunction {
      * themselves IS taken into account, so this has an effective upper limit of 64. */
     static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
-            if (toInsert.isEmpty()) {
-                return new InsertionResult(addingTo, StackUtil.EMPTY);
+            if (toInsert == null) {
+                return new InsertionResult(addingTo, null);
             }
 
-            if (addingTo.isEmpty()) {
+            if (addingTo == null) {
                 int maxSize = Math.min(maxStackSize, toInsert.getMaxStackSize());
-                if (toInsert.getCount() <= maxSize) {
-                    return new InsertionResult(toInsert, StackUtil.EMPTY);
+                if (toInsert.stackSize <= maxSize) {
+                    return new InsertionResult(toInsert, null);
                 } else {
                     ItemStack inserted = toInsert.splitStack(maxSize);
                     return new InsertionResult(inserted, toInsert);
                 }
-            } else if (addingTo.getCount() == maxStackSize) {
+            } else if (addingTo.stackSize == maxStackSize) {
                 return new InsertionResult(addingTo, toInsert);
             } else if (StackUtil.canMerge(addingTo, toInsert)) {
                 ItemStack complete = addingTo.copy();
-                int count = addingTo.getCount() + toInsert.getCount();
+                int count = addingTo.stackSize + toInsert.stackSize;
                 int maxSize = Math.min(maxStackSize, complete.getMaxStackSize());
                 if (count <= maxSize) {
-                    complete.setCount(count);
-                    return new InsertionResult(complete, StackUtil.EMPTY);
+                    complete.stackSize = count;
+                    return new InsertionResult(complete, null);
                 } else {
-                    complete.setCount(maxSize);
+                    complete.stackSize = maxSize;
                     ItemStack leftOver = toInsert.copy();
-                    leftOver.setCount(count - maxSize);
+                    leftOver.stackSize = count - maxSize;
                     return new InsertionResult(complete, leftOver);
                 }
             }
@@ -60,13 +60,13 @@ public interface StackInsertionFunction {
 
     /** Gets a stack insertion function that will insert up to full stacks into a given slot. This is just
      * {@link #getInsertionFunction(int)} with an argument of {@link Integer#MAX_VALUE}. */
-    public static StackInsertionFunction getDefaultInserter() {
+    static StackInsertionFunction getDefaultInserter() {
         return getInsertionFunction(Integer.MAX_VALUE);
     }
 
     /** The result of an attempted insertion. */
     class InsertionResult {
-        public static final InsertionResult EMPTY_STACKS = new InsertionResult(StackUtil.EMPTY, StackUtil.EMPTY);
+        public static final InsertionResult EMPTY_STACKS = new InsertionResult(null, null);
 
         @Nonnull
         public final ItemStack toSet, toReturn;

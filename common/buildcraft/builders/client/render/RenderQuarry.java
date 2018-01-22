@@ -73,7 +73,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     }
 
     @Override
-    public void render(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void renderTileEntityAt(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("bc");
         profiler.startSection("quarry");
@@ -136,28 +136,28 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
 
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z),//
-                        new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, max.getZ() + 12 / 16D),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, interpolatedPos.zCoord),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, max.getZ() + 12 / 16D),//
                         1 / 16D, true, true, 0));
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z),//
-                        new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, min.getZ() + 4 / 16D),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, interpolatedPos.zCoord),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, min.getZ() + 4 / 16D),//
                         1 / 16D, true, true, 0));
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.x, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-                        new Vec3d(max.getX() + 12 / 16D, max.getY() + 0.5, interpolatedPos.z + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(max.getX() + 12 / 16D, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0));
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
-                        new Vec3d(interpolatedPos.x, max.getY() + 0.5, interpolatedPos.z + 0.5),//
-                        new Vec3d(min.getX() + 4 / 16D, max.getY() + 0.5, interpolatedPos.z + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(min.getX() + 4 / 16D, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0));
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME_BOTTOM,//
-                        new Vec3d(interpolatedPos.x + 0.5, interpolatedPos.y + 1 + 4 / 16D, interpolatedPos.z + 0.5),//
-                        new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + 4 / 16D, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, max.getY() + 0.5, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0));
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(DRILL,//
-                        new Vec3d(interpolatedPos.x + 0.5, interpolatedPos.y + 1 + yOffset, interpolatedPos.z + 0.5),//
-                        new Vec3d(interpolatedPos.x + 0.5, interpolatedPos.y + yOffset, interpolatedPos.z + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + yOffset, interpolatedPos.zCoord + 0.5),//
+                        new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + yOffset, interpolatedPos.zCoord + 0.5),//
                         1 / 16D, true, true, 0));
             } else {
                 LaserBoxRenderer.renderLaserBoxStatic(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, true);

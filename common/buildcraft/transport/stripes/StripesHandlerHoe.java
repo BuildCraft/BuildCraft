@@ -34,33 +34,9 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
         }
 
         pos = pos.offset(direction);
-        if (stack.onItemUse(
-                player,
-                world,
-                pos,
-                EnumHand.MAIN_HAND,
-                EnumFacing.UP,
-                0.0f,
-                0.0f,
-                0.0f
-        ) != EnumActionResult.PASS) {
-            return true;
-        }
+        return stack.onItemUse(player, world, pos, EnumHand.MAIN_HAND, EnumFacing.UP, 0.0f, 0.0f, 0.0f) != EnumActionResult.PASS
+                || direction != EnumFacing.UP && stack.onItemUse(player, world, pos.down(), EnumHand.MAIN_HAND, EnumFacing.UP, 0.0f, 0.0f, 0.0f) != EnumActionResult.PASS;
 
-        if (direction != EnumFacing.UP && stack.onItemUse(
-                player,
-                world,
-                pos.down(),
-                EnumHand.MAIN_HAND,
-                EnumFacing.UP,
-                0.0f,
-                0.0f,
-                0.0f
-        ) != EnumActionResult.PASS) {
-            return true;
-        }
-
-        return false;
     }
 
 }

@@ -117,8 +117,8 @@ public class ZonePlan implements IZone {
                                 .map(entry -> {
                                     NBTTagCompound zoneChunkTag = new NBTTagCompound();
                                     entry.getValue().writeToNBT(zoneChunkTag);
-                                    zoneChunkTag.setInteger("chunkX", entry.getKey().x);
-                                    zoneChunkTag.setInteger("chunkZ", entry.getKey().z);
+                                    zoneChunkTag.setInteger("chunkX", entry.getKey().chunkXPos);
+                                    zoneChunkTag.setInteger("chunkZ", entry.getKey().chunkZPos);
                                     return zoneChunkTag;
                                 })
                 )
@@ -150,8 +150,8 @@ public class ZonePlan implements IZone {
         double maxSqrDistance = Double.MAX_VALUE;
 
         for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
-            double dx = (e.getKey().x << 4 + 8) - index.getX();
-            double dz = (e.getKey().z << 4 + 8) - index.getZ();
+            double dx = (e.getKey().chunkXPos << 4 + 8) - index.getX();
+            double dz = (e.getKey().chunkZPos << 4 + 8) - index.getZ();
 
             double sqrDistance = dx * dx + dz * dz;
 
@@ -165,8 +165,8 @@ public class ZonePlan implements IZone {
 
     @Override
     public boolean contains(Vec3d point) {
-        int xBlock = (int) Math.floor(point.x);
-        int zBlock = (int) Math.floor(point.z);
+        int xBlock = (int) Math.floor(point.xCoord);
+        int zBlock = (int) Math.floor(point.zCoord);
 
         return get(xBlock, zBlock);
     }
@@ -182,8 +182,8 @@ public class ZonePlan implements IZone {
         for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
             if (chunkId == 0) {
                 BlockPos i = e.getValue().getRandomBlockPos(rand);
-                int x = (e.getKey().x << 4) + i.getX();
-                int z = (e.getKey().z << 4) + i.getZ();
+                int x = (e.getKey().chunkXPos << 4) + i.getX();
+                int z = (e.getKey().chunkZPos << 4) + i.getZ();
 
                 return new BlockPos(x, i.getY(), z);
             }
@@ -209,8 +209,8 @@ public class ZonePlan implements IZone {
     public void writeToByteBuf(PacketBuffer buf) {
         buf.writeInt(chunkMapping.size());
         for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
-            buf.writeInt(e.getKey().x);
-            buf.writeInt(e.getKey().z);
+            buf.writeInt(e.getKey().chunkXPos);
+            buf.writeInt(e.getKey().chunkZPos);
             e.getValue().writeToByteBuf(buf);
         }
     }

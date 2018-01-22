@@ -33,7 +33,7 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     @Override
     public void initGui() {
         super.initGui();
-        nameField = new GuiTextField(0, fontRenderer, guiLeft + 90, guiTop + 62, 156, 12);
+        nameField = new GuiTextField(0, fontRendererObj, guiLeft + 90, guiTop + 62, 156, 12);
         nameField.setText(container.tile.name);
         nameField.setFocused(true);
     }

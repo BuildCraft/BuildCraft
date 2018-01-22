@@ -48,9 +48,17 @@ public class MatrixUtil {
                 mat.mul(m2);
             } else {
                 int ang;
-                if (face == EnumFacing.EAST) ang = 2;
-                else if (face == EnumFacing.NORTH) ang = 3;
-                else ang = 1;
+                switch (face) {
+                    case EAST:
+                        ang = 2;
+                        break;
+                    case NORTH:
+                        ang = 3;
+                        break;
+                    default:
+                        ang = 1;
+                        break;
+                }
                 AxisAngle4f axisAngle = new AxisAngle4f(0, 1, 0, (float) Math.PI * 0.5f * ang);
                 m2.setRotation(axisAngle);
                 mat.mul(m2);

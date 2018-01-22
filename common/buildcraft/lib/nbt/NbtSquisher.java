@@ -130,16 +130,17 @@ public class NbtSquisher {
         if (byte1 == NbtSquishConstants.BUILDCRAFT_MAGIC_1 && byte2 == NbtSquishConstants.BUILDCRAFT_MAGIC_2) {
             // Defiantly a BC stream
             int type = stream.read();
-            if (type == TYPE_MC) {
-                return CompressedStreamTools.read(new DataInputStream(stream));
-            } else if (type == TYPE_MC_GZIP) {
-                return CompressedStreamTools.readCompressed(stream);
-            } else if (type == TYPE_BC_1) {
-                return readBuildCraftV1Direct(new DataInputStream(stream));
-            } else if (type == TYPE_BC_1_GZIP) {
-                return readBuildCraftV1Direct(new DataInputStream(new GZIPInputStream(stream)));
-            } else {
-                throw new InvalidInputDataException("Cannot handle BuildCraft saved NBT type " + type);
+            switch (type) {
+                case TYPE_MC:
+                    return CompressedStreamTools.read(new DataInputStream(stream));
+                case TYPE_MC_GZIP:
+                    return CompressedStreamTools.readCompressed(stream);
+                case TYPE_BC_1:
+                    return readBuildCraftV1Direct(new DataInputStream(stream));
+                case TYPE_BC_1_GZIP:
+                    return readBuildCraftV1Direct(new DataInputStream(new GZIPInputStream(stream)));
+                default:
+                    throw new InvalidInputDataException("Cannot handle BuildCraft saved NBT type " + type);
             }
         } else if (byte1 == NbtSquishConstants.GZIP_MAGIC_1 && byte2 == NbtSquishConstants.GZIP_MAGIC_2) {
             // Defiantly a GZIP stream
@@ -153,20 +154,21 @@ public class NbtSquisher {
         stream.mark(5);
         int type = stream.read();
 
-        if (type == TYPE_MC) {
-            return CompressedStreamTools.read(new DataInputStream(stream));
-        } else if (type == TYPE_MC_GZIP) {
-            return CompressedStreamTools.readCompressed(stream);
-        } else if (type == TYPE_BC_1) {
-            return readBuildCraftV1Direct(new DataInputStream(stream));
-        } else if (type == TYPE_BC_1_GZIP) {
-            return readBuildCraftV1Direct(new DataInputStream(new GZIPInputStream(stream)));
-        } else if (type == Constants.NBT.TAG_COMPOUND) {
-            // Assume vanilla, but reset back to the first byte as vanilla needs
-            stream.reset();
-            return CompressedStreamTools.read(new DataInputStream(stream));
-        } else {
-            throw new InvalidInputDataException("Cannot handle unknown saved NBT type " + type);
+        switch (type) {
+            case TYPE_MC:
+                return CompressedStreamTools.read(new DataInputStream(stream));
+            case TYPE_MC_GZIP:
+                return CompressedStreamTools.readCompressed(stream);
+            case TYPE_BC_1:
+                return readBuildCraftV1Direct(new DataInputStream(stream));
+            case TYPE_BC_1_GZIP:
+                return readBuildCraftV1Direct(new DataInputStream(new GZIPInputStream(stream)));
+            case Constants.NBT.TAG_COMPOUND:
+                // Assume vanilla, but reset back to the first byte as vanilla needs
+                stream.reset();
+                return CompressedStreamTools.read(new DataInputStream(stream));
+            default:
+                throw new InvalidInputDataException("Cannot handle unknown saved NBT type " + type);
         }
     }
 

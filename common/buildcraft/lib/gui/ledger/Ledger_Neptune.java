@@ -171,14 +171,17 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
 
         double targetWidth = currentWidth;
         double targetHeight = currentHeight;
-        if (currentDifference == 1) {
-            targetWidth = maxWidth;
-            targetHeight = maxHeight;
-        } else if (currentDifference == -1) {
-            targetWidth = CLOSED_WIDTH;
-            targetHeight = CLOSED_HEIGHT;
-        } else {
-            return;
+        switch (currentDifference) {
+            case 1:
+                targetWidth = maxWidth;
+                targetHeight = maxHeight;
+                break;
+            case -1:
+                targetWidth = CLOSED_WIDTH;
+                targetHeight = CLOSED_HEIGHT;
+                break;
+            default:
+                return;
         }
 
         double maxDiff = Math.max(maxWidth - CLOSED_WIDTH, maxHeight - CLOSED_HEIGHT);

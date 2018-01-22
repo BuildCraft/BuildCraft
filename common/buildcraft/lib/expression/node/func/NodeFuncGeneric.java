@@ -101,11 +101,13 @@ public abstract class NodeFuncGeneric implements INodeFunc {
         FULL;
 
         public InlineType and(IExpressionNode before, IExpressionNode after) {
-            if (this == PARTIAL) return PARTIAL;
-            else if (this == NONE) {
-                return before == after ? NONE : PARTIAL;
-            } else {// FULL
-                return after instanceof IConstantNode ? FULL : PARTIAL;
+            switch (this) {
+                case PARTIAL:
+                    return PARTIAL;
+                case NONE:
+                    return before == after ? NONE : PARTIAL;
+                default: // FULL
+                    return after instanceof IConstantNode ? FULL : PARTIAL;
             }
         }
     }

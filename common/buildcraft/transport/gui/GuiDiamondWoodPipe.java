@@ -110,9 +110,9 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     @Override
     protected void drawForegroundLayer() {
         String title = LocaleUtil.localize("gui.pipes.emerald.title");
-        double titleX = rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
-        fontRenderer.drawString(title, (int) titleX, (int) rootElement.getY() + 6, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) rootElement.getX() + 8, (int) rootElement.getY() + ySize - 93, 0x404040);
+        double titleX = rootElement.getX() + (xSize - fontRendererObj.getStringWidth(title)) / 2;
+        fontRendererObj.drawString(title, (int) titleX, (int) rootElement.getY() + 6, 0x404040);
+        fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), (int) rootElement.getX() + 8, (int) rootElement.getY() + ySize - 93, 0x404040);
         if (pipe.filterMode == FilterMode.ROUND_ROBIN) {
             GlStateManager.color(1, 1, 1, 1);
             GuiIcon icon = pipe.filterValid ? ICON_ROUND_ROBIN_INDEX : ICON_ROUND_ROBIN_NONE;

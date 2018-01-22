@@ -19,7 +19,6 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,6 +38,8 @@ import buildcraft.lib.misc.SoundUtil;
 
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.PluggableLens;
+
+import java.util.List;
 
 public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggableLens(String id) {
@@ -90,7 +91,7 @@ public class ItemPluggableLens extends ItemBC_Neptune implements IItemPluggable 
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    protected void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         for (int i = 0; i < 34; i++) {
             subItems.add(new ItemStack(this, 1, i));
         }

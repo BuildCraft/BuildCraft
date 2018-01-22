@@ -57,7 +57,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
-        ItemStack searchedStack = StackUtil.EMPTY;
+        ItemStack searchedStack = null;
 
         if (parameters != null && parameters.length >= 1 && parameters[0] != null) {
             searchedStack = parameters[0].getItemStack();
@@ -75,10 +75,10 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 ItemStack stack = handler.getStackInSlot(i);
 
                 // TODO: Replace some of this with
-                foundItems |= !stack.isEmpty() && (searchedStack.isEmpty() || StackUtil.canStacksOrListsMerge(stack, searchedStack));
+                foundItems |= stack != null && (searchedStack == null || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack.isEmpty() || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxStackSize()))//
-                    && (searchedStack.isEmpty() || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true).isEmpty());
+                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
+                    && (searchedStack == null || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true) == null);
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a
                 // heuristic which is more desirable than expensive computation

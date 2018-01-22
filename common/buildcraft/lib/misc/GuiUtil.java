@@ -20,7 +20,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -49,10 +48,10 @@ public class GuiUtil {
             public void refresh() {
                 delegate().clear();
                 ItemStack stack = stackRef.get();
-                if (!stack.isEmpty()) {
+                if (stack != null) {
                     EntityPlayer player = gui.container.player;
                     boolean advanced = gui.mc.gameSettings.advancedItemTooltips;
-                    delegate().addAll(stack.getTooltip(player, advanced ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL));
+                    delegate().addAll(stack.getTooltip(player, advanced));
                 }
             }
         };
@@ -73,7 +72,7 @@ public class GuiUtil {
         Minecraft mc = Minecraft.getMinecraft();
         RenderItem itemRender = mc.getRenderItem();
         itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, null);
         RenderHelper.disableStandardItemLighting();
     }
 
@@ -261,19 +260,16 @@ public class GuiUtil {
         }
         scissorRegions.push(rect);
         scissor0();
-        return new AutoGlScissor() {
-            @Override
-            public void close() {
-                GuiRectangle last = scissorRegions.pop();
-                if (last != rect) {
-                    throw new IllegalStateException("Popped rectangles in the wrong order!");
-                }
-                GuiRectangle next = scissorRegions.peek();
-                if (next == null) {
-                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                } else {
-                    scissor0();
-                }
+        return () -> {
+            GuiRectangle last = scissorRegions.pop();
+            if (last != rect) {
+                throw new IllegalStateException("Popped rectangles in the wrong order!");
+            }
+            GuiRectangle next = scissorRegions.peek();
+            if (next == null) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            } else {
+                scissor0();
             }
         };
     }

@@ -141,8 +141,7 @@ public class PositionUtil {
         boolean y = diff.getY() == 1 || diff.getY() == -1;
         if (x && y) return false;
         boolean z = diff.getZ() == 1 || diff.getZ() == -1;
-        if (y && z) return false;
-        return x != z;
+        return (!y || !z) && x != z;
     }
 
     /** Finds a rotation that {@link #rotateFacing(EnumFacing, Axis, Rotation)} will use on "from" to get "to", with a
@@ -189,9 +188,9 @@ public class PositionUtil {
     public static Vec3d rotateVec(Vec3d from, Axis axis, Rotation rotation) {
         Vec3d rotated = new Vec3d(0, 0, 0);
 
-        double numEast = from.x;
-        double numUp = from.y;
-        double numSouth = from.z;
+        double numEast = from.xCoord;
+        double numUp = from.yCoord;
+        double numSouth = from.zCoord;
 
         EnumFacing newEast = PositionUtil.rotateFacing(EnumFacing.EAST, axis, rotation);
         EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);

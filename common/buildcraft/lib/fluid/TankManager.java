@@ -17,7 +17,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.INBTSerializable;
@@ -54,7 +53,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
         Collections.addAll(this, values);
     }
 
-    public void addDrops(NonNullList<ItemStack> toDrop) {
+    public void addDrops(List<ItemStack> toDrop) {
         FluidItemDrops.addFluidDrops(toDrop, toArray(new Tank[0]));
     }
 

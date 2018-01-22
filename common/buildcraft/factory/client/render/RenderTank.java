@@ -6,10 +6,10 @@
 
 package buildcraft.factory.client.render;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -40,7 +40,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
     public RenderTank() {}
 
     @Override
-    public void render(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void renderTileEntityAt(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage) {
         FluidStackInterp forRender = tile.getFluidForRender(partialTicks);
         if (forRender == null) {
             return;
@@ -55,7 +55,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        VertexBuffer bb = Tessellator.getInstance().getBuffer();
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         bb.setTranslation(x, y, z);
 

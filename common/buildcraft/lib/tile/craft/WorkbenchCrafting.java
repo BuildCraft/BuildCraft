@@ -17,9 +17,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.items.IItemHandler;
 
@@ -33,7 +31,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 public class WorkbenchCrafting extends InventoryCrafting {
     enum EnumRecipeType {
         INGREDIENTS,
-        EXACT_STACKS;
+        EXACT_STACKS
     }
 
     public static final Container CONTAINER_EVENT_HANDLER = new ContainerNullEventHandler();
@@ -48,7 +46,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
 
     @Nullable
     private IRecipe currentRecipe;
-    private ItemStack assumedResult = ItemStack.EMPTY;
+    private ItemStack assumedResult = null;
 
     private EnumRecipeType recipeType = null;
 
@@ -90,16 +88,11 @@ public class WorkbenchCrafting extends InventoryCrafting {
         if (isBlueprintDirty) {
             currentRecipe = CraftingUtil.findMatchingRecipe(this, tile.getWorld());
             if (currentRecipe == null) {
-                assumedResult = ItemStack.EMPTY;
+                assumedResult = null;
                 recipeType = null;
             } else {
                 assumedResult = currentRecipe.getCraftingResult(this);
-                NonNullList<Ingredient> ingredients = currentRecipe.getIngredients();
-                if (ingredients.isEmpty()) {
                     recipeType = EnumRecipeType.EXACT_STACKS;
-                } else {
-                    recipeType = EnumRecipeType.INGREDIENTS;
-                }
             }
             isBlueprintDirty = false;
             return true;
@@ -161,11 +154,11 @@ public class WorkbenchCrafting extends InventoryCrafting {
         TObjectIntMap<ItemStackKey> required = new TObjectIntHashMap<>(getSizeInventory());
         for (int s = 0; s < getSizeInventory(); s++) {
             ItemStack req = invBlueprint.getStackInSlot(s);
-            if (!req.isEmpty()) {
-                int count = req.getCount();
+            if (req != null) {
+                int count = req.stackSize;
                 if (count != 1) {
                     req = req.copy();
-                    req.setCount(1);
+                    req.stackSize = 1;
                 }
                 ItemStackKey key = new ItemStackKey(req);
                 required.adjustOrPutValue(key, count, count);
@@ -174,7 +167,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
         return required.forEachEntry((stack, count) -> {
             ArrayStackFilter filter = new ArrayStackFilter(stack.baseStack);
             ItemStack inInventory = invMaterials.extract(filter, count, count, true);
-            return !inInventory.isEmpty() && inInventory.getCount() == count;
+            return inInventory != null && inInventory.stackSize == count;
         });
     }
 
@@ -192,9 +185,9 @@ public class WorkbenchCrafting extends InventoryCrafting {
         // Step 2
         for (int s = 0; s < getSizeInventory(); s++) {
             ItemStack bpt = invBlueprint.getStackInSlot(s);
-            if (!bpt.isEmpty()) {
+            if (bpt != null) {
                 ItemStack stack = invMaterials.extract(new ArrayStackFilter(bpt), 1, 1, false);
-                if (stack.isEmpty()) {
+                if (stack == null) {
                     clearInventory();
                     return false;
                 }
@@ -210,35 +203,35 @@ public class WorkbenchCrafting extends InventoryCrafting {
             return false;
         }
         ItemStack result = currentRecipe.getCraftingResult(this);
-        if (result.isEmpty()) {
+        if (result == null) {
             // what?
             clearInventory();
             return false;
         }
         ItemStack leftover = invResult.insert(result, false, false);
-        if (!leftover.isEmpty()) {
+        if (leftover != null) {
             InventoryUtil.addToBestAcceptor(tile.getWorld(), tile.getPos(), null, leftover);
         }
-        NonNullList<ItemStack> remainingStacks = currentRecipe.getRemainingItems(this);
-        for (int s = 0; s < remainingStacks.size(); s++) {
+        ItemStack[] remainingStacks = currentRecipe.getRemainingItems(this);
+        for (int s = 0; s < remainingStacks.length; s++) {
             ItemStack inSlot = getStackInSlot(s);
-            ItemStack remaining = remainingStacks.get(s);
+            ItemStack remaining = remainingStacks[s];
 
-            if (!inSlot.isEmpty()) {
+            if (inSlot != null) {
                 decrStackSize(s, 1);
                 inSlot = getStackInSlot(s);
             }
 
-            if (!remaining.isEmpty()) {
-                if (inSlot.isEmpty()) {
+            if (remaining != null) {
+                if (inSlot == null) {
                     setInventorySlotContents(s, remaining);
                 } else if (ItemStack.areItemsEqual(inSlot, remaining)
                     && ItemStack.areItemStackTagsEqual(inSlot, remaining)) {
-                    remaining.grow(inSlot.getCount());
+                    remaining.stackSize += inSlot.stackSize;
                     setInventorySlotContents(s, remaining);
                 } else {
                     leftover = invMaterials.insert(remaining, false, false);
-                    if (!leftover.isEmpty()) {
+                    if (leftover != null) {
                         InventoryUtil.addToBestAcceptor(tile.getWorld(), tile.getPos(), null, leftover);
                     }
                 }
@@ -249,10 +242,10 @@ public class WorkbenchCrafting extends InventoryCrafting {
         // Some ingredients really need to be removed (like empty buckets)
         for (int s = 0; s < getSizeInventory(); s++) {
             ItemStack inSlot = super.getStackInSlot(s);
-            if (!inSlot.isEmpty()) {
+            if (inSlot != null) {
                 leftover = invMaterials.insert(inSlot, false, false);
-                decrStackSize(s, inSlot.getCount() - (leftover.isEmpty() ? 0 : leftover.getCount()));
-                if (!leftover.isEmpty()) {
+                decrStackSize(s, inSlot.stackSize - (leftover == null ? 0 : leftover.stackSize));
+                if (leftover != null) {
                     InventoryUtil.addToBestAcceptor(tile.getWorld(), tile.getPos(), null, leftover);
                 }
             }
@@ -264,10 +257,10 @@ public class WorkbenchCrafting extends InventoryCrafting {
     private boolean clearInventory() {
         for (int s = 0; s < getSizeInventory(); s++) {
             ItemStack inSlot = super.getStackInSlot(s);
-            if (!inSlot.isEmpty()) {
+            if (inSlot != null) {
                 ItemStack leftover = invMaterials.insert(inSlot, false, false);
-                decrStackSize(s, inSlot.getCount() - (leftover.isEmpty() ? 0 : leftover.getCount()));
-                if (!leftover.isEmpty()) {
+                decrStackSize(s, inSlot.stackSize - (leftover == null ? 0 : leftover.stackSize));
+                if (leftover != null) {
                     return false;
                 }
             }

@@ -55,11 +55,10 @@ public final class PipeModelKey {
         if (obj == null) return false;
         if (obj.getClass() != getClass()) return false;
         PipeModelKey other = (PipeModelKey) obj;
-        if (definition != other.definition) return false;
-        if (center != other.center) return false;
-        if (!Arrays.equals(sides, other.sides)) return false;
-        if (!Arrays.equals(connected, other.connected)) return false;
-        return colour == other.colour;
+        return definition == other.definition && center == other.center
+                && Arrays.equals(sides, other.sides)
+                && Arrays.equals(connected, other.connected)
+                && colour == other.colour;
     }
 
     @Override

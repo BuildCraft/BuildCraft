@@ -154,7 +154,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                     // makeTileCache();
                     sendNetworkUpdate(NET_RENDER_DATA);
                     redrawBlock();
-                    world.notifyNeighborsRespectDebug(getPos(), getBlockType(), true);
+                    world.notifyNeighborsRespectDebug(getPos(), getBlockType());
                     return EnumActionResult.SUCCESS;
                 }
                 return EnumActionResult.FAIL;
@@ -167,8 +167,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         TileEntity neighbour = world.getTileEntity(getPos().offset(dir));
         if (neighbour == null) return false;
         IMjConnector other = neighbour.getCapability(MjAPI.CAP_CONNECTOR, dir.getOpposite());
-        if (other == null) return false;
-        return mjConnector.canConnect(other) && other.canConnect(mjConnector);
+        return other != null && mjConnector.canConnect(other) && other.canConnect(mjConnector);
     }
 
     public void rotateIfInvalid() {
@@ -196,7 +195,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     /** @return The heat of the current biome, in celsius. */
     protected float getBiomeHeat() {
         Biome biome = getBiome();
-        float temp = biome.getTemperature(getPos());
+        float temp = biome.getTemperature();
         return Math.max(0, Math.min(30, temp * 15f));
     }
 

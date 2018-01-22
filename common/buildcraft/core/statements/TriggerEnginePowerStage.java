@@ -46,10 +46,7 @@ public class TriggerEnginePowerStage extends BCStatement implements ITriggerExte
     @Override
     public boolean isTriggerActive(TileEntity target, EnumFacing side, IStatementContainer source,
         IStatementParameter[] parameters) {
-        if (target instanceof TileEngineBase_BC8) {
-            return ((TileEngineBase_BC8) target).getPowerStage() == stage;
-        }
-        return false;
+        return target instanceof TileEngineBase_BC8 && ((TileEngineBase_BC8) target).getPowerStage() == stage;
     }
 
     @Override

@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -31,7 +31,6 @@ import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.factory.BCFactoryBlocks;
@@ -73,9 +72,8 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
     }
 
     @Override
-    public void render(TileHeatExchange tile, double x, double y, double z, float partialTicks, int destroyStage,
-        float alpha) {
-        super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
+    public void renderTileEntityAt(TileHeatExchange tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
 
         if (!tile.isStart()) {
             return;
@@ -102,7 +100,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        VertexBuffer bb = Tessellator.getInstance().getBuffer();
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         bb.setTranslation(x, y, z);
 
@@ -170,8 +168,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         profiler.endSection();
     }
 
-    private static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks,
-        BufferBuilder bb) {
+    private static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks, VertexBuffer bb) {
         FluidStackInterp fluid = tank.getFluidForRender(partialTicks);
         if (fluid == null || fluid.amount <= 0) {
             return;
@@ -183,7 +180,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             size.max, bb, null);
     }
 
-    private static void renderFlow(Vec3d diff, EnumFacing face, BufferBuilder bb, double s, double e, FluidStack fluid,
+    private static void renderFlow(Vec3d diff, EnumFacing face, VertexBuffer bb, double s, double e, FluidStack fluid,
         int point, float partialTicks) {
         double tickTime = Minecraft.getMinecraft().world.getTotalWorldTime();
         double offset = (tickTime + partialTicks) % 31 / 31.0;
@@ -209,7 +206,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             if (i < s - 1) {
                 continue;
             }
-            bb.setTranslation(d.x, d.y, d.z);
+            bb.setTranslation(d.xCoord, d.yCoord, d.zCoord);
 
             double s1 = s < i ? 0 : (s % 1);
             double e1 = e > i + 1 ? 1 : (e % 1);

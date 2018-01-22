@@ -15,14 +15,14 @@ import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilGenerator;
 
-@Mod.EventBusSubscriber(modid = BCEnergy.MODID)
+@Mod.EventBusSubscriber()
 public class BCEnergyWorldGen {
     public static void init() {
-        BiomeDictionary.addTypes(
+        BiomeDictionary.registerBiomeType(
             BiomeOilOcean.INSTANCE,
             BiomeDictionary.Type.OCEAN
         );
-        BiomeDictionary.addTypes(
+        BiomeDictionary.registerBiomeType(
             BiomeOilDesert.INSTANCE,
             BiomeDictionary.Type.HOT,
             BiomeDictionary.Type.DRY,

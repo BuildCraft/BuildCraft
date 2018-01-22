@@ -63,19 +63,6 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
     }
 
     @Override
-    public void spawnParticle(int id,
-                              boolean ignoreRange,
-                              boolean minParticles,
-                              double x,
-                              double y,
-                              double z,
-                              double xSpeed,
-                              double ySpeed,
-                              double zSpeed,
-                              @Nonnull int... parameters) {
-    }
-
-    @Override
     public void onEntityAdded(@Nonnull Entity entity) {
     }
 

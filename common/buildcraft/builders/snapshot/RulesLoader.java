@@ -185,4 +185,16 @@ public class RulesLoader {
             )
             .collect(Collectors.toCollection(HashSet::new));
     }
+
+    @SuppressWarnings("WeakerAccess")
+    public static Set<JsonRule> getRules(String entityId, NBTTagCompound tileNbt) {
+        // noinspection ConstantConditions
+        return RulesLoader.RULES.stream()
+                .filter(rule -> rule.selectors != null)
+                .filter(rule ->
+                        rule.selectors.stream()
+                                .anyMatch(selector -> selector.matches(entityId::equals, tileNbt))
+                )
+                .collect(Collectors.toCollection(HashSet::new));
+    }
 }

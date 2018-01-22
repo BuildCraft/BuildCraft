@@ -45,8 +45,7 @@ public class ModelHolderRegistry {
         }
         if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE)) {
             BCLog.logger.info("[lib.model.holder] List of registered Models:");
-            List<ModelHolder> holders = new ArrayList<>();
-            holders.addAll(HOLDERS);
+            List<ModelHolder> holders = new ArrayList<>(HOLDERS);
             holders.sort(Comparator.comparing(a -> a.modelLocation.toString()));
 
             for (ModelHolder holder : holders) {

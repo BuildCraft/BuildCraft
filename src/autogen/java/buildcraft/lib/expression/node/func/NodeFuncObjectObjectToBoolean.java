@@ -8,8 +8,6 @@ package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeStack;
@@ -73,12 +71,12 @@ public class NodeFuncObjectObjectToBoolean<A, B> extends NodeFuncBase implements
             if (!canInline) {
                 // Note that we can still inline the arguments, just not *this* function
                 return NodeInliningHelper.tryInline(this, argA, argB,
-                    (a, b) -> new Func(a, b),
-                    (a, b) -> new Func(a, b)
+                        Func::new,
+                        Func::new
                 );
             }
             return NodeInliningHelper.tryInline(this, argA, argB,
-                (a, b) -> new Func(a, b),
+                    Func::new,
                 (a, b) -> NodeConstantBoolean.of(function.apply(a.evaluate(), b.evaluate()))
             );
         }

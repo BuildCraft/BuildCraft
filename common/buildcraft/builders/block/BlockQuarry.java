@@ -17,7 +17,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -30,7 +29,6 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -101,8 +99,5 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
         ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (placer instanceof EntityPlayer) {
-            AdvancementUtil.unlockAdvancement((EntityPlayer) placer, ADVANCEMENT);
-        }
     }
 }

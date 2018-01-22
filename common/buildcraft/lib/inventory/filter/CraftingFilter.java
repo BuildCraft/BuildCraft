@@ -9,16 +9,17 @@ package buildcraft.lib.inventory.filter;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.misc.StackUtil;
 
+import java.util.List;
+
 /** Returns true if the stack matches any one one of the filter stacks. Checks the OreDictionary and wildcards. */
 public class CraftingFilter implements IStackFilter {
 
-    private final NonNullList<ItemStack> stacks;
+    private final List<ItemStack> stacks;
 
     public CraftingFilter(ItemStack... stacks) {
         this.stacks = StackUtil.listOf(stacks);
@@ -37,7 +38,7 @@ public class CraftingFilter implements IStackFilter {
         return false;
     }
 
-    public NonNullList<ItemStack> getStacks() {
+    public List<ItemStack> getStacks() {
         return stacks;
     }
 

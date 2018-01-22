@@ -82,8 +82,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         } else {
             buffer.writeBoolean(true);
             type.writeToBuffer(buffer, statement);
-            for (int p = 0; p < params.length; p++) {
-                IStatementParameter param = params[p];
+            for (IStatementParameter param : params) {
                 StatementTypeParam.INSTANCE.writeToBuffer(buffer, param);
             }
         }
@@ -114,13 +113,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
 
     @Override
     public boolean canSet(Object value) {
-        if (value == null) {
-            return true;
-        }
-        if (!type.clazz.isInstance(value)) {
-            return false;
-        }
-        return ((IStatement) value).minParameters() <= params.length;
+        return value == null || type.clazz.isInstance(value) && ((IStatement) value).minParameters() <= params.length;
     }
 
     static class ParamRef implements IReference<IStatementParameter> {

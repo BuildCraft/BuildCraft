@@ -54,11 +54,7 @@ public class PathSubCache extends MarkerSubCache<PathConnection> {
         PathConnection conFrom = getConnection(from);
         PathConnection conTo = getConnection(to);
         if (conFrom == null) {
-            if (conTo == null) {
-                return true;
-            } else {
-                return conTo.canAddMarker(from, to);
-            }
+            return conTo == null || conTo.canAddMarker(from, to);
         } else {
             if (conTo == null) {
                 return conFrom.canAddMarker(from, to);

@@ -10,13 +10,13 @@ import java.nio.IntBuffer;
 
 import javax.vecmath.Vector3d;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -77,7 +77,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
     private ItemStack getPaintbrush() {
         ItemStack currentStack = getCurrentStack();
-        if (!currentStack.isEmpty() && currentStack.getItem() instanceof ItemPaintbrush_BC8) {
+        if (currentStack != null && currentStack.getItem() instanceof ItemPaintbrush_BC8) {
             return currentStack;
         }
         return null;
@@ -111,7 +111,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             if (lastSelected != null) {
                 selectionStartXZ = lastSelected;
             }
-        } else if (getCurrentStack().isEmpty()) {
+        } else if (getCurrentStack() == null) {
             startPositionX = positionX;
             startPositionZ = positionZ;
             startMouseX = mouseX;
@@ -221,7 +221,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int y = guiTop;
         if (lastSelected != null) {
             String text = "X: " + lastSelected.getX() + " Y: " + lastSelected.getY() + " Z: " + lastSelected.getZ();
-            fontRenderer.drawString(text, x + 130, y + 130, 0x404040);
+            fontRendererObj.drawString(text, x + 130, y + 130, 0x404040);
         }
         int offsetX = 8;
         int offsetY = 9;
@@ -348,7 +348,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             int b = (int) (((foundColor >> 0) & 0xFF) * 0.7);
             int a = 0x77;
             ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
-            BufferBuilder builder = Tessellator.getInstance().getBuffer();
+            VertexBuffer builder = Tessellator.getInstance().getBuffer();
             builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
             ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(builder, found.getX(), found.getY(), found.getZ());
             Tessellator.getInstance().draw();
@@ -400,7 +400,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 } else {
                                     continue;
                                 }
-                                int color = EnumDyeColor.byMetadata(i).getColorValue();
+                                int color = EnumDyeColor.byMetadata(i).getDyeDamage();
                                 int r = (color >> 16) & 0xFF;
                                 int g = (color >> 8) & 0xFF;
                                 int b = (color >> 0) & 0xFF;

@@ -30,8 +30,8 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     }
 
     public GuideAssemblyFactory(ItemStack[] input, ItemStack output, long mjCost) {
-        this.input = ArrayUtil.map(input, ChangingItemStack::new, ChangingItemStack[]::new);
-        this.output = new ChangingItemStack(output);
+        this.input = ArrayUtil.map(input, ChangingItemStack::create, ChangingItemStack[]::new);
+        this.output = ChangingItemStack.create(output);
         this.mjCost = new ChangingObject<>(new Long[] { mjCost });
         this.hash = computeHash();
     }
@@ -191,8 +191,6 @@ public class GuideAssemblyFactory implements GuidePartFactory {
         if (obj.getClass() != getClass()) return false;
         GuideAssemblyFactory other = (GuideAssemblyFactory) obj;
         // Shortcut out of this full itemstack comparison as its really expensive
-        if (hash != other.hash) return false;
-        if (input.length != other.input.length) return false;
-        return Arrays.equals(input, other.input) && output.equals(other.output);
+        return hash == other.hash && input.length == other.input.length && Arrays.equals(input, other.input) && output.equals(other.output);
     }
 }

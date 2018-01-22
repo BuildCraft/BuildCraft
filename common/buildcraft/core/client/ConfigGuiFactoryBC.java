@@ -51,14 +51,13 @@ public class ConfigGuiFactoryBC implements IModGuiFactory {
         return null;
     }
 
-
     @Override
-    public boolean hasConfigGui() {
-        return true;
+    public Class<? extends GuiScreen> mainConfigGuiClass() {
+        return GuiConfigManager.class;
     }
 
     @Override
-    public GuiScreen createConfigGui(GuiScreen parentScreen) {
-        return new GuiConfigManager(parentScreen);
+    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
+        return null;
     }
 }

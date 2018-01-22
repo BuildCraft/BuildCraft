@@ -6,7 +6,7 @@
 
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,7 +24,7 @@ public enum PipeBehaviourRendererStripes implements IPipeBehaviourRenderer<PipeB
     INSTANCE;
 
     @Override
-    public void render(PipeBehaviourStripes stripes, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    public void render(PipeBehaviourStripes stripes, double x, double y, double z, float partialTicks, VertexBuffer bb) {
         EnumFacing dir = stripes.direction;
         if (dir == null) return;
         MutableQuad[] quads = BCTransportModels.getStripesDynQuads(dir);

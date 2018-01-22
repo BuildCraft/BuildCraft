@@ -42,11 +42,7 @@ public class BlockTube extends BlockBCBase_Neptune {
         // noinspection StatementWithEmptyBody
         while (world.getBlockState(currentPos = currentPos.up()).getBlock() == this) {
         }
-        if (!(world.getTileEntity(currentPos) instanceof TileMiner)) {
-            return super.removedByPlayer(state, world, pos, player, willHarvest);
-        } else {
-            return false;
-        }
+        return !(world.getTileEntity(currentPos) instanceof TileMiner) && super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
     @Override

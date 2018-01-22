@@ -48,16 +48,21 @@ public class JsonTypeTags {
 
     private String getTyped(ETypeTag tag) {
         String typed;
-        if (tag == ETypeTag.MOD) {
-            typed = mod;
-        } else if (tag == ETypeTag.SUB_MOD) {
-            typed = subMod;
-        } else if (tag == ETypeTag.TYPE) {
-            typed = type;
-        } else if (tag == ETypeTag.SUB_TYPE) {
-            typed = subType;
-        } else {
-            throw new IllegalStateException("Don't know the type " + tag);
+        switch (tag) {
+            case MOD:
+                typed = mod;
+                break;
+            case SUB_MOD:
+                typed = subMod;
+                break;
+            case TYPE:
+                typed = type;
+                break;
+            case SUB_TYPE:
+                typed = subType;
+                break;
+            default:
+                throw new IllegalStateException("Don't know the type " + tag);
         }
         return tag.preText + typed;
     }

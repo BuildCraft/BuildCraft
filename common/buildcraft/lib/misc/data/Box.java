@@ -164,10 +164,9 @@ public class Box implements IBox {
     @Override
     public boolean contains(Vec3d p) {
         AxisAlignedBB bb = getBoundingBox();
-        if (p.x < bb.minX || p.x >= bb.maxX) return false;
-        if (p.y < bb.minY || p.y >= bb.maxY) return false;
-        if (p.z < bb.minZ || p.z >= bb.maxZ) return false;
-        return true;
+        return !(p.xCoord < bb.minX) && !(p.xCoord >= bb.maxX)
+                && !(p.yCoord < bb.minY) && !(p.yCoord >= bb.maxY)
+                && !(p.zCoord < bb.minZ) && !(p.zCoord >= bb.maxZ);
     }
 
     public boolean contains(BlockPos i) {
@@ -211,8 +210,6 @@ public class Box implements IBox {
         return this;
     }
 
-    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#contains(Vec3d)} as the
-     * logic is different! */
     public AxisAlignedBB getBoundingBox() {
         return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
     }
@@ -264,12 +261,9 @@ public class Box implements IBox {
     }
 
     public boolean doesIntersectWith(Box box) {
-        if (isInitialized() && box.isInitialized()) {
-            return min.getX() <= box.max.getX() && max.getX() >= box.min.getX()//
-                && min.getY() <= box.max.getY() && max.getY() >= box.min.getY() //
+        return isInitialized() && box.isInitialized() && min.getX() <= box.max.getX() && max.getX() >= box.min.getX()
+                && min.getY() <= box.max.getY() && max.getY() >= box.min.getY()
                 && min.getZ() <= box.max.getZ() && max.getZ() >= box.min.getZ();
-        }
-        return false;
     }
 
     /** @return The intersection box (if these two boxes are intersecting) or null if they were not. */
@@ -316,9 +310,7 @@ public class Box implements IBox {
         if (obj == null) return false;
         if (obj.getClass() != getClass()) return false;
         Box box = (Box) obj;
-        if (!Objects.equal(min, box.min)) return false;
-        if (!Objects.equal(max, box.max)) return false;
-        return true;
+        return Objects.equal(min, box.min) && Objects.equal(max, box.max);
     }
 
     @Override

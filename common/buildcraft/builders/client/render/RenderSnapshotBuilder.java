@@ -10,7 +10,7 @@ import java.util.Collections;
 
 import javax.vecmath.Point3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -42,7 +42,7 @@ public class RenderSnapshotBuilder {
             double y,
             double z,
             float partialTicks,
-            BufferBuilder bb
+            VertexBuffer bb
     ) {
         for (SnapshotBuilder<T>.PlaceTask placeTask : snapshotBuilder.clientPlaceTasks) {
             Vec3d prevPos = snapshotBuilder.prevClientPlaceTasks.stream()
@@ -53,9 +53,9 @@ public class RenderSnapshotBuilder {
             Vec3d pos = prevPos.add(snapshotBuilder.getPlaceTaskItemPos(placeTask).subtract(prevPos).scale(partialTicks));
             for (ItemStack item : placeTask.items) {
                 ItemRenderUtil.renderItemStack(
-                    x - tilePos.getX() + pos.x,
-                    y - tilePos.getY() + pos.y,
-                    z - tilePos.getZ() + pos.z,
+                    x - tilePos.getX() + pos.xCoord,
+                    y - tilePos.getY() + pos.yCoord,
+                    z - tilePos.getZ() + pos.zCoord,
                     item,
                     world.getCombinedLight(new BlockPos(pos), 0),
                     EnumFacing.SOUTH,
@@ -77,7 +77,7 @@ public class RenderSnapshotBuilder {
             for (EnumFacing face : EnumFacing.VALUES) {
                 ModelUtil.createFace(
                     face,
-                    new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
+                    new Point3f((float) robotPos.xCoord, (float) robotPos.yCoord, (float) robotPos.zCoord),
                     new Point3f(4 / 16F, 4 / 16F, 4 / 16F),
                     new ModelUtil.UvFaceData(
                         BCBuildersSprites.ROBOT.getInterpU((i * 8) / 64D),

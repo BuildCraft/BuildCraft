@@ -176,16 +176,6 @@ public class FakeWorld extends World {
             public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original) {
                 return original;
             }
-
-            @Override
-            public boolean isFixedBiome() {
-                return true;
-            }
-
-            @Override
-            public Biome getFixedBiome() {
-                return BIOME;
-            }
         };
     }
 }

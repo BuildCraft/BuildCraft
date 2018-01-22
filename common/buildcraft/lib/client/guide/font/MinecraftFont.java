@@ -17,7 +17,7 @@ public enum MinecraftFont implements IFontRenderer {
     INSTANCE;
 
     private static FontRenderer getFontRenderer() {
-        return Minecraft.getMinecraft().fontRenderer;
+        return Minecraft.getMinecraft().fontRendererObj;
     }
 
     @Override

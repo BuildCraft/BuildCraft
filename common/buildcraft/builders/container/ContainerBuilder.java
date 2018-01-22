@@ -53,7 +53,7 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
         return tile.snapshotType == EnumSnapshotType.BLUEPRINT &&
                 index < tile.blueprintBuilder.remainingDisplayRequired.size()
                 ? tile.blueprintBuilder.remainingDisplayRequired.get(index)
-                : ItemStack.EMPTY;
+                : null;
     }
 
     @Override

@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -19,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -34,8 +33,9 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.ParticleUtil;
 import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
+
+import java.util.List;
 
 public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     private static final String DAMAGE = "damage";
@@ -48,7 +48,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    protected void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         for (int i = 0; i < 17; i++) {
             subItems.add(new ItemStack(this, 1, i));
         }
@@ -64,13 +64,12 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         Brush brush = new Brush(stack);
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
         if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing, player)) {
             ItemStack newStack = brush.save(stack);
-            if (!newStack.isEmpty()) {
+            if (newStack != null) {
                 player.setHeldItem(hand, newStack);
             }
             // We just changed the damage NBT value
@@ -158,15 +157,15 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             }
         }
 
-        @Nonnull
+        @Nullable
         public ItemStack save() {
-            return save(StackUtil.EMPTY);
+            return save(null);
         }
 
-        @Nonnull
-        public ItemStack save(@Nonnull ItemStack existing) {
+        @Nullable
+        public ItemStack save(ItemStack existing) {
             ItemStack stack = existing;
-            if (existing.isEmpty() || existing.getMetadata() != getMeta()) {
+            if (existing == null || existing.getMetadata() != getMeta()) {
                 stack = new ItemStack(ItemPaintbrush_BC8.this, 1, getMeta());
             }
             if (usesLeft != MAX_USES && colour != null) {
@@ -177,7 +176,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
                 }
                 nbt.setByte(DAMAGE, (byte) (MAX_USES - usesLeft));
             }
-            return stack == existing ? StackUtil.EMPTY : stack;
+            return stack == existing ? null : stack;
         }
 
         public int getMeta() {

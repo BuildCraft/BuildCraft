@@ -8,6 +8,7 @@ package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -16,7 +17,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -32,6 +32,8 @@ import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.StackUtil;
+
+import java.util.List;
 
 public class ItemTransactorHelper {
     @Nonnull
@@ -99,14 +101,14 @@ public class ItemTransactorHelper {
         return new InjectableWrapper(injectable, facing);
     }
 
-    /** Provides an implementation of {@link IItemTransactor#insert(NonNullList, boolean)} that relies on
+    /** Provides an implementation of {@link IItemTransactor#insert(List, boolean)} that relies on
      * {@link IItemTransactor#insert(ItemStack, boolean, boolean)}. This is the least efficient, default
      * implementation. */
-    public static NonNullList<ItemStack> insertAllBypass(IItemTransactor transactor, NonNullList<ItemStack> stacks, boolean simulate) {
-        NonNullList<ItemStack> leftOver = NonNullList.create();
+    public static List<ItemStack> insertAllBypass(IItemTransactor transactor, List<ItemStack> stacks, boolean simulate) {
+        List<ItemStack> leftOver = Lists.newArrayList();
         for (ItemStack stack : stacks) {
             ItemStack leftOverStack = transactor.insert(stack, false, simulate);
-            if (!leftOverStack.isEmpty()) {
+            if (leftOverStack != null) {
                 leftOver.add(leftOverStack);
             }
         }
@@ -173,12 +175,12 @@ public class ItemTransactorHelper {
 
     private static int moveSingle0(IItemTransactor src, IItemTransactor dst, IStackFilter filter, int maxItems, boolean simulateSrc, boolean simulateDst) {
         ItemStack potential = src.extract(filter, 1, maxItems, true);
-        if (potential.isEmpty()) return 0;
+        if (potential == null) return 0;
         ItemStack leftOver = dst.insert(potential, false, simulateDst);
-        int toTake = potential.getCount() - leftOver.getCount();
+        int toTake = potential.stackSize - leftOver.stackSize;
         IStackFilter exactFilter = (stack) -> StackUtil.canMerge(stack, potential);
         ItemStack taken = src.extract(exactFilter, toTake, toTake, simulateSrc);
-        if (taken.getCount() != toTake) {
+        if (taken.stackSize != toTake) {
             String msg = "One of the two transactors (either src = ";
             msg += src.getClass() + " or dst = " + dst.getClass() + ")";
             msg += " didn't respect the movement flags! ( potential = " + potential;
@@ -194,7 +196,7 @@ public class ItemTransactorHelper {
             if (!simulate) {
                 InventoryUtil.drop(world, vec, stack);
             }
-            return StackUtil.EMPTY;
+            return null;
         };
     }
 }

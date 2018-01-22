@@ -9,6 +9,7 @@ package buildcraft.silicon.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -29,6 +30,8 @@ import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileChargingTable;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
+
+import javax.annotation.Nullable;
 
 public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTargetBlock {
     private final EnumLaserTableType type;
@@ -76,7 +79,7 @@ public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTarget
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
         switch(type) {
             case ASSEMBLY_TABLE:
                 if (!world.isRemote) {

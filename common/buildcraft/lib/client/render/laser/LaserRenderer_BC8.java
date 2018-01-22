@@ -16,7 +16,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.profiler.Profiler;
@@ -156,7 +156,7 @@ public class LaserRenderer_BC8 {
     }
 
     /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
-    public static void renderLaserDynamic(LaserData_BC8 data, BufferBuilder buffer) {
+    public static void renderLaserDynamic(LaserData_BC8 data, VertexBuffer buffer) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("compute");
         LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);

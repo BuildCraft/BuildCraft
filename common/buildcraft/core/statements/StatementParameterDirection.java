@@ -8,7 +8,6 @@ package buildcraft.core.statements;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -30,7 +29,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
 
 /** Directions *might* be replaced with individual triggers and actions per direction. Not sure yet. */
 @Deprecated
@@ -67,10 +65,10 @@ public class StatementParameterDirection implements IStatementParameter {
         return direction;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

@@ -22,6 +22,6 @@ public class InvertedStackFilter implements IStackFilter {
 
     @Override
     public boolean matches(@Nonnull ItemStack stack) {
-        return !stack.isEmpty() && !filter.matches(stack);
+        return stack != null && !filter.matches(stack);
     }
 }

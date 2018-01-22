@@ -77,10 +77,10 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before,
+        ItemStack after) {
         if (handler == invFuel) {
-            if (isForceInserting && after.isEmpty()) {
+            if (isForceInserting && after == null) {
                 isForceInserting = false;
             }
         }
@@ -127,11 +127,11 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
                 ItemStack fuel = invFuel.extractItem(0, 1, false);
                 ItemStack container = fuel.getItem().getContainerItem(fuel);
-                if (!container.isEmpty()) {
-                    if (invFuel.getStackInSlot(0).isEmpty()) {
+                if (container != null) {
+                    if (invFuel.getStackInSlot(0) == null) {
                         isForceInserting = false;
                         ItemStack leftover = invFuel.insert(container, false, false);
-                        if (!leftover.isEmpty()) {
+                        if (leftover != null) {
                             isForceInserting = true;
                             invFuel.setStackInSlot(0, leftover);
                         }

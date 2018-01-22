@@ -7,12 +7,14 @@ import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockBanner;
 import net.minecraft.block.BlockVine;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -50,10 +52,25 @@ public class BCBuildersSchematics {
             @Nonnull
             @Override
             public List<ItemStack> computeRequiredItems() {
-                return Collections.singletonList(ItemBanner.makeBanner(
+                return Collections.singletonList(makeBanner(
                     EnumDyeColor.byDyeDamage(tileNbt.getInteger("Base")), tileNbt.getTagList("Patterns", 10)));
             }
         };
+    }
+
+    /**
+     * Direct copy from 1.12
+     */
+    public static ItemStack makeBanner(EnumDyeColor dyeColor, @Nullable NBTTagList nbtTagList)
+    {
+        ItemStack itemstack = new ItemStack(Items.BANNER, 1, dyeColor.getDyeDamage());
+
+        if (nbtTagList != null && !nbtTagList.hasNoTags())
+        {
+            itemstack.getSubCompound("BlockEntityTag", true).setTag("Patterns", nbtTagList.copy());
+        }
+
+        return itemstack;
     }
 
     private static SchematicBlockDefault getVine() {

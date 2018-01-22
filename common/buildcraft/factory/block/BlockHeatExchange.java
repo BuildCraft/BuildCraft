@@ -97,10 +97,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
     private static boolean doesNeighbourConnect(IBlockAccess world, BlockPos pos, EnumFacing thisFacing,
         EnumFacing dir) {
         IBlockState neighbour = world.getBlockState(pos.offset(dir));
-        if (neighbour.getBlock() == BCFactoryBlocks.heatExchange) {
-            return neighbour.getValue(PROP_FACING) == thisFacing;
-        }
-        return false;
+        return neighbour.getBlock() == BCFactoryBlocks.heatExchange && neighbour.getValue(PROP_FACING) == thisFacing;
     }
 
     @Override

@@ -68,13 +68,7 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
     }
 
     public boolean isReady() {
-        if (delay == 0) {
-            return true;
-        }
-        if (mouseOverStart == 0) {
-            return false;
-        }
-        return System.currentTimeMillis() - mouseOverStart >= delay;
+        return delay == 0 || mouseOverStart != 0 && System.currentTimeMillis() - mouseOverStart >= delay;
     }
 
     public void refresh() {}

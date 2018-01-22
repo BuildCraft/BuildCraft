@@ -128,13 +128,13 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
             }
         }
 
-        double cx = center.x;
-        double cy = center.y;
-        double cz = center.z;
+        double cx = center.xCoord;
+        double cy = center.yCoord;
+        double cz = center.zCoord;
 
-        double rx = radius.x;
-        double ry = radius.y;
-        double rz = radius.z;
+        double rx = radius.xCoord;
+        double ry = radius.yCoord;
+        double rz = radius.zCoord;
 
         BitSet data = null;
         if (hollow != PatternParameterHollow.FILLED_INNER) {

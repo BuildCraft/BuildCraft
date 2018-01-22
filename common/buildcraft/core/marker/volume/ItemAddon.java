@@ -26,15 +26,15 @@ public abstract class ItemAddon extends ItemBC_Neptune {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
-            return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+            return new ActionResult<>(EnumActionResult.PASS,itemStack);
         }
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(
-            player,
-            volumeBoxes.volumeBoxes
+                player,
+                volumeBoxes.volumeBoxes
         );
         VolumeBox volumeBox = selectingVolumeBoxAndSlot.getLeft();
         EnumAddonSlot slot = selectingVolumeBoxAndSlot.getRight();
@@ -46,11 +46,12 @@ public abstract class ItemAddon extends ItemBC_Neptune {
                     volumeBox.addons.put(slot, addon);
                     volumeBox.addons.get(slot).onAdded();
                     volumeBoxes.markDirty();
-                    return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                    return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
                 }
             }
         }
 
-        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.PASS, itemStack);
     }
+
 }

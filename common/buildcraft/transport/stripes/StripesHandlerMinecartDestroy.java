@@ -21,8 +21,6 @@ import net.minecraft.world.World;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerBlock;
 
-import buildcraft.lib.misc.StackUtil;
-
 public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
     INSTANCE;
 
@@ -39,17 +37,17 @@ public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
                 EntityMinecartContainer container = (EntityMinecartContainer) cart;
                 for (int i = 0; i < container.getSizeInventory(); i++) {
                     ItemStack s = container.getStackInSlot(i);
-                    if (!s.isEmpty()) {
-                        container.setInventorySlotContents(i, StackUtil.EMPTY);
+                    if (s != null) {
+                        container.setInventorySlotContents(i, null);
                         // Safety check
-                        if (container.getStackInSlot(i).isEmpty()) {
+                        if (container.getStackInSlot(i) == null) {
                             activator.sendItem(s, direction);
                         }
                     }
                 }
             }
             cart.setDead();
-            activator.sendItem(StackUtil.asNonNull(cart.getCartItem()), direction);
+            activator.sendItem(cart.getCartItem(), direction);
             return true;
         }
         return false;

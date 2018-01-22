@@ -207,7 +207,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
             avgPower.clear();
         }
 
-        if (!Objects.equals(previousTargetPos, targetPos) || true) {
+        if (!Objects.equals(previousTargetPos, targetPos)) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
     }

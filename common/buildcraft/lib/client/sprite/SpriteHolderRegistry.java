@@ -104,8 +104,7 @@ public class SpriteHolderRegistry {
     public static void onTextureStitchPost() {
         if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE)) {
             BCLog.logger.info("[lib.sprite.holder] List of registered sprites:");
-            List<ResourceLocation> locations = new ArrayList<>();
-            locations.addAll(HOLDER_MAP.keySet());
+            List<ResourceLocation> locations = new ArrayList<>(HOLDER_MAP.keySet());
             locations.sort(Comparator.comparing(ResourceLocation::toString));
 
             TextureAtlasSprite missing = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();

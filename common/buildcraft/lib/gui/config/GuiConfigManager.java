@@ -4,11 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,7 +33,7 @@ public class GuiConfigManager {
     private static boolean isDirty = false;
 
     static {
-        properties = new TreeMap<>((a, b) -> a.toString().compareTo(b.toString()));
+        properties = new TreeMap<>(Comparator.comparing(ResourceLocation::toString));
         // TODO (AlexIIL, post 1.12 move): Flesh this system out more! Add settings that can be loaded from json GUI's
         // TODO (AlexIIL, post 1.12 move): Move config file loading from core -> lib
         customGuiProperties.put(NodeTypes.getName(boolean.class), GuiPropertyBoolean::new);
@@ -122,11 +119,7 @@ public class GuiConfigManager {
     private static void readFromJson(JsonObject json) {
         for (Entry<String, JsonElement> entry : json.entrySet()) {
             ResourceLocation location = new ResourceLocation(entry.getKey());
-            GuiConfigSet set = properties.get(location);
-            if (set == null) {
-                set = new GuiConfigSet();
-                properties.put(location, set);
-            }
+            GuiConfigSet set = properties.computeIfAbsent(location, k -> new GuiConfigSet());
             JsonElement elem = entry.getValue();
             if (!elem.isJsonObject()) {
                 BCLog.logger.warn("[lib.gui.config] Found a non-object element in '" + location + "'");

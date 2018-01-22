@@ -16,7 +16,7 @@ public interface StatementContext<S extends IGuiSlot> {
      *         they won't be drawn with an icon. */
     List<? extends StatementGroup<S>> getAllPossible();
 
-    public interface StatementGroup<S extends IGuiSlot> {
+    interface StatementGroup<S extends IGuiSlot> {
         List<S> getValues();
 
         /** @return Something that can be drawn to identify what this is, or null if nothing exists that could identify

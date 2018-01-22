@@ -132,7 +132,7 @@ public enum CoolantRegistry implements ICoolantManager {
             if (stack == null || !stack.isItemEqual(solid)) {
                 return null;
             }
-            int liquidAmount = (int) (stack.getCount() * fluid.amount * multiplier / solid.getCount());
+            int liquidAmount = (int) (stack.stackSize * fluid.amount * multiplier / solid.stackSize);
             return new FluidStack(fluid.getFluid(), liquidAmount);
         }
     }

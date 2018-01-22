@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,12 +49,12 @@ public class SchematicEntityDefault implements ISchematicEntity {
     private Rotation entityRotation = Rotation.NONE;
 
     public static boolean predicate(SchematicEntityContext context) {
-        ResourceLocation registryName = EntityList.getKey(context.entity);
-        return registryName != null &&
-            RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+        String registryName = EntityList.getEntityString(context.entity);
+        return !registryName.isEmpty() &&
+            RulesLoader.READ_DOMAINS.contains(registryName) &&
             RulesLoader.getRules(
-                EntityList.getKey(context.entity),
-                context.entity.serializeNBT()
+                    EntityList.getEntityString(context.entity),
+                    context.entity.serializeNBT()
             )
                 .stream()
                 .anyMatch(rule -> rule.capture);
@@ -95,7 +94,6 @@ public class SchematicEntityDefault implements ISchematicEntity {
             .filter(Objects::nonNull)
             .flatMap(Collection::stream)
             .flatMap(requiredExtractor -> requiredExtractor.extractItemsFromEntity(entityNbt).stream())
-            .filter(((Predicate<ItemStack>) ItemStack::isEmpty).negate())
             .collect(Collectors.toList());
     }
 
@@ -120,10 +118,26 @@ public class SchematicEntityDefault implements ISchematicEntity {
         SchematicEntityDefault schematicEntity = SchematicEntityManager.createCleanCopy(this);
         schematicEntity.entityNbt = entityNbt;
         schematicEntity.pos = RotationUtil.rotateVec3d(pos, rotation);
-        schematicEntity.hangingPos = hangingPos.rotate(rotation);
+        schematicEntity.hangingPos = rotate(hangingPos, rotation);
         schematicEntity.hangingFacing = rotation.rotate(hangingFacing);
         schematicEntity.entityRotation = entityRotation.add(rotation);
         return schematicEntity;
+    }
+
+    public BlockPos rotate(BlockPos pos, Rotation rotationIn)
+    {
+        switch (rotationIn)
+        {
+            case NONE:
+            default:
+                return pos;
+            case CLOCKWISE_90:
+                return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+            case CLOCKWISE_180:
+                return new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+            case COUNTERCLOCKWISE_90:
+                return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+        }
     }
 
     @Override
@@ -165,9 +179,9 @@ public class SchematicEntityDefault implements ISchematicEntity {
         if (entity != null) {
             if (rotate) {
                 entity.setLocationAndAngles(
-                    placePos.x,
-                    placePos.y,
-                    placePos.z,
+                    placePos.xCoord,
+                    placePos.yCoord,
+                    placePos.zCoord,
                     entity.rotationYaw + (entity.rotationYaw - entity.getRotatedYaw(entityRotation)),
                     entity.rotationPitch
                 );

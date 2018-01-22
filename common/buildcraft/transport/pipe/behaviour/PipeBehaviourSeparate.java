@@ -23,10 +23,6 @@ public abstract class PipeBehaviourSeparate extends PipeBehaviour {
 
     @Override
     public boolean canConnect(EnumFacing face, PipeBehaviour other) {
-        if (other instanceof PipeBehaviourSeparate) {
-            return other.getClass() == getClass();
-        } else {
-            return true;
-        }
+        return !(other instanceof PipeBehaviourSeparate) || other.getClass() == getClass();
     }
 }

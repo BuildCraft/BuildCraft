@@ -31,7 +31,6 @@ import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.nbt.NbtSquisher;
 import buildcraft.lib.net.MessageManager;
@@ -116,7 +115,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             return;
         }
 
-        if (!invDownIn.getStackInSlot(0).isEmpty() && invDownOut.getStackInSlot(0).isEmpty()) {
+        if (invDownIn.getStackInSlot(0) != null && invDownOut.getStackInSlot(0) == null) {
             if (progressDown == -1) {
                 progressDown = 0;
                 deltaProgressDown.addDelta(0, 50, 1);
@@ -125,7 +124,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             if (progressDown >= 50) {
                 sendNetworkGuiUpdate(NET_DOWN);
                 invDownOut.setStackInSlot(0, invDownIn.getStackInSlot(0));
-                invDownIn.setStackInSlot(0, StackUtil.EMPTY);
+                invDownIn.setStackInSlot(0, null);
                 progressDown = -1;
             } else {
                 progressDown++;
@@ -135,7 +134,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             deltaProgressDown.setValue(0);
         }
 
-        if (selected != null && !invUpIn.getStackInSlot(0).isEmpty() && invUpOut.getStackInSlot(0).isEmpty()) {
+        if (selected != null && invUpIn.getStackInSlot(0) != null && invUpOut.getStackInSlot(0) == null) {
             if (progressUp == -1) {
                 progressUp = 0;
                 deltaProgressUp.addDelta(0, 50, 1);
@@ -288,7 +287,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                         snapshot.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
                         invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), header));
-                        invUpIn.setStackInSlot(0, StackUtil.EMPTY);
+                        invUpIn.setStackInSlot(0, null);
                     } finally {
                         upSnapshotsParts.remove(pair);
                     }

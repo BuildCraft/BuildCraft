@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
@@ -75,8 +74,8 @@ public final class NBTUtilBC {
         return source;
     }
 
-    public static NBTTagCompound getItemData(@Nonnull ItemStack stack) {
-        if (stack.isEmpty()) {
+    public static NBTTagCompound getItemData(ItemStack stack) {
+        if (stack == null) {
             return new NBTTagCompound();
         }
         NBTTagCompound nbt = stack.getTagCompound();
@@ -146,9 +145,9 @@ public final class NBTUtilBC {
 
     public static NBTTagList writeVec3d(Vec3d vec3) {
         NBTTagList list = new NBTTagList();
-        list.appendTag(new NBTTagDouble(vec3.x));
-        list.appendTag(new NBTTagDouble(vec3.y));
-        list.appendTag(new NBTTagDouble(vec3.z));
+        list.appendTag(new NBTTagDouble(vec3.xCoord));
+        list.appendTag(new NBTTagDouble(vec3.yCoord));
+        list.appendTag(new NBTTagDouble(vec3.zCoord));
         return list;
     }
 

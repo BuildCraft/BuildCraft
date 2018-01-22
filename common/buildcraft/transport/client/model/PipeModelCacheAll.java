@@ -81,9 +81,7 @@ public class PipeModelCacheAll {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PipeAllCutoutKey other = (PipeAllCutoutKey) obj;
-            if (!cutout.equals(other.cutout)) return false;
-            if (!pluggable.equals(other.pluggable)) return false;
-            return true;
+            return cutout.equals(other.cutout) && pluggable.equals(other.pluggable);
         }
 
         @Override
@@ -122,9 +120,7 @@ public class PipeModelCacheAll {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PipeAllTranslucentKey other = (PipeAllTranslucentKey) obj;
-            if (!translucent.equals(other.translucent)) return false;
-            if (!pluggable.equals(other.pluggable)) return false;
-            return true;
+            return translucent.equals(other.translucent) && pluggable.equals(other.pluggable);
         }
 
         @Override

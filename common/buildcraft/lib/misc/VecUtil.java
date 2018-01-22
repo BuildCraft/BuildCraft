@@ -33,7 +33,7 @@ public class VecUtil {
     }
 
     public static double dot(Vec3d a, Vec3d b) {
-        return a.x * b.x + a.y * b.y + a.z * b.z;
+        return a.xCoord * b.xCoord + a.yCoord * b.yCoord + a.zCoord * b.zCoord;
     }
 
     public static Vec3d scale(Vec3d vec, double scale) {
@@ -51,9 +51,9 @@ public class VecUtil {
 
     public static Vec3d replaceValue(Vec3d old, Axis axis, double with) {
         return new Vec3d(//
-            axis == Axis.X ? with : old.x,//
-            axis == Axis.Y ? with : old.y,//
-            axis == Axis.Z ? with : old.z//
+            axis == Axis.X ? with : old.xCoord,//
+            axis == Axis.Y ? with : old.yCoord,//
+            axis == Axis.Z ? with : old.zCoord//
         );
     }
 
@@ -67,7 +67,7 @@ public class VecUtil {
     }
 
     public static double getValue(Vec3d from, Axis axis) {
-        return axis == Axis.X ? from.x : axis == Axis.Y ? from.y : from.z;
+        return axis == Axis.X ? from.xCoord : axis == Axis.Y ? from.yCoord : from.zCoord;
     }
 
     public static int getValue(Vec3i from, Axis axis) {
@@ -79,15 +79,15 @@ public class VecUtil {
     }
 
     public static BlockPos convertFloor(Vec3d vec) {
-        return new BlockPos(Math.floor(vec.x), Math.floor(vec.y), Math.floor(vec.z));
+        return new BlockPos(Math.floor(vec.xCoord), Math.floor(vec.yCoord), Math.floor(vec.zCoord));
     }
 
     public static BlockPos convertCeiling(Vec3d vec) {
-        return new BlockPos(Math.ceil(vec.x), Math.ceil(vec.y), Math.ceil(vec.z));
+        return new BlockPos(Math.ceil(vec.xCoord), Math.ceil(vec.yCoord), Math.ceil(vec.zCoord));
     }
 
     public static Tuple3f convertFloat(Vec3d vec) {
-        return new Vector3f((float) vec.x, (float) vec.y, (float) vec.z);
+        return new Vector3f((float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
     }
 
     // Min/Max
@@ -132,9 +132,9 @@ public class VecUtil {
         if (a == null) return b;
         if (b == null) return a;
         return new Vec3d(//
-            Math.min(a.x, b.x),//
-            Math.min(a.y, b.y),//
-            Math.min(a.z, b.z)//
+            Math.min(a.xCoord, b.xCoord),//
+            Math.min(a.yCoord, b.yCoord),//
+            Math.min(a.zCoord, b.zCoord)//
         );
     }
 
@@ -150,9 +150,9 @@ public class VecUtil {
         if (a == null) return b;
         if (b == null) return a;
         return new Vec3d(//
-            Math.max(a.x, b.x),//
-            Math.max(a.y, b.y),//
-            Math.max(a.z, b.z)//
+            Math.max(a.xCoord, b.xCoord),//
+            Math.max(a.yCoord, b.yCoord),//
+            Math.max(a.zCoord, b.zCoord)//
         );
     }
 

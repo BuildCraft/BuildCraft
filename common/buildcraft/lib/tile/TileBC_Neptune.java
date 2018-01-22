@@ -7,11 +7,13 @@
 package buildcraft.lib.tile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 
@@ -33,7 +35,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
@@ -115,12 +116,15 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int id;
-        if (type == EnumDeltaMessage.ADD_SINGLE) {
-            id = gui ? NET_GUI_DELTA_SINGLE : NET_REN_DELTA_SINGLE;
-        } else if (type == EnumDeltaMessage.SET_VALUE) {
-            id = gui ? NET_GUI_DELTA_CLEAR : NET_REN_DELTA_CLEAR;
-        } else {
-            throw new IllegalArgumentException("Unknown delta message type " + type);
+        switch (type) {
+            case ADD_SINGLE:
+                id = gui ? NET_GUI_DELTA_SINGLE : NET_REN_DELTA_SINGLE;
+                break;
+            case SET_VALUE:
+                id = gui ? NET_GUI_DELTA_CLEAR : NET_REN_DELTA_CLEAR;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown delta message type " + type);
         }
         if (gui) {
             createAndSendGuiMessage(id, writer);
@@ -217,14 +221,14 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Called whenever the block is removed. Called by {@link #onExplode(Explosion)}, and
      * {@link Block#breakBlock(World, BlockPos, IBlockState)} */
     public void onRemove() {
-        NonNullList<ItemStack> toDrop = NonNullList.create();
+        List<ItemStack> toDrop = Lists.newArrayList();
         addDrops(toDrop, 0);
         InventoryUtil.dropAll(world, pos, toDrop);
     }
 
-    /** Called whenever {@link Block#getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}, or
+    /** Called whenever {@link Block#getDrops(IBlockAccess, BlockPos, IBlockState, int)}, or
      * {@link #onRemove()} is called (by default). */
-    public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
+    public void addDrops(List<ItemStack> toDrop, int fortune) {
         itemManager.addDrops(toDrop);
         tankManager.addDrops(toDrop);
     }

@@ -9,7 +9,7 @@ package buildcraft.lib.gui.widget;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -30,7 +30,6 @@ import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 /** Defines a widget that represents a phantom slot. */
@@ -42,8 +41,8 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte CLICK_FLAG_SINGLE = 2;
     private static final byte CLICK_FLAG_CLONE = 4;
 
-    @Nonnull
-    private ItemStack stack = StackUtil.EMPTY;
+    @Nullable
+    private ItemStack stack = null;
 
     public WidgetPhantomSlot(ContainerBC_Neptune container) {
         super(container);
@@ -66,20 +65,20 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         if (clone) {
             if (container.player.capabilities.isCreativeMode) {
                 ItemStack get = getStack();
-                if (!get.isEmpty() && container.player.inventory.getItemStack().isEmpty()) {
+                if (get != null && container.player.inventory.getItemStack() == null) {
                     container.player.inventory.setItemStack(get.copy());
                 }
             }
         } else if (shift) {
-            setStack(StackUtil.EMPTY, true);
+            setStack(null, true);
         } else {
             ItemStack toSet = container.player.inventory.getItemStack();
-            if (toSet.isEmpty()) {
-                setStack(StackUtil.EMPTY, true);
+            if (toSet == null) {
+                setStack(null, true);
             } else {
                 toSet = toSet.copy();
                 if (single) {
-                    toSet.setCount(1);
+                    toSet.stackSize = 1;
                 }
                 setStack(toSet, true);
             }
@@ -90,7 +89,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     public IMessage handleWidgetDataClient(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_SERVER_TO_CLIENT_ITEM) {
-            stack = StackUtil.asNonNull(buffer.readItemStack());
+            stack = buffer.readItemStack();
             onSetStack();
         }
         return null;
@@ -100,16 +99,18 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         return stack.getMaxStackSize();
     }
 
-    @Nonnull
+    @Nullable
     public ItemStack getStack() {
         return stack;
     }
 
-    public final void setStack(@Nonnull ItemStack stack, boolean tellClient) {
-        this.stack = StackUtil.asNonNull(stack);
-        int max = getMaxStackSize(stack);
-        if (stack.getCount() > max) {
-            this.stack.setCount(max);
+    public final void setStack(ItemStack stack, boolean tellClient) {
+        this.stack = stack;
+        if (stack != null) {
+            int max = getMaxStackSize(stack);
+            if (stack.stackSize > max) {
+                this.stack.stackSize = max;
+            }
         }
         if (tellClient && !container.player.world.isRemote) {
             sendWidgetData(buffer -> {
@@ -144,7 +145,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
             return true;
         }
 
-        @Nonnull
+        @Nullable
         public ItemStack getStack() {
             return WidgetPhantomSlot.this.getStack();
         }
@@ -172,7 +173,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
 
         @Override
         public void addToolTips(List<ToolTip> tooltips) {
-            if (contains(gui.mouse) && !getStack().isEmpty()) {
+            if (contains(gui.mouse) && getStack() != null) {
                 tooltips.add(tooltip);
                 tooltip.refresh();
             }

@@ -35,7 +35,6 @@ import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -60,7 +59,6 @@ import buildcraft.api.facades.IFacadeState;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.recipe.FacadeSwapRecipe;
@@ -121,14 +119,14 @@ public enum FacadeStateManager implements IFacadeRegistry {
             NBTTagCompound nbt = message.getNBTValue();
             String regName = nbt.getString(FacadeAPI.NBT_CUSTOM_BLOCK_REG_KEY);
             int meta = nbt.getInteger(FacadeAPI.NBT_CUSTOM_BLOCK_META);
-            ItemStack stack = new ItemStack(nbt.getCompoundTag(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
+            ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
             if (regName.isEmpty()) {
                 BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
                     + id + " should have a registry name for the block, stored as "
                     + FacadeAPI.NBT_CUSTOM_BLOCK_REG_KEY);
                 return;
             }
-            if (stack.isEmpty()) {
+            if (stack == null) {
                 BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
                     + id + " should have a valid ItemStack stored in " + FacadeAPI.NBT_CUSTOM_ITEM_STACK);
                 return;
@@ -198,14 +196,14 @@ public enum FacadeStateManager implements IFacadeRegistry {
         }
         Block block = state.getBlock();
         Item item = Item.getItemFromBlock(block);
-        if (item == Items.AIR) {
+        if (item == null) {
             item = block.getItemDropped(state, new Random(0), 0);
         }
         return new ItemStack(item, 1, block.damageDropped(state));
     }
 
     public static void init() {
-        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
+        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), null, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
             if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getResourceDomain())) {
                 if (BCLib.VERSION.startsWith("7.99")) {
@@ -297,7 +295,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     ImmutableSet<IProperty<?>> varSet = ImmutableSet.copyOf(vars.keySet());
                     FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, varSet);
                     validFacadeStates.put(state, info);
-                    if (!info.requiredStack.isEmpty()) {
+                    if (info.requiredStack != null) {
                         ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
                         stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
                     }
@@ -321,16 +319,16 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         BCLog.logger.info("[transport.facade]   Added " + info);
                     }
                 } catch (Throwable t) {
-                    String msg = "Scanning facade states";
-                    msg += "\n\tState = " + state;
-                    msg += "\n\tBlock = " + safeToString(() -> state.getBlock().getRegistryName());
-                    msg += "\n\tStack = " + stack;
-                    msg += "\n\tvarying-properties: {";
+                    StringBuilder msg = new StringBuilder("Scanning facade states");
+                    msg.append("\n\tState = ").append(state);
+                    msg.append("\n\tBlock = ").append(safeToString(() -> state.getBlock().getRegistryName()));
+                    msg.append("\n\tStack = ").append(stack);
+                    msg.append("\n\tvarying-properties: {");
                     for (Entry<IProperty<?>, Comparable<?>> varEntry : vars.entrySet()) {
-                        msg += "\n\t\t" + varEntry.getKey() + " = " + varEntry.getValue();
+                        msg.append("\n\t\t").append(varEntry.getKey()).append(" = ").append(varEntry.getValue());
                     }
-                    msg += "\n\t}";
-                    throw new IllegalStateException(msg.replace("\t", "    "), t);
+                    msg.append("\n\t}");
+                    throw new IllegalStateException(msg.toString().replace("\t", "    "), t);
                 }
             }
         }

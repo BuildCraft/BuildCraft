@@ -63,7 +63,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
         }
         FluidStack searchedFluid = null;
 
-        if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack() .isEmpty()) {
+        if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack()  != null) {
             searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
             if (searchedFluid != null) {
                 searchedFluid.amount = 1;

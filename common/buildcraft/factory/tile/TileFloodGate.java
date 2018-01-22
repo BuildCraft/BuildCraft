@@ -80,11 +80,11 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     private void buildQueue() {
-        world.profiler.startSection("prepare");
+        world.theProfiler.startSection("prepare");
         queue.clear();
         paths.clear();
         if (tank.isEmpty()) {
-            world.profiler.endSection();
+            world.theProfiler.endSection();
             return;
         }
         Set<BlockPos> checked = new HashSet<>();
@@ -95,7 +95,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             nextPosesToCheck.add(offset);
             paths.put(offset, ImmutableList.of(offset));
         }
-        world.profiler.endStartSection("build");
+        world.theProfiler.endStartSection("build");
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
             nextPosesToCheck.clear();
@@ -137,7 +137,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                 }
             }
         }
-        world.profiler.endSection();
+        world.theProfiler.endSection();
     }
 
     private boolean canFill(BlockPos offsetPos) {
@@ -199,10 +199,9 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     if (canFill && canFill(currentPos)) {
                         FakePlayer fakePlayer =
                             BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), currentPos);
-                        if (FluidUtil.tryPlaceFluid(fakePlayer, world, currentPos, tank, fluid)) {
+                        if (FluidUtil.tryPlaceFluid(fakePlayer, world, fluid, currentPos)) {
                             for (EnumFacing side : EnumFacing.VALUES) {
-                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate,
-                                    false);
+                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate);
                             }
                             delayIndex = 0;
                             tick = 0;

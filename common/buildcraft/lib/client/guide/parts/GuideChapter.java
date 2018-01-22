@@ -121,16 +121,12 @@ public abstract class GuideChapter extends GuidePart {
             int x = gui.minX - width - 4 + 11;
 
             GuiRectangle drawRect = new GuiRectangle(x, y - 4, width + GuiGuide.CHAPTER_MARKER_LEFT.width, 16);
-            if (drawRect.contains(gui.mouse)) {
-                return true;
-            }
+            return drawRect.contains(gui.mouse);
         } else if (lastDrawn == EnumGuiSide.RIGHT) {
             int x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
 
             GuiRectangle drawRect = new GuiRectangle(x, y - 4, width + GuiGuide.CHAPTER_MARKER_RIGHT.width, 16);
-            if (drawRect.contains(gui.mouse)) {
-                return true;
-            }
+            return drawRect.contains(gui.mouse);
         }
         return false;
     }
@@ -141,10 +137,7 @@ public abstract class GuideChapter extends GuidePart {
     }
 
     public boolean handleClick() {
-        if (isMouseInside()) {
-            return onClick();
-        }
-        return false;
+        return isMouseInside() && onClick();
     }
 
     protected abstract boolean onClick();

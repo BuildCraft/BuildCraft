@@ -67,9 +67,8 @@ public class TaskMiniChunkAnalyser implements Callable<AnalysedChunk> {
     }
 
     public static boolean isValid(BlockPos offset) {
-        if (offset.getX() < 0 || offset.getX() >= 16) return false;
-        if (offset.getY() < 0 || offset.getY() >= 16) return false;
-        if (offset.getZ() < 0 || offset.getZ() >= 16) return false;
-        return true;
+        return offset.getX() >= 0 && offset.getX() < 16
+                && offset.getY() >= 0 && offset.getY() < 16
+                && offset.getZ() >= 0 && offset.getZ() < 16;
     }
 }

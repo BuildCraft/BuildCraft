@@ -6,9 +6,9 @@
 
 package buildcraft.core.client.render;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -34,7 +34,7 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     public void render(EntityPlayer player, float partialTicks) {
         GlStateManager.enableBlend();
 
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+        VertexBuffer bb = Tessellator.getInstance().getBuffer();
 
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 

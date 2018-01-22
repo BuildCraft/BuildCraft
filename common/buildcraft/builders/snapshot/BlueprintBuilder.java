@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import buildcraft.lib.fluid.FluidHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
@@ -30,7 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
@@ -100,7 +100,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         return Stream.concat(
             requiredItems == null ? Stream.empty() : requiredItems.stream(),
             requiredFluids == null ? Stream.empty() : requiredFluids.stream()
-                .map(FluidUtil::getFilledBucket)
+                .map(FluidHelper::getFilledBucket)
         );
     }
 
@@ -113,10 +113,10 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     .noneMatch(stack ->
                         tile.getInvResources().extract(
                             extracted -> StackUtil.canMerge(stack, extracted),
-                            stack.getCount(),
-                            stack.getCount(),
+                            stack.stackSize,
+                            stack.stackSize,
                             true
-                        ).isEmpty()
+                        ) != null
                     ) &&
                     FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                         .allMatch(stack ->
@@ -131,15 +131,15 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                 .map(stack ->
                                     tile.getInvResources().extract(
                                         extracted -> StackUtil.canMerge(stack, extracted),
-                                        stack.getCount(),
-                                        stack.getCount(),
+                                            stack.stackSize,
+                                            stack.stackSize,
                                         simulate
                                     )
                                 ),
                             FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                                 .map(fluidStack -> tile.getTankManager().drain(fluidStack, !simulate))
                                 .map(fluidStack -> {
-                                    ItemStack stack = FluidUtil.getFilledBucket(fluidStack);
+                                    ItemStack stack = FluidHelper.getFilledBucket(fluidStack);
                                     if (!stack.hasTagCompound()) {
                                         stack.setTagCompound(new NBTTagCompound());
                                     }
@@ -206,7 +206,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         // noinspection ConstantConditions
         placeTask.items.stream()
             .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey(FLUID_STACK_KEY))
-            .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompoundTag(FLUID_STACK_KEY)))
+            .map(stack -> Pair.of(stack.stackSize, stack.getTagCompound().getCompoundTag(FLUID_STACK_KEY)))
             .map(countNbt -> {
                 FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());
                 if (fluidStack != null) {
@@ -238,14 +238,14 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         if (tile.getWorldBC().isRemote) {
             return super.tick();
         }
-        tile.getWorldBC().profiler.startSection("entitiesWithinBox");
+        tile.getWorldBC().theProfiler.startSection("entitiesWithinBox");
         List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
             Entity.class,
             getBuildingInfo().box.getBoundingBox(),
             Objects::nonNull
         );
-        tile.getWorldBC().profiler.endSection();
-        tile.getWorldBC().profiler.startSection("toSpawn");
+        tile.getWorldBC().theProfiler.endSection();
+        tile.getWorldBC().theProfiler.startSection("toSpawn");
         List<ISchematicEntity> toSpawn = getBuildingInfo().entities.stream()
             .filter(schematicEntity ->
                 entitiesWithinBox.stream()
@@ -254,9 +254,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
             )
             .collect(Collectors.toList());
-        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().theProfiler.endSection();
         // Compute needed stacks
-        tile.getWorldBC().profiler.startSection("remainingDisplayRequired");
+        tile.getWorldBC().theProfiler.startSection("remainingDisplayRequired");
         remainingDisplayRequired.clear();
         remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
             Stream.concat(
@@ -270,9 +270,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     )
             ).collect(Collectors.toList())
         ));
-        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().theProfiler.endSection();
         // Kill not needed entities
-        tile.getWorldBC().profiler.startSection("toKill");
+        tile.getWorldBC().theProfiler.startSection("toKill");
         List<Entity> toKill = entitiesWithinBox.stream()
             .filter(entity ->
                 entity != null &&
@@ -292,12 +292,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             if (!tile.getBattery().isFull()) {
                 return false;
             } else {
-                tile.getWorldBC().profiler.startSection("kill");
+                tile.getWorldBC().theProfiler.startSection("kill");
                 toKill.forEach(Entity::setDead);
-                tile.getWorldBC().profiler.endSection();
+                tile.getWorldBC().theProfiler.endSection();
             }
         }
-        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().theProfiler.endSection();
         // Call superclass method
         if (super.tick()) {
             // Spawn needed entities
@@ -305,7 +305,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 if (!tile.getBattery().isFull()) {
                     return false;
                 } else {
-                    tile.getWorldBC().profiler.startSection("spawn");
+                    tile.getWorldBC().theProfiler.startSection("spawn");
                     toSpawn.stream()
                         .filter(schematicEntity ->
                             tryExtractRequired(
@@ -324,7 +324,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                 false
                             )
                         );
-                    tile.getWorldBC().profiler.endSection();
+                    tile.getWorldBC().theProfiler.endSection();
                 }
             }
             return true;
@@ -365,7 +365,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         buffer.writeInt(remainingDisplayRequired.size());
         remainingDisplayRequired.forEach(stack -> {
             buffer.writeItemStack(stack);
-            buffer.writeInt(stack.getCount());
+            buffer.writeInt(stack.stackSize);
         });
     }
 
@@ -380,7 +380,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            stack.setCount(buffer.readInt());
+            stack.stackSize = buffer.readInt();
             return stack;
         }).forEach(remainingDisplayRequired::add);
     }

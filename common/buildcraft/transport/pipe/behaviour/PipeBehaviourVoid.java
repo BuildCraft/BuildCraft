@@ -27,7 +27,7 @@ public class PipeBehaviourVoid extends PipeBehaviour {
 
     @PipeEventHandler
     public static void reachCentre(PipeEventItem.ReachCenter reachCenter) {
-        reachCenter.getStack().setCount(0);
+        reachCenter.getStack().stackSize = 0;
     }
 
     @PipeEventHandler

@@ -8,7 +8,7 @@ package buildcraft.core.statements;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,7 +23,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.core.BCCoreSprites;
 
@@ -58,10 +57,10 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
         nbt.setByte("ma", (byte) maxLevel);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack getItemStack() {
-        return StackUtil.EMPTY;
+        return null;
     }
 
     @Override

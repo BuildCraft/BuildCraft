@@ -6,13 +6,14 @@
 
 package buildcraft.lib.list;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.Lists;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,8 +37,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         int[] oreIds = OreDictionary.getOreIDs(stack);
 
         if (oreIds.length == 0) {
-            // Unfortunately we cannot compare the items.
-            return false;
+            // No ore IDs? Time for the best effort plan of METADATA!
+            return type == Type.TYPE && StackUtil.isMatchingItem(stack, target, false, false);
         }
 
         int[] matchesIds = OreDictionary.getOreIDs(target);
@@ -80,7 +81,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
     @Override
     public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
-        return OreDictionary.getOreIDs(stack).length > 0;
+        return OreDictionary.getOreIDs(stack).length > 0 || type == Type.TYPE && stack.getHasSubtypes();
     }
 
     private static String getBestOreString(String[] oreIds) {
@@ -98,15 +99,15 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
+    public List<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
-        NonNullList<ItemStack> stacks = NonNullList.create();
+        List<ItemStack> stacks = Lists.newArrayList();
 
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
-                NonNullList<ItemStack> tempStack = NonNullList.create();
-                stack.getItem().getSubItems(CreativeTabs.SEARCH, tempStack);
+                List<ItemStack> tempStack = Lists.newArrayList();
+                stack.getItem().getSubItems(stack.getItem(), CreativeTabs.SEARCH, tempStack);
                 for (ItemStack is : tempStack) {
                     if (is.getItem() == stack.getItem()) {
                         stacks.add(is);
@@ -138,7 +139,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
 
-        NonNullList<ItemStack> wildcard = NonNullList.create();
+        List<ItemStack> wildcard = Lists.newArrayList();
 
         for (ItemStack is : stacks) {
             if (is != null && is.getItemDamage() == OreDictionary.WILDCARD_VALUE && is.getHasSubtypes()) {
@@ -146,8 +147,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
         for (ItemStack is : wildcard) {
-            NonNullList<ItemStack> wll = NonNullList.create();
-            is.getItem().getSubItems(CreativeTabs.MISC, wll);
+            List<ItemStack> wll = Lists.newArrayList();
+            is.getItem().getSubItems(is.getItem(), CreativeTabs.MISC, wll);
             if (wll.size() > 0) {
                 stacks.remove(is);
                 stacks.addAll(wll);

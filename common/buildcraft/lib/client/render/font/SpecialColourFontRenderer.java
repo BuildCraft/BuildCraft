@@ -39,7 +39,7 @@ public class SpecialColourFontRenderer extends FontRenderer {
     }
 
     private static FontRenderer getRealRenderer() {
-        return Minecraft.getMinecraft().fontRenderer;
+        return Minecraft.getMinecraft().fontRendererObj;
     }
 
     // Delegate methods (To ensure we have the exact same behaviour as the normal font renderer)
@@ -67,11 +67,6 @@ public class SpecialColourFontRenderer extends FontRenderer {
     @Override
     public String trimStringToWidth(String text, int width, boolean reverse) {
         return getRealRenderer().trimStringToWidth(text, width, reverse);
-    }
-
-    @Override
-    public int getWordWrappedHeight(String str, int maxLength) {
-        return getRealRenderer().getWordWrappedHeight(str, maxLength);
     }
 
     @Override

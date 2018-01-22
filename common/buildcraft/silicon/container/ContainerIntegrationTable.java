@@ -28,7 +28,7 @@ public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTa
             }
         }
 
-        addSlotToContainer(new SlotDisplay(i -> tile.getOutput(), 0, 101, 36));
+        addSlotToContainer(new SlotDisplay(i -> tile.recipe != null ? tile.recipe.output : null, 0, 101, 36));
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 138, 49));
     }

@@ -7,16 +7,16 @@
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
 
-import buildcraft.lib.misc.StackUtil;
+import java.util.List;
 
 public class InjectableWrapper implements IItemTransactor {
     private final IInjectable injectable;
@@ -27,20 +27,20 @@ public class InjectableWrapper implements IItemTransactor {
         this.from = facing;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack insert(@Nonnull ItemStack stack, boolean allOrNone, boolean simulate) {
         if (allOrNone) {
             stack = stack.copy();
             ItemStack leftOver = injectable.injectItem(stack, false, from, null, 0);
-            if (leftOver.isEmpty()) {
+            if (leftOver == null) {
                 ItemStack reallyLeftOver = injectable.injectItem(stack, !simulate, from, null, 0);
                 // sanity check: it really helps debugging
-                if (!reallyLeftOver.isEmpty()) {
+                if (reallyLeftOver != null) {
                     throw new IllegalStateException("Found an invalid IInjectable instance! (leftOver = "//
                         + leftOver + ", reallyLeftOver = " + reallyLeftOver + ", " + injectable.getClass() + ")");
                 } else {
-                    return StackUtil.EMPTY;
+                    return null;
                 }
             } else {
                 return stack;
@@ -51,13 +51,13 @@ public class InjectableWrapper implements IItemTransactor {
     }
 
     @Override
-    public NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate) {
+    public List<ItemStack> insert(List<ItemStack> stacks, boolean simulate) {
         return ItemTransactorHelper.insertAllBypass(this, stacks, simulate);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
-        return StackUtil.EMPTY;
+        return null;
     }
 }

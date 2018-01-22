@@ -10,10 +10,10 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -52,7 +52,7 @@ public class FluidRenderer {
     private static final boolean[] DEFAULT_FACES = { true, true, true, true, true, true };
 
     // Cached fields that prevent lots of arguments on most methods
-    private static BufferBuilder bb;
+    private static VertexBuffer bb;
     private static TextureAtlasSprite sprite;
     private static TexMap texmap;
     private static boolean invertU, invertV;
@@ -100,12 +100,12 @@ public class FluidRenderer {
      * @param tank The fluid tank that should be rendered.
      * @param min The minimum coordinate that the tank should be rendered from
      * @param max The maximum coordinate that the tank will be rendered to.
-     * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
+     * @param bbIn The {@link VertexBuffer} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns.
      * 
-     * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, BufferBuilder, boolean[]) */
-    public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, BufferBuilder bbIn,
+     * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, VertexBuffer, boolean[]) */
+    public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, VertexBuffer bbIn,
         boolean[] sideRender) {
         renderFluid(type, tank.getFluid(), tank.getCapacity(), min, max, bbIn, sideRender);
     }
@@ -118,11 +118,11 @@ public class FluidRenderer {
      * @param cap The maximum amount of fluid that could be in the stack. Usually the capacity of the tank.
      * @param min The minimum coordinate that the tank should be rendered from
      * @param max The maximum coordinate that the tank will be rendered to.
-     * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
+     * @param bbIn The {@link VertexBuffer} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
     public static void renderFluid(FluidSpriteType type, FluidStack fluid, int cap, Vec3d min, Vec3d max,
-                                   BufferBuilder bbIn, boolean[] sideRender) {
+                                   VertexBuffer bbIn, boolean[] sideRender) {
         renderFluid(type, fluid, fluid == null ? 0 : fluid.amount, cap, min, max, bbIn, sideRender);
     }
 
@@ -136,11 +136,11 @@ public class FluidRenderer {
      * @param cap The maximum amount of fluid that could be in the stack. Usually the capacity of the tank.
      * @param min The minimum coordinate that the tank should be rendered from
      * @param max The maximum coordinate that the tank will be rendered to.
-     * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
+     * @param bbIn The {@link VertexBuffer} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
     public static void renderFluid(FluidSpriteType type, FluidStack fluid, double amount, double cap, Vec3d min,
-        Vec3d max, BufferBuilder bbIn, boolean[] sideRender) {
+        Vec3d max, VertexBuffer bbIn, boolean[] sideRender) {
         if (fluid == null || fluid.getFluid() == null || amount <= 0) {
             return;
         }
@@ -153,11 +153,11 @@ public class FluidRenderer {
         double height = MathHelper.clamp(amount / cap, 0, 1);
         final Vec3d realMin, realMax;
         if (fluid.getFluid().isGaseous(fluid)) {
-            realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.y, max.y));
+            realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.yCoord, max.yCoord));
             realMax = max;
         } else {
             realMin = min;
-            realMax = VecUtil.replaceValue(max, Axis.Y, MathUtil.interp(height, min.y, max.y));
+            realMax = VecUtil.replaceValue(max, Axis.Y, MathUtil.interp(height, min.yCoord, max.yCoord));
         }
 
         bb = bbIn;
@@ -170,33 +170,33 @@ public class FluidRenderer {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }
 
-        final double xs = realMin.x;
-        final double ys = realMin.y;
-        final double zs = realMin.z;
+        final double xs = realMin.xCoord;
+        final double ys = realMin.yCoord;
+        final double zs = realMin.zCoord;
 
-        final double xb = realMax.x;
-        final double yb = realMax.y;
-        final double zb = realMax.z;
+        final double xb = realMax.xCoord;
+        final double yb = realMax.yCoord;
+        final double zb = realMax.zCoord;
 
         if (type == FluidSpriteType.FROZEN) {
-            if (min.x > 1) {
-                xTexDiff = Math.floor(min.x);
-            } else if (min.x < 0) {
-                xTexDiff = Math.floor(min.x);
+            if (min.xCoord > 1) {
+                xTexDiff = Math.floor(min.xCoord);
+            } else if (min.xCoord < 0) {
+                xTexDiff = Math.floor(min.xCoord);
             } else {
                 xTexDiff = 0;
             }
-            if (min.y > 1) {
-                yTexDiff = Math.floor(min.y);
-            } else if (min.y < 0) {
-                yTexDiff = Math.floor(min.y);
+            if (min.yCoord > 1) {
+                yTexDiff = Math.floor(min.yCoord);
+            } else if (min.yCoord < 0) {
+                yTexDiff = Math.floor(min.yCoord);
             } else {
                 yTexDiff = 0;
             }
-            if (min.z > 1) {
-                zTexDiff = Math.floor(min.z);
-            } else if (min.z < 0) {
-                zTexDiff = Math.floor(min.z);
+            if (min.zCoord > 1) {
+                zTexDiff = Math.floor(min.zCoord);
+            } else if (min.zCoord < 0) {
+                zTexDiff = Math.floor(min.zCoord);
             } else {
                 zTexDiff = 0;
             }
@@ -418,7 +418,7 @@ public class FluidRenderer {
         }
 
         public TankSize shink(Vec3d by) {
-            return shrink(by.x, by.y, by.z);
+            return shrink(by.xCoord, by.yCoord, by.zCoord);
         }
 
         public TankSize rotateY() {
@@ -429,9 +429,9 @@ public class FluidRenderer {
 
         private static Vec3d rotateY(Vec3d vec) {
             return new Vec3d(//
-                1 - vec.z,//
-                vec.y,//
-                vec.x//
+                1 - vec.zCoord,//
+                vec.yCoord,//
+                vec.xCoord//
             );
         }
     }

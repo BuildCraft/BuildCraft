@@ -12,6 +12,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -25,6 +26,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileFiller;
+
+import javax.annotation.Nullable;
 
 public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing {
     // public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
@@ -60,8 +63,8 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFiller) {
             if (!((TileFiller) tile).hasBox()) {

@@ -97,7 +97,7 @@ public class ElementTypeButton extends ElementType {
         }
         Boolean current = gui.properties.get(buttonId, Boolean.class);
         if (current != null) {
-            button.setActive(current.booleanValue());
+            button.setActive(current);
         }
         IButtonClickEventListener listener = gui.properties.get(buttonId, IButtonClickEventListener.class);
         if (listener == null) {

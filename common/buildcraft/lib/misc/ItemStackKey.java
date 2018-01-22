@@ -6,19 +6,20 @@
 
 package buildcraft.lib.misc;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 
 public class ItemStackKey {
-    public static final ItemStackKey EMPTY = new ItemStackKey(StackUtil.EMPTY);
+    public static final ItemStackKey EMPTY = new ItemStackKey(null);
 
-    public final @Nonnull ItemStack baseStack;
+    @Nullable
+    public final ItemStack baseStack;
     private final int hash;
 
-    public ItemStackKey(@Nonnull ItemStack stack) {
-        if (stack.isEmpty()) {
-            baseStack = StackUtil.EMPTY;
+    public ItemStackKey(ItemStack stack) {
+        if (stack == null) {
+            baseStack = null;
             hash = 0;
         } else {
             this.baseStack = stack.copy();
@@ -37,8 +38,7 @@ public class ItemStackKey {
         if (obj == null) return false;
         if (obj.getClass() != this.getClass()) return false;
         ItemStackKey other = (ItemStackKey) obj;
-        if (hash != other.hash) return false;
-        return baseStack.serializeNBT().equals(other.baseStack.serializeNBT());
+        return hash == other.hash && baseStack.serializeNBT().equals(other.baseStack.serializeNBT());
     }
 
     @Override

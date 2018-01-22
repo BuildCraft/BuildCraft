@@ -48,10 +48,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
         IHasWork hasWork = tile.getCapability(TilesAPI.CAP_HAS_WORK, side.getOpposite());
-        if (hasWork == null) {
-            return false;
-        }
-        return hasWork.hasWork() == active;
+        return hasWork != null && hasWork.hasWork() == active;
 
     }
 
