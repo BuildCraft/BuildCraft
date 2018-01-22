@@ -7,7 +7,7 @@
                 "statement_slot_down":  [ 0, 18, 18, 18 ],
                 "statement_slot_up":    [ 0, 36, 18, 18 ],
                 "statement_slot_north": [ 0, 54, 18, 18 ],
-                "statement_slot_southr":[ 0, 72, 18, 18 ],
+                "statement_slot_south": [ 0, 72, 18, 18 ],
                 "statement_slot_west":  [ 0, 90, 18, 18 ],
                 "statement_slot_east":  [ 0,108, 18, 18 ],
                 "slot_blocked": [ 18, 0, 18, 18 ],
