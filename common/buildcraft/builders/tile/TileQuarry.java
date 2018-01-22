@@ -577,8 +577,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
                 if (found) {
                     sendNetworkUpdate(NET_RENDER_DATA);
-                } else {
-                    AxisAlignedBB box = miningBox.getBoundingBox();
                 }
             }
         }

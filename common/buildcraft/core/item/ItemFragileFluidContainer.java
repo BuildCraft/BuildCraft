@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,6 +39,11 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new FragileFluidHandler(stack);
+    }
+
+    @Override
+    protected void addSubItems(CreativeTabs tab, List<ItemStack> items) {
+        // Never allow this to be displayed in a creative tab -- we don't want to list every single fluid...
     }
 
     @Override

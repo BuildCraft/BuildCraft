@@ -101,7 +101,7 @@ public class RetroGenData extends WorldSavedData {
     }
 
     private static String serializeChunkPos(ChunkPos pos) {
-        return pos.getXCenter() + "," + pos.getZCenter();
+        return pos.chunkXPos + "," + pos.chunkZPos;
     }
 
     @Override

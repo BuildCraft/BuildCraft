@@ -218,15 +218,17 @@ public final class ListHandler {
 
     }
 
-    public static boolean hasItems(@Nonnull ItemStack stack) {
-        if (!stack.hasTagCompound()) return false;
-        for (Line l : getLines(stack)) {
-            if (l.hasItems()) return true;
+    public static boolean hasItems(ItemStack stack) {
+        if (stack != null) {
+            if (!stack.hasTagCompound()) return false;
+            for (Line l : getLines(stack)) {
+                if (l.hasItems()) return true;
+            }
         }
         return false;
     }
 
-    public static boolean isDefault(@Nonnull ItemStack stack) {
+    public static boolean isDefault(ItemStack stack) {
         if (!stack.hasTagCompound()) return true;
         for (Line l : getLines(stack)) {
             if (!l.isDefault()) return false;
@@ -234,7 +236,7 @@ public final class ListHandler {
         return true;
     }
 
-    public static Line[] getLines(@Nonnull ItemStack item) {
+    public static Line[] getLines(ItemStack item) {
         NBTTagCompound data = NBTUtilBC.getItemData(item);
         if (data.hasKey("written") && data.hasKey("lines")) {
             NBTTagList list = data.getTagList("lines", 10);
@@ -252,7 +254,7 @@ public final class ListHandler {
         }
     }
 
-    public static void saveLines(@Nonnull ItemStack stackList, Line[] lines) {
+    public static void saveLines(ItemStack stackList, Line[] lines) {
         boolean hasLine = false;
 
         for (Line l : lines) {
@@ -282,7 +284,8 @@ public final class ListHandler {
         }
     }
 
-    public static boolean matches(@Nonnull ItemStack stackList, @Nonnull ItemStack item) {
+    public static boolean matches(ItemStack stackList, ItemStack item) {
+        if (stackList == null || item == null) return false;
         NBTTagCompound data = NBTUtilBC.getItemData(stackList);
         if (data.hasKey("written") && data.hasKey("lines")) {
             NBTTagList list = data.getTagList("lines", 10);
