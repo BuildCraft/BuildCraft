@@ -74,4 +74,15 @@ public interface IContainingElement extends IInteractionElement {
             }
         }
     }
+
+    @Override
+    default boolean onKeyPress(char typedChar, int keyCode) {
+        boolean action = false;
+        for (IGuiElement elem : getChildElements()) {
+            if (elem instanceof IInteractionElement) {
+                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode);
+            }
+        }
+        return action;
+    }
 }

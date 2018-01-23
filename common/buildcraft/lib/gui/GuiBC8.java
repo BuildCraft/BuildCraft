@@ -408,6 +408,27 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         }
     }
 
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        boolean action = false;
+        IMenuElement m = currentMenu;
+        if (m != null) {
+            action = m.onKeyPress(typedChar, keyCode);
+            if (action && m.shouldFullyOverride()) {
+                return;
+            }
+        }
+
+        for (IGuiElement element : shownElements) {
+            if (element instanceof IInteractionElement) {
+                action |= ((IInteractionElement) element).onKeyPress(typedChar, keyCode);
+            }
+        }
+        if (!action) {
+            super.keyTyped(typedChar, keyCode);
+        }
+    }
+
     protected void drawBackgroundLayer(float partialTicks) {}
 
     protected void drawForegroundLayer() {}
