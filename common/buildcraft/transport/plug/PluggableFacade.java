@@ -8,6 +8,7 @@ package buildcraft.transport.plug;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -42,12 +43,14 @@ public class PluggableFacade extends PipePluggable implements IFacade {
     public static final int SIZE = 2;
     public final FacadeInstance states;
     public final boolean isSideSolid;
+    public BlockFaceShape blockFaceShape;
     public int activeState;
 
     public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, FacadeInstance states) {
         super(definition, holder, side);
         this.states = states;
         isSideSolid = states.areAllStatesSolid(side);
+        blockFaceShape = states.getBlockFaceShape(side);
     }
 
     public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
@@ -55,6 +58,7 @@ public class PluggableFacade extends PipePluggable implements IFacade {
         this.states = FacadeInstance.readFromNbt(nbt, "states");
         activeState = MathUtil.clamp(nbt.getInteger("activeState"), 0, states.phasedStates.length - 1);
         isSideSolid = states.areAllStatesSolid(side);
+        blockFaceShape = states.getBlockFaceShape(side);
     }
 
     @Override
@@ -72,6 +76,7 @@ public class PluggableFacade extends PipePluggable implements IFacade {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         states = FacadeInstance.readFromBuffer(buf);
         isSideSolid = buf.readBoolean();
+        blockFaceShape = states.getBlockFaceShape(side);
     }
 
     @Override
@@ -106,6 +111,11 @@ public class PluggableFacade extends PipePluggable implements IFacade {
     @Override
     public float getExplosionResistance(@Nullable Entity exploder, Explosion explosion) {
         return states.phasedStates[activeState].stateInfo.state.getBlock().getExplosionResistance(exploder);
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape() {
+        return blockFaceShape;
     }
 
     @Override
