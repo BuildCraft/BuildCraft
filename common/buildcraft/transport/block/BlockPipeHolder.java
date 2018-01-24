@@ -645,7 +645,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return BlockFaceShape.UNDEFINED;
         }
         PipePluggable pluggable = tile.getPluggable(face);
-        return pluggable != null && pluggable.isSideSolid() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+        return pluggable != null ? pluggable.getBlockFaceShape() : BlockFaceShape.UNDEFINED;
     }
 
     private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
