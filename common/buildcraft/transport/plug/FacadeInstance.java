@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -119,6 +120,13 @@ public class FacadeInstance implements IFacade {
             }
         }
         return true;
+    }
+
+    public BlockFaceShape getBlockFaceShape(EnumFacing side) {
+        if (type == FacadeType.Basic) {
+            return phasedStates[0].isHollow() ? BlockFaceShape.UNDEFINED : phasedStates[0].getBlockFaceShape(side);
+        }
+        return BlockFaceShape.UNDEFINED;
     }
 
     // IFacade

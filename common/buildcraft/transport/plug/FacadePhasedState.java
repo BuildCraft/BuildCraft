@@ -2,6 +2,7 @@ package buildcraft.transport.plug;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -93,6 +94,10 @@ public class FacadePhasedState implements IFacadePhasedState {
 
     public boolean isSideSolid(EnumFacing side) {
         return stateInfo.isSideSolid[side.ordinal()];
+    }
+
+    public BlockFaceShape getBlockFaceShape(EnumFacing side) {
+        return stateInfo.blockFaceShape[side.ordinal()];
     }
 
     @Override

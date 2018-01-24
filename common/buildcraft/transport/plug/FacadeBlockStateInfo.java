@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,7 @@ public class FacadeBlockStateInfo implements IFacadeState {
     public final boolean isTransparent;
     public final boolean isVisible;
     public final boolean[] isSideSolid = new boolean[6];
+    public final BlockFaceShape[] blockFaceShape = new BlockFaceShape[6];
 
     public FacadeBlockStateInfo(IBlockState state, ItemStack requiredStack,
         ImmutableSet<IProperty<?>> varyingProperties) {
@@ -37,6 +39,7 @@ public class FacadeBlockStateInfo implements IFacadeState {
         IBlockAccess access = new SingleBlockAccess(state);
         for (EnumFacing side : EnumFacing.VALUES) {
             isSideSolid[side.ordinal()] = state.isSideSolid(access, BlockPos.ORIGIN, side);
+            blockFaceShape[side.ordinal()] = state.getBlockFaceShape(access, BlockPos.ORIGIN, side);
         }
     }
 
