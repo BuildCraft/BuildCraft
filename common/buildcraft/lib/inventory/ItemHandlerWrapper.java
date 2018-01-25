@@ -33,7 +33,7 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
         if (max < min) return null;
         ItemStack current = wrapped.getStackInSlot(slot);
         if (current == null || current.stackSize < min) return null;
-        if (filter.matches(current)) {
+        if (filter.matches(asValid(current))) {
             return wrapped.extractItem(slot, max, simulate);
         }
         return null;

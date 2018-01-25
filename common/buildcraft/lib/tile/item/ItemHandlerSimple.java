@@ -5,9 +5,9 @@
  */
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -28,7 +28,7 @@ import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 import java.util.List;
 
 public class ItemHandlerSimple extends AbstractInvItemTransactor
-    implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
+        implements IItemHandlerModifiable, IItemHandlerAdv, INBTSerializable<NBTTagCompound> {
     // Function-called stuff (helpers etc)
     private StackInsertionChecker checker;
     private StackInsertionFunction inserter;
@@ -56,7 +56,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     }
 
     public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction,
-        @Nullable StackChangeCallback callback) {
+                             @Nullable StackChangeCallback callback) {
         stacks = Lists.newArrayListWithCapacity(size);
         this.checker = checker;
         this.inserter = insertionFunction;
@@ -84,11 +84,9 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList list = new NBTTagList();
         for (ItemStack stack : stacks) {
-            if (stack != null) {
-                NBTTagCompound itemNbt = new NBTTagCompound();
-                stack.writeToNBT(itemNbt);
-                list.appendTag(itemNbt);
-            }
+            NBTTagCompound itemNbt = new NBTTagCompound();
+            stack.writeToNBT(itemNbt);
+            list.appendTag(itemNbt);
         }
         nbt.setTag("items", list);
         return nbt;
@@ -116,19 +114,20 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
 
     @Override
     protected boolean isEmpty(int slot) {
-        return badSlotIndex(slot) || stacks.get(slot) == null;
+        if (badSlotIndex(slot)) return true;
+        return ItemStackHelper.isEmpty(stacks.get(slot));
     }
 
     @Override
     @Nullable
     public ItemStack getStackInSlot(int slot) {
         if (badSlotIndex(slot)) return null;
-        return stacks.get(slot);
+        return asValid(stacks.get(slot));
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @Nullable
+    public ItemStack insertItem(int slot, @Nullable ItemStack stack, boolean simulate) {
         if (badSlotIndex(slot)) {
             return stack;
         }
@@ -138,11 +137,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 // A bit odd, but can happen if the filter changed
                 return stack;
             }
-            InsertionResult result = inserter.modifyForInsertion(slot, current.copy(), stack.copy());
+            InsertionResult result = inserter.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)",
-                    new IllegalStateException("Conflicting Insertion!"));
+                        new IllegalStateException("Conflicting Insertion!"));
                 CrashReportCategory cat = report.makeCategory("Inventory details");
                 cat.addCrashSection("Existing Item", current);
                 cat.addCrashSection("Inserting Item", stack);
@@ -158,14 +157,15 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                     callback.onStackChange(this, slot, current, result.toSet);
                 }
             }
-            return result.toReturn;
+            return asValid(result.toReturn);
         } else {
             return stack;
         }
     }
 
     @Override
-    protected ItemStack insert(int slot, ItemStack stack, boolean simulate) {
+    @Nullable
+    protected ItemStack insert(int slot, @Nullable ItemStack stack, boolean simulate) {
         return insertItem(slot, stack, simulate);
     }
 
@@ -175,10 +175,10 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         if (badSlotIndex(slot)) return null;
         // You can ALWAYS extract. if you couldn't then you could never take out items from anywhere
         ItemStack current = stacks.get(slot);
-        if (current == null) return null;
+        if (ItemStackHelper.isEmpty(current)) return null;
         if (current.stackSize < amount) {
             if (simulate) {
-                return current.copy();
+                return asValid(current.copy());
             }
             setStackInternal(slot, null);
             if (callback != null) {
@@ -210,7 +210,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         ItemStack current = stacks.get(slot);
         ItemStack before = current.copy();
         if (current.stackSize < min) return null;
-        if (filter.matches(current)) {
+        if (filter.matches(asValid(current))) {
             if (simulate) {
                 ItemStack copy = current.copy();
                 return copy.splitStack(max);
@@ -228,7 +228,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @Nullable ItemStack stack) {
         if (badSlotIndex(slot)) {
             // Its safe to throw here
             throw new IndexOutOfBoundsException("Slot index out of range: " + slot);
@@ -236,21 +236,25 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         ItemStack before = stacks.get(slot);
         setStackInternal(slot, stack);
         if (callback != null) {
-            callback.onStackChange(this, slot, before, stack);
+            callback.onStackChange(this, slot, before, asValid(stack));
         }
     }
 
     @Override
-    public final boolean canSet(int slot, ItemStack stack) {
-        return stack == null || checker.canSet(slot, stack.copy());
+    public final boolean canSet(int slot, @Nullable ItemStack stack) {
+        ItemStack copied = asValid(stack);
+        if (ItemStackHelper.isEmpty(copied)) {
+            return true;
+        }
+        return checker.canSet(slot, copied);
     }
 
-    private void setStackInternal(int slot, ItemStack stack) {
-        stacks.set(slot, null);
+    private void setStackInternal(int slot, @Nullable ItemStack stack) {
+        stacks.set(slot, asValid(stack));
         // Transactor calc
-        if (stack == null && firstUsed == slot) {
+        if (ItemStackHelper.isEmpty(stack) && firstUsed == slot) {
             for (int s = firstUsed; s < getSlots(); s++) {
-                if (stacks.get(s) != null) {
+                if (!ItemStackHelper.isEmpty(stacks.get(s))) {
                     firstUsed = s;
                     break;
                 }
@@ -258,7 +262,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
             if (firstUsed == slot) {
                 firstUsed = Integer.MAX_VALUE;
             }
-        } else if (stack != null && firstUsed > slot) {
+        } else if (!ItemStackHelper.isEmpty(stack) && firstUsed > slot) {
             firstUsed = slot;
         }
     }

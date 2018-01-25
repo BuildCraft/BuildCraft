@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.ImmutableList;
 
 import com.google.common.collect.Lists;
@@ -104,7 +105,7 @@ public abstract class ContainerBC_Neptune extends Container {
         ItemStack playerStack = player.inventory.getItemStack();
         if (slot instanceof IPhantomSlot) {
             IPhantomSlot phantom = (IPhantomSlot) slot;
-            if (playerStack == null) {
+            if (ItemStackHelper.isEmpty(playerStack)) {
                 slot.putStack(null);
             } else if (!StackUtil.canMerge(playerStack, slot.getStack())) {
                 ItemStack copy = playerStack.copy();
@@ -132,32 +133,32 @@ public abstract class ContainerBC_Neptune extends Container {
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
-            if (itemstack1 == null){
-                slot.putStack(null);
-            }
-            else {
-                itemstack = itemstack1.copy();
+            itemstack = itemstack1.copy();
 
-                if (inventorySlots.size() == playerInventorySize) return null;
-                if (playerInventoryFirst) {
-                    if (index < playerInventorySize) {
-                        if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
-                            return null;
-                        }
-                    } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
+            if (inventorySlots.size() == playerInventorySize) return null;
+            if (playerInventoryFirst) {
+                if (index < playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, playerInventorySize, this.inventorySlots.size(), false)) {
                         return null;
                     }
-                } else {
-                    if (index < this.inventorySlots.size() - playerInventorySize) {
-                        if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize,
-                                this.inventorySlots.size(), false)) {
-                            return null;
-                        }
-                    } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize,
-                            true)) {
-                        return null;
-                    }
+                } else if (!this.mergeItemStack(itemstack1, 0, playerInventorySize, true)) {
+                    return null;
                 }
+            } else {
+                if (index < this.inventorySlots.size() - playerInventorySize) {
+                    if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize,
+                            this.inventorySlots.size(), false)) {
+                        return null;
+                    }
+                } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize,
+                        true)) {
+                    return null;
+                }
+            }
+
+            if (ItemStackHelper.isEmpty(itemstack1)) {
+                slot.putStack(null);
+            } else {
                 slot.onSlotChanged();
             }
         }
@@ -175,14 +176,14 @@ public abstract class ContainerBC_Neptune extends Container {
         if (widgetId == -1) {
             if (DEBUG) {
                 throw new IllegalArgumentException(
-                    "Invalid Widget Request! (" + (widget == null ? "null" : widget.getClass()) + ")");
+                        "Invalid Widget Request! (" + (widget == null ? "null" : widget.getClass()) + ")");
             } else {
                 BCLog.logger.warn("[lib.container] Received an invalid widget sending request!");
                 BCLog.logger
-                    .warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
+                        .warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
                 BCLog.logger.warn("[lib.container]   Container {class = " + getClass() + "}");
                 BCLog.logger.warn(
-                    "[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
+                        "[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
             }
         } else {
             sendMessage(NET_WIDGET, (buffer) -> {
@@ -283,7 +284,7 @@ public abstract class ContainerBC_Neptune extends Container {
     public void sendSetPhantomSlots(IItemHandler handler, List<ItemStack> stacks) {
         if (handler.getSlots() < stacks.size()) {
             throw new IllegalStateException("Too many ItemStacks's in the list to change, compared to the "
-                + "size of the inventory! (list = " + stacks + ", handler = " + handler + ")");
+                    + "size of the inventory! (list = " + stacks + ", handler = " + handler + ")");
         }
         int[] indexes = new int[stacks.size()];
         List<ItemStack> destinationStacks = Lists.newArrayList();

@@ -9,7 +9,6 @@ package buildcraft.lib.inventory;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import buildcraft.lib.item.ItemStackHelper;
@@ -25,8 +24,18 @@ import buildcraft.lib.misc.StackUtil;
 
 /** Designates an {@link IItemTransactor} that is backed by a simple, static, array based inventory. */
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
-    @Nonnull
-    protected abstract ItemStack insert(int slot, @Nonnull ItemStack stack, boolean simulate);
+    /** Returns null if it was empty, or the input stack if it was not. */
+    @Nullable
+    public static ItemStack asValid(@Nullable ItemStack stack) {
+        if (ItemStackHelper.isEmpty(stack)) {
+            return null;
+        } else {
+            return stack;
+        }
+    }
+
+    @Nullable
+    protected abstract ItemStack insert(int slot, @Nullable ItemStack stack, boolean simulate);
 
     @Nullable
     protected abstract ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate);
@@ -37,7 +46,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
 
     @Override
     @Nullable
-    public ItemStack insert(ItemStack stack, boolean allAtOnce, boolean simulate) {
+    public ItemStack insert(@Nullable ItemStack stack, boolean allAtOnce, boolean simulate) {
         if (allAtOnce) {
             return insertAllAtOnce(stack, simulate);
         } else {
@@ -45,7 +54,8 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         }
     }
 
-    private ItemStack insertAnyAmount(ItemStack stack, boolean simulate) {
+    @Nullable
+    private ItemStack insertAnyAmount(@Nullable ItemStack stack, boolean simulate) {
         int slotCount = getSlots();
         TIntArrayList emptySlots = new TIntArrayList(slotCount);
         for (int slot = 0; slot < getSlots(); slot++) {
@@ -63,8 +73,9 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         return stack;
     }
 
-    private ItemStack insertAllAtOnce(ItemStack stack, boolean simulate) {
-        ItemStack before = stack;
+    @Nullable
+    private ItemStack insertAllAtOnce(@Nullable ItemStack stack, boolean simulate) {
+        ItemStack before = asValid(stack);
         TIntArrayList insertedSlots = new TIntArrayList(getSlots());
         TIntArrayList emptySlots = new TIntArrayList(getSlots());
         for (int slot = 0; slot < getSlots(); slot++) {
@@ -81,18 +92,18 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             insertedSlots.add(slot);
             if (ItemStackHelper.isEmpty(stack)) break;
         }
-        if (stack != null) {
+        if (!ItemStackHelper.isEmpty(stack)) {
             return stack;
         }
         if (simulate) return null;
         for (int slot : insertedSlots.toArray()) {
             before = insert(slot, before, false);
         }
-        if (before != null) {
+        if (!ItemStackHelper.isEmpty(before)) {
             // We have a bad implementation that doesn't respect simulation properly- we are in an invalid state at this
             // point with no chance of recovery
             throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! ("
-                + getClass() + ")");
+                    + getClass() + ")");
         }
         return null;
     }
@@ -121,8 +132,8 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
 
         for (int slot = 0; slot < slots; slot++) {
             ItemStack possible = extract(slot, filter, 1, max - totalSize, true);
-            if (possible != null) {
-                if (toExtract == null) {
+            if (!ItemStackHelper.isEmpty(possible)) {
+                if (ItemStackHelper.isEmpty(toExtract)) {
                     toExtract = possible.copy();
                 }
                 if (StackUtil.canMerge(toExtract, possible)) {
@@ -138,13 +149,11 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         ItemStack total = null;
         if (min <= totalSize) {
             for (int slot : valids.toArray()) {
-                ItemStack extracted = extract(slot, filter, 1, max - (total == null ? 0 : total.stackSize), simulate);
-                if (!ItemStackHelper.isEmpty(extracted)) {
-                    if (ItemStackHelper.isEmpty(total)) {
-                        total = extracted.copy();
-                    } else {
-                        total.stackSize += extracted.stackSize;
-                    }
+                ItemStack extracted = extract(slot, filter, 1, max - total.stackSize, simulate);
+                if (ItemStackHelper.isEmpty(total)) {
+                    total = extracted.copy();
+                } else {
+                    total.stackSize += extracted.stackSize;
                 }
             }
         }
