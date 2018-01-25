@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
@@ -203,7 +204,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 : collect.stream().flatMap(Collection::stream)
         )
             .flatMap(requiredExtractor -> requiredExtractor.extractItemsFromBlock(blockState, tileNbt).stream())
-            .filter(((Predicate<ItemStack>) Objects::isNull).negate())
+            .filter(((Predicate<ItemStack>) ItemStackHelper::isEmpty).negate())
             .collect(Collectors.toList());
     }
 

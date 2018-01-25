@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -137,7 +138,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
             return true;
         }
-        if (current != null) {
+        if (!ItemStackHelper.isEmpty(current)) {
             if (EntityUtil.getWrenchHand(player) != null) {
                 return false;
             }

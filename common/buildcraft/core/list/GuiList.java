@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.Lists;
 import org.lwjgl.input.Keyboard;
 
@@ -167,11 +168,11 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean isCarryingNonEmptyList() {
         ItemStack stack = mc.player.inventory.getItemStack();
-        return stack != null && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
+        return !ItemStackHelper.isEmpty(stack) && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
     }
 
     private boolean hasListEquipped() {
-        return container.getListItemStack() != null;
+        return !ItemStackHelper.isEmpty(container.getListItemStack());
     }
 
     @Override
@@ -224,7 +225,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
         if (!exampleList.containsKey(type)) {
             List<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks.get(0);
-            if (input != null) {
+            if (!ItemStackHelper.isEmpty(input)) {
                 List<ItemStack> repetitions = Lists.newArrayList();
                 for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {

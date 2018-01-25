@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.primitives.Bytes;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -115,7 +116,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             return;
         }
 
-        if (invDownIn.getStackInSlot(0) != null && invDownOut.getStackInSlot(0) == null) {
+        if (!ItemStackHelper.isEmpty(invDownIn.getStackInSlot(0)) && ItemStackHelper.isEmpty(invDownOut.getStackInSlot(0))) {
             if (progressDown == -1) {
                 progressDown = 0;
                 deltaProgressDown.addDelta(0, 50, 1);
@@ -134,7 +135,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             deltaProgressDown.setValue(0);
         }
 
-        if (selected != null && invUpIn.getStackInSlot(0) != null && invUpOut.getStackInSlot(0) == null) {
+        if (selected != null && !ItemStackHelper.isEmpty(invUpIn.getStackInSlot(0)) && ItemStackHelper.isEmpty(invUpOut.getStackInSlot(0))) {
             if (progressUp == -1) {
                 progressUp = 0;
                 deltaProgressUp.addDelta(0, 50, 1);

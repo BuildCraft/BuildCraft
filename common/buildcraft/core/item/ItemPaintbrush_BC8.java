@@ -6,6 +6,7 @@ package buildcraft.core.item;
 
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -69,7 +70,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
         if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing, player)) {
             ItemStack newStack = brush.save(stack);
-            if (newStack != null) {
+            if (!ItemStackHelper.isEmpty(newStack)) {
                 player.setHeldItem(hand, newStack);
             }
             // We just changed the damage NBT value
@@ -165,7 +166,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         @Nullable
         public ItemStack save(ItemStack existing) {
             ItemStack stack = existing;
-            if (existing == null || existing.getMetadata() != getMeta()) {
+            if (ItemStackHelper.isEmpty(existing) || existing.getMetadata() != getMeta()) {
                 stack = new ItemStack(ItemPaintbrush_BC8.this, 1, getMeta());
             }
             if (usesLeft != MAX_USES && colour != null) {

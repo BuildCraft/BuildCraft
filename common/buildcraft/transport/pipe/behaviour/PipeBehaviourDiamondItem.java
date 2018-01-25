@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -42,7 +43,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 boolean foundItem = false;
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (compareTo == null) continue;
+                    if (ItemStackHelper.isEmpty(compareTo)) continue;
                     foundItem = true;
                     if (StackUtil.isMatchingItemOrList(compareTo, toCompare)) {
                         sideAllowed = true;
@@ -79,7 +80,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 int offset = FILTERS_PER_SIDE * allSides[s].ordinal();
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (compareTo == null) continue;
+                    if (ItemStackHelper.isEmpty(compareTo)) continue;
                     if (StackUtil.isMatchingItemOrList(compareTo, item.stack)) {
                         int count = compareTo.stackSize;
                         totalCount += count;
@@ -120,7 +121,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 }
                 toSplit.stackSize = leftOver;
             }
-            if (toSplit != null) {
+            if (!ItemStackHelper.isEmpty(toSplit)) {
                 int[] randLookup = new int[totalCount];
                 int j = 0;
                 for (int s = 0; s < allSides.length; s++) {
@@ -129,7 +130,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                     j += len;
                 }
 
-                while (toSplit != null && toSplit.stackSize > 0) {
+                while (!ItemStackHelper.isEmpty(toSplit)) {
                     // Pick a random number between 0 and total count.
                     int rand = split.holder.getPipeWorld().rand.nextInt(totalCount);
                     int face = randLookup[rand];

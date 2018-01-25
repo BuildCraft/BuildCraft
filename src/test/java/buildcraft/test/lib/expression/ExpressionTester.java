@@ -194,13 +194,13 @@ public class ExpressionTester {
     public void testFunctions() throws InvalidExpressionException {
         FunctionContext ctx = DefaultContexts.createWithAll();
         compileFuncLong(ctx, "one", "1");
-        compileFuncLong(ctx, "same", "value", argLong("value"));
+        compileFuncLong(ctx, "same", "value", Argument.argLong("value"));
 
-        compileFuncDouble(ctx, "same", "value", argDouble("value"));
-        compileFuncDouble(ctx, "powertwo", "pow(2,input)", argDouble("input"));
-        compileFuncDouble(ctx, "subtract", "l - r", argDouble("l"), argDouble("r"));
-        compileFuncDouble(ctx, "tuple", "a + b + c", argDouble("a"), argDouble("b"), argDouble("c"));
-        compileFuncDouble(ctx, "powlong", "pow((same(a + 1) - 1) , (same(b) * one()))", argDouble("a"), argDouble("b"));
+        compileFuncDouble(ctx, "same", "value", Argument.argDouble("value"));
+        compileFuncDouble(ctx, "powertwo", "pow(2,input)", Argument.argDouble("input"));
+        compileFuncDouble(ctx, "subtract", "l - r", Argument.argDouble("l"), Argument.argDouble("r"));
+        compileFuncDouble(ctx, "tuple", "a + b + c", Argument.argDouble("a"), Argument.argDouble("b"),Argument. argDouble("c"));
+        compileFuncDouble(ctx, "powlong", "pow((same(a + 1) - 1) , (same(b) * one()))", Argument.argDouble("a"), Argument.argDouble("b"));
 
         bakeAndCallDouble("one()", 1, ctx);
         bakeAndCallDouble("oNe()", 1, ctx);
@@ -345,7 +345,7 @@ public class ExpressionTester {
         INodeDouble node = bakeFunctionDouble(function, ctx);
         ExpressionDebugManager.debugPrintln("To " + node);
         double got = node.evaluate();
-        assertEquals(expected, got, 0.0001);
+        Assert.assertEquals(expected, got, 0.0001);
     }
 
     private static void bakeAndCallDouble(String function, double def) {
@@ -365,7 +365,7 @@ public class ExpressionTester {
         INodeBoolean node = bakeFunctionBoolean(function, ctx);
         ExpressionDebugManager.debugPrintln("To " + node);
         boolean got = node.evaluate();
-        assertEquals(expected, got);
+        Assert.assertEquals(expected, got);
     }
 
     private static void bakeAndCallBoolean(String function, boolean def) {
@@ -389,7 +389,7 @@ public class ExpressionTester {
         INodeObject<String> node = bakeFunctionString(function, ctx);
         ExpressionDebugManager.debugPrintln("To " + node);
         String got = node.evaluate();
-        assertEquals(expected, got);
+        Assert.assertEquals(expected, got);
     }
 
     private static void bakeAndCallString(String function, String def) {
@@ -414,7 +414,7 @@ public class ExpressionTester {
         INodeLong node = bakeFunctionLong(function, ctx);
         ExpressionDebugManager.debugPrintln("To " + node);
         long got = node.evaluate();
-        assertEquals(expected, got);
+        Assert.assertEquals(expected, got);
     }
 
     private static void bakeAndCallLong(String function, long def) {

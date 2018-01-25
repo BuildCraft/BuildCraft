@@ -8,6 +8,7 @@ package buildcraft.builders.tile;
 
 import java.util.Date;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.util.ITickable;
 
 import buildcraft.api.core.InvalidInputDataException;
@@ -59,9 +60,9 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
         if (world.isRemote) {
             return;
         }
-        if (invSnapshot.getStackInSlot(0) != null &&
-            invSchematicFrom.getStackInSlot(0) != null &&
-            invSchematicTo.getStackInSlot(0) != null) {
+        if (!ItemStackHelper.isEmpty(invSnapshot.getStackInSlot(0)) &&
+                !ItemStackHelper.isEmpty(invSchematicFrom.getStackInSlot(0)) &&
+                !ItemStackHelper.isEmpty(invSchematicTo.getStackInSlot(0))) {
             Header header = BCBuildersItems.snapshot.getHeader(invSnapshot.getStackInSlot(0));
             if (header != null) {
                 Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);

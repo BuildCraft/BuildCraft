@@ -7,6 +7,7 @@ package buildcraft.builders.item;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import buildcraft.lib.item.ItemStackHelper;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -130,12 +131,12 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                         if (requiredFluids.isEmpty()) {
                             InventoryWrapper itemTransactor = new InventoryWrapper(player.inventory);
                             if (StackUtil.mergeSameItems(requiredItems).stream().noneMatch(s ->
-                                    itemTransactor.extract(
+                                    ItemStackHelper.isEmpty(itemTransactor.extract(
                                             extracted -> StackUtil.canMerge(s, extracted),
                                             s.stackSize,
                                             s.stackSize,
                                             true
-                                    ) == null
+                                    ))
                             )) {
                                 if (schematicBlock.build(world, placePos)) {
                                     StackUtil.mergeSameItems(requiredItems).forEach(s ->

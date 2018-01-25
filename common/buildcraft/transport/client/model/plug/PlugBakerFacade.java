@@ -13,6 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
@@ -201,6 +204,8 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
 
     public List<MutableQuad> bakeForKey(KeyPlugFacade key) {
         IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(key.state);
+        BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
+        ForgeHooksClient.setRenderLayer(null);
         List<MutableQuad> quads = new ArrayList<>();
         int pS = PluggableFacade.SIZE;
         int nS = 16 - pS;
@@ -273,6 +278,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
                 }
             }
         }
+        ForgeHooksClient.setRenderLayer(renderLayer);
         for (MutableQuad quad : quads) {
             int tint = quad.getTint();
             if (tint != -1) {

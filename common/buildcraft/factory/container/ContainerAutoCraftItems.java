@@ -15,6 +15,9 @@ import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 
 public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchItems> {
+
+    public final SlotBase[] materialSlots;
+
     public ContainerAutoCraftItems(EntityPlayer player, TileAutoWorkbenchItems tile) {
         super(player, tile);
 
@@ -24,8 +27,10 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
                 addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18, false));
             }
         }
+        materialSlots = new SlotBase[9];
         for (int x = 0; x < 9; x++) {
-            addSlotToContainer(new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
+            addSlotToContainer(new SlotPhantom(tile.invMaterialFilter, x, -1000000, -1000000));
+            addSlotToContainer(materialSlots[x] = new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
         }
         addSlotToContainer(new SlotDisplay(i -> tile.resultClient, 0, 93, 27));
 

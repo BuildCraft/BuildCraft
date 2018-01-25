@@ -9,7 +9,9 @@ package buildcraft.core.list;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -83,15 +85,15 @@ public class ContainerList extends ContainerBC_Neptune {
         return true;
     }
 
-    @Nonnull
+    @Nullable
     public ItemStack getListItemStack() {
         ItemStack toTry = player.getHeldItemMainhand();
-        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
+        if (!ItemStackHelper.isEmpty(toTry) && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
         toTry = player.getHeldItemOffhand();
-        if (toTry != null && toTry.getItem() instanceof ItemList_BC8) {
+        if (!ItemStackHelper.isEmpty(toTry) && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
         return null;

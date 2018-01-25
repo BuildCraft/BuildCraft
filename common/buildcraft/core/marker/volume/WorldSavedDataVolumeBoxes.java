@@ -25,8 +25,14 @@ import buildcraft.lib.net.MessageManager;
 
 public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     private static final String DATA_NAME = "buildcraft_volume_boxes";
+    /**
+     * Used to assign {@link WorldSavedDataVolumeBoxes#world} to pass it to {@link VolumeBox},
+     * as we can't pass it other way ({@link MapStorage} can call only constructor with one {@link String} argument
+     * and then it calls NBT deserialization method,
+     * giving us no chance to set the {@link WorldSavedDataVolumeBoxes#world} field).
+     */
     private static World currentWorld;
-    public World world = currentWorld;
+    public final World world = currentWorld;
     public final List<VolumeBox> volumeBoxes = new ArrayList<>();
 
     public WorldSavedDataVolumeBoxes() {
@@ -120,12 +126,11 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
         currentWorld = world;
         WorldSavedDataVolumeBoxes instance = (WorldSavedDataVolumeBoxes)
             storage.getOrLoadData(WorldSavedDataVolumeBoxes.class, DATA_NAME);
-        currentWorld = null;
         if (instance == null) {
             instance = new WorldSavedDataVolumeBoxes();
             storage.setData(DATA_NAME, instance);
         }
-        instance.world = world;
+        currentWorld = null;
         return instance;
     }
 }

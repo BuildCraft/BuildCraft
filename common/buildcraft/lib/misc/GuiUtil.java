@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -51,7 +52,8 @@ public class GuiUtil {
                 if (stack != null) {
                     EntityPlayer player = gui.container.player;
                     boolean advanced = gui.mc.gameSettings.advancedItemTooltips;
-                    delegate().addAll(stack.getTooltip(player, advanced));
+                    delegate().addAll(stack.getTooltip(player,
+                            advanced));
                 }
             }
         };
@@ -59,7 +61,7 @@ public class GuiUtil {
 
     /** Draws multiple elements, one after each other. */
     public static <D> void drawVerticallyAppending(IGuiPosition element, Iterable<? extends D> iterable,
-        IVerticalAppendingDrawer<D> drawer) {
+                                                   IVerticalAppendingDrawer<D> drawer) {
         double x = element.getX();
         double y = element.getY();
         for (D drawable : iterable) {
@@ -96,7 +98,7 @@ public class GuiUtil {
      *            width.
      * @param font the font for drawing the text in the tooltip box */
     public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
-        final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
+                                       final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
@@ -179,25 +181,25 @@ public class GuiUtil {
             final int zLevel = 300;
             final int backgroundColor = 0xF0100010;
             GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3,
-                backgroundColor, backgroundColor);
+                    backgroundColor, backgroundColor);
             GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 3,
-                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
+                    tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
             GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3,
-                tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+                    tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
             GuiUtils.drawGradientRect(zLevel, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3,
-                backgroundColor, backgroundColor);
+                    backgroundColor, backgroundColor);
             GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 3, tooltipY - 3,
-                tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+                    tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
             final int borderColorStart = 0x505000FF;
             final int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
             GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1,
-                tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+                    tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
             GuiUtils.drawGradientRect(zLevel, tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1,
-                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+                    tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
             GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3,
-                tooltipY - 3 + 1, borderColorStart, borderColorStart);
+                    tooltipY - 3 + 1, borderColorStart, borderColorStart);
             GuiUtils.drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2,
-                tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
+                    tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
                 String line = textLines.get(lineNumber);
@@ -260,16 +262,19 @@ public class GuiUtil {
         }
         scissorRegions.push(rect);
         scissor0();
-        return () -> {
-            GuiRectangle last = scissorRegions.pop();
-            if (last != rect) {
-                throw new IllegalStateException("Popped rectangles in the wrong order!");
-            }
-            GuiRectangle next = scissorRegions.peek();
-            if (next == null) {
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            } else {
-                scissor0();
+        return new AutoGlScissor() {
+            @Override
+            public void close() {
+                GuiRectangle last = scissorRegions.pop();
+                if (last != rect) {
+                    throw new IllegalStateException("Popped rectangles in the wrong order!");
+                }
+                GuiRectangle next = scissorRegions.peek();
+                if (next == null) {
+                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                } else {
+                    scissor0();
+                }
             }
         };
     }
@@ -312,7 +317,7 @@ public class GuiUtil {
     }
 
     public static ISprite subAbsolute(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
-        double spriteSize) {
+                                      double spriteSize) {
         double size = spriteSize;
         return GuiUtil.subAbsolute(sprite, uMin / size, vMin / size, uMax / size, vMax / size);
     }
@@ -333,7 +338,7 @@ public class GuiUtil {
     }
 
     public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
-        double scale) {
+                                         double scale) {
         return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, scale);
     }
 
@@ -341,5 +346,24 @@ public class GuiUtil {
     public interface AutoGlScissor extends AutoCloseable {
         @Override
         void close();
+    }
+
+    public static List<String> getFormattedTooltip(ItemStack stack) {
+        Minecraft mc = Minecraft.getMinecraft();
+        List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
+
+        if (!list.isEmpty()) {
+            list.set(0, stack.getRarity().rarityColor + list.get(0));
+        }
+
+        for (int i = 1; i < list.size(); ++i) {
+            list.set(i, TextFormatting.GRAY + list.get(i));
+        }
+
+        return list;
+    }
+
+    private static Boolean getTooltipFlags() {
+        return Minecraft.getMinecraft().gameSettings.advancedItemTooltips;
     }
 }

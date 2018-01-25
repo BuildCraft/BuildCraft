@@ -109,7 +109,7 @@ public class BCEnergyFluids {
         BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"),
             new ResourceLocation(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
-        def.setMapColour(getMapColour(texLight));
+        def.setMapColour(getMapColor(texDark));
         def.setFlammable(true);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
@@ -132,21 +132,21 @@ public class BCEnergyFluids {
         return def;
     }
 
-    private static MapColor getMapColour(int colour) {
-        MapColor bestColor = MapColor.BLACK;
+    private static MapColor getMapColor(int color) {
+        MapColor bestMapColor = MapColor.BLACK;
         int currentDifference = Integer.MAX_VALUE;
 
-        int r = (colour >> 16) & 0xFF;
-        int g = (colour >> 8) & 0xFF;
-        int b = (colour >> 0) & 0xFF;
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = (color) & 0xFF;
 
-        for (MapColor map : MapColor.COLORS) {
-            if (map == null || map.colorValue == 0) {
+        for (MapColor mapColor  : MapColor.COLORS) {
+            if (mapColor  == null || mapColor .colorValue == 0) {
                 continue;
             }
-            int mr = (map.colorValue >> 16) & 0xFF;
-            int mg = (map.colorValue >> 8) & 0xFF;
-            int mb = (map.colorValue >> 0) & 0xFF;
+            int mr = (mapColor .colorValue >> 16) & 0xFF;
+            int mg = (mapColor .colorValue >> 8) & 0xFF;
+            int mb = (mapColor .colorValue) & 0xFF;
 
             int dr = mr - r;
             int dg = mg - g;
@@ -156,9 +156,9 @@ public class BCEnergyFluids {
 
             if (difference < currentDifference) {
                 currentDifference = difference;
-                bestColor = map;
+                bestMapColor = mapColor ;
             }
         }
-        return bestColor;
+        return bestMapColor;
     }
 }

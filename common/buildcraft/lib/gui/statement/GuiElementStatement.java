@@ -36,7 +36,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
     public static final SpriteNineSliced SELECTION_HOVER;
 
     static {
-        TEXTURE_SELECTOR = new ResourceLocation("buildcraftlib:textures/gui/statement_selector.png");
+        TEXTURE_SELECTOR = new ResourceLocation("buildcraftlib:textures/gui/misc_slots.png");
         SLOT_COLOUR = new GuiIcon(TEXTURE_SELECTOR, 0, 0, 18, 18);
         ICON_SLOT_BLOCKED = SLOT_COLOUR.offset(18, 0);
         ICON_SLOT_NOT_SET = ICON_SLOT_BLOCKED.offset(18, 0);

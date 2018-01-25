@@ -88,7 +88,7 @@ public enum BCLibEventDist {
                 }
 
                 String ver;
-                if (BCLib.VERSION.startsWith("${")) {
+                if (BCLib.VERSION.startsWith("$")) {
                     ModContainer mod = Loader.instance().getIndexedModList().get(BCLib.MODID);
                     if (mod == null) {
                         ver = "[UNKNOWN-MANUAL-BUILD]";

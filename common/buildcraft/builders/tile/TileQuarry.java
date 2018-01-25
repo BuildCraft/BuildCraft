@@ -23,6 +23,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
@@ -114,7 +115,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private List<AxisAlignedBB> collisionboxes = null;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
-        public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState,
+        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
             int flags) {
             if (frameBox.isInitialized() && miningBox.isInitialized()) {
                 if (frameBox.contains(pos)) {
@@ -880,7 +881,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                         new AxisAlignedBB(breakPos).expandXyz(1))) {
                         TransactorEntityItem transactor = new TransactorEntityItem(entity);
                         ItemStack stack;
-                        while ((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)) != null) {
+                        while (!ItemStackHelper.isEmpty((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)))) {
                             InventoryUtil.addToBestAcceptor(world, pos, null, stack);
                         }
                     }

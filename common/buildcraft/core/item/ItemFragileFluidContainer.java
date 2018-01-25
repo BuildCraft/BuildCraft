@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -112,7 +113,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
 
     @Nullable
     static FluidStack getFluid(ItemStack container) {
-        if (container == null) {
+        if (ItemStackHelper.isEmpty(container)) {
             return null;
         }
         NBTTagCompound fluidNbt = container.getSubCompound("fluid", false);

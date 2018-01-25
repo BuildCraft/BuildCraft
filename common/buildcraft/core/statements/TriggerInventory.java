@@ -8,6 +8,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -75,10 +76,10 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 ItemStack stack = handler.getStackInSlot(i);
 
                 // TODO: Replace some of this with
-                foundItems |= stack != null && (searchedStack == null || StackUtil.canStacksOrListsMerge(stack, searchedStack));
+                foundItems |= !ItemStackHelper.isEmpty(stack) && (ItemStackHelper.isEmpty(searchedStack) || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
-                    && (searchedStack == null || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true) == null);
+                foundSpace |= (ItemStackHelper.isEmpty(stack) || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
+                    && (ItemStackHelper.isEmpty(searchedStack) || searchedStack.getItem() instanceof IList || ItemStackHelper.isEmpty(handler.insertItem(i, searchedStack, true)));
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a
                 // heuristic which is more desirable than expensive computation

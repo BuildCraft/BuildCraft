@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
@@ -94,6 +96,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
             .filter(Objects::nonNull)
             .flatMap(Collection::stream)
             .flatMap(requiredExtractor -> requiredExtractor.extractItemsFromEntity(entityNbt).stream())
+                .filter(((Predicate<ItemStack>) ItemStackHelper::isEmpty).negate())
             .collect(Collectors.toList());
     }
 
