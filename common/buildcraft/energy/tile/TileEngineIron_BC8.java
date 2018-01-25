@@ -7,6 +7,7 @@
 package buildcraft.energy.tile;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -134,16 +135,18 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
-        ItemStack current = player.getHeldItem(hand).copy();
-        if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
-            return true;
-        }
-        if (!ItemStackHelper.isEmpty(current)) {
-            if (EntityUtil.getWrenchHand(player) != null) {
-                return false;
+        if (!ItemStackHelper.isEmpty(player.getHeldItem(hand))) {
+            ItemStack current = Objects.requireNonNull(player.getHeldItem(hand)).copy();
+            if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
+                return true;
             }
-            if (current.getItem() instanceof IItemPipe) {
-                return false;
+            if (!ItemStackHelper.isEmpty(current)) {
+                if (EntityUtil.getWrenchHand(player) != null) {
+                    return false;
+                }
+                if (current.getItem() instanceof IItemPipe) {
+                    return false;
+                }
             }
         }
         if (!world.isRemote) {

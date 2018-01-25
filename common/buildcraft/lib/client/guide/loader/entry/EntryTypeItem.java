@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -44,7 +45,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
             matchMeta = false;
             matchNbt = false;
         }
-        if (stack == null || stack.stackSize == 0) {
+        if (ItemStackHelper.isEmpty(stack)) {
             return null;
         }
         return new ItemStackValueFilter(new ItemStackKey(stack), matchMeta, matchNbt);
@@ -63,7 +64,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
         if (value instanceof ItemStack) {
             ItemStack base = target.stack.baseStack;
             ItemStack test = (ItemStack) value;
-            if (base == null || base.stackSize == 0 || test == null || test.stackSize == 0) {
+            if (ItemStackHelper.isEmpty(base) || ItemStackHelper.isEmpty(test)) {
                 return false;
             }
             if (base.getItem() != test.getItem()) {
@@ -74,12 +75,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
                     return false;
                 }
             }
-            if (target.matchNbt) {
-                if (!ItemStack.areItemStackTagsEqual(base, test)) {
-                    return false;
-                }
-            }
-            return true;
+            return !target.matchNbt || ItemStack.areItemStackTagsEqual(base, test);
         }
         return false;
     }

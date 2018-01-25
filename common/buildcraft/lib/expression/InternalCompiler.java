@@ -631,7 +631,7 @@ public class InternalCompiler {
                 }
                 nodes[i] = node;
             }
-            ExpressionDebugManager.debugPrintln("Nodes = " + nodes);
+            ExpressionDebugManager.debugPrintln("Nodes = " + Arrays.toString(nodes));
             realStack = new NodeStack(nodes);
         }
         INodeFunc func = bestFunction;

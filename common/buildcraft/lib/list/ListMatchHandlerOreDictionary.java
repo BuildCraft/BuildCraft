@@ -20,8 +20,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;
 
-import buildcraft.lib.misc.StackUtil;
-
 public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     private static int getUppercaseCount(String s) {
         int j = 0;

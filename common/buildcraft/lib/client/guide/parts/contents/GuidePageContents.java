@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import buildcraft.lib.item.ItemStackHelper;
 import buildcraft.lib.misc.SuffixArray;
 import com.google.common.collect.ImmutableList;
 
@@ -107,7 +108,8 @@ public class GuidePageContents extends GuidePageBase {
             if (entryFactory == null) {
                 if (entry.value instanceof ItemStackValueFilter) {
                     ItemStack stack = ((ItemStackValueFilter) entry.value).stack.baseStack;
-                    itemsAdded.add(stack.getItem());
+                    if (!ItemStackHelper.isEmpty(stack))
+                        itemsAdded.add(stack.getItem());
                     PageLinkGenerated pageLink = pageHolder.addKnownPage(text, stack);
                     if (pageLink != null) {
                         quickSearcher.add(pageLink, pageLink.joinedTooltip.toLowerCase(Locale.ROOT));
@@ -116,7 +118,8 @@ public class GuidePageContents extends GuidePageBase {
             } else {
                 if (entry.value instanceof ItemStackValueFilter) {
                     ItemStack stack = ((ItemStackValueFilter) entry.value).stack.baseStack;
-                    itemsAdded.add(stack.getItem());
+                    if (!ItemStackHelper.isEmpty(stack))
+                        itemsAdded.add(stack.getItem());
                 }
                 PageLinkNormal pageLink = pageHolder.addNormalPage(text, entryFactory);
                 quickSearcher.add(pageLink, pageLink.getName().toLowerCase(Locale.ROOT));

@@ -13,6 +13,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -121,17 +122,18 @@ public class InventoryUtil {
 
     /** Attempts to add the given stack to the best acceptor, in this order: {@link IItemHandler} instances,
      * {@link IInjectable} instances, and finally dropping it down on the ground. */
-    public static void addToBestAcceptor(World world, BlockPos pos, EnumFacing ignore, @Nonnull ItemStack stack) {
+    public static void addToBestAcceptor(World world, BlockPos pos, EnumFacing ignore, ItemStack stack) {
         stack = addToRandomInjectable(world, pos, ignore, stack);
         stack = addToRandomInventory(world, pos, stack);
-        drop(world, pos, stack);
+        if (!ItemStackHelper.isEmpty(stack))
+            drop(world, pos, stack);
     }
 
     /** Adds every stack from src to dst. Doesn't add empty stacks. */
     public static void addAll(IItemHandler src, List<ItemStack> dst) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack stack = src.getStackInSlot(i);
-            if (stack != null) {
+            if (!ItemStackHelper.isEmpty(stack)) {
                 dst.add(stack);
             }
         }

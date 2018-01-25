@@ -50,11 +50,9 @@ public class LaserData_BC8 {
         if (obj == null) return false;
         if (obj.getClass() != getClass()) return false;
         LaserData_BC8 other = (LaserData_BC8) obj;
-        if (laserType != other.laserType) return false;
-        if (!start.equals(other.start)) return false;
-        if (!end.equals(other.end)) return false;
-        if (Double.compare(scale, other.scale) != 0) return false;
-        return enableDiffuse == other.enableDiffuse && doubleFace == other.doubleFace && minBlockLight == other.minBlockLight;
+        return laserType == other.laserType && start.equals(other.start) && end.equals(other.end)
+                && Double.compare(scale, other.scale) == 0 && enableDiffuse == other.enableDiffuse
+                && doubleFace == other.doubleFace && minBlockLight == other.minBlockLight;
     }
 
     /** Holds information about a specific type of laser: what textures should be used for different parts. */

@@ -8,7 +8,6 @@ package buildcraft.core.list;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import buildcraft.lib.item.ItemStackHelper;
@@ -99,7 +98,7 @@ public class ContainerList extends ContainerBC_Neptune {
         return null;
     }
 
-    void setStack(final int lineIndex, final int slotIndex, @Nonnull final ItemStack stack) {
+    void setStack(final int lineIndex, final int slotIndex, @Nullable final ItemStack stack) {
         lines[lineIndex].setStack(slotIndex, stack);
         ListHandler.saveLines(getListItemStack(), lines);
     }

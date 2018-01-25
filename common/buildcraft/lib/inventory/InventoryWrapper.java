@@ -6,8 +6,9 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
@@ -23,8 +24,8 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
     }
 
     @Override
-    @Nonnull
-    protected ItemStack insert(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @Nullable
+    protected ItemStack insert(int slot, @Nullable ItemStack stack, boolean simulate) {
         ItemStack current = inventory.getStackInSlot(slot);
         if (!inventory.isItemValidForSlot(slot, stack)) {
             return stack;
@@ -35,7 +36,7 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
             if (!simulate) {
                 inventory.setInventorySlotContents(slot, split);
             }
-            if (stack == null) {
+            if (ItemStackHelper.isEmpty(stack)) {
                 return null;
             } else {
                 return stack;
@@ -63,10 +64,10 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
     }
 
     @Override
-    @Nonnull
+    @Nullable
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         ItemStack current = inventory.getStackInSlot(slot);
-        if (current == null) {
+        if (ItemStackHelper.isEmpty(current)) {
             return null;
         }
         if (filter.matches(current.copy())) {

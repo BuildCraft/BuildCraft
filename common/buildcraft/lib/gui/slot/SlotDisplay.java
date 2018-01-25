@@ -53,11 +53,11 @@ public class SlotDisplay extends Slot {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return getStack().stackSize;
+        return getStack() == null ? 0 : getStack().getMaxStackSize();
     }
 
     @Override
     public int getSlotStackLimit() {
-        return getStack().stackSize;
+        return getStack() == null ? 0 : getStack().getMaxStackSize();
     }
 }

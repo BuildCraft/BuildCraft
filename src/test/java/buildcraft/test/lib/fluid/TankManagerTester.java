@@ -11,6 +11,8 @@ import buildcraft.lib.fluid.TankManager;
 
 import buildcraft.test.VanillaSetupBaseTester;
 
+import java.util.Objects;
+
 public class TankManagerTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
@@ -25,6 +27,6 @@ public class TankManagerTester extends VanillaSetupBaseTester {
         Assert.assertEquals(5, manager.fill(new FluidStack(FluidRegistry.LAVA, 5), true));
         Assert.assertTrue(new FluidStack(FluidRegistry.LAVA, 4).isFluidStackIdentical(manager.drain(new FluidStack(FluidRegistry.LAVA, 4), true)));
 
-        Assert.assertEquals(1, manager.get(1).getFluid().amount);
+        Assert.assertEquals(1, Objects.requireNonNull(manager.get(1).getFluid()).amount);
     }
 }

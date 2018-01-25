@@ -8,6 +8,7 @@ package buildcraft.silicon.client.render;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -26,6 +27,8 @@ import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.item.ItemGoggles;
 import buildcraft.silicon.BCSiliconConfig;
 import buildcraft.silicon.tile.TileLaser;
+
+import java.util.Objects;
 
 public class RenderLaser extends FastTESR<TileLaser> {
     private static final int MAX_POWER = BuildCraftLaserManager.POWERS.length - 1;
@@ -61,7 +64,9 @@ public class RenderLaser extends FastTESR<TileLaser> {
     }
 
     private boolean isPlayerWearingGoggles() {
-        Item headArmor = Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
-        return headArmor instanceof ItemGoggles;
+        if (!ItemStackHelper.isEmpty(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD))) {
+            Item headArmor = Objects.requireNonNull(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD)).getItem();
+            return headArmor instanceof ItemGoggles;
+        } else return false;
     }
 }

@@ -46,8 +46,6 @@ import buildcraft.transport.plug.FacadePhasedState;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.PluggableFacade;
 
-import static buildcraft.transport.plug.FacadeStateManager.getInfoForBlock;
-
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
     public ItemPluggableFacade(String id) {
         super(id);

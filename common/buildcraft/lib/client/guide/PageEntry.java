@@ -78,7 +78,7 @@ public class PageEntry<T> {
             BCLog.logger.warn("[lib.guide] Invalid page entry: a page is not specified!SSS");
             return null;
         }
-        return new PageEntry<T>(title, entry.page, entry.typeTags, type, value);
+        return new PageEntry<>(title, entry.page, entry.typeTags, type, value);
     }
 
     private PageEntry(String title, String page, JsonTypeTags typeTags, PageEntryType<T> entryType, T value) {

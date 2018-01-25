@@ -74,9 +74,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
             return;
         }
         toWaitTicks--;
-        if (toWaitTicks > 0) {
-            return;
-        } else {
+        if (toWaitTicks <= 0) {
             toWaitTicks = 0;
         }
     }

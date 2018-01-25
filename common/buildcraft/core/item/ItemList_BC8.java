@@ -40,9 +40,10 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     }
 
     @Override
+    @Nonnull
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
         BCCoreGuis.LIST.openGUI(player);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
     }
 
     @Override

@@ -20,8 +20,6 @@ import buildcraft.lib.misc.data.Box;
 
 import buildcraft.test.TestHelper;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(Theories.class)
 public class BoxTester {
     private static final BlockPos MIN = new BlockPos(1, 2, 3), MAX = new BlockPos(4, 5, 6);

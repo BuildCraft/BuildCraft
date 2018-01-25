@@ -27,10 +27,6 @@ import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-import static buildcraft.lib.expression.Argument.argDouble;
-import static buildcraft.lib.expression.Argument.argLong;
-import static org.junit.Assert.assertEquals;
-
 @SuppressWarnings("static-method")
 public class ExpressionTester {
     static {
@@ -72,8 +68,8 @@ public class ExpressionTester {
         bakeAndCallDouble("2*(-3)", -6);
         bakeAndCallDouble("2*-3", -6);
 
-        bakeAndCallDouble("1 << 0", 1 << 0);
-        bakeAndCallDouble("1 >> 0", 1 >> 0);
+        bakeAndCallDouble("1 << 0", 1);
+        bakeAndCallDouble("1 >> 0", 1);
         bakeAndCallDouble("100 >> 2", 100 >> 2);
         bakeAndCallDouble("1 << 2", 1 << 2);
         bakeAndCallDouble("1 << 10", 1 << 10);

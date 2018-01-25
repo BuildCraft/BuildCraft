@@ -12,6 +12,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import gnu.trove.list.array.TIntArrayList;
 
 import net.minecraft.item.ItemStack;
@@ -52,12 +53,12 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
                 emptySlots.add(slot);
             } else {
                 stack = insert(slot, stack, simulate);
-                if (stack == null) return null;
+                if (ItemStackHelper.isEmpty(stack)) return null;
             }
         }
         for (int slot : emptySlots.toArray()) {
             stack = insert(slot, stack, simulate);
-            if (stack == null) return null;
+            if (ItemStackHelper.isEmpty(stack)) return null;
         }
         return stack;
     }
@@ -72,13 +73,13 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             } else {
                 stack = insert(slot, stack, true);
                 insertedSlots.add(slot);
-                if (stack == null) break;
+                if (ItemStackHelper.isEmpty(stack)) break;
             }
         }
         for (int slot : emptySlots.toArray()) {
             stack = insert(slot, stack, true);
             insertedSlots.add(slot);
-            if (stack == null) break;
+            if (ItemStackHelper.isEmpty(stack)) break;
         }
         if (stack != null) {
             return stack;
@@ -137,11 +138,13 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         ItemStack total = null;
         if (min <= totalSize) {
             for (int slot : valids.toArray()) {
-                ItemStack extracted = extract(slot, filter, 1, max - total.stackSize, simulate);
-                if (total == null) {
-                    total = extracted.copy();
-                } else {
-                    total.stackSize += extracted.stackSize;
+                ItemStack extracted = extract(slot, filter, 1, max - (total == null ? 0 : total.stackSize), simulate);
+                if (!ItemStackHelper.isEmpty(extracted)) {
+                    if (ItemStackHelper.isEmpty(total)) {
+                        total = extracted.copy();
+                    } else {
+                        total.stackSize += extracted.stackSize;
+                    }
                 }
             }
         }

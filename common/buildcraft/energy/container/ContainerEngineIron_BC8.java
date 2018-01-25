@@ -6,6 +6,7 @@
 
 package buildcraft.energy.container;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -42,24 +43,26 @@ public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8>
         if (!player.world.isRemote) {
             Slot slot = inventorySlots.get(index);
             ItemStack stack = slot.getStack();
-            ItemStack original = stack.copy();
-            stack = tile.tankFuel.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
-                return null;
-            }
-            stack = tile.tankCoolant.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
-                return null;
-            }
-            stack = tile.tankResidue.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
-                return null;
+            if (!ItemStackHelper.isEmpty(stack)) {
+                ItemStack original = stack.copy();
+                stack = tile.tankFuel.transferStackToTank(this, stack);
+                if (!ItemStack.areItemStacksEqual(stack, original)) {
+                    slot.putStack(stack);
+                    detectAndSendChanges();
+                    return null;
+                }
+                stack = tile.tankCoolant.transferStackToTank(this, stack);
+                if (!ItemStack.areItemStacksEqual(stack, original)) {
+                    slot.putStack(stack);
+                    detectAndSendChanges();
+                    return null;
+                }
+                stack = tile.tankResidue.transferStackToTank(this, stack);
+                if (!ItemStack.areItemStacksEqual(stack, original)) {
+                    slot.putStack(stack);
+                    detectAndSendChanges();
+                    return null;
+                }
             }
         }
 

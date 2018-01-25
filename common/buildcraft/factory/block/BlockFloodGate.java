@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -68,7 +69,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (heldItem.getItem() instanceof IToolWrench) {
+        if (!ItemStackHelper.isEmpty(heldItem) && heldItem.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {
                 if (side != EnumFacing.UP) {
                     TileEntity tile = world.getTileEntity(pos);

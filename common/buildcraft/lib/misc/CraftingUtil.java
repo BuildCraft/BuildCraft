@@ -8,6 +8,7 @@ package buildcraft.lib.misc;
 
 import java.util.List;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -42,6 +43,9 @@ public final class CraftingUtil {
                 ++itemNum;
             }
         }
+
+        if (ItemStackHelper.isEmpty(item1) || ItemStackHelper.isEmpty(item2))
+            return null;
 
         if (itemNum == 2 && item1.getItem() == item2.getItem() && item1.stackSize == 1 && item2.stackSize == 1 && item1.getItem().isRepairable()) {
             int item1Durability = item1.getMaxDamage() - item1.getItemDamage();

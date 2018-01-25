@@ -6,8 +6,7 @@
 
 package buildcraft.lib.recipe;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 
@@ -33,8 +32,8 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
      * metadata is equal to {@link OreDictionary#WILDCARD_VALUE}
      * 
      * @param stack the stack to check. */
-    public static ChangingItemStack create(@Nonnull ItemStack stack) {
-        if (stack != null) {
+    public static ChangingItemStack create(ItemStack stack) {
+        if (ItemStackHelper.isEmpty(stack)) {
             return new ChangingItemStack(StackUtil.listOf(null));
         } else if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             List<ItemStack> subs = Lists.newArrayList();

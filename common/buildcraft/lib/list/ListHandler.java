@@ -9,7 +9,6 @@ package buildcraft.lib.list;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 import net.minecraft.creativetab.CreativeTabs;
