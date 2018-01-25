@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -48,9 +49,6 @@ public class StackUtil {
     public static ItemStack getItemStackForState(IBlockState state) {
         Block b = state.getBlock();
         ItemStack stack = new ItemStack(b);
-        if (stack == null) {
-            return null;
-        }
         if (stack.getHasSubtypes()) {
             stack = new ItemStack(stack.getItem(), 1, b.getMetaFromState(state));
         }
@@ -78,7 +76,7 @@ public class StackUtil {
 
     /** Checks that passed stack meets stack definition requirements */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
-        return stack != null && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
+        return !ItemStackHelper.isEmpty(stack) && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
     }
 
     /** Checks that passed stack definition acceptable for stack collection */
@@ -94,7 +92,7 @@ public class StackUtil {
                 // Use an explicit null check here as the collection doesn't have @Nonnull applied to its type
                 throw new NullPointerException("Found a null itemstack in " + containers);
             }
-            if (req == null) continue;
+            if (ItemStackHelper.isEmpty(req)) continue;
             if (!contains(req, containers)) {
                 return false;
             }
@@ -309,7 +307,8 @@ public class StackUtil {
      * @param stacks The stacks to put into a list
      * @return A {@link List} of all the given items. Note that the returned list of of a specified size, and
      *         cannot be expanded. */
-    public static List<ItemStack> listOf(ItemStack... stacks) {
+    public static List<ItemStack> listOf(@Nullable ItemStack... stacks) {
+        if (stacks == null) return listOf();
         switch (stacks.length) {
             case 0:
                 return listOf();
@@ -352,11 +351,6 @@ public class StackUtil {
         }
     }
 
-    @Nonnull
-    public static ItemStack asNonNullSoft(@Nullable ItemStack stack) {
-        return asNonNullSoft(stack);
-    }
-
     /** @return A {@link Collector} that will collect the input elements into a {@link List} */
     public static <E> Collector<E, ?, List<E>> nonNullListCollector() {
         return Collectors.toCollection(Lists::newArrayList);
@@ -364,8 +358,8 @@ public class StackUtil {
 
     /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},
      * except if null returns true, in which case the hash will be 0. */
-    public static int hash(@Nonnull ItemStack stack) {
-        if (stack == null) {
+    public static int hash(ItemStack stack) {
+        if (ItemStackHelper.isEmpty(stack)) {
             return 0;
         }
         return stack.serializeNBT().hashCode();

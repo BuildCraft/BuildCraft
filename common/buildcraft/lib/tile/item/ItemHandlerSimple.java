@@ -20,7 +20,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.inventory.AbstractInvItemTransactor;

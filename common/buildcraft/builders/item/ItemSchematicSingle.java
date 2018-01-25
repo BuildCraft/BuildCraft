@@ -40,6 +40,8 @@ import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.builders.snapshot.SchematicBlockManager;
 
+import javax.annotation.Nonnull;
+
 public class ItemSchematicSingle extends ItemBC_Neptune {
     public static final int DAMAGE_CLEAN = 0;
     public static final int DAMAGE_USED = 1;
@@ -64,6 +66,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
     }
 
     @Override
+    @Nonnull
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -81,6 +84,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
     }
 
     @Override
+    @Nonnull
     public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;

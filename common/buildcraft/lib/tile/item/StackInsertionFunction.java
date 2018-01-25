@@ -7,7 +7,9 @@
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.misc.StackUtil;
@@ -26,11 +28,11 @@ public interface StackInsertionFunction {
      * themselves IS taken into account, so this has an effective upper limit of 64. */
     static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
-            if (toInsert == null) {
+            if (ItemStackHelper.isEmpty(toInsert)) {
                 return new InsertionResult(addingTo, null);
             }
 
-            if (addingTo == null) {
+            if (ItemStackHelper.isEmpty(addingTo)) {
                 int maxSize = Math.min(maxStackSize, toInsert.getMaxStackSize());
                 if (toInsert.stackSize <= maxSize) {
                     return new InsertionResult(toInsert, null);
@@ -68,10 +70,10 @@ public interface StackInsertionFunction {
     class InsertionResult {
         public static final InsertionResult EMPTY_STACKS = new InsertionResult(null, null);
 
-        @Nonnull
+        @Nullable
         public final ItemStack toSet, toReturn;
 
-        public InsertionResult(@Nonnull ItemStack toSet, @Nonnull ItemStack toReturn) {
+        public InsertionResult(ItemStack toSet, ItemStack toReturn) {
             this.toSet = toSet;
             this.toReturn = toReturn;
         }

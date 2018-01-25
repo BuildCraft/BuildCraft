@@ -127,18 +127,20 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
                 deltaFuelLeft.addDelta(0, totalBurnTime, -100);
 
                 ItemStack fuel = invFuel.extractItem(0, 1, false);
-                ItemStack container = fuel.getItem().getContainerItem(fuel);
-                if (!ItemStackHelper.isEmpty(container)) {
-                    if (ItemStackHelper.isEmpty(invFuel.getStackInSlot(0))) {
-                        isForceInserting = false;
-                        ItemStack leftover = invFuel.insert(container, false, false);
-                        if (!ItemStackHelper.isEmpty(leftover)) {
-                            isForceInserting = true;
-                            invFuel.setStackInSlot(0, leftover);
+                if (!ItemStackHelper.isEmpty(fuel)) {
+                    ItemStack container = fuel.getItem().getContainerItem(fuel);
+                    if (!ItemStackHelper.isEmpty(container)) {
+                        if (ItemStackHelper.isEmpty(invFuel.getStackInSlot(0))) {
+                            isForceInserting = false;
+                            ItemStack leftover = invFuel.insert(container, false, false);
+                            if (!ItemStackHelper.isEmpty(leftover)) {
+                                isForceInserting = true;
+                                invFuel.setStackInSlot(0, leftover);
+                            }
+                        } else {
+                            // Not good!
+                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, container);
                         }
-                    } else {
-                        // Not good!
-                        InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, container);
                     }
                 }
             }

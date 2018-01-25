@@ -170,7 +170,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         if (!ItemStackHelper.isEmpty(invSnapshotIn.getStackInSlot(0)) && ItemStackHelper.isEmpty(invSnapshotOut.getStackInSlot(0)) && isValid) {
             if (!scanning) {
                 snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(
-                    invSnapshotIn.getStackInSlot(0)
+                        Objects.requireNonNull(invSnapshotIn.getStackInSlot(0))
                 ).snapshotType;
                 int size = box.size().getX() * box.size().getY() * box.size().getZ();
                 size /= snapshotType.maxPerTick;
@@ -284,9 +284,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         snapshot.computeKey();
         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
         ItemStack stackIn = invSnapshotIn.getStackInSlot(0);
-        stackIn.stackSize -= 1;
-        if (stackIn.stackSize == 0) {
+        if (stackIn == null || stackIn.stackSize >= 1)
             stackIn = null;
+        else {
+            stackIn.stackSize -= 1;
+            if (stackIn.stackSize == 0) {
+                stackIn = null;
+            }
         }
         invSnapshotIn.setStackInSlot(0, stackIn);
         invSnapshotOut.setStackInSlot(

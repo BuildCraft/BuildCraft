@@ -14,7 +14,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -53,8 +52,8 @@ public class MessageDebugRequest implements IMessage {
     public static final IMessageHandler<MessageDebugRequest, MessageDebugResponse> HANDLER = (message, ctx) -> {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         if (!player.capabilities.isCreativeMode &&
-            !(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger) &&
-            !(player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger)) {
+            !(player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() instanceof ItemDebugger) &&
+            !(player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof ItemDebugger)) {
             return new MessageDebugResponse();
         }
         TileEntity tile = player.world.getTileEntity(message.pos);

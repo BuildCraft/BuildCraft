@@ -65,8 +65,7 @@ public class PipeModelCacheBase {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PipeBaseCutoutKey other = (PipeBaseCutoutKey) obj;
-            if (definition != other.definition) return false;
-            return centerSprite == other.centerSprite && Arrays.equals(connections, other.connections) && Arrays.equals(sideSprites, other.sideSprites);
+            return definition == other.definition && centerSprite == other.centerSprite && Arrays.equals(connections, other.connections) && Arrays.equals(sideSprites, other.sideSprites);
         }
 
         @Override

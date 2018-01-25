@@ -26,9 +26,7 @@ public class GuidePageStandInRecipes extends GuidePage {
     public static GuidePageFactory createFactory(@Nonnull ItemStack stack) {
         List<GuidePartFactory> factories = XmlPageLoader.loadAllCrafting(stack);
         if (factories.isEmpty()) {
-            return (gui) -> {
-                return new GuidePageStandInRecipes(gui, ImmutableList.of(new GuideText(gui, "No recipes!")), stack);
-            };
+            return (gui) -> new GuidePageStandInRecipes(gui, ImmutableList.of(new GuideText(gui, "No recipes!")), stack);
         }
         return (gui) -> {
             List<GuidePart> parts = new ArrayList<>();

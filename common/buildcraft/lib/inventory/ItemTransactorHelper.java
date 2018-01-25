@@ -8,6 +8,7 @@ package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -175,7 +176,7 @@ public class ItemTransactorHelper {
 
     private static int moveSingle0(IItemTransactor src, IItemTransactor dst, IStackFilter filter, int maxItems, boolean simulateSrc, boolean simulateDst) {
         ItemStack potential = src.extract(filter, 1, maxItems, true);
-        if (potential == null) return 0;
+        if (ItemStackHelper.isEmpty(potential)) return 0;
         ItemStack leftOver = dst.insert(potential, false, simulateDst);
         int toTake = potential.stackSize - leftOver.stackSize;
         IStackFilter exactFilter = (stack) -> StackUtil.canMerge(stack, potential);

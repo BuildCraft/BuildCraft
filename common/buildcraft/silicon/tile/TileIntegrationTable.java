@@ -8,7 +8,9 @@ package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.ImmutableList;
 
 import com.google.common.collect.Lists;
@@ -65,12 +67,13 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     private boolean isSpaceEnough(ItemStack stack) {
         ItemStack output = invResult.getStackInSlot(0);
-        return output != null || (StackUtil.canMerge(stack, output) && stack.stackSize + output.stackSize <= stack.getMaxStackSize());
+        return !ItemStackHelper.isEmpty(output) || (StackUtil.canMerge(stack, output) && stack.stackSize + output.stackSize <= stack.getMaxStackSize());
     }
 
     private void updateRecipe() {
         if (recipe != null && extract(recipe.target, recipe.toIntegrate, true)) return;
-        recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), Lists.newArrayList(invToIntegrate.stacks));
+        if (!ItemStackHelper.isEmpty(invTarget.getStackInSlot(0)))
+            recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(Objects.requireNonNull(invTarget.getStackInSlot(0)), Lists.newArrayList(invToIntegrate.stacks));
     }
 
     @Override

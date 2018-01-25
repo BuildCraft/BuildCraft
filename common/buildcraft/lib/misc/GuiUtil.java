@@ -262,19 +262,16 @@ public class GuiUtil {
         }
         scissorRegions.push(rect);
         scissor0();
-        return new AutoGlScissor() {
-            @Override
-            public void close() {
-                GuiRectangle last = scissorRegions.pop();
-                if (last != rect) {
-                    throw new IllegalStateException("Popped rectangles in the wrong order!");
-                }
-                GuiRectangle next = scissorRegions.peek();
-                if (next == null) {
-                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                } else {
-                    scissor0();
-                }
+        return () -> {
+            GuiRectangle last = scissorRegions.pop();
+            if (last != rect) {
+                throw new IllegalStateException("Popped rectangles in the wrong order!");
+            }
+            GuiRectangle next = scissorRegions.peek();
+            if (next == null) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            } else {
+                scissor0();
             }
         };
     }

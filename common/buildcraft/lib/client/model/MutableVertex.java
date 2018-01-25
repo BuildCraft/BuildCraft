@@ -260,7 +260,7 @@ public class MutableVertex {
     }
 
     public MutableVertex normali(int combined) {
-        normal_x = ((combined >> 0) & 0xFF) / 0x7f;
+        normal_x = ((combined) & 0xFF) / 0x7f;
         normal_y = ((combined >> 8) & 0xFF) / 0x7f;
         normal_z = ((combined >> 16) & 0xFF) / 0x7f;
         return this;
@@ -312,7 +312,7 @@ public class MutableVertex {
 
     public int colourRGBA() {
         int rgba = 0;
-        rgba |= (colour_r & 0xFF) << 0;
+        rgba |= (colour_r & 0xFF);
         rgba |= (colour_g & 0xFF) << 8;
         rgba |= (colour_b & 0xFF) << 16;
         rgba |= (colour_a & 0xFF) << 24;
@@ -324,7 +324,7 @@ public class MutableVertex {
         rgba |= (colour_r & 0xFF) << 24;
         rgba |= (colour_g & 0xFF) << 16;
         rgba |= (colour_b & 0xFF) << 8;
-        rgba |= (colour_a & 0xFF) << 0;
+        rgba |= (colour_a & 0xFF);
         return rgba;
     }
 

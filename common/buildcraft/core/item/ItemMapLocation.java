@@ -130,8 +130,8 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World world, EntityPlayer player, EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    @Nonnull
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }

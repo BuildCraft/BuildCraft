@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;

@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.Swapper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +30,7 @@ public class SuffixArray<T>
      */
     private static final boolean DEBUG_PRINT_ARRAY = Boolean.parseBoolean(System.getProperty("SuffixArray.printArray", "false"));
     private static final Logger LOGGER = LogManager.getLogger();
-    protected final List<T> list = Lists.<T>newArrayList();
+    protected final List<T> list = Lists.newArrayList();
     private final IntList chars = new IntArrayList();
     private final IntList wordStarts = new IntArrayList();
     private IntList suffixToT = new IntArrayList();
@@ -147,7 +146,7 @@ public class SuffixArray<T>
     {
         for (int i2 = 0; i2 < this.suffixToT.size(); ++i2)
         {
-            LOGGER.debug("{} {}", Integer.valueOf(i2), this.getString(i2));
+            LOGGER.debug("{} {}", i2, this.getString(i2));
         }
 
         LOGGER.debug("");
@@ -166,7 +165,7 @@ public class SuffixArray<T>
                 stringbuilder.append('^');
             }
 
-            int l2 = ((Integer)this.chars.get(j2 + k2)).intValue();
+            int l2 = this.chars.get(j2 + k2);
 
             if (l2 == -1)
             {
@@ -223,7 +222,7 @@ public class SuffixArray<T>
 
             if (DEBUG_PRINT_COMPARISONS)
             {
-                LOGGER.debug("comparing lower \"{}\" with {} \"{}\": {}", p_194055_1_, Integer.valueOf(l2), this.getString(l2), Integer.valueOf(i3));
+                LOGGER.debug("comparing lower \"{}\" with {} \"{}\": {}", p_194055_1_, l2, this.getString(l2), i3);
             }
 
             if (i3 > 0)
@@ -248,7 +247,7 @@ public class SuffixArray<T>
 
                 if (DEBUG_PRINT_COMPARISONS)
                 {
-                    LOGGER.debug("comparing upper \"{}\" with {} \"{}\": {}", p_194055_1_, Integer.valueOf(j4), this.getString(j4), Integer.valueOf(j3));
+                    LOGGER.debug("comparing upper \"{}\" with {} \"{}\": {}", p_194055_1_, j4, this.getString(j4), j3);
                 }
 
                 if (j3 >= 0)
@@ -271,7 +270,7 @@ public class SuffixArray<T>
 
             int[] aint4 = intset.toIntArray();
             java.util.Arrays.sort(aint4);
-            Set<T> set = Sets.<T>newLinkedHashSet();
+            Set<T> set = Sets.newLinkedHashSet();
 
             for (int l3 : aint4)
             {
@@ -282,7 +281,7 @@ public class SuffixArray<T>
         }
         else
         {
-            return Collections.<T>emptyList();
+            return Collections.emptyList();
         }
     }
 }

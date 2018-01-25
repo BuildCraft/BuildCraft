@@ -6,7 +6,7 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityArrow.PickupStatus;
@@ -25,7 +25,7 @@ public class TransactorEntityArrow implements IItemExtractable {
         this.entity = entity;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
         if (entity.isDead || entity.pickupStatus != PickupStatus.ALLOWED || min > 1 || max < 1 || max < min) {

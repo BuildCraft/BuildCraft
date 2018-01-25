@@ -66,7 +66,7 @@ public class LocaleUtil {
      * @return The localized key, or the input key if no localization was found. */
     public static String localize(String key) {
         String localized = I18n.translateToLocal(key);
-        if (localized == key) {
+        if (localized.equals(key)) {
             if (DEBUG && failedStrings.add(localized)) {
                 BCLog.logger.warn("[lib.locale] Attempted to localize '" + key + "' but no localization existed!");
             }
@@ -83,7 +83,7 @@ public class LocaleUtil {
      * @return The localized string. */
     public static String localize(String key, Object... args) {
         String localized = I18n.translateToLocal(key);
-        if (localized == key) {
+        if (localized.equals(key)) {
             if (DEBUG && failedStrings.add(localized)) {
                 BCLog.logger.warn("[lib.locale] Attempted to localize '" + key + "' but no localization existed!");
             }

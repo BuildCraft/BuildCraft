@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import buildcraft.lib.item.ItemStackHelper;
 import com.google.common.collect.Lists;
@@ -81,7 +81,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         }
                     }
 
-                    @Nonnull
+                    @Nullable
                     @Override
                     public ItemStack getStack() {
                         if (shouldDrawHighlight()) {

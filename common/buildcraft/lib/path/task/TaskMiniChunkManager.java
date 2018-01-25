@@ -35,8 +35,7 @@ public class TaskMiniChunkManager implements Callable<MiniChunkGraph> {
         FilledChunk filled = execute(new TaskMiniChunkFiller(world, offset));
         world = null;// We no longer need this. Let the GC remove this if we are holding the last reference to it.
         AnalysedChunk analysed = execute(new TaskMiniChunkAnalyser(filled));
-        MiniChunkGraph graph = null;
-        setter.accept(graph);
-        return graph;
+        setter.accept(null);
+        return null;
     }
 }
