@@ -8,6 +8,7 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.api.tiles.TilesAPI;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -110,6 +111,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankIn, EnumPipePart.HORIZONTALS);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankGasOut, EnumPipePart.UP);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankLiquidOut, EnumPipePart.DOWN);
+        caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !tankIn.isEmpty(), EnumPipePart.VALUES);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(mjBattery)));
     }
 

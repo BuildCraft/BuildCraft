@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import buildcraft.lib.item.ItemStackHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
@@ -78,7 +79,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             .limit(PICKUP_MAX)
             .map(TransactorEntityItem::new)
             .forEach(transactor -> {
-                if (inv.insert(
+                if (ItemStackHelper.isEmpty(inv.insert(
                     transactor.extract(
                         StackFilter.ALL,
                         0,
@@ -87,7 +88,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
                     ),
                     true,
                     true
-                ) == null) {
+                ))) {
                     inv.insert(
                         transactor.extract(
                             StackFilter.ALL,
@@ -122,13 +123,13 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
                 ItemStack item = inv.extract(
                     stack -> {
                         ItemStack leftOver = transactor.insert(stack.copy(), false, true);
-                        return leftOver == null || leftOver.stackSize < stack.stackSize;
+                        return ItemStackHelper.isEmpty(leftOver) || leftOver.stackSize < stack.stackSize;
                     },
                     1,
                     1,
                     false
                 );
-                if (item != null) {
+                if (!ItemStackHelper.isEmpty(item)) {
                     transactor.insert(item, false, false);
                 }
             });

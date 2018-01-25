@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import buildcraft.lib.fluid.FluidHelper;
+import buildcraft.lib.item.ItemStackHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
@@ -111,12 +112,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             (
                 StackUtil.mergeSameItems(requiredItems).stream()
                     .noneMatch(stack ->
-                        tile.getInvResources().extract(
+                            ItemStackHelper.isEmpty(tile.getInvResources().extract(
                             extracted -> StackUtil.canMerge(stack, extracted),
                             stack.stackSize,
                             stack.stackSize,
                             true
-                        ) == null
+                        ))
                     ) &&
                     FluidUtilBC.mergeSameFluids(requiredFluids).stream()
                         .allMatch(stack ->

@@ -12,6 +12,7 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -71,7 +72,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
             Vec3d pos = item.getRenderPosition(BlockPos.ORIGIN, now, partialTicks);
 
             ItemStack stack = item.clientItemLink.get();
-            if (stack != null && stack != null) {
+            if (stack != null && !ItemStackHelper.isEmpty(stack)) {
                 if (item.stackSize != stack.stackSize) {
                     stack = stack.copy();
                     stack.stackSize = item.stackSize;

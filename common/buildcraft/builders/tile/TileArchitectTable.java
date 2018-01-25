@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -166,7 +167,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             return;
         }
 
-        if (invSnapshotIn.getStackInSlot(0) != null && invSnapshotOut.getStackInSlot(0) == null && isValid) {
+        if (!ItemStackHelper.isEmpty(invSnapshotIn.getStackInSlot(0)) && ItemStackHelper.isEmpty(invSnapshotOut.getStackInSlot(0)) && isValid) {
             if (!scanning) {
                 snapshotType = ItemSnapshot.EnumItemSnapshotType.getFromStack(
                     invSnapshotIn.getStackInSlot(0)

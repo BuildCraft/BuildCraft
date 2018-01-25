@@ -2,7 +2,7 @@
 {
   "modid": "buildcraftlib",
   "name": "BuildCraft Lib",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Library mod used by buildcraft.",
   "credits": "Created by SpaceToad",
@@ -19,7 +19,7 @@
 {
   "modid": "buildcraftcore",
   "name": "BuildCraft",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more!",
   "credits": "Created by SpaceToad",
@@ -36,7 +36,7 @@
 {
   "modid": "buildcraftbuilders",
   "name": "BC Builders",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Builders Component)",
   "credits": "Created by SpaceToad",
@@ -53,7 +53,7 @@
 {
   "modid": "buildcraftenergy",
   "name": "BC Energy",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Energy Component)",
   "credits": "Created by SpaceToad",
@@ -70,7 +70,7 @@
 {
   "modid": "buildcraftfactory",
   "name": "BC Factory",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Factory Component)",
   "credits": "Created by SpaceToad",
@@ -87,7 +87,7 @@
 {
   "modid": "buildcraftsilicon",
   "name": "BC Silicon",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Silicon Component)",
   "credits": "Created by SpaceToad",
@@ -104,7 +104,7 @@
 {
   "modid": "buildcrafttransport",
   "name": "BC Transport",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
   "credits": "Created by SpaceToad",
@@ -121,7 +121,7 @@
 {
   "modid": "buildcraftrobotics",
   "name": "BC Robotics",
-  "version": "${version}",
+  "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Robotics Component)",
   "credits": "Created by SpaceToad",

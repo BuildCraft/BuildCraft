@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -44,31 +45,31 @@ public class BoxTester {
         Box box = new Box(MIN, MAX);
         Vec3d in = entry.getKey();
         boolean expected = entry.getValue();
-        assertEquals(expected, box.contains(in));
+        Assert.assertEquals(expected, box.contains(in));
     }
 
     @Test
     public void testMin() {
         Box box = new Box(MIN, MAX);
-        assertEquals(MIN, box.min());
+        Assert.assertEquals(MIN, box.min());
     }
 
     @Test
     public void testMax() {
         Box box = new Box(MIN, MAX);
-        assertEquals(MAX, box.max());
+        Assert.assertEquals(MAX, box.max());
     }
 
     @Test
     public void testSize() {
         Box box = new Box(MIN, MAX);
-        assertEquals(SIZE, box.size());
+        Assert.assertEquals(SIZE, box.size());
     }
 
     @Test
     public void testCenter() {
         Box box = new Box(MIN, MAX);
-        assertEquals(CENTER, box.center());
+        Assert.assertEquals(CENTER, box.center());
     }
 
     @Test
@@ -82,8 +83,8 @@ public class BoxTester {
         Box box1 = new Box(new BlockPos(0, 0, 0), new BlockPos(2, 2, 2));
         Box box2 = new Box(new BlockPos(1, 1, 1), new BlockPos(3, 3, 3));
         Box inter = new Box(new BlockPos(1, 1, 1), new BlockPos(2, 2, 2));
-        assertEquals(inter, box1.getIntersect(box2));
-        assertEquals(inter, box2.getIntersect(box1));
+        Assert.assertEquals(inter, box1.getIntersect(box2));
+        Assert.assertEquals(inter, box2.getIntersect(box1));
     }
 
     @Test
@@ -91,8 +92,8 @@ public class BoxTester {
         Box box1 = new Box(new BlockPos(0, 0, 0), new BlockPos(2, 2, 2));
         Box box2 = new Box(new BlockPos(0, 0, 0), new BlockPos(3, 3, 3));
         Box inter = new Box(new BlockPos(0, 0, 0), new BlockPos(2, 2, 2));
-        assertEquals(inter, box1.getIntersect(box2));
-        assertEquals(inter, box2.getIntersect(box1));
+        Assert.assertEquals(inter, box1.getIntersect(box2));
+        Assert.assertEquals(inter, box2.getIntersect(box1));
     }
 
     @Test
@@ -100,7 +101,7 @@ public class BoxTester {
         Box box1 = new Box(new BlockPos(1, 1, 1), new BlockPos(2, 2, 2));
         Box box2 = new Box(new BlockPos(0, 0, 0), new BlockPos(1, 1, 1));
         Box inter = new Box(new BlockPos(1, 1, 1), new BlockPos(1, 1, 1));
-        assertEquals(inter, box1.getIntersect(box2));
-        assertEquals(inter, box2.getIntersect(box1));
+        Assert.assertEquals(inter, box1.getIntersect(box2));
+        Assert.assertEquals(inter, box2.getIntersect(box1));
     }
 }

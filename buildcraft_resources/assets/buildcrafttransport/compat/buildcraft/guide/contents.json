@@ -372,6 +372,15 @@
                 "type": "pipe",
                 "sub_type": "pipe_plug"
             }
+        },
+        {
+            "title": "item.Facade.name",
+            "item_stack": "{buildcrafttransport:plug_facade,1,0,{preview:1b}}",
+            "page": "facade.md",
+            "type_tags": {
+                "type": "pipe",
+                "sub_type": "pipe_plug"
+            }
         }
     ]
 }

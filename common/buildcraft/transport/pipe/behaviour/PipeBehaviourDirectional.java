@@ -34,6 +34,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionPipeDirection;
 
+import java.io.IOException;
+
 public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     public static final OrderedEnumMap<EnumFacing> ROTATION_ORDER = VanillaRotationHandlers.ROTATE_FACING;
 
@@ -63,7 +65,7 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         currentDir = PacketBufferBC.asPacketBufferBc(buffer).readEnumValue(EnumPipePart.class);
     }

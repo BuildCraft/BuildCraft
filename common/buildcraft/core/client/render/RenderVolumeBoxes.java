@@ -27,9 +27,7 @@ import buildcraft.core.marker.volume.Lock;
 public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
-    private static final double NORMAL_SCALE = 1 / 16D;
-    private static final double HIGHLIGHT_SCALE = 1 / 15.8D;
-
+    @SuppressWarnings("unchecked")
     @Override
     public void render(EntityPlayer player, float partialTicks) {
         GlStateManager.enableBlend();

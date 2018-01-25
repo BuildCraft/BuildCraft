@@ -11,6 +11,7 @@ import java.util.WeakHashMap;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -74,6 +75,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         }
         toWaitTicks--;
         if (toWaitTicks > 0) {
+            return;
         } else {
             toWaitTicks = 0;
         }
@@ -158,7 +160,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
 
             int max = power == 0 ? 1 : (int) (power / powerReqPerItem);
             ItemStack extracted = transactor.extract(StackFilter.ALL, 1, max, simulate);
-            if (extracted != null) {
+            if (!ItemStackHelper.isEmpty(extracted)) {
                 if (!simulate) {
                     flowItem.insertItemsForce(extracted, faceFrom, null, INSERT_SPEED);
                 }

@@ -6,6 +6,7 @@
 
 package buildcraft.core.list;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
@@ -24,9 +25,9 @@ public enum ListTooltipHandler {
     public void itemTooltipEvent(ItemTooltipEvent event) {
         final EntityPlayer player = event.getEntityPlayer();
         final ItemStack stack = event.getItemStack();
-        if (stack != null && player != null && player.openContainer instanceof ContainerList) {
+        if (!ItemStackHelper.isEmpty(stack) && player != null && player.openContainer instanceof ContainerList) {
             ItemStack list = player.getHeldItemMainhand();
-            if (list != null && list.getItem() instanceof IList) {
+            if (!ItemStackHelper.isEmpty(list) && list.getItem() instanceof IList) {
                 if (((IList) list.getItem()).matches(list, stack)) {
                     event.getToolTip().add(TextFormatting.GREEN + LocaleUtil.localize("tip.list.matches"));
                 }

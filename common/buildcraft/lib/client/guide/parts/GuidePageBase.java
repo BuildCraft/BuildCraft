@@ -6,6 +6,7 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import java.io.IOException;
 import java.util.List;
 
 import buildcraft.lib.client.guide.GuiGuide;
@@ -164,5 +165,9 @@ public abstract class GuidePageBase extends GuidePart {
     @Override
     public final void handleMouseDragFinish(int startX, int startY, int endX, int endY, int button) {
 
+    }
+
+    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
+        return false;
     }
 }

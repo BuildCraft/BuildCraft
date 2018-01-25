@@ -8,6 +8,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -63,7 +64,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
         }
         FluidStack searchedFluid = null;
 
-        if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack()  != null) {
+        if (parameters != null && parameters.length >= 1 && parameters[0] != null && !ItemStackHelper.isEmpty(parameters[0].getItemStack())) {
             searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
             if (searchedFluid != null) {
                 searchedFluid.amount = 1;

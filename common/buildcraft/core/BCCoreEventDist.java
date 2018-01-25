@@ -8,6 +8,7 @@ package buildcraft.core;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -30,17 +31,17 @@ public enum BCCoreEventDist {
     }
 
     @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.player instanceof EntityPlayerMP) {
+    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+        if (event.getEntity() instanceof EntityPlayerMP) {
             // Delay sending join messages to player as it makes it work when in single-player
             MessageUtil.doDelayed(() ->
                 MessageManager.sendTo(
-                    new MessageVolumeBoxes(WorldSavedDataVolumeBoxes.get(event.player.world).volumeBoxes),
-                    (EntityPlayerMP) event.player
+                    new MessageVolumeBoxes(WorldSavedDataVolumeBoxes.get(event.getEntity().world).volumeBoxes),
+                    (EntityPlayerMP) event.getEntity()
                 )
             );
-            WorldSavedDataVolumeBoxes.get(((EntityPlayerMP) event.player).world).volumeBoxes.stream()
-                .filter(volumeBox -> volumeBox.isPausedEditingBy(event.player))
+            WorldSavedDataVolumeBoxes.get(((EntityPlayerMP) event.getEntity()).world).volumeBoxes.stream()
+                .filter(volumeBox -> volumeBox.isPausedEditingBy((EntityPlayerMP) event.getEntity()))
                 .forEach(VolumeBox::resumeEditing);
         }
     }

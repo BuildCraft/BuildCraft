@@ -9,6 +9,7 @@ package buildcraft.transport.pipe.behaviour;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.lib.item.ItemStackHelper;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.item.ItemStack;
@@ -52,6 +53,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 
 import buildcraft.transport.BCTransportStatements;
 
+import java.io.IOException;
 import java.util.List;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
@@ -80,7 +82,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         direction = MessageUtil.readEnumOrNull(buffer, EnumFacing.class);
     }
@@ -222,7 +224,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
             event.setStack(null);
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack stack = player.inventory.removeStackFromSlot(i);
-                if (stack != null) {
+                if (!ItemStackHelper.isEmpty(stack)) {
                     sendItem(stack, direction);
                 }
             }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -80,7 +81,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before,
         ItemStack after) {
         if (handler == invFuel) {
-            if (isForceInserting && after == null) {
+            if (isForceInserting && ItemStackHelper.isEmpty(after)) {
                 isForceInserting = false;
             }
         }
@@ -127,11 +128,11 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
                 ItemStack fuel = invFuel.extractItem(0, 1, false);
                 ItemStack container = fuel.getItem().getContainerItem(fuel);
-                if (container != null) {
-                    if (invFuel.getStackInSlot(0) == null) {
+                if (!ItemStackHelper.isEmpty(container)) {
+                    if (ItemStackHelper.isEmpty(invFuel.getStackInSlot(0))) {
                         isForceInserting = false;
                         ItemStack leftover = invFuel.insert(container, false, false);
-                        if (leftover != null) {
+                        if (!ItemStackHelper.isEmpty(leftover)) {
                             isForceInserting = true;
                             invFuel.setStackInSlot(0, leftover);
                         }

@@ -94,11 +94,6 @@ public class PluggableFacade extends PipePluggable implements IFacade {
     }
 
     @Override
-    public boolean canBeConnected() {
-        return !states.phasedStates[activeState].isHollow;
-    }
-
-    @Override
     public boolean isSideSolid() {
         return isSideSolid;
     }

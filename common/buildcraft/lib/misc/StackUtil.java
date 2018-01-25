@@ -76,16 +76,12 @@ public class StackUtil {
         return false;
     }
 
-    /**
-     * Checks that passed stack meets stack definition requirements
-     */
+    /** Checks that passed stack meets stack definition requirements */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
         return stack != null && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
     }
 
-    /**
-     * Checks that passed stack definition acceptable for stack collection
-     */
+    /** Checks that passed stack definition acceptable for stack collection */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull List<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
     }
@@ -143,13 +139,30 @@ public class StackUtil {
 
     }
 
+    /** This doesn't take into account stack sizes.
+     *
+     * @param filterOrList The exact itemstack to test, or an item that implements {@link IList} to test against.
+     * @param test The stack to test for equality
+     * @return True if they matched according to the above definitions, or false if theydidn't, or either was empty. */
+    public static boolean matchesStackOrList(ItemStack filterOrList, ItemStack test) {
+        if (filterOrList == null || test == null) {
+            return false;
+        }
+        if (filterOrList.getItem() instanceof IList) {
+            IList list = (IList) filterOrList.getItem();
+            return list.matches(filterOrList, test);
+        }
+        return canMerge(filterOrList, test);
+    }
+
+
     /** Merges mergeSource into mergeTarget
      *
      * @param mergeSource - The stack to merge into mergeTarget, this stack is not modified
      * @param mergeTarget - The target merge, this stack is modified if doMerge is set
      * @param doMerge - To actually do the merge
      * @return The number of items that was successfully merged. */
-    public static int mergeStacks(@Nonnull ItemStack mergeSource, @Nonnull ItemStack mergeTarget, boolean doMerge) {
+    public static int mergeStacks(ItemStack mergeSource, ItemStack mergeTarget, boolean doMerge) {
         if (!canMerge(mergeSource, mergeTarget)) {
             return 0;
         }
@@ -170,7 +183,7 @@ public class StackUtil {
      * @param comparison The stack to compare.
      * @param oreDictionary true to take the Forge OreDictionary into account.
      * @return true if comparison should be considered a crafting equivalent for base. */
-    public static boolean isCraftingEquivalent(@Nonnull ItemStack base, @Nonnull ItemStack comparison, boolean oreDictionary) {
+    public static boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean oreDictionary) {
         if (isMatchingItem(base, comparison, true, false)) {
             return true;
         }
@@ -180,7 +193,9 @@ public class StackUtil {
             if (idBase.length > 0) {
                 for (int id : idBase) {
                     for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                        if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+                        if (comparison.getItem() == itemstack.getItem()
+                                && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                                || comparison.getItemDamage() == itemstack.getItemDamage())) {
                             return true;
                         }
                     }

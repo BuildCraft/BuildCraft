@@ -96,7 +96,6 @@
             }
         },
         {
-            "title": "tile.pathMarkerBlock.name",
             "item_stack": "(buildcraftcore:marker_path)",
             "page": "marker_path.md",
             "type_tags": {
@@ -105,7 +104,6 @@
             }
         },
         {
-            "title": "tile.engineWood.name",
             "item_stack": "{buildcraftcore:engine,1,0}",
             "page": "engine_wood.md",
             "type_tags": {
@@ -114,12 +112,20 @@
             }
         },
         {
-            "title": "item.list.name",
             "item_stack": "(buildcraftcore:list)",
             "page": "list.md",
             "type_tags": {
                 "type": "item",
                 "sub_type": "information_storage"
+            }
+        },
+        {
+            "type": "buildcraft:statement",
+            "source": "buildcraftcore:trigger.true",
+            "page": "always_on.md",
+            "type_tags": {
+                "type": "trigger",
+                "sub_type": "basic"
             }
         }
     ]

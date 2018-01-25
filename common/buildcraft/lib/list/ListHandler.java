@@ -80,17 +80,26 @@ public final class ListHandler {
             }
         }
 
-        public boolean matches(@Nonnull ItemStack target) {
+        public boolean matches(ItemStack target) {
             if (byType || byMaterial) {
-                if (stacks.get(0) == null) {
+                ItemStack compare = stacks.get(0);
+                if (compare == null) {
                     return false;
                 }
 
                 List<ListMatchHandler> handlers = ListRegistry.getHandlers();
                 ListMatchHandler.Type type = getSortingType();
+                boolean anyHandled = false;
                 for (ListMatchHandler h : handlers) {
-                    if (h.matches(type, stacks.get(0), target, precise)) {
+                    if (h.matches(type, compare, target, precise)) {
                         return true;
+                    } else if (h.isValidSource(type, target)){
+                        anyHandled = true;
+                    }
+                }
+                if (!anyHandled){
+                    if (type == ListMatchHandler.Type.TYPE && target.getHasSubtypes()){
+                        return StackUtil.isMatchingItem(compare, target, false, false);
                     }
                 }
             } else {
@@ -107,7 +116,8 @@ public final class ListHandler {
         }
 
         public ListMatchHandler.Type getSortingType() {
-            return byType ? (byMaterial ? ListMatchHandler.Type.CLASS : ListMatchHandler.Type.TYPE) : ListMatchHandler.Type.MATERIAL;
+            return byType ? (byMaterial ? ListMatchHandler.Type.CLASS : ListMatchHandler.Type.TYPE)
+                    : ListMatchHandler.Type.MATERIAL;
         }
 
         public static Line fromNBT(NBTTagCompound data) {

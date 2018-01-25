@@ -38,8 +38,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         int[] oreIds = OreDictionary.getOreIDs(stack);
 
         if (oreIds.length == 0) {
-            // No ore IDs? Time for the best effort plan of METADATA!
-            return type == Type.TYPE && StackUtil.isMatchingItem(stack, target, false, false);
+            // Unfortunately we cannot compare the items.
+            return false;
         }
 
         int[] matchesIds = OreDictionary.getOreIDs(target);
@@ -63,7 +63,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             // cases in which a given stone is also used for crafting equivalents.
             String s = getBestOreString(oreNames);
             if (s != null) {
-                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
+                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(
+                        type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
                         for (int k : matchesIds) {
@@ -81,7 +82,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
     @Override
     public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
-        return OreDictionary.getOreIDs(stack).length > 0 || type == Type.TYPE && stack.getHasSubtypes();
+        return OreDictionary.getOreIDs(stack).length > 0;
     }
 
     private static String getBestOreString(String[] oreIds) {
@@ -129,7 +130,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         } else {
             String s = getBestOreString(oreNames);
             if (s != null) {
-                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
+                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(
+                        type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
                         stacks.addAll(OreDictionary.getOres(OreDictionary.getOreName(j)));

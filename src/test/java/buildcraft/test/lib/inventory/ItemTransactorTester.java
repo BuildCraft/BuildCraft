@@ -1,5 +1,6 @@
 package buildcraft.test.lib.inventory;
 
+import buildcraft.lib.item.ItemStackHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,12 +19,12 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
     public void testSimpleMoving() {
         IItemTransactor trans = new ItemHandlerSimple(2, null);
 
-        Assert.assertTrue(trans.extract(null, 1, 1, false) == null);
+        Assert.assertTrue(ItemStackHelper.isEmpty(trans.extract(null, 1, 1, false)));
 
         ItemStack insert = new ItemStack(Items.APPLE);
         ItemStack leftOver = trans.insert(insert.copy(), false, false);
 
-        Assert.assertTrue(leftOver == null);
+        Assert.assertTrue(ItemStackHelper.isEmpty(leftOver));
 
         ItemStack extracted = trans.extract(null, 1, 1, false);
 
@@ -31,7 +32,7 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
 
         extracted = trans.extract(null, 1, 1, false);
 
-        Assert.assertTrue(extracted == null);
+        Assert.assertTrue(ItemStackHelper.isEmpty(extracted));
     }
 
     @Test

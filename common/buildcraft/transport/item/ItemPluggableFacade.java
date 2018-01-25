@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -64,6 +65,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     public static FacadeInstance getStates(ItemStack item) {
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
+        if (nbt.getBoolean("preview")) {
+            return FacadeInstance.createSingle(FacadeStateManager.previewState, false);
+        }
         return FacadeInstance.readFromNbt(nbt, "states");
     }
 
@@ -89,18 +93,23 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     @Override
     public void addSubItems(CreativeTabs tab, List<ItemStack> subItems) {
         // Add a single phased facade as a default
-        //check if the data is present as we only process in post-init
-        FacadeBlockStateInfo stone = getInfoForBlock(Blocks.STONE);
+        // check if the data is present as we only process in post-init
+        FacadeBlockStateInfo stone = FacadeStateManager.getInfoForBlock(Blocks.STONE);
         if (stone != null) {
-            FacadePhasedState[] states = {//
-                FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null),//
-                FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED),//
+            FacadePhasedState[] states = { //
+                FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null), //
+                FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED), //
                 FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
             };
             FacadeInstance inst = new FacadeInstance(states);
             subItems.add(createItemStack(inst));
 
             for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
+                if (!ForgeRegistries.BLOCKS.containsValue(info.state.getBlock())){
+                    // Forge can de-register blocks if the server a client is connected to
+                    // doesn't have the mods that created them.
+                    continue;
+                }
                 if (info.isVisible) {
                     subItems.add(createItemStack(FacadeInstance.createSingle(info, false)));
                     subItems.add(createItemStack(FacadeInstance.createSingle(info, true)));

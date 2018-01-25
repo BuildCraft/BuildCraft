@@ -6,12 +6,14 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -110,7 +112,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         if (side == Side.CLIENT) {
             for (SlotIndex index : SlotIndex.VALUES) {
@@ -186,7 +188,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
         int i = SlotIndex.VALUES.length;
         while (i-- > 0) {
             current = current.next();
-            if (activeSlots.contains(current) && invFilters.getStackInSlot(current.ordinal()) != null) {
+            if (activeSlots.contains(current) && !ItemStackHelper.isEmpty(invFilters.getStackInSlot(current.ordinal()))) {
                 return current;
             }
         }

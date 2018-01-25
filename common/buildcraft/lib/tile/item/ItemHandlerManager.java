@@ -46,7 +46,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         BOTH
     }
 
-    private final StackChangeCallback callback;
+    public  final StackChangeCallback callback;
     private final List<IItemHandlerModifiable> handlersToDrop = new ArrayList<>();
     private final Map<EnumPipePart, Wrapper> wrappers = new EnumMap<>(EnumPipePart.class);
     private final Map<String, INBTSerializable<NBTTagCompound>> handlers = new HashMap<>();
@@ -58,7 +58,8 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         }
     }
 
-    public <T extends INBTSerializable<NBTTagCompound> & IItemHandlerModifiable> T addInvHandler(String key, T handler, EnumAccess access, EnumPipePart... parts) {
+    public <T extends INBTSerializable<NBTTagCompound> & IItemHandlerModifiable> T addInvHandler(String key, T handler,
+                                                                                                 EnumAccess access, EnumPipePart... parts) {
         if (parts == null) {
             parts = new EnumPipePart[0];
         }
@@ -69,7 +70,8 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
             case PHANTOM:
                 external = null;
                 if (parts.length > 0) {
-                    throw new IllegalArgumentException("Completely useless to not allow access to multiple sides! Just don't pass any sides!");
+                    throw new IllegalArgumentException(
+                            "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
                 }
                 break;
             case EXTRACT:
