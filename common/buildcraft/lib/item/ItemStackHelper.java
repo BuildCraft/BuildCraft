@@ -5,6 +5,10 @@ import net.minecraft.item.ItemStack;
 public class ItemStackHelper {
 
     public static boolean isEmpty(ItemStack stack) {
-        return stack == null || stack.stackSize <= 0 || stack.getItemDamage() < -32768 || stack.getItemDamage() > 65535;
+        if (stack == null)
+            return true;
+        else if (stack.stackSize <= 0)
+            return true;
+        else return stack.isItemStackDamageable() && (stack.getItemDamage() < -32768 || stack.getItemDamage() > 65535);
     }
 }
