@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
@@ -230,8 +228,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
             // These strings are hardcoded, so we can get away with not needing the .equals check
             if (result.getType() != EnumActionResult.PASS && result.getType() != EnumActionResult.SUCCESS) {
                 if (DEBUG) {
-                    BCLog.logger
-                        .info("[transport.facade] Disallowed block " + block.getRegistryName() + " because " + result.getResult());
+                    BCLog.logger.info("[transport.facade] Disallowed block " + block.getRegistryName() + " because "
+                        + result.getResult());
                 }
                 continue;
             } else if (DEBUG) {
@@ -239,7 +237,6 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     BCLog.logger.info("[transport.facade] Allowed block " + block.getRegistryName());
                 }
             }
-            Set<IBlockState> checkedStates = new HashSet<>();
             Map<IBlockState, ItemStack> usedStates = new HashMap<>();
             Map<ItemStackKey, Map<IProperty<?>, Comparable<?>>> varyingProperties = new HashMap<>();
             for (IBlockState state : block.getBlockState().getValidStates()) {
@@ -255,7 +252,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         }
                     } else {
                         if (DEBUG) {
-                            BCLog.logger.info("[transport.facade] Disallowed state " + state + " because " + result.getResult());
+                            BCLog.logger.info(
+                                "[transport.facade] Disallowed state " + state + " because " + result.getResult());
                         }
                         continue;
                     }
@@ -303,7 +301,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     }
 
                     // Test to make sure that we can read + write it
-                    FacadePhasedState phasedState = info.createPhased(false, null);
+                    FacadePhasedState phasedState = info.createPhased(null);
                     NBTTagCompound nbt = phasedState.writeToNbt();
                     FacadePhasedState read = FacadePhasedState.readFromNbt(nbt);
                     if (read.stateInfo != info) {
@@ -409,16 +407,16 @@ public enum FacadeStateManager implements IFacadeRegistry {
     }
 
     @Override
-    public IFacadePhasedState createPhasedState(IFacadeState state, boolean isHollow, EnumDyeColor activeColor) {
-        return new FacadePhasedState((FacadeBlockStateInfo) state, isHollow, activeColor);
+    public IFacadePhasedState createPhasedState(IFacadeState state, EnumDyeColor activeColor) {
+        return new FacadePhasedState((FacadeBlockStateInfo) state, activeColor);
     }
 
     @Override
-    public IFacade createPhasedFacade(IFacadePhasedState[] states) {
+    public IFacade createPhasedFacade(IFacadePhasedState[] states, boolean isHollow) {
         FacadePhasedState[] realStates = new FacadePhasedState[states.length];
         for (int i = 0; i < states.length; i++) {
             realStates[i] = (FacadePhasedState) states[i];
         }
-        return new FacadeInstance(realStates);
+        return new FacadeInstance(realStates, isHollow);
     }
 }

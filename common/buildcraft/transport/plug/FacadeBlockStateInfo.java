@@ -45,8 +45,8 @@ public class FacadeBlockStateInfo implements IFacadeState {
 
     // Helper methods
 
-    public FacadePhasedState createPhased(boolean isHollow, EnumDyeColor activeColour) {
-        return new FacadePhasedState(this, isHollow, activeColour);
+    public FacadePhasedState createPhased(EnumDyeColor activeColour) {
+        return new FacadePhasedState(this, activeColour);
     }
 
     @Override
