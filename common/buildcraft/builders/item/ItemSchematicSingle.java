@@ -184,7 +184,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
 
 
     public static ISchematicBlock getSchematic(ItemStack stack) throws InvalidInputDataException {
-        if (stack != null && stack.getItem() instanceof ItemSchematicSingle) {
+        if (stack != null && stack.getItem() instanceof ItemSchematicSingle && !NBTUtilBC.getItemData(stack).hasNoTags()) {
             return SchematicBlockManager.readFromNBT(NBTUtilBC.getItemData(stack).getCompoundTag(NBT_KEY));
         }
         return null;
