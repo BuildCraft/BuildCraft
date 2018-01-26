@@ -6,9 +6,8 @@
 
 package buildcraft.lib.misc.data;
 
-import com.google.common.collect.Lists;
-
 import java.util.AbstractList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -22,18 +21,24 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     public NonNullMatrix(int width, int height, @Nonnull T fill) {
         this.width = width;
         this.height = height;
-        internalList = Lists.newArrayListWithCapacity(width * height);
+        internalList = listWithSize(width * height, fill);
     }
 
     public NonNullMatrix(int width, int height, IEntryFiller<T> filler) {
         this.width = width;
         this.height = height;
-        internalList = Lists.newArrayListWithCapacity(width * height);
+        internalList = listWithSize(width * height, filler.getEntry(0, 0));
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 internalList.set(flatIndexOf(x, y), filler.getEntry(x, y));
             }
         }
+    }
+
+    private List<T> listWithSize(int size, T fill){
+        Object[] aobject = new Object[size];
+        Arrays.fill(aobject, fill);
+        return Arrays.asList((T[])aobject);
     }
 
     public interface IEntryFiller<T> {
@@ -43,10 +48,10 @@ public class NonNullMatrix<T> extends AbstractList<T> {
 
     /** Creates a {@link NonNullMatrix} from the given 2-dim array, replacing all null values with the given nonnull
      * replacement. */
-    public NonNullMatrix(T[][] from, @Nonnull T nullReplacer) {
+    public NonNullMatrix(T[][] from, T nullReplacer) {
         this.width = from.length;
         this.height = width == 0 ? 0 : from[0].length;
-        internalList = Lists.newArrayListWithCapacity(width * height);
+        internalList = listWithSize(width * height, nullReplacer);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 T val = from[x][y];

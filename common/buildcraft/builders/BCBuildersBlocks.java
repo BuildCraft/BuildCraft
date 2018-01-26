@@ -24,8 +24,6 @@ import buildcraft.builders.tile.TileReplacer;
 
 public class BCBuildersBlocks {
 
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
     public static BlockFiller filler;
     public static BlockBuilder builder;
     public static BlockArchitectTable architect;
@@ -36,22 +34,22 @@ public class BCBuildersBlocks {
     public static BlockQuarry quarry;
 
     public static void fmlPreInit() {
-        filler = HELPER.addBlockAndItem(new BlockFiller(Material.IRON, "block.filler"));
-        builder = HELPER.addBlockAndItem(new BlockBuilder(Material.IRON, "block.builder"));
-        architect = HELPER.addBlockAndItem(new BlockArchitectTable(Material.IRON, "block.architect"));
-        library = HELPER.addBlockAndItem(new BlockElectronicLibrary(Material.IRON, "block.library"));
-        replacer = HELPER.addBlockAndItem(new BlockReplacer(Material.IRON, "block.replacer"));
+        filler = RegistrationHelper.addBlockAndItem(new BlockFiller(Material.IRON, "block.filler"));
+        builder = RegistrationHelper.addBlockAndItem(new BlockBuilder(Material.IRON, "block.builder"));
+        architect = RegistrationHelper.addBlockAndItem(new BlockArchitectTable(Material.IRON, "block.architect"));
+        library = RegistrationHelper.addBlockAndItem(new BlockElectronicLibrary(Material.IRON, "block.library"));
+        replacer = RegistrationHelper.addBlockAndItem(new BlockReplacer(Material.IRON, "block.replacer"));
 
-        frame = HELPER.addBlockAndItem(new BlockFrame(Material.IRON, "block.frame"));
-        quarry = HELPER.addBlockAndItem(new BlockQuarry(Material.IRON, "block.quarry"));
+        frame = RegistrationHelper.addBlockAndItem(new BlockFrame(Material.IRON, "block.frame"));
+        quarry = RegistrationHelper.addBlockAndItem(new BlockQuarry(Material.IRON, "block.quarry"));
     }
 
     public static void fmlInit() {
-        HELPER.registerTile(TileFiller.class, "tile.filler");
-        HELPER.registerTile(TileBuilder.class, "tile.builder");
-        HELPER.registerTile(TileArchitectTable.class, "tile.architect");
-        HELPER.registerTile(TileElectronicLibrary.class, "tile.library");
-        HELPER.registerTile(TileReplacer.class, "tile.replacer");
-        HELPER.registerTile(TileQuarry.class, "tile.quarry");
+        RegistrationHelper.registerTile(TileFiller.class, "tile.filler");
+        RegistrationHelper.registerTile(TileBuilder.class, "tile.builder");
+        RegistrationHelper.registerTile(TileArchitectTable.class, "tile.architect");
+        RegistrationHelper.registerTile(TileElectronicLibrary.class, "tile.library");
+        RegistrationHelper.registerTile(TileReplacer.class, "tile.replacer");
+        RegistrationHelper.registerTile(TileQuarry.class, "tile.quarry");
     }
 }

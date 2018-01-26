@@ -1,12 +1,11 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -60,7 +59,7 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
-        ItemStack stack) {
+                                ItemStack stack) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
@@ -70,8 +69,8 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
-
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    @Nullable ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
@@ -92,12 +91,12 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
-        super.neighborChanged(state, world, pos, block);
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos fromPos) {
+        super.onNeighborChange(world, pos, fromPos);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
-            tileBC.onNeighbourBlockChanged(block, pos);
+            tileBC.onNeighbourBlockChanged(world.getBlockState(fromPos).getBlock(), fromPos);
         }
     }
 }

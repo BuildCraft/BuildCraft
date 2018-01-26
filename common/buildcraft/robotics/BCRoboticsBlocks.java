@@ -14,13 +14,11 @@ import buildcraft.robotics.block.BlockZonePlanner;
 import buildcraft.robotics.tile.TileZonePlanner;
 
 public class BCRoboticsBlocks {
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
     public static BlockZonePlanner zonePlanner;
 
     public static void preInit() {
-        zonePlanner = HELPER.addBlockAndItem(new BlockZonePlanner(Material.IRON, "block.zone_planner"));
+        zonePlanner = RegistrationHelper.addBlockAndItem(new BlockZonePlanner(Material.IRON, "block.zone_planner"));
 
-        HELPER.registerTile(TileZonePlanner.class, "tile.zone_planner");
+        RegistrationHelper.registerTile(TileZonePlanner.class, "tile.zone_planner");
     }
 }

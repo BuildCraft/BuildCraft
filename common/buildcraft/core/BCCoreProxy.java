@@ -96,7 +96,6 @@ public abstract class BCCoreProxy implements IGuiHandler {
         public void fmlInit() {
             BCCoreModels.fmlInit();
             MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
-            RegistrationHelper.registerModels();
         }
 
         @Override

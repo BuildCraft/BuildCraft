@@ -21,8 +21,6 @@ import buildcraft.core.item.ItemWrench_Neptune;
 
 public class BCCoreItems {
 
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
     public static ItemWrench_Neptune wrench;
     public static ItemBC_Neptune gearWood;
     public static ItemBC_Neptune gearStone;
@@ -38,20 +36,20 @@ public class BCCoreItems {
     public static ItemGoggles goggles;
 
     public static void preInit() {
-        wrench = HELPER.addItem(new ItemWrench_Neptune("item.wrench"));
-        gearWood = HELPER.addItem(new ItemBC_Neptune("item.gear.wood"));
-        gearStone = HELPER.addItem(new ItemBC_Neptune("item.gear.stone"));
-        gearIron = HELPER.addItem(new ItemBC_Neptune("item.gear.iron"));
-        gearGold = HELPER.addItem(new ItemBC_Neptune("item.gear.gold"));
-        gearDiamond = HELPER.addItem(new ItemBC_Neptune("item.gear.diamond"));
-        paintbrush = HELPER.addItem(new ItemPaintbrush_BC8("item.paintbrush"));
-        list = HELPER.addItem(new ItemList_BC8("item.list"));
-        mapLocation = HELPER.addItem(new ItemMapLocation("item.map_location"));
-        markerConnector = HELPER.addItem(new ItemMarkerConnector("item.marker_connector"));
-        volumeBox = HELPER.addItem(new ItemVolumeBox("item.volume_box"));
-        fragileFluidShard = HELPER.addItem(new ItemFragileFluidContainer("item.fragile_fluid_shard"));
+        wrench = RegistrationHelper.addItem(new ItemWrench_Neptune("item.wrench"));
+        gearWood = RegistrationHelper.addItem(new ItemBC_Neptune("item.gear.wood"));
+        gearStone = RegistrationHelper.addItem(new ItemBC_Neptune("item.gear.stone"));
+        gearIron = RegistrationHelper.addItem(new ItemBC_Neptune("item.gear.iron"));
+        gearGold = RegistrationHelper.addItem(new ItemBC_Neptune("item.gear.gold"));
+        gearDiamond = RegistrationHelper.addItem(new ItemBC_Neptune("item.gear.diamond"));
+        paintbrush = RegistrationHelper.addItem(new ItemPaintbrush_BC8("item.paintbrush"));
+        list = RegistrationHelper.addItem(new ItemList_BC8("item.list"));
+        mapLocation = RegistrationHelper.addItem(new ItemMapLocation("item.map_location"));
+        markerConnector = RegistrationHelper.addItem(new ItemMarkerConnector("item.marker_connector"));
+        volumeBox = RegistrationHelper.addItem(new ItemVolumeBox("item.volume_box"));
+        fragileFluidShard = RegistrationHelper.addItem(new ItemFragileFluidContainer("item.fragile_fluid_shard"));
         if (BCLib.DEV) {
-            goggles = HELPER.addItem(new ItemGoggles("item.goggles"));
+            goggles = RegistrationHelper.addItem(new ItemGoggles("item.goggles"));
         }
         FluidItemDrops.item = fragileFluidShard;
     }

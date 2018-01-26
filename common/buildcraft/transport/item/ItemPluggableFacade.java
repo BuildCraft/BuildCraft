@@ -11,6 +11,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.item.ItemStackHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -130,10 +132,15 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     public static String getFacadeStateDisplayName(FacadePhasedState state) {
         ItemStack assumedStack = state.stateInfo.requiredStack;
         String s = "item.FacadePhased.name";
-        if (assumedStack != null) {
-            s = assumedStack.getDisplayName();
-            if (state.isHollow) {
-                s += " (" + LocaleUtil.localize("item.Facade.state_hollow") + ")";
+        if (!ItemStackHelper.isEmpty(assumedStack)) {
+            try {
+                s = assumedStack.getDisplayName();
+                if (state.isHollow) {
+                    s += " (" + LocaleUtil.localize("item.Facade.state_hollow") + ")";
+                }
+            } catch (NullPointerException e){
+                //Catch rare cases when display names would be null
+                BCLog.logger.error("Item " + assumedStack.getItem().getUnlocalizedName() + " threw NullPointerException on getDisplayName");
             }
         }
         return s;

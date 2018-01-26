@@ -31,7 +31,6 @@ import buildcraft.transport.item.ItemPipeHolder;
 public enum PipeRegistry implements IPipeRegistry {
     INSTANCE;
 
-    private final RegistrationHelper helper = new RegistrationHelper();
     private final Map<ResourceLocation, PipeDefinition> definitions = new HashMap<>();
     private final Map<PipeDefinition, IItemPipe> pipeItems = new IdentityHashMap<>();
 
@@ -55,7 +54,7 @@ public enum PipeRegistry implements IPipeRegistry {
     @Override
     public ItemPipeHolder createItemForPipe(PipeDefinition definition) {
         ItemPipeHolder item = ItemPipeHolder.createAndTag(definition);
-        helper.addForcedItem(item);
+        RegistrationHelper.addForcedItem(item);
         if (definitions.values().contains(definition)) {
             setItemForPipe(definition, item);
         }
@@ -66,7 +65,7 @@ public enum PipeRegistry implements IPipeRegistry {
     public IItemPipe createUnnamedItemForPipe(PipeDefinition definition, Consumer<Item> postCreate) {
         ItemPipeHolder item = ItemPipeHolder.create(definition);
         postCreate.accept(item);
-        helper.addForcedItem(item);
+        RegistrationHelper.addForcedItem(item);
         if (definitions.values().contains(definition)) {
             setItemForPipe(definition, item);
         }

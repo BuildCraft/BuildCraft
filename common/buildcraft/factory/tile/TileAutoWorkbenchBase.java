@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerFiltered;
@@ -78,8 +79,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nullable ItemStack before,
+        @Nullable ItemStack after) {
         if (!ItemStack.areItemStacksEqual(before, after)) {
             crafting.onInventoryChange(handler);
         }

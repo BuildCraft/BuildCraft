@@ -9,11 +9,14 @@ package buildcraft.lib;
 import java.io.IOException;
 import java.io.InputStream;
 
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -131,6 +134,7 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlInit() {
             super.fmlInit();
+            RegistrationHelper.registerModels();
         }
 
         @Override

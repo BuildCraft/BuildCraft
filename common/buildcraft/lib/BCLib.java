@@ -106,6 +106,7 @@ public class BCLib {
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
         MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(FluidManager.class);
+        MinecraftForge.EVENT_BUS.register(RegistrationHelper.class);
 
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }

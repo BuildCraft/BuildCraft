@@ -30,9 +30,15 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
         final boolean matchNbt;
         if (source.startsWith("{") && source.endsWith("}")) {
             stack = MarkdownPageLoader.loadComplexItemStack(source.substring(1, source.length() - 1));
-            stack.stackSize = 1;
-            matchMeta = true;
-            matchNbt = stack.hasTagCompound();
+            if (!ItemStackHelper.isEmpty(stack)) {
+                stack.stackSize = 1;
+                matchMeta = true;
+                matchNbt = stack.hasTagCompound();
+            }
+            else{
+                matchMeta = false;
+                matchNbt = false;
+            }
         } else {
             if (source.startsWith("(") && source.endsWith(")")) {
                 source = source.substring(1, source.length() - 1);

@@ -23,7 +23,6 @@ import buildcraft.silicon.tile.TileLaser;
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 
 public class BCSiliconBlocks {
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
 
     public static BlockLaser laser;
     public static BlockLaserTable assemblyTable;
@@ -33,7 +32,7 @@ public class BCSiliconBlocks {
     public static BlockLaserTable programmingTable;
 
     public static void preInit() {
-        laser = HELPER.addBlockAndItem(new BlockLaser(Material.IRON, "block.laser"));
+        laser = RegistrationHelper.addBlockAndItem(new BlockLaser(Material.IRON, "block.laser"));
         assemblyTable = createLaserTable(EnumLaserTableType.ASSEMBLY_TABLE, "block.assembly_table");
         advancedCraftingTable = createLaserTable(EnumLaserTableType.ADVANCED_CRAFTING_TABLE, "block.advanced_crafting_table");
         integrationTable = createLaserTable(EnumLaserTableType.INTEGRATION_TABLE, "block.integration_table");
@@ -42,18 +41,18 @@ public class BCSiliconBlocks {
             programmingTable = createLaserTable(EnumLaserTableType.PROGRAMMING_TABLE, "block.programming_table");
         }
 
-        HELPER.registerTile(TileLaser.class, "tile.laser");
-        HELPER.registerTile(TileAssemblyTable.class, "tile.assembly_table");
-        HELPER.registerTile(TileAdvancedCraftingTable.class, "tile.advanced_crafting_table");
-        HELPER.registerTile(TileIntegrationTable.class, "tile.integration_table");
+        RegistrationHelper.registerTile(TileLaser.class, "tile.laser");
+        RegistrationHelper.registerTile(TileAssemblyTable.class, "tile.assembly_table");
+        RegistrationHelper.registerTile(TileAdvancedCraftingTable.class, "tile.advanced_crafting_table");
+        RegistrationHelper.registerTile(TileIntegrationTable.class, "tile.integration_table");
         if (BCLib.DEV) {
-            HELPER.registerTile(TileChargingTable.class, "tile.charging_table");
-            HELPER.registerTile(TileProgrammingTable_Neptune.class, "tile.programming_table");
+            RegistrationHelper.registerTile(TileChargingTable.class, "tile.charging_table");
+            RegistrationHelper.registerTile(TileProgrammingTable_Neptune.class, "tile.programming_table");
         }
     }
 
     private static BlockLaserTable createLaserTable(EnumLaserTableType type, String id) {
         BlockLaserTable block = new BlockLaserTable(type, Material.IRON, id);
-        return HELPER.addBlockAndItem(block);
+        return RegistrationHelper.addBlockAndItem(block);
     }
 }

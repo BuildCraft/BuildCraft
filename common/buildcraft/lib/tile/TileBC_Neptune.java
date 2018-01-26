@@ -286,8 +286,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     // Item caps
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before,
+        ItemStack after) {
         if (world.isBlockLoaded(pos)) {
             markDirty();
         }
