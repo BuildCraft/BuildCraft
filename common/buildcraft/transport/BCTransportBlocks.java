@@ -16,16 +16,14 @@ import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class BCTransportBlocks {
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
     public static BlockFilteredBuffer filteredBuffer;
     public static BlockPipeHolder pipeHolder;
 
     public static void preInit() {
-        filteredBuffer = HELPER.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
-        pipeHolder = HELPER.addBlock(new BlockPipeHolder(Material.IRON, "block.pipe_holder"));
+        filteredBuffer = RegistrationHelper.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
+        pipeHolder = RegistrationHelper.addBlock(new BlockPipeHolder(Material.IRON, "block.pipe_holder"));
 
-        HELPER.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
-        HELPER.registerTile(TilePipeHolder.class, "tile.pipe_holder");
+        RegistrationHelper.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
+        RegistrationHelper.registerTile(TilePipeHolder.class, "tile.pipe_holder");
     }
 }

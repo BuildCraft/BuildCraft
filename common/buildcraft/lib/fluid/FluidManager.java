@@ -24,8 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.registry.RegistrationHelper;
 
 public class FluidManager {
-
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
     private static final List<BCFluidBlock> fluidBlocks = new ArrayList<>();
 
     /** Should only ever be called during pre-init */
@@ -42,7 +40,7 @@ public class FluidManager {
         block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getBlockName());
         block.setUnlocalizedName("blockFluid_" + fluid.getBlockName());
         block.setLightOpacity(fluid.getLightOpacity());
-        HELPER.addForcedBlock(block);
+        RegistrationHelper.addForcedBlock(block);
         fluid.setBlock(block);
         FluidRegistry.addBucketForFluid(fluid);
         fluidBlocks.add(block);

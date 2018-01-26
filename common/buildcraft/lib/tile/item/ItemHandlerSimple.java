@@ -25,6 +25,7 @@ import buildcraft.api.core.IStackFilter;
 import buildcraft.lib.inventory.AbstractInvItemTransactor;
 import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemHandlerSimple extends AbstractInvItemTransactor
@@ -57,7 +58,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
 
     public ItemHandlerSimple(int size, StackInsertionChecker checker, StackInsertionFunction insertionFunction,
                              @Nullable StackChangeCallback callback) {
-        stacks = Lists.newArrayListWithCapacity(size);
+        stacks = Arrays.asList(new ItemStack[size]);
         this.checker = checker;
         this.inserter = insertionFunction;
         this.callback = callback;
@@ -84,9 +85,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList list = new NBTTagList();
         for (ItemStack stack : stacks) {
-            NBTTagCompound itemNbt = new NBTTagCompound();
-            stack.writeToNBT(itemNbt);
-            list.appendTag(itemNbt);
+            if (!ItemStackHelper.isEmpty(stack)) {
+                NBTTagCompound itemNbt = new NBTTagCompound();
+                stack.writeToNBT(itemNbt);
+                list.appendTag(itemNbt);
+            }
         }
         nbt.setTag("items", list);
         return nbt;

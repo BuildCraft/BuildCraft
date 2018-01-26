@@ -7,6 +7,8 @@ package buildcraft.core;
 import java.io.File;
 import java.util.function.Consumer;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 

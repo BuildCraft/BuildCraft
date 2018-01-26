@@ -27,9 +27,6 @@ import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.core.tile.TilePowerConsumerTester;
 
 public class BCCoreBlocks {
-
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
     public static BlockEngine_BC8 engine;
     public static BlockSpring spring;
     public static BlockDecoration decorated;
@@ -38,26 +35,26 @@ public class BCCoreBlocks {
     public static BlockPowerConsumerTester powerTester;
 
     public static void preInit() {
-        spring = HELPER.addBlockAndItem(new BlockSpring("block.spring"), ItemBlockSpring::new);
-        decorated = HELPER.addBlockAndItem(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
-        markerVolume = HELPER.addBlockAndItem(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
-        markerPath = HELPER.addBlockAndItem(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
+        spring = RegistrationHelper.addBlockAndItem(new BlockSpring("block.spring"), ItemBlockSpring::new);
+        decorated = RegistrationHelper.addBlockAndItem(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
+        markerVolume = RegistrationHelper.addBlockAndItem(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
+        markerPath = RegistrationHelper.addBlockAndItem(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
         if (BCLib.DEV) {
-            powerTester = HELPER.addBlockAndItem(new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
+            powerTester = RegistrationHelper.addBlockAndItem(new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
         }
 
-        engine = HELPER.addBlockAndItem(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8::new);
+        engine = RegistrationHelper.addBlockAndItem(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8::new);
         if (engine != null) {
             engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
             engine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);
         }
 
-        HELPER.registerTile(TileMarkerVolume.class, "tile.marker.volume");
-        HELPER.registerTile(TileMarkerPath.class, "tile.marker.path");
-        HELPER.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
-        HELPER.registerTile(TileEngineCreative.class, "tile.engine.creative");
+        RegistrationHelper.registerTile(TileMarkerVolume.class, "tile.marker.volume");
+        RegistrationHelper.registerTile(TileMarkerPath.class, "tile.marker.path");
+        RegistrationHelper.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
+        RegistrationHelper.registerTile(TileEngineCreative.class, "tile.engine.creative");
         if (BCLib.DEV) {
-            HELPER.registerTile(TilePowerConsumerTester.class, "tile.power_tester");
+            RegistrationHelper.registerTile(TilePowerConsumerTester.class, "tile.power_tester");
         }
     }
 }

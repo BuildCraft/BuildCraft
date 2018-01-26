@@ -18,8 +18,6 @@ import buildcraft.energy.tile.TileSpringOil;
 
 public class BCEnergyBlocks {
 
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
     public static void preInit() {
 
         if (BCCoreBlocks.engine != null) {
@@ -30,8 +28,8 @@ public class BCEnergyBlocks {
         EnumSpring.OIL.liquidBlock = BCEnergyFluids.crudeOil[0].getBlock().getDefaultState();
         EnumSpring.OIL.tileConstructor = TileSpringOil::new;
 
-        HELPER.registerTile(TileSpringOil.class, "tile.spring.oil");
-        HELPER.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
-        HELPER.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
+        RegistrationHelper.registerTile(TileSpringOil.class, "tile.spring.oil");
+        RegistrationHelper.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
+        RegistrationHelper.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
     }
 }

@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collector;
@@ -56,17 +57,13 @@ public class StackUtil {
     }
 
     /** Checks to see if the given required stack is contained fully in the given container stack. */
-    public static boolean contains(@Nonnull ItemStack required, @Nonnull ItemStack container) {
+    public static boolean contains(ItemStack required, ItemStack container) {
         return canMerge(required, container) && container.stackSize >= required.stackSize;
     }
 
     /** Checks to see if the given required stack is contained fully in a single stack in a list. */
-    public static boolean contains(@Nonnull ItemStack required, Collection<ItemStack> containers) {
+    public static boolean contains(ItemStack required, Collection<ItemStack> containers) {
         for (ItemStack possible : containers) {
-            if (possible == null) {
-                // Use an explicit null check here as the collection doesn't have @Nonnull applied to its type
-                throw new NullPointerException("Found a null itemstack in " + containers);
-            }
             if (contains(required, possible)) {
                 return true;
             }
@@ -75,12 +72,12 @@ public class StackUtil {
     }
 
     /** Checks that passed stack meets stack definition requirements */
-    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
+    public static boolean contains(StackDefinition stackDefinition, ItemStack stack) {
         return !ItemStackHelper.isEmpty(stack) && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
     }
 
     /** Checks that passed stack definition acceptable for stack collection */
-    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull List<ItemStack> stacks) {
+    public static boolean contains(StackDefinition stackDefinition, List<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
     }
 
@@ -299,7 +296,7 @@ public class StackUtil {
 
     /** @return An empty, nonnull list that cannot be modified (as it cannot be expanded and it has a size of 0) */
     public static List<ItemStack> listOf() {
-        return Lists.newArrayListWithCapacity(0);
+        return Arrays.asList(new ItemStack[0]);
     }
 
     /** Creates a {@link List} of {@link ItemStack}'s with the elements given in the order that they are given.
@@ -313,12 +310,12 @@ public class StackUtil {
             case 0:
                 return listOf();
             case 1:
-                List<ItemStack> list = Lists.newArrayListWithCapacity(1);
+                List<ItemStack> list = Arrays.asList(new ItemStack[1]);
                 list.add(0, stacks[0]);
                 return list;
             default:
         }
-        List<ItemStack> list = Lists.newArrayListWithCapacity(stacks.length);
+        List<ItemStack> list = Arrays.asList(new ItemStack[stacks.length]);
         for (int i = 0; i < stacks.length; i++) {
             list.set(i, stacks[i]);
         }

@@ -46,7 +46,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         BOTH
     }
 
-    public  final StackChangeCallback callback;
+    public final StackChangeCallback callback;
     private final List<IItemHandlerModifiable> handlersToDrop = new ArrayList<>();
     private final Map<EnumPipePart, Wrapper> wrappers = new EnumMap<>(EnumPipePart.class);
     private final Map<String, INBTSerializable<NBTTagCompound>> handlers = new HashMap<>();
@@ -64,22 +64,16 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
             parts = new EnumPipePart[0];
         }
         IItemHandlerModifiable external = handler;
-        switch (access) {
-            case NONE:
-                break;
-            case PHANTOM:
-                external = null;
-                if (parts.length > 0) {
-                    throw new IllegalArgumentException(
-                            "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
-                }
-                break;
-            case EXTRACT:
-                external = new WrappedItemHandlerExtract(handler);
-                break;
-            case INSERT:
-                external = new WrappedItemHandlerInsert(handler);
-                break;
+        if (access == EnumAccess.NONE || access == EnumAccess.PHANTOM) {
+            external = null;
+            if (parts.length > 0) {
+                throw new IllegalArgumentException(
+                        "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
+            }
+        } else if (access == EnumAccess.EXTRACT) {
+            external = new WrappedItemHandlerExtract(handler);
+        } else if (access == EnumAccess.INSERT) {
+            external = new WrappedItemHandlerInsert(handler);
         }
 
         if (external != null) {
@@ -106,21 +100,21 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionChecker checker, EnumAccess access,
-        EnumPipePart... parts) {
+                                           EnumPipePart... parts) {
         ItemHandlerSimple handler = new ItemHandlerSimple(size, callback);
         handler.setChecker(checker);
         return addInvHandler(key, handler, access, parts);
     }
 
     public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionFunction insertionFunction,
-        EnumAccess access, EnumPipePart... parts) {
+                                           EnumAccess access, EnumPipePart... parts) {
         ItemHandlerSimple handler = new ItemHandlerSimple(size, callback);
         handler.setInsertor(insertionFunction);
         return addInvHandler(key, handler, access, parts);
     }
 
     public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionChecker checker,
-        StackInsertionFunction insertionFunction, EnumAccess access, EnumPipePart... parts) {
+                                           StackInsertionFunction insertionFunction, EnumAccess access, EnumPipePart... parts) {
         ItemHandlerSimple handler = new ItemHandlerSimple(size, checker, insertionFunction, callback);
         return addInvHandler(key, handler, access, parts);
     }

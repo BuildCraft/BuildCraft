@@ -7,6 +7,7 @@
 package buildcraft.lib.list;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public final class ListHandler {
         public boolean precise, byType, byMaterial;
 
         public Line() {
-            stacks = Lists.newArrayListWithCapacity(WIDTH);
+            stacks = Arrays.asList(new ItemStack[WIDTH]);
         }
 
         /** Checks to see if this line is completely blank, and no data would be lost if this line was not saved. */
@@ -177,7 +178,7 @@ public final class ListHandler {
         public List<ItemStack> getExamples() {
             ItemStack firstStack = stacks.get(0);
             if (firstStack == null) {
-                return Lists.newArrayListWithCapacity(0);
+                return Arrays.asList(new ItemStack[0]);
             }
             List<ItemStack> stackList = Lists.newArrayList();
             List<ListMatchHandler> handlers = ListRegistry.getHandlers();
