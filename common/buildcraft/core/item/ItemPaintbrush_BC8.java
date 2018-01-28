@@ -4,11 +4,15 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.blocks.CustomPaintHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.ParticleUtil;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.VecUtil;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -23,19 +27,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blocks.CustomPaintHelper;
-
-import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.ParticleUtil;
-import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.VecUtil;
-
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
@@ -70,7 +65,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
         if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing, player)) {
             ItemStack newStack = brush.save(stack);
-            if (!ItemStackHelper.isEmpty(newStack)) {
+            if (!BCStackHelper.isEmpty(newStack)) {
                 player.setHeldItem(hand, newStack);
             }
             // We just changed the damage NBT value
@@ -166,7 +161,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         @Nullable
         public ItemStack save(ItemStack existing) {
             ItemStack stack = existing;
-            if (ItemStackHelper.isEmpty(existing) || existing.getMetadata() != getMeta()) {
+            if (BCStackHelper.isEmpty(existing) || existing.getMetadata() != getMeta()) {
                 stack = new ItemStack(ItemPaintbrush_BC8.this, 1, getMeta());
             }
             if (usesLeft != MAX_USES && colour != null) {

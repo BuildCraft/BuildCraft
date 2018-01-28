@@ -6,12 +6,11 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.items.BCStackHelper;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
+import javax.annotation.Nullable;
 
 public class InvertedStackFilter implements IStackFilter {
 
@@ -23,6 +22,6 @@ public class InvertedStackFilter implements IStackFilter {
 
     @Override
     public boolean matches(@Nullable ItemStack stack) {
-        return !ItemStackHelper.isEmpty(stack) && !filter.matches(stack);
+        return !BCStackHelper.isEmpty(stack) && !filter.matches(stack);
     }
 }

@@ -6,15 +6,13 @@
 
 package buildcraft.energy.container;
 
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.energy.tile.TileEngineIron_BC8;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.widget.WidgetFluidTank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-
-import buildcraft.lib.gui.ContainerBCTile;
-import buildcraft.lib.gui.widget.WidgetFluidTank;
-
-import buildcraft.energy.tile.TileEngineIron_BC8;
 
 public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8> {
     public final WidgetFluidTank widgetTankFuel;
@@ -43,7 +41,7 @@ public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8>
         if (!player.world.isRemote) {
             Slot slot = inventorySlots.get(index);
             ItemStack stack = slot.getStack();
-            if (!ItemStackHelper.isEmpty(stack)) {
+            if (!BCStackHelper.isEmpty(stack)) {
                 ItemStack original = stack.copy();
                 stack = tile.tankFuel.transferStackToTank(this, stack);
                 if (!ItemStack.areItemStacksEqual(stack, original)) {

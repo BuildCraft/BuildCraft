@@ -6,24 +6,6 @@
 
 package buildcraft.energy.tile;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
-
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -31,10 +13,11 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
 import buildcraft.api.fuels.ISolidCoolant;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IItemPipe;
-
+import buildcraft.energy.BCEnergyGuis;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.fluid.Tank;
@@ -43,8 +26,20 @@ import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.energy.BCEnergyGuis;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.Objects;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final int MAX_FLUID = 10_000;
@@ -135,12 +130,12 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
-        if (!ItemStackHelper.isEmpty(player.getHeldItem(hand))) {
+        if (!BCStackHelper.isEmpty(player.getHeldItem(hand))) {
             ItemStack current = Objects.requireNonNull(player.getHeldItem(hand)).copy();
             if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
                 return true;
             }
-            if (!ItemStackHelper.isEmpty(current)) {
+            if (!BCStackHelper.isEmpty(current)) {
                 if (EntityUtil.getWrenchHand(player) != null) {
                     return false;
                 }

@@ -1,30 +1,26 @@
 package buildcraft.test.lib.inventory;
 
-import buildcraft.lib.item.ItemStackHelper;
-import org.junit.Assert;
-import org.junit.Test;
-
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.inventory.IItemTransactor;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
-
 import buildcraft.test.VanillaSetupBaseTester;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ItemTransactorTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
         IItemTransactor trans = new ItemHandlerSimple(2, null);
 
-        Assert.assertTrue(ItemStackHelper.isEmpty(trans.extract(null, 1, 1, false)));
+        Assert.assertTrue(BCStackHelper.isEmpty(trans.extract(null, 1, 1, false)));
 
         ItemStack insert = new ItemStack(Items.APPLE);
         ItemStack leftOver = trans.insert(insert.copy(), false, false);
 
-        Assert.assertTrue(ItemStackHelper.isEmpty(leftOver));
+        Assert.assertTrue(BCStackHelper.isEmpty(leftOver));
 
         ItemStack extracted = trans.extract(null, 1, 1, false);
 
@@ -32,7 +28,7 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
 
         extracted = trans.extract(null, 1, 1, false);
 
-        Assert.assertTrue(ItemStackHelper.isEmpty(extracted));
+        Assert.assertTrue(BCStackHelper.isEmpty(extracted));
     }
 
     @Test

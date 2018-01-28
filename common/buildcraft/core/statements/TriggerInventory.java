@@ -6,29 +6,21 @@
 
 package buildcraft.core.statements;
 
-import java.util.Locale;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.items.IItemHandler;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.items.IList;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
-
+import buildcraft.api.statements.*;
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
+import java.util.Locale;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
     public State state;
@@ -76,10 +68,10 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 ItemStack stack = handler.getStackInSlot(i);
 
                 // TODO: Replace some of this with
-                foundItems |= !ItemStackHelper.isEmpty(stack) && (ItemStackHelper.isEmpty(searchedStack) || StackUtil.canStacksOrListsMerge(stack, searchedStack));
+                foundItems |= !BCStackHelper.isEmpty(stack) && (BCStackHelper.isEmpty(searchedStack) || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (ItemStackHelper.isEmpty(stack) || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
-                    && (ItemStackHelper.isEmpty(searchedStack) || searchedStack.getItem() instanceof IList || ItemStackHelper.isEmpty(handler.insertItem(i, searchedStack, true)));
+                foundSpace |= (BCStackHelper.isEmpty(stack) || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
+                    && (BCStackHelper.isEmpty(searchedStack) || searchedStack.getItem() instanceof IList || BCStackHelper.isEmpty(handler.insertItem(i, searchedStack, true)));
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a
                 // heuristic which is more desirable than expensive computation

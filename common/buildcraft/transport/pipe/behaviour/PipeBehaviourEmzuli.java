@@ -6,14 +6,22 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-
-import javax.annotation.Nonnull;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pipe.PipeEventActionActivate;
+import buildcraft.api.transport.pipe.PipeEventStatement;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.transport.BCTransportGuis;
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.ActionExtractionPreset;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -21,27 +29,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.transport.BCTransportGuis;
-import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.statements.ActionExtractionPreset;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 public class PipeBehaviourEmzuli extends PipeBehaviourWood {
 
@@ -188,7 +183,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
         int i = SlotIndex.VALUES.length;
         while (i-- > 0) {
             current = current.next();
-            if (activeSlots.contains(current) && !ItemStackHelper.isEmpty(invFilters.getStackInSlot(current.ordinal()))) {
+            if (activeSlots.contains(current) && !BCStackHelper.isEmpty(invFilters.getStackInSlot(current.ordinal()))) {
                 return current;
             }
         }

@@ -6,21 +6,10 @@
 
 package buildcraft.builders.tile;
 
-import java.util.Date;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.util.ITickable;
-
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.schematics.ISchematicBlock;
-
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
@@ -29,6 +18,14 @@ import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.SchematicBlockManager;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Snapshot.Header;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import net.minecraft.util.ITickable;
+
+import java.util.Date;
 
 public class TileReplacer extends TileBC_Neptune implements ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("replacer");
@@ -60,9 +57,9 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
         if (world.isRemote) {
             return;
         }
-        if (!ItemStackHelper.isEmpty(invSnapshot.getStackInSlot(0)) &&
-                !ItemStackHelper.isEmpty(invSchematicFrom.getStackInSlot(0)) &&
-                !ItemStackHelper.isEmpty(invSchematicTo.getStackInSlot(0))) {
+        if (!BCStackHelper.isEmpty(invSnapshot.getStackInSlot(0)) &&
+                !BCStackHelper.isEmpty(invSchematicFrom.getStackInSlot(0)) &&
+                !BCStackHelper.isEmpty(invSchematicTo.getStackInSlot(0))) {
             Header header = BCBuildersItems.snapshot.getHeader(invSnapshot.getStackInSlot(0));
             if (header != null) {
                 Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);

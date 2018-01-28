@@ -6,14 +6,10 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.lib.inventory.ItemTransactorHelper;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,14 +19,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-
-import buildcraft.lib.inventory.ItemTransactorHelper;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class InventoryUtil {
     // Drops
@@ -125,7 +121,7 @@ public class InventoryUtil {
     public static void addToBestAcceptor(World world, BlockPos pos, EnumFacing ignore, ItemStack stack) {
         stack = addToRandomInjectable(world, pos, ignore, stack);
         stack = addToRandomInventory(world, pos, stack);
-        if (!ItemStackHelper.isEmpty(stack))
+        if (!BCStackHelper.isEmpty(stack))
             drop(world, pos, stack);
     }
 
@@ -133,7 +129,7 @@ public class InventoryUtil {
     public static void addAll(IItemHandler src, List<ItemStack> dst) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack stack = src.getStackInSlot(i);
-            if (!ItemStackHelper.isEmpty(stack)) {
+            if (!BCStackHelper.isEmpty(stack)) {
                 dst.add(stack);
             }
         }

@@ -6,14 +6,27 @@
 
 package buildcraft.transport.block;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.blocks.ICustomPaintHandler;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.WireNode;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.prop.UnlistedNonNullProperty;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.transport.BCTransportItems;
+import buildcraft.transport.item.ItemWire;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.tile.TilePipeHolder;
+import buildcraft.transport.wire.EnumWireBetween;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -43,35 +56,17 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blocks.ICustomPaintHandler;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.EnumWirePart;
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.WireNode;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeDefinition;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.prop.UnlistedNonNullProperty;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.item.ItemWire;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.tile.TilePipeHolder;
-import buildcraft.transport.wire.EnumWireBetween;
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
     public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE = new UnlistedNonNullProperty<>(
@@ -444,7 +439,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
         EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
 
-        Item item = ItemStackHelper.isEmpty(held) ? null : held.getItem();
+        Item item = BCStackHelper.isEmpty(held) ? null : held.getItem();
         PipePluggable existing = tile.getPluggable(realSide);
         if (item instanceof IItemPluggable && existing == null) {
             IItemPluggable itemPlug = (IItemPluggable) item;

@@ -6,33 +6,25 @@
 
 package buildcraft.core.statements;
 
-import java.util.Locale;
-
 import buildcraft.api.inventory.IItemHandlerFiltered;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.items.IList;
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.statements.*;
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.ObjectUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
+import java.util.Locale;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
     public TriggerType type;
@@ -75,8 +67,8 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
         int foundItems = 0;
         for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
             ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-            if (ItemStackHelper.isEmpty(stackInSlot)) {
-                if (ItemStackHelper.isEmpty(searchStack)) {
+            if (BCStackHelper.isEmpty(stackInSlot)) {
+                if (BCStackHelper.isEmpty(searchStack)) {
                     itemSpace += 64;
                 } else {
                     if (searchStack.getItem() instanceof IList) {
@@ -91,7 +83,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
                         int count = searchStack.getMaxStackSize();
                         stack.stackSize = count;
                         ItemStack leftOver = itemHandler.insertItem(slot, stack, true);
-                        if (ItemStackHelper.isEmpty(leftOver) || leftOver.stackSize == 0) {
+                        if (BCStackHelper.isEmpty(leftOver) || leftOver.stackSize == 0) {
                             itemSpace += count;
                         } else {
                             itemSpace += count - leftOver.stackSize;
@@ -99,7 +91,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
                     }
                 }
             } else {
-                if (ItemStackHelper.isEmpty(searchStack) || StackUtil.matchesStackOrList(searchStack, stackInSlot)) {
+                if (BCStackHelper.isEmpty(searchStack) || StackUtil.matchesStackOrList(searchStack, stackInSlot)) {
                     itemSpace += stackInSlot.getMaxStackSize();
                     foundItems += stackInSlot.stackSize;
                 }

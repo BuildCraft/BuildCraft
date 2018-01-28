@@ -5,26 +5,21 @@
  */
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
-import com.google.common.collect.Lists;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.lib.inventory.AbstractInvItemTransactor;
+import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ReportedException;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.inventory.AbstractInvItemTransactor;
-import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
-
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -85,7 +80,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList list = new NBTTagList();
         for (ItemStack stack : stacks) {
-            if (!ItemStackHelper.isEmpty(stack)) {
+            if (!BCStackHelper.isEmpty(stack)) {
                 NBTTagCompound itemNbt = new NBTTagCompound();
                 stack.writeToNBT(itemNbt);
                 list.appendTag(itemNbt);
@@ -118,7 +113,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     @Override
     protected boolean isEmpty(int slot) {
         if (badSlotIndex(slot)) return true;
-        return ItemStackHelper.isEmpty(stacks.get(slot));
+        return BCStackHelper.isEmpty(stacks.get(slot));
     }
 
     @Override
@@ -178,7 +173,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         if (badSlotIndex(slot)) return null;
         // You can ALWAYS extract. if you couldn't then you could never take out items from anywhere
         ItemStack current = stacks.get(slot);
-        if (ItemStackHelper.isEmpty(current)) return null;
+        if (BCStackHelper.isEmpty(current)) return null;
         if (current.stackSize < amount) {
             if (simulate) {
                 return asValid(current.copy());
@@ -246,7 +241,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     @Override
     public final boolean canSet(int slot, @Nullable ItemStack stack) {
         ItemStack copied = asValid(stack);
-        if (ItemStackHelper.isEmpty(copied)) {
+        if (BCStackHelper.isEmpty(copied)) {
             return true;
         }
         return checker.canSet(slot, copied);
@@ -255,9 +250,9 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     private void setStackInternal(int slot, @Nullable ItemStack stack) {
         stacks.set(slot, asValid(stack));
         // Transactor calc
-        if (ItemStackHelper.isEmpty(stack) && firstUsed == slot) {
+        if (BCStackHelper.isEmpty(stack) && firstUsed == slot) {
             for (int s = firstUsed; s < getSlots(); s++) {
-                if (!ItemStackHelper.isEmpty(stacks.get(s))) {
+                if (!BCStackHelper.isEmpty(stacks.get(s))) {
                     firstUsed = s;
                     break;
                 }
@@ -265,7 +260,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
             if (firstUsed == slot) {
                 firstUsed = Integer.MAX_VALUE;
             }
-        } else if (!ItemStackHelper.isEmpty(stack) && firstUsed > slot) {
+        } else if (!BCStackHelper.isEmpty(stack) && firstUsed > slot) {
             firstUsed = slot;
         }
     }

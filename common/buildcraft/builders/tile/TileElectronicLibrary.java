@@ -4,32 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-
-import buildcraft.lib.item.ItemStackHelper;
-import com.google.common.primitives.Bytes;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ITickable;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.data.NbtSquishConstants;
-
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -40,11 +21,18 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
+import com.google.common.primitives.Bytes;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ITickable;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.Snapshot;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 
 public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("library");
@@ -116,7 +104,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             return;
         }
 
-        if (!ItemStackHelper.isEmpty(invDownIn.getStackInSlot(0)) && ItemStackHelper.isEmpty(invDownOut.getStackInSlot(0))) {
+        if (!BCStackHelper.isEmpty(invDownIn.getStackInSlot(0)) && BCStackHelper.isEmpty(invDownOut.getStackInSlot(0))) {
             if (progressDown == -1) {
                 progressDown = 0;
                 deltaProgressDown.addDelta(0, 50, 1);
@@ -135,7 +123,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
             deltaProgressDown.setValue(0);
         }
 
-        if (selected != null && !ItemStackHelper.isEmpty(invUpIn.getStackInSlot(0)) && ItemStackHelper.isEmpty(invUpOut.getStackInSlot(0))) {
+        if (selected != null && !BCStackHelper.isEmpty(invUpIn.getStackInSlot(0)) && BCStackHelper.isEmpty(invUpOut.getStackInSlot(0))) {
             if (progressUp == -1) {
                 progressUp = 0;
                 deltaProgressUp.addDelta(0, 50, 1);

@@ -4,12 +4,14 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.misc.data.NonNullMatrix;
+import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.IRecipeViewable;
+import buildcraft.lib.recipe.IRecipeViewable.IViewableGrid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -17,19 +19,14 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagList;
-
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.parts.GuidePartFactory;
-import buildcraft.lib.misc.data.NonNullMatrix;
-import buildcraft.lib.recipe.ChangingItemStack;
-import buildcraft.lib.recipe.IRecipeViewable;
-import buildcraft.lib.recipe.IRecipeViewable.IViewableGrid;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
@@ -39,12 +36,13 @@ public class GuideCraftingFactory implements GuidePartFactory {
     private final @Nonnull ItemStack output;
     private final int hash;
 
-    public GuideCraftingFactory(ItemStack[][] input, ItemStack output) {
+    public GuideCraftingFactory(ItemStack[][] input, @Nonnull ItemStack output) {
         this.input = new NonNullMatrix<>(input, null);
         this.output = output;
         NBTTagList hashNbt = new NBTTagList();
         for (ItemStack stack : this.input) {
-            hashNbt.appendTag(stack.serializeNBT());
+            if (!BCStackHelper.isEmpty(stack))
+                hashNbt.appendTag(stack.serializeNBT());
         }
         this.hash = hashNbt.hashCode();
     }

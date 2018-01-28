@@ -6,9 +6,15 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.inventory.IItemTransactor.IItemInsertable;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.StackUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -20,20 +26,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.inventory.IItemTransactor.IItemInsertable;
-import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.pipe.PipeApi;
-
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.StackUtil;
-
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ItemTransactorHelper {
@@ -176,7 +172,7 @@ public class ItemTransactorHelper {
 
     private static int moveSingle0(IItemTransactor src, IItemTransactor dst, IStackFilter filter, int maxItems, boolean simulateSrc, boolean simulateDst) {
         ItemStack potential = src.extract(filter, 1, maxItems, true);
-        if (ItemStackHelper.isEmpty(potential)) return 0;
+        if (BCStackHelper.isEmpty(potential)) return 0;
         ItemStack leftOver = dst.insert(potential, false, simulateDst);
         int toTake = potential.stackSize - leftOver.stackSize;
         IStackFilter exactFilter = (stack) -> StackUtil.canMerge(stack, potential);

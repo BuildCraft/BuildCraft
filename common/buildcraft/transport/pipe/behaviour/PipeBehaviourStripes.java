@@ -6,12 +6,22 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjRedstoneReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.transport.BCTransportStatements;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -19,7 +29,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
@@ -27,32 +36,8 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjRedstoneReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-import buildcraft.api.transport.pipe.PipeFlow;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-
-import buildcraft.transport.BCTransportStatements;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
@@ -224,7 +209,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
             event.setStack(null);
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack stack = player.inventory.removeStackFromSlot(i);
-                if (!ItemStackHelper.isEmpty(stack)) {
+                if (!BCStackHelper.isEmpty(stack)) {
                     sendItem(stack, direction);
                 }
             }

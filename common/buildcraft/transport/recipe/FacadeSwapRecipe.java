@@ -6,22 +6,20 @@
 
 package buildcraft.transport.recipe;
 
-import com.google.common.collect.Lists;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.ForgeHooks;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.IRecipeViewable;
-
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
+import com.google.common.collect.Lists;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 import java.util.List;
 
@@ -71,12 +69,12 @@ public enum FacadeSwapRecipe implements IRecipe, IRecipeViewable.IViewableGrid {
                 }
             }
         }
-        if (stackIn.getItem() != BCTransportItems.plugFacade) {
-            return null;
+        if (!BCStackHelper.isEmpty(stackIn) && stackIn.getItem() == BCTransportItems.plugFacade) {
+            FacadeInstance states = ItemPluggableFacade.getStates(stackIn);
+            states = states.withSwappedIsHollow();
+            return BCTransportItems.plugFacade.createItemStack(states);
         }
-        FacadeInstance states = ItemPluggableFacade.getStates(stackIn);
-        states = states.withSwappedIsHollow();
-        return BCTransportItems.plugFacade.createItemStack(states);
+        return null;
     }
 
     @Override

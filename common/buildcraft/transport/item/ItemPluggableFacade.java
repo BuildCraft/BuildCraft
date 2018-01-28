@@ -6,13 +6,21 @@
 
 package buildcraft.transport.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.facades.FacadeType;
+import buildcraft.api.facades.IFacade;
+import buildcraft.api.facades.IFacadeItem;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.transport.BCTransportPlugs;
+import buildcraft.transport.plug.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,30 +31,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.facades.FacadeType;
-import buildcraft.api.facades.IFacade;
-import buildcraft.api.facades.IFacadeItem;
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.SoundUtil;
-
-import buildcraft.transport.BCTransportPlugs;
-import buildcraft.transport.plug.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeInstance;
-import buildcraft.transport.plug.FacadePhasedState;
-import buildcraft.transport.plug.FacadeStateManager;
-import buildcraft.transport.plug.PluggableFacade;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
     public ItemPluggableFacade(String id) {
@@ -132,7 +123,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     public static String getFacadeStateDisplayName(FacadePhasedState state) {
         ItemStack assumedStack = state.stateInfo.requiredStack;
         String s = "item.FacadePhased.name";
-        if (!ItemStackHelper.isEmpty(assumedStack)) {
+        if (!BCStackHelper.isEmpty(assumedStack)) {
             try {
                 s = assumedStack.getDisplayName();
                 if (state.isHollow) {
