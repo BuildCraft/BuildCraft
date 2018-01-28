@@ -6,28 +6,23 @@
 
 package buildcraft.core.list;
 
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
-
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemList_BC8;
+import javax.annotation.Nullable;
+import java.io.IOException;
 
 public class ContainerList extends ContainerBC_Neptune {
     // Network ID's
@@ -87,12 +82,12 @@ public class ContainerList extends ContainerBC_Neptune {
     @Nullable
     public ItemStack getListItemStack() {
         ItemStack toTry = player.getHeldItemMainhand();
-        if (!ItemStackHelper.isEmpty(toTry) && toTry.getItem() instanceof ItemList_BC8) {
+        if (!BCStackHelper.isEmpty(toTry) && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
         toTry = player.getHeldItemOffhand();
-        if (!ItemStackHelper.isEmpty(toTry) && toTry.getItem() instanceof ItemList_BC8) {
+        if (!BCStackHelper.isEmpty(toTry) && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
         return null;

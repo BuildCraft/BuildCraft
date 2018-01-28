@@ -6,35 +6,30 @@
 
 package buildcraft.transport.client.render;
 
-import java.util.List;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.render.ISprite;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.render.ItemRenderUtil;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportSprites;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.pipe.flow.TravellingItem;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.render.ISprite;
-import buildcraft.api.transport.pipe.IPipeFlowRenderer;
-
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.pipe.flow.TravellingItem;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
@@ -72,7 +67,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
             Vec3d pos = item.getRenderPosition(BlockPos.ORIGIN, now, partialTicks);
 
             ItemStack stack = item.clientItemLink.get();
-            if (stack != null && !ItemStackHelper.isEmpty(stack)) {
+            if (stack != null && !BCStackHelper.isEmpty(stack)) {
                 if (item.stackSize != stack.stackSize) {
                     stack = stack.copy();
                     stack.stackSize = item.stackSize;

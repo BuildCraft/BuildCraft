@@ -6,7 +6,19 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.IItemPluggable;
+import buildcraft.api.transport.pipe.IFlowFluid;
+import buildcraft.api.transport.pipe.IFlowItems;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.lib.inventory.filter.*;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.transport.BCTransportGuis;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,31 +27,11 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.pipe.IFlowFluid;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-
-import buildcraft.lib.inventory.filter.ArrayFluidFilter;
-import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
-import buildcraft.lib.inventory.filter.InvertedFluidFilter;
-import buildcraft.lib.inventory.filter.InvertedStackFilter;
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.transport.BCTransportGuis;
 
 import java.io.IOException;
 
@@ -77,7 +69,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         filters.deserializeNBT(nbt.getCompoundTag("filters"));
         filterMode = FilterMode.get(nbt.getByte("mode"));
         currentFilter = nbt.getByte("currentFilter") % filters.getSlots();
-        filterValid = !ItemStackHelper.isEmpty(filters.extract(StackFilter.ALL, 1, 1, true));
+        filterValid = !BCStackHelper.isEmpty(filters.extract(StackFilter.ALL, 1, 1, true));
     }
 
     @Override
@@ -116,7 +108,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
         ItemStack held = player.getHeldItemMainhand();
-        if (!ItemStackHelper.isEmpty(held)) {
+        if (!BCStackHelper.isEmpty(held)) {
             if (held.getItem() instanceof IItemPluggable) {
                 return false;
             }
@@ -128,7 +120,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     private void onSlotChanged(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
-        if (!ItemStackHelper.isEmpty(after)) {
+        if (!BCStackHelper.isEmpty(after)) {
             if (!filterValid) {
                 currentFilter = slot;
                 filterValid = true;
@@ -142,7 +134,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         switch (filterMode) {
             default:
             case WHITE_LIST:
-                if (ItemStackHelper.isEmpty(filters.extract(s -> true, 1, 1, true))) {
+                if (BCStackHelper.isEmpty(filters.extract(s -> true, 1, 1, true))) {
                     return s -> true;
                 }
                 return new DelegatingItemHandlerFilter(StackUtil::isMatchingItemOrList, filters);
@@ -159,7 +151,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 
     @Override
     protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
-        if (ItemStackHelper.isEmpty(filters.getStackInSlot(currentFilter))) {
+        if (BCStackHelper.isEmpty(filters.getStackInSlot(currentFilter))) {
             advanceFilter();
         }
         int extracted = flow.tryExtractItems(1, getCurrentDir(), null, getStackFilter(), simulate);
@@ -171,14 +163,14 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 
     @Override
     protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
-        if (ItemStackHelper.isEmpty(filters.getStackInSlot(currentFilter))) {
+        if (BCStackHelper.isEmpty(filters.getStackInSlot(currentFilter))) {
             advanceFilter();
         }
 
         switch (filterMode) {
             default:
             case WHITE_LIST:
-                if (ItemStackHelper.isEmpty(filters.extract(s -> true, 1, 1, true))) {
+                if (BCStackHelper.isEmpty(filters.extract(s -> true, 1, 1, true))) {
                     return flow.tryExtractFluid(millibuckets, dir, null, simulate);
                 }
                 // Firstly try the advanced version - if that fails we will need to try the basic version
@@ -191,7 +183,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                 if (extracted == null || extracted.amount <= 0) {
                     for (int i = 0; i < filters.getSlots(); i++) {
                         ItemStack stack = filters.getStackInSlot(i);
-                        if (ItemStackHelper.isEmpty(stack)) {
+                        if (BCStackHelper.isEmpty(stack)) {
                             continue;
                         }
                         extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack), simulate);
@@ -219,7 +211,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             if (currentFilter >= filters.getSlots()) {
                 currentFilter = 0;
             }
-            if (ItemStackHelper.isEmpty(filters.getStackInSlot(currentFilter))) {
+            if (BCStackHelper.isEmpty(filters.getStackInSlot(currentFilter))) {
                 filterValid = true;
                 break;
             }

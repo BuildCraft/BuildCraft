@@ -1,17 +1,16 @@
 package buildcraft.core.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.items.IItemFluidShard;
+import buildcraft.lib.fluid.BCFluid;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -20,12 +19,9 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import buildcraft.api.items.IItemFluidShard;
-
-import buildcraft.lib.fluid.BCFluid;
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.NBTUtilBC;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFluidShard {
 
@@ -113,7 +109,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
 
     @Nullable
     static FluidStack getFluid(ItemStack container) {
-        if (ItemStackHelper.isEmpty(container)) {
+        if (BCStackHelper.isEmpty(container)) {
             return null;
         }
         NBTTagCompound fluidNbt = container.getSubCompound("fluid", false);

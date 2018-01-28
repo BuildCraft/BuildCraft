@@ -1,21 +1,18 @@
 package buildcraft.lib.client.guide.loader.entry;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.ItemStackKey;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
 
@@ -30,7 +27,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
         final boolean matchNbt;
         if (source.startsWith("{") && source.endsWith("}")) {
             stack = MarkdownPageLoader.loadComplexItemStack(source.substring(1, source.length() - 1));
-            if (!ItemStackHelper.isEmpty(stack)) {
+            if (!BCStackHelper.isEmpty(stack)) {
                 stack.stackSize = 1;
                 matchMeta = true;
                 matchNbt = stack.hasTagCompound();
@@ -51,7 +48,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
             matchMeta = false;
             matchNbt = false;
         }
-        if (ItemStackHelper.isEmpty(stack)) {
+        if (BCStackHelper.isEmpty(stack)) {
             return null;
         }
         return new ItemStackValueFilter(new ItemStackKey(stack), matchMeta, matchNbt);
@@ -70,7 +67,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
         if (value instanceof ItemStack) {
             ItemStack base = target.stack.baseStack;
             ItemStack test = (ItemStack) value;
-            if (ItemStackHelper.isEmpty(base) || ItemStackHelper.isEmpty(test)) {
+            if (BCStackHelper.isEmpty(base) || BCStackHelper.isEmpty(test)) {
                 return false;
             }
             if (base.getItem() != test.getItem()) {

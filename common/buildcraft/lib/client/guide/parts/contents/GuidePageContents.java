@@ -6,48 +6,17 @@
 
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import buildcraft.lib.item.ItemStackHelper;
-import buildcraft.lib.misc.SuffixArray;
-import com.google.common.collect.ImmutableList;
-
-import com.google.common.collect.Lists;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
-
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.statements.IAction;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.ITrigger;
 import buildcraft.api.statements.StatementManager;
-
 import buildcraft.lib.BCLib;
-import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.GuideManager;
-import buildcraft.lib.client.guide.PageEntry;
-import buildcraft.lib.client.guide.PageLine;
-import buildcraft.lib.client.guide.TypeOrder;
+import buildcraft.lib.client.guide.*;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.loader.entry.ItemStackValueFilter;
-import buildcraft.lib.client.guide.parts.GuideChapter;
-import buildcraft.lib.client.guide.parts.GuidePage;
-import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.guide.parts.GuidePageFactory;
-import buildcraft.lib.client.guide.parts.GuideText;
+import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.client.guide.parts.contents.ContentsList.Title;
 import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader;
 import buildcraft.lib.client.guide.parts.contents.ContentsList.Title.SubHeader.PageLink;
@@ -60,6 +29,21 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.statement.GuiElementStatementSource;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.SuffixArray;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
@@ -108,7 +92,7 @@ public class GuidePageContents extends GuidePageBase {
             if (entryFactory == null) {
                 if (entry.value instanceof ItemStackValueFilter) {
                     ItemStack stack = ((ItemStackValueFilter) entry.value).stack.baseStack;
-                    if (!ItemStackHelper.isEmpty(stack))
+                    if (!BCStackHelper.isEmpty(stack))
                         itemsAdded.add(stack.getItem());
                     PageLinkGenerated pageLink = pageHolder.addKnownPage(text, stack);
                     if (pageLink != null) {
@@ -118,7 +102,7 @@ public class GuidePageContents extends GuidePageBase {
             } else {
                 if (entry.value instanceof ItemStackValueFilter) {
                     ItemStack stack = ((ItemStackValueFilter) entry.value).stack.baseStack;
-                    if (!ItemStackHelper.isEmpty(stack))
+                    if (!BCStackHelper.isEmpty(stack))
                         itemsAdded.add(stack.getItem());
                 }
                 PageLinkNormal pageLink = pageHolder.addNormalPage(text, entryFactory);

@@ -6,40 +6,28 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.ISchematicEntity;
+import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.lib.fluid.FluidHelper;
-import buildcraft.lib.item.ItemStackHelper;
-import org.apache.commons.lang3.tuple.Pair;
-
+import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.ISchematicEntity;
-import buildcraft.api.schematics.SchematicEntityContext;
-
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.net.PacketBufferBC;
+import java.io.IOException;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> {
     private static final double MAX_ENTITY_DISTANCE = 0.1D;
@@ -112,7 +100,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             (
                 StackUtil.mergeSameItems(requiredItems).stream()
                     .noneMatch(stack ->
-                            ItemStackHelper.isEmpty(tile.getInvResources().extract(
+                            BCStackHelper.isEmpty(tile.getInvResources().extract(
                             extracted -> StackUtil.canMerge(stack, extracted),
                             stack.stackSize,
                             stack.stackSize,

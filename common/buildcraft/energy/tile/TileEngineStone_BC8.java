@@ -4,24 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy.tile;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
-
+import buildcraft.energy.BCEnergyGuis;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
@@ -29,8 +16,16 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.energy.BCEnergyGuis;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private static final long MAX_OUTPUT = MjAPI.MJ;
@@ -81,7 +76,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before,
         ItemStack after) {
         if (handler == invFuel) {
-            if (isForceInserting && ItemStackHelper.isEmpty(after)) {
+            if (isForceInserting && BCStackHelper.isEmpty(after)) {
                 isForceInserting = false;
             }
         }
@@ -127,13 +122,13 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
                 deltaFuelLeft.addDelta(0, totalBurnTime, -100);
 
                 ItemStack fuel = invFuel.extractItem(0, 1, false);
-                if (!ItemStackHelper.isEmpty(fuel)) {
+                if (!BCStackHelper.isEmpty(fuel)) {
                     ItemStack container = fuel.getItem().getContainerItem(fuel);
-                    if (!ItemStackHelper.isEmpty(container)) {
-                        if (ItemStackHelper.isEmpty(invFuel.getStackInSlot(0))) {
+                    if (!BCStackHelper.isEmpty(container)) {
+                        if (BCStackHelper.isEmpty(invFuel.getStackInSlot(0))) {
                             isForceInserting = false;
                             ItemStack leftover = invFuel.insert(container, false, false);
-                            if (!ItemStackHelper.isEmpty(leftover)) {
+                            if (!BCStackHelper.isEmpty(leftover)) {
                                 isForceInserting = true;
                                 invFuel.setStackInSlot(0, leftover);
                             }

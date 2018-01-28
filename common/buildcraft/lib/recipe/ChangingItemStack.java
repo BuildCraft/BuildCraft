@@ -6,14 +6,12 @@
 
 package buildcraft.lib.recipe;
 
-import buildcraft.lib.item.ItemStackHelper;
-import com.google.common.collect.Lists;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.oredict.OreDictionary;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
+import com.google.common.collect.Lists;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
@@ -33,7 +31,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
      * 
      * @param stack the stack to check. */
     public static ChangingItemStack create(ItemStack stack) {
-        if (ItemStackHelper.isEmpty(stack)) {
+        if (BCStackHelper.isEmpty(stack)) {
             return new ChangingItemStack(StackUtil.listOf(null));
         } else if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             List<ItemStack> subs = Lists.newArrayList();

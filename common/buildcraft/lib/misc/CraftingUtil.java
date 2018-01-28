@@ -6,15 +6,15 @@
 
 package buildcraft.lib.misc;
 
-import java.util.List;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public final class CraftingUtil {
 
@@ -44,7 +44,7 @@ public final class CraftingUtil {
             }
         }
 
-        if (ItemStackHelper.isEmpty(item1) || ItemStackHelper.isEmpty(item2))
+        if (BCStackHelper.isEmpty(item1) || BCStackHelper.isEmpty(item2))
             return null;
 
         if (itemNum == 2 && item1.getItem() == item2.getItem() && item1.stackSize == 1 && item2.stackSize == 1 && item1.getItem().isRepairable()) {

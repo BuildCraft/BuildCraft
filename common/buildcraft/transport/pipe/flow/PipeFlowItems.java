@@ -6,18 +6,20 @@
 
 package buildcraft.transport.pipe.flow;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipe.ConnectedType;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -28,30 +30,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeFlow;
-
-import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Supplier;
 
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
@@ -69,7 +59,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
         for (int i = 0; i < list.tagCount(); i++) {
             TravellingItem item = new TravellingItem(list.getCompoundTagAt(i), tickNow);
-            if (ItemStackHelper.isEmpty(item.stack)) {
+            if (BCStackHelper.isEmpty(item.stack)) {
                 items.add(item.getCurrentDelay(tickNow), item);
             }
         }
@@ -154,7 +144,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         ItemStack possible = trans.extract(filter, 1, count, true);
 
-        if (ItemStackHelper.isEmpty(possible)) {
+        if (BCStackHelper.isEmpty(possible)) {
             return 0;
         }
         if (possible.stackSize > possible.getMaxStackSize()) {
@@ -173,7 +163,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         ItemStack stack = trans.extract(filter, count, count, simulate);
 
-        if (ItemStackHelper.isEmpty(stack)) {
+        if (BCStackHelper.isEmpty(stack)) {
             throw new IllegalStateException(
                 "The transactor " + trans + " returned an empty itemstack from a known good request!");
         }
@@ -271,7 +261,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         PipeEventItem.ReachCenter reachCenter =
             new PipeEventItem.ReachCenter(holder, this, item.colour, item.stack, item.side);
         holder.fireEvent(reachCenter);
-        if (ItemStackHelper.isEmpty(reachCenter.getStack())) {
+        if (BCStackHelper.isEmpty(reachCenter.getStack())) {
             return;
         }
 
@@ -310,7 +300,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         World world = holder.getPipeWorld();
         long now = world.getTotalWorldTime();
         for (PipeEventItem.ItemEntry itemEntry : findDest.items) {
-            if (ItemStackHelper.isEmpty(itemEntry.stack)) {
+            if (BCStackHelper.isEmpty(itemEntry.stack)) {
                 continue;
             }
             PipeEventItem.ModifySpeed modifySpeed = new PipeEventItem.ModifySpeed(holder, this, itemEntry, item.speed);
@@ -359,7 +349,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.colour = reachEnd.colour;
         item.stack = reachEnd.getStack();
         ItemStack excess = item.stack;
-        if (ItemStackHelper.isEmpty(excess)) {
+        if (BCStackHelper.isEmpty(excess)) {
             return;
         }
         if (pipe.isConnected(item.side)) {
@@ -374,7 +364,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                     if (flow instanceof IFlowItems) {
                         IFlowItems oFlow = (IFlowItems) flow;
                         excess = oFlow.injectItem(excess, true, item.side.getOpposite(), item.colour, item.speed);
-                        if (ItemStackHelper.isEmpty(excess)) {
+                        if (BCStackHelper.isEmpty(excess)) {
                             return;
                         }
                     }
@@ -384,14 +374,14 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                     TileEntity tile = pipe.getConnectedTile(item.side);
                     IInjectable injectable = ItemTransactorHelper.getInjectable(tile, item.side.getOpposite());
                     excess = injectable.injectItem(excess, true, item.side.getOpposite(), item.colour, item.speed);
-                    if (ItemStackHelper.isEmpty(excess)) {
+                    if (BCStackHelper.isEmpty(excess)) {
                         return;
                     }
 
                     IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, item.side.getOpposite());
                     excess = transactor.insert(excess, false, false);
 
-                    if (ItemStackHelper.isEmpty(excess)) {
+                    if (BCStackHelper.isEmpty(excess)) {
                         return;
                     }
 
@@ -399,7 +389,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 }
             }
         }
-        if (ItemStackHelper.isEmpty(excess)) {
+        if (BCStackHelper.isEmpty(excess)) {
             return;
         }
         item.tried.add(item.side);
@@ -411,7 +401,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion, double speed) {
-        if (ItemStackHelper.isEmpty(stack)) {
+        if (BCStackHelper.isEmpty(stack)) {
             return;
         }
 
@@ -431,7 +421,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, ent);
         holder.fireEvent(drop);
-        if (ItemStackHelper.isEmpty(ent.getEntityItem()) || ent.isDead) {
+        if (BCStackHelper.isEmpty(ent.getEntityItem()) || ent.isDead) {
             return;
         }
 
@@ -480,7 +470,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (world.isRemote) {
             throw new IllegalStateException("Cannot inject items on the client side!");
         }
-        if (ItemStackHelper.isEmpty(stack)) {
+        if (BCStackHelper.isEmpty(stack)) {
             return;
         }
         if (speed < 0.01) {
@@ -504,7 +494,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         PipeEventItem.OnInsert onInsert = new PipeEventItem.OnInsert(holder, this, colour, toInsert, from);
         holder.fireEvent(onInsert);
 
-        if (ItemStackHelper.isEmpty(onInsert.getStack())) {
+        if (BCStackHelper.isEmpty(onInsert.getStack())) {
             return;
         }
 

@@ -6,17 +6,14 @@
 
 package buildcraft.core.list;
 
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.items.IList;
+import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import buildcraft.api.items.IList;
-
-import buildcraft.lib.misc.LocaleUtil;
 
 public enum ListTooltipHandler {
     INSTANCE;
@@ -25,9 +22,9 @@ public enum ListTooltipHandler {
     public void itemTooltipEvent(ItemTooltipEvent event) {
         final EntityPlayer player = event.getEntityPlayer();
         final ItemStack stack = event.getItemStack();
-        if (!ItemStackHelper.isEmpty(stack) && player != null && player.openContainer instanceof ContainerList) {
+        if (!BCStackHelper.isEmpty(stack) && player != null && player.openContainer instanceof ContainerList) {
             ItemStack list = player.getHeldItemMainhand();
-            if (!ItemStackHelper.isEmpty(list) && list.getItem() instanceof IList) {
+            if (!BCStackHelper.isEmpty(list) && list.getItem() instanceof IList) {
                 if (((IList) list.getItem()).matches(list, stack)) {
                     event.getToolTip().add(TextFormatting.GREEN + LocaleUtil.localize("tip.list.matches"));
                 }

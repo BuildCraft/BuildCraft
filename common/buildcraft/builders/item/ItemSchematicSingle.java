@@ -4,12 +4,18 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.item;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
+import buildcraft.builders.snapshot.SchematicBlockManager;
+import buildcraft.lib.inventory.InventoryWrapper;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.StackUtil;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,25 +28,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
-
-import buildcraft.lib.inventory.InventoryWrapper;
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.SoundUtil;
-import buildcraft.lib.misc.StackUtil;
-
-import buildcraft.builders.snapshot.SchematicBlockManager;
-
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemSchematicSingle extends ItemBC_Neptune {
     public static final int DAMAGE_CLEAN = 0;
@@ -135,7 +129,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
                         if (requiredFluids.isEmpty()) {
                             InventoryWrapper itemTransactor = new InventoryWrapper(player.inventory);
                             if (StackUtil.mergeSameItems(requiredItems).stream().noneMatch(s ->
-                                    ItemStackHelper.isEmpty(itemTransactor.extract(
+                                    BCStackHelper.isEmpty(itemTransactor.extract(
                                             extracted -> StackUtil.canMerge(s, extracted),
                                             s.stackSize,
                                             s.stackSize,

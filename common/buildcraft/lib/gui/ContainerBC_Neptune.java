@@ -6,33 +6,9 @@
 
 package buildcraft.lib.gui;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
-import com.google.common.collect.ImmutableList;
-
-import com.google.common.collect.Lists;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.gui.slot.IPhantomSlot;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.misc.StackUtil;
@@ -42,6 +18,25 @@ import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.item.IItemHandlerAdv;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
@@ -105,7 +100,7 @@ public abstract class ContainerBC_Neptune extends Container {
         ItemStack playerStack = player.inventory.getItemStack();
         if (slot instanceof IPhantomSlot) {
             IPhantomSlot phantom = (IPhantomSlot) slot;
-            if (ItemStackHelper.isEmpty(playerStack)) {
+            if (BCStackHelper.isEmpty(playerStack)) {
                 slot.putStack(null);
             } else if (!StackUtil.canMerge(playerStack, slot.getStack())) {
                 ItemStack copy = playerStack.copy();
@@ -156,7 +151,7 @@ public abstract class ContainerBC_Neptune extends Container {
                 }
             }
 
-            if (ItemStackHelper.isEmpty(itemstack1)) {
+            if (BCStackHelper.isEmpty(itemstack1)) {
                 slot.putStack(null);
             } else {
                 slot.onSlotChanged();

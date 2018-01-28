@@ -6,14 +6,14 @@
 
 package buildcraft.lib.gui.slot;
 
-import java.util.function.IntFunction;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import java.util.function.IntFunction;
 
 public class SlotDisplay extends Slot {
     private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
@@ -35,7 +35,7 @@ public class SlotDisplay extends Slot {
 
     @Override
     public ItemStack getStack() {
-        return ItemStackHelper.isEmpty(getter.apply(getSlotIndex())) ? null : getter.apply(getSlotIndex()).copy();
+        return BCStackHelper.isEmpty(getter.apply(getSlotIndex())) ? null : getter.apply(getSlotIndex()).copy();
     }
 
     @Override

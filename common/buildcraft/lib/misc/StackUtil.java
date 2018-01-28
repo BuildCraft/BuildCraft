@@ -6,26 +6,23 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.items.IList;
+import buildcraft.api.recipes.StackDefinition;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.items.IList;
-import buildcraft.api.recipes.StackDefinition;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {
@@ -73,7 +70,7 @@ public class StackUtil {
 
     /** Checks that passed stack meets stack definition requirements */
     public static boolean contains(StackDefinition stackDefinition, ItemStack stack) {
-        return !ItemStackHelper.isEmpty(stack) && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
+        return !BCStackHelper.isEmpty(stack) && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
     }
 
     /** Checks that passed stack definition acceptable for stack collection */
@@ -89,7 +86,7 @@ public class StackUtil {
                 // Use an explicit null check here as the collection doesn't have @Nonnull applied to its type
                 throw new NullPointerException("Found a null itemstack in " + containers);
             }
-            if (ItemStackHelper.isEmpty(req)) continue;
+            if (BCStackHelper.isEmpty(req)) continue;
             if (!contains(req, containers)) {
                 return false;
             }
@@ -305,21 +302,7 @@ public class StackUtil {
      * @return A {@link List} of all the given items. Note that the returned list of of a specified size, and
      *         cannot be expanded. */
     public static List<ItemStack> listOf(@Nullable ItemStack... stacks) {
-        if (stacks == null) return listOf();
-        switch (stacks.length) {
-            case 0:
-                return listOf();
-            case 1:
-                List<ItemStack> list = Arrays.asList(new ItemStack[1]);
-                list.add(0, stacks[0]);
-                return list;
-            default:
-        }
-        List<ItemStack> list = Arrays.asList(new ItemStack[stacks.length]);
-        for (int i = 0; i < stacks.length; i++) {
-            list.set(i, stacks[i]);
-        }
-        return list;
+        return (stacks != null && stacks.length > 0) ? Arrays.asList(stacks) : listOf();
     }
 
 
@@ -356,7 +339,7 @@ public class StackUtil {
     /** Computes a hash code for the given {@link ItemStack}. This is based off of {@link ItemStack#serializeNBT()},
      * except if null returns true, in which case the hash will be 0. */
     public static int hash(ItemStack stack) {
-        if (ItemStackHelper.isEmpty(stack)) {
+        if (BCStackHelper.isEmpty(stack)) {
             return 0;
         }
         return stack.serializeNBT().hashCode();

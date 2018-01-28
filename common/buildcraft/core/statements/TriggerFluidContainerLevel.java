@@ -6,29 +6,21 @@
 
 package buildcraft.core.statements;
 
-import java.util.Locale;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.statements.*;
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.LocaleUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
+import java.util.Locale;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
     public final TriggerType type;
@@ -64,7 +56,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
         }
         FluidStack searchedFluid = null;
 
-        if (parameters != null && parameters.length >= 1 && parameters[0] != null && !ItemStackHelper.isEmpty(parameters[0].getItemStack())) {
+        if (parameters != null && parameters.length >= 1 && parameters[0] != null && !BCStackHelper.isEmpty(parameters[0].getItemStack())) {
             searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
             if (searchedFluid != null) {
                 searchedFluid.amount = 1;

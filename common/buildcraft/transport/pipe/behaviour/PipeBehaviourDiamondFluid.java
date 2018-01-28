@@ -6,17 +6,15 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
     public PipeBehaviourDiamondFluid(IPipe pipe, NBTTagCompound nbt) {
@@ -37,7 +35,7 @@ public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
                 boolean foundItem = false;
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (ItemStackHelper.isEmpty(compareTo)) continue;
+                    if (BCStackHelper.isEmpty(compareTo)) continue;
                     FluidStack target = FluidUtil.getFluidContained(compareTo);
                     if (target == null || target.amount <= 0) {
                         continue;

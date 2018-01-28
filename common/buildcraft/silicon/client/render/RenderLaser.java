@@ -6,28 +6,23 @@
 
 package buildcraft.silicon.client.render;
 
-import javax.annotation.Nonnull;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.core.item.ItemGoggles;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.silicon.BCSiliconConfig;
+import buildcraft.silicon.tile.TileLaser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-
-import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.item.ItemGoggles;
-import buildcraft.silicon.BCSiliconConfig;
-import buildcraft.silicon.tile.TileLaser;
-
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class RenderLaser extends FastTESR<TileLaser> {
@@ -64,7 +59,7 @@ public class RenderLaser extends FastTESR<TileLaser> {
     }
 
     private boolean isPlayerWearingGoggles() {
-        if (!ItemStackHelper.isEmpty(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD))) {
+        if (!BCStackHelper.isEmpty(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD))) {
             Item headArmor = Objects.requireNonNull(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD)).getItem();
             return headArmor instanceof ItemGoggles;
         } else return false;

@@ -6,26 +6,36 @@
 
 package buildcraft.builders.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.BCBuildersEventDist;
+import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.VolumeConnection;
+import buildcraft.core.marker.VolumeSubCache;
+import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.chunkload.ChunkLoaderManager;
+import buildcraft.lib.chunkload.IChunkLoadingTile;
+import buildcraft.lib.inventory.AutomaticProvidingTransactor;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.mj.MjBatteryReceiver;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.world.WorldEventListenerAdapter;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -44,7 +54,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -52,43 +61,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.chunkload.ChunkLoaderManager;
-import buildcraft.lib.chunkload.IChunkLoadingTile;
-import buildcraft.lib.inventory.AutomaticProvidingTransactor;
-import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.AxisOrder;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
-import buildcraft.lib.misc.data.EnumAxisOrder;
-import buildcraft.lib.mj.MjBatteryReceiver;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.world.WorldEventListenerAdapter;
-
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.BCBuildersEventDist;
-import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.VolumeConnection;
-import buildcraft.core.marker.VolumeSubCache;
-import buildcraft.core.tile.TileMarkerVolume;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
+import java.util.function.Function;
 
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
     private static final long MAX_POWER_PER_TICK = 64 * MjAPI.MJ;
@@ -881,7 +858,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                         new AxisAlignedBB(breakPos).expandXyz(1))) {
                         TransactorEntityItem transactor = new TransactorEntityItem(entity);
                         ItemStack stack;
-                        while (!ItemStackHelper.isEmpty((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)))) {
+                        while (!BCStackHelper.isEmpty((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)))) {
                             InventoryUtil.addToBestAcceptor(world, pos, null, stack);
                         }
                     }

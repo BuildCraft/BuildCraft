@@ -6,25 +6,11 @@
 
 package buildcraft.core.list;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
-import com.google.common.collect.Lists;
-import org.lwjgl.input.Keyboard;
-
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.lists.ListMatchHandler;
-
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemList_BC8;
+import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -36,10 +22,19 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
+import com.google.common.collect.Lists;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemList_BC8;
-import buildcraft.core.list.ContainerList.WidgetListSlot;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
@@ -168,11 +163,11 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean isCarryingNonEmptyList() {
         ItemStack stack = mc.player.inventory.getItemStack();
-        return !ItemStackHelper.isEmpty(stack) && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
+        return !BCStackHelper.isEmpty(stack) && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
     }
 
     private boolean hasListEquipped() {
-        return !ItemStackHelper.isEmpty(container.getListItemStack());
+        return !BCStackHelper.isEmpty(container.getListItemStack());
     }
 
     @Override
@@ -225,7 +220,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
         if (!exampleList.containsKey(type)) {
             List<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks.get(0);
-            if (!ItemStackHelper.isEmpty(input)) {
+            if (!BCStackHelper.isEmpty(input)) {
                 List<ItemStack> repetitions = Lists.newArrayList();
                 for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {

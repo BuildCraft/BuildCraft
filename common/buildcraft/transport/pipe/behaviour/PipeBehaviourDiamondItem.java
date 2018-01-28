@@ -6,22 +6,20 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import buildcraft.lib.item.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pipe.PipeEventItem.ItemEntry;
-
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 
@@ -43,7 +41,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 boolean foundItem = false;
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (ItemStackHelper.isEmpty(compareTo)) continue;
+                    if (BCStackHelper.isEmpty(compareTo)) continue;
                     foundItem = true;
                     if (StackUtil.isMatchingItemOrList(compareTo, toCompare)) {
                         sideAllowed = true;
@@ -80,7 +78,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 int offset = FILTERS_PER_SIDE * allSides[s].ordinal();
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (ItemStackHelper.isEmpty(compareTo)) continue;
+                    if (BCStackHelper.isEmpty(compareTo)) continue;
                     if (StackUtil.isMatchingItemOrList(compareTo, item.stack)) {
                         int count = compareTo.stackSize;
                         totalCount += count;
@@ -121,7 +119,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 }
                 toSplit.stackSize = leftOver;
             }
-            if (!ItemStackHelper.isEmpty(toSplit)) {
+            if (!BCStackHelper.isEmpty(toSplit)) {
                 int[] randLookup = new int[totalCount];
                 int j = 0;
                 for (int s = 0; s < allSides.length; s++) {
@@ -130,7 +128,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                     j += len;
                 }
 
-                while (!ItemStackHelper.isEmpty(toSplit)) {
+                while (!BCStackHelper.isEmpty(toSplit)) {
                     // Pick a random number between 0 and total count.
                     int rand = split.holder.getPipeWorld().rand.nextInt(totalCount);
                     int face = randLookup[rand];

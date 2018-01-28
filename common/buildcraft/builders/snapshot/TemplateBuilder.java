@@ -6,18 +6,16 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collections;
-import java.util.List;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.template.TemplateApi;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.FakePlayer;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.template.TemplateApi;
+import java.util.Collections;
+import java.util.List;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {
@@ -51,7 +49,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean hasEnoughToPlaceItems(BlockPos blockPos) {
-        return !ItemStackHelper.isEmpty(tile.getInvResources().extract(null, 1, 1, true));
+        return !BCStackHelper.isEmpty(tile.getInvResources().extract(null, 1, 1, true));
     }
 
     @Override

@@ -6,31 +6,27 @@
 
 package buildcraft.silicon.tile;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-
-import buildcraft.lib.item.ItemStackHelper;
-import com.google.common.collect.ImmutableList;
-
-import com.google.common.collect.Lists;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.api.recipes.StackDefinition;
-
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 public class TileIntegrationTable extends TileLaserTableBase {
     public final ItemHandlerSimple invTarget = itemManager.addInvHandler(
@@ -67,12 +63,12 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     private boolean isSpaceEnough(ItemStack stack) {
         ItemStack output = invResult.getStackInSlot(0);
-        return !ItemStackHelper.isEmpty(output) || (StackUtil.canMerge(stack, output) && stack.stackSize + output.stackSize <= stack.getMaxStackSize());
+        return !BCStackHelper.isEmpty(output) || (StackUtil.canMerge(stack, output) && stack.stackSize + output.stackSize <= stack.getMaxStackSize());
     }
 
     private void updateRecipe() {
         if (recipe != null && extract(recipe.target, recipe.toIntegrate, true)) return;
-        if (!ItemStackHelper.isEmpty(invTarget.getStackInSlot(0)))
+        if (!BCStackHelper.isEmpty(invTarget.getStackInSlot(0)))
             recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(Objects.requireNonNull(invTarget.getStackInSlot(0)), Lists.newArrayList(invToIntegrate.stacks));
     }
 

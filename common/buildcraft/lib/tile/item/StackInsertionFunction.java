@@ -6,13 +6,12 @@
 
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /** Defines a way of inserting items into an inventory - this can be overridden to have different rules with stack
  * merging. */
@@ -28,11 +27,11 @@ public interface StackInsertionFunction {
      * themselves IS taken into account, so this has an effective upper limit of 64. */
     static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
-            if (ItemStackHelper.isEmpty(toInsert)) {
+            if (BCStackHelper.isEmpty(toInsert)) {
                 return new InsertionResult(addingTo, null);
             }
 
-            if (ItemStackHelper.isEmpty(addingTo)) {
+            if (BCStackHelper.isEmpty(addingTo)) {
                 int maxSize = Math.min(maxStackSize, toInsert.getMaxStackSize());
                 if (toInsert.stackSize <= maxSize) {
                     return new InsertionResult(toInsert, null);

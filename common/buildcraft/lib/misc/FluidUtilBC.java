@@ -6,11 +6,9 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.lib.fluid.Tank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -19,17 +17,15 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IFluidHandlerAdv;
-
-import buildcraft.lib.fluid.Tank;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluidUtilBC {
     public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
@@ -107,7 +103,7 @@ public class FluidUtilBC {
         if (from == null || to == null) {
             return null;
         }
-        FluidStack toDrainPotential;
+        final FluidStack toDrainPotential;
         if (from instanceof IFluidHandlerAdv) {
             IFluidFilter filter = f -> to.fill(f, false) > 0;
             toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, false);
@@ -118,8 +114,10 @@ public class FluidUtilBC {
         if (accepted <= 0) {
             return null;
         }
+        if (toDrainPotential == null) throw new NullPointerException();
         FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
         FluidStack drained = from.drain(toDrain, true);
+        if (drained == null) throw new NullPointerException();
         if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
             detail += ", actually drained = " + StringUtilBC.fluidToString(drained) + ")";

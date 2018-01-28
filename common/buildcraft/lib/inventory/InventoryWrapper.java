@@ -6,15 +6,13 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nullable;
-
-import buildcraft.lib.item.ItemStackHelper;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nullable;
 
 public final class InventoryWrapper extends AbstractInvItemTransactor {
     private final IInventory inventory;
@@ -30,13 +28,13 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
         if (!inventory.isItemValidForSlot(slot, stack)) {
             return stack;
         }
-        if (current == null) {
+        if (BCStackHelper.isEmpty(current)) {
             int max = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
             ItemStack split = stack.splitStack(max);
             if (!simulate) {
                 inventory.setInventorySlotContents(slot, split);
             }
-            if (ItemStackHelper.isEmpty(stack)) {
+            if (BCStackHelper.isEmpty(stack)) {
                 return null;
             } else {
                 return stack;
@@ -47,7 +45,7 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
             merged.stackSize += stack.stackSize;
             int size = Math.min(inventory.getInventoryStackLimit(), merged.getMaxStackSize());
             if (merged.stackSize > size) {
-                stack.stackSize = (stack.stackSize - (merged.stackSize - size));
+                stack.stackSize -= merged.stackSize - size;
                 merged.stackSize = size;
                 if (!simulate) {
                     inventory.setInventorySlotContents(slot, merged);
@@ -67,7 +65,7 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
     @Nullable
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         ItemStack current = inventory.getStackInSlot(slot);
-        if (ItemStackHelper.isEmpty(current)) {
+        if (BCStackHelper.isEmpty(current)) {
             return null;
         }
         if (filter.matches(current.copy())) {
@@ -96,6 +94,6 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected boolean isEmpty(int slot) {
-        return inventory.getStackInSlot(slot) == null;
+        return BCStackHelper.isEmpty(inventory.getStackInSlot(slot));
     }
 }

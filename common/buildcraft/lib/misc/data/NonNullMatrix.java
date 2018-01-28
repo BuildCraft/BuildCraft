@@ -6,11 +6,10 @@
 
 package buildcraft.lib.misc.data;
 
+import javax.annotation.Nullable;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 /** Defines a non-null 2 dimensional matrix, where the width and height are known at creation time. Note that this
  * matrix cannot be resized. */
@@ -18,7 +17,7 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     private final List<T> internalList;
     private final int width, height;
 
-    public NonNullMatrix(int width, int height, @Nonnull T fill) {
+    public NonNullMatrix(int width, int height, @Nullable T fill) {
         this.width = width;
         this.height = height;
         internalList = listWithSize(width * height, fill);
@@ -42,7 +41,7 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     }
 
     public interface IEntryFiller<T> {
-        @Nonnull
+        @Nullable
         T getEntry(int x, int y);
     }
 
@@ -68,18 +67,18 @@ public class NonNullMatrix<T> extends AbstractList<T> {
         return x * height + y;
     }
 
-    @Nonnull
+    @Nullable
     public T get(int x, int y) {
         return get(flatIndexOf(x, y));
     }
 
-    @Nonnull
-    public T set(int x, int y, @Nonnull T element) {
+    @Nullable
+    public T set(int x, int y, @Nullable T element) {
         return set0(flatIndexOf(x, y), element);
     }
 
     @Override
-    @Nonnull
+    @Nullable
     public T get(int index) {
         return internalList.get(index);
     }
@@ -98,7 +97,7 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     }
 
     @Override
-    @Nonnull
+    @Nullable
     public T set(int index, T element) {
         if (element == null) {
             throw new NullPointerException("Element was null!");
@@ -106,8 +105,8 @@ public class NonNullMatrix<T> extends AbstractList<T> {
         return set0(index, element);
     }
 
-    @Nonnull
-    private T set0(int flatIndex, @Nonnull T element) {
+    @Nullable
+    private T set0(int flatIndex, @Nullable T element) {
         return internalList.set(flatIndex, element);
     }
 }
