@@ -142,15 +142,14 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
                 }
             }
         }
-        if (Objects.isNull(toExtract))
-            return null;
 
         ItemStack total = null;
         if (min <= totalSize) {
             for (int slot : valids.toArray()) {
-                ItemStack extracted = extract(slot, filter, 1, max - total.stackSize, simulate);
+                int stackSize = BCStackHelper.isEmpty(total) ? 0 : total.stackSize;
+                ItemStack extracted = extract(slot, filter, 1, max - stackSize, simulate);
                 if (!BCStackHelper.isEmpty(extracted)) {
-                    if (BCStackHelper.isEmpty(total)) {
+                    if (stackSize == 0) {
                         total = extracted.copy();
                     } else {
                         total.stackSize += extracted.stackSize;

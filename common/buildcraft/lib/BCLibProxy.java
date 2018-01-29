@@ -6,31 +6,7 @@
  */
 package buildcraft.lib;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import buildcraft.lib.item.IItemBuildCraft;
-import buildcraft.lib.registry.RegistrationHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.BCModules;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.reload.LibConfigChangeListener;
@@ -39,14 +15,28 @@ import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.gui.config.GuiConfigManager;
-import buildcraft.lib.net.MessageContainer;
-import buildcraft.lib.net.MessageDebugRequest;
-import buildcraft.lib.net.MessageDebugResponse;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageMarker;
-import buildcraft.lib.net.MessageUpdateTile;
+import buildcraft.lib.net.*;
 import buildcraft.lib.net.cache.MessageObjectCacheRequest;
 import buildcraft.lib.net.cache.MessageObjectCacheResponse;
+import buildcraft.lib.registry.RegistrationHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class BCLibProxy implements IGuiHandler {
     @SidedProxy(modId = BCLib.MODID)
