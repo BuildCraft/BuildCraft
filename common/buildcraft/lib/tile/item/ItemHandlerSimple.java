@@ -112,8 +112,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
 
     @Override
     protected boolean isEmpty(int slot) {
-        if (badSlotIndex(slot)) return true;
-        return BCStackHelper.isEmpty(stacks.get(slot));
+        return (badSlotIndex(slot)) || BCStackHelper.isEmpty(stacks.get(slot));
     }
 
     @Override
@@ -131,11 +130,9 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         }
         if (canSet(slot, stack)) {
             ItemStack current = stacks.get(slot);
-            if (!canSet(slot, current)) {
-                // A bit odd, but can happen if the filter changed
-                return stack;
-            }
-            InsertionResult result = inserter.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
+            InsertionResult result = inserter.modifyForInsertion(slot,
+                    BCStackHelper.isEmpty(current) ? null : current.copy(),
+                    BCStackHelper.isEmpty(stack) ? null : stack.copy());
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)",
@@ -143,13 +140,12 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 CrashReportCategory cat = report.makeCategory("Inventory details");
                 cat.addCrashSection("Existing Item", current);
                 cat.addCrashSection("Inserting Item", stack);
-                cat.addCrashSection("To Set", result.toSet);
-                cat.addCrashSection("To Return", result.toReturn);
                 cat.addCrashSection("Slot", slot);
                 cat.addCrashSection("Checker", checker.getClass());
                 cat.addCrashSection("Inserter", inserter.getClass());
                 throw new ReportedException(report);
-            } else if (!simulate) {
+            }
+            else if (!simulate) {
                 setStackInternal(slot, result.toSet);
                 if (callback != null) {
                     callback.onStackChange(this, slot, current, result.toSet);
@@ -206,21 +202,23 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         if (min <= 0) min = 1;
         if (max < min) return null;
         ItemStack current = stacks.get(slot);
-        ItemStack before = current.copy();
-        if (current.stackSize < min) return null;
-        if (filter.matches(asValid(current))) {
-            if (simulate) {
-                ItemStack copy = current.copy();
-                return copy.splitStack(max);
+        if (!BCStackHelper.isEmpty(current)) {
+            ItemStack before = current.copy();
+            if (current.stackSize < min) return null;
+            if (filter.matches(asValid(current))) {
+                if (simulate) {
+                    ItemStack copy = current.copy();
+                    return copy.splitStack(max);
+                }
+                ItemStack split = current.splitStack(max);
+                if (current.stackSize <= 0) {
+                    stacks.set(slot, null);
+                }
+                if (callback != null) {
+                    callback.onStackChange(this, slot, before, stacks.get(slot));
+                }
+                return split;
             }
-            ItemStack split = current.splitStack(max);
-            if (current.stackSize <= 0) {
-                stacks.set(slot, null);
-            }
-            if (callback != null) {
-                callback.onStackChange(this, slot, before, stacks.get(slot));
-            }
-            return split;
         }
         return null;
     }
@@ -241,10 +239,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     @Override
     public final boolean canSet(int slot, @Nullable ItemStack stack) {
         ItemStack copied = asValid(stack);
-        if (BCStackHelper.isEmpty(copied)) {
-            return true;
-        }
-        return checker.canSet(slot, copied);
+        return BCStackHelper.isEmpty(copied) || checker.canSet(slot, copied);
     }
 
     private void setStackInternal(int slot, @Nullable ItemStack stack) {

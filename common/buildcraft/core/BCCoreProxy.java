@@ -4,24 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import java.util.List;
-
-import buildcraft.lib.registry.RegistrationHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.BCModules;
-
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
-import buildcraft.lib.net.MessageManager;
-
 import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderVolumeBoxes;
 import buildcraft.core.list.ContainerList;
@@ -31,6 +14,18 @@ import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.MessageVolumeBoxes;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
+import buildcraft.lib.net.MessageManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public abstract class BCCoreProxy implements IGuiHandler {
     @SidedProxy(modId = BCCore.MODID)

@@ -4,9 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -16,18 +17,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockBCBase_Neptune extends Block {
     public static final IProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;

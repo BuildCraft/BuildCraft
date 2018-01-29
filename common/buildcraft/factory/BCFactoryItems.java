@@ -4,15 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import buildcraft.factory.item.ItemWaterGel;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.registry.RegistrationHelper;
 
-import buildcraft.factory.item.ItemWaterGel;
-
 public class BCFactoryItems {
-
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
 
     public static ItemBC_Neptune plasticSheet;
     public static ItemWaterGel waterGel;
@@ -20,9 +17,9 @@ public class BCFactoryItems {
 
     public static void fmlPreInit() {
         if (BCLib.DEV) {
-            plasticSheet = HELPER.addItem(new ItemBC_Neptune("item.plastic.sheet"));
+            plasticSheet = RegistrationHelper.addItem(new ItemBC_Neptune("item.plastic.sheet"));
         }
-        waterGel = HELPER.addItem(new ItemWaterGel("item.water_gel_spawn"));
-        gelledWater = HELPER.addItem(new ItemBC_Neptune("item.gel"));
+        waterGel = RegistrationHelper.addItem(new ItemWaterGel("item.water_gel_spawn"));
+        gelledWater = RegistrationHelper.addItem(new ItemBC_Neptune("item.gel"));
     }
 }

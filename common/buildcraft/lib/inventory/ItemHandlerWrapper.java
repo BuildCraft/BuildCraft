@@ -6,13 +6,12 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.items.BCStackHelper;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.core.IStackFilter;
+import javax.annotation.Nullable;
 
 public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
     private final IItemHandler wrapped;
@@ -46,6 +45,6 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected boolean isEmpty(int slot) {
-        return wrapped.getStackInSlot(slot) == null;
+        return BCStackHelper.isEmpty(wrapped.getStackInSlot(slot));
     }
 }

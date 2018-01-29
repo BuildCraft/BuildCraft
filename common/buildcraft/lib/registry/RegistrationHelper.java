@@ -1,36 +1,27 @@
 package buildcraft.lib.registry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
-import buildcraft.api.core.BCLog;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.item.IItemBuildCraft;
-import buildcraft.lib.item.ItemBlockBC_Neptune;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
 
 /** Registration helper for static blocks and items: those which will always be registered. This is intended to simplify
  * item/block registry usage, as it looks like forge will start to support dynamically registered ones. (Perhaps we

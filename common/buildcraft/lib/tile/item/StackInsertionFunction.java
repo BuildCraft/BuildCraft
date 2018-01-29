@@ -21,7 +21,7 @@ public interface StackInsertionFunction {
      * @param toInsert The stacks to insert. Modifications are lost.
      * @return The result of attempting to insert it. */
     @Nonnull
-    InsertionResult modifyForInsertion(int slot, @Nonnull ItemStack addingTo, @Nonnull ItemStack toInsert);
+    InsertionResult modifyForInsertion(int slot, @Nullable ItemStack addingTo, @Nullable ItemStack toInsert);
 
     /** Gets a stack insertion function that will insert items up to a given stack size. The stack size of the items
      * themselves IS taken into account, so this has an effective upper limit of 64. */

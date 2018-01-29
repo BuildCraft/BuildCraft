@@ -6,21 +6,12 @@
 
 package buildcraft.lib.tile.item;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.InventoryUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -28,10 +19,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
-import buildcraft.api.core.EnumPipePart;
-
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
     public enum EnumAccess {
@@ -64,16 +54,21 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
             parts = new EnumPipePart[0];
         }
         IItemHandlerModifiable external = handler;
-        if (access == EnumAccess.NONE || access == EnumAccess.PHANTOM) {
-            external = null;
-            if (parts.length > 0) {
-                throw new IllegalArgumentException(
-                        "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
-            }
-        } else if (access == EnumAccess.EXTRACT) {
-            external = new WrappedItemHandlerExtract(handler);
-        } else if (access == EnumAccess.INSERT) {
-            external = new WrappedItemHandlerInsert(handler);
+        switch (access) {
+            case NONE:
+            case PHANTOM:
+                external = null;
+                if (parts.length > 0) {
+                    throw new IllegalArgumentException(
+                            "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
+                }
+                break;
+            case EXTRACT:
+                external = new WrappedItemHandlerExtract(handler);
+                break;
+            case INSERT:
+                external = new WrappedItemHandlerInsert(handler);
+                break;
         }
 
         if (external != null) {

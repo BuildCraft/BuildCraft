@@ -4,32 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import buildcraft.factory.block.*;
+import buildcraft.factory.tile.*;
+import buildcraft.lib.registry.RegistrationHelper;
 import net.minecraft.block.material.Material;
 
-import buildcraft.lib.registry.RegistrationHelper;
-
-import buildcraft.factory.block.BlockAutoWorkbenchItems;
-import buildcraft.factory.block.BlockChute;
-import buildcraft.factory.block.BlockDistiller;
-import buildcraft.factory.block.BlockFloodGate;
-import buildcraft.factory.block.BlockHeatExchange;
-import buildcraft.factory.block.BlockMiningWell;
-import buildcraft.factory.block.BlockPump;
-import buildcraft.factory.block.BlockTank;
-import buildcraft.factory.block.BlockTube;
-import buildcraft.factory.block.BlockWaterGel;
-import buildcraft.factory.tile.TileAutoWorkbenchItems;
-import buildcraft.factory.tile.TileChute;
-import buildcraft.factory.tile.TileDistiller_BC8;
-import buildcraft.factory.tile.TileFloodGate;
-import buildcraft.factory.tile.TileHeatExchange;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileTank;
-
 public class BCFactoryBlocks {
-
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
 
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
     public static BlockMiningWell miningWell;
@@ -45,24 +25,24 @@ public class BCFactoryBlocks {
     public static BlockWaterGel waterGel;
 
     public static void fmlPreInit() {
-        autoWorkbenchItems = HELPER.addBlockAndItem(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        miningWell = HELPER.addBlockAndItem(new BlockMiningWell(Material.IRON, "block.mining_well"));
-        pump = HELPER.addBlockAndItem(new BlockPump(Material.IRON, "block.pump"));
-        tube = HELPER.addBlock(new BlockTube(Material.IRON, "block.tube"));
-        floodGate = HELPER.addBlockAndItem(new BlockFloodGate(Material.IRON, "block.flood_gate"));
-        tank = HELPER.addBlockAndItem(new BlockTank(Material.IRON, "block.tank"));
-        chute = HELPER.addBlockAndItem(new BlockChute(Material.IRON, "block.chute"));
-        distiller = HELPER.addBlockAndItem(new BlockDistiller(Material.IRON, "block.distiller"));
-        heatExchange = HELPER.addBlockAndItem(new BlockHeatExchange(Material.IRON, "block.heat_exchange"));
-        waterGel = HELPER.addBlock(new BlockWaterGel(Material.CLAY, "block.water_gel"));
+        autoWorkbenchItems = RegistrationHelper.addBlockAndItem(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
+        miningWell = RegistrationHelper.addBlockAndItem(new BlockMiningWell(Material.IRON, "block.mining_well"));
+        pump = RegistrationHelper.addBlockAndItem(new BlockPump(Material.IRON, "block.pump"));
+        tube = RegistrationHelper.addBlock(new BlockTube(Material.IRON, "block.tube"));
+        floodGate = RegistrationHelper.addBlockAndItem(new BlockFloodGate(Material.IRON, "block.flood_gate"));
+        tank = RegistrationHelper.addBlockAndItem(new BlockTank(Material.IRON, "block.tank"));
+        chute = RegistrationHelper.addBlockAndItem(new BlockChute(Material.IRON, "block.chute"));
+        distiller = RegistrationHelper.addBlockAndItem(new BlockDistiller(Material.IRON, "block.distiller"));
+        heatExchange = RegistrationHelper.addBlockAndItem(new BlockHeatExchange(Material.IRON, "block.heat_exchange"));
+        waterGel = RegistrationHelper.addBlock(new BlockWaterGel(Material.CLAY, "block.water_gel"));
 
-        HELPER.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
-        HELPER.registerTile(TileMiningWell.class, "tile.mining_well");
-        HELPER.registerTile(TilePump.class, "tile.pump");
-        HELPER.registerTile(TileFloodGate.class, "tile.flood_gate");
-        HELPER.registerTile(TileTank.class, "tile.tank");
-        HELPER.registerTile(TileChute.class, "tile.chute");
-        HELPER.registerTile(TileDistiller_BC8.class, "tile.distiller");
-        HELPER.registerTile(TileHeatExchange.class, "tile.heat_exchange");
+        RegistrationHelper.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
+        RegistrationHelper.registerTile(TileMiningWell.class, "tile.mining_well");
+        RegistrationHelper.registerTile(TilePump.class, "tile.pump");
+        RegistrationHelper.registerTile(TileFloodGate.class, "tile.flood_gate");
+        RegistrationHelper.registerTile(TileTank.class, "tile.tank");
+        RegistrationHelper.registerTile(TileChute.class, "tile.chute");
+        RegistrationHelper.registerTile(TileDistiller_BC8.class, "tile.distiller");
+        RegistrationHelper.registerTile(TileHeatExchange.class, "tile.heat_exchange");
     }
 }
