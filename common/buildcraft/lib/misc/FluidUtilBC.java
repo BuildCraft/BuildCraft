@@ -117,18 +117,20 @@ public class FluidUtilBC {
         if (toDrainPotential == null) throw new NullPointerException();
         FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
         FluidStack drained = from.drain(toDrain, true);
-        if (drained == null) throw new NullPointerException();
-        if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
-            String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
-            detail += ", actually drained = " + StringUtilBC.fluidToString(drained) + ")";
-            throw new IllegalStateException("Drained fluid did not equal expected fluid!\n" + detail);
+        if (drained != null) {
+            if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
+                String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
+                detail += ", actually drained = " + StringUtilBC.fluidToString(drained) + ")";
+                throw new IllegalStateException("Drained fluid did not equal expected fluid!\n" + detail);
+            }
+            int actuallyAccepted = to.fill(drained, true);
+            if (actuallyAccepted != accepted) {
+                String detail = "(actually accepted = " + actuallyAccepted + ", accepted = " + accepted + ")";
+                throw new IllegalStateException("Mismatched IFluidHandler implementations!\n" + detail);
+            }
+            return new FluidStack(drained, accepted);
         }
-        int actuallyAccepted = to.fill(drained, true);
-        if (actuallyAccepted != accepted) {
-            String detail = "(actually accepted = " + actuallyAccepted + ", accepted = " + accepted + ")";
-            throw new IllegalStateException("Mismatched IFluidHandler implementations!\n" + detail);
-        }
-        return new FluidStack(drained, accepted);
+        return null;
     }
 
     public static boolean onTankActivated(EntityPlayer player, BlockPos pos, EnumHand hand,
