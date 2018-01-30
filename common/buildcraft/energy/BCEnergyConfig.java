@@ -1,30 +1,19 @@
 package buildcraft.energy;
 
-import java.time.LocalDateTime;
-import java.time.MonthDay;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
-
-import org.apache.logging.log4j.Level;
-
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
 import buildcraft.api.core.BCLog;
-
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.ConfigUtil;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.logging.log4j.Level;
 
-import buildcraft.core.BCCoreConfig;
+import java.time.LocalDateTime;
+import java.time.MonthDay;
+import java.util.*;
 
 public class BCEnergyConfig {
 
@@ -129,8 +118,9 @@ public class BCEnergyConfig {
         List<ResourceLocation> invalidList = new ArrayList<>(invalids);
         invalidList.sort(Comparator.comparing(ResourceLocation::toString));
 
-        List<ResourceLocation> allValid = new ArrayList<>(ForgeRegistries.BIOMES.getKeys());
-        allValid.sort(Comparator.comparing(ResourceLocation::toString));
+        //TODO Fix me, causes weird abstract set error
+        //List<ResourceLocation> allValid = new ArrayList<>(ForgeRegistries.BIOMES.getKeys());
+        //allValid.sort(Comparator.comparing(ResourceLocation::toString));
 
         BCLog.logger.warn("****************************************************");
         BCLog.logger.warn("*");
@@ -140,9 +130,9 @@ public class BCEnergyConfig {
         BCLog.logger.warn("* Unknown biomes: ");
         printList(Level.WARN, invalidList);
         BCLog.logger.warn("*");
-        BCLog.logger.info("* All possible known names: ");
-        printList(Level.INFO, allValid);
-        BCLog.logger.info("*");
+        //BCLog.logger.info("* All possible known names: ");
+        //printList(Level.INFO, allValid);
+        //BCLog.logger.info("*");
         BCLog.logger.warn("****************************************************");
     }
 
