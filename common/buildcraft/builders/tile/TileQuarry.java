@@ -89,7 +89,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
     private long debugPowerRate = 0;
-    private List<AxisAlignedBB> collisionboxes = null;
+    public List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
@@ -457,6 +457,29 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public void update() {
+        if (drillPos != null) {
+            Vec3d max = VecUtil.convertCenter(frameBox.max());
+            Vec3d min = VecUtil.replaceValue(VecUtil.convertCenter(frameBox.min()), Axis.Y, max.yCoord);
+            collisionBoxes = ImmutableList.of(
+                    BoundingBoxUtil.makeFrom(
+                            VecUtil.replaceValue(min, Axis.X, drillPos.xCoord + 0.5),
+                            VecUtil.replaceValue(max, Axis.X, drillPos.xCoord + 0.5),
+                            0.25
+                    ),
+                    BoundingBoxUtil.makeFrom(
+                            VecUtil.replaceValue(min, Axis.Z, drillPos.zCoord + 0.5),
+                            VecUtil.replaceValue(max, Axis.Z, drillPos.zCoord + 0.5),
+                            0.25
+                    ),
+                    BoundingBoxUtil.makeFrom(
+                            drillPos.addVector(0.5, 0, 0.5),
+                            VecUtil.replaceValue(drillPos, Axis.Y, max.yCoord).addVector(0.5, 0, 0.5),
+                            0.25
+                    )
+            );
+        } else {
+            collisionBoxes = ImmutableList.of();
+        }
         if (world.isRemote) {
             prevClientDrillPos = clientDrillPos;
             clientDrillPos = drillPos;
@@ -479,10 +502,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long max = MAX_POWER_PER_TICK;
-            max *= battery.getStored() + max;
-            max /= battery.getCapacity() / 2;
-            max = Math.min(max, MAX_POWER_PER_TICK);
+            long max = Math.min(
+                    MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() * 2),
+                    Math.min(
+                            currentTask.getTarget() - currentTask.getPower(),
+                            MAX_POWER_PER_TICK
+                    )
+            );
             debugPowerRate = max;
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {
@@ -651,32 +677,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 }
             }
         }
-    }
-
-    public Iterable<AxisAlignedBB> getCollisionBoxes() {
-        if (!frameBox.isInitialized() || drillPos == null) {
-            return ImmutableList.of();
-        }
-        if (collisionboxes == null) {
-            collisionboxes = new ArrayList<>(3);
-            Vec3d min = VecUtil.convertCenter(frameBox.min());
-            Vec3d max = VecUtil.convertCenter(frameBox.max());
-            min = VecUtil.replaceValue(min, Axis.Y, max.yCoord);
-
-            Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.xCoord + 0.5);
-            Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.xCoord + 0.5);
-            collisionboxes.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
-
-            Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.zCoord + 0.5);
-            Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.zCoord + 0.5);
-            collisionboxes.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
-
-            Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
-            Vec3d minYAdj = realDrillPos;
-            Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.yCoord);
-            collisionboxes.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
-        }
-        return collisionboxes;
     }
 
     @Override
@@ -1005,7 +1005,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             // Vec3d oldDrillPos = drillPos;
             drillPos = to;
             // moveEntities(oldDrillPos);
-            collisionboxes = null;
             return true;
         }
 

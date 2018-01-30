@@ -6,28 +6,17 @@
 
 package buildcraft.transport.plug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.facades.*;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.ItemStackKey;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.recipe.FacadeSwapRecipe;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockLiquid;
@@ -43,25 +32,14 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.facades.FacadeAPI;
-import buildcraft.api.facades.IFacade;
-import buildcraft.api.facades.IFacadePhasedState;
-import buildcraft.api.facades.IFacadeRegistry;
-import buildcraft.api.facades.IFacadeState;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.transport.recipe.FacadeSwapRecipe;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 
 public enum FacadeStateManager implements IFacadeRegistry {
     INSTANCE;
@@ -381,7 +359,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 // or in a dev environment
                 // as this really needs to be fixed
                 RuntimeException exception = new RuntimeException(message);
-                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.10.2")) {
                     throw exception;
                 } else {
                     BCLog.logger.error("[transport.facade] Invalid property!", exception);

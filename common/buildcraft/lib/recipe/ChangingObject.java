@@ -6,9 +6,10 @@
 
 package buildcraft.lib.recipe;
 
+import net.minecraft.item.ItemStack;
+
 import java.util.Arrays;
 
-import net.minecraft.item.ItemStack;
 
 public class ChangingObject<T> {
     protected final T[] options;
@@ -16,6 +17,9 @@ public class ChangingObject<T> {
     private int timeGap = 1000;
 
     public ChangingObject(T[] options) {
+        if (options.length == 0) {
+            throw new IllegalStateException("Must provide at least 1 option!");
+        }
         this.options = options;
         hash = computeHash();
     }
@@ -51,6 +55,7 @@ public class ChangingObject<T> {
         if (obj == null) return false;
         if (obj.getClass() != getClass()) return false;
         ChangingObject<?> other = (ChangingObject<?>) obj;
-        return hash == other.hash && Arrays.equals(options, other.options);
+        if (hash != other.hash) return false;
+        return Arrays.equals(options, other.options);
     }
 }
