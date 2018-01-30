@@ -501,10 +501,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long max = MAX_POWER_PER_TICK;
-            max *= battery.getStored() + max;
-            max /= battery.getCapacity() / 2;
-            max = Math.min(max, MAX_POWER_PER_TICK);
+            long max = Math.min(
+                MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() * 2),
+                Math.min(
+                    currentTask.getTarget() - currentTask.getPower(),
+                    MAX_POWER_PER_TICK
+                )
+            );
             debugPowerRate = max;
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {
