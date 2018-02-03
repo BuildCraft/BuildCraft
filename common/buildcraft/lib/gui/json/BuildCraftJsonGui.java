@@ -111,9 +111,9 @@ public class BuildCraftJsonGui extends BuildCraftGui {
     }
 
     @Override
-    public void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    public void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY, Runnable backgroundRenderer) {
         time.value = timeOpen + partialTicks;
         varData.refresh();
-        super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+        super.drawBackgroundLayer(partialTicks, mouseX, mouseY, backgroundRenderer);
     }
 }

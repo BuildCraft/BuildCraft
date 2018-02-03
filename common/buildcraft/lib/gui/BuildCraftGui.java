@@ -32,15 +32,27 @@ import buildcraft.lib.misc.GuiUtil;
  * This isn't final, although you should generally only subclass this for additional library functionality, not to
  * render out a particular gui.
  * <p>
- * Classes extending {@link GuiScreen} need to call the following methods:
+ * Classes extending {@link GuiScreen} (either directly or indirectly) need to call the following methods:
  * <ul>
- * <li></li>
+ * <li>{@link #tick()} once per tick (usually in {@link GuiScreen#updateScreen()}</li>
+ * <li>{@link #drawBackgroundLayer(float, int, int, Runnable)} before drawing anything else, except for your own
+ * backgrounds</li>
+ * <li>{@link #drawElementBackgrounds()} after {@link #drawBackgroundLayer(float, int, int, Runnable)},but before
+ * sub-display backgrounds</li>
+ * <li>{@link #drawElementForegrounds(Runnable)} after drawing everything else.</li>
+ * <li>{@link #preDrawForeground()} if your base gui class offsets the call to drawing the foreground by the gui's
+ * position, for example, {@link GuiContainer}.</li>
+ * <li>{@link #postDrawForeground()} after {@link #preDrawForeground()} (and the same rules apply). These two calls
+ * should wrap around and calls to this that occur while the gl state is translated.
+ * <li>{@link #onMouseClicked(int, int, int)} whenever the mouse is clicked. If this returns true you shouldn't do any
+ * other mouse click handling.</li>
+ * <li>{@link #onMouseReleased(int, int, int)} whenever the mouse is released.</li>
+ * <li>{@link #onMouseDragged(int, int, int, long)} whenever the mouse is dragged.</li>
  * </ul>
- */
+ * For both {@link #drawBackgroundLayer(float, int, int, Runnable)} and {@link #drawElementForegrounds(Runnable)} the
+ * {@link Runnable} passed will only be called once, and it's call time will differ based on the
+ * {@link #currentMenu}. */
 public class BuildCraftGui {
-
-    // TODO: Change GuiBC8 -> GuiContainerBC8 to be based off of this!
-    // TODO: Add GuiScreenBC8 (based off this) extending GuiScreen.
 
     /** Used to control if this gui should show debugging lines, and other oddities that help development. */
     public static final IVariableNodeBoolean isDebuggingEnabled;
@@ -161,10 +173,17 @@ public class BuildCraftGui {
         return 4 + GuiUtil.drawHoveringText(tooltip, _x, _y, _w, _h, -1, mc.fontRenderer);
     }
 
-    public void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    public void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY, Runnable menuBackgroundRenderer) {
         // FIX FOR MC-121719 // https://bugs.mojang.com/browse/MC-121719
         partialTicks = mc.getRenderPartialTicks();
         // END FIX
+
+        RenderHelper.disableStandardItemLighting();
+        this.lastPartialTicks = partialTicks;
+        mouse.setMousePosition(mouseX, mouseY);
+        if (currentMenu == null || !currentMenu.shouldFullyOverride()) {
+            menuBackgroundRenderer.run();
+        }
 
         GlStateManager.color(1, 1, 1, 1);
         if (isDebuggingShown.evaluate()) {
@@ -192,11 +211,6 @@ public class BuildCraftGui {
                 }
             }
         }
-
-        RenderHelper.disableStandardItemLighting();
-        this.lastPartialTicks = partialTicks;
-        mouse.setMousePosition(mouseX, mouseY);
-
     }
 
     public void drawElementBackgrounds() {
@@ -296,7 +310,9 @@ public class BuildCraftGui {
         }
     }
 
-    public void onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+    /** @return True if the {@link #currentMenu} {@link IMenuElement#shouldFullyOverride() fully overrides} other mouse
+     *         clicks, false otherwise. */
+    public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
         mouse.setMousePosition(mouseX, mouseY);
 
         if (isDebuggingShown.evaluate()) {
@@ -310,7 +326,7 @@ public class BuildCraftGui {
         if (m != null) {
             m.onMouseClicked(mouseButton);
             if (m.shouldFullyOverride()) {
-                return;
+                return true;
             }
         }
 
@@ -319,6 +335,7 @@ public class BuildCraftGui {
                 ((IInteractionElement) element).onMouseClicked(mouseButton);
             }
         }
+        return false;
     }
 
     public void onMouseDragged(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {

@@ -10,6 +10,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
@@ -35,6 +36,7 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SubSprite;
+import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
@@ -60,6 +62,28 @@ public class GuiUtil {
      *         scale".) */
     public static int getScreenHeight() {
         return Minecraft.getMinecraft().currentScreen.height;
+    }
+
+    public static IGuiArea moveRectangleToCentre(GuiRectangle area) {
+        final double w = area.width;
+        final double h = area.height;
+
+        DoubleSupplier posX = () -> (AREA_WHOLE_SCREEN.getWidth() - w) / 2;
+        DoubleSupplier posY = () -> (AREA_WHOLE_SCREEN.getHeight() - h) / 2;
+
+        IGuiPosition position = IGuiPosition.create(posX, posY);
+        return IGuiArea.create(position, area.width, area.height);
+    }
+
+    public static IGuiArea moveAreaToCentre(IGuiArea area) {
+        if (area instanceof GuiRectangle || area instanceof IConstantNode) {
+            return moveRectangleToCentre(area.asImmutable());
+        }
+
+        DoubleSupplier posX = () -> (AREA_WHOLE_SCREEN.getWidth() - area.getWidth()) / 2;
+        DoubleSupplier posY = () -> (AREA_WHOLE_SCREEN.getHeight() - area.getHeight()) / 2;
+
+        return IGuiArea.create(posX, posY, area::getWidth, area::getHeight);
     }
 
     public static ToolTip createToolTip(Supplier<ItemStack> stackRef) {

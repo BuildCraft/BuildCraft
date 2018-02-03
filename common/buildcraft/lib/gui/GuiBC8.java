@@ -27,6 +27,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 
+/** Future rename: "GuiContainerBuildCraft" */
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     public final BuildCraftGui mainGui;
     public final C container;
@@ -62,12 +63,8 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        boolean drawEverything = mainGui.currentMenu == null || !mainGui.currentMenu.shouldFullyOverride();
-        if (drawEverything) {
-            this.drawDefaultBackground();
-        }
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if (drawEverything) {
+        if (mainGui.currentMenu == null || !mainGui.currentMenu.shouldFullyOverride()) {
             this.renderHoveredToolTip(mouseX, mouseY);
         }
     }
@@ -132,14 +129,13 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        mainGui.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+        mainGui.drawBackgroundLayer(partialTicks, mouseX, mouseY, this::drawDefaultBackground);
         drawBackgroundLayer(partialTicks);
         mainGui.drawElementBackgrounds();
     }
 
     @Override
     protected final void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        mainGui.mouse.setMousePosition(mouseX, mouseY);
         mainGui.preDrawForeground();
 
         drawForegroundLayer();
