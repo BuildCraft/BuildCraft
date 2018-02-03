@@ -1,7 +1,7 @@
 package buildcraft.lib.gui.elem;
 
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
@@ -11,7 +11,7 @@ public class GuiElementContainerScissor extends GuiElementContainer2 {
 
     public final IGuiArea area;
 
-    public GuiElementContainerScissor(GuiBC8<?> gui, IGuiArea area) {
+    public GuiElementContainerScissor(BuildCraftJsonGui gui, IGuiArea area) {
         super(gui);
         this.area = area;
     }

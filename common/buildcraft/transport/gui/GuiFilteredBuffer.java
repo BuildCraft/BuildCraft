@@ -32,12 +32,12 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
         RenderHelper.enableGUIStandardItemLighting();
         for (int i = 0; i < 9; i++) {
             ItemStack stack = container.tile.invFilter.getStackInSlot(i);
-            double currentX = rootElement.getX() + 8 + i * 18;
-            double currentY = rootElement.getY() + 61;
+            double currentX = mainGui.rootElement.getX() + 8 + i * 18;
+            double currentY = mainGui.rootElement.getY() + 61;
             // GL11.glEnable(GL11.GL_BLEND);
             // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             // GL11.glColor4f(1, 1, 1, 0.5F);
@@ -57,7 +57,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer_BC8> {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1, 1, 1, 0.7f);
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.disableBlend();

@@ -70,8 +70,8 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
         Supplier<EnumDyeColor> getter = () -> container.behaviour.slotColours.get(index);
         Consumer<EnumDyeColor> setter = c -> container.paintWidgets.get(index).setColour(c);
 
-        IGuiPosition elem = rootElement.offset(x, y);
-        GuiButtonDrawable button = new GuiButtonDrawable(this, index.name(), elem, PAINT_BUTTON_BUILDER);
+        IGuiPosition elem = mainGui.rootElement.offset(x, y);
+        GuiButtonDrawable button = new GuiButtonDrawable(mainGui, index.name(), elem, PAINT_BUTTON_BUILDER);
         button.registerListener((b, key) -> {
             final EnumDyeColor old = getter.get();
             EnumDyeColor nColour;
@@ -94,7 +94,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
             }
             setter.accept(nColour);
         });
-        shownElements.add(button);
+        mainGui.shownElements.add(button);
 
         // Button paintbrush
         IGuiArea area = new GuiRectangle(20, 20).offset(elem);
@@ -107,7 +107,7 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
                 GuiIcon.drawAt(sprite, px + 2, py + 2, 16);
             }
         };
-        shownElements.add(new GuiElementDrawable(this, area, paintIcon, false));
+        mainGui.shownElements.add(new GuiElementDrawable(mainGui, area, paintIcon, false));
         ITooltipElement tooltips = list -> {
             EnumDyeColor colour = getter.get();
             String line;
@@ -118,12 +118,12 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
             }
             list.add(new ToolTip(line));
         };
-        shownElements.add(new GuiElementToolTip(this, area, tooltips));
+        mainGui.shownElements.add(new GuiElementToolTip(mainGui, area, tooltips));
     }
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         SlotIndex currentSlot = container.behaviour.getCurrentSlot();
         for (SlotIndex index : container.behaviour.getActiveSlots()) {
@@ -131,18 +131,18 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
             int x = (index.ordinal() < 2 ? 4 : 155);
             int y = (index.ordinal() % 2 == 0 ? 21 : 49);
             ISprite sprite = current ? BCCoreSprites.TRIGGER_TRUE : BCLibSprites.LOCK;
-            GuiIcon.drawAt(sprite, rootElement.getX() + x, rootElement.getY() + y, 16);
+            GuiIcon.drawAt(sprite, mainGui.rootElement.getX() + x, mainGui.rootElement.getY() + y, 16);
         }
     }
 
     @Override
     protected void drawForegroundLayer() {
         String title = LocaleUtil.localize("gui.pipes.emzuli.title");
-        double titleX = rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
-        fontRenderer.drawString(title, (int) titleX, (int) rootElement.getY() + 6, 0x404040);
+        double titleX = mainGui.rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
+        fontRenderer.drawString(title, (int) titleX, (int) mainGui.rootElement.getY() + 6, 0x404040);
 
-        int invX = (int) rootElement.getX() + 8;
-        int invY = (int) rootElement.getY() + ySize - 93;
+        int invX = (int) mainGui.rootElement.getX() + 8;
+        int invY = (int) mainGui.rootElement.getY() + ySize - 93;
         fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), invX, invY, 0x404040);
     }
 }

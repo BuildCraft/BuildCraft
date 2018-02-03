@@ -55,22 +55,22 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     public void initGui() {
         super.initGui();
 
-        this.whiteListButton = new GuiImageButton(this, WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
+        this.whiteListButton = new GuiImageButton(mainGui, WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
         this.whiteListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.whitelist"));
         this.whiteListButton.registerListener(this);
-        this.shownElements.add(this.whiteListButton);
+        this.mainGui.shownElements.add(this.whiteListButton);
 
-        this.blackListButton = new GuiImageButton(this, BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
+        this.blackListButton = new GuiImageButton(mainGui, BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
         this.blackListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.blacklist"));
         this.blackListButton.registerListener(this);
-        this.shownElements.add(this.blackListButton);
+        this.mainGui.shownElements.add(this.blackListButton);
 
         if (pipe.pipe.getFlow() instanceof IFlowItems) {
             // Don't show round robin for the fluid pipe - its not yet implemented
-            this.roundRobinButton = new GuiImageButton(this, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
+            this.roundRobinButton = new GuiImageButton(mainGui, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
             this.roundRobinButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.roundrobin"));
             this.roundRobinButton.registerListener(this);
-            this.shownElements.add(this.roundRobinButton);
+            this.mainGui.shownElements.add(this.roundRobinButton);
             IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton, roundRobinButton);
         } else {
             IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton);
@@ -104,20 +104,20 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
     }
 
     @Override
     protected void drawForegroundLayer() {
         String title = LocaleUtil.localize("gui.pipes.emerald.title");
-        double titleX = rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
-        fontRenderer.drawString(title, (int) titleX, (int) rootElement.getY() + 6, 0x404040);
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) rootElement.getX() + 8, (int) rootElement.getY() + ySize - 93, 0x404040);
+        double titleX = mainGui.rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
+        fontRenderer.drawString(title, (int) titleX, (int) mainGui.rootElement.getY() + 6, 0x404040);
+        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) mainGui.rootElement.getX() + 8, (int) mainGui.rootElement.getY() + ySize - 93, 0x404040);
         if (pipe.filterMode == FilterMode.ROUND_ROBIN) {
             GlStateManager.color(1, 1, 1, 1);
             GuiIcon icon = pipe.filterValid ? ICON_ROUND_ROBIN_INDEX : ICON_ROUND_ROBIN_NONE;
             int x = pipe.filterValid ? 18 * pipe.currentFilter : 0;
-            icon.drawAt(rootElement.getX() + 6 + x, rootElement.getY() + 16);
+            icon.drawAt(mainGui.rootElement.getX() + 6 + x, mainGui.rootElement.getY() + 16);
         }
     }
 }

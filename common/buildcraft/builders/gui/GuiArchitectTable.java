@@ -40,7 +40,7 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
         drawProgress(
                 RECT_PROGRESS,
                 ICON_PROGRESS,

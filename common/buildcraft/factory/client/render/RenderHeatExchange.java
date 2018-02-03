@@ -31,7 +31,6 @@ import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.factory.BCFactoryBlocks;
@@ -126,7 +125,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
 
         profiler.endStartSection("flow");
 
-        if (middles > 0) {
+        if (middles > 0 && sectionEnd != null) {
             EnumProgressState progressState = section.getProgressState();
             double progress = section.getProgress(partialTicks);
             if (progress > 0) {

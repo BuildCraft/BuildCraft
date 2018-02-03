@@ -2,12 +2,12 @@ package buildcraft.lib.gui.button;
 
 import net.minecraft.client.renderer.GlStateManager;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-public final class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
+public final class GuiButtonDrawable extends GuiAbstractButton {
     private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled, drDisabledActive;
 
     public static class Builder {
@@ -25,7 +25,7 @@ public final class GuiButtonDrawable extends GuiAbstractButton<GuiBC8<?>> {
         }
     }
 
-    public GuiButtonDrawable(GuiBC8<?> gui, String id, IGuiPosition parent, Builder args) {
+    public GuiButtonDrawable(BuildCraftGui gui, String id, IGuiPosition parent, Builder args) {
         super(gui, id, args.rect.offset(parent));
         this.drEnabled = args.enabled;
         this.drActive = getFirstNonnull(args.active, args.enabled);

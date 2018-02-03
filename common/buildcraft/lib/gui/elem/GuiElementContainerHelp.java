@@ -11,20 +11,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 /** @deprecated Help *should* be moved to GuiElementContainer rather than this. */
 @Deprecated
 public class GuiElementContainerHelp implements IGuiElement {
-    public final GuiBC8<?> gui;
+    public final BuildCraftGui gui;
     private final IGuiPosition position;
     private final List<IGuiElement> internalElements = new ArrayList<>();
     private double width, height;
     private boolean calc = false;
 
-    public GuiElementContainerHelp(GuiBC8<?> gui, IGuiPosition position) {
+    public GuiElementContainerHelp(BuildCraftGui gui, IGuiPosition position) {
         this.gui = gui;
         this.position = position;
     }

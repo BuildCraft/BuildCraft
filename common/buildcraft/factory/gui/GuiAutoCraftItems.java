@@ -68,7 +68,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
             book = null;
         }
         recipeBook = book;
-        shownElements.add(new LedgerHelp(this, true));
+        mainGui.shownElements.add(new LedgerHelp(mainGui, true));
     }
 
     private void sendRecipe(IRecipe recipe) {
@@ -156,7 +156,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         double progress = container.tile.getProgress(partialTicks);
 
@@ -165,8 +165,8 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         if (hasFilters()) {
             RenderHelper.enableGUIStandardItemLighting();
             forEachFilter((slot, filterStack) -> {
-                int x = slot.xPos + (int) rootElement.getX();
-                int y = slot.yPos + (int) rootElement.getY();
+                int x = slot.xPos + (int) mainGui.rootElement.getX();
+                int y = slot.yPos + (int) mainGui.rootElement.getY();
                 itemRender.renderItemAndEffectIntoGUI(mc.player, filterStack, x, y);
                 itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, filterStack, x, y, null);
             });
@@ -181,8 +181,8 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
                 } else {
                     icon = ICON_FILTER_OVERLAY_DIFFERENT;
                 }
-                int x = slot.xPos + (int) rootElement.getX();
-                int y = slot.yPos + (int) rootElement.getY();
+                int x = slot.xPos + (int) mainGui.rootElement.getX();
+                int y = slot.yPos + (int) mainGui.rootElement.getY();
                 icon.drawAt(x - 1, y - 1);
             });
             GlStateManager.enableDepth();

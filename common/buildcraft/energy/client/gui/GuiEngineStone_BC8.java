@@ -24,15 +24,15 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     private static final int SIZE_X = 176, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
-    private final IGuiArea flameRect = new GuiRectangle(81, 25, 14, 14).offset(rootElement);
-    private final IGuiArea fuelSlotRect = new GuiRectangle(78, 39, 20, 20).offset(rootElement);
+    private final IGuiArea flameRect = new GuiRectangle(81, 25, 14, 14).offset(mainGui.rootElement);
+    private final IGuiArea fuelSlotRect = new GuiRectangle(78, 39, 20, 20).offset(mainGui.rootElement);
     private final ElementHelpInfo helpFlame, helpFuel;
 
     public GuiEngineStone_BC8(ContainerEngineStone_BC8 container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        shownElements.add(new LedgerEngine(this, true));
+        mainGui.shownElements.add(new LedgerEngine(mainGui, container.tile, true));
         helpFlame = new ElementHelpInfo("buildcraft.help.stone_engine.flame.title", 0xFF_FF_FF_1F, "buildcraft.help.stone_engine.flame");
         // TODO: Auto list of example fuels!
         helpFuel = new ElementHelpInfo("buildcraft.help.stone_engine.fuel.title", 0xFF_AA_33_33, "buildcraft.help.stone_engine.fuel");
@@ -41,13 +41,13 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     @Override
     public void initGui() {
         super.initGui();
-        shownElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
-        shownElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
+        mainGui.shownElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
+        mainGui.shownElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
     }
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         double amount = container.tile.deltaFuelLeft.getDynamic(partialTicks) / 100;
 
@@ -65,12 +65,12 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineStone.name");
         int strWidth = fontRenderer.getStringWidth(str);
-        double titleX = rootElement.getCenterX() - strWidth / 2;
-        double titleY = rootElement.getY() + 6;
+        double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
+        double titleY = mainGui.rootElement.getY() + 6;
         fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
         
-        double invX = rootElement.getX() + 8;
-        double invY = rootElement.getY() + SIZE_Y - 96;
+        double invX = mainGui.rootElement.getX() + 8;
+        double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
         fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
     }
 }

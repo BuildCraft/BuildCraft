@@ -16,14 +16,15 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -35,7 +36,6 @@ import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SubSprite;
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -43,19 +43,33 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiUtil {
 
+    public static final IGuiArea AREA_WHOLE_SCREEN;
     private static final Deque<GuiRectangle> scissorRegions = new ArrayDeque<>();
 
-    public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {
+    static {
+        AREA_WHOLE_SCREEN = IGuiArea.create(() -> 0, () -> 0, GuiUtil::getScreenWidth, GuiUtil::getScreenHeight);
+    }
+
+    /** @return The relative screen width. (Relative - changes with both the window size and the game setting "gui
+     *         scale".) */
+    public static int getScreenWidth() {
+        return Minecraft.getMinecraft().currentScreen.width;
+    }
+
+    /** @return The relative screen height. (Relative - changes with both the window size and the game setting "gui
+     *         scale".) */
+    public static int getScreenHeight() {
+        return Minecraft.getMinecraft().currentScreen.height;
+    }
+
+    public static ToolTip createToolTip(Supplier<ItemStack> stackRef) {
         return new ToolTip() {
             @Override
             public void refresh() {
                 delegate().clear();
                 ItemStack stack = stackRef.get();
                 if (!stack.isEmpty()) {
-                    EntityPlayer player = gui.container.player;
-                    boolean advanced = gui.mc.gameSettings.advancedItemTooltips;
-                    delegate().addAll(stack.getTooltip(player,
-                        advanced ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL));
+                    delegate().addAll(GuiUtil.getFormattedTooltip(stack));
                 }
             }
         };
@@ -86,7 +100,7 @@ public class GuiUtil {
     }
 
     /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer)}, except that we
-     * return the size of the box that was drawn. Draws a tooltip box on the screen with text in it. Automatically
+     * return the height of the box that was drawn. Draws a tooltip box on the screen with text in it. Automatically
      * positions the box relative to the mouse to match Mojang's implementation. Automatically wraps text when there is
      * not enough space on the screen to display the text without wrapping. Can have a maximum width set to avoid
      * creating very wide tooltips.
@@ -221,6 +235,44 @@ public class GuiUtil {
             return tooltipHeight + 5;
         }
         return 0;
+    }
+
+    public static void drawHorizontalLine(int startX, int endX, int y, int color) {
+        if (endX < startX) {
+            int i = startX;
+            startX = endX;
+            endX = i;
+        }
+        Gui.drawRect(startX, y, endX + 1, y + 1, color);
+    }
+
+    public static void drawVerticalLine(int x, int startY, int endY, int color) {
+        if (endY < startY) {
+            int i = startY;
+            startY = endY;
+            endY = i;
+        }
+        Gui.drawRect(x, startY + 1, x + 1, endY, color);
+    }
+
+    public static void drawRect(IGuiArea area, int colour) {
+        int xMin = (int) area.getX();
+        int yMin = (int) area.getY();
+        int xMax = (int) area.getEndX();
+        int yMax = (int) area.getEndY();
+        Gui.drawRect(xMin, yMin, xMax, yMax, colour);
+    }
+
+    public static void drawTexturedModalRect(double posX, double posY, double textureX, double textureY, double width,
+        double height) {
+        int x = MathHelper.floor(posX);
+        int y = MathHelper.floor(posY);
+        int u = MathHelper.floor(textureX);
+        int v = MathHelper.floor(textureY);
+        int w = MathHelper.floor(width);
+        int h = MathHelper.floor(height);
+        Gui gui = Minecraft.getMinecraft().currentScreen;
+        gui.drawTexturedModalRect(x, y, u, v, w, h);
     }
 
     public static void drawFluid(IGuiArea position, Tank tank) {

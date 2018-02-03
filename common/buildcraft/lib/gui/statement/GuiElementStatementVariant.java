@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import buildcraft.api.statements.IGuiSlot;
 
 import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IMenuElement;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -16,7 +16,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 
-public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> implements IMenuElement {
+public class GuiElementStatementVariant extends GuiElementSimple implements IMenuElement {
     public static final SpriteNineSliced SELECTION_HOVER = GuiElementStatement.SELECTION_HOVER;
 
     /** An array containing [offset][X,Y] */
@@ -35,7 +35,7 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
     private final IGuiSlot[] possible;
     private final IGuiArea[] posPossible;
 
-    public GuiElementStatementVariant(GuiBC8<?> gui, IGuiArea element, IReference<? extends IGuiSlot> ref,
+    public GuiElementStatementVariant(BuildCraftGui gui, IGuiArea element, IReference<? extends IGuiSlot> ref,
         IGuiSlot[] possible, IGuiArea[] posPossible) {
         super(gui, element);
         this.ref = ref;
@@ -43,8 +43,8 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
         this.posPossible = posPossible;
     }
 
-    public static GuiElementStatementVariant create(GuiElementSimple<?> parent, IReference<? extends IGuiSlot> ref,
-        IGuiSlot[] possible) {
+    public static GuiElementStatementVariant create(BuildCraftGui gui, IGuiArea parent,
+        IReference<? extends IGuiSlot> ref, IGuiSlot[] possible) {
         int count = Math.min(OFFSET_HOVER.length, possible.length);
         possible = possible.length == count ? possible : Arrays.copyOf(possible, count);
         IGuiArea[] posPossible = new IGuiArea[count];
@@ -57,7 +57,7 @@ public class GuiElementStatementVariant extends GuiElementSimple<GuiBC8<?>> impl
         int offset = -sub - 4;
         int size = 8 + add + 18 * 2;
         IGuiArea area = new GuiRectangle(offset, offset, size, size).offset(parent);
-        return new GuiElementStatementVariant(parent.gui, area, ref, possible, posPossible);
+        return new GuiElementStatementVariant(gui, area, ref, possible, posPossible);
     }
 
     interface ISlotIter {

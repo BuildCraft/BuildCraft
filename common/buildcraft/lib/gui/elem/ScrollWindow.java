@@ -3,7 +3,7 @@ package buildcraft.lib.gui.elem;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -13,7 +13,7 @@ import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 
 public class ScrollWindow implements IContainingElement {
 
-    public final GuiBC8<?> gui;
+    public final BuildCraftGui gui;
     public final IGuiArea area;
     public final List<IGuiElement> innerElements = new ArrayList<>();
     public final IGuiPosition basePosition = new ScrollingElement();
@@ -21,7 +21,7 @@ public class ScrollWindow implements IContainingElement {
     // Don't allow half-pixel scrolling: it breaks a lot of stuff.
     private int scrollPosition = 0;
 
-    public ScrollWindow(GuiBC8<?> gui, IGuiArea area) {
+    public ScrollWindow(BuildCraftGui gui, IGuiArea area) {
         this.gui = gui;
         this.area = area;
     }

@@ -21,6 +21,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IContainingElement;
@@ -33,6 +34,7 @@ import buildcraft.lib.misc.data.ModelVariableData;
 /** A GUI that is defined (mostly) in a json file. Note that implementors generally have to add {@link Slot}'s,
  * {@link ISprite}'s and configure buttons in code - currently this only allows for completely defining simple elements
  * via json, more complex ones must be implemented in code. */
+@Deprecated
 public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     public final ResourceLocation guiDefinition;
     protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
@@ -42,7 +44,7 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     private int timeOpen;
 
     public GuiJson(C container, ResourceLocation guiDefinition) {
-        super(container);
+        super(container, guiDefinition);
         this.guiDefinition = guiDefinition;
         time = context.putVariableDouble("time");
         load();
@@ -59,9 +61,9 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     }
 
     protected final void load() {
-        context.putConstant("gui.mouse", IGuiPosition.class, mouse);
-        context.putConstant("gui.area", IGuiArea.class, rootElement);
-        context.putConstant("gui.pos", IGuiPosition.class, rootElement);
+        context.putConstant("gui.mouse", IGuiPosition.class, mainGui.mouse);
+        context.putConstant("gui.area", IGuiArea.class, mainGui.rootElement);
+        context.putConstant("gui.pos", IGuiPosition.class, mainGui.rootElement);
         preLoad();
 
         ResourceLoaderContext loadHistory = new ResourceLoaderContext();
@@ -78,12 +80,12 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
                 if (type == null) {
                     BCLog.logger.warn("Unknown type " + typeName);
                 } else {
-                    IGuiElement e = type.deserialize(this, rootElement, info, elem);
+                    IGuiElement e = type.deserialize(mainGui, mainGui.rootElement, info, elem);
                     String parent = elem.properties.get("parent");
                     IContainingElement p = properties.get("custom." + parent, IContainingElement.class);
                     properties.put("custom." + elem.name, e);
                     if (p == null) {
-                        shownElements.add(e);
+                        mainGui.shownElements.add(e);
                     } else {
                         p.getChildElements().add(e);
                         p.calculateSizes();
@@ -116,7 +118,7 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
     @Override
     protected void drawForegroundLayer() {
         super.drawForegroundLayer();
-        if (isDebuggingEnabled.evaluate()) {
+        if (BuildCraftGui.isDebuggingEnabled.evaluate()) {
             List<String> debug = new ArrayList<>();
             varData.addDebugInfo(debug);
 

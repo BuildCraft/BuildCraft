@@ -15,8 +15,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -48,14 +48,14 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @SideOnly(Side.CLIENT)
-    public IGuiElement createGuiElement(GuiBC8<?> gui, IGuiArea area, GuiIcon overlay) {
+    public IGuiElement createGuiElement(BuildCraftGui gui, IGuiArea area, GuiIcon overlay) {
         return new GuiElementFluidTank(gui, area, overlay);
     }
 
-    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> implements IInteractionElement {
+    private final class GuiElementFluidTank extends GuiElementSimple implements IInteractionElement {
         private final GuiIcon overlay;
 
-        public GuiElementFluidTank(GuiBC8<?> gui, IGuiArea area, GuiIcon overlay) {
+        public GuiElementFluidTank(BuildCraftGui gui, IGuiArea area, GuiIcon overlay) {
             super(gui, area);
             this.overlay = overlay;
         }

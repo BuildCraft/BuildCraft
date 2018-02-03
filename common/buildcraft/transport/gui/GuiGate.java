@@ -2,30 +2,37 @@ package buildcraft.transport.gui;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.json.GuiJson;
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.collect.TypedKeyMap;
 
 import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gate.GateLogic;
 
-public class GuiGate extends GuiJson<ContainerGate> {
+public class GuiGate extends GuiBC8<ContainerGate> {
 
     public static final ResourceLocation GUI_DEFINITION = new ResourceLocation("buildcrafttransport:gui/gate.json");
 
     public GuiGate(ContainerGate container) {
         super(container, GUI_DEFINITION);
 
+        BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
+        preLoad(jsonGui);
+        jsonGui.load();
+
         MessageUtil.doDelayed(() -> {
             container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
         });
     }
 
-    @Override
-    protected void preLoad() {
-        super.preLoad();
+    protected void preLoad(BuildCraftJsonGui json) {
         GateLogic gate = container.gate;
+        TypedKeyMap<String, Object> properties = json.properties;
+        FunctionContext context = json.context;
         properties.put("statement.container", gate);
         context.putConstantBoolean("gate.two_columns", gate.isSplitInTwo());
         context.putConstantLong("gate.slots", gate.variant.numSlots);
