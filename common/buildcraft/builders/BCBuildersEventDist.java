@@ -71,7 +71,6 @@ public enum BCBuildersEventDist {
 
     @SubscribeEvent
     public void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
-        AxisAlignedBB target = event.getAabb();
         Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(event.getWorld());
         if (quarries == null) {
             // No quarries in the target world
@@ -85,8 +84,8 @@ public enum BCBuildersEventDist {
                 iter.remove();
                 continue;
             }
-            for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
-                if (target.intersects(aabb)) {
+            for (AxisAlignedBB aabb : quarry.collisionBoxes) {
+                if (event.getAabb().intersects(aabb)) {
                     event.getCollisionBoxesList().add(aabb);
                 }
             }
