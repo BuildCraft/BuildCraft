@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -382,7 +384,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     // Rendering
 
-    @SuppressWarnings("NullableProblems")
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

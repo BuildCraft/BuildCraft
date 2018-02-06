@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -294,7 +296,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         }
     }
 
+    @Nonnull
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return new Box(this).extendToEncompass(targetPos).getBoundingBox();
     }

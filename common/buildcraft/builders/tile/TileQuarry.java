@@ -734,6 +734,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("drill = " + drillPos);
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

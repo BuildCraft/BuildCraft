@@ -391,7 +391,7 @@ public class TileBuilder extends TileBC_Neptune
         return true;
     }
 
-    @SuppressWarnings("NullableProblems")
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

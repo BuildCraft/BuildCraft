@@ -7,6 +7,8 @@ package buildcraft.core.tile;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -119,6 +121,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
         }
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
