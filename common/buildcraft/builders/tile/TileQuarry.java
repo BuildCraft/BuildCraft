@@ -456,7 +456,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 chunkPoses.add(new ChunkPos(x, z));
             }
         }
-        chunkPoses.add(new ChunkPos(pos));
         return chunkPoses;
     }
 
