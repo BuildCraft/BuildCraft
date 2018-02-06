@@ -444,7 +444,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Nullable
     @Override
-    public Collection<ChunkPos> getChunksToLoad() {
+    public Set<ChunkPos> getChunksToLoad() {
         if (!miningBox.isInitialized()) {
             return null;
         }

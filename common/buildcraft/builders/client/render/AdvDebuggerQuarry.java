@@ -8,7 +8,6 @@ package buildcraft.builders.client.render;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -23,6 +22,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
+import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
 
@@ -43,11 +43,7 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
         if (tile == null || !tile.frameBox.isInitialized()) {
             return;
         }
-        Collection<ChunkPos> chunksToLoad = tile.getChunksToLoad();
-        if (chunksToLoad == null) {
-            return;
-        }
-        List<ChunkPos> chunkPoses = new ArrayList<>(chunksToLoad);
+        List<ChunkPos> chunkPoses = new ArrayList<>(ChunkLoaderManager.getChunksToLoad(tile));
         chunkPoses.sort(
             Comparator.comparingDouble(chunkPos ->
                 -player.getPositionEyes(partialTicks).distanceTo(
