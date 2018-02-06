@@ -9,7 +9,6 @@ package buildcraft.builders.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -107,7 +106,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final Set<BlockPos> firstCheckedPoses = new HashSet<>();
     private boolean firstChecked = false;
     private final Set<BlockPos> frameBreakBlockPoses =
-        new TreeSet<>(Comparator.<BlockPos> comparingDouble(pos::distanceSq));
+        new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(p -> getPos().distanceSq(p))));
     private final Set<BlockPos> framePlaceFramePoses = new HashSet<>();
     public Task currentTask = null;
     public Vec3d drillPos;
@@ -157,7 +156,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
      * <p>
      * Assumes that {@link #frameBox} is correct for the current position. Does not take into account the current facing
      * of the quarry, as that is assumed to be involved in the {@link #frameBox} itself.
-     * 
+     *
      * @return An ordered list of the positions that the frame should be placed in. The list is in placement order.
      * @throws IllegalStateException if something went wrong during iteration, or the current {@link #frameBox} was
      *             incorrect compared to {@link #getPos()} */
@@ -470,6 +469,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == BCBuildersBlocks.quarry && frameBox.isInitialized()) {
             List<BlockPos> blocksInArea = frameBox.getBlocksInArea();
+            blocksInArea.sort(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(pos::distanceSq)));
             frameBoxPosesCount = blocksInArea.size();
             toCheck.addAll(blocksInArea);
             framePoses.addAll(getFramePositions());
@@ -719,6 +719,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add(" - min = " + miningBox.min());
         left.add(" - max = " + miningBox.max());
 
+        left.add("firstCheckedPoses = " + firstCheckedPoses.size());
+        left.add("frameBoxPosesCount = " + frameBoxPosesCount);
+
         BoxIterator iter = boxIterator;
         left.add("current = " + (iter == null ? "null" : iter.getCurrent()));
 
@@ -901,6 +904,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 } else {
                     world.destroyBlock(breakPos, false);
                 }
+                check(breakPos);
                 return true;
             } else {
                 return false;
