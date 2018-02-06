@@ -449,12 +449,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             return null;
         }
         ArrayList<ChunkPos> list = new ArrayList<>();
-        int minX = miningBox.min().getX() >> 4;
-        int minZ = miningBox.min().getZ() >> 4;
-        int maxX = miningBox.max().getX() >> 4;
-        int maxZ = miningBox.max().getZ() >> 4;
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
+        ChunkPos minChunkPos = new ChunkPos(miningBox.min());
+        ChunkPos maxChunkPos = new ChunkPos(miningBox.max());
+        for (int x = minChunkPos.x; x <= maxChunkPos.x; x++) {
+            for (int z = minChunkPos.z; z <= maxChunkPos.z; z++) {
                 list.add(new ChunkPos(x, z));
             }
         }
