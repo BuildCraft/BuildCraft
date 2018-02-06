@@ -448,15 +448,16 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (!miningBox.isInitialized()) {
             return null;
         }
-        ArrayList<ChunkPos> list = new ArrayList<>();
+        Set<ChunkPos> chunkPoses = new HashSet<>();
         ChunkPos minChunkPos = new ChunkPos(miningBox.min());
         ChunkPos maxChunkPos = new ChunkPos(miningBox.max());
         for (int x = minChunkPos.x; x <= maxChunkPos.x; x++) {
             for (int z = minChunkPos.z; z <= maxChunkPos.z; z++) {
-                list.add(new ChunkPos(x, z));
+                chunkPoses.add(new ChunkPos(x, z));
             }
         }
-        return list;
+        chunkPoses.add(new ChunkPos(pos));
+        return chunkPoses;
     }
 
     private void updatePoses() {
