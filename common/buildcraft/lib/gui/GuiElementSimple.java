@@ -10,12 +10,12 @@ import java.util.List;
 
 import buildcraft.lib.gui.pos.IGuiArea;
 
-public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
-    public final G gui;
+public class GuiElementSimple implements IGuiElement {
+    public final BuildCraftGui gui;
     private final IGuiArea element;
     public String name = null;
 
-    public GuiElementSimple(G gui, IGuiArea element) {
+    public GuiElementSimple(BuildCraftGui gui, IGuiArea element) {
         this.gui = gui;
         this.element = element;
     }

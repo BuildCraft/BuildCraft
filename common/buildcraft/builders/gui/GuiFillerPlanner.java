@@ -1,26 +1,33 @@
 package buildcraft.builders.gui;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
+import buildcraft.lib.misc.collect.TypedKeyMap;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.json.SpriteDelegate;
 
 import buildcraft.builders.container.ContainerFillerPlanner;
 import buildcraft.builders.filler.FillerStatementContext;
 
-public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
+public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
     private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler_planner.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
 
     public GuiFillerPlanner(ContainerFillerPlanner container) {
         super(container, LOCATION);
+        BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
+        preLoad(jsonGui);
+        jsonGui.load();
     }
 
-    @Override
-    protected void preLoad() {
-        super.preLoad();
+    protected void preLoad(BuildCraftJsonGui json) {
+        TypedKeyMap<String, Object> properties = json.properties;
+        FunctionContext context = json.context;
+
         properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
         properties.put("filler.pattern", container.getPatternStatementClient());
         properties.put("filler.pattern.sprite", SPRITE_PATTERN);
@@ -28,26 +35,9 @@ public class GuiFillerPlanner extends GuiJson<ContainerFillerPlanner> {
         context.put_b("filler.invert", () -> container.addon.inverted);
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.addon.inverted);
-        properties.put("filler.invert", (IButtonClickEventListener) (b, k) ->
-            container.sendInverted(b.isButtonActive())
+        properties.put("filler.invert",
+                (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive())
         );
-    }
-
-    @Override
-    protected void postLoad() {
-        super.postLoad();
-/*        setupButton("filler.invert", b -> {
-            b.setBehaviour(IButtonBehaviour.TOGGLE);
-            final ToolTip on = ToolTip.createLocalized("tip.filler.invert.on");
-            final ToolTip off = ToolTip.createLocalized("tip.filler.invert.off");
-            b.setActive(container.addon.inverted);
-            IButtonClickEventListener listener = (b2, k) -> {
-                b.setToolTip(b.active ? on : off);
-                container.setInverted(b.active);
-            };
-            listener.handleButtonClick(b, 0);
-            b.registerListener(listener);
-        });*/
     }
 
     @Override

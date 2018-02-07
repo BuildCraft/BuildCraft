@@ -6,6 +6,7 @@
 
 package buildcraft.silicon.client.render;
 
+import buildcraft.lib.client.render.DetachedRenderer;
 import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
 
@@ -21,31 +22,25 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.misc.VolumeUtil;
 
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.tile.TileLaser;
 
-public enum AdvDebuggerLaser implements IDetachedRenderer {
-    INSTANCE;
-
+public class AdvDebuggerLaser implements DetachedRenderer.IDetachedRenderer {
     private static final int COLOUR_VISIBLE = 0xFF_99_FF_99;
     private static final int COLOUR_NOT_VISIBLE = 0xFF_11_11_99;
 
-    private BlockPos pos;
-    private EnumFacing face;
+    private final BlockPos pos;
+    private final EnumFacing face;
 
-    public static AdvDebuggerLaser getForTile(TileLaser tile) {
-        INSTANCE.pos = tile.getPos();
-        IBlockState state = tile.getWorld().getBlockState(INSTANCE.pos);
-        if (state.getBlock() == BCSiliconBlocks.laser) {
-            INSTANCE.face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
-        } else {
-            INSTANCE.face = null;
-        }
-        return INSTANCE;
+    public AdvDebuggerLaser(TileLaser tile) {
+        pos = tile.getPos();
+        IBlockState state = tile.getWorld().getBlockState(pos);
+        face = state.getBlock() == BCSiliconBlocks.laser
+                ? state.getValue(BuildCraftProperties.BLOCK_FACING_6)
+                : null;
     }
 
     @SideOnly(Side.CLIENT)

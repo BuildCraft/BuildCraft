@@ -24,7 +24,6 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
-import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
@@ -65,7 +64,7 @@ public class BCTransportRecipes {
             builder.map('w', "plankWood");
             builder.map('p', Blocks.PISTON);
             builder.map('c', Blocks.CHEST);
-            builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM, Items.DIAMOND);
+            builder.map('d', BCTransportItems.pipeItemDiamond, Items.DIAMOND);
             builder.setResult(new ItemStack(BCTransportBlocks.filteredBuffer));
             builder.register();
         }
@@ -141,7 +140,7 @@ public class BCTransportRecipes {
                 redstoneEngine = new ItemStack(Blocks.REDSTONE_BLOCK);
             }
 
-            if (BCBlocks.SILICON_TABLE_ASSEMBLY != null) {
+            if (BCBlocks.Silicon.ASSEMBLY_TABLE != null) {
                 Set<StackDefinition> input = new HashSet<>();
                 input.add(ArrayStackFilter.definition(redstoneEngine));
                 input.add(OreStackFilter.definition(2, "ingotIron"));
@@ -213,6 +212,8 @@ public class BCTransportRecipes {
                 }
             }
             StackDefinition lapis = OreStackFilter.definition("gemLapis");
+            if (lapis.filter.getExamples().isEmpty())
+                lapis = ArrayStackFilter.definition(new ItemStack(Items.DYE, 1, 4));
             makeGateAssembly(20_000, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON);
             makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER,
                     EnumRedstoneChipset.IRON, ArrayStackFilter.definition(new ItemStack(Blocks.NETHER_BRICK)));
@@ -240,8 +241,11 @@ public class BCTransportRecipes {
         if (BCTransportItems.wire != null) {
             for (EnumDyeColor color : ColourUtil.COLOURS) {
                 String name = String.format("wire-%s", color.getUnlocalizedName());
-                ImmutableSet<StackDefinition> input = ImmutableSet.of(OreStackFilter.definition("dustRedstone"),
-                        OreStackFilter.definition(ColourUtil.getDyeName(color)));
+                StackDefinition redstone = OreStackFilter.definition("dustRedstone");
+                if (redstone.filter.getExamples().isEmpty()) redstone = ArrayStackFilter.definition(Items.REDSTONE);
+                StackDefinition colorStack = OreStackFilter.definition(ColourUtil.getDyeName(color));
+                if (colorStack.filter.getExamples().isEmpty()) colorStack = ArrayStackFilter.definition(new ItemStack(Items.DYE, 1, color.getDyeDamage()));
+                ImmutableSet<StackDefinition> input = ImmutableSet.of(redstone, colorStack);
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 10_000 * MjAPI.MJ, input,
                         new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
@@ -251,6 +255,7 @@ public class BCTransportRecipes {
             for (EnumDyeColor colour : ColourUtil.COLOURS) {
                 String name = String.format("lens-regular-%s", colour.getUnlocalizedName());
                 StackDefinition stainedGlass = OreStackFilter.definition("blockGlass" + ColourUtil.getName(colour));
+                if (stainedGlass.filter.getExamples().isEmpty()) stainedGlass = ArrayStackFilter.definition(new ItemStack(Blocks.STAINED_GLASS, 1, colour.getDyeDamage()));
                 ImmutableSet<StackDefinition> input = ImmutableSet.of(stainedGlass);
                 ItemStack output = BCTransportItems.plugLens.getStack(colour, false);
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 500 * MjAPI.MJ, input, output));

@@ -6,14 +6,20 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.items.BCStackHelper;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.recipes.StackDefinition;
+import scala.actors.threadpool.Arrays;
+
+import java.util.List;
+import java.util.Objects;
 
 
 /** Returns true if the stack matches any one one of the filter stacks. */
@@ -26,7 +32,16 @@ public class OreStackFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(@Nonnull ItemStack stack) {
+    public List<ItemStack> getExamples() {
+        List<ItemStack> stacks = Lists.newArrayList();
+        for (String name : ores)
+            OreDictionary.getOres(name).stream().filter(Objects::nonNull).forEach(stacks::add);
+        return stacks.isEmpty() ? Arrays.asList(new ItemStack[0]) : stacks;
+    }
+
+    @Override
+    public boolean matches(@Nullable ItemStack stack) {
+        if (BCStackHelper.isEmpty(stack)) return false;
         int[] ids = OreDictionary.getOreIDs(stack);
 
         if (ids.length == 0) {

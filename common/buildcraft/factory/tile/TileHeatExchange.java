@@ -55,6 +55,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.BCFactoryBlocks;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchanger");
@@ -244,7 +245,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         }
     }
 
+    @Nonnull
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         if (section instanceof ExchangeSectionStart) {
             // Temp

@@ -22,7 +22,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class RecipeBuilderShaped {
     @Nonnull
-    private ItemStack result = null;
+    private ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
 
@@ -37,7 +37,7 @@ public class RecipeBuilderShaped {
     public RecipeBuilderShaped map(char c, Object... values) {
         boolean put = false;
         for (Object v : values) {
-            if (v != null && v != null) {
+            if (v != null) {
                 if (v instanceof Item//
                     || v instanceof Block//
                     || v instanceof ItemStack//

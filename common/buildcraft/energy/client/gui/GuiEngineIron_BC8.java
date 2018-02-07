@@ -26,33 +26,33 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        shownElements.add(new LedgerEngine(this, true));
+        mainGui.shownElements.add(new LedgerEngine(mainGui, container.tile, true));
     }
 
     @Override
     public void initGui() {
         super.initGui();
 
-        shownElements.add(container.widgetTankFuel.createGuiElement(this, new GuiRectangle(26, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
-        shownElements.add(container.widgetTankCoolant.createGuiElement(this, new GuiRectangle(80, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
-        shownElements.add(container.widgetTankResidue.createGuiElement(this, new GuiRectangle(134, 18, 16, 60).offset(rootElement), ICON_TANK_OVERLAY));
+        mainGui.shownElements.add(container.widgetTankFuel.createGuiElement(mainGui, new GuiRectangle(26, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
+        mainGui.shownElements.add(container.widgetTankCoolant.createGuiElement(mainGui, new GuiRectangle(80, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
+        mainGui.shownElements.add(container.widgetTankResidue.createGuiElement(mainGui, new GuiRectangle(134, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
     }
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
     }
 
     @Override
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineIron.name");
         int strWidth = fontRendererObj.getStringWidth(str);
-        double titleX = rootElement.getCenterX() - strWidth / 2;
-        double titleY = rootElement.getY() + 6;
+        double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
+        double titleY = mainGui.rootElement.getY() + 6;
         fontRendererObj.drawString(str, (int) titleX, (int) titleY, 0x404040);
 
-        double invX = rootElement.getX() + 8;
-        double invY = rootElement.getY() + SIZE_Y - 96;
+        double invX = mainGui.rootElement.getX() + 8;
+        double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
         fontRendererObj.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
     }
 }

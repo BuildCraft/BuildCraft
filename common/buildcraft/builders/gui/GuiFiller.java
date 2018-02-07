@@ -1,5 +1,9 @@
 package buildcraft.builders.gui;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
+import buildcraft.lib.misc.collect.TypedKeyMap;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.filler.IFillerPattern;
@@ -7,7 +11,6 @@ import buildcraft.api.tiles.IControllable.Mode;
 
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
 
@@ -15,18 +18,22 @@ import buildcraft.builders.container.ContainerFiller;
 import buildcraft.builders.filler.FillerStatementContext;
 import buildcraft.core.BCCoreSprites;
 
-public class GuiFiller extends GuiJson<ContainerFiller> {
+public class GuiFiller extends GuiBC8<ContainerFiller> {
     private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
     private static final SpriteDelegate SPRITE_CONTROL_MODE = new SpriteDelegate();
 
     public GuiFiller(ContainerFiller container) {
         super(container, LOCATION);
+        BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
+        preLoad(jsonGui);
+        jsonGui.load();
     }
 
-    @Override
-    protected void preLoad() {
-        super.preLoad();
+    protected void preLoad(BuildCraftJsonGui json) {
+        TypedKeyMap<String, Object> properties = json.properties;
+        FunctionContext context = json.context;
+
         properties.put("filler.inventory", new InventorySlotHolder(container, container.tile.invResources));
         properties.put("statement.container", container.tile);
         properties.put("controllable", container.tile);
@@ -43,18 +50,14 @@ public class GuiFiller extends GuiJson<ContainerFiller> {
         context.put_b("filler.invert", container::isInverted);
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.isInverted());
-        properties.put(
-            "filler.invert",
-            (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive())
-        );
+        properties.put("filler.invert",
+                (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
 
         context.put_b("filler.excavate", container.tile::canExcavate);
         properties.put("filler.excavate", IButtonBehaviour.TOGGLE);
         properties.put("filler.excavate", container.tile.canExcavate());
-        properties.put(
-            "filler.excavate",
-            (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive())
-        );
+        properties.put("filler.excavate",
+                (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive()));
     }
 
     @Override

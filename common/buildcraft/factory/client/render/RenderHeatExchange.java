@@ -124,7 +124,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
 
         profiler.endStartSection("flow");
 
-        if (middles > 0) {
+        if (middles > 0 && sectionEnd != null) {
             EnumProgressState progressState = section.getProgressState();
             double progress = section.getProgress(partialTicks);
             if (progress > 0) {

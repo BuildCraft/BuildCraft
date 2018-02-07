@@ -2,13 +2,12 @@ package buildcraft.lib.gui.json;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
@@ -21,8 +20,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -30,46 +28,45 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.collect.TypedKeyMap;
 import buildcraft.lib.misc.data.ModelVariableData;
 
-/** A GUI that is defined (mostly) in a json file. Note that implementors generally have to add {@link Slot}'s,
+/** A GUI that is defined (mostly) in a json file. Note that callers generally have to add {@link Slot}'s,
  * {@link ISprite}'s and configure buttons in code - currently this only allows for completely defining simple elements
  * via json, more complex ones must be implemented in code. */
-public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
-    public final ResourceLocation guiDefinition;
-    protected final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
-    protected final FunctionContext context = DefaultContexts.createWithAll();
-    ModelVariableData varData = new ModelVariableData();
+public class BuildCraftJsonGui extends BuildCraftGui {
+
+    public final ResourceLocation jsonGuiDefinition;
+
+    public final TypedKeyMap<String, Object> properties = TypedKeyMap.createHierachy();
+    public final FunctionContext context = DefaultContexts.createWithAll();
+    final ModelVariableData varData = new ModelVariableData();
     private final NodeVariableDouble time;
     private int timeOpen;
 
-    public GuiJson(C container, ResourceLocation guiDefinition) {
-        super(container);
-        this.guiDefinition = guiDefinition;
-        time = context.putVariableDouble("time");
-        load();
-    }
+    private int sizeX, sizeY;
 
-    @Override
-    protected boolean shouldAddHelpLedger() {
-        return true;
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-    }
-
-    protected final void load() {
+    {
         context.putConstant("gui.mouse", IGuiPosition.class, mouse);
         context.putConstant("gui.area", IGuiArea.class, rootElement);
         context.putConstant("gui.pos", IGuiPosition.class, rootElement);
-        preLoad();
+        time = context.putVariableDouble("time");
+    }
 
+    public BuildCraftJsonGui(GuiScreen gui, ResourceLocation jsonGuiDefinition) {
+        super(gui);
+        this.jsonGuiDefinition = jsonGuiDefinition;
+    }
+
+    public BuildCraftJsonGui(GuiScreen gui, IGuiArea rootElement, ResourceLocation jsonGuiDefinition) {
+        super(gui, rootElement);
+        this.jsonGuiDefinition = jsonGuiDefinition;
+    }
+
+    public final void load() {
         ResourceLoaderContext loadHistory = new ResourceLoaderContext();
-        try (InputStreamReader reader = loadHistory.startLoading(guiDefinition)) {
+        try (InputStreamReader reader = loadHistory.startLoading(jsonGuiDefinition)) {
             JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
             JsonGuiInfo info = new JsonGuiInfo(obj, context, loadHistory);
-            xSize = (int) GenericExpressionCompiler.compileExpressionLong(info.sizeX, context).evaluate();
-            ySize = (int) GenericExpressionCompiler.compileExpressionLong(info.sizeY, context).evaluate();
+            sizeX = (int) GenericExpressionCompiler.compileExpressionLong(info.sizeX, context).evaluate();
+            sizeY = (int) GenericExpressionCompiler.compileExpressionLong(info.sizeY, context).evaluate();
             varData.setNodes(info.createTickableNodes());
 
             for (JsonGuiElement elem : info.elements) {
@@ -90,50 +87,33 @@ public abstract class GuiJson<C extends ContainerBC_Neptune> extends GuiBC8<C> {
                     }
                 }
             }
-            postLoad();
         } catch (InvalidExpressionException iee) {
-            throw new JsonSyntaxException("Failed to resolve the size of " + guiDefinition, iee);
+            throw new JsonSyntaxException("Failed to resolve the size of " + jsonGuiDefinition, iee);
         } catch (IOException e) {
             throw new Error(e);
         }
         loadHistory.finishLoading();
     }
 
+    public int getSizeX() {
+        return sizeX;
+    }
+
+    public int getSizeY() {
+        return sizeY;
+    }
+
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void tick() {
+        super.tick();
         timeOpen++;
         varData.tick();
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks) {
+    public void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY, Runnable backgroundRenderer) {
         time.value = timeOpen + partialTicks;
         varData.refresh();
-        super.drawBackgroundLayer(partialTicks);
+        super.drawBackgroundLayer(partialTicks, mouseX, mouseY, backgroundRenderer);
     }
-
-    @Override
-    protected void drawForegroundLayer() {
-        super.drawForegroundLayer();
-        if (isDebuggingEnabled.evaluate()) {
-            List<String> debug = new ArrayList<>();
-            varData.addDebugInfo(debug);
-
-            int x = 6;
-            int y = 18;
-            for (String d : debug) {
-                // drawString(getFontRenderer(), d, x, y, -1);
-                y += getFontRenderer().FONT_HEIGHT + 2;
-            }
-        }
-    }
-
-    /** Fill up {@link #properties} and {@link #context} */
-    protected void preLoad() {
-        properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
-    }
-
-    /** Called after the whole gui has been loaded. */
-    protected void postLoad() {}
 }

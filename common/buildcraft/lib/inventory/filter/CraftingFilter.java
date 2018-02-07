@@ -25,6 +25,12 @@ public class CraftingFilter implements IStackFilter {
         this.stacks = StackUtil.listOf(stacks);
     }
 
+    @Nonnull
+    @Override
+    public List<ItemStack> getExamples() {
+        return stacks;
+    }
+
     @Override
     public boolean matches(@Nonnull ItemStack stack) {
         if (stacks.size() == 0 || !hasFilter()) {

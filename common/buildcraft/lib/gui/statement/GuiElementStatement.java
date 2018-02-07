@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import buildcraft.lib.gui.BuildCraftGui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,14 +17,13 @@ import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.FullStatement;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
 
-public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<GuiJson<?>>
+public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
     implements IInteractionElement, IReference<S> {
 
     public static final ResourceLocation TEXTURE_SELECTOR;
@@ -48,8 +48,8 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
     private final StatementContext<?> ctx;
     private final boolean draw;
 
-    public GuiElementStatement(GuiJson<?> gui, IGuiArea element, FullStatement<S> ref, StatementContext<?> ctx,
-        boolean draw) {
+    public GuiElementStatement(BuildCraftGui gui, IGuiArea element, FullStatement<S> ref, StatementContext<?> ctx,
+                               boolean draw) {
         super(gui, element);
         this.ref = ref;
         this.ctx = ctx;
@@ -139,7 +139,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple<
                     return true;
                 });
             }
-            gui.currentMenu = GuiElementStatementVariant.create(this, this, possible.toArray(new IStatement[0]));
+            gui.currentMenu = GuiElementStatementVariant.create(gui, this, this, possible.toArray(new IStatement[0]));
         }
     }
 }

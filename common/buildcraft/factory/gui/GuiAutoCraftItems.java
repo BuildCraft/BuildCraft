@@ -32,7 +32,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         drawProgress(
                 RECT_PROGRESS,

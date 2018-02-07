@@ -37,7 +37,7 @@ public class ElementTypeSprite extends ElementType {
     }
 
     @Override
-    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         inheritProperty(json, "pos[0]", "area[0]");
         inheritProperty(json, "pos[1]", "area[1]");

@@ -36,6 +36,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.BCFactoryBlocks;
 
+import javax.annotation.Nonnull;
+
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("miner");
     public static final int NET_LED_STATUS = IDS.allocId("LED_STATUS");
@@ -232,6 +234,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         left.add("progress = " + LocaleUtil.localizeMj(progress));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

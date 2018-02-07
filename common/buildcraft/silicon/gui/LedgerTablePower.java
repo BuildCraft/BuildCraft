@@ -4,8 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.transport.gui;
+package buildcraft.silicon.gui;
 
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.silicon.tile.TileAssemblyTable;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.render.ISprite;
@@ -16,7 +18,6 @@ import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 
-import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.tile.TileLaserTableBase;
 
 public class LedgerTablePower extends Ledger_Neptune {
@@ -26,9 +27,9 @@ public class LedgerTablePower extends Ledger_Neptune {
 
     public final TileLaserTableBase tile;
 
-    public LedgerTablePower(GuiAssemblyTable gui, boolean expandPositive) {
+    public LedgerTablePower(BuildCraftGui gui, TileAssemblyTable tile, boolean expandPositive) {
         super(gui, OVERLAY_COLOUR, expandPositive);
-        this.tile = gui.container.tile;
+        this.tile = tile;
         title = "gui.power";
 
         appendText(LocaleUtil.localize("gui.assemblyCurrentRequired") + ":", SUB_HEADER_COLOUR).setDropShadow(true);

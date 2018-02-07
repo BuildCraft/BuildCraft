@@ -13,17 +13,17 @@ import net.minecraft.item.ItemStack;
 
 public class BCFactoryRecipes {
     public static void init() {
-        if (BCBlocks.FACTORY_AUTOWORKBENCH_ITEM != null) {
+        if (BCBlocks.Factory.AUTOWORKBENCH_ITEM != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("gwg");
             builder.map('w', "craftingTableWood");
             builder.map('g', "gearStone");
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_AUTOWORKBENCH_ITEM));
+            builder.setResult(new ItemStack(BCBlocks.Factory.AUTOWORKBENCH_ITEM));
             builder.register();
             builder.registerRotated();
         }
 
-        if (BCBlocks.FACTORY_MINING_WELL != null) {
+        if (BCBlocks.Factory.MINING_WELL != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("iri");
             builder.add("igi");
@@ -32,21 +32,21 @@ public class BCFactoryRecipes {
             builder.map('r', "dustRedstone");
             builder.map('g', "gearIron");
             builder.map('p', Items.IRON_PICKAXE);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_MINING_WELL));
+            builder.setResult(new ItemStack(BCBlocks.Factory.MINING_WELL));
             builder.register();
         }
 
-        if (BCBlocks.FACTORY_TANK != null) {
+        if (BCBlocks.Factory.TANK != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("ggg");
             builder.add("g g");
             builder.add("ggg");
             builder.map('g', OredictionaryNames.GLASS_COLOURLESS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_TANK));
+            builder.setResult(new ItemStack(BCBlocks.Factory.TANK));
             builder.register();
         }
 
-        if (BCBlocks.FACTORY_PUMP != null) {
+        if (BCBlocks.Factory.PUMP != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("iri");
             builder.add("igi");
@@ -55,12 +55,12 @@ public class BCFactoryRecipes {
             builder.map('r', "dustRedstone");
             builder.map('g', "gearIron");
             builder.map('b', Items.BUCKET);
-            builder.map('t', BCBlocks.FACTORY_TANK, OredictionaryNames.GLASS_COLOURLESS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_PUMP));
+            builder.map('t', BCBlocks.Factory.TANK, OredictionaryNames.GLASS_COLOURLESS);
+            builder.setResult(new ItemStack(BCBlocks.Factory.PUMP));
             builder.register();
         }
 
-        if (BCBlocks.FACTORY_FLOOD_GATE != null) {
+        if (BCBlocks.Factory.FLOOD_GATE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("igi");
             builder.add("btb");
@@ -68,12 +68,12 @@ public class BCFactoryRecipes {
             builder.map('i', "ingotIron");
             builder.map('g', OredictionaryNames.GEAR_IRON);
             builder.map('b', Blocks.IRON_BARS);
-            builder.map('t', BCBlocks.FACTORY_TANK, OredictionaryNames.GLASS_COLOURLESS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_FLOOD_GATE));
+            builder.map('t', BCBlocks.Factory.TANK, OredictionaryNames.GLASS_COLOURLESS);
+            builder.setResult(new ItemStack(BCBlocks.Factory.FLOOD_GATE));
             builder.register();
         }
 
-        if (BCBlocks.FACTORY_CHUTE != null) {
+        if (BCBlocks.Factory.CHUTE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("ici");
             builder.add("igi");
@@ -81,54 +81,30 @@ public class BCFactoryRecipes {
             builder.map('i', "ingotIron");
             builder.map('g', OredictionaryNames.GEAR_STONE);
             builder.map('c', Blocks.CHEST);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_CHUTE));
+            builder.setResult(new ItemStack(BCBlocks.Factory.CHUTE));
             builder.register();
         }
 
-        if (BCBlocks.FACTORY_DISTILLER != null) {
+        if (BCBlocks.Factory.DISTILLER != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rtr");
             builder.add("tgt");
             builder.map('r', Blocks.REDSTONE_TORCH);
             builder.map('g', OredictionaryNames.GEAR_DIAMOND);
-            builder.map('t', BCBlocks.FACTORY_TANK, OredictionaryNames.GLASS_COLOURLESS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_DISTILLER));
+            builder.map('t', BCBlocks.Factory.TANK, OredictionaryNames.GLASS_COLOURLESS);
+            builder.setResult(new ItemStack(BCBlocks.Factory.DISTILLER));
             builder.register();
         }
 
-        if (BCBlocks.FACTORY_HEAT_EXCHANGE_START != null) {
-            RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.add("IGI");
-            builder.add("###");
-            builder.add("G#G");
-            builder.map('I', Items.IRON_INGOT);
-            builder.map('G', OredictionaryNames.GEAR_IRON);
-            builder.map('#', Blocks.GLASS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_HEAT_EXCHANGE_START));
-            builder.register();
-        }
-
-        if (BCBlocks.FACTORY_HEAT_EXCHANGE_MIDDLE != null) {
+        if (BCBlocks.Factory.HEAT_EXCHANGE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("IGI");
             builder.add("###");
             builder.add("IGI");
-            builder.map('I', Items.IRON_INGOT);
+            builder.map('I', "ingotIron");
             builder.map('G', OredictionaryNames.GEAR_IRON);
-            builder.map('#', Blocks.GLASS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_HEAT_EXCHANGE_MIDDLE));
-            builder.register();
-        }
-
-        if (BCBlocks.FACTORY_HEAT_EXCHANGE_END != null) {
-            RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.add("G#G");
-            builder.add("###");
-            builder.add("IGI");
-            builder.map('I', Items.IRON_INGOT);
-            builder.map('G', OredictionaryNames.GEAR_IRON);
-            builder.map('#', Blocks.GLASS);
-            builder.setResult(new ItemStack(BCBlocks.FACTORY_HEAT_EXCHANGE_END));
+            builder.map('#', "blockGlassColorless");
+            builder.setResult(new ItemStack(BCBlocks.Factory.HEAT_EXCHANGE));
             builder.register();
         }
     }

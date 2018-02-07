@@ -234,12 +234,12 @@ public class StackUtil {
      * @param base The stack to compare to.
      * @param comparison The stack to compare.
      * @return true if id, damage and NBT match. */
-    public static boolean isMatchingItem(final @Nonnull ItemStack base, final @Nonnull ItemStack comparison) {
+    public static boolean isMatchingItem(final @Nullable ItemStack base, final @Nullable ItemStack comparison) {
         return isMatchingItem(base, comparison, true, true);
     }
 
     /** This variant also checks damage for damaged items. */
-    public static boolean isEqualItem(final @Nonnull ItemStack base, final @Nonnull ItemStack comparison) {
+    public static boolean isEqualItem(final @Nullable ItemStack base, final @Nullable ItemStack comparison) {
         return isMatchingItem(base, comparison, false, true) && (isWildcard(base) || isWildcard(comparison) || base.getItemDamage() == comparison.getItemDamage());
     }
 

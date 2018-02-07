@@ -27,7 +27,7 @@ public class ElementTypeText extends ElementType {
     // centered: If true then the text will be centered around pos
 
     @Override
-    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
         IGuiPosition pos = resolvePosition(json, "pos", parent, ctx);

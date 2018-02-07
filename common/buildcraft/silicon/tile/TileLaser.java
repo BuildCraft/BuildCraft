@@ -50,6 +50,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
+import javax.annotation.Nonnull;
+
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
     private static final int TARGETING_RANGE = 6;
 
@@ -146,11 +148,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     private void updateLaser() {
         if (targetPos != null) {
             laserPos = new Vec3d(targetPos)
-                .addVector(
-                    (5 + world.rand.nextInt(6) + 0.5) / 16D,
-                    9 / 16D,
-                    (5 + world.rand.nextInt(6) + 0.5) / 16D
-                );
+                    .addVector(
+                            (5 + world.rand.nextInt(6) + 0.5) / 16D,
+                            9 / 16D,
+                            (5 + world.rand.nextInt(6) + 0.5) / 16D
+                    );
         } else {
             laserPos = null;
         }
@@ -207,7 +209,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
             avgPower.clear();
         }
 
-        if (!Objects.equals(previousTargetPos, targetPos)) {
+        if (!Objects.equals(previousTargetPos, targetPos) || true) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
     }
@@ -294,7 +296,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         }
     }
 
+    @Nonnull
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return new Box(this).extendToEncompass(targetPos).getBoundingBox();
     }
@@ -302,6 +306,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     @Override
     @SideOnly(Side.CLIENT)
     public IDetachedRenderer getDebugRenderer() {
-        return AdvDebuggerLaser.getForTile(this);
+        return new AdvDebuggerLaser(this);
     }
 }

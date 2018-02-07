@@ -6,6 +6,7 @@
 
 package buildcraft.lib.recipe;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -23,7 +24,19 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
      * 
      * @param stacks The list to iterate through. */
     public ChangingItemStack(List<ItemStack> stacks) {
-        super(stacks.toArray(new ItemStack[0]));
+        super(makeRecipeArray(stacks));
+    }
+
+
+    private static ItemStack[] makeRecipeArray(List<ItemStack> stacks) {
+        if (stacks.isEmpty()) {
+            BCLog.logger.error("Recipe returned 0 required stacks");
+            return new ItemStack[0];
+        } else {
+            ItemStack[] stackArray = new ItemStack[stacks.size()];
+            stacks.toArray(stackArray);
+            return stackArray;
+        }
     }
 
     /** Creates a changing item stack that iterates through all sub-item variants of the specified stack, if its

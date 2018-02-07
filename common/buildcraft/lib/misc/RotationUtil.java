@@ -12,7 +12,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
 public class RotationUtil {
-    @SuppressWarnings("SuspiciousNameCombination")
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
         switch (facing) {
             case DOWN:

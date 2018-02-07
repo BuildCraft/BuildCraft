@@ -16,6 +16,7 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersEventDist;
+import buildcraft.builders.client.render.AdvDebuggerQuarry;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.core.marker.VolumeSubCache;
@@ -23,6 +24,7 @@ import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.chunkload.IChunkLoadingTile;
+import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
@@ -82,7 +84,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final Set<BlockPos> firstCheckedPoses = new HashSet<>();
     private boolean firstChecked = false;
     private final Set<BlockPos> frameBreakBlockPoses =
-        new TreeSet<>(Comparator.<BlockPos> comparingDouble(pos::distanceSq));
+            new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(p -> getPos().distanceSq(p))));
     private final Set<BlockPos> framePlaceFramePoses = new HashSet<>();
     public Task currentTask = null;
     public Vec3d drillPos;
@@ -420,21 +422,19 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Nullable
     @Override
-    public Collection<ChunkPos> getChunksToLoad() {
+    public Set<ChunkPos> getChunksToLoad() {
         if (!miningBox.isInitialized()) {
             return null;
         }
-        ArrayList<ChunkPos> list = new ArrayList<>();
-        int minX = miningBox.min().getX() >> 4;
-        int minZ = miningBox.min().getZ() >> 4;
-        int maxX = miningBox.max().getX() >> 4;
-        int maxZ = miningBox.max().getZ() >> 4;
-        for (int x = minX; x < maxX; x++) {
-            for (int z = minZ; z < maxZ; z++) {
-                list.add(new ChunkPos(x, z));
+        Set<ChunkPos> chunkPoses = new HashSet<>();
+        ChunkPos minChunkPos = new ChunkPos(frameBox.min());
+        ChunkPos maxChunkPos = new ChunkPos(frameBox.max());
+        for (int x = minChunkPos.chunkXPos; x <= maxChunkPos.chunkXPos; x++) {
+            for (int z = minChunkPos.chunkZPos; z <= maxChunkPos.chunkZPos; z++) {
+                chunkPoses.add(new ChunkPos(x, z));
             }
         }
-        return list;
+        return chunkPoses;
     }
 
     private void updatePoses() {
@@ -448,6 +448,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         //IBlockState state = getWorld().getBlockState(pos);
         if (frameBox.isInitialized()) {
             List<BlockPos> blocksInArea = frameBox.getBlocksInArea();
+            blocksInArea.sort(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(pos::distanceSq)));
             frameBoxPosesCount = blocksInArea.size();
             toCheck.addAll(blocksInArea);
             framePoses.addAll(getFramePositions());
@@ -690,6 +691,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add(" - min = " + miningBox.min());
         left.add(" - max = " + miningBox.max());
 
+        left.add("firstCheckedPoses = " + firstCheckedPoses.size());
+        left.add("frameBoxPosesCount = " + frameBoxPosesCount);
+
         BoxIterator iter = boxIterator;
         left.add("current = " + (iter == null ? "null" : iter.getCurrent()));
 
@@ -705,6 +709,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("drill = " + drillPos);
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -715,6 +720,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public DetachedRenderer.IDetachedRenderer getDebugRenderer() {
+        return new AdvDebuggerQuarry(this);
     }
 
     private enum EnumTaskType {
@@ -865,6 +876,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 } else {
                     world.destroyBlock(breakPos, false);
                 }
+                check(breakPos);
                 return true;
             } else {
                 return false;
