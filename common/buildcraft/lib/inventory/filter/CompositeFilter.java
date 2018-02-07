@@ -7,10 +7,14 @@
 package buildcraft.lib.inventory.filter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
+
+import java.util.List;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class CompositeFilter implements IStackFilter {
@@ -21,8 +25,17 @@ public class CompositeFilter implements IStackFilter {
         filters = iFilters;
     }
 
+    @Nonnull
     @Override
-    public boolean matches(@Nonnull ItemStack stack) {
+    public List<ItemStack> getExamples() {
+        List<ItemStack> stacks = Lists.newArrayList();
+        for (IStackFilter filter : filters)
+            stacks.addAll(filter.getExamples());
+        return stacks;
+    }
+
+    @Override
+    public boolean matches(@Nullable ItemStack stack) {
         for (IStackFilter f : filters) {
             if (f.matches(stack)) {
                 return true;

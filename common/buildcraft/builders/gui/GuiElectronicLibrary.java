@@ -40,12 +40,12 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        IGuiPosition buttonPos = rootElement.offset(174, 109);
-        delButton = new GuiButtonDrawable(this, "del", buttonPos, StandardSpriteButtons.EIGHTH_BUTTON_DRAWABLE);
+        IGuiPosition buttonPos = mainGui.rootElement.offset(174, 109);
+        delButton = new GuiButtonDrawable(mainGui, "del", buttonPos, StandardSpriteButtons.EIGHTH_BUTTON_DRAWABLE);
         delButton.enabled = false;
         delButton.registerListener(this::onDelButtonClick);
-        shownElements.add(delButton);
-        shownElements.add(delButton.createTextElement(LocaleUtil.localize("gui.del")));
+        mainGui.shownElements.add(delButton);
+        mainGui.shownElements.add(delButton.createTextElement(LocaleUtil.localize("gui.del")));
     }
 
     private void onDelButtonClick(IButtonClickEventTrigger button, int buttonKey) {
@@ -60,7 +60,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
         drawProgress(RECT_PROGRESS_DOWN, ICON_PROGRESS_DOWN, -container.tile.deltaProgressDown.getDynamic(partialTicks), 1);
         drawProgress(RECT_PROGRESS_UP, ICON_PROGRESS_UP, container.tile.deltaProgressUp.getDynamic(partialTicks), 1);
         iterateSnapshots((i, rect, key) -> {
@@ -82,7 +82,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
 
     private void iterateSnapshots(ISnapshotIterator iterator) {
         List<Snapshot.Key> list = getSnapshots().getList();
-        GuiRectangle rect = new GuiRectangle(rootElement.getX() + 8, rootElement.getY() + 22, 154, 8);
+        GuiRectangle rect = new GuiRectangle(mainGui.rootElement.getX() + 8, mainGui.rootElement.getY() + 22, 154, 8);
         for (int i = 0; i < list.size(); i++) {
             iterator.call(i, rect, list.get(i));
             rect = rect.offset(0, 8);
@@ -93,7 +93,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         AtomicBoolean found = new AtomicBoolean(false);
         iterateSnapshots((i, rect, key) -> {
-            if (rect.contains(mouse)) {
+            if (rect.contains(mainGui.mouse)) {
                 container.sendSelectedToServer(key);
                 delButton.enabled = true;
                 found.set(true);

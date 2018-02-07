@@ -8,10 +8,11 @@ package buildcraft.lib.gui.help;
 
 import java.util.List;
 
+import buildcraft.lib.gui.BuildCraftGui;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainerHelp;
 import buildcraft.lib.gui.elem.GuiElementText;
@@ -40,11 +41,11 @@ public class ElementHelpInfo {
 
     @SideOnly(Side.CLIENT)
     public void addGuiElements(GuiElementContainerHelp container) {
-        GuiBC8<?> gui = container.gui;
+        BuildCraftGui gui = container.gui;
         int y = 20;
         for (String key : localeKeys) {
             if (key == null) {
-                y += container.gui.getFontRenderer().FONT_HEIGHT + 5;
+                y += Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 5;
                 continue;
             }
             String localized = LocaleUtil.localize(key);

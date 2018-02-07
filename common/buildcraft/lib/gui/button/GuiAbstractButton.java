@@ -11,16 +11,17 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import net.minecraft.client.gui.FontRenderer;
 
 /** If this only has 1 subclass (GuiButtonDrawable), then why not merge them? */
-public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementSimple<G>
+public abstract class GuiAbstractButton extends GuiElementSimple
     implements IButtonClickEventTrigger, IInteractionElement {
     private final List<IButtonClickEventListener> listeners = new ArrayList<>();
 
@@ -29,7 +30,7 @@ public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementS
     private IButtonBehaviour behaviour = IButtonBehaviour.DEFAULT;
     private ToolTip toolTip;
 
-    public GuiAbstractButton(G gui, String id, IGuiArea area) {
+    public GuiAbstractButton(BuildCraftGui gui, String id, IGuiArea area) {
         super(gui, area);
         this.id = id;
     }
@@ -39,8 +40,9 @@ public abstract class GuiAbstractButton<G extends GuiBC8<?>> extends GuiElementS
     }
 
     public GuiElementText createTextElement(Supplier<String> text) {
-        DoubleSupplier x = () -> -gui.getFontRenderer().getStringWidth(text.get()) / 2;
-        DoubleSupplier y = () -> -gui.getFontRenderer().FONT_HEIGHT / 2;
+        FontRenderer fr = gui.mc.fontRendererObj;
+        DoubleSupplier x = () -> -fr.getStringWidth(text.get()) / 2;
+        DoubleSupplier y = () -> -fr.FONT_HEIGHT / 2;
         IGuiPosition pos = getCenter().offset(x, y);
         return new GuiElementText(gui, pos, text, this::getColourForText);
     }

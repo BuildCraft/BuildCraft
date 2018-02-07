@@ -8,7 +8,7 @@ package buildcraft.silicon.tile;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -44,8 +44,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nullable ItemStack before,
+                                @Nullable ItemStack after) {
         if (!ItemStack.areItemStacksEqual(before, after)) {
             crafting.onInventoryChange(handler);
         }
@@ -87,6 +87,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
         }
     }
 
+    @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {

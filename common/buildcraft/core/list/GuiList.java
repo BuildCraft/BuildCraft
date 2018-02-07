@@ -6,11 +6,25 @@
 
 package buildcraft.core.list;
 
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 import buildcraft.api.items.BCStackHelper;
+import com.google.common.collect.Lists;
+import org.lwjgl.input.Keyboard;
+
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.lists.ListMatchHandler;
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemList_BC8;
-import buildcraft.core.list.ContainerList.WidgetListSlot;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -20,24 +34,17 @@ import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
-import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemList_BC8;
+import buildcraft.core.list.ContainerList.WidgetListSlot;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
+    private static final ResourceLocation TEXTURE_BASE =
+            new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
     private static final int SIZE_X = 176, SIZE_Y = 191;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_HIGHLIGHT = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 16);
@@ -63,10 +70,14 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                 final WidgetListSlot listSlot = arr[slot];
                 GuiRectangle rectangle = new GuiRectangle(8 + slot * 18, 32 + line * 34, 16, 16);
 
-                shownElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rectangle.offset(rootElement)) {
+                IGuiArea phantomSlotArea = rectangle.offset(mainGui.rootElement);
+                mainGui.shownElements.add(listSlot.new GuiElementPhantomSlot(mainGui, phantomSlotArea) {
                     @Override
                     protected boolean shouldDrawHighlight() {
-                        return listSlot.slotIndex == 0 || !gui.container.lines[listSlot.lineIndex].isOneStackMode();
+                        if (listSlot.slotIndex == 0) {
+                            return true;
+                        }
+                        return !GuiList.this.container.lines[listSlot.lineIndex].isOneStackMode();
                     }
 
                     @Override
@@ -82,7 +93,8 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         if (shouldDrawHighlight()) {
                             return super.getStack();
                         } else {
-                            List<ItemStack> data = gui.getExamplesList(listSlot.lineIndex, container.lines[listSlot.lineIndex].getSortingType());
+                            List<ItemStack> data = GuiList.this.getExamplesList(listSlot.lineIndex,
+                                    container.lines[listSlot.lineIndex].getSortingType());
                             if (data.size() >= listSlot.slotIndex) {
                                 return data.get(listSlot.slotIndex - 1);
                             } else {
@@ -109,23 +121,26 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
-            GuiImageButton buttonPrecise = new GuiImageButton(this, bOff, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
+            GuiImageButton buttonPrecise =
+                    new GuiImageButton(mainGui, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
             buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt"));
             buttonPrecise.setBehaviour(IButtonBehaviour.TOGGLE);
-            shownElements.add(buttonPrecise);
+            mainGui.shownElements.add(buttonPrecise);
 
-            GuiImageButton buttonType = new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
+            GuiImageButton buttonType =
+                    new GuiImageButton(mainGui, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
             buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata"));
             buttonType.setBehaviour(IButtonBehaviour.TOGGLE);
-            shownElements.add(buttonType);
+            mainGui.shownElements.add(buttonType);
 
-            GuiImageButton buttonMaterial = new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
+            GuiImageButton buttonMaterial =
+                    new GuiImageButton(mainGui, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
             buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict"));
             buttonMaterial.setBehaviour(IButtonBehaviour.TOGGLE);
-            shownElements.add(buttonMaterial);
+            mainGui.shownElements.add(buttonMaterial);
         }
 
-        for (IGuiElement elem : shownElements) {
+        for (IGuiElement elem : mainGui.shownElements) {
             if (elem instanceof GuiImageButton) {
                 GuiImageButton b = (GuiImageButton) elem;
                 int id = Integer.parseInt(b.id);
@@ -147,7 +162,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         for (int i = 0; i < 2; i++) {
             if (container.lines[i].isOneStackMode()) {
@@ -212,10 +227,8 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private List<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
-        Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.computeIfAbsent(
-            lineId,
-            k -> new EnumMap<>(ListMatchHandler.Type.class)
-        );
+        Map<ListMatchHandler.Type, List<ItemStack>> exampleList =
+                exampleCache.computeIfAbsent(lineId, k -> new EnumMap<>(ListMatchHandler.Type.class));
 
         if (!exampleList.containsKey(type)) {
             List<ItemStack> examples = container.lines[lineId].getExamples();

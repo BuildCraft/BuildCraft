@@ -172,7 +172,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         drawProgress(
             RECT_PROGRESS_INPUT,

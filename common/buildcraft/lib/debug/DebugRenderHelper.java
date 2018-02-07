@@ -12,6 +12,7 @@ import javax.vecmath.Tuple3f;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.client.model.ModelLoader;
@@ -53,6 +54,30 @@ public enum DebugRenderHelper implements IDetachedRenderer {
         IDetachedRenderer renderer = target.getDebugRenderer();
         if (renderer != null) {
             renderer.render(player, partialTicks);
+        }
+    }
+
+    public static void renderAABB(VertexBuffer bb, AxisAlignedBB aabb, int colour) {
+        bb.setTranslation(0, 0, 0);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            MutableQuad quad = ModelUtil.createFace(
+                    face,
+                    new Point3f(
+                            (float) aabb.getCenter().xCoord,
+                            (float) aabb.getCenter().yCoord,
+                            (float) aabb.getCenter().zCoord
+                    ),
+                    new Point3f(
+                            (float) (aabb.maxX - aabb.minX) / 2,
+                            (float) (aabb.maxY - aabb.minY) / 2,
+                            (float) (aabb.maxZ - aabb.minZ) / 2
+                    ),
+                    null
+            );
+            quad.lightf(1, 1);
+            quad.texFromSprite(ModelLoader.White.INSTANCE);
+            quad.colouri(colour);
+            quad.render(bb);
         }
     }
 

@@ -3,6 +3,9 @@ package buildcraft.lib.gui.statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import buildcraft.lib.gui.BuildCraftGui;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.statements.IStatement;
@@ -13,12 +16,11 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.FullStatement;
 
-public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
+public class GuiElementStatementParam extends GuiElementSimple
     implements IInteractionElement, IReference<IStatementParameter> {
 
     private final IStatementContainer container;
@@ -26,8 +28,8 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
     private final int paramIndex;
     private final boolean draw;
 
-    public GuiElementStatementParam(GuiJson<?> gui, IGuiArea element, IStatementContainer container,
-        FullStatement<?> ref, int index, boolean draw) {
+    public GuiElementStatementParam(BuildCraftGui gui, IGuiArea element, IStatementContainer container,
+                                    FullStatement<?> ref, int index, boolean draw) {
         super(gui, element);
         this.container = container;
         this.ref = ref;
@@ -94,8 +96,16 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                 return;
             }
             StatementMouseClick clickEvent = new StatementMouseClick(0, false);
-            ItemStack stack = gui.container.player.inventory.getItemStack();
-            IStatementParameter pNew = param.onClick(container, ref.get(), stack, clickEvent);
+
+            final ItemStack heldStack;
+            EntityPlayer currentPlayer = Minecraft.getMinecraft().player;
+            if (currentPlayer == null) {
+                heldStack = null;
+            } else {
+                heldStack = currentPlayer.inventory.getItemStack();
+            }
+            IStatementParameter pNew = param.onClick(container, ref.get(), heldStack, clickEvent);
+
             if (pNew != null) {
                 set(pNew);
             } else {
@@ -109,7 +119,7 @@ public class GuiElementStatementParam extends GuiElementSimple<GuiJson<?>>
                     }
                     possible = list.toArray(new IStatementParameter[0]);
                 }
-                gui.currentMenu = GuiElementStatementVariant.create(this, this, possible);
+                gui.currentMenu = GuiElementStatementVariant.create(gui, this, this, possible);
             }
         }
     }

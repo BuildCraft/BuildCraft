@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import buildcraft.lib.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
@@ -22,11 +23,6 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.IContainingElement;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.IInteractionElement;
-import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -53,7 +49,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public static final int CLOSED_WIDTH = 2 + 16 + LEDGER_GAP;
     public static final int CLOSED_HEIGHT = LEDGER_GAP + 16 + LEDGER_GAP;
 
-    public final GuiBC8<?> gui;
+    public final BuildCraftGui gui;
     public final int colour;
     public final boolean expandPositive;
 
@@ -82,7 +78,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     @Nullable
     private IVariableNodeBoolean isOpenProperty;
 
-    public Ledger_Neptune(GuiBC8<?> gui, int colour, boolean expandPositive) {
+    public Ledger_Neptune(BuildCraftGui gui, int colour, boolean expandPositive) {
         this.gui = gui;
         this.colour = colour;
         this.expandPositive = expandPositive;

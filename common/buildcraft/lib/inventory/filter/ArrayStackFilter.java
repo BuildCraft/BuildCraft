@@ -10,7 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.items.BCStackHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,7 +32,8 @@ public class ArrayStackFilter implements IStackFilter {
     }
 
     @Override
-    public boolean matches(@Nonnull ItemStack stack) {
+    public boolean matches(@Nullable ItemStack stack) {
+        if (BCStackHelper.isEmpty(stack)) return false;
         if (stacks.size() == 0 || !hasFilter()) {
             return true;
         }
@@ -74,7 +77,7 @@ public class ArrayStackFilter implements IStackFilter {
         return new StackDefinition(new ArrayStackFilter(stacks), count);
     }
 
-    public static StackDefinition definition(ItemStack... stacks) {
+    public static StackDefinition definition(@Nonnull ItemStack... stacks) {
         return definition(1, stacks);
     }
 

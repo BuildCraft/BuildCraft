@@ -6,11 +6,7 @@
 
 package buildcraft.lib.chunkload;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 
@@ -67,7 +63,7 @@ public class ChunkLoaderManager {
             loadChunksForTile(tile);
         }
         ForgeChunkManager.Ticket ticket = TICKETS.get(tile);
-        Collection<ChunkPos> chunks = getChunksToLoad(tile);
+        Set<ChunkPos> chunks = getChunksToLoad(tile);
         for (ChunkPos pos : ticket.getChunkList()) {
             if (!chunks.contains(pos)) {
                 ForgeChunkManager.unforceChunk(ticket, pos);
@@ -81,16 +77,13 @@ public class ChunkLoaderManager {
         }
     }
 
-    private static <T extends TileEntity & IChunkLoadingTile> Collection<ChunkPos> getChunksToLoad(@Nonnull T tile) {
-        Collection<ChunkPos> chunks = tile.getChunksToLoad();
-        if (chunks == null) {
-            chunks = new ArrayList<>();
+    public static <T extends TileEntity & IChunkLoadingTile> Set<ChunkPos> getChunksToLoad(@Nonnull T tile) {
+        Set<ChunkPos> chunkPoses = tile.getChunksToLoad();
+        if (chunkPoses == null) {
+            chunkPoses = new HashSet<>();
         }
-        ChunkPos pos = new ChunkPos(tile.getPos());
-        if (!chunks.contains(pos)) {
-            chunks.add(pos);
-        }
-        return chunks;
+        chunkPoses.add(new ChunkPos(tile.getPos()));
+        return chunkPoses;
     }
 
     public static <T extends TileEntity & IChunkLoadingTile> void rebindTickets(List<ForgeChunkManager.Ticket> tickets,

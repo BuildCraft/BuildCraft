@@ -2,7 +2,7 @@ package buildcraft.lib.gui.elem;
 
 import java.util.List;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
@@ -12,7 +12,7 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
     private double minX, minY;
     private double maxX, maxY;
 
-    public GuiElementContainerResizing(GuiBC8<?> gui, IGuiPosition childRoot) {
+    public GuiElementContainerResizing(BuildCraftGui gui, IGuiPosition childRoot) {
         super(gui);
         this.childRoot = childRoot;
         minX = maxX = childRoot.getX();

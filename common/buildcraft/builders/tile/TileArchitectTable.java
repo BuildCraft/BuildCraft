@@ -53,6 +53,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
 
@@ -372,7 +373,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
 
     // Rendering
 
-    @SuppressWarnings("NullableProblems")
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

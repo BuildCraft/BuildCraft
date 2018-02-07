@@ -14,7 +14,7 @@ public class TypedMapDirect<V> implements TypedMap<V> {
     @Override
     @Nullable
     public <T extends V> T get(Class<T> clazz) {
-        T val = (T) internalMap.get(clazz);
+        T val = clazz.cast(internalMap.get(clazz));
         if (val != null) {
             return val;
         }
@@ -22,7 +22,7 @@ public class TypedMapDirect<V> implements TypedMap<V> {
     }
 
     @Override
-    public <T extends V> void put(T value) {
+    public void put(V value) {
         internalMap.put(value.getClass(), value);
     }
 
@@ -32,7 +32,7 @@ public class TypedMapDirect<V> implements TypedMap<V> {
     }
 
     @Override
-    public <T extends V> void remove(T value) {
+    public void remove(V value) {
         internalMap.remove(value.getClass(), value);
     }
 }

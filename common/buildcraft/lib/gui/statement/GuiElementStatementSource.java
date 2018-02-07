@@ -9,11 +9,11 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 import buildcraft.api.statements.IStatementParameter;
 
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.statement.StatementContext;
@@ -21,14 +21,14 @@ import buildcraft.lib.statement.StatementContext.StatementGroup;
 import buildcraft.lib.statement.StatementWrapper;
 
 public class GuiElementStatementSource<S extends IGuiSlot> implements IInteractionElement {
-    public final GuiJson<?> gui;
+    public final BuildCraftGui gui;
     public final IGuiPosition position;
     public final StatementContext<S> ctx;
     private final boolean left;
 
     public final GuiElementStatementDrag dragger;
 
-    public GuiElementStatementSource(GuiJson<?> gui, boolean left, StatementContext<S> ctx) {
+    public GuiElementStatementSource(BuildCraftGui gui, boolean left, StatementContext<S> ctx) {
         this.gui = gui;
         this.left = left;
         this.ctx = ctx;

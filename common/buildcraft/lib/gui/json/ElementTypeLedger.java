@@ -17,7 +17,7 @@ public class ElementTypeLedger extends ElementType {
     }
 
     @Override
-    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
         inheritProperty(json, "color", "colour");
@@ -34,7 +34,7 @@ public class ElementTypeLedger extends ElementType {
         addChildren(gui, ledger.positionLedgerIconStart, info, json, "closed", ledger.getClosedElements()::add);
 
         ledger.calculateMaxSize();
-        ResourceLocation def = gui.guiDefinition;
+        ResourceLocation def = gui.jsonGuiDefinition;
         def = new ResourceLocation(def.getResourceDomain(), def.getResourcePath().replace(".json", ""));
         ledger.setOpenProperty(GuiConfigManager.getOrAddBoolean(def, json.name + ".is_open", false));
         return ledger;

@@ -10,17 +10,17 @@ import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+import buildcraft.lib.gui.BuildCraftGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
 import buildcraft.lib.expression.node.value.NodeConstantObject;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.RenderUtil;
 
-public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
+public class GuiElementText extends GuiElementSimple {
     public boolean dropShadow = false;
     public boolean foreground = false;
     public boolean centered = false;
@@ -28,17 +28,17 @@ public class GuiElementText extends GuiElementSimple<GuiBC8<?>> {
     private final Supplier<String> text;
     private final IntSupplier colour;
 
-    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
+    public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
         super(gui, GuiRectangle.ZERO.offset(parent));
         this.text = text;
         this.colour = colour;
     }
 
-    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, Supplier<String> text, int colour) {
+    public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, int colour) {
         this(gui, parent, text, () -> colour);
     }
 
-    public GuiElementText(GuiBC8<?> gui, IGuiPosition parent, String text, int colour) {
+    public GuiElementText(BuildCraftGui gui, IGuiPosition parent, String text, int colour) {
         this(gui, parent, new NodeConstantObject<>(String.class, text), () -> colour);
     }
 

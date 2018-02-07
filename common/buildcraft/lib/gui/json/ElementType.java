@@ -36,13 +36,13 @@ public abstract class ElementType {
         this.name = name;
     }
 
-    protected abstract IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info,
+    protected abstract IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info,
         JsonGuiElement json);
 
-    public final IGuiElement deserialize(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public final IGuiElement deserialize(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         IGuiElement element = deserialize0(gui, parent, info, json);
-        if (element instanceof GuiElementSimple<?>) {
-            ((GuiElementSimple<?>) element).name = json.fullName;
+        if (element instanceof GuiElementSimple) {
+            ((GuiElementSimple) element).name = json.fullName;
         }
         gui.context.putConstant(json.fullName + ".pos", IGuiPosition.class, element);
         gui.context.putConstant(json.fullName + ".area", IGuiArea.class, element);
@@ -77,7 +77,7 @@ public abstract class ElementType {
         return element;
     }
 
-    protected static void addChildren(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json,
+    protected static void addChildren(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json,
         String subName, Consumer<IGuiElement> to) {
         List<JsonGuiElement> children = json.getChildren(subName);
         for (JsonGuiElement child : children) {
@@ -93,7 +93,7 @@ public abstract class ElementType {
         }
     }
 
-    protected static void addType(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json,
+    protected static void addType(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json,
         String subName, Consumer<IGuiElement> to, ElementType type) {
         JsonGuiElement ch = json.getChildElement(subName, json.json.get(subName));
         if (!ch.properties.containsKey("area") && !ch.properties.containsKey("area[0]")

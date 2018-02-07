@@ -36,6 +36,8 @@ import buildcraft.core.BCCoreConfig;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 
+import javax.annotation.Nonnull;
+
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("marker_volume");
     public static final int NET_SIGNALS_ON = IDS.allocId("SIGNALS_ON");
@@ -119,6 +121,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
         }
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

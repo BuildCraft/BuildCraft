@@ -33,7 +33,7 @@ import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 public class BCSiliconRecipes {
     public static void init() {
-        if (BCBlocks.SILICON_LASER != null) {
+        if (BCBlocks.Silicon.LASER != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("rro");
             builder.add("rdd");
@@ -41,12 +41,12 @@ public class BCSiliconRecipes {
             builder.map('r', "dustRedstone");
             builder.map('o', Blocks.OBSIDIAN);
             builder.map('d', "gemDiamond");
-            builder.setResult(new ItemStack(BCBlocks.SILICON_LASER));
+            builder.setResult(new ItemStack(BCBlocks.Silicon.LASER));
             builder.register();
             builder.registerRotated();
         }
 
-        if (BCItems.SILICON_REDSTONE_CHIPSET != null) {
+        if (BCItems.Silicon.REDSTONE_CHIPSET != null) {
             addChipsetAssembly(1, null, EnumRedstoneChipset.RED);
             addChipsetAssembly(2, "ingotIron", EnumRedstoneChipset.IRON);
             addChipsetAssembly(4, "ingotGold", EnumRedstoneChipset.GOLD);
@@ -54,9 +54,9 @@ public class BCSiliconRecipes {
             addChipsetAssembly(8, "gemDiamond", EnumRedstoneChipset.DIAMOND);
         }
 
-        if (BCBlocks.SILICON_TABLE_ASSEMBLY != null) {
+        if (BCBlocks.Silicon.ASSEMBLY_TABLE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_ASSEMBLY));
+            builder.setResult(new ItemStack(BCBlocks.Silicon.ASSEMBLY_TABLE));
             builder.add("OdO");
             builder.add("OrO");
             builder.add("OgO");
@@ -67,9 +67,9 @@ public class BCSiliconRecipes {
             builder.register();
         }
 
-        if (BCBlocks.SILICON_TABLE_ADV_CRAFT != null) {
+        if (BCBlocks.Silicon.ADVANCED_CRAFTING_TABLE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_ADV_CRAFT));
+            builder.setResult(new ItemStack(BCBlocks.Silicon.ADVANCED_CRAFTING_TABLE));
             builder.add("OtO");
             builder.add("OcO");
             builder.add("OrO");
@@ -80,9 +80,9 @@ public class BCSiliconRecipes {
             builder.register();
         }
 
-        if (BCBlocks.SILICON_TABLE_INTEGRATION != null) {
+        if (BCBlocks.Silicon.INTEGRATION_TABLE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_INTEGRATION));
+            builder.setResult(new ItemStack(BCBlocks.Silicon.INTEGRATION_TABLE));
             builder.add("OiO");
             builder.add("OrO");
             builder.add("OgO");
@@ -93,9 +93,9 @@ public class BCSiliconRecipes {
             builder.register();
         }
 
-        if (BCBlocks.SILICON_TABLE_CHARGING != null) {
+        if (BCBlocks.Silicon.CHARGING_TABLE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_CHARGING));
+            builder.setResult(new ItemStack(BCBlocks.Silicon.CHARGING_TABLE));
             builder.add("OdO");
             builder.add("OrO");
             builder.add("OgO");
@@ -106,9 +106,9 @@ public class BCSiliconRecipes {
             builder.register();
         }
 
-        if (BCBlocks.SILICON_TABLE_PROGRAMMING != null) {
+        if (BCBlocks.Silicon.PROGRAMMING_TABLE != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
-            builder.setResult(new ItemStack(BCBlocks.SILICON_TABLE_PROGRAMMING));
+            builder.setResult(new ItemStack(BCBlocks.Silicon.PROGRAMMING_TABLE));
             builder.add("OeO");
             builder.add("OrO");
             builder.add("OgO");

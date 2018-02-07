@@ -16,7 +16,6 @@ import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -26,7 +25,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 public class TileIntegrationTable extends TileLaserTableBase {
     public final ItemHandlerSimple invTarget = itemManager.addInvHandler(
@@ -51,7 +49,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     private boolean extract(StackDefinition item, ImmutableList<StackDefinition> items, boolean simulate) {
         ItemStack targetStack = invTarget.getStackInSlot(0);
-        if (targetStack == null) return false;
+        if (BCStackHelper.isEmpty(targetStack)) return false;
         if (!StackUtil.contains(item, targetStack)) return false;
         if (!extract(invToIntegrate, items, simulate, true)) return false;
         if (!simulate) {
@@ -63,18 +61,25 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     private boolean isSpaceEnough(ItemStack stack) {
         ItemStack output = invResult.getStackInSlot(0);
-        return !BCStackHelper.isEmpty(output) || (StackUtil.canMerge(stack, output) && stack.stackSize + output.stackSize <= stack.getMaxStackSize());
+        return BCStackHelper.isEmpty(output) || (StackUtil.canMerge(stack, output) && stack.stackSize + output.stackSize <= stack.getMaxStackSize());
     }
 
     private void updateRecipe() {
-        if (recipe != null && extract(recipe.target, recipe.toIntegrate, true)) return;
-        if (!BCStackHelper.isEmpty(invTarget.getStackInSlot(0)))
-            recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(Objects.requireNonNull(invTarget.getStackInSlot(0)), Lists.newArrayList(invToIntegrate.stacks));
+        if (recipe != null) {
+            ItemStack output = getOutput();
+            if (!BCStackHelper.isEmpty(output) && extract(recipe.target, recipe.toIntegrate, true))
+                return;
+        }
+        recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks);
+    }
+
+    public ItemStack getOutput() {
+        return recipe != null ? recipe.output : null;
     }
 
     @Override
     public long getTarget() {
-        return recipe != null && isSpaceEnough(recipe.output) ? recipe.requiredMicroJoules : 0;
+        return recipe != null && isSpaceEnough(getOutput()) ? recipe.requiredMicroJoules : 0;
     }
 
     @Override
@@ -88,13 +93,14 @@ public class TileIntegrationTable extends TileLaserTableBase {
         updateRecipe();
 
         if (getTarget() > 0 && power >= getTarget()) {
+            ItemStack output = getOutput();
             extract(recipe.target, recipe.toIntegrate, false);
             ItemStack result = invResult.getStackInSlot(0);
-            if (result != null) {
+            if (!BCStackHelper.isEmpty(result)) {
                 result = result.copy();
-                result.stackSize += recipe.output.stackSize;
+                result.stackSize += output.stackSize;
             } else {
-                result = recipe.output.copy();
+                result = output.copy();
             }
             invResult.setStackInSlot(0, result);
             power -= getTarget();

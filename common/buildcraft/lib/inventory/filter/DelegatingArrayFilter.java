@@ -23,6 +23,12 @@ public class DelegatingArrayFilter implements IStackFilter {
         this.stacks = stacks;
     }
 
+    @Nonnull
+    @Override
+    public List<ItemStack> getExamples() {
+        return stacks;
+    }
+
     @Override
     public boolean matches(@Nonnull ItemStack stack) {
         for (ItemStack possible : stacks) {

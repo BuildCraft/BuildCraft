@@ -33,48 +33,42 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class BCCoreRecipes {
     public static void init() {
-        if (BCItems.CORE_WRENCH != null) {
-            ItemStack out = new ItemStack(BCItems.CORE_WRENCH);
+        if (BCItems.Core.WRENCH != null) {
+            ItemStack out = new ItemStack(BCItems.Core.WRENCH);
             Object[] in = { "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone" };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCItems.CORE_DIAMOND_SHARD != null) {
-            ItemStack out = new ItemStack(BCItems.CORE_DIAMOND_SHARD, 4);
-            Object[] in = { "D", 'D', Items.DIAMOND };
-            GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
-        }
-
-        if (BCBlocks.CORE_MARKER_VOLUME != null) {
-            ItemStack out = new ItemStack(BCBlocks.CORE_MARKER_VOLUME);
+        if (BCBlocks.Core.MARKER_VOLUME != null) {
+            ItemStack out = new ItemStack(BCBlocks.Core.MARKER_VOLUME);
             ItemStack lapisLazuli = new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage());
             Object[] in = { "l", "t", 'l', lapisLazuli, 't', Blocks.REDSTONE_TORCH };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCBlocks.CORE_MARKER_PATH != null) {
-            ItemStack out = new ItemStack(BCBlocks.CORE_MARKER_PATH);
+        if (BCBlocks.Core.MARKER_PATH != null) {
+            ItemStack out = new ItemStack(BCBlocks.Core.MARKER_PATH);
             ItemStack cactusGreen = new ItemStack(Items.DYE, 1, EnumDyeColor.GREEN.getDyeDamage());
             Object[] in = { "g", "t", 'g', cactusGreen, 't', Blocks.REDSTONE_TORCH };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCItems.CORE_MARKER_CONNECTOR != null) {
-            ItemStack out = new ItemStack(BCItems.CORE_MARKER_CONNECTOR);
+        if (BCItems.Core.MARKER_CONNECTOR != null) {
+            ItemStack out = new ItemStack(BCItems.Core.MARKER_CONNECTOR);
             Item wrench;
-            if (BCItems.CORE_WRENCH != null) wrench = BCItems.CORE_WRENCH;
+            if (BCItems.Core.WRENCH != null) wrench = BCItems.Core.WRENCH;
             else wrench = Items.IRON_INGOT;
 
             Item gear;
-            if (BCItems.CORE_GEAR_WOOD != null) gear = BCItems.CORE_GEAR_WOOD;
+            if (BCItems.Core.GEAR_WOOD != null) gear = BCItems.Core.GEAR_WOOD;
             else gear = Items.STICK;
 
             Object[] in = { "r", "g", "w", 'r', Blocks.REDSTONE_TORCH, 'g', gear, 'w', wrench };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCItems.CORE_PAINTBRUSH != null) {
-            ItemStack cleanPaintbrush = new ItemStack(BCItems.CORE_PAINTBRUSH);
+        if (BCItems.Core.PAINTBRUSH != null) {
+            ItemStack cleanPaintbrush = new ItemStack(BCItems.Core.PAINTBRUSH);
             Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL,
                     1, 0), 'i', Items.STRING };
             GameRegistry.addRecipe(new ShapedOreRecipe(cleanPaintbrush, input));
@@ -86,8 +80,8 @@ public class BCCoreRecipes {
             }
         }
 
-        if (BCItems.CORE_LIST != null) {
-            if (BCBlocks.SILICON_TABLE_ASSEMBLY != null) {
+        if (BCItems.Core.LIST != null) {
+            if (BCBlocks.Silicon.ASSEMBLY_TABLE != null) {
                 long mjCost = 2_000 * MjAPI.MJ;
                 ImmutableSet<StackDefinition> required = ImmutableSet.of(//
                         ArrayStackFilter.definition(8, Items.PAPER),//
@@ -95,7 +89,7 @@ public class BCCoreRecipes {
                         OreStackFilter.definition("dustRedstone")//
                 );
                 BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("list", mjCost, required,
-                        new ItemStack(BCItems.CORE_LIST)));
+                        new ItemStack(BCItems.Core.LIST)));
             } else {
                 RecipeBuilderShaped recipe = new RecipeBuilderShaped();
                 recipe.add("pRp");
@@ -104,7 +98,7 @@ public class BCCoreRecipes {
                 recipe.map('p', Items.PAPER);
                 recipe.map('G', ColourUtil.getDyeName(EnumDyeColor.GREEN));
                 recipe.map('R', "dustRedstone");
-                recipe.setResult(new ItemStack(BCItems.CORE_LIST));
+                recipe.setResult(new ItemStack(BCItems.Core.LIST));
                 recipe.register();
             }
         }
@@ -139,12 +133,13 @@ public class BCCoreRecipes {
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(gear), arr));
         }
 
-        if (BCBlocks.CORE_DECORATED != null) {
+        if (BCBlocks.Core.DECORATED != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("sss");
             builder.add("scs");
             builder.add("sss");
 
+            /*
             if (BCItems.BUILDERS_SNAPSHOT != null) {
                 builder.map('s', "stone");
                 builder.map('c', new ItemStack(BCItems.BUILDERS_SNAPSHOT, 1, 2));
@@ -154,11 +149,11 @@ public class BCCoreRecipes {
                 builder.map('c', new ItemStack(BCItems.BUILDERS_SNAPSHOT, 1, 0));
                 builder.setResult(new ItemStack(BCBlocks.CORE_DECORATED, 16, EnumDecoratedBlock.TEMPLATE.ordinal()));
                 builder.register();
-            }
+            }*/
 
             builder.map('s', Blocks.OBSIDIAN);
             builder.map('c', Blocks.REDSTONE_BLOCK);
-            builder.setResult(new ItemStack(BCBlocks.CORE_DECORATED, 32, EnumDecoratedBlock.LASER_BACK.ordinal()));
+            builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 32, EnumDecoratedBlock.LASER_BACK.ordinal()));
             builder.register();
         }
     }

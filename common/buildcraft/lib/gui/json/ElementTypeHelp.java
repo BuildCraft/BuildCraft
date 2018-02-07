@@ -27,7 +27,7 @@ public class ElementTypeHelp extends ElementType {
     // - title: The name of the help element
 
     @Override
-    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
         String title = json.properties.get("title");
