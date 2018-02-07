@@ -6,21 +6,20 @@
 
 package buildcraft.lib.gui.widget;
 
-import java.io.IOException;
-import java.util.List;
-
-import buildcraft.lib.gui.*;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.util.List;
 
 public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte NET_CLICK = 0;

@@ -6,27 +6,25 @@
 
 package buildcraft.lib.gui.widget;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.misc.GuiUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.misc.GuiUtil;
-import buildcraft.lib.net.PacketBufferBC;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
 
 /** Defines a widget that represents a phantom slot. */
 public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
@@ -61,7 +59,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         if (clone) {
             if (container.player.capabilities.isCreativeMode) {
                 ItemStack get = getStack();
-                if (get != null && container.player.inventory.getItemStack() == null) {
+                if (!BCStackHelper.isEmpty(get) && BCStackHelper.isEmpty(container.player.inventory.getItemStack())) {
                     container.player.inventory.setItemStack(get.copy());
                 }
             }
@@ -69,7 +67,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
             setStack(null, true);
         } else {
             ItemStack toSet = container.player.inventory.getItemStack();
-            if (toSet == null) {
+            if (BCStackHelper.isEmpty(toSet)) {
                 setStack(null, true);
             } else {
                 toSet = toSet.copy();
@@ -100,9 +98,9 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         return stack;
     }
 
-    public final void setStack(ItemStack stack, boolean tellClient) {
+    public final void setStack(@Nullable ItemStack stack, boolean tellClient) {
         this.stack = stack;
-        if (stack != null) {
+        if (this.stack != null) {
             int max = getMaxStackSize(stack);
             if (stack.stackSize > max) {
                 this.stack.stackSize = max;
@@ -141,7 +139,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
             return true;
         }
 
-        @Nullable
+        @Nonnull
         public ItemStack getStack() {
             return WidgetPhantomSlot.this.getStack();
         }
@@ -169,7 +167,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
 
         @Override
         public void addToolTips(List<ToolTip> tooltips) {
-            if (contains(gui.mouse) && getStack() != null) {
+            if (contains(gui.mouse) && !BCStackHelper.isEmpty(getStack())) {
                 tooltips.add(tooltip);
                 tooltip.refresh();
             }

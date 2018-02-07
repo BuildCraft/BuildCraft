@@ -1,11 +1,11 @@
 package buildcraft.lib.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiPosition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface IContainingElement extends IInteractionElement {
     /** @return The backing list of the contained elements. Must be modifiable, and changes must be reflected by future
@@ -73,5 +73,16 @@ public interface IContainingElement extends IInteractionElement {
                 ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
             }
         }
+    }
+
+    @Override
+    default boolean onKeyPress(char typedChar, int keyCode) {
+        boolean action = false;
+        for (IGuiElement elem : getChildElements()) {
+            if (elem instanceof IInteractionElement) {
+                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode);
+            }
+        }
+        return action;
     }
 }

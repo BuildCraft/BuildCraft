@@ -1,23 +1,5 @@
 package buildcraft.lib.gui;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.DoubleSupplier;
-
-import gnu.trove.set.hash.TIntHashSet;
-
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import buildcraft.lib.gui.config.GuiConfigManager;
@@ -27,6 +9,22 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.misc.GuiUtil;
+import gnu.trove.set.hash.TIntHashSet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.DoubleSupplier;
 
 /** A gui element that allows for easy implementation of an actual {@link GuiScreen} class.
  * <p>
@@ -100,7 +98,7 @@ public class BuildCraftGui {
 
     /** Creates a new {@link BuildCraftGui} that uses the entire screen for display. Ledgers are displayed on the
      * opposite side (so that they expand properly).
-     *
+     * 
      * @param gui */
     public BuildCraftGui(GuiScreen gui) {
         this.gui = gui;
@@ -114,11 +112,54 @@ public class BuildCraftGui {
     /** Creates a new {@link BuildCraftGui} that takes it's {@link #rootElement} from the {@link GuiContainer}'s
      * size. */
     public static IGuiArea createWindowedArea(GuiContainer gui) {
-        DoubleSupplier guiLeft = () ->  gui.width - 176 / 2;
-        DoubleSupplier guiTop = () ->  gui.height - 166 / 2;
-        DoubleSupplier width = () ->  176;
-        DoubleSupplier height = () ->  166;
-        return IGuiArea.create(guiLeft, guiTop, width, height);
+        DoubleSupplier[] guiSizes = getGuiSize(gui);
+        return IGuiArea.create(guiSizes[0], guiSizes[1], guiSizes[2], guiSizes[3]);
+    }
+
+    /** DuctTape at it's finest */
+    private static DoubleSupplier[] getGuiSize(GuiContainer gui) {
+        DoubleSupplier[] sizes = new DoubleSupplier[4];
+        //guiLeft
+        sizes[0] = () -> {
+            try {
+                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui,"field_147003_i", "guiLeft");
+            } catch (Exception e) {
+                //In rare cases this should fail, return the default value
+                return gui.width - 176 / 2;
+            }
+        };
+
+        //guiTop
+        sizes[1] = () -> {
+            try {
+                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_147009_r", "guiTop");
+            } catch (Exception e) {
+                //In rare cases this should fail, return the default value
+                return gui.height - 166 / 2;
+            }
+        };
+
+        //xSize
+        sizes[2] = () -> {
+            try {
+                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_146999_f", "xSize");
+            } catch (Exception e) {
+                //In rare cases this should fail, return the default value
+                return 176;
+            }
+        };
+
+        sizes[3] = () -> {
+            try {
+                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_147000_g", "ySize");
+            } catch (Exception  e){
+                //In rare cases this should fail, return the default value
+                return 166;
+            }
+        };
+
+        return sizes;
+
     }
 
     /** @return The current partial ticks value. */
@@ -182,6 +223,7 @@ public class BuildCraftGui {
         // FIX FOR MC-121719 // https://bugs.mojang.com/browse/MC-121719
         partialTicks = mc.getRenderPartialTicks();
         // END FIX
+
         RenderHelper.disableStandardItemLighting();
         this.lastPartialTicks = partialTicks;
         mouse.setMousePosition(mouseX, mouseY);

@@ -1,18 +1,10 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IStatement;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SpriteRaw;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IInteractionElement;
@@ -22,6 +14,12 @@ import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.FullStatement;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
     implements IInteractionElement, IReference<S> {
@@ -49,7 +47,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
     private final boolean draw;
 
     public GuiElementStatement(BuildCraftGui gui, IGuiArea element, FullStatement<S> ref, StatementContext<?> ctx,
-                               boolean draw) {
+        boolean draw) {
         super(gui, element);
         this.ref = ref;
         this.ctx = ctx;

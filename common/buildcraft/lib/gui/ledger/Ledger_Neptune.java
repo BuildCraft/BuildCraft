@@ -6,23 +6,11 @@
 
 package buildcraft.lib.gui.ledger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
-import buildcraft.lib.gui.*;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.math.MathHelper;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -32,9 +20,15 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.MathHelper;
 
-// TODO: Json "parent" and "parent position" - useful for ledgers, and where ledgers begin and end.
-// Or that could be done in-code, rather than in json.
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public static final ISprite SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;

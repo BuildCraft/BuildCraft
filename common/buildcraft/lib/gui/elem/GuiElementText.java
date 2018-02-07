@@ -6,19 +6,18 @@
 
 package buildcraft.lib.gui.elem;
 
-import java.util.List;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
-import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-
 import buildcraft.lib.expression.node.value.NodeConstantObject;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+
+import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class GuiElementText extends GuiElementSimple {
     public boolean dropShadow = false;

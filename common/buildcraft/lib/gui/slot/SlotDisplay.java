@@ -25,7 +25,7 @@ public class SlotDisplay extends Slot {
     }
 
     @Override
-    public void onPickupFromSlot(EntityPlayer player, ItemStack stack) {
+    public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
     }
 
     @Override
@@ -54,11 +54,11 @@ public class SlotDisplay extends Slot {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return getStack() == null ? 0 : getStack().getMaxStackSize();
+        return getStack() == null ? 0 : getStack().stackSize;
     }
 
     @Override
     public int getSlotStackLimit() {
-        return getStack() == null ? 0 : getStack().getMaxStackSize();
+        return getStack() == null ? 0 : getStack().stackSize;
     }
 }

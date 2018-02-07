@@ -7,14 +7,12 @@
 package buildcraft.lib.gui.button;
 
 import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.gui.pos.GuiRectangle;
 
 /** An image button that draws its states downwards, starting at baseU. */
 @SideOnly(Side.CLIENT)

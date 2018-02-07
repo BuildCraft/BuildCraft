@@ -119,6 +119,7 @@ public abstract class ContainerBC_Neptune extends Container {
     }
 
     @Override
+    @Nullable
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = null;
         Slot slot = this.inventorySlots.get(index);
@@ -142,11 +143,11 @@ public abstract class ContainerBC_Neptune extends Container {
             } else {
                 if (index < this.inventorySlots.size() - playerInventorySize) {
                     if (!this.mergeItemStack(itemstack1, this.inventorySlots.size() - playerInventorySize,
-                            this.inventorySlots.size(), false)) {
+                        this.inventorySlots.size(), false)) {
                         return null;
                     }
                 } else if (!this.mergeItemStack(itemstack1, 0, this.inventorySlots.size() - playerInventorySize,
-                        true)) {
+                    true)) {
                     return null;
                 }
             }
@@ -171,14 +172,14 @@ public abstract class ContainerBC_Neptune extends Container {
         if (widgetId == -1) {
             if (DEBUG) {
                 throw new IllegalArgumentException(
-                        "Invalid Widget Request! (" + (widget == null ? "null" : widget.getClass()) + ")");
+                    "Invalid Widget Request! (" + (widget == null ? "null" : widget.getClass()) + ")");
             } else {
                 BCLog.logger.warn("[lib.container] Received an invalid widget sending request!");
                 BCLog.logger
-                        .warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
+                    .warn("[lib.container]   Widget {id = " + widgetId + ", class = " + widget.getClass() + "}");
                 BCLog.logger.warn("[lib.container]   Container {class = " + getClass() + "}");
                 BCLog.logger.warn(
-                        "[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
+                    "[lib.container]   Player {class = " + player.getClass() + ", name = " + player.getName() + "}");
             }
         } else {
             sendMessage(NET_WIDGET, (buffer) -> {
@@ -279,7 +280,7 @@ public abstract class ContainerBC_Neptune extends Container {
     public void sendSetPhantomSlots(IItemHandler handler, List<ItemStack> stacks) {
         if (handler.getSlots() < stacks.size()) {
             throw new IllegalStateException("Too many ItemStacks's in the list to change, compared to the "
-                    + "size of the inventory! (list = " + stacks + ", handler = " + handler + ")");
+                + "size of the inventory! (list = " + stacks + ", handler = " + handler + ")");
         }
         int[] indexes = new int[stacks.size()];
         List<ItemStack> destinationStacks = Lists.newArrayList();

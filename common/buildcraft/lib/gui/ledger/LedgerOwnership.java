@@ -6,17 +6,14 @@
 
 package buildcraft.lib.gui.ledger;
 
-import buildcraft.lib.gui.BuildCraftGui;
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.util.ResourceLocation;
 
 public class LedgerOwnership extends Ledger_Neptune {
 
@@ -30,7 +27,8 @@ public class LedgerOwnership extends Ledger_Neptune {
         appendText(this::getOwnerName, 0);
 
         calculateMaxSize();
-        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"), "ledger.owner.is_open", false));
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"),
+            "ledger.owner.is_open", false));
     }
 
     @Override

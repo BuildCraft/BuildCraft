@@ -1,20 +1,18 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.Arrays;
-import java.util.List;
-
-import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.api.statements.IGuiSlot;
-
 import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IMenuElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.data.IReference;
+import net.minecraft.client.renderer.GlStateManager;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class GuiElementStatementVariant extends GuiElementSimple implements IMenuElement {
     public static final SpriteNineSliced SELECTION_HOVER = GuiElementStatement.SELECTION_HOVER;
@@ -36,7 +34,7 @@ public class GuiElementStatementVariant extends GuiElementSimple implements IMen
     private final IGuiArea[] posPossible;
 
     public GuiElementStatementVariant(BuildCraftGui gui, IGuiArea element, IReference<? extends IGuiSlot> ref,
-                                      IGuiSlot[] possible, IGuiArea[] posPossible) {
+        IGuiSlot[] possible, IGuiArea[] posPossible) {
         super(gui, element);
         this.ref = ref;
         this.possible = possible;
@@ -44,7 +42,7 @@ public class GuiElementStatementVariant extends GuiElementSimple implements IMen
     }
 
     public static GuiElementStatementVariant create(BuildCraftGui gui, IGuiArea parent,
-                                                    IReference<? extends IGuiSlot> ref, IGuiSlot[] possible) {
+        IReference<? extends IGuiSlot> ref, IGuiSlot[] possible) {
         int count = Math.min(OFFSET_HOVER.length, possible.length);
         possible = possible.length == count ? possible : Arrays.copyOf(possible, count);
         IGuiArea[] posPossible = new IGuiArea[count];

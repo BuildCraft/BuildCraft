@@ -6,17 +6,10 @@
 
 package buildcraft.lib.gui.ledger;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.config.GuiConfigManager;
@@ -26,6 +19,11 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LedgerHelp extends Ledger_Neptune {
 

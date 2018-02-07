@@ -6,19 +6,18 @@
 
 package buildcraft.lib.gui.help;
 
-import java.util.List;
-
 import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainerHelp;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 /** Defines some information used when displaying help text about a specific {@link IGuiElement}. If you want to display
  * help at a particular position, but the target is not an {@link IGuiElement} then you should use

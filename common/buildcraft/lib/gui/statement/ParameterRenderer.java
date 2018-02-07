@@ -1,18 +1,17 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.Function;
-
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.render.ISprite;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.IStatementParameter.DrawType;
-
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.GuiUtil;
+import net.minecraft.item.ItemStack;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /** Specialised class for rendering {@link IStatementParameter}. */
 public class ParameterRenderer {
@@ -43,7 +42,7 @@ public class ParameterRenderer {
     public static ISimpleDrawable getStackDrawable(IStatementParameter param, boolean orQuestionMark) {
         return (x, y) -> {
             ItemStack stack = param.getItemStack();
-            if (stack != null) {
+            if (!BCStackHelper.isEmpty(stack)) {
                 GuiUtil.drawItemStackAt(stack, (int) x + 1, (int) y + 1);
             } else if (orQuestionMark) {
                 GuiElementStatement.ICON_SLOT_NOT_SET.drawAt(x + 1, y + 1);

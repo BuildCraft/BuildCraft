@@ -34,9 +34,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
@@ -55,7 +53,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -481,16 +478,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
         }
         Pipe pipe = tile.getPipe();
-        if (pipe == null) {
-            return false;
-        }
-        if (pipe.behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
-            return true;
-        }
-        if (pipe.flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
-            return true;
-        }
-        return false;
+        return pipe != null && (pipe.behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part) || pipe.flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part));
     }
 
     @Override
@@ -656,26 +644,6 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return (TilePipeHolder) tile;
         }
         return null;
-    }
-
-    // Block overrides
-
-    @Override
-    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition,
-                                     IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
-        return super.addLandingEffects(state, worldObj, blockPosition, iblockstate, entity, numberOfParticles);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager) {
-        return super.addHitEffects(state, worldObj, target, manager);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
-        return super.addDestroyEffects(world, pos, manager);
     }
 
     // paint
