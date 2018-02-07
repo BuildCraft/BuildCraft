@@ -24,5 +24,10 @@ Bug fixes:
 
 * Fix torches being placable on pipes (without any pluggables that they could rest on)
 * Fix fluid tanks sometimes leaving a visible gap between the above and below tanks.
+* Fix the quarry not loading enough chunks
+* Fix the filler and builder not using power smoothly.
+* [#3954] Chisel facades don't render correctly.
 * [#3977] The filtered buffer doesn't work properly with inventory level triggers.
+* [#3981] Placing a pipe wire will also interact with a gate.
 * [#3989] The Auto Workbench accepts items not used in its recipe.
+* [#3995] Facades are sometimes solid even when they shouldn't be.
