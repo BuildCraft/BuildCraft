@@ -1,12 +1,11 @@
 package buildcraft.lib.gui.elem;
 
-import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.inventory.Slot;
-
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import net.minecraft.inventory.Slot;
 
 public class GuiElementSlotMover extends GuiElementSimple {
 

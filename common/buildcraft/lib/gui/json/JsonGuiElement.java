@@ -1,25 +1,22 @@
 package buildcraft.lib.gui.json;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.json.JsonGuiIterator.ResolvedIterator;
+import buildcraft.lib.json.JsonVariableObject;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.JsonUtils;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.JsonUtils;
-
-import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.json.JsonGuiIterator.ResolvedIterator;
-import buildcraft.lib.json.JsonVariableObject;
 
 public class JsonGuiElement extends JsonVariableObject {
     public final String name;
@@ -60,8 +57,8 @@ public class JsonGuiElement extends JsonVariableObject {
             this.context = new FunctionContext(context);
             this.types = typeLookup;
 
-            String str = JsonUtils.getString(json, "type", "");
-            if (str.isEmpty()) {
+            String str = JsonUtils.getString(json, "type", null);
+            if (str != null) {
                 JsonGuiElement parent = typeLookup.get(str);
                 if (parent != null) {
                     properties.putAll(parent.properties);

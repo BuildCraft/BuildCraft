@@ -1,11 +1,10 @@
 package buildcraft.lib.gui.button;
 
 import buildcraft.lib.gui.BuildCraftGui;
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import net.minecraft.client.renderer.GlStateManager;
 
 public final class GuiButtonDrawable extends GuiAbstractButton {
     private final ISimpleDrawable drEnabled, drActive, drHovered, drActiveHovered, drDisabled, drDisabledActive;

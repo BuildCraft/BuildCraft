@@ -1,19 +1,19 @@
 package buildcraft.lib.gui.statement;
 
-import javax.annotation.Nullable;
-
-import buildcraft.lib.gui.*;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 import buildcraft.api.statements.IStatementParameter;
-
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.IMenuElement;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.StatementWrapper;
+import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nullable;
 
 public class GuiElementStatementDrag implements IMenuElement {
 

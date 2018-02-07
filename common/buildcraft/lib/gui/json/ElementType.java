@@ -1,15 +1,6 @@
 package buildcraft.lib.gui.json;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.InternalCompiler;
@@ -28,6 +19,13 @@ import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainerResizing;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public abstract class ElementType {
     public final String name;
@@ -39,7 +37,8 @@ public abstract class ElementType {
     protected abstract IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info,
         JsonGuiElement json);
 
-    public final IGuiElement deserialize(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public final IGuiElement deserialize(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info,
+        JsonGuiElement json) {
         IGuiElement element = deserialize0(gui, parent, info, json);
         if (element instanceof GuiElementSimple) {
             ((GuiElementSimple) element).name = json.fullName;

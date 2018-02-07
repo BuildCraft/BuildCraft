@@ -114,7 +114,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
             GuiImageButton buttonPrecise =
-                    new GuiImageButton(mainGui, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
+                    new GuiImageButton(mainGui, bOff, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
             buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt"));
             buttonPrecise.setBehaviour(IButtonBehaviour.TOGGLE);
             mainGui.shownElements.add(buttonPrecise);
