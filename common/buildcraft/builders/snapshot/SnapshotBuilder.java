@@ -380,8 +380,11 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         tile.getWorldBC().profiler.startSection("do tasks");
         long max = Math.min(
-            (long) (MAX_POWER_PER_TICK *
-                (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK) / (tile.getBattery().getCapacity() * 2)),
+            (long) (
+                MAX_POWER_PER_TICK *
+                (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK / 10) /
+                    (tile.getBattery().getCapacity() * 2)
+            ),
             MAX_POWER_PER_TICK
         );
         tile.getWorldBC().profiler.startSection("break");
