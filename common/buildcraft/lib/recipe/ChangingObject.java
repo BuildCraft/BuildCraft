@@ -55,7 +55,6 @@ public class ChangingObject<T> {
         if (obj == null) return false;
         if (obj.getClass() != getClass()) return false;
         ChangingObject<?> other = (ChangingObject<?>) obj;
-        if (hash != other.hash) return false;
-        return Arrays.equals(options, other.options);
+        return hash == other.hash && Arrays.equals(options, other.options);
     }
 }
