@@ -97,7 +97,7 @@ public class TileFiller extends TileBC_Neptune
             EnumAccess.INSERT,
             EnumPipePart.VALUES
         );
-    private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
+    private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     private boolean canExcavate = true;
     public boolean inverted = false;
     private boolean finished = false;
