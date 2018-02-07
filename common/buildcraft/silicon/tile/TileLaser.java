@@ -306,6 +306,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     @Override
     @SideOnly(Side.CLIENT)
     public IDetachedRenderer getDebugRenderer() {
-        return AdvDebuggerLaser.getForTile(this);
+        return new AdvDebuggerLaser(this);
     }
 }
