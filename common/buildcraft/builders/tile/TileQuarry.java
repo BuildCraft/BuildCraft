@@ -9,7 +9,6 @@ package buildcraft.builders.tile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -62,6 +61,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.chunkload.IChunkLoadingTile;
+import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
@@ -85,6 +85,7 @@ import buildcraft.lib.world.WorldEventListenerAdapter;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersEventDist;
+import buildcraft.builders.client.render.AdvDebuggerQuarry;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.core.marker.VolumeSubCache;
@@ -105,18 +106,18 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final Set<BlockPos> firstCheckedPoses = new HashSet<>();
     private boolean firstChecked = false;
     private final Set<BlockPos> frameBreakBlockPoses =
-        new TreeSet<>(Comparator.<BlockPos> comparingDouble(pos::distanceSq));
+        new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(p -> getPos().distanceSq(p))));
     private final Set<BlockPos> framePlaceFramePoses = new HashSet<>();
     public Task currentTask = null;
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
     private long debugPowerRate = 0;
-    private List<AxisAlignedBB> collisionboxes = null;
+    public List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
-        public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState,
-            int flags) {
+        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
+                                      int flags) {
             if (frameBox.isInitialized() && miningBox.isInitialized()) {
                 if (frameBox.contains(pos)) {
                     check(pos);
@@ -155,7 +156,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
      * <p>
      * Assumes that {@link #frameBox} is correct for the current position. Does not take into account the current facing
      * of the quarry, as that is assumed to be involved in the {@link #frameBox} itself.
-     * 
+     *
      * @return An ordered list of the positions that the frame should be placed in. The list is in placement order.
      * @throws IllegalStateException if something went wrong during iteration, or the current {@link #frameBox} was
      *             incorrect compared to {@link #getPos()} */
@@ -442,21 +443,19 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Nullable
     @Override
-    public Collection<ChunkPos> getChunksToLoad() {
+    public Set<ChunkPos> getChunksToLoad() {
         if (!miningBox.isInitialized()) {
             return null;
         }
-        ArrayList<ChunkPos> list = new ArrayList<>();
-        int minX = miningBox.min().getX() >> 4;
-        int minZ = miningBox.min().getZ() >> 4;
-        int maxX = miningBox.max().getX() >> 4;
-        int maxZ = miningBox.max().getZ() >> 4;
-        for (int x = minX; x < maxX; x++) {
-            for (int z = minZ; z < maxZ; z++) {
-                list.add(new ChunkPos(x, z));
+        Set<ChunkPos> chunkPoses = new HashSet<>();
+        ChunkPos minChunkPos = new ChunkPos(frameBox.min());
+        ChunkPos maxChunkPos = new ChunkPos(frameBox.max());
+        for (int x = minChunkPos.x; x <= maxChunkPos.x; x++) {
+            for (int z = minChunkPos.z; z <= maxChunkPos.z; z++) {
+                chunkPoses.add(new ChunkPos(x, z));
             }
         }
-        return list;
+        return chunkPoses;
     }
 
     private void updatePoses() {
@@ -470,6 +469,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == BCBuildersBlocks.quarry && frameBox.isInitialized()) {
             List<BlockPos> blocksInArea = frameBox.getBlocksInArea();
+            blocksInArea.sort(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(pos::distanceSq)));
             frameBoxPosesCount = blocksInArea.size();
             toCheck.addAll(blocksInArea);
             framePoses.addAll(getFramePositions());
@@ -479,6 +479,31 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public void update() {
+
+        if (drillPos != null) {
+            Vec3d max = VecUtil.convertCenter(frameBox.max());
+            Vec3d min = VecUtil.replaceValue(VecUtil.convertCenter(frameBox.min()), Axis.Y, max.y);
+            collisionBoxes = ImmutableList.of(
+                BoundingBoxUtil.makeFrom(
+                    VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5),
+                    VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5),
+                    0.25
+                ),
+                BoundingBoxUtil.makeFrom(
+                    VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5),
+                    VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5),
+                    0.25
+                ),
+                BoundingBoxUtil.makeFrom(
+                    drillPos.addVector(0.5, 0, 0.5),
+                    VecUtil.replaceValue(drillPos, Axis.Y, max.y).addVector(0.5, 0, 0.5),
+                    0.25
+                )
+            );
+        } else {
+            collisionBoxes = ImmutableList.of();
+        }
+
         if (world.isRemote) {
             prevClientDrillPos = clientDrillPos;
             clientDrillPos = drillPos;
@@ -501,10 +526,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long max = MAX_POWER_PER_TICK;
-            max *= battery.getStored() + max;
-            max /= battery.getCapacity() / 2;
-            max = Math.min(max, MAX_POWER_PER_TICK);
+            long max = Math.min(
+                MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() * 2),
+                Math.min(
+                    currentTask.getTarget() - currentTask.getPower(),
+                    MAX_POWER_PER_TICK
+                )
+            );
             debugPowerRate = max;
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {
@@ -680,32 +708,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
     }
 
-    public Iterable<AxisAlignedBB> getCollisionBoxes() {
-        if (!frameBox.isInitialized() || drillPos == null) {
-            return ImmutableList.of();
-        }
-        if (collisionboxes == null) {
-            collisionboxes = new ArrayList<>(3);
-            Vec3d min = VecUtil.convertCenter(frameBox.min());
-            Vec3d max = VecUtil.convertCenter(frameBox.max());
-            min = VecUtil.replaceValue(min, Axis.Y, max.y);
-
-            Vec3d minXAdj = VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5);
-            Vec3d maxXAdj = VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5);
-            collisionboxes.add(BoundingBoxUtil.makeFrom(minXAdj, maxXAdj, 0.25));
-
-            Vec3d minZAdj = VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5);
-            Vec3d maxZAdj = VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5);
-            collisionboxes.add(BoundingBoxUtil.makeFrom(minZAdj, maxZAdj, 0.25));
-
-            Vec3d realDrillPos = drillPos.addVector(0.5, 0, 0.5);
-            Vec3d minYAdj = realDrillPos;
-            Vec3d maxYAdj = VecUtil.replaceValue(realDrillPos, Axis.Y, max.y);
-            collisionboxes.add(BoundingBoxUtil.makeFrom(minYAdj, maxYAdj, 0.25));
-        }
-        return collisionboxes;
-    }
-
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("battery = " + battery.getDebugString());
@@ -716,6 +718,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("miningBox:");
         left.add(" - min = " + miningBox.min());
         left.add(" - max = " + miningBox.max());
+
+        left.add("firstCheckedPoses = " + firstCheckedPoses.size());
+        left.add("frameBoxPosesCount = " + frameBoxPosesCount);
 
         BoxIterator iter = boxIterator;
         left.add("current = " + (iter == null ? "null" : iter.getCurrent()));
@@ -732,6 +737,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         left.add("drill = " + drillPos);
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -742,6 +748,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public DetachedRenderer.IDetachedRenderer getDebugRenderer() {
+        return new AdvDebuggerQuarry(this);
     }
 
     private enum EnumTaskType {
@@ -892,6 +904,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 } else {
                     world.destroyBlock(breakPos, false);
                 }
+                check(breakPos);
                 return true;
             } else {
                 return false;
@@ -1032,7 +1045,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             // Vec3d oldDrillPos = drillPos;
             drillPos = to;
             // moveEntities(oldDrillPos);
-            collisionboxes = null;
             return true;
         }
 

@@ -121,6 +121,8 @@ public class BCTransport {
             .tab("buildcraft.plugs");
         registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor")
             .tab("buildcraft.plugs");
+        registerTag("item.plug.power_adaptor").reg("plug_power_adaptor").locale("PipePowerAdapter")
+            .model("plug_power_adaptor").tab("buildcraft.plugs");
         registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade")
             .tab("buildcraft.facades");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/").tab("buildcraft.plugs");
@@ -185,7 +187,8 @@ public class BCTransport {
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock")
             .model("filtered_buffer");
         // Blocks
-        registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock").locale("filteredBufferBlock").model("filtered_buffer");
+        registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock")
+            .locale("filteredBufferBlock").model("filtered_buffer");
         registerTag("block.pipe_holder").reg("pipe_holder").locale("pipeHolder");
         // Tiles
         registerTag("tile.filtered_buffer").reg("filtered_buffer");

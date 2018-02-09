@@ -6,57 +6,51 @@
     },
     "contents": [
         {
-            "title": "tile.laserBlock.name",
             "item_stack": "(buildcraftsilicon:laser)",
             "page": "laser.md",
             "type_tags": {
                 "type": "block",
-                "sub_type": "Lasers"
+                "sub_type": "laser"
             }
         },
         {
-            "title": "tile.assemblyTableBlock.name",
             "item_stack": "(buildcraftsilicon:assembly_table)",
             "page": "assembly.md",
             "type_tags": {
                 "type": "block",
-                "sub_type": "Lasers"
+                "sub_type": "laser"
             }
         },
         {
-            "title": "tile.integrationTableBlock.name",
             "item_stack": "(buildcraftsilicon:integration_table)",
             "page": "integration.md",
             "type_tags": {
                 "type": "block",
-                "sub_type": "Lasers"
+                "sub_type": "laser"
             }
         },
         {
-            "title": "tile.chargingTableBlock.name",
             "item_stack": "(buildcraftsilicon:charging_table)",
             "page": "charging.md",
             "type_tags": {
                 "type": "block",
-                "sub_type": "Lasers"
+                "sub_type": "laser"
             }
         },
         {
-            "title": "tile.programmingTableBlock.name",
             "item_stack": "(buildcraftsilicon:programming_table)",
             "page": "programming.md",
             "type_tags": {
                 "type": "block",
-                "sub_type": "Lasers"
+                "sub_type": "laser"
             }
         },
         {
-            "title": "tile.assemblyWorkbenchBlock.name",
             "item_stack": "(buildcraftsilicon:advanced_crafting_table)",
             "page": "advanced_crafting.md",
             "type_tags": {
                 "type": "block",
-                "sub_type": "Lasers"
+                "sub_type": "laser"
             }
         }
     ]

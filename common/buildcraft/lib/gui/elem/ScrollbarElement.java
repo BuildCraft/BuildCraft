@@ -9,7 +9,7 @@ package buildcraft.lib.gui.elem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IInteractionElement;
@@ -18,13 +18,13 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.MathUtil;
 
 @SideOnly(Side.CLIENT)
-public class ScrollbarElement<G extends GuiBC8<?>> extends GuiElementSimple<G> implements IInteractionElement {
+public class ScrollbarElement extends GuiElementSimple implements IInteractionElement {
     private static final int HEIGHT = 14;
     private final GuiIcon background, scroller;
     private int pos, len;
     private boolean isClicking;
 
-    public ScrollbarElement(G gui, IGuiPosition parent, int height, GuiIcon background, GuiIcon scroller) {
+    public ScrollbarElement(BuildCraftGui gui, IGuiPosition parent, int height, GuiIcon background, GuiIcon scroller) {
         super(gui, new GuiRectangle(0, 0, 6, height).offset(parent));
         this.background = background;
         this.scroller = scroller;

@@ -22,7 +22,7 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.IInteractionElement;
@@ -37,9 +37,6 @@ import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 import buildcraft.lib.misc.RenderUtil;
 
-// TODO: Json "parent" and "parent position" - useful for ledgers, and where ledgers begin and end.
-// Or that could be done in-code, rather than in json.
-
 public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public static final ISprite SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;
     public static final ISprite SPRITE_EXP_POS = BCLibSprites.LEDGER_RIGHT;
@@ -53,7 +50,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public static final int CLOSED_WIDTH = 2 + 16 + LEDGER_GAP;
     public static final int CLOSED_HEIGHT = LEDGER_GAP + 16 + LEDGER_GAP;
 
-    public final GuiBC8<?> gui;
+    public final BuildCraftGui gui;
     public final int colour;
     public final boolean expandPositive;
 
@@ -82,7 +79,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     @Nullable
     private IVariableNodeBoolean isOpenProperty;
 
-    public Ledger_Neptune(GuiBC8<?> gui, int colour, boolean expandPositive) {
+    public Ledger_Neptune(BuildCraftGui gui, int colour, boolean expandPositive) {
         this.gui = gui;
         this.colour = colour;
         this.expandPositive = expandPositive;

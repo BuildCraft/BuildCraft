@@ -59,7 +59,7 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
             book = null;
         }
         recipeBook = book;
-        shownElements.add(new LedgerHelp(this, true));
+        mainGui.shownElements.add(new LedgerHelp(mainGui, true));
     }
 
     private void sendRecipe(IRecipe recipe) {
@@ -148,7 +148,7 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         long target = container.tile.getTarget();
         if (target != 0) {
@@ -159,7 +159,7 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
                             (int) (RECT_PROGRESS.y + RECT_PROGRESS.height * Math.max(1 - v, 0)),
                             RECT_PROGRESS.width,
                             (int) Math.ceil(RECT_PROGRESS.height * Math.min(v, 1))
-                    ).offset(rootElement)
+                    ).offset(mainGui.rootElement)
             );
         }
     }

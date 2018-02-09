@@ -16,6 +16,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 
+import buildcraft.api.inventory.IItemHandlerFiltered;
+import buildcraft.api.items.IList;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -25,6 +27,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.ObjectUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.core.BCCoreSprites;
@@ -34,21 +37,14 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     public TriggerType type;
 
     public TriggerInventoryLevel(TriggerType type) {
-        super(
-            "buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ROOT),
+        super("buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ROOT),
             "buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ROOT),
-            "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT)
-        );
+            "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT));
         this.type = type;
     }
 
     @Override
     public int maxParameters() {
-        return 1;
-    }
-
-    @Override
-    public int minParameters() {
         return 1;
     }
 
@@ -64,36 +60,54 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
-        if (parameters == null || parameters.length < 1 || parameters[0] == null) {
+    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container,
+        IStatementParameter[] parameters) {
+        IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+        if (itemHandler == null) {
             return false;
         }
+        IItemHandlerFiltered filters = ObjectUtilBC.castOrNull(itemHandler, IItemHandlerFiltered.class);
+        StatementParameterItemStack param = getParam(0, parameters, new StatementParameterItemStack());
+        ItemStack searchStack = param.getItemStack();
 
-        if (tile.hasCapability(CapUtil.CAP_ITEMS, side.getOpposite())) {
-            IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
-            if (itemHandler == null) {
-                return false;
-            }
-            ItemStack searchStack = parameters[0].getItemStack();
-
-            if (searchStack.isEmpty()) {
-                return false;
-            }
-
-            int stackSpace = 0;
-            int foundItems = 0;
-            for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
-                ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-                if (stackInSlot.isEmpty() || StackUtil.canStacksOrListsMerge(stackInSlot, searchStack)) {
-                    stackSpace++;
-                    foundItems += stackInSlot.isEmpty() ? 0 : stackInSlot.getCount();
+        int itemSpace = 0;
+        int foundItems = 0;
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
+            ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
+            if (stackInSlot.isEmpty()) {
+                if (searchStack.isEmpty()) {
+                    itemSpace += itemHandler.getSlotLimit(slot);
+                } else {
+                    if (searchStack.getItem() instanceof IList) {
+                        // Unfortunately lists are too generic to work properly
+                        // without a simple filtered inventory.
+                        ItemStack filter = filters == null ? ItemStack.EMPTY : filters.getFilter(slot);
+                        if (StackUtil.matchesStackOrList(searchStack, filter)) {
+                            itemSpace += Math.min(filter.getMaxStackSize(), itemHandler.getSlotLimit(slot));
+                        }
+                    } else {
+                        ItemStack stack = searchStack.copy();
+                        int count = Math.min(itemHandler.getSlotLimit(slot), searchStack.getMaxStackSize());
+                        stack.setCount(count);
+                        ItemStack leftOver = itemHandler.insertItem(slot, stack, true);
+                        if (leftOver.isEmpty()) {
+                            itemSpace += count;
+                        } else {
+                            itemSpace += count - leftOver.getCount();
+                        }
+                    }
+                }
+            } else {
+                if (searchStack.isEmpty() || StackUtil.matchesStackOrList(searchStack, stackInSlot)) {
+                    itemSpace += Math.min(stackInSlot.getMaxStackSize(), itemHandler.getSlotLimit(slot));
+                    foundItems += stackInSlot.getCount();
                 }
             }
+        }
 
-            if (stackSpace > 0) {
-                float percentage = foundItems / ((float) stackSpace * (float) searchStack.getMaxStackSize());
-                return percentage < type.level;
-            }
+        if (itemSpace > 0) {
+            float percentage = foundItems / (float) itemSpace;
+            return percentage < type.level;
         }
 
         return false;

@@ -9,6 +9,7 @@ package buildcraft.lib.list;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.api.lists.ListMatchHandler.Type;
 import buildcraft.api.lists.ListRegistry;
 
 import buildcraft.lib.misc.NBTUtilBC;
@@ -83,15 +85,24 @@ public final class ListHandler {
 
         public boolean matches(@Nonnull ItemStack target) {
             if (byType || byMaterial) {
-                if (stacks.get(0).isEmpty()) {
+                ItemStack compare = stacks.get(0);
+                if (compare.isEmpty()) {
                     return false;
                 }
 
                 List<ListMatchHandler> handlers = ListRegistry.getHandlers();
                 ListMatchHandler.Type type = getSortingType();
+                boolean anyHandled = false;
                 for (ListMatchHandler h : handlers) {
-                    if (h.matches(type, stacks.get(0), target, precise)) {
+                    if (h.matches(type, compare, target, precise)) {
                         return true;
+                    } else if (h.isValidSource(type, target)) {
+                        anyHandled = true;
+                    }
+                }
+                if (!anyHandled) {
+                    if (type == Type.TYPE && target.getHasSubtypes()) {
+                        return StackUtil.isMatchingItem(compare, target, false, false);
                     }
                 }
             } else {
@@ -108,7 +119,8 @@ public final class ListHandler {
         }
 
         public ListMatchHandler.Type getSortingType() {
-            return byType ? (byMaterial ? ListMatchHandler.Type.CLASS : ListMatchHandler.Type.TYPE) : ListMatchHandler.Type.MATERIAL;
+            return byType ? (byMaterial ? ListMatchHandler.Type.CLASS : ListMatchHandler.Type.TYPE)
+                : ListMatchHandler.Type.MATERIAL;
         }
 
         public static Line fromNBT(NBTTagCompound data) {

@@ -23,7 +23,7 @@ public class TypedKeyMap<K, V> {
         this.mapType = mapType;
     }
 
-    public <T extends V> void put(K key, T value) {
+    public void put(K key, V value) {
         internalMap.computeIfAbsent(key, k -> mapType.get()).put(value);
     }
 

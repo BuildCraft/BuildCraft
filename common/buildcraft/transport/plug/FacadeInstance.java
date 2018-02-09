@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,8 +21,9 @@ import buildcraft.lib.net.PacketBufferBC;
 public class FacadeInstance implements IFacade {
     public final FacadePhasedState[] phasedStates;
     public final FacadeType type;
+    public final boolean isHollow;
 
-    public FacadeInstance(FacadePhasedState[] phasedStates) {
+    public FacadeInstance(FacadePhasedState[] phasedStates, boolean isHollow) {
         if (phasedStates == null) throw new NullPointerException("phasedStates");
         if (phasedStates.length == 0) throw new IllegalArgumentException("phasedStates.length was 0");
         // Maximum of 17 states - 16 for each colour, 1 for no colour
@@ -32,43 +34,49 @@ public class FacadeInstance implements IFacade {
         } else {
             type = FacadeType.Phased;
         }
+        this.isHollow = isHollow;
     }
 
     public static FacadeInstance createSingle(FacadeBlockStateInfo info, boolean isHollow) {
-        return new FacadeInstance(new FacadePhasedState[] { new FacadePhasedState(info, isHollow, null) });
+        return new FacadeInstance(new FacadePhasedState[] { new FacadePhasedState(info, null) }, isHollow);
     }
 
-    public static FacadeInstance readFromNbt(NBTTagCompound nbt, String subTag) {
-        NBTTagList list = nbt.getTagList(subTag, Constants.NBT.TAG_COMPOUND);
+    public static FacadeInstance readFromNbt(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("states", Constants.NBT.TAG_COMPOUND);
         if (list.hasNoTags()) {
-            return new FacadeInstance(
-                new FacadePhasedState[] { new FacadePhasedState(FacadeStateManager.defaultState, false, null) });
+            return FacadeInstance.createSingle(FacadeStateManager.defaultState, false);
         }
         FacadePhasedState[] states = new FacadePhasedState[list.tagCount()];
         for (int i = 0; i < list.tagCount(); i++) {
             states[i] = FacadePhasedState.readFromNbt(list.getCompoundTagAt(i));
         }
-        return new FacadeInstance(states);
+        boolean hollow = nbt.getBoolean("isHollow");
+        return new FacadeInstance(states, hollow);
     }
 
-    public void writeToNbt(NBTTagCompound nbt, String subTag) {
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList list = new NBTTagList();
         for (FacadePhasedState state : phasedStates) {
             list.appendTag(state.writeToNbt());
         }
-        nbt.setTag(subTag, list);
+        nbt.setTag("states", list);
+        nbt.setBoolean("isHollow", isHollow);
+        return nbt;
     }
 
     public static FacadeInstance readFromBuffer(PacketBufferBC buf) {
+        boolean isHollow = buf.readBoolean();
         int count = buf.readFixedBits(5);
         FacadePhasedState[] states = new FacadePhasedState[count];
         for (int i = 0; i < count; i++) {
             states[i] = FacadePhasedState.readFromBuffer(buf);
         }
-        return new FacadeInstance(states);
+        return new FacadeInstance(states, isHollow);
     }
 
     public void writeToBuffer(PacketBufferBC buf) {
+        buf.writeBoolean(isHollow);
         buf.writeFixedBits(phasedStates.length, 5);
         for (FacadePhasedState phasedState : phasedStates) {
             phasedState.writeToBuffer(buf);
@@ -89,7 +97,7 @@ public class FacadeInstance implements IFacade {
         if (canAddColour(state.activeColour)) {
             FacadePhasedState[] newStates = Arrays.copyOf(phasedStates, phasedStates.length + 1);
             newStates[newStates.length - 1] = state;
-            return new FacadeInstance(newStates);
+            return new FacadeInstance(newStates, isHollow);
         } else {
             return null;
         }
@@ -106,11 +114,7 @@ public class FacadeInstance implements IFacade {
     }
 
     public FacadeInstance withSwappedIsHollow() {
-        FacadePhasedState[] newStates = Arrays.copyOf(phasedStates, phasedStates.length);
-        for (int i = 0; i < newStates.length; i++) {
-            newStates[i] = newStates[i].withSwappedIsHollow();
-        }
-        return new FacadeInstance(newStates);
+        return new FacadeInstance(phasedStates, !isHollow);
     }
 
     public boolean areAllStatesSolid(EnumFacing side) {
@@ -122,11 +126,42 @@ public class FacadeInstance implements IFacade {
         return true;
     }
 
+    public BlockFaceShape getBlockFaceShape(EnumFacing side) {
+        if (isHollow()) {
+            return BlockFaceShape.UNDEFINED;
+        }
+        switch (type) {
+            case Basic:
+                return phasedStates[0].getBlockFaceShape(side);
+            case Phased: {
+                BlockFaceShape shape = null;
+                for (FacadePhasedState state : phasedStates) {
+                    if (shape == null) {
+                        shape = state.getBlockFaceShape(side);
+                    } else if (shape != state.getBlockFaceShape(side)) {
+                        return BlockFaceShape.UNDEFINED;
+                    }
+                }
+                if (shape == null) {
+                    return BlockFaceShape.UNDEFINED;
+                }
+                return shape;
+            }
+            default:
+                throw new IllegalStateException("Unknown FacadeType " + type);
+        }
+    }
+
     // IFacade
 
     @Override
     public FacadeType getType() {
         return type;
+    }
+
+    @Override
+    public boolean isHollow() {
+        return isHollow;
     }
 
     @Override

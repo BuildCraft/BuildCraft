@@ -47,7 +47,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> implements INBTSerializable<NBTTagCompound> {
-    private static final int MAX_QUEUE_SIZE = 64;
+    private static final int MAX_QUEUE_SIZE = 16;
     @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_UNKNOWN = 0;
     @SuppressWarnings("WeakerAccess")
@@ -60,7 +60,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     private static final byte REQUIRED_TRUE = 1;
     private static final byte REQUIRED_FALSE = 2;
     private static final int CHECKS_PER_TICK = 10;
-    private static final long MAX_POWER_PER_TICK = 10 * MjAPI.MJ;
+    private static final long MAX_POWER_PER_TICK = 256 * MjAPI.MJ;
 
     protected final T tile;
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
@@ -379,6 +379,14 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         tile.getWorldBC().profiler.endSection();
 
         tile.getWorldBC().profiler.startSection("do tasks");
+        long max = Math.min(
+            (long) (
+                MAX_POWER_PER_TICK *
+                (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK / 10) /
+                    (tile.getBattery().getCapacity() * 2)
+            ),
+            MAX_POWER_PER_TICK
+        );
         tile.getWorldBC().profiler.startSection("break");
         if (!breakTasks.isEmpty()) {
             for (Iterator<BreakTask> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
@@ -390,11 +398,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                 breakTask.power += tile.getBattery().extractPower(
                     0,
                     Math.min(
-                        Math.min(
-                            target - breakTask.power,
-                            tile.getBattery().getStored() / breakTasks.size()
-                        ),
-                        MAX_POWER_PER_TICK
+                        target - breakTask.power,
+                        max / breakTasks.size()
                     )
                 );
                 if (breakTask.power >= target) {
@@ -445,11 +450,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                 placeTask.power += tile.getBattery().extractPower(
                     0,
                     Math.min(
-                        Math.min(
-                            target - placeTask.power,
-                            tile.getBattery().getStored() / placeTasks.size()
-                        ),
-                        MAX_POWER_PER_TICK
+                        target - placeTask.power,
+                        max / placeTasks.size()
                     )
                 );
                 if (placeTask.power >= target) {

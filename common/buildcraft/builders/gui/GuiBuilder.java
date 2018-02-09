@@ -42,9 +42,9 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         super.initGui();
 
         for (int i = 0; i < container.widgetTanks.size(); i++) {
-            shownElements.add(
+            mainGui.shownElements.add(
                     container.widgetTanks
-                    .get(i).createGuiElement(this, new GuiRectangle(179 + i * 18, 145, 16, 47).offset(rootElement), ICON_TANK_OVERLAY)
+                    .get(i).createGuiElement(mainGui, new GuiRectangle(179 + i * 18, 145, 16, 47).offset(mainGui.rootElement), ICON_TANK_OVERLAY)
             );
         }
 
@@ -68,7 +68,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
-        ICON_BLUEPRINT_GUI.drawAt(rootElement.offset(SIZE_BLUEPRINT_X - BLUEPRINT_WIDTH, 0));
+        ICON_GUI.drawAt(mainGui.rootElement);
+        ICON_BLUEPRINT_GUI.drawAt(mainGui.rootElement.offset(SIZE_BLUEPRINT_X - BLUEPRINT_WIDTH, 0));
     }
 }

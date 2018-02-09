@@ -22,7 +22,7 @@ public class ElementTypeDrawnStack extends ElementType {
     }
 
     @Override
-    protected IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    protected IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         IGuiPosition pos = resolvePosition(json, "pos", parent, ctx);
 

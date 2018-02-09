@@ -7,6 +7,7 @@
 package buildcraft.lib.list;
 
 import java.util.Set;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,8 +19,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;
-
-import buildcraft.lib.misc.StackUtil;
 
 public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     private static int getUppercaseCount(String s) {
@@ -37,10 +36,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         int[] oreIds = OreDictionary.getOreIDs(stack);
 
         if (oreIds.length == 0) {
-            // No ore IDs? Time for the best effort plan of METADATA!
-            if (type == Type.TYPE) {
-                return StackUtil.isMatchingItem(stack, target, false, false);
-            }
+            // Unfortunately we cannot compare the items.
             return false;
         }
 
@@ -65,7 +61,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             // cases in which a given stone is also used for crafting equivalents.
             String s = getBestOreString(oreNames);
             if (s != null) {
-                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
+                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(
+                    type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
                         for (int k : matchesIds) {
@@ -83,13 +80,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
     @Override
     public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
-        if (OreDictionary.getOreIDs(stack).length > 0) {
-            return true;
-        }
-        if (type == Type.TYPE && stack.getHasSubtypes()) {
-            return true;
-        }
-        return false;
+        return OreDictionary.getOreIDs(stack).length > 0;
     }
 
     private static String getBestOreString(String[] oreIds) {
@@ -137,7 +128,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         } else {
             String s = getBestOreString(oreNames);
             if (s != null) {
-                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
+                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(
+                    type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
                         stacks.addAll(OreDictionary.getOres(OreDictionary.getOreName(j)));

@@ -12,6 +12,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiButtonImage;
 import net.minecraft.client.gui.recipebook.GuiRecipeBook;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -29,16 +31,23 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.recipe.GuiRecipeBookPhantom;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import buildcraft.factory.container.ContainerAutoCraftItems;
 
 public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implements IRecipeShownListener {
     private static final ResourceLocation TEXTURE_BASE =
         new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
+    private static final ResourceLocation TEXTURE_MISC =
+        new ResourceLocation("buildcraftlib:textures/gui/misc_slots.png");
     private static final ResourceLocation VANILLA_CRAFTING_TABLE =
         new ResourceLocation("textures/gui/container/crafting_table.png");
     private static final int SIZE_X = 176, SIZE_Y = 197;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
+    private static final GuiIcon ICON_FILTER_OVERLAY_SAME = new GuiIcon(TEXTURE_MISC, 54, 0, 18, 18);
+    private static final GuiIcon ICON_FILTER_OVERLAY_DIFFERENT = new GuiIcon(TEXTURE_MISC, 72, 0, 18, 18);
     private static final GuiIcon ICON_PROGRESS = new GuiIcon(TEXTURE_BASE, SIZE_X, 0, 23, 10);
     private static final GuiRectangle RECT_PROGRESS = new GuiRectangle(90, 47, 23, 10);
 
@@ -59,7 +68,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
             book = null;
         }
         recipeBook = book;
-        shownElements.add(new LedgerHelp(this, true));
+        mainGui.shownElements.add(new LedgerHelp(mainGui, true));
     }
 
     private void sendRecipe(IRecipe recipe) {
@@ -147,11 +156,63 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         double progress = container.tile.getProgress(partialTicks);
 
         drawProgress(RECT_PROGRESS, ICON_PROGRESS, progress, 1);
+
+        if (hasFilters()) {
+            RenderHelper.enableGUIStandardItemLighting();
+            forEachFilter((slot, filterStack) -> {
+                int x = slot.xPos + (int) mainGui.rootElement.getX();
+                int y = slot.yPos + (int) mainGui.rootElement.getY();
+                itemRender.renderItemAndEffectIntoGUI(mc.player, filterStack, x, y);
+                itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, filterStack, x, y, null);
+            });
+            RenderHelper.disableStandardItemLighting();
+
+            GlStateManager.disableDepth();
+            forEachFilter((slot, filterStack) -> {
+                ItemStack real = slot.getStack();
+                final GuiIcon icon;
+                if (real.isEmpty() || StackUtil.canMerge(real, filterStack)) {
+                    icon = ICON_FILTER_OVERLAY_SAME;
+                } else {
+                    icon = ICON_FILTER_OVERLAY_DIFFERENT;
+                }
+                int x = slot.xPos + (int) mainGui.rootElement.getX();
+                int y = slot.yPos + (int) mainGui.rootElement.getY();
+                icon.drawAt(x - 1, y - 1);
+            });
+            GlStateManager.enableDepth();
+        }
+    }
+
+    private boolean hasFilters() {
+        ItemHandlerSimple filters = container.tile.invMaterialFilter;
+        for (int s = 0; s < filters.getSlots(); s++) {
+            ItemStack filter = filters.getStackInSlot(s);
+            if (!filter.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void forEachFilter(IFilterSlotIterator iter) {
+        ItemHandlerSimple filters = container.tile.invMaterialFilter;
+        for (int s = 0; s < filters.getSlots(); s++) {
+            ItemStack filter = filters.getStackInSlot(s);
+            if (!filter.isEmpty()) {
+                iter.iterate(container.materialSlots[s], filter);
+            }
+        }
+    }
+
+    @FunctionalInterface
+    private interface IFilterSlotIterator {
+        void iterate(SlotBase drawSlot, ItemStack filterStack);
     }
 
     @Override

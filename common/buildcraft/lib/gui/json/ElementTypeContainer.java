@@ -16,7 +16,8 @@ public class ElementTypeContainer extends ElementType {
     }
 
     @Override
-    protected IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    protected IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info,
+        JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         boolean scissor = resolveEquationBool(json, "limit", ctx, false);
         if (scissor) {

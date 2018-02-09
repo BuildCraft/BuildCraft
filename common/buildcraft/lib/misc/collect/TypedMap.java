@@ -9,9 +9,9 @@ import java.util.Map;
 public interface TypedMap<V> {
     <T extends V> T get(Class<T> clazz);
 
-    <T extends V> void put(T value);
+    void put(V value);
 
     void clear();
 
-    <T extends V> void remove(T value);
+    void remove(V value);
 }

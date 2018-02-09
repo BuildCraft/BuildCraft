@@ -9,6 +9,7 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.state.IBlockState;
@@ -443,7 +444,9 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         return this.progressState;
     }
 
+    @Nonnull
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         TileHeatExchangeEnd end = tileEnd;
         if (end == null) {

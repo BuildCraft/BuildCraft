@@ -32,6 +32,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
@@ -245,7 +246,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         }
     }
 
+    @Nonnull
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         if (section instanceof ExchangeSectionStart) {
             // Temp

@@ -27,9 +27,7 @@ import buildcraft.core.marker.volume.Lock;
 public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
-    private static final double NORMAL_SCALE = 1 / 16D;
-    private static final double HIGHLIGHT_SCALE = 1 / 15.8D;
-
+    @SuppressWarnings("unchecked")
     @Override
     public void render(EntityPlayer player, float partialTicks) {
         GlStateManager.enableBlend();
@@ -43,13 +41,13 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
             if (volumeBox.isEditingBy(player)) {
                 type = BuildCraftLaserManager.MARKER_VOLUME_SIGNAL;
             } else {
-                type =  volumeBox.getLockTargetsStream()
-                        .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
-                        .map(Lock.Target.TargetUsedByMachine.class::cast)
-                        .map(target -> target.type)
-                        .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
-                        .findFirst()
-                        .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
+                type = volumeBox.getLockTargetsStream()
+                    .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
+                    .map(Lock.Target.TargetUsedByMachine.class::cast)
+                    .map(target -> target.type)
+                    .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
+                    .findFirst()
+                    .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
             }
             LaserBoxRenderer.renderLaserBoxDynamic(volumeBox.box, type, bb, false);
 

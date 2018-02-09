@@ -24,6 +24,6 @@ public class GuiChute extends GuiBC8<ContainerChute> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
     }
 }

@@ -6,6 +6,7 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -110,7 +111,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         if (side == Side.CLIENT) {
             for (SlotIndex index : SlotIndex.VALUES) {

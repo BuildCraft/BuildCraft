@@ -11,7 +11,7 @@ import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 import buildcraft.api.statements.IStatementParameter;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.IMenuElement;
@@ -20,14 +20,14 @@ import buildcraft.lib.statement.StatementWrapper;
 
 public class GuiElementStatementDrag implements IMenuElement {
 
-    public final GuiBC8<?> gui;
+    public final BuildCraftGui gui;
 
     private boolean isDragging;
 
     @Nullable
     private IGuiSlot dragging;
 
-    public GuiElementStatementDrag(GuiBC8<?> gui) {
+    public GuiElementStatementDrag(BuildCraftGui gui) {
         this.gui = gui;
     }
 

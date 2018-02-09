@@ -8,7 +8,9 @@ package buildcraft.lib.chunkload;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -33,21 +35,17 @@ public interface IChunkLoadingTile {
      * 
      * The default implementation returns neighbouring chunks if this block is on a chunk boundary.
      * 
-     * @return A collection of all the additional chunks to load, optionally including the {@link ChunkPos} that this tile is
+     * @return A set of all the additional chunks to load, optionally including the {@link ChunkPos} that this tile is
      *         contained within. If the return value is null then only the chunk containing this block will be
      *         chunkloaded. */
     @Nullable
-    default Collection<ChunkPos> getChunksToLoad() {
+    default Set<ChunkPos> getChunksToLoad() {
         BlockPos pos = ((TileEntity) this).getPos();
-        ChunkPos thisPos = new ChunkPos(pos);
-        List<ChunkPos> list = new ArrayList<>(4);
+        Set<ChunkPos> chunkPoses = new HashSet<>(4);
         for (EnumFacing face : EnumFacing.HORIZONTALS) {
-            ChunkPos potential = new ChunkPos(pos.offset(face));
-            if (!potential.equals(thisPos)) {
-                list.add(potential);
-            }
+            chunkPoses.add(new ChunkPos(pos.offset(face)));
         }
-        return list;
+        return chunkPoses;
     }
 
     public enum LoadType {

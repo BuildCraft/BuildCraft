@@ -20,7 +20,6 @@ import buildcraft.lib.gui.pos.PositionAbsolute;
 import buildcraft.silicon.EnumAssemblyRecipeState;
 import buildcraft.silicon.container.ContainerAssemblyTable;
 import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.transport.gui.LedgerTablePower;
 
 public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_table.png");
@@ -36,7 +35,7 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
-        shownElements.add(new LedgerTablePower(this, true));
+        mainGui.shownElements.add(new LedgerTablePower(mainGui, container.tile, true));
     }
 
     private IGuiPosition getPos(int index) {
@@ -47,13 +46,13 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
 
     private IGuiArea getArea(int index) {
         return index < 3 * 4
-                ? new GuiRectangle(16, 16).offset(rootElement).offset(getPos(index))
+                ? new GuiRectangle(16, 16).offset(mainGui.rootElement).offset(getPos(index))
                 : GuiRectangle.ZERO;
     }
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
 
         long target = container.tile.getTarget();
         if (target != 0) {
@@ -64,7 +63,7 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
                             (int) (RECT_PROGRESS.y + RECT_PROGRESS.height * Math.max(1 - v, 0)),
                             RECT_PROGRESS.width,
                             (int) Math.ceil(RECT_PROGRESS.height * Math.min(v, 1))
-                    ).offset(rootElement)
+                    ).offset(mainGui.rootElement)
             );
         }
         for (int i = 0; i < container.tile.recipesStates.size(); i++) {

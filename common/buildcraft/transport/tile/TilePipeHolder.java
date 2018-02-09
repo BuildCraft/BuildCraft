@@ -53,6 +53,7 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
@@ -440,6 +441,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
+        world.neighborChanged(pos.offset(side), BCTransportBlocks.pipeHolder, pos);
         return old;
     }
 

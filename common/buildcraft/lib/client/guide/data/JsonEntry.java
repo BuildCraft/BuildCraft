@@ -13,6 +13,8 @@ import buildcraft.api.core.BCLog;
 public class JsonEntry {
     public final String title;
     public final String page;
+    public final String type;
+    public final String source;
 
     @SerializedName("item_stack")
     public final String itemStack;
@@ -20,9 +22,11 @@ public class JsonEntry {
     @SerializedName("type_tags")
     public final JsonTypeTags typeTags;
 
-    public JsonEntry(String title, String page, String itemStack, JsonTypeTags typeTags) {
+    public JsonEntry(String title, String page, String type, String source, String itemStack, JsonTypeTags typeTags) {
         this.title = title;
         this.page = page;
+        this.type = type;
+        this.source = source;
         this.itemStack = itemStack;
         this.typeTags = typeTags;
     }
@@ -42,13 +46,15 @@ public class JsonEntry {
         realPage = realPage.replaceAll("<type>", tags.type);
         realPage = realPage.replaceAll("<sub_mod>", tags.subMod);
         realPage = realPage.replaceAll("<sub_type>", tags.subType);
-        return new JsonEntry(title, realPage, itemStack, tags);
+        return new JsonEntry(title, realPage, type, source, itemStack, tags);
     }
 
     public void printContents() {
         BCLog.logger.info("      title = " + title + ",");
         BCLog.logger.info("      page = " + page + ",");
         BCLog.logger.info("      item_stack = " + itemStack + ",");
+        BCLog.logger.info("      type = " + type + ",");
+        BCLog.logger.info("      source = " + source + ",");
         if (typeTags == null) {
             BCLog.logger.info("      type_tags = null");
         } else {

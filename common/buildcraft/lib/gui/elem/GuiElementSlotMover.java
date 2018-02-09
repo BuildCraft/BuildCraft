@@ -3,17 +3,17 @@ package buildcraft.lib.gui.elem;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.json.GuiJson;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-public class GuiElementSlotMover extends GuiElementSimple<GuiJson<?>> {
+public class GuiElementSlotMover extends GuiElementSimple {
 
     public final INodeBoolean visible;
     public final Slot toMove;
 
-    public GuiElementSlotMover(GuiJson<?> gui, IGuiPosition pos, INodeBoolean visible, Slot toMove) {
+    public GuiElementSlotMover(BuildCraftGui gui, IGuiPosition pos, INodeBoolean visible, Slot toMove) {
         super(gui, IGuiArea.create(pos, 18, 18));
         this.visible = visible;
         this.toMove = toMove;

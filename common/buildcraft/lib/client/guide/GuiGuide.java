@@ -25,7 +25,7 @@ import buildcraft.lib.client.guide.font.FontManager;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.guide.parts.GuidePageContents;
+import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -55,7 +55,7 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
 
     public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(23, 25, 168, 190);
-    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(4, 25, 166, 190);
+    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(4, 25, 168, 190);
 
     public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 14, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);
@@ -100,6 +100,10 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon NOTE_PAGE = new GuiIcon(NOTE, 0, 0, 131, 164);
     public static final GuiIcon NOTE_UNDERLAY = new GuiIcon(ICONS_2, 0, 1, 3, 4);
     public static final GuiIcon NOTE_OVERLAY = new GuiIcon(ICONS_2, 0, 1, 2, 3);
+
+    public static final GuiIcon SEARCH_ICON = new GuiIcon(ICONS_2, 26, 196, 12, 12);
+    public static final GuiIcon SEARCH_TAB_CLOSED = new GuiIcon(ICONS_2, 58, 196, 14, 6);
+    public static final GuiIcon SEARCH_TAB_OPEN = new GuiIcon(ICONS_2, 40, 209, 106, 14);
 
     public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_MOD };
 
@@ -152,15 +156,20 @@ public class GuiGuide extends GuiScreen {
     private float lastPartialTicks;
 
     public GuiGuide() {
+        mc = Minecraft.getMinecraft();
         openPage(new GuidePageContents(this));
+        // TODO: Add a full screen option, with a constant colour (or gradiant, or computed noise?)
     }
 
     public GuiGuide(String noteId) {
+        mc = Minecraft.getMinecraft();
         // TODO (AlexIIL): add support for notes!
-        // TODO (AlexIIL): Seperate text drawing from everything else (layer [gl, buffered, gl])
+        // TODO (AlexIIL): Separate text drawing from everything else (layer [gl, buffered, gl])
     }
 
     public void initForExport() {
+        // TODO: Move this out of this gui, and also change factories in some way to support
+        // exporting to other formats.
         isOpening = true;
         isOpen = true;
         setWorldAndResolution(Minecraft.getMinecraft(), 1920, 1080);
@@ -391,8 +400,10 @@ public class GuiGuide extends GuiScreen {
             chapter.reset();
         }
 
-        currentPage.renderFirstPage(minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y, (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
-        currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x, minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
+        currentPage.renderFirstPage(minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y,
+            (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
+        currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x, minY + (int) PAGE_RIGHT_TEXT.y,
+            (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
 
         int chapterIndex = 0;
         for (GuideChapter chapter : chapters) {
@@ -494,6 +505,9 @@ public class GuiGuide extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
+        if (currentPage.keyTyped(typedChar, keyCode)) {
+            return;
+        }
         if (keyCode == mc.gameSettings.keyBindLeft.getKeyCode()) {
             currentPage.lastPage();
         } else if (keyCode == mc.gameSettings.keyBindRight.getKeyCode()) {

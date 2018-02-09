@@ -9,6 +9,8 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -232,6 +234,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         left.add("progress = " + LocaleUtil.localizeMj(progress));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

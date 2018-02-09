@@ -6,87 +6,106 @@
 
 package buildcraft.lib.client.guide;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.util.StringUtils;
 
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
-import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.loader.entry.PageEntryType;
+import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.misc.ColourUtil;
 
-public class PageEntry {
+public class PageEntry<T> {
+
     public final String title, page;
     public final JsonTypeTags typeTags;
-    private final ItemStack stack;
-    private final boolean containsMeta, containsNbt;
+    public final PageEntryType<T> entryType;
+    public final T value;
 
-    public PageEntry(JsonEntry entry) {
-        this.page = entry.page;
-        this.typeTags = entry.typeTags;
-        // parse item stack
-        if (StringUtils.isNullOrEmpty(entry.itemStack)) {
-            stack = ItemStack.EMPTY;
-            containsMeta = false;
-            containsNbt = false;
-        } else if (entry.itemStack.startsWith("(") && entry.itemStack.endsWith(")")) {
-            String inner = entry.itemStack.substring(1, entry.itemStack.length() - 1);
-            Item item = Item.getByNameOrId(inner);
-            if (item != null) {
-                stack = new ItemStack(item);
-            } else {
-                BCLog.logger.warn("[lib.markdown] " + inner + " was not a valid item!");
-                stack = ItemStack.EMPTY;
-            }
-            containsMeta = false;
-            containsNbt = false;
-        } else if (entry.itemStack.startsWith("{") && entry.itemStack.endsWith("}")) {
-            String inner = entry.itemStack.substring(1, entry.itemStack.length() - 1);
-            String[] split = inner.split(",");
-            stack = MarkdownPageLoader.loadComplexItemStack(inner);
-            containsMeta = split.length >= 3;
-            containsNbt = split.length >= 4;
-        } else {
-            // print warning
-            stack = ItemStack.EMPTY;
-            containsMeta = false;
-            containsNbt = false;
+    private final List<String> searchTags = new ArrayList<>();
+
+    @Nullable
+    public static PageEntry<?> createPageEntry(JsonEntry entry) {
+        String typeName = entry.type;
+        if (typeName == null) {
+            typeName = "";
         }
-        if (entry.title == null || entry.title.length() == 0) {
-            if (stack.isEmpty()) {
-                this.title = "Unknown!";
-            } else {
-                this.title = stack.getDisplayName();
-            }
-        } else {
-            this.title = entry.title;
+
+        PageEntryType<?> type = PageEntryType.REGISTRY.get(typeName);
+        if (type == null) {
+            String valids = new TreeSet<>(PageEntryType.REGISTRY.keySet()).toString();
+            BCLog.logger.warn("[lib.guide] Unknown page entry type '" + typeName + "'. Valid ones are: " + valids);
+            return null;
         }
+        return createPageEntryKnown(entry, type);
     }
 
-    public boolean stackMatches(ItemStack test) {
-        if (stack == null || test == null) {
-            return false;
-        }
-        if (stack.getItem() != test.getItem()) {
-            return false;
-        }
-        if (containsMeta) {
-            if (stack.getMetadata() != test.getMetadata()) {
-                return false;
+    @Nullable
+    private static <T> PageEntry<T> createPageEntryKnown(JsonEntry entry, PageEntryType<T> type) {
+
+        String src = entry.source;
+        if (StringUtils.isNullOrEmpty(src)) {
+            src = entry.itemStack;
+            if (StringUtils.isNullOrEmpty(src)) {
+                BCLog.logger.warn("[lib.guide] Invalid page entry: must specify either 'item_stack', or 'source'!");
+                return null;
             }
-        }
-        if (containsNbt) {
-            if (!ItemStack.areItemStackTagsEqual(stack, test)) {
-                return false;
-            }
+        } else if (!StringUtils.isNullOrEmpty(entry.itemStack)) {
+            BCLog.logger.warn(
+                "[lib.guide] Invalid page entry: must only specify either 'item_stack' or 'source', but not both!");
+            return null;
         }
 
-        return true;
+        T value = type.deserialise(src);
+        if (value == null) {
+            BCLog.logger.warn("[lib.guide] Unknown source '" + src + "'");
+            return null;
+        }
+
+        String title = entry.title;
+        if (title == null || title.isEmpty()) {
+            List<String> tooltip = type.getTooltip(value);
+            title = ColourUtil.stripAllFormatCodes(tooltip.get(0));
+        }
+        if (StringUtils.isNullOrEmpty(entry.page)) {
+            BCLog.logger.warn("[lib.guide] Invalid page entry: a page is not specified!SSS");
+            return null;
+        }
+        return new PageEntry<T>(title, entry.page, entry.typeTags, type, value);
     }
 
-    public ItemStack getItemStack() {
-        return stack == null ? ItemStack.EMPTY : stack.copy();
+    private PageEntry(String title, String page, JsonTypeTags typeTags, PageEntryType<T> entryType, T value) {
+        this.title = title;
+        this.page = page;
+        this.typeTags = typeTags;
+        this.entryType = entryType;
+        this.value = value;
+
+        searchTags.add(title);
+        searchTags.add(typeTags.mod);
+        searchTags.add(typeTags.subMod);
+        searchTags.add(typeTags.type);
+        searchTags.add(typeTags.subType);
+        searchTags.addAll(entryType.getTooltip(value));
+    }
+
+    public List<String> getSearchTags() {
+        return searchTags;
+    }
+
+    public boolean matches(Object obj) {
+        return entryType.matches(value, obj);
+    }
+
+    public ISimpleDrawable createDrawable() {
+        return entryType.createDrawable(value);
     }
 
     @Override

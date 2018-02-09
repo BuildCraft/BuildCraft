@@ -36,7 +36,7 @@ public class ElementTypeButton extends ElementType {
     }
 
     @Override
-    public IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    public IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
         // TODO: Find a sane way of making the position variable!
         inheritProperty(json, "area[0]", "pos[0]");
@@ -109,7 +109,7 @@ public class ElementTypeButton extends ElementType {
     }
 
     private static ISimpleDrawable resolveDrawable(FunctionContext ctx, JsonGuiInfo guiInfo, JsonGuiElement json,
-        GuiJson<?> gui, int sizeX, int sizeY, String key) {
+        BuildCraftJsonGui gui, int sizeX, int sizeY, String key) {
         double[] uvs = new double[4];
         for (int i = 0; i < 4; i++) {
             uvs[i] = resolveEquationDouble(json, key + "[" + i + "]", ctx);

@@ -50,7 +50,7 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 //@formatter:on
 public class BCLib {
     public static final String MODID = "buildcraftlib";
-    public static final String VERSION = "${version}";
+    public static final String VERSION = "$version";
     public static final String MC_VERSION = "${mcversion}";
     public static final String GIT_BRANCH = "${git_branch}";
     public static final String GIT_COMMIT_HASH = "${git_commit_hash}";

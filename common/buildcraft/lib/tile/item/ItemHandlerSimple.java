@@ -20,7 +20,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.inventory.AbstractInvItemTransactor;
@@ -96,13 +95,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
     public void deserializeNBT(NBTTagCompound nbt) {
         NBTTagList list = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount() && i < getSlots(); i++) {
-            setStackInternal(i, StackUtil.EMPTY);
-            ItemStack stack = new ItemStack(list.getCompoundTagAt(i));
-            // Obviously this can fail to load some items
-            ItemStack leftOver = insert(i, stack, false);
-            if (!leftOver.isEmpty()) {
-                BCLog.logger.error("Failed to insert a stack while reading! (" + leftOver + ")", new Throwable());
-            }
+            setStackInternal(i, new ItemStack(list.getCompoundTagAt(i)));
         }
         for (int i = list.tagCount(); i < getSlots(); i++) {
             setStackInternal(i, StackUtil.EMPTY);
@@ -139,6 +132,10 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         }
         if (canSet(slot, stack)) {
             ItemStack current = stacks.get(slot);
+            if (!canSet(slot, current)) {
+                // A bit odd, but can happen if the filter changed
+                return stack;
+            }
             InsertionResult result = inserter.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
@@ -147,6 +144,8 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 CrashReportCategory cat = report.makeCategory("Inventory details");
                 cat.addCrashSection("Existing Item", current);
                 cat.addCrashSection("Inserting Item", stack);
+                cat.addCrashSection("To Set", result.toSet);
+                cat.addCrashSection("To Return", result.toReturn);
                 cat.addCrashSection("Slot", slot);
                 cat.addCrashSection("Checker", checker.getClass());
                 cat.addCrashSection("Inserter", inserter.getClass());
@@ -233,17 +232,10 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
             // Its safe to throw here
             throw new IndexOutOfBoundsException("Slot index out of range: " + slot);
         }
-        if (canSet(slot, stack)) {
-            ItemStack before = stacks.get(slot);
-            setStackInternal(slot, stack);
-            if (callback != null) {
-                callback.onStackChange(this, slot, before, asValid(stack));
-            }
-        } else {
-            // Someone miss-called this. Woops. Looks like they didn't call insert.
-            // If this is *somehow* called from vanilla code then its probably a vanilla bug
-            throw new IllegalStateException(
-                "Attempted to set stack[" + slot + "] when it was invalid! (" + stack + ")");
+        ItemStack before = stacks.get(slot);
+        setStackInternal(slot, stack);
+        if (callback != null) {
+            callback.onStackChange(this, slot, before, asValid(stack));
         }
     }
 

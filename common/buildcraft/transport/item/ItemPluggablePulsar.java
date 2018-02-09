@@ -26,13 +26,15 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.plug.PluggablePulsar;
 
+@Deprecated
 public class ItemPluggablePulsar extends ItemBC_Neptune implements IItemPluggable {
     public ItemPluggablePulsar(String id) {
         super(id);
     }
 
     @Override
-    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player, EnumHand hand) {
+    public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player,
+        EnumHand hand) {
         IPipe pipe = holder.getPipe();
         if (pipe == null) {
             return null;

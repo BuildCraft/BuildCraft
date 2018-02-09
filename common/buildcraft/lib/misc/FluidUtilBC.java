@@ -33,6 +33,7 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.lib.fluid.Tank;
 
 public class FluidUtilBC {
+
     public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
         FluidStack potential = tank.drain(tank.getFluidAmount(), false);
         int drained = 0;
@@ -61,8 +62,10 @@ public class FluidUtilBC {
         if (drained > 0) {
             FluidStack actuallyDrained = tank.drain(drained, true);
             if (actuallyDrained == null || actuallyDrained.amount != drained) {
-                throw new IllegalStateException("Bad tank! Could drain " + working + " but only drained "
-                    + actuallyDrained + "( tank " + tank.getClass() + ")");
+                String strWorking = StringUtilBC.fluidToString(working);
+                String strActual = StringUtilBC.fluidToString(actuallyDrained);
+                throw new IllegalStateException("Bad tank! Could drain " + strWorking + " but only drained " + strActual
+                    + "( tank " + tank.getClass() + ")");
             }
         }
     }

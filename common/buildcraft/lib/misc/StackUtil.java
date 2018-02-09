@@ -6,7 +6,6 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collector;
@@ -91,30 +90,22 @@ public class StackUtil {
         return false;
     }
 
-    /**
-     * Checks that passed stack meets stack definition requirements
-     */
+    /** Checks that passed stack meets stack definition requirements */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
         return !stack.isEmpty() && stackDefinition.filter.matches(stack) && stack.getCount() >= stackDefinition.count;
     }
 
-    /**
-     * Checks that passed stack definition acceptable for stack collection
-     */
+    /** Checks that passed stack definition acceptable for stack collection */
     public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull NonNullList<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
     }
 
-    /**
-     * Checks that passed stack meets stack definition requirements
-     */
+    /** Checks that passed stack meets stack definition requirements */
     public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull ItemStack stack) {
         return !stack.isEmpty() && ingredientStack.ingredient.apply(stack) && stack.getCount() >= ingredientStack.count;
     }
 
-    /**
-     * Checks that passed stack definition acceptable for stack collection
-     */
+    /** Checks that passed stack definition acceptable for stack collection */
     public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull NonNullList<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(ingredientStack, stack));
     }
@@ -169,7 +160,22 @@ public class StackUtil {
         }
 
         return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+    }
 
+    /** This doesn't take into account stack sizes.
+     * 
+     * @param filterOrList The exact itemstack to test, or an item that implements {@link IList} to test against.
+     * @param test The stack to test for equality
+     * @return True if they matched according to the above definitions, or false if theydidn't, or either was empty. */
+    public static boolean matchesStackOrList(@Nonnull ItemStack filterOrList, @Nonnull ItemStack test) {
+        if (filterOrList.isEmpty() || test.isEmpty()) {
+            return false;
+        }
+        if (filterOrList.getItem() instanceof IList) {
+            IList list = (IList) filterOrList.getItem();
+            return list.matches(filterOrList, test);
+        }
+        return canMerge(filterOrList, test);
     }
 
     /** Merges mergeSource into mergeTarget
@@ -199,7 +205,8 @@ public class StackUtil {
      * @param comparison The stack to compare.
      * @param oreDictionary true to take the Forge OreDictionary into account.
      * @return true if comparison should be considered a crafting equivalent for base. */
-    public static boolean isCraftingEquivalent(@Nonnull ItemStack base, @Nonnull ItemStack comparison, boolean oreDictionary) {
+    public static boolean isCraftingEquivalent(@Nonnull ItemStack base, @Nonnull ItemStack comparison,
+        boolean oreDictionary) {
         if (isMatchingItem(base, comparison, true, false)) {
             return true;
         }
@@ -209,7 +216,9 @@ public class StackUtil {
             if (idBase.length > 0) {
                 for (int id : idBase) {
                     for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                        if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+                        if (comparison.getItem() == itemstack.getItem()
+                            && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                                || comparison.getItemDamage() == itemstack.getItemDamage())) {
                             return true;
                         }
                     }
@@ -224,7 +233,9 @@ public class StackUtil {
         if (oreIDs.length > 0) {
             for (int id : oreIDs) {
                 for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                    if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+                    if (comparison.getItem() == itemstack.getItem()
+                        && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                            || comparison.getItemDamage() == itemstack.getItemDamage())) {
                         return true;
                     }
                 }
@@ -277,7 +288,8 @@ public class StackUtil {
      * @param matchDamage
      * @param matchNBT
      * @return true if matches */
-    public static boolean isMatchingItem(@Nonnull final ItemStack base, @Nonnull final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
+    public static boolean isMatchingItem(@Nonnull final ItemStack base, @Nonnull final ItemStack comparison,
+        final boolean matchDamage, final boolean matchNBT) {
         if (base.isEmpty() || comparison.isEmpty()) {
             return false;
         }

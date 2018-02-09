@@ -17,8 +17,6 @@ import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCLog;
@@ -137,7 +135,6 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return create(new ItemStack(output));
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public GuideCrafting createNew(GuiGuide gui) {
         return new GuideCrafting(gui, input, output);

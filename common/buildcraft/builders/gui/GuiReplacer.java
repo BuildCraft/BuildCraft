@@ -39,7 +39,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement);
         ClientSnapshots.INSTANCE.renderSnapshot(
             BCBuildersItems.snapshot.getHeader(container.tile.invSnapshot.getStackInSlot(0)),
             guiLeft + 8,

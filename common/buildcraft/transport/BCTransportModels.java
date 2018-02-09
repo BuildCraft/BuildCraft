@@ -43,6 +43,7 @@ import buildcraft.transport.client.model.key.KeyPlugFacade;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 import buildcraft.transport.client.model.key.KeyPlugLens;
 import buildcraft.transport.client.model.key.KeyPlugLightSensor;
+import buildcraft.transport.client.model.key.KeyPlugPowerAdaptor;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 import buildcraft.transport.client.model.plug.ModelFacadeItem;
 import buildcraft.transport.client.model.plug.ModelLensItem;
@@ -88,6 +89,7 @@ public class BCTransportModels {
     public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
     public static final IPluggableStaticBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;
     public static final IPluggableStaticBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
+    public static final IPluggableStaticBaker<KeyPlugPowerAdaptor> BAKER_PLUG_POWER_ADAPTOR;
 
     static {
         BLOCKER = getModel("plugs/blocker.json");
@@ -115,6 +117,7 @@ public class BCTransportModels {
         BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
         BAKER_PLUG_BLOCKER = new PlugBakerSimple<>(BLOCKER::getCutoutQuads);
         BAKER_PLUG_LIGHT_SENSOR = new PlugBakerSimple<>(LIGHT_SENSOR::getCutoutQuads);
+        BAKER_PLUG_POWER_ADAPTOR = new PlugBakerSimple<>(POWER_ADAPTER::getCutoutQuads);
     }
 
     private static ModelHolderStatic getModel(String loc) {
@@ -142,6 +145,7 @@ public class BCTransportModels {
         PipeApiClient.registry.registerBaker(KeyPlugBlocker.class, BCTransportModels.BAKER_PLUG_BLOCKER);
         PipeApiClient.registry.registerBaker(KeyPlugPulsar.class, BCTransportModels.BAKER_PLUG_PULSAR);
         PipeApiClient.registry.registerBaker(KeyPlugLightSensor.class, BCTransportModels.BAKER_PLUG_LIGHT_SENSOR);
+        PipeApiClient.registry.registerBaker(KeyPlugPowerAdaptor.class, BCTransportModels.BAKER_PLUG_POWER_ADAPTOR);
         PipeApiClient.registry.registerBaker(KeyPlugLens.class, PlugBakerLens.INSTANCE);
         PipeApiClient.registry.registerBaker(KeyPlugFacade.class, PlugBakerFacade.INSTANCE);
 
@@ -175,6 +179,8 @@ public class BCTransportModels {
             new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), PULSAR_DYNAMIC.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_light_sensor#inventory",
             new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
+        registerModel(modelRegistry, start + "plug_power_adaptor#inventory",
+            new ModelPluggableItem(POWER_ADAPTER.getCutoutQuads()));
         registerModel(modelRegistry, start + "plug_facade#inventory", ModelFacadeItem.INSTANCE);
 
         PlugGateBaker.onModelBake();

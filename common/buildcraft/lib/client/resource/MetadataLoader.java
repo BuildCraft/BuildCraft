@@ -52,6 +52,7 @@ public class MetadataLoader {
             // That's fine
             return null;
         } catch (IOException e) {
+            // That's not fine
             e.printStackTrace();
             return null;
         }

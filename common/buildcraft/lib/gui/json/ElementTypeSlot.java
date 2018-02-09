@@ -24,7 +24,7 @@ public class ElementTypeSlot extends ElementType {
     // visible: If false then the slot won't be visible
 
     @Override
-    protected IGuiElement deserialize0(GuiJson<?> gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
+    protected IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info, JsonGuiElement json) {
         FunctionContext ctx = createContext(json);
 
         String slotName = json.properties.get("slot");

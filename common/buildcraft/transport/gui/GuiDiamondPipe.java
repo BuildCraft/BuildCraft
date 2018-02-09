@@ -41,20 +41,20 @@ public class GuiDiamondPipe extends GuiBC8<ContainerDiamondPipe> {
     @Override
     protected void drawForegroundLayer() {
         String string = LocaleUtil.localize("gui.pipes.emerald.title");
-        double titleX = rootElement.getX() + 8;
-        double titleY = rootElement.getY() + 6;
+        double titleX = mainGui.rootElement.getX() + 8;
+        double titleY = mainGui.rootElement.getY() + 6;
         fontRenderer.drawString(string, (int) titleX, (int) titleY, 0x404040);
 
-        double invY = rootElement.getY() + ySize - 97;
+        double invY = mainGui.rootElement.getY() + ySize - 97;
         fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) titleX, (int) invY, 0x404040);
     }
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         if (BCLibConfig.colourBlindMode) {
-            ICON_GUI_CB.drawAt(rootElement);
+            ICON_GUI_CB.drawAt(mainGui.rootElement);
         } else {
-            ICON_GUI.drawAt(rootElement);
+            ICON_GUI.drawAt(mainGui.rootElement);
         }
     }
 }

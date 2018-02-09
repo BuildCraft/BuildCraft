@@ -7,12 +7,14 @@
 package buildcraft.factory.tile;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,14 +29,17 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.craft.IAutoCraft;
 import buildcraft.lib.tile.craft.WorkbenchCrafting;
+import buildcraft.lib.tile.item.ItemHandlerFiltered;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
+public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
+    implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
 
     /** A redstone engine generates <code> 1 * {@link MjAPI#MJ}</code> per tick. This makes it a lot slower without one
      * powering it. */
@@ -46,7 +51,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     private static final long POWER_LOST = POWER_GEN_PASSIVE * 10;
 
     public final ItemHandlerSimple invBlueprint;
-    public final ItemHandlerSimple invMaterials;
+    public final ItemHandlerSimple invMaterialFilter;
+    public final ItemHandlerFiltered invMaterials;
     public final ItemHandlerSimple invResult;
     private final WorkbenchCrafting crafting;
 
@@ -60,7 +66,10 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
     public TileAutoWorkbenchBase(int width, int height) {
         int slots = width * height;
         invBlueprint = itemManager.addInvHandler("blueprint", slots, EnumAccess.PHANTOM);
-        invMaterials = itemManager.addInvHandler("materials", slots, EnumAccess.INSERT, EnumPipePart.VALUES);
+        invMaterialFilter = itemManager.addInvHandler("material_filter", slots, EnumAccess.PHANTOM);
+        invMaterials = new ItemHandlerFiltered(invMaterialFilter, true);
+        invMaterials.setCallback(itemManager.callback);
+        itemManager.addInvHandler("materials", invMaterials, EnumAccess.INSERT, EnumPipePart.VALUES);
         invResult = itemManager.addInvHandler("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
         crafting = new WorkbenchCrafting(width, height, this, invBlueprint, invMaterials, invResult);
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this, EnumPipePart.VALUES);
@@ -97,6 +106,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
             powerStored = 0;
         }
         if (didChange) {
+            createFilters();
             sendNetworkGuiUpdate(NET_GUI_DATA);
         }
     }
@@ -141,6 +151,68 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
 
     public InventoryCrafting getWorkbenchCrafting() {
         return crafting;
+    }
+
+    private void createFilters() {
+        if (crafting.getAssumedResult().isEmpty()) {
+            for (int s = 0; s < invMaterialFilter.getSlots(); s++) {
+                invMaterialFilter.setStackInSlot(s, ItemStack.EMPTY);
+            }
+            return;
+        }
+        NonNullList<ItemStack> uniqueStacks = NonNullList.create();
+        int slotCount = invBlueprint.getSlots();
+        int[] requirements = new int[slotCount];
+        for (int s = 0; s < slotCount; s++) {
+            ItemStack bptStack = invBlueprint.getStackInSlot(s);
+            if (!bptStack.isEmpty()) {
+                boolean foundMatch = false;
+                for (int i = 0; i < uniqueStacks.size(); i++) {
+                    if (StackUtil.canMerge(bptStack, uniqueStacks.get(i))) {
+                        foundMatch = true;
+                        requirements[i]++;
+                        break;
+                    }
+                }
+                if (!foundMatch) {
+                    requirements[uniqueStacks.size()] = 1;
+                    uniqueStacks.add(bptStack);
+                }
+            }
+        }
+        int uniqueSlotCount = uniqueStacks.size();
+        int[] slotAllocationCount = new int[uniqueSlotCount];
+        Arrays.fill(slotAllocationCount, 1);
+        int slotsLeft = slotCount - uniqueSlotCount;
+        for (int i = 0; i < slotsLeft; i++) {
+            int smallestDifference = Integer.MAX_VALUE;
+            int smallestDifferenceIndex = 0;
+
+            for (int s = 0; s < uniqueSlotCount; s++) {
+                ItemStack stack = uniqueStacks.get(s);
+                int uniqueCountTotal = stack.getMaxStackSize() * slotAllocationCount[s];
+
+                int difference = uniqueCountTotal / requirements[s];
+                if (difference < smallestDifference) {
+                    smallestDifference = difference;
+                    smallestDifferenceIndex = s;
+                }
+            }
+            slotAllocationCount[smallestDifferenceIndex]++;
+        }
+
+        int realIndex = 0;
+        for (int s = 0; s < uniqueSlotCount; s++) {
+            ItemStack stack = uniqueStacks.get(s).copy();
+            stack.setCount(1);
+            for (int i = 0; i < slotAllocationCount[s]; i++) {
+                invMaterialFilter.setStackInSlot(realIndex, stack);
+                realIndex++;
+            }
+        }
+        if (realIndex != slotCount) {
+            throw new IllegalStateException("Somehow the balanced formula wasn't perfectly balanced!");
+        }
     }
 
     // IMjRedstoneReceiver

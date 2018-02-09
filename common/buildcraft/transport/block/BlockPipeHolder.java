@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -480,6 +481,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 if (attached && !player.capabilities.isCreativeMode) {
                     held.shrink(1);
                 }
+                if (attached) {
+                    return true;
+                }
             }
         }
         Pipe pipe = tile.getPipe();
@@ -635,6 +639,16 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
         PipePluggable pluggable = tile.getPluggable(side);
         return pluggable != null && pluggable.isSideSolid();
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return BlockFaceShape.UNDEFINED;
+        }
+        PipePluggable pluggable = tile.getPluggable(face);
+        return pluggable != null ? pluggable.getBlockFaceShape() : BlockFaceShape.UNDEFINED;
     }
 
     private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {

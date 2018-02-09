@@ -87,6 +87,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
         }
     }
 
+    @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {

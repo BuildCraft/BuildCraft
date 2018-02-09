@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.render.ISprite;
 
-import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.misc.SpriteUtil;
@@ -22,7 +22,7 @@ public class LedgerOwnership extends Ledger_Neptune {
 
     private final TileBC_Neptune tile;
 
-    public LedgerOwnership(GuiBC8<?> gui, TileBC_Neptune tile, boolean expandPositive) {
+    public LedgerOwnership(BuildCraftGui gui, TileBC_Neptune tile, boolean expandPositive) {
         super(gui, 0xFF_E0_F0_FF, expandPositive);
         this.title = "gui.ledger.ownership";
         this.tile = tile;
