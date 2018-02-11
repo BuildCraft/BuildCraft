@@ -26,6 +26,8 @@ Bug fixes:
 * Fix fluid tanks sometimes leaving a visible gap between the above and below tanks.
 * Fix the quarry not loading enough chunks
 * Fix the filler and builder not using power smoothly.
+* Fix gates not saving the currently emmited wires, leading to buggy state cells.
+* Fix the list item not populating examples from all items at once.
 * [#3954] Chisel facades don't render correctly.
 * [#3977] The filtered buffer doesn't work properly with inventory level triggers.
 * [#3981] Placing a pipe wire will also interact with a gate.
