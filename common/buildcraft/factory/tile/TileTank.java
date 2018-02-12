@@ -191,8 +191,8 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     private TileTank getTank(BlockPos at) {
         TileEntity tile = world.getTileEntity(at);
         if (tile instanceof TileTank) {
-            TileTank tank = (TileTank) tile;
-            return Objects.equals(this.association, tank.association) ? tank : null;
+            TileTank tileTank = (TileTank) tile;
+            return Objects.equals(this.association, tileTank.association) ? tileTank : null;
         }
         return null;
     }
