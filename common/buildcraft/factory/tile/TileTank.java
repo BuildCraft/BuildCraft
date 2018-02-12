@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,7 +49,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     private static boolean isPlayerInteracting = false;
 
     public final Tank tank;
-    public final String association;
     public final FluidSmoother smoothedTank;
 
     private int lastComparatorLevel;
@@ -60,13 +58,12 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     }
 
     protected TileTank(int capacity) {
-        this(new Tank("tank", capacity, null), null);
+        this(new Tank("tank", capacity, null));
     }
 
-    protected TileTank(Tank tank, String association) {
+    protected TileTank(Tank tank) {
         tank.setTileEntity(this);
         this.tank = tank;
-        this.association = association;
         tankManager.add(tank);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, this, EnumPipePart.VALUES);
         smoothedTank = new FluidSmoother(w -> createAndSendMessage(NET_FLUID_DELTA, w), tank);
@@ -188,11 +185,17 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     // Tank helper methods
 
+    public boolean canConnectTo(TileTank tileTank) {
+        return true;
+    }
+
     private TileTank getTank(BlockPos at) {
         TileEntity tile = world.getTileEntity(at);
         if (tile instanceof TileTank) {
             TileTank tileTank = (TileTank) tile;
-            return Objects.equals(this.association, tileTank.association) ? tileTank : null;
+            if (tileTank.canConnectTo(this)) {
+                return tileTank;
+            }
         }
         return null;
     }
