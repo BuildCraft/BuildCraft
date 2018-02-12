@@ -193,7 +193,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         TileEntity tile = world.getTileEntity(at);
         if (tile instanceof TileTank) {
             TileTank tileTank = (TileTank) tile;
-            if (tileTank.canConnectTo(this)) {
+            if (tileTank.canConnectTo(this) && this.canConnectTo(tileTank)) {
                 return tileTank;
             }
         }
