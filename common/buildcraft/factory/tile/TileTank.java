@@ -213,12 +213,12 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         return from.canConnectTo(to, direction) && to.canConnectTo(from, direction.getOpposite());
     }
 
-    /** @return A list of all connected tanks around this block, ordered by position bottom to top. */
+    /** @return A list of all connected tanks around this block, ordered by position from bottom to top. */
     private List<TileTank> getTanks() {
         // double-ended queue rather than array list to avoid
         // the copy operation when we search downwards
         Deque<TileTank> tanks = new ArrayDeque<>();
-        BlockPos currentPos = pos;
+        tanks.add(this);
         TileTank prevTank = this;
         while (true) {
             TileEntity tileAbove = prevTank.getNeighbourTile(EnumFacing.UP);
@@ -231,10 +231,8 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             } else {
                 break;
             }
-            currentPos = currentPos.up();
             prevTank = tankUp;
         }
-        currentPos = pos.down();
         prevTank = this;
         while (true) {
             TileEntity tileBelow = prevTank.getNeighbourTile(EnumFacing.DOWN);
@@ -247,7 +245,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             } else {
                 break;
             }
-            currentPos = currentPos.down();
             prevTank = tankBelow;
         }
         return new ArrayList<>(tanks);
