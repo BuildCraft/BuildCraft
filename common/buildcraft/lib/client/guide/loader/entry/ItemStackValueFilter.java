@@ -10,7 +10,7 @@ public class ItemStackValueFilter {
     public final boolean matchNbt;
     public final boolean matchMeta;
 
-    public ItemStackValueFilter(ItemStackKey stack, boolean matchNbt, boolean matchMeta) {
+    public ItemStackValueFilter(ItemStackKey stack, boolean matchMeta, boolean matchNbt) {
         this.stack = stack;
         this.matchNbt = matchNbt;
         this.matchMeta = matchMeta;
