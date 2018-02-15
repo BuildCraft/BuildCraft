@@ -104,34 +104,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         if (!placer.world.isRemote) {
-            List<TileTank> tanks = getTanks();
-            FluidStack fluid = null;
-            for (TileTank tile : tanks) {
-                FluidStack held = tile.tank.getFluid();
-                if (held == null) {
-                    continue;
-                }
-                if (fluid == null) {
-                    fluid = held;
-                } else if (!fluid.isFluidEqual(held)) {
-                    return;
-                }
-            }
-            if (fluid == null) {
-                return;
-            }
-            if (fluid.getFluid().isGaseous(fluid)) {
-                Collections.reverse(tanks);
-            }
-            TileTank prev = null;
-            isPlayerInteracting = true;
-            for (TileTank tile : tanks) {
-                if (prev != null) {
-                    FluidUtilBC.move(tile.tank, prev.tank);
-                }
-                prev = tile;
-            }
-            isPlayerInteracting = false;
+            reflowTanks();
         }
     }
 
@@ -211,6 +184,41 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
      * @return True if both could connect, false otherwise. */
     public static boolean canTanksConnect(TileTank from, TileTank to, EnumFacing direction) {
         return from.canConnectTo(to, direction) && to.canConnectTo(from, direction.getOpposite());
+    }
+
+    /** Attempts to reflow fluids to the bottom most tank, and gasses to the uppermost tank. This is necessary whenever
+     * a new tank is added to the stack, or can be run by addons which directly manipulate connectivity, capacities or
+     * fluid amount in a single tank.
+     */
+    public void reflowTanks() {
+        List<TileTank> tanks = getTanks();
+        FluidStack fluid = null;
+        for (TileTank tile : tanks) {
+            FluidStack held = tile.tank.getFluid();
+            if (held == null) {
+                continue;
+            }
+            if (fluid == null) {
+                fluid = held;
+            } else if (!fluid.isFluidEqual(held)) {
+                return;
+            }
+        }
+        if (fluid == null) {
+            return;
+        }
+        if (fluid.getFluid().isGaseous(fluid)) {
+            Collections.reverse(tanks);
+        }
+        TileTank prev = null;
+        isPlayerInteracting = true;
+        for (TileTank tile : tanks) {
+            if (prev != null) {
+                FluidUtilBC.move(tile.tank, prev.tank);
+            }
+            prev = tile;
+        }
+        isPlayerInteracting = false;
     }
 
     /** @return A list of all connected tanks around this block, ordered by position from bottom to top. */
