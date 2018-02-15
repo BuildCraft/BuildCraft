@@ -104,34 +104,40 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         if (!placer.world.isRemote) {
-            List<TileTank> tanks = getTanks();
-            FluidStack fluid = null;
-            for (TileTank tile : tanks) {
-                FluidStack held = tile.tank.getFluid();
-                if (held == null) {
-                    continue;
-                }
-                if (fluid == null) {
-                    fluid = held;
-                } else if (!fluid.isFluidEqual(held)) {
-                    return;
-                }
+            isPlayerInteracting = true;
+            balanceTankFluids();
+            isPlayerInteracting = false;
+        }
+    }
+
+    /** Moves fluids around to their preferred positions. (For gaseous fluids this will move everything as high as
+     * possible, for liquid fluids this will move everything as low as possible.) */
+    public void balanceTankFluids() {
+        List<TileTank> tanks = getTanks();
+        FluidStack fluid = null;
+        for (TileTank tile : tanks) {
+            FluidStack held = tile.tank.getFluid();
+            if (held == null) {
+                continue;
             }
             if (fluid == null) {
+                fluid = held;
+            } else if (!fluid.isFluidEqual(held)) {
                 return;
             }
-            if (fluid.getFluid().isGaseous(fluid)) {
-                Collections.reverse(tanks);
+        }
+        if (fluid == null) {
+            return;
+        }
+        if (fluid.getFluid().isGaseous(fluid)) {
+            Collections.reverse(tanks);
+        }
+        TileTank prev = null;
+        for (TileTank tile : tanks) {
+            if (prev != null) {
+                FluidUtilBC.move(tile.tank, prev.tank);
             }
-            TileTank prev = null;
-            isPlayerInteracting = true;
-            for (TileTank tile : tanks) {
-                if (prev != null) {
-                    FluidUtilBC.move(tile.tank, prev.tank);
-                }
-                prev = tile;
-            }
-            isPlayerInteracting = false;
+            prev = tile;
         }
     }
 
