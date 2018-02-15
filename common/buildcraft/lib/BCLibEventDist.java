@@ -185,6 +185,7 @@ public enum BCLibEventDist {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
