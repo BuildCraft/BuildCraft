@@ -189,8 +189,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     /** Attempts to reflow fluids to the bottom most tank, and gasses to the uppermost tank. This is necessary whenever
      * a new tank is added to the stack, or can be run by addons which directly manipulate connectivity, capacities or
      * fluid amount in a single tank.
-     *
-     * @return void
      */
     public void reflowTanks() {
         List<TileTank> tanks = getTanks();
