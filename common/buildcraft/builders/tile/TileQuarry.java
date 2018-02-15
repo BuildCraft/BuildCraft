@@ -315,6 +315,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 if (box2.contains(pos)) {
                     continue;
                 }
+                if (!box2.contains(areaPos)) {
+                    continue;
+                }
                 if (box2.size().getX() < 3 || box2.size().getZ() < 3) {
                     continue;
                 }
