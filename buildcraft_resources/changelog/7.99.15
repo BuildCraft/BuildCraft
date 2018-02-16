@@ -23,14 +23,15 @@ Improvements:
 
 Bug fixes:
 
-* Fix torches being placable on pipes (without any pluggables that they could rest on)
+* Fix torches being placable on pipes (without any pluggables that they could rest on).
 * Fix fluid tanks sometimes leaving a visible gap between the above and below tanks.
-* Fix the quarry not loading enough chunks
+* Fix the quarry not loading enough chunks.
 * Fix the filler and builder not using power smoothly.
 * Fix gates not saving the currently emmited wires, leading to buggy state cells.
 * Fix the list item not populating examples from all items at once.
 * Fix the quarry not checking to see if it is facing directly away from a marker box.
-* Fix the guide book swapping "matchNbt" and "matchMeta"
+* Fix the guide book swapping "matchNbt" and "matchMeta".
+* Fix the builder and filler using up power unevenly.
 * [#3954] Chisel facades don't render correctly.
 * [#3977] The filtered buffer doesn't work properly with inventory level triggers.
 * [#3981] Placing a pipe wire will also interact with a gate.
