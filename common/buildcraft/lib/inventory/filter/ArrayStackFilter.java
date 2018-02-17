@@ -6,21 +6,18 @@
 
 package buildcraft.lib.inventory.filter;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.recipes.StackDefinition;
-
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayStackFilter implements IStackFilter {
@@ -66,11 +63,6 @@ public class ArrayStackFilter implements IStackFilter {
             }
         }
         return false;
-    }
-
-    @Override
-    public List<ItemStack> getExamples() {
-        return stacks;
     }
 
     public static StackDefinition definition(int count, ItemStack... stacks) {

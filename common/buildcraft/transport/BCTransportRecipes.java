@@ -6,23 +6,6 @@
 
 package buildcraft.transport;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.RecipeSorter.Category;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
-
 import buildcraft.api.BCBlocks;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
@@ -30,7 +13,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
-
+import buildcraft.core.BCCoreBlocks;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
@@ -38,8 +21,6 @@ import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
-
-import buildcraft.core.BCCoreBlocks;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;
@@ -47,6 +28,20 @@ import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPipeHolder;
 import buildcraft.transport.recipe.FacadeAssemblyRecipes;
 import buildcraft.transport.recipe.FacadeSwapRecipe;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class BCTransportRecipes {
     public static void init() {
@@ -212,8 +207,6 @@ public class BCTransportRecipes {
                 }
             }
             StackDefinition lapis = OreStackFilter.definition("gemLapis");
-            if (lapis.filter.getExamples().isEmpty())
-                lapis = ArrayStackFilter.definition(new ItemStack(Items.DYE, 1, 4));
             makeGateAssembly(20_000, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON);
             makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER,
                     EnumRedstoneChipset.IRON, ArrayStackFilter.definition(new ItemStack(Blocks.NETHER_BRICK)));
@@ -242,9 +235,7 @@ public class BCTransportRecipes {
             for (EnumDyeColor color : ColourUtil.COLOURS) {
                 String name = String.format("wire-%s", color.getUnlocalizedName());
                 StackDefinition redstone = OreStackFilter.definition("dustRedstone");
-                if (redstone.filter.getExamples().isEmpty()) redstone = ArrayStackFilter.definition(Items.REDSTONE);
                 StackDefinition colorStack = OreStackFilter.definition(ColourUtil.getDyeName(color));
-                if (colorStack.filter.getExamples().isEmpty()) colorStack = ArrayStackFilter.definition(new ItemStack(Items.DYE, 1, color.getDyeDamage()));
                 ImmutableSet<StackDefinition> input = ImmutableSet.of(redstone, colorStack);
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 10_000 * MjAPI.MJ, input,
                         new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
@@ -255,7 +246,6 @@ public class BCTransportRecipes {
             for (EnumDyeColor colour : ColourUtil.COLOURS) {
                 String name = String.format("lens-regular-%s", colour.getUnlocalizedName());
                 StackDefinition stainedGlass = OreStackFilter.definition("blockGlass" + ColourUtil.getName(colour));
-                if (stainedGlass.filter.getExamples().isEmpty()) stainedGlass = ArrayStackFilter.definition(new ItemStack(Blocks.STAINED_GLASS, 1, colour.getDyeDamage()));
                 ImmutableSet<StackDefinition> input = ImmutableSet.of(stainedGlass);
                 ItemStack output = BCTransportItems.plugLens.getStack(colour, false);
                 AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(name, 500 * MjAPI.MJ, input, output));

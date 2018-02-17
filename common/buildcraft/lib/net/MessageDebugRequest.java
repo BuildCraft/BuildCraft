@@ -6,22 +6,18 @@
 
 package buildcraft.lib.net;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.item.ItemDebugger;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.item.ItemDebugger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageDebugRequest implements IMessage {
     private BlockPos pos;
@@ -51,9 +47,7 @@ public class MessageDebugRequest implements IMessage {
 
     public static final IMessageHandler<MessageDebugRequest, MessageDebugResponse> HANDLER = (message, ctx) -> {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
-        if (!player.capabilities.isCreativeMode &&
-            !(player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() instanceof ItemDebugger) &&
-            !(player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof ItemDebugger)) {
+        if (!ItemDebugger.isShowDebugInfo(player)) {
             return new MessageDebugResponse();
         }
         TileEntity tile = player.world.getTileEntity(message.pos);

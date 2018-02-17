@@ -6,27 +6,24 @@
 
 package buildcraft.lib.list;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.api.lists.ListRegistry;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import com.google.common.collect.Lists;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.lists.ListMatchHandler;
-import buildcraft.api.lists.ListRegistry;
-
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.StackUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public final class ListHandler {
     public static final int WIDTH = 9;
@@ -197,7 +194,7 @@ public final class ListHandler {
             if (handlersCustom.size() > 0) {
                 for (Item i : ForgeRegistries.ITEMS) {
                     List<ItemStack> examples = Lists.newArrayList();
-                    i.getSubItems(i, CreativeTabs.MISC, examples);
+                    i.getSubItems(i, CreativeTabs.SEARCH, examples);
                     for (ItemStack s : examples) {
                         for (ListMatchHandler mh : handlersCustom) {
                             if (mh.matches(type, firstStack, s, false)) {

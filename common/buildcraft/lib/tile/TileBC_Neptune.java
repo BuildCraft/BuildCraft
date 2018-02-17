@@ -6,20 +6,27 @@
  */
 package buildcraft.lib.tile;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IPlayerOwned;
+import buildcraft.lib.cap.CapabilityHelper;
+import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
+import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.IAdvDebugTarget;
+import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
+import buildcraft.lib.fluid.TankManager;
+import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.*;
+import buildcraft.lib.tile.item.ItemHandlerManager;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,7 +47,6 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -49,32 +55,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.IPlayerOwned;
-
-import buildcraft.lib.cap.CapabilityHelper;
-import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
-import buildcraft.lib.debug.BCAdvDebugging;
-import buildcraft.lib.debug.IAdvDebugTarget;
-import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
-import buildcraft.lib.fluid.TankManager;
-import buildcraft.lib.migrate.BCVersion;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.FakePlayerProvider;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.PermissionUtil;
-import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
-import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.net.IPayloadReceiver;
-import buildcraft.lib.net.IPayloadWriter;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageUpdateTile;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.item.ItemHandlerManager;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("tile.debug.network");
@@ -161,6 +146,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public final IBlockState getNeighbourState(EnumFacing offset) {
+        // In the future it is plausible that we might cache block states here.
+        // However, until that is implemented, just call the world directly.
         return getOffsetState(offset.getDirectionVec());
     }
 
@@ -175,6 +162,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public final TileEntity getNeighbourTile(EnumFacing offset) {
+        // In the future it is plausible that we might cache tile entities here.
+        // However, until that is implemented, just call the world directly.
         return getOffsetTile(offset.getDirectionVec());
     }
 
