@@ -6,20 +6,8 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
-import buildcraft.api.core.BCLog;
-import buildcraft.api.items.BCStackHelper;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
-
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -27,6 +15,11 @@ import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum GuideAssemblyRecipes implements IStackRecipes {
     INSTANCE;
@@ -34,21 +27,18 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     @Override
     public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
-        if (!BCStackHelper.isEmpty(stack)) {
-            BCLog.logger.info("Getting usages for " + stack.getUnlocalizedName());
-            for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
-                if (recipe.requiredStacks.stream().anyMatch((definition) -> definition.filter.matches(stack))) {
-                    usages.add(getFactory(recipe));
-                }
+        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.INSTANCE.getAllRecipes()) {
+            if (recipe.requiredStacks.stream().anyMatch((definition) -> definition.filter.matches(stack))) {
+                usages.add(getFactory(recipe));
             }
-            for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
-                if (adv instanceof IRecipePowered) {
-                    IRecipePowered view = (IRecipePowered) adv;
-                    ChangingItemStack[] in = view.getRecipeInputs();
-                    if (ArrayUtil.testForAny(in, c -> c.matches(stack))) {
-                        ChangingItemStack out = view.getRecipeOutputs();
-                        usages.add(new GuideAssemblyFactory(in, out, view.getMjCost()));
-                    }
+        }
+        for (IAssemblyRecipeProvider adv : AssemblyRecipeRegistry.INSTANCE.getAllRecipeProviders()) {
+            if (adv instanceof IRecipePowered) {
+                IRecipePowered view = (IRecipePowered) adv;
+                ChangingItemStack[] in = view.getRecipeInputs();
+                if (ArrayUtil.testForAny(in, c -> c.matches(stack))) {
+                    ChangingItemStack out = view.getRecipeOutputs();
+                    usages.add(new GuideAssemblyFactory(in, out, view.getMjCost()));
                 }
             }
         }
@@ -77,12 +67,11 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     }
 
     private GuideAssemblyFactory getFactory(AssemblyRecipe recipe) {
-        BCLog.logger.info("Getting recipe factory for " + recipe.name);
         ChangingItemStack[] stacks = recipe.requiredStacks.stream().map(definition -> {
-            List<ItemStack> items = definition.filter.getExamples().stream().filter(Objects::nonNull).map(ItemStack::copy).collect(Collectors.toList());
+            List<ItemStack> items = definition.filter.getExamples().stream().map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
             items.forEach(stack -> stack.stackSize = definition.count);
             return items;
-        }).map(ChangingItemStack::new).toArray(ChangingItemStack[]::new);
+        }).filter(it -> !it.isEmpty()).map(ChangingItemStack::new).toArray(ChangingItemStack[]::new);
         return new GuideAssemblyFactory(stacks, ChangingItemStack.create(recipe.output), new ChangingObject<>(new Long[] { recipe.requiredMicroJoules }));
     }
 }

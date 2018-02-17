@@ -6,14 +6,11 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
-
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /** Returns true if the stack matches any one one of the filter stacks. Checks the OreDictionary and wildcards. */
@@ -23,12 +20,6 @@ public class CraftingFilter implements IStackFilter {
 
     public CraftingFilter(ItemStack... stacks) {
         this.stacks = StackUtil.listOf(stacks);
-    }
-
-    @Nonnull
-    @Override
-    public List<ItemStack> getExamples() {
-        return stacks;
     }
 
     @Override

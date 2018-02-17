@@ -6,33 +6,10 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.tiles.IDebuggable;
-
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
@@ -41,6 +18,24 @@ import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.util.*;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IFluidHandlerAdv {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
@@ -185,37 +180,70 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     // Tank helper methods
 
-    private TileTank getTank(BlockPos at) {
-        TileEntity tile = world.getTileEntity(at);
-        if (tile instanceof TileTank) {
-            return (TileTank) tile;
-        }
-        return null;
+    /**
+     * Tests to see if this tank can connect to the other one, in the given direction. BuildCraft itself only calls
+     * with {@link EnumFacing#UP} or {@link EnumFacing#DOWN}, however addons are free to call with any of the other 4
+     * non-null faces. (Although an addon calling from other faces must provide some way of transferring fluids around).
+     *
+     * @param other The other tank.
+     * @param direction The direction that the other tank is, from this tank.
+     * @return True if this can connect, false otherwise.
+     */
+    public boolean canConnectTo(TileTank other, EnumFacing direction) {
+        return true;
     }
 
+    /**
+     * Helper for {@link #canConnectTo(TileTank, EnumFacing)} that only returns true if both tanks can connect to each
+     * other.
+     *
+     * @param direction The direction from the "from" tank, to the "to" tank, such that
+     *             {@link Objects#equals(Object, Object) Objects.equals(}{@link TileTank#getPos()
+     *             from.getPos()}.{@link BlockPos#offset(EnumFacing) offset(direction)}, {@link TileTank#getPos()
+     *             to.getPos()}) returns true.
+     * @return True if both could connect, false otherwise.
+     */
+    public static boolean canTanksConnect(TileTank from, TileTank to, EnumFacing direction) {
+        return from.canConnectTo(to, direction) && to.canConnectTo(from, direction.getOpposite());
+    }
+
+    /**
+     * @return A list of all connected tanks around this block, ordered by position from bottom to top.
+     * */
     private List<TileTank> getTanks() {
-        List<TileTank> tanks = new ArrayList<>();
-        BlockPos currentPos = pos;
+        // double-ended queue rather than array list to avoid
+        // the copy operation when we search downwards
+        Deque<TileTank> tanks = new ArrayDeque<>();
+        tanks.add(this);
+        TileTank prevTank = this;
         while (true) {
-            TileTank tankUp = getTank(currentPos);
-            if (tankUp != null) {
-                tanks.add(tankUp);
+            TileEntity tileAbove = prevTank.getNeighbourTile(EnumFacing.UP);
+            if (!(tileAbove instanceof TileTank)) {
+                break;
+            }
+            TileTank tankUp = (TileTank) tileAbove;
+            if (tankUp != null && canTanksConnect(prevTank, tankUp, EnumFacing.UP)) {
+                tanks.addLast(tankUp);
             } else {
                 break;
             }
-            currentPos = currentPos.up();
+            prevTank = tankUp;
         }
-        currentPos = pos.down();
+        prevTank = this;
         while (true) {
-            TileTank tankBelow = getTank(currentPos);
-            if (tankBelow != null) {
-                tanks.add(0, tankBelow);
+            TileEntity tileBelow = prevTank.getNeighbourTile(EnumFacing.DOWN);
+            if (!(tileBelow instanceof TileTank)) {
+                break;
+            }
+            TileTank tankBelow = (TileTank) tileBelow;
+            if (tankBelow != null && canTanksConnect(prevTank, tankBelow, EnumFacing.DOWN)) {
+                tanks.addFirst(tankBelow);
             } else {
                 break;
             }
-            currentPos = currentPos.down();
+            prevTank = tankBelow;
         }
-        return tanks;
+        return new ArrayList<>(tanks);
     }
 
     // IFluidHandler

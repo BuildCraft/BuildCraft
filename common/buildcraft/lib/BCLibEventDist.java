@@ -4,6 +4,23 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.client.model.ModelHolderRegistry;
+import buildcraft.lib.client.reload.ReloadManager;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.ClientDebuggables;
+import buildcraft.lib.item.ItemDebugger;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.misc.FakePlayerProvider;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.data.ModelVariableData;
+import buildcraft.lib.net.MessageDebugRequest;
+import buildcraft.lib.net.MessageManager;
+import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiNewChat;
@@ -18,7 +35,6 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -33,24 +49,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.client.model.ModelHolderRegistry;
-import buildcraft.lib.client.reload.ReloadManager;
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.debug.BCAdvDebugging;
-import buildcraft.lib.debug.ClientDebuggables;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.misc.FakePlayerProvider;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.data.ModelVariableData;
-import buildcraft.lib.net.MessageDebugRequest;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 public enum BCLibEventDist {
     INSTANCE;
@@ -190,7 +188,7 @@ public enum BCLibEventDist {
             MessageUtil.postTick();
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayerSP player = mc.player;
-            if (player != null && player.capabilities.isCreativeMode && mc.gameSettings.showDebugInfo) {
+            if (player != null && ItemDebugger.isShowDebugInfo(player)) {
                 RayTraceResult mouseOver = mc.objectMouseOver;
                 if (mouseOver != null) {
                     IDebuggable debuggable = ClientDebuggables.getDebuggableObject(mouseOver);

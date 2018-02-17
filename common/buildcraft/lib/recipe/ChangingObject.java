@@ -18,7 +18,7 @@ public class ChangingObject<T> {
 
     public ChangingObject(T[] options) {
         if (options.length == 0) {
-            //throw new IllegalStateException("Must provide at least 1 option!");
+            throw new IllegalStateException("Must provide at least 1 option!");
         }
         this.options = options;
         hash = computeHash();

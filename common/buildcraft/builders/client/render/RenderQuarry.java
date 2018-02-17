@@ -6,8 +6,16 @@
 
 package buildcraft.builders.client.render;
 
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.misc.SpriteUtil;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -19,19 +27,7 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.misc.SpriteUtil;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.client.BuildCraftLaserManager;
+import org.lwjgl.opengl.GL11;
 
 public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static final LaserData_BC8.LaserType FRAME;
@@ -172,7 +168,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
             int index = tile.framePoses.indexOf(currentTask.framePos);
             if (index > 1) {
-                double progress = (double) currentTask.getPower() / currentTask.getTarget() * (index - 1) / tile.framePoses.size();
+                double progress = (double) currentTask.power / currentTask.getTarget() * (index - 1) / tile.framePoses.size();
                 double progress1 = (progress >= 0 && progress <= 0.25) ? progress * 4 ://
                     (progress >= 0.25 && progress <= 0.5) ? 1 ://
                         (progress >= 0.5 && progress <= 0.75) ? 1 - (progress - 0.5) * 4 ://

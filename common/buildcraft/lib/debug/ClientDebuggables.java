@@ -6,11 +6,8 @@
 
 package buildcraft.lib.debug;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.item.ItemDebugger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
@@ -18,7 +15,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
-import buildcraft.api.tiles.IDebuggable;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientDebuggables {
     public static final List<String> SERVER_LEFT = new ArrayList<>();
@@ -27,8 +26,11 @@ public class ClientDebuggables {
     @Nullable
     public static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.gameSettings.reducedDebugInfo || mc.player.hasReducedDebug() || !mc.player.capabilities.isCreativeMode
-            || !mc.gameSettings.showDebugInfo) {
+        if (mc.gameSettings.reducedDebugInfo ||
+                mc.player.hasReducedDebug() ||
+                !mc.player.capabilities.isCreativeMode ||
+                !mc.gameSettings.showDebugInfo ||
+                !ItemDebugger.isShowDebugInfo(mc.player)) {
             return null;
         }
         if (mouseOver == null) {
