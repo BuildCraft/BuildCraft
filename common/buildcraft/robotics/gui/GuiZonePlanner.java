@@ -1,5 +1,5 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.gui;
@@ -7,9 +7,14 @@ package buildcraft.robotics.gui;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.vecmath.Vector3d;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -55,8 +60,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private float startPositionZ = 0;
     private float camY = 256;
     private float scaleSpeed = 0;
-    private float positionX = 0;
-    private float positionZ = 0;
+    private float positionX;
+    private float positionZ;
     private boolean canDrag = false;
     private BlockPos lastSelected = null;
     private BlockPos selectionStartXZ = null;
@@ -188,6 +193,58 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         );
     }
 
+    private BlockPos rayTrace(int screenX, int screenY) {
+        BlockPos found = null;
+        FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
+        FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
+        IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
+
+        GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
+        GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
+        GlStateManager.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
+
+        FloatBuffer positionNearBuffer = BufferUtils.createFloatBuffer(3);
+        FloatBuffer positionFarBuffer = BufferUtils.createFloatBuffer(3);
+
+        GLU.gluUnProject(screenX, screenY, 0f, modelViewBuffer, projectionBuffer, viewportBuffer, positionNearBuffer);
+        GLU.gluUnProject(screenX, screenY, 1f, modelViewBuffer, projectionBuffer, viewportBuffer, positionFarBuffer);
+
+        Vector3d rayStart = new Vector3d(positionNearBuffer.get(0), positionNearBuffer.get(1), positionNearBuffer.get(2));
+        Vector3d rayPosition = new Vector3d(rayStart);
+        Vector3d rayDirection = new Vector3d(positionFarBuffer.get(0), positionFarBuffer.get(1), positionFarBuffer.get(2));
+        rayDirection.sub(rayStart);
+        rayDirection.normalize();
+
+        for (int i = 0; i < 10000; i++) {
+            int chunkX = (int) Math.round(rayPosition.getX()) >> 4;
+            int chunkZ = (int) Math.round(rayPosition.getZ()) >> 4;
+            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
+                mc.world,
+                new ZonePlannerMapChunkKey(
+                    new ChunkPos(chunkX, chunkZ),
+                    mc.world.provider.getDimension(),
+                    container.tile.getLevel()
+                )
+            );
+            if (zonePlannerMapChunk != null) {
+                BlockPos pos = new BlockPos(
+                    Math.round(rayPosition.getX()) - (chunkX << 4),
+                    Math.round(rayPosition.getY()),
+                    Math.round(rayPosition.getZ()) - (chunkZ << 4)
+                );
+                MapColourData data = zonePlannerMapChunk.getData(pos.getX(), pos.getZ());
+                if (data != null && data.posY >= pos.getY()) {
+                    found = new BlockPos(pos.getX() + (chunkX << 4), data.posY, pos.getZ() + (chunkZ << 4));
+                    break;
+                }
+            } else {
+                break;
+            }
+            rayPosition.add(rayDirection);
+        }
+        return found;
+    }
+
     @SuppressWarnings("PointlessBitwiseExpression")
     @Override
     protected void drawForegroundLayer() {
@@ -252,7 +309,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             viewportHeight
         );
         GlStateManager.scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
-        GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 1F, 1000.0F);
+        GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 1F, 10000.0F);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.loadIdentity();
         RenderHelper.enableStandardItemLighting();
@@ -263,11 +320,45 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GlStateManager.disableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.disableTexture2D();
-        int chunkBaseX = posX >> 4;
-        int chunkBaseZ = posZ >> 4;
-        int radius = 8;
-        for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
-            for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
+        int minScreenX = (x + offsetX) * scaledResolution.getScaleFactor();
+        int minScreenY = (scaledResolution.getScaledHeight() - (y + offsetY)) * scaledResolution.getScaleFactor();
+        int maxScreenX = (x + offsetX + sizeX) * scaledResolution.getScaleFactor();
+        int maxScreenY = (scaledResolution.getScaledHeight() - (y + offsetY + sizeY)) * scaledResolution.getScaleFactor();
+        int minChunkX = (posX >> 4) - 8;
+        int minChunkZ = (posZ >> 4) - 8;
+        int maxChunkX = (posX >> 4) + 8;
+        int maxChunkZ = (posZ >> 4) + 8;
+        // noinspection SuspiciousNameCombination
+        List<ChunkPos> chunkPosBounds = Stream.of(
+            Pair.of(minScreenX, minScreenY),
+            Pair.of(minScreenX, maxScreenY),
+            Pair.of(maxScreenX, minScreenY),
+            Pair.of(maxScreenX, maxScreenY)
+        )
+            .map(p -> rayTrace(p.getLeft(), p.getRight()))
+            .filter(Objects::nonNull)
+            .map(ChunkPos::new)
+            .collect(Collectors.toList());
+        for (ChunkPos chunkPos : chunkPosBounds) {
+            if (chunkPos.x < minChunkX) {
+                minChunkX = chunkPos.x;
+            }
+            if (chunkPos.z < minChunkZ) {
+                minChunkZ = chunkPos.z;
+            }
+            if (chunkPos.x > maxChunkX) {
+                maxChunkX = chunkPos.x;
+            }
+            if (chunkPos.z > maxChunkZ) {
+                maxChunkZ = chunkPos.z;
+            }
+        }
+        minChunkX--;
+        minChunkZ--;
+        maxChunkX++;
+        maxChunkZ++;
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                 ZonePlannerMapRenderer.INSTANCE.getChunkGlList(
                     new ZonePlannerMapChunkKey(
                         new ChunkPos(chunkX, chunkZ),
@@ -280,61 +371,26 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
         BlockPos found = null;
         int foundColor = 0;
-
-        if (Mouse.getX() / scaledResolution.getScaleFactor() > x + offsetX &&
-            Mouse.getX() / scaledResolution.getScaleFactor() < x + offsetX + sizeX &&
-            scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() > y + offsetY &&
-            scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() < y + offsetY + sizeY) {
-            FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
-            FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
-            IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
-
-            GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
-            GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
-            GlStateManager.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
-
-            FloatBuffer positionNearBuffer = BufferUtils.createFloatBuffer(3);
-            FloatBuffer positionFarBuffer = BufferUtils.createFloatBuffer(3);
-
-            GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 0f, modelViewBuffer, projectionBuffer, viewportBuffer, positionNearBuffer);
-            GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 1f, modelViewBuffer, projectionBuffer, viewportBuffer, positionFarBuffer);
-
-            Vector3d rayStart = new Vector3d(positionNearBuffer.get(0), positionNearBuffer.get(1), positionNearBuffer.get(2));
-            Vector3d rayPosition = new Vector3d(rayStart);
-            Vector3d rayDirection = new Vector3d(positionFarBuffer.get(0), positionFarBuffer.get(1), positionFarBuffer.get(2));
-            rayDirection.sub(rayStart);
-            rayDirection.normalize();
-            Vector3d offset = new Vector3d(rayDirection);
-            offset.scale(100);
-            rayPosition.add(offset);
-            rayDirection.negate();
-
-            for (int i = 0; i < 100; i++) {
-                int chunkX = (int) Math.round(rayPosition.getX()) >> 4;
-                int chunkZ = (int) Math.round(rayPosition.getZ()) >> 4;
-                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                    mc.world,
-                    new ZonePlannerMapChunkKey(
-                        new ChunkPos(chunkX, chunkZ),
-                        mc.world.provider.getDimension(),
-                        container.tile.getLevel()
-                    )
-                );
-                if (zonePlannerMapChunk != null) {
-                    BlockPos pos = new BlockPos(
-                        Math.round(rayPosition.getX()) - (chunkX << 4),
-                        Math.round(rayPosition.getY()),
-                        Math.round(rayPosition.getZ()) - (chunkZ << 4)
-                    );
-                    MapColourData data = zonePlannerMapChunk.getData(pos.getX(), pos.getZ());
-                    if (data != null && data.posY >= pos.getY()) {
-                        found = new BlockPos(pos.getX() + (chunkX << 4), data.posY, pos.getZ() + chunkZ * 16);
-                        foundColor = data.colour;
-                    }
-                } else {
-                    break;
+        if (Mouse.getX() >= minScreenX &&
+            Mouse.getY() <= minScreenY &&
+            Mouse.getX() <= maxScreenX &&
+            Mouse.getY() >= maxScreenY) {
+            found = rayTrace(Mouse.getX(), Mouse.getY());
+        }
+        if (found != null) {
+            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
+                mc.world,
+                new ZonePlannerMapChunkKey(
+                    new ChunkPos(found),
+                    mc.world.provider.getDimension(),
+                    container.tile.getLevel()
+                )
+            );
+            if (zonePlannerMapChunk != null) {
+                MapColourData data = zonePlannerMapChunk.getData(found.getX(), found.getZ());
+                if (data != null) {
+                    foundColor = data.colour;
                 }
-                rayPosition.add(rayDirection);
             }
         }
 
@@ -370,8 +426,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             }
             if (!layer.getChunkPoses().isEmpty()) {
                 Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-                for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
-                    for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
+                for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+                    for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                         ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
                         for (int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
                             for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
