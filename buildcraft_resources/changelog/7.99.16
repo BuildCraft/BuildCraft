@@ -1,0 +1,4 @@
+
+Bug fixes:
+
+* [#4031] Tanks that disallow connections via the new canConnectTo(tank) method doesn't render properly.
