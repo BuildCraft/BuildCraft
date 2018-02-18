@@ -7,40 +7,9 @@
 
 package buildcraft.lib.client.guide;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.Language;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.guide.data.JsonContents;
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.loader.IPageLoader;
@@ -48,6 +17,25 @@ import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageStandInRecipes;
 import buildcraft.lib.misc.LocaleUtil;
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.Language;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+
+import javax.annotation.Nonnull;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public enum GuideManager implements IResourceManagerReloadListener {
     INSTANCE;
@@ -56,8 +44,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
     public static final List<String> loadedMods = new ArrayList<>();
     public static final List<String> loadedOther = new ArrayList<>();
 
-    private static final String DEFAULT_LANG = "en_us";
-    private static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
+    public static final String DEFAULT_LANG = "en_us";
+    public static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
 
     private final List<PageEntry<?>> entries = new ArrayList<>();
     private final Map<String, GuidePageFactory> pages = new HashMap<>();
