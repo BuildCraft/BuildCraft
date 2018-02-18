@@ -109,7 +109,11 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     }
 
     public void drawString(FontRenderer fontRenderer, String text, double x, double y, int colour) {
-        fontRenderer.drawStringWithShadow(text, (float) x, (float) y, colour);
+        drawString(fontRenderer, text, x, y, colour, true);
+    }
+
+    public void drawString(FontRenderer fontRenderer, String text, double x, double y, int colour, boolean shadow) {
+        fontRenderer.drawString(text, (float) x, (float) y, colour, shadow);
     }
 
     // Other
