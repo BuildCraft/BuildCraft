@@ -6,15 +6,17 @@
 
 package buildcraft.factory.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.factory.tile.TileTank;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -22,14 +24,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fluids.FluidStack;
-
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-
-import buildcraft.factory.tile.TileTank;
+import org.lwjgl.opengl.GL11;
 
 public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
     private static final Vec3d MIN = new Vec3d(0.13, 0.01, 0.13);
@@ -91,6 +87,9 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         TileEntity oTile = thisTank.getWorld().getTileEntity(pos);
         if (oTile instanceof TileTank) {
             TileTank oTank = (TileTank) oTile;
+            if (!TileTank.canTanksConnect(thisTank, oTank, face)) {
+                return false;
+            }
             FluidStackInterp forRender = oTank.getFluidForRender(partialTicks);
             if (forRender == null) {
                 return false;
