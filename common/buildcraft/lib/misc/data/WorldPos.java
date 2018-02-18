@@ -6,39 +6,40 @@
 
 package buildcraft.lib.misc.data;
 
-import java.util.Objects;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public final class WorldPos {
-    public final BlockPos pos;
+    @SuppressWarnings("WeakerAccess")
     public final int dimension;
-    private final int hash;
+    public final BlockPos pos;
 
-    public WorldPos(TileEntity tile) {
-        this(tile.getPos(), tile.getWorld().provider.getDimension());
+    @SuppressWarnings("WeakerAccess")
+    public WorldPos(int dimension, BlockPos pos) {
+        this.dimension = dimension;
+        this.pos = pos.getClass() == BlockPos.class ? pos : new BlockPos(pos);
     }
 
-    public WorldPos(BlockPos pos, int dimension) {
-        this.pos = pos.getClass() == BlockPos.class ? pos : new BlockPos(pos);
-        this.dimension = dimension;
-        hash = Objects.hash(pos, dimension);
+    public WorldPos(World world, BlockPos pos) {
+        this(world.provider.getDimension(), pos);
+    }
+
+    public WorldPos(TileEntity tile) {
+        this(tile.getWorld(), tile.getPos());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null) return false;
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        WorldPos other = (WorldPos) obj;
-        return dimension == other.dimension && pos.equals(other.pos);
+    public boolean equals(Object o) {
+        return this == o ||
+                o != null &&
+                        getClass() == o.getClass() &&
+                        dimension == ((WorldPos) o).dimension &&
+                        pos.equals(((WorldPos) o).pos);
     }
 
     @Override
     public int hashCode() {
-        return hash;
+        return 31 * dimension + pos.hashCode();
     }
 }
