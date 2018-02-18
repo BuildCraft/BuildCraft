@@ -107,6 +107,9 @@ public class BCLib {
         MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(FluidManager.class);
 
+        // Set max chunk limit for quarries: 1 chunk for quarry itself and 5 * 5 chunks square for working area
+        ForgeChunkManager.getConfig().get(MODID, "maximumChunksPerTicket", 26);
+        ForgeChunkManager.syncConfigDefaults();
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }
 
