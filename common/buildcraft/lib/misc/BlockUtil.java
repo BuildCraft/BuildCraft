@@ -6,21 +6,18 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.world.SingleBlockAccess;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.properties.IProperty;
@@ -36,31 +33,22 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.compat.CompatManager;
-import buildcraft.lib.world.SingleBlockAccess;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public final class BlockUtil {
 
@@ -105,8 +93,8 @@ public final class BlockUtil {
         return false;
     }
 
-    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -171,6 +159,21 @@ public final class BlockUtil {
         entityitem.setDefaultPickupDelay();
 
         world.spawnEntity(entityitem);
+    }
+
+    public static List<ItemStack> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        if (!BlockUtil.harvestBlock(world, pos, tool, owner)) {
+            world.destroyBlock(pos, true);
+        }
+        List<ItemStack> stacks = Lists.newArrayList();
+        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).expandXyz(1))) {
+            TransactorEntityItem transactor = new TransactorEntityItem(entity);
+            ItemStack stack;
+            while (!BCStackHelper.isEmpty((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)))) {
+                stacks.add(stack);
+            }
+        }
+        return stacks;
     }
 
     public static boolean canChangeBlock(World world, BlockPos pos, GameProfile owner) {
