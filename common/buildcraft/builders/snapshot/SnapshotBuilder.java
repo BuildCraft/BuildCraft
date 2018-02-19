@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -421,7 +422,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                             breakTask.pos,
                             -1
                         );
-                        tile.getWorldBC().destroyBlock(breakTask.pos, false);
+                        BlockUtil.breakBlockAndGetDrops(
+                            (WorldServer) tile.getWorldBC(),
+                            breakTask.pos,
+                            new ItemStack(Items.DIAMOND_PICKAXE),
+                            tile.getOwner()
+                        );
                         tile.getWorldBC().profiler.endSection();
                     } else {
                         cancelBreakTask(breakTask);

@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -179,11 +181,16 @@ public final class BlockUtil {
     }
 
     public static List<ItemStack> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(1);
+        Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
         if (!BlockUtil.harvestBlock(world, pos, tool, owner)) {
             world.destroyBlock(pos, true);
         }
         List<ItemStack> stacks = new ArrayList<>();
-        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(1))) {
+        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
+            if (entities.contains(entity)) {
+                continue;
+            }
             TransactorEntityItem transactor = new TransactorEntityItem(entity);
             ItemStack stack;
             while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
