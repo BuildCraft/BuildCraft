@@ -6,16 +6,10 @@
 
 package buildcraft.factory.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
-
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 
@@ -46,7 +40,9 @@ public class TileMiningWell extends TileMiner {
                     currentPos,
                     new ItemStack(Items.DIAMOND_PICKAXE),
                     getOwner()
-                ).forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
+                ).ifPresent(stacks ->
+                    stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack))
+                );
                 nextPos();
                 updateLength();
             } else {

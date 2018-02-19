@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -27,7 +28,6 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,14 +44,11 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.mj.MjAPI;
@@ -884,33 +881,25 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         protected boolean finish() {
-            EntityPlayer fake = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), pos);
-
-            IBlockState state = world.getBlockState(breakPos);
             if (!canMine(breakPos)) {
                 return true;
             }
-
-            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
-            MinecraftForge.EVENT_BUS.post(breakEvent);
-            if (!breakEvent.isCanceled()) {
-                world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
-                List<ItemStack> stacks = BlockUtil.breakBlockAndGetDrops(
-                    (WorldServer) world,
-                    breakPos,
-                    new ItemStack(Items.DIAMOND_PICKAXE),
-                    getOwner()
-                );
+            world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
+            Optional<List<ItemStack>> stacks = BlockUtil.breakBlockAndGetDrops(
+                (WorldServer) world,
+                breakPos,
+                new ItemStack(Items.DIAMOND_PICKAXE),
+                getOwner()
+            );
+            if (stacks.isPresent()) {
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
                 if (drillPos != null) {
-                    stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
+                    stacks.get().forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
                 }
-                check(breakPos);
-                return true;
-            } else {
-                return false;
             }
+            check(breakPos);
+            return stacks.isPresent();
         }
 
         @Override

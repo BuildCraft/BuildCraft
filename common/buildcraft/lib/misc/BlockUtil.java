@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -194,11 +195,13 @@ public final class BlockUtil {
         world.spawnEntity(entityitem);
     }
 
-    public static List<ItemStack> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+    public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
         AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(1);
         Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
         if (!harvestBlock(world, pos, tool, owner)) {
-            destroyBlock(world, pos, tool, owner);
+            if (!destroyBlock(world, pos, tool, owner)) {
+                Optional.empty();
+            }
         }
         List<ItemStack> stacks = new ArrayList<>();
         for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
@@ -211,7 +214,7 @@ public final class BlockUtil {
                 stacks.add(stack);
             }
         }
-        return stacks;
+        return Optional.of(stacks);
     }
 
     public static boolean canChangeBlock(World world, BlockPos pos, GameProfile owner) {
