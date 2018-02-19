@@ -37,7 +37,9 @@ public class TileMiningWell extends TileMiner {
                         currentPos,
                         new ItemStack(Items.DIAMOND_PICKAXE),
                         getOwner()
-                ).forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
+                ).ifPresent(stacks ->
+                        stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack))
+                );
                 nextPos();
                 updateLength();
             } else {
