@@ -116,6 +116,20 @@ public final class BlockUtil {
         return true;
     }
 
+    public static boolean destroyBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
+        MinecraftForge.EVENT_BUS.post(breakEvent);
+
+        if (breakEvent.isCanceled()) {
+            return false;
+        }
+
+        world.destroyBlock(pos, true);
+
+        return true;
+    }
+
     public static FakePlayer getFakePlayerWithTool(WorldServer world, @Nonnull ItemStack tool, GameProfile owner) {
         FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner);
         int i = 0;
@@ -165,8 +179,8 @@ public final class BlockUtil {
     public static List<ItemStack> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
         AxisAlignedBB aabb = new AxisAlignedBB(pos).expandXyz(1);
         Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
-        if (!BlockUtil.harvestBlock(world, pos, tool, owner)) {
-            world.destroyBlock(pos, true);
+        if (!harvestBlock(world, pos, tool, owner)) {
+            destroyBlock(world, pos, tool, owner);
         }
         List<ItemStack> stacks = Lists.newArrayList();
         for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
