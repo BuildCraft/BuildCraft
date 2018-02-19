@@ -6,23 +6,17 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.world.WorldEventListenerAdapter;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -31,20 +25,15 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.world.WorldEventListenerAdapter;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> implements INBTSerializable<NBTTagCompound> {
     private static final int MAX_QUEUE_SIZE = 16;
@@ -421,7 +410,12 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                             breakTask.pos,
                             -1
                         );
-                        tile.getWorldBC().destroyBlock(breakTask.pos, false);
+                        BlockUtil.breakBlockAndGetDrops(
+                                (WorldServer) tile.getWorldBC(),
+                                breakTask.pos,
+                                new ItemStack(Items.DIAMOND_PICKAXE),
+                                tile.getOwner()
+                        );
                         tile.getWorldBC().theProfiler.endSection();
                     } else {
                         cancelBreakTask(breakTask);

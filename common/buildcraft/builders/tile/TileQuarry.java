@@ -868,18 +868,19 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, breakPos, state, fake);
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if (!breakEvent.isCanceled()) {
+                world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
+                List<ItemStack> stacks = BlockUtil.breakBlockAndGetDrops(
+                        (WorldServer) world,
+                        breakPos,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        getOwner()
+                );
+
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
-                world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
+
                 if (drillPos != null) {
-                    BlockUtil.breakBlockAndGetDrops(
-                            (WorldServer) world,
-                            breakPos,
-                            new ItemStack(Items.DIAMOND_PICKAXE),
-                            getOwner()
-                    ).forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
-                } else {
-                    world.destroyBlock(breakPos, false);
+                    stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
                 }
                 check(breakPos);
                 return true;
