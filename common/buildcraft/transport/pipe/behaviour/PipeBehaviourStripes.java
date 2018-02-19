@@ -11,21 +11,17 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.mojang.authlib.GameProfile;
-
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -185,21 +181,12 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                         world.sendBlockBreakProgress(offsetHash, offset, (int) (progress * 9 / target));
                     }
                 } else {
-                    WorldServer server = (WorldServer) world;
-                    GameProfile owner = pipe.getHolder().getOwner();
-                    FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(server, owner, pos);
-                    BreakEvent breakEvent = new BreakEvent(world, offset, world.getBlockState(offset), fakePlayer);
-                    MinecraftForge.EVENT_BUS.post(breakEvent);
-                    if (!breakEvent.isCanceled()) {
-                        NonNullList<ItemStack> dropped = BlockUtil.getItemStackFromBlock(server, offset, owner);
-                        if (dropped != null) {
-                            for (ItemStack stack : dropped) {
-                                sendItem(stack, direction);
-                            }
-                        }
-                        world.sendBlockBreakProgress(offsetHash, offset, -1);
-                        world.destroyBlock(offset, false);
-                    }
+                    BlockUtil.breakBlockAndGetDrops(
+                        (WorldServer) world,
+                        offset,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        pipe.getHolder().getOwner()
+                    ).forEach(stack -> sendItem(stack, direction));
                     progress = 0;
                 }
             }
