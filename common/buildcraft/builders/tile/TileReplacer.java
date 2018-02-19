@@ -6,11 +6,11 @@
 
 package buildcraft.builders.tile;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.Blueprint;
@@ -60,7 +60,7 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
         if (!BCStackHelper.isEmpty(invSnapshot.getStackInSlot(0)) &&
                 !BCStackHelper.isEmpty(invSchematicFrom.getStackInSlot(0)) &&
                 !BCStackHelper.isEmpty(invSchematicTo.getStackInSlot(0))) {
-            Header header = BCBuildersItems.snapshot.getHeader(invSnapshot.getStackInSlot(0));
+            Header header = ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getHeader(invSnapshot.getStackInSlot(0));
             if (header != null) {
                 Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                 if (snapshot instanceof Blueprint) {
@@ -80,7 +80,7 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
                         GlobalSavedDataSnapshots.get(world).addSnapshot(newBlueprint);
                         invSnapshot.setStackInSlot(
                             0,
-                            BCBuildersItems.snapshot.getUsed(
+                                ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getUsed(
                                 EnumSnapshotType.BLUEPRINT,
                                 new Header(
                                     blueprint.key,

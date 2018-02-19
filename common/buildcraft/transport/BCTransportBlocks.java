@@ -6,21 +6,19 @@
 
 package buildcraft.transport;
 
-import net.minecraft.block.material.Material;
-
 import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.transport.block.BlockFilteredBuffer;
 import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
+import net.minecraft.block.material.Material;
 
 public class BCTransportBlocks {
-    public static BlockFilteredBuffer filteredBuffer;
+
     public static BlockPipeHolder pipeHolder;
 
     public static void preInit() {
-        filteredBuffer = RegistrationHelper.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
+        RegistrationHelper.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
         pipeHolder = RegistrationHelper.addBlock(new BlockPipeHolder(Material.IRON, "block.pipe_holder"));
 
         RegistrationHelper.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");

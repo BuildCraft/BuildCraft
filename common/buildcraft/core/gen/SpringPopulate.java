@@ -6,23 +6,20 @@
 
 package buildcraft.core.gen;
 
-import java.util.Random;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.core.BCCoreBlocks;
+import java.util.Random;
 
 public class SpringPopulate {
 
@@ -73,7 +70,7 @@ public class SpringPopulate {
             // Handle flat bedrock maps
             int y = i > 0 ? i : i - 1;
 
-            IBlockState springState = BCCoreBlocks.spring.getDefaultState();
+            IBlockState springState = BCBlocks.Core.SPRING.getDefaultState();
             springState = springState.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.WATER);
 
             world.setBlockState(new BlockPos(posX, y, posZ), springState);

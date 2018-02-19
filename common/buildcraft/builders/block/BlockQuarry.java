@@ -6,11 +6,12 @@
 
 package buildcraft.builders.block;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -25,15 +26,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.tile.TileQuarry;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:shaping_the_world");
@@ -82,7 +77,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileQuarry) {
             for (BlockPos blockPos : ((TileQuarry) tile).framePoses) {
-                if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
+                if (world.getBlockState(blockPos).getBlock() instanceof BlockFrame) {
                     world.setBlockToAir(blockPos);
                 }
             }

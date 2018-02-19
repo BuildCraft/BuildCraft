@@ -11,15 +11,11 @@ import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCFactoryItems {
 
-    public static ItemBC_Neptune plasticSheet;
-    public static ItemWaterGel waterGel;
-    public static ItemBC_Neptune gelledWater;
-
     public static void fmlPreInit() {
         if (BCLib.DEV) {
-            plasticSheet = RegistrationHelper.addItem(new ItemBC_Neptune("item.plastic.sheet"));
+            RegistrationHelper.addItem(new ItemBC_Neptune("item.plastic.sheet"));
         }
-        waterGel = RegistrationHelper.addItem(new ItemWaterGel("item.water_gel_spawn"));
-        gelledWater = RegistrationHelper.addItem(new ItemBC_Neptune("item.gel"));
+        RegistrationHelper.addItem(new ItemWaterGel("item.water_gel_spawn"));
+        RegistrationHelper.addItem(new ItemBC_Neptune("item.gel"));
     }
 }

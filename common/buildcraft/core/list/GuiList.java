@@ -6,9 +6,9 @@
 
 package buildcraft.core.list;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.lists.ListMatchHandler;
-import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
@@ -148,7 +148,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
         textField = new GuiTextField(6, this.fontRendererObj, guiLeft + 10, guiTop + 10, 156, 12);
         textField.setMaxStringLength(32);
-        textField.setText(BCCoreItems.list.getName(container.getListItemStack()));
+        textField.setText(((ItemList_BC8)BCItems.Core.LIST).getName(container.getListItemStack()));
         textField.setFocused(false);
     }
 

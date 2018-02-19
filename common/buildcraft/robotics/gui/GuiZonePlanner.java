@@ -4,8 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.gui;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.items.BCStackHelper;
-import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -84,7 +84,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private ItemPaintbrush_BC8.Brush getPaintbrushBrush() {
         ItemStack paintbrush = getPaintbrush();
         if (paintbrush != null) {
-            ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.getBrushFromStack(paintbrush);
+            ItemPaintbrush_BC8.Brush brush = ((ItemPaintbrush_BC8)BCItems.Core.PAINTBRUSH).getBrushFromStack(paintbrush);
             if (brush.colour != null) {
                 return brush;
             }

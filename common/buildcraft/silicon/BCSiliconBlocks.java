@@ -6,39 +6,25 @@
 
 package buildcraft.silicon;
 
-import net.minecraft.block.material.Material;
-
 import buildcraft.api.enums.EnumLaserTableType;
-
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.silicon.block.BlockLaser;
 import buildcraft.silicon.block.BlockLaserTable;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.silicon.tile.TileChargingTable;
-import buildcraft.silicon.tile.TileIntegrationTable;
-import buildcraft.silicon.tile.TileLaser;
-import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
+import buildcraft.silicon.tile.*;
+import net.minecraft.block.material.Material;
 
 public class BCSiliconBlocks {
 
-    public static BlockLaser laser;
-    public static BlockLaserTable assemblyTable;
-    public static BlockLaserTable advancedCraftingTable;
-    public static BlockLaserTable integrationTable;
-    public static BlockLaserTable chargingTable;
-    public static BlockLaserTable programmingTable;
 
     public static void preInit() {
-        laser = RegistrationHelper.addBlockAndItem(new BlockLaser(Material.IRON, "block.laser"));
-        assemblyTable = createLaserTable(EnumLaserTableType.ASSEMBLY_TABLE, "block.assembly_table");
-        advancedCraftingTable = createLaserTable(EnumLaserTableType.ADVANCED_CRAFTING_TABLE, "block.advanced_crafting_table");
-        integrationTable = createLaserTable(EnumLaserTableType.INTEGRATION_TABLE, "block.integration_table");
+        RegistrationHelper.addBlockAndItem(new BlockLaser(Material.IRON, "block.laser"));
+        createLaserTable(EnumLaserTableType.ASSEMBLY_TABLE, "block.assembly_table");
+        createLaserTable(EnumLaserTableType.ADVANCED_CRAFTING_TABLE, "block.advanced_crafting_table");
+        createLaserTable(EnumLaserTableType.INTEGRATION_TABLE, "block.integration_table");
         if (BCLib.DEV) {
-            chargingTable = createLaserTable(EnumLaserTableType.CHARGING_TABLE, "block.charging_table");
-            programmingTable = createLaserTable(EnumLaserTableType.PROGRAMMING_TABLE, "block.programming_table");
+            createLaserTable(EnumLaserTableType.CHARGING_TABLE, "block.charging_table");
+            createLaserTable(EnumLaserTableType.PROGRAMMING_TABLE, "block.programming_table");
         }
 
         RegistrationHelper.registerTile(TileLaser.class, "tile.laser");

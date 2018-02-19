@@ -11,30 +11,17 @@ import net.minecraft.block.material.Material;
 
 public class BCFactoryBlocks {
 
-    public static BlockAutoWorkbenchItems autoWorkbenchItems;
-    public static BlockMiningWell miningWell;
-    public static BlockPump pump;
-    public static BlockTube tube;
-    public static BlockFloodGate floodGate;
-    public static BlockTank tank;
-    public static BlockChute chute;
-    public static BlockDistiller distiller;
-    public static BlockHeatExchange heatExchange;
-
-    // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
-    public static BlockWaterGel waterGel;
-
     public static void fmlPreInit() {
-        autoWorkbenchItems = RegistrationHelper.addBlockAndItem(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        miningWell = RegistrationHelper.addBlockAndItem(new BlockMiningWell(Material.IRON, "block.mining_well"));
-        pump = RegistrationHelper.addBlockAndItem(new BlockPump(Material.IRON, "block.pump"));
-        tube = RegistrationHelper.addBlock(new BlockTube(Material.IRON, "block.tube"));
-        floodGate = RegistrationHelper.addBlockAndItem(new BlockFloodGate(Material.IRON, "block.flood_gate"));
-        tank = RegistrationHelper.addBlockAndItem(new BlockTank(Material.IRON, "block.tank"));
-        chute = RegistrationHelper.addBlockAndItem(new BlockChute(Material.IRON, "block.chute"));
-        distiller = RegistrationHelper.addBlockAndItem(new BlockDistiller(Material.IRON, "block.distiller"));
-        heatExchange = RegistrationHelper.addBlockAndItem(new BlockHeatExchange(Material.IRON, "block.heat_exchange"));
-        waterGel = RegistrationHelper.addBlock(new BlockWaterGel(Material.CLAY, "block.water_gel"));
+        RegistrationHelper.addBlockAndItem(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
+        RegistrationHelper.addBlockAndItem(new BlockMiningWell(Material.IRON, "block.mining_well"));
+        RegistrationHelper.addBlockAndItem(new BlockPump(Material.IRON, "block.pump"));
+        RegistrationHelper.addBlock(new BlockTube(Material.IRON, "block.tube"));
+        RegistrationHelper.addBlockAndItem(new BlockFloodGate(Material.IRON, "block.flood_gate"));
+        RegistrationHelper.addBlockAndItem(new BlockTank(Material.IRON, "block.tank"));
+        RegistrationHelper.addBlockAndItem(new BlockChute(Material.IRON, "block.chute"));
+        RegistrationHelper.addBlockAndItem(new BlockDistiller(Material.IRON, "block.distiller"));
+        RegistrationHelper.addBlockAndItem(new BlockHeatExchange(Material.IRON, "block.heat_exchange"));
+        RegistrationHelper.addBlock(new BlockWaterGel(Material.CLAY, "block.water_gel"));
 
         RegistrationHelper.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         RegistrationHelper.registerTile(TileMiningWell.class, "tile.mining_well");

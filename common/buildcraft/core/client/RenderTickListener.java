@@ -4,37 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.client;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextFormatting;
-
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
+import buildcraft.api.BCItems;
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemMarkerConnector;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
@@ -46,10 +21,29 @@ import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemMapLocation;
-import buildcraft.core.item.ItemMarkerConnector;
+import javax.annotation.Nonnull;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class RenderTickListener {
     private static final Vec3d[][][] MAP_LOCATION_POINT = new Vec3d[6][][];
@@ -153,9 +147,9 @@ public class RenderTickListener {
         Item offHandItem = offHand != null ? offHand.getItem() : null;
 
         if (mainHandItem != null) {
-            if (mainHandItem == BCCoreItems.mapLocation) {
+            if (mainHandItem instanceof ItemMapLocation) {
                 renderMapLocation(mainHand);
-            } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem != null && offHandItem == BCCoreItems.markerConnector) {
+            } else if (mainHandItem instanceof ItemMarkerConnector || offHandItem != null && offHandItem instanceof ItemMarkerConnector) {
                 renderMarkerConnector(world, player);
             }
         }
@@ -194,7 +188,7 @@ public class RenderTickListener {
                 break;
             }
             case PATH:
-                List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
+                List<BlockPos> path = ((ItemMapLocation) BCItems.Core.MAP_LOCATION).getPath(stack);
                 if (path != null && path.size() > 1) {
                     BlockPos last = null;
                     for (BlockPos p : path) {

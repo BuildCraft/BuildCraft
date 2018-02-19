@@ -6,28 +6,10 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.api.BCBlocks;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.tiles.IDebuggable;
-
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.Tank;
@@ -35,8 +17,21 @@ import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.factory.BCFactoryBlocks;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
 
 @Deprecated
 public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, ITickable {
@@ -75,7 +70,7 @@ public class TileHeatExchangeEnd extends TileBC_Neptune implements IDebuggable, 
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        IBlockState state = getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
         if (state == null) {
             return null;
         }

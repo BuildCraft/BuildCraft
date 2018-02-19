@@ -6,12 +6,15 @@
 
 package buildcraft.transport.pipe;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.schematics.ISchematicBlock;
+import buildcraft.api.schematics.SchematicBlockContext;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.transport.block.BlockPipeHolder;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,22 +24,15 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.schematics.ISchematicBlock;
-import buildcraft.api.schematics.SchematicBlockContext;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.misc.NBTUtilBC;
-
-import buildcraft.transport.BCTransportBlocks;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class SchematicBlockPipe implements ISchematicBlock {
     private NBTTagCompound tileNbt;
     private Rotation tileRotation = Rotation.NONE;
 
     public static boolean predicate(SchematicBlockContext context) {
-        return context.world.getBlockState(context.pos).getBlock() == BCTransportBlocks.pipeHolder;
+        return context.world.getBlockState(context.pos).getBlock() instanceof BlockPipeHolder;
     }
 
     @Override
@@ -92,7 +88,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
     @SuppressWarnings("Duplicates")
     @Override
     public boolean build(World world, BlockPos blockPos) {
-        if (world.setBlockState(blockPos, BCTransportBlocks.pipeHolder.getDefaultState(), 11)) {
+        if (world.setBlockState(blockPos, BCBlocks.Transport.PIPE_HOLDER.getDefaultState(), 11)) {
             TileEntity tileEntity = TileEntity.create(world, tileNbt);
             if (tileEntity != null) {
                 tileEntity.setWorld(world);
@@ -109,7 +105,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
     @SuppressWarnings("Duplicates")
     @Override
     public boolean buildWithoutChecks(World world, BlockPos blockPos) {
-        if (world.setBlockState(blockPos, BCTransportBlocks.pipeHolder.getDefaultState(), 0)) {
+        if (world.setBlockState(blockPos, BCBlocks.Transport.PIPE_HOLDER.getDefaultState(), 0)) {
             TileEntity tileEntity = TileEntity.create(world, tileNbt);
             if (tileEntity != null) {
                 tileEntity.setWorld(world);
@@ -125,7 +121,7 @@ public class SchematicBlockPipe implements ISchematicBlock {
 
     @Override
     public boolean isBuilt(World world, BlockPos blockPos) {
-        return world.getBlockState(blockPos).getBlock() == BCTransportBlocks.pipeHolder;
+        return world.getBlockState(blockPos).getBlock() instanceof BlockPipeHolder;
     }
 
     @Override

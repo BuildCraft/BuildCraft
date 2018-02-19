@@ -8,13 +8,11 @@ package buildcraft.energy;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumSpring;
-
-import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.energy.tile.TileSpringOil;
+import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCEnergyBlocks {
 

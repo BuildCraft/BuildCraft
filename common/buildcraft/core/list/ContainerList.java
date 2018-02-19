@@ -6,10 +6,10 @@
 
 package buildcraft.core.list;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
-import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
@@ -120,7 +120,7 @@ public class ContainerList extends ContainerBC_Neptune {
     }
 
     public void setLabel(final String text) {
-        BCCoreItems.list.setName(getListItemStack(), text);
+        ((ItemList_BC8) BCItems.Core.LIST).setName(getListItemStack(), text);
 
         if (player.world.isRemote) {
             sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));

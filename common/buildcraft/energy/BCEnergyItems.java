@@ -9,9 +9,7 @@ import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCEnergyItems {
 
-    public static ItemBC_Neptune globOil;
-
     public static void preInit() {
-        globOil = RegistrationHelper.addItem(new ItemBC_Neptune("item.glob.oil"));
+        RegistrationHelper.addItem(new ItemBC_Neptune("item.glob.oil"));
     }
 }

@@ -6,24 +6,10 @@
 
 package buildcraft.robotics.tile;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.api.BCItems;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -32,12 +18,22 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemMapLocation;
-import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.robotics.zone.ZonePlan;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebuggable {
     protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("zone_planner");
@@ -199,9 +195,9 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
 
                 ZonePlan zonePlan = new ZonePlan();
                 zonePlan.readFromNBT(invInputMapLocation.getStackInSlot(0).getTagCompound());
-                layers[BCCoreItems.paintbrush.getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] = zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
+                layers[((ItemPaintbrush_BC8) BCItems.Core.PAINTBRUSH).getBrushFromStack(invInputPaintbrush.getStackInSlot(0)).colour.getMetadata()] = zonePlan.getWithOffset(-pos.getX(), -pos.getZ());
                 invInputMapLocation.setStackInSlot(0, null);
-                invInputResult.setStackInSlot(0, new ItemStack(BCCoreItems.mapLocation));
+                invInputResult.setStackInSlot(0, new ItemStack(BCItems.Core.MAP_LOCATION));
                 this.markDirty();
                 this.sendNetworkUpdate(NET_RENDER_DATA);
                 progressInput = 0;
@@ -223,7 +219,7 @@ public class TileZonePlanner extends TileBC_Neptune implements ITickable, IDebug
                     return;
                 }
 
-                ItemMapLocation.setZone(invOutputMapLocation.getStackInSlot(0), layers[BCCoreItems.paintbrush.getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
+                ItemMapLocation.setZone(invOutputMapLocation.getStackInSlot(0), layers[((ItemPaintbrush_BC8) BCItems.Core.PAINTBRUSH).getBrushFromStack(invOutputPaintbrush.getStackInSlot(0)).colour.getMetadata()]
                     .getWithOffset(pos.getX(), pos.getZ()));
                 invOutputResult.setStackInSlot(0, invOutputMapLocation.getStackInSlot(0));
                 invOutputMapLocation.setStackInSlot(0, null);
