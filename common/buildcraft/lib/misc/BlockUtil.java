@@ -181,7 +181,7 @@ public final class BlockUtil {
         Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
         if (!harvestBlock(world, pos, tool, owner)) {
             if (!destroyBlock(world, pos, tool, owner)) {
-                Optional.empty();
+                return Optional.empty();
             }
         }
         List<ItemStack> stacks = Lists.newArrayList();
