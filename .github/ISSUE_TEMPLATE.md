@@ -7,5 +7,6 @@ Please do not put the entire log here, upload it on pastebin (https://pastebin.c
 BuildCraft version:
 Forge version:
 Link to crash report or log: 
-Singleplayer or multiplayer: 
+Singleplayer or multiplayer:
+Steps to reproduce:
 Additional information: 
