@@ -6,12 +6,15 @@
 
 package buildcraft.transport.pipe;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.client.model.key.PipeModelKey;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -20,30 +23,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeConnectionAPI;
-import buildcraft.api.transport.pipe.PipeDefinition;
-import buildcraft.api.transport.pipe.PipeFlow;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.transport.client.model.key.PipeModelKey;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.List;
 
 public final class Pipe implements IPipe, IDebuggable {
     public final IPipeHolder holder;
@@ -74,6 +62,13 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
+        NBTUtilBC.readCompoundList(nbt.getTag("connected"))
+                .forEach(entryTag ->
+                        connected.put(
+                                NBTUtilBC.readEnum(entryTag.getTag("key"), EnumFacing.class),
+                                entryTag.getFloat("value")
+                        )
+                );
     }
 
     public NBTTagCompound writeToNbt() {
@@ -82,6 +77,18 @@ public final class Pipe implements IPipe, IDebuggable {
         nbt.setString("def", definition.identifier.toString());
         nbt.setTag("beh", behaviour.writeToNbt());
         nbt.setTag("flow", flow.writeToNbt());
+        nbt.setTag(
+                "connected",
+                NBTUtilBC.writeCompoundList(
+                        connected.entrySet().stream()
+                                .map(entry -> {
+                                    NBTTagCompound entryTag = new NBTTagCompound();
+                                    entryTag.setTag("key", NBTUtilBC.writeEnum(entry.getKey()));
+                                    entryTag.setFloat("value", entry.getValue());
+                                    return entryTag;
+                                })
+                )
+        );
         return nbt;
     }
 
