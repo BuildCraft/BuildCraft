@@ -75,6 +75,13 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
+        NBTUtilBC.readCompoundList(nbt.getTag("connected"))
+            .forEach(entryTag ->
+                connected.put(
+                    NBTUtilBC.readEnum(entryTag.getTag("key"), EnumFacing.class),
+                    entryTag.getFloat("value")
+                )
+            );
     }
 
     public NBTTagCompound writeToNbt() {
@@ -83,6 +90,18 @@ public final class Pipe implements IPipe, IDebuggable {
         nbt.setString("def", definition.identifier.toString());
         nbt.setTag("beh", behaviour.writeToNbt());
         nbt.setTag("flow", flow.writeToNbt());
+        nbt.setTag(
+            "connected",
+            NBTUtilBC.writeCompoundList(
+                connected.entrySet().stream()
+                    .map(entry -> {
+                        NBTTagCompound entryTag = new NBTTagCompound();
+                        entryTag.setTag("key", NBTUtilBC.writeEnum(entry.getKey()));
+                        entryTag.setFloat("value", entry.getValue());
+                        return entryTag;
+                    })
+            )
+        );
         return nbt;
     }
 
