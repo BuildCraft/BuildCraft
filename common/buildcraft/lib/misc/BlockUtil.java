@@ -176,11 +176,13 @@ public final class BlockUtil {
         world.spawnEntity(entityitem);
     }
 
-    public static List<ItemStack> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+    public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
         AxisAlignedBB aabb = new AxisAlignedBB(pos).expandXyz(1);
         Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
         if (!harvestBlock(world, pos, tool, owner)) {
-            destroyBlock(world, pos, tool, owner);
+            if (!destroyBlock(world, pos, tool, owner)) {
+                Optional.empty();
+            }
         }
         List<ItemStack> stacks = Lists.newArrayList();
         for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
@@ -193,7 +195,7 @@ public final class BlockUtil {
                 stacks.add(stack);
             }
         }
-        return stacks;
+        return Optional.of(stacks);
     }
 
     public static boolean canChangeBlock(World world, BlockPos pos, GameProfile owner) {

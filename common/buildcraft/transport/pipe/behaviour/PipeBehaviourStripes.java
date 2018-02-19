@@ -172,7 +172,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                             offset,
                             new ItemStack(Items.DIAMOND_PICKAXE),
                             pipe.getHolder().getOwner()
-                    ).forEach(stack -> sendItem(stack, direction));
+                    ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
                     progress = 0;
                 }
             }
