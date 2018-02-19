@@ -27,8 +27,8 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -64,8 +64,6 @@ import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
-import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
@@ -900,15 +898,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 // drop its contents
                 world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
                 if (drillPos != null) {
-                    world.destroyBlock(breakPos, true);
-                    for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class,
-                        new AxisAlignedBB(breakPos).grow(1))) {
-                        TransactorEntityItem transactor = new TransactorEntityItem(entity);
-                        ItemStack stack;
-                        while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
-                            InventoryUtil.addToBestAcceptor(world, pos, null, stack);
-                        }
-                    }
+                    BlockUtil.breakBlockAndGetDrops(
+                        (WorldServer) world,
+                        breakPos,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        getOwner()
+                    ).forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
                 } else {
                     world.destroyBlock(breakPos, false);
                 }

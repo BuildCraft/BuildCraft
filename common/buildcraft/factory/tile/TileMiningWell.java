@@ -7,6 +7,7 @@
 package buildcraft.factory.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.WorldServer;
@@ -39,19 +40,13 @@ public class TileMiningWell extends TileMiner {
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 progress = 0;
-                EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), pos);
-                BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, currentPos, world.getBlockState(currentPos), fakePlayer);
-                MinecraftForge.EVENT_BUS.post(breakEvent);
-                if (!breakEvent.isCanceled()) {
-                    NonNullList<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, currentPos, getOwner());
-                    if (stacks != null) {
-                        for (ItemStack stack : stacks) {
-                            InventoryUtil.addToBestAcceptor(world, pos, null, stack);
-                        }
-                    }
-                    world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
-                    world.destroyBlock(currentPos, false);
-                }
+                world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+                BlockUtil.breakBlockAndGetDrops(
+                    (WorldServer) world,
+                    currentPos,
+                    new ItemStack(Items.DIAMOND_PICKAXE),
+                    getOwner()
+                ).forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
                 nextPos();
                 updateLength();
             } else {

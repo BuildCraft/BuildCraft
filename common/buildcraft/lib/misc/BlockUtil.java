@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -60,6 +62,8 @@ import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
@@ -106,8 +110,8 @@ public final class BlockUtil {
         return false;
     }
 
-    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -172,6 +176,21 @@ public final class BlockUtil {
         entityitem.setDefaultPickupDelay();
 
         world.spawnEntity(entityitem);
+    }
+
+    public static List<ItemStack> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        if (!BlockUtil.harvestBlock(world, pos, tool, owner)) {
+            world.destroyBlock(pos, true);
+        }
+        List<ItemStack> stacks = new ArrayList<>();
+        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(1))) {
+            TransactorEntityItem transactor = new TransactorEntityItem(entity);
+            ItemStack stack;
+            while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
+                stacks.add(stack);
+            }
+        }
+        return stacks;
     }
 
     public static boolean canChangeBlock(World world, BlockPos pos, GameProfile owner) {
