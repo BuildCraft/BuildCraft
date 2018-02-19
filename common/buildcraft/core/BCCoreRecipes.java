@@ -14,6 +14,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
+import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
@@ -74,7 +75,7 @@ public class BCCoreRecipes {
             GameRegistry.addRecipe(new ShapedOreRecipe(cleanPaintbrush, input));
 
             for (EnumDyeColor colour : EnumDyeColor.values()) {
-                ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
+                ItemPaintbrush_BC8.Brush brush = ((ItemPaintbrush_BC8)BCItems.Core.PAINTBRUSH).new Brush(colour);
                 ItemStack out = brush.save();
                 GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
             }
@@ -103,7 +104,7 @@ public class BCCoreRecipes {
             }
         }
 
-        if (BCCoreBlocks.engine != null && BCCoreBlocks.engine.isRegistered(EnumEngineType.WOOD)) {
+        if (BCBlocks.Core.ENGINE != null && ((BlockEngine_BC8)BCBlocks.Core.ENGINE).isRegistered(EnumEngineType.WOOD)) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("www");
             builder.add(" g ");
@@ -112,7 +113,7 @@ public class BCCoreRecipes {
             builder.map('g', OredictionaryNames.GLASS_COLOURLESS);
             builder.map('G', OredictionaryNames.GEAR_WOOD);
             builder.map('p', Blocks.PISTON);
-            builder.setResult(BCCoreBlocks.engine.getStack(EnumEngineType.WOOD));
+            builder.setResult(((BlockEngine_BC8)BCBlocks.Core.ENGINE).getStack(EnumEngineType.WOOD));
             builder.register();
         }
 

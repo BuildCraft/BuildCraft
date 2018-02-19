@@ -7,13 +7,11 @@
 package buildcraft.silicon;
 
 import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
 public class BCSiliconItems {
-    public static ItemRedstoneChipset redstoneChipset;
 
     public static void preInit() {
-        redstoneChipset = RegistrationHelper.addItem(new ItemRedstoneChipset("item.redstone_chipset"));
+        RegistrationHelper.addItem(new ItemRedstoneChipset("item.redstone_chipset"));
     }
 }

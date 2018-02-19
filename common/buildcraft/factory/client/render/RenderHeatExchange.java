@@ -1,12 +1,17 @@
 package buildcraft.factory.client.render;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-
-import net.minecraft.client.renderer.VertexBuffer;
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.factory.tile.TileHeatExchange.EnumProgressState;
+import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionEnd;
+import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionStart;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
+import buildcraft.lib.client.render.fluid.FluidSpriteType;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,6 +19,7 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -22,22 +28,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.fluids.FluidStack;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileHeatExchange;
-import buildcraft.factory.tile.TileHeatExchange.EnumProgressState;
-import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionEnd;
-import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionStart;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchange> {
     private static final Map<EnumFacing, TankSideData> TANK_SIDES = new EnumMap<>(EnumFacing.class);
@@ -82,7 +78,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         ExchangeSectionStart section = (ExchangeSectionStart) tile.getSection();
         ExchangeSectionEnd sectionEnd = section.getEndSection();
 
-        IBlockState state = tile.getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        IBlockState state = tile.getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
         if (state == null) {
             return;
         }

@@ -6,6 +6,7 @@
 
 package buildcraft.builders.tile;
 
+import buildcraft.api.BCBlocks;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
@@ -14,8 +15,8 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersEventDist;
+import buildcraft.builders.block.BlockFrame;
 import buildcraft.builders.client.render.AdvDebuggerQuarry;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
@@ -377,7 +378,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBreakBlockPoses.remove(blockPos);
         framePlaceFramePoses.remove(blockPos);
         if (shouldBeFrame(blockPos)) {
-            if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.frame) {
+            if (!(world.getBlockState(blockPos).getBlock() instanceof BlockFrame)) {
                 if (!world.isAirBlock(blockPos)) {
                     frameBreakBlockPoses.add(blockPos);
                 } else {
@@ -953,7 +954,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         @Override
         protected boolean finish() {
             if (world.isAirBlock(framePos)) {
-                world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
+                world.setBlockState(framePos, BCBlocks.Builders.FRAME.getDefaultState());
             }
             return true;
         }

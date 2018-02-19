@@ -6,38 +6,35 @@
 
 package buildcraft.transport.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import com.google.common.collect.Lists;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.api.BCItems;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
 import buildcraft.api.recipes.StackDefinition;
-
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable;
-
 import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportItems;
+import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.plug.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeInstance;
 import buildcraft.transport.plug.FacadeStateManager;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeViewable.IRecipePowered {
     INSTANCE;
@@ -82,7 +79,7 @@ public enum FacadeAssemblyRecipes implements IAssemblyRecipeProvider, IRecipeVie
     }
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
-        ItemStack stack = BCTransportItems.plugFacade.createItemStack(FacadeInstance.createSingle(info, isHollow));
+        ItemStack stack = ((ItemPluggableFacade) BCItems.Transport.PLUG_FACADE).createItemStack(FacadeInstance.createSingle(info, isHollow));
         stack.stackSize = 6;
         return stack;
     }

@@ -6,6 +6,10 @@
 
 package buildcraft.factory.item;
 
+import buildcraft.api.BCBlocks;
+import buildcraft.factory.block.BlockWaterGel;
+import buildcraft.factory.block.BlockWaterGel.GelStage;
+import buildcraft.lib.item.ItemBC_Neptune;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -18,12 +22,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.block.BlockWaterGel;
-import buildcraft.factory.block.BlockWaterGel.GelStage;
 
 public class ItemWaterGel extends ItemBC_Neptune {
 
@@ -58,8 +56,8 @@ public class ItemWaterGel extends ItemBC_Neptune {
                 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
         if (!world.isRemote) {
-            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
-            world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.waterGel, 200);
+            world.setBlockState(ray.getBlockPos(), BCBlocks.Factory.WATER_GEL.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
+            world.scheduleUpdate(ray.getBlockPos(), BCBlocks.Factory.WATER_GEL, 200);
 
             // TODO: Snowball stuff
 

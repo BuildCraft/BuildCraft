@@ -6,10 +6,15 @@
 
 package buildcraft.transport.item;
 
-import java.util.List;
-
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
+import buildcraft.lib.item.IItemBuildCraft;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.registry.TagManager;
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -21,21 +26,12 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.pipe.IItemPipe;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeDefinition;
+import java.util.List;
 
-import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
-import buildcraft.lib.item.IItemBuildCraft;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.registry.TagManager;
-
-import buildcraft.transport.BCTransportBlocks;
+import static buildcraft.transport.BCTransportBlocks.pipeHolder;
 
 public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemPipe {
     public final PipeDefinition definition;
@@ -44,7 +40,7 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
     private CreativeTabs creativeTab;
 
     protected ItemPipeHolder(PipeDefinition definition, String tagId) {
-        super(BCTransportBlocks.pipeHolder);
+        super(pipeHolder);
         this.definition = definition;
         this.id = tagId;
         this.setMaxDamage(0);

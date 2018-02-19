@@ -6,18 +6,16 @@
 
 package buildcraft.transport.plug;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-
+import buildcraft.api.BCItems;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
-import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 
 public class PluggableBlocker extends PipePluggable {
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
@@ -55,7 +53,7 @@ public class PluggableBlocker extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugBlocker);
+        return new ItemStack(BCItems.Transport.PLUG_BLOCKER);
     }
 
     @Override

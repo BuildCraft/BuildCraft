@@ -6,53 +6,34 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.block.BlockSpring;
+import buildcraft.energy.BCEnergyFluids;
+import buildcraft.energy.tile.TileSpringOil;
+import buildcraft.factory.block.BlockTube;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
+import buildcraft.lib.net.PacketBufferBC;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreConfig;
-import buildcraft.energy.BCEnergyFluids;
-import buildcraft.energy.tile.TileSpringOil;
-import buildcraft.factory.BCFactoryBlocks;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
 public class TilePump extends TileMiner {
     private static final EnumFacing[] SEARCH_DIRECTIONS = new EnumFacing[] { //
@@ -101,7 +82,7 @@ public class TilePump extends TileMiner {
                 fluidConnection = posToCheck;
                 break;
             } else if (!world.isAirBlock(posToCheck) &&
-                world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+                !(world.getBlockState(posToCheck).getBlock() instanceof BlockTube)) {
                 break;
             }
         }
@@ -157,7 +138,7 @@ public class TilePump extends TileMiner {
             List<BlockPos> springPositions = new ArrayList<>();
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
             for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
-                if (world.getBlockState(spring).getBlock() == BCCoreBlocks.spring) {
+                if (world.getBlockState(spring).getBlock() instanceof BlockSpring) {
                     TileEntity tile = world.getTileEntity(spring);
                     if (tile instanceof TileSpringOil) {
                         springPositions.add(spring);

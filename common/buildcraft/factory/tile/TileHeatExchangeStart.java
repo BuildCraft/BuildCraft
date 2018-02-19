@@ -6,12 +6,22 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.IRefineryRecipeManager;
+import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
+import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.factory.block.BlockHeatExchange;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,7 +33,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -32,27 +41,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.IRefineryRecipeManager;
-import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
-import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
 
 @Deprecated
 public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -104,7 +96,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     }
 
     private IFluidHandler getTankForSide(EnumFacing side) {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        IBlockState state = getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
         if (state == null) {
             return null;
         }
@@ -229,7 +221,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
     private void findEnd() {
         // TODO (AlexIIL): Make this check passive, not active.
         tileEnd = null;
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        IBlockState state = getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
         if (state == null) {
             // BCLog.logger.warn("Null state");
             return;
@@ -241,7 +233,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         for (int i = 0; i <= 4; i++) {
             search = search.offset(facing);
             state = getLocalState(search);
-            if (state.getBlock() != BCFactoryBlocks.heatExchange) {
+            if (!(state.getBlock() instanceof BlockHeatExchange)) {
                 // BCLog.logger.warn("Not middle @ " + search + " (" + i + ")");
                 search = search.offset(facing.getOpposite());
                 state = getLocalState(search);
@@ -328,7 +320,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
             Vec3d from = VecUtil.convertCenter(getPos());
             FluidStack c_in_f = end.smoothedCoolableIn.getFluidForRender();
             if (c_in_f != null && c_in_f.getFluid() == FluidRegistry.LAVA) {
-                IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+                IBlockState state = getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
                 if (state != null) {
                     EnumFacing dir = state.getValue(BlockBCBase_Neptune.PROP_FACING);
                     spewForth(from, dir.getOpposite(), EnumParticleTypes.SMOKE_LARGE);
@@ -419,7 +411,7 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
 
     @Nullable
     private IFluidHandler getFluidAutoOutputTarget() {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        IBlockState state = getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
         if (state == null) {
             return null;
         }

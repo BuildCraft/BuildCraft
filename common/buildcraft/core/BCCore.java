@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
+import buildcraft.api.BCItems;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.lib.BCLib;
@@ -62,11 +63,11 @@ public class BCCore {
 
         BCCoreProxy.getProxy().fmlPreInit();
 
-        tab.setItem(BCCoreItems.wrench);
+        tab.setItem(BCItems.Core.WRENCH);
 
-        setItemTab(BCLibItems.guide, tab);
-        setItemTab(BCLibItems.guideNote, tab);
-        setItemTab(BCLibItems.debugger, tab);
+        setItemTab(BCItems.Lib.GUIDE, tab);
+        setItemTab(BCItems.Lib.GUIDE_NOTE, tab);
+        setItemTab(BCItems.Lib.DEBUGGER, tab);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
@@ -82,7 +83,8 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
+        BCItems.Lib.GUIDE.setCreativeTab(
+                CreativeTabManager.getTab("buildcraft.main"));
 
         BCCoreProxy.getProxy().fmlInit();
 

@@ -7,13 +7,14 @@
 package buildcraft.transport;
 
 import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
-import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
@@ -60,7 +61,7 @@ public class BCTransportRecipes {
             builder.map('p', Blocks.PISTON);
             builder.map('c', Blocks.CHEST);
             builder.map('d', BCTransportItems.pipeItemDiamond, Items.DIAMOND);
-            builder.setResult(new ItemStack(BCTransportBlocks.filteredBuffer));
+            builder.setResult(new ItemStack(BCBlocks.Transport.FILTERED_BUFFER));
             builder.register();
         }
 
@@ -117,11 +118,11 @@ public class BCTransportRecipes {
         addPipeUpgradeRecipe(BCTransportItems.pipeItemSandstone, BCTransportItems.pipePowerSandstone, upgrade);
 //        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipePowerDiamond, upgrade);
 
-        RecipeBuilderShaped builder = new RecipeBuilderShaped();
-        builder.add("s");
-        builder.map('s', BCTransportItems.pipeStructure);
-        builder.setResult(new ItemStack(BCItems.Transport.PLUG_BLOCKER, 4));
-        builder.register();
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("s");
+            builder.map('s', BCTransportItems.pipeStructure);
+            builder.setResult(new ItemStack(BCItems.Transport.PLUG_BLOCKER, 4));
+            builder.register();
 
         if (BCItems.Transport.PLUG_PULSAR != null) {
             ItemStack output = new ItemStack(BCItems.Transport.PLUG_PULSAR);

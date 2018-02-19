@@ -1,23 +1,20 @@
 package buildcraft.transport.plug;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-
-import net.minecraftforge.common.capabilities.Capability;
-
+import buildcraft.api.BCItems;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
-import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPowerAdaptor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.common.capabilities.Capability;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class PluggablePowerAdaptor extends PipePluggable {
 
@@ -56,7 +53,7 @@ public class PluggablePowerAdaptor extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugPowerAdaptor);
+        return new ItemStack(BCItems.Transport.PLUG_POWER_ADAPTOR);
     }
 
     @Override

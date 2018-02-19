@@ -6,32 +6,22 @@
 
 package buildcraft.factory;
 
+import buildcraft.api.BCBlocks;
+import buildcraft.factory.client.model.ModelHeatExchange;
+import buildcraft.factory.client.render.*;
+import buildcraft.factory.tile.*;
+import buildcraft.lib.client.model.ModelHolderVariable;
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.expression.FunctionContext;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.util.registry.IRegistry;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import buildcraft.lib.client.model.ModelHolderVariable;
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.expression.FunctionContext;
-
-import buildcraft.factory.client.model.ModelHeatExchange;
-import buildcraft.factory.client.render.RenderDistiller;
-import buildcraft.factory.client.render.RenderHeatExchange;
-import buildcraft.factory.client.render.RenderMiningWell;
-import buildcraft.factory.client.render.RenderPump;
-import buildcraft.factory.client.render.RenderTank;
-import buildcraft.factory.tile.TileDistiller_BC8;
-import buildcraft.factory.tile.TileHeatExchange;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileTank;
 
 public class BCFactoryModels {
     public static final ModelHolderVariable DISTILLER;
@@ -60,7 +50,7 @@ public class BCFactoryModels {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        event.getModelManager().getBlockModelShapes().registerBlockWithStateMapper(BCFactoryBlocks.heatExchange,
+        event.getModelManager().getBlockModelShapes().registerBlockWithStateMapper(BCBlocks.Factory.HEAT_EXCHANGE,
             new StateMapperBase() {
                 @Override
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state) {

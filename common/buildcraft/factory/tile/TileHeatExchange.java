@@ -1,13 +1,22 @@
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.IRefineryRecipeManager;
+import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
+import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.cap.CapabilityHelper;
+import buildcraft.lib.fluid.FluidSmoother;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.fluid.TankManager;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -23,7 +32,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -31,31 +39,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.IRefineryRecipeManager;
-import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
-import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.cap.CapabilityHelper;
-import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.fluid.TankManager;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
 public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchanger");
@@ -315,7 +306,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
     @Nullable
     EnumFacing getFacing() {
-        IBlockState state = getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        IBlockState state = getCurrentStateForBlock(BCBlocks.Factory.HEAT_EXCHANGE);
         if (state == null) {
             return null;
         }

@@ -6,6 +6,18 @@
 
 package buildcraft.transport.plug;
 
+import buildcraft.api.BCItems;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableDefinition;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.client.model.key.KeyPlugLens;
+import buildcraft.transport.item.ItemPluggableLens;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,20 +25,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableDefinition;
-import buildcraft.api.transport.pluggable.PluggableModelKey;
-
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.client.model.key.KeyPlugLens;
 
 public class PluggableLens extends PipePluggable {
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
@@ -104,7 +102,7 @@ public class PluggableLens extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return BCTransportItems.plugLens.getStack(colour, isFilter);
+        return ((ItemPluggableLens)BCItems.Transport.PLUG_LENS).getStack(colour, isFilter);
     }
 
     @Override

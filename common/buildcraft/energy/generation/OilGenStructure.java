@@ -1,25 +1,22 @@
 package buildcraft.energy.generation;
 
-import java.util.function.Predicate;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.core.block.BlockSpring;
+import buildcraft.energy.BCEnergyFluids;
+import buildcraft.energy.tile.TileSpringOil;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.enums.EnumSpring;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
-
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.block.BlockSpring;
-import buildcraft.energy.BCEnergyFluids;
-import buildcraft.energy.tile.TileSpringOil;
+import java.util.function.Predicate;
 
 public abstract class OilGenStructure {
     public final Box box;
@@ -282,7 +279,7 @@ public abstract class OilGenStructure {
         }
 
         public void generate(World world, int count) {
-            IBlockState state = BCCoreBlocks.spring.getDefaultState();
+            IBlockState state = BCBlocks.Core.SPRING.getDefaultState();
             state = state.withProperty(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
             world.setBlockState(pos, state);
             TileEntity tile = world.getTileEntity(pos);

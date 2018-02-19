@@ -4,21 +4,16 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.builders.item.ItemFillerPlanner;
 import buildcraft.builders.item.ItemSchematicSingle;
 import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCBuildersItems {
 
-    public static ItemSnapshot snapshot;
-    public static ItemSchematicSingle schematicSingle;
-    public static ItemFillerPlanner addonFillerPlanner;
-
     public static void fmlPreInit() {
-        snapshot = RegistrationHelper.addItem(new ItemSnapshot("item.snapshot"));
-        schematicSingle = RegistrationHelper.addItem(new ItemSchematicSingle("item.schematic.single"));
-        addonFillerPlanner = RegistrationHelper.addItem(new ItemFillerPlanner("item.filler_planner"));
+        RegistrationHelper.addItem(new ItemSnapshot("item.snapshot"));
+        RegistrationHelper.addItem(new ItemSchematicSingle("item.schematic.single"));
+        RegistrationHelper.addItem(new ItemFillerPlanner("item.filler_planner"));
     }
 }

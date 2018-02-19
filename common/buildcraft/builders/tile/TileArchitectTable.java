@@ -6,6 +6,8 @@
  */
 package buildcraft.builders.tile;
 
+import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.enums.EnumSnapshotType;
@@ -15,8 +17,6 @@ import buildcraft.api.schematics.ISchematicEntity;
 import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.api.schematics.SchematicEntityContext;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.builders.BCBuildersBlocks;
-import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.block.BlockArchitectTable;
 import buildcraft.builders.client.ClientArchitectTables;
 import buildcraft.builders.item.ItemSnapshot;
@@ -251,7 +251,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     private void finishScanning() {
-        IBlockState thisState = getCurrentStateForBlock(BCBuildersBlocks.architect);
+        IBlockState thisState = getCurrentStateForBlock(BCBlocks.Builders.ARCHITECT);
         if (thisState == null) {
             return;
         }
@@ -283,7 +283,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         invSnapshotIn.setStackInSlot(0, stackIn);
         invSnapshotOut.setStackInSlot(
             0,
-            BCBuildersItems.snapshot.getUsed(
+                ((ItemSnapshot) BCItems.Builders.SNAPSHOT).getUsed(
                 snapshotType,
                 new Header(
                     snapshot.key,

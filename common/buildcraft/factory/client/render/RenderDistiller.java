@@ -6,29 +6,9 @@
 
 package buildcraft.factory.client.render;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import net.minecraft.client.renderer.VertexBuffer;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.factory.BCFactoryModels;
+import buildcraft.factory.block.BlockDistiller;
+import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
@@ -37,10 +17,26 @@ import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.misc.VecUtil;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.BCFactoryModels;
-import buildcraft.factory.tile.TileDistiller_BC8;
+import java.util.EnumMap;
+import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
@@ -64,7 +60,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
 
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() != BCFactoryBlocks.distiller) {
+        if (!(state.getBlock() instanceof BlockDistiller)) {
             return;
         }
 

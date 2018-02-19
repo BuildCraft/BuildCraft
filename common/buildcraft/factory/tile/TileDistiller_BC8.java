@@ -5,21 +5,6 @@
  */
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import buildcraft.api.tiles.TilesAPI;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.MjAPI;
@@ -29,7 +14,9 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.api.tiles.TilesAPI;
+import buildcraft.core.BCCoreConfig;
+import buildcraft.factory.block.BlockDistiller;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
@@ -47,9 +34,18 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.factory.BCFactoryBlocks;
+import java.io.IOException;
+import java.util.List;
 
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final FunctionContext MODEL_FUNC_CTX;
@@ -221,7 +217,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         MODEL_FACING.value = EnumFacing.WEST;
 
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == BCFactoryBlocks.distiller) {
+        if (state.getBlock() instanceof BlockDistiller) {
             MODEL_FACING.value = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         }
     }

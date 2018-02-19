@@ -6,21 +6,7 @@
 
 package buildcraft.transport.plug;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
+import buildcraft.api.BCItems;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IFlowFluid;
@@ -29,7 +15,6 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.ContextInfo;
@@ -43,10 +28,21 @@ import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
-
 import buildcraft.transport.BCTransportConfig;
-import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 public class PluggablePulsar extends PipePluggable {
 
@@ -194,7 +190,7 @@ public class PluggablePulsar extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugPulsar);
+        return new ItemStack(BCItems.Transport.PLUG_PULSAR);
     }
 
     @Override

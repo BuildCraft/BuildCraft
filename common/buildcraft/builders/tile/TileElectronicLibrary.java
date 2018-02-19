@@ -4,10 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.data.NbtSquishConstants;
 import buildcraft.api.items.BCStackHelper;
-import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
@@ -161,7 +161,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
             if (id == NET_DOWN) {
-                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(invDownIn.getStackInSlot(0));
+                Snapshot.Header header = ((ItemSnapshot) BCItems.Builders.SNAPSHOT).getHeader(invDownIn.getStackInSlot(0));
                 if (header != null) {
                     Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                     if (snapshot != null) {
@@ -275,7 +275,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                         snapshot.key = new Snapshot.Key(snapshot.key, (Snapshot.Header) null);
                         snapshot.computeKey();
                         GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
-                        invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), header));
+                        invUpOut.setStackInSlot(0, ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getUsed(snapshot.getType(), header));
                         invUpIn.setStackInSlot(0, null);
                     } finally {
                         upSnapshotsParts.remove(pair);

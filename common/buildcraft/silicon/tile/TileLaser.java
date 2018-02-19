@@ -6,34 +6,10 @@
 
 package buildcraft.silicon.tile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.ILaserTarget;
-import buildcraft.api.mj.ILaserTargetBlock;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.mj.*;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
-
 import buildcraft.lib.block.ILocalBlockUpdateSubscriber;
 import buildcraft.lib.block.LocalBlockUpdateNotifier;
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
@@ -46,11 +22,26 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.block.BlockLaser;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
     private static final int TARGETING_RANGE = 6;
@@ -91,7 +82,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     private void findPossibleTargets() {
         targetPositions.clear();
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != BCSiliconBlocks.laser) {
+        if (!(state.getBlock() instanceof BlockLaser)) {
             return;
         }
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);

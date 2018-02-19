@@ -6,21 +6,16 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Deque;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.*;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagByteArray;
@@ -31,7 +26,6 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -39,21 +33,9 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.block.BlockFloodGate;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     private static final EnumFacing[] SEARCH_DIRECTIONS = new EnumFacing[] { //
@@ -201,7 +183,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                             BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), currentPos);
                         if (FluidUtil.tryPlaceFluid(fakePlayer, world, fluid, currentPos)) {
                             for (EnumFacing side : EnumFacing.VALUES) {
-                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate);
+                                world.notifyNeighborsOfStateChange(currentPos.offset(side), BCBlocks.Factory.FLOOD_GATE);
                             }
                             delayIndex = 0;
                             tick = 0;

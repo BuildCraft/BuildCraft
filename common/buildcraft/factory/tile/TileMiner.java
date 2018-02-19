@@ -6,20 +6,7 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.api.BCBlocks;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -27,16 +14,25 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
-
+import buildcraft.factory.block.BlockTube;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.List;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("miner");
@@ -104,7 +100,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         super.invalidate();
         for (int y = pos.getY() - 1; y > 0; y--) {
             BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
-            if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
+            if (world.getBlockState(blockPos).getBlock() instanceof BlockTube) {
                 world.setBlockToAir(blockPos);
             } else {
                 break;
@@ -118,7 +114,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         if (newLength != wantedLength) {
             for (int y = pos.getY() - 1; y > 0; y--) {
                 BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
-                if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
+                if (world.getBlockState(blockPos).getBlock() instanceof BlockTube) {
                     world.setBlockToAir(blockPos);
                 } else {
                     break;
@@ -126,7 +122,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
             }
             for (int y = pos.getY() - 1; y > newY; y--) {
                 BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
-                world.setBlockState(blockPos, BCFactoryBlocks.tube.getDefaultState());
+                world.setBlockState(blockPos, BCBlocks.Factory.TUBE.getDefaultState());
             }
             currentLength = wantedLength = newLength;
             sendNetworkUpdate(NET_WANTED_Y);

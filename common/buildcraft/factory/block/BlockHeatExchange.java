@@ -6,9 +6,12 @@
 
 package buildcraft.factory.block;
 
-import java.util.List;
-import java.util.Locale;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -21,18 +24,11 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileHeatExchange;
+import java.util.List;
+import java.util.Locale;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection, IBlockWithFacing {
 
@@ -97,7 +93,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
     private static boolean doesNeighbourConnect(IBlockAccess world, BlockPos pos, EnumFacing thisFacing,
         EnumFacing dir) {
         IBlockState neighbour = world.getBlockState(pos.offset(dir));
-        return neighbour.getBlock() == BCFactoryBlocks.heatExchange && neighbour.getValue(PROP_FACING) == thisFacing;
+        return neighbour.getBlock() == BCBlocks.Factory.HEAT_EXCHANGE && neighbour.getValue(PROP_FACING) == thisFacing;
     }
 
     @Override

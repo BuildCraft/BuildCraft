@@ -6,8 +6,8 @@
 
 package buildcraft.builders.client.render;
 
+import buildcraft.api.BCBlocks;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -219,7 +219,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 }
                 double xResult = min.getX() + (max.getX() - min.getX()) * xProgress;
                 double zResult = min.getZ() + (max.getZ() - min.getZ()) * zProgress;
-                ItemStack stack = new ItemStack(BCBuildersBlocks.frame);
+                ItemStack stack = new ItemStack(BCBlocks.Builders.FRAME);
 
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);

@@ -6,6 +6,7 @@
 
 package buildcraft.transport;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
@@ -16,6 +17,7 @@ import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.transport.item.ItemPluggableFacade;
 import buildcraft.transport.pipe.SchematicBlockPipe;
 import buildcraft.transport.plug.FacadeBlockStateInfo;
 import buildcraft.transport.plug.FacadeInstance;
@@ -69,7 +71,7 @@ public class BCTransport {
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
         tabPipes.setItem(BCTransportItems.pipeItemDiamond);
-        tabPlugs.setItem(BCTransportItems.plugGate);
+        tabPlugs.setItem(BCItems.Transport.PLUG_GATE);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
@@ -99,10 +101,10 @@ public class BCTransport {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlPostInit();
-        if (BCTransportItems.plugFacade != null) {
+        if (BCItems.Transport.PLUG_FACADE != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FacadeInstance inst = FacadeInstance.createSingle(state, false);
-            tabFacades.setItem(BCTransportItems.plugFacade.createItemStack(inst));
+            tabFacades.setItem(((ItemPluggableFacade)BCItems.Transport.PLUG_FACADE).createItemStack(inst));
         }
     }
 

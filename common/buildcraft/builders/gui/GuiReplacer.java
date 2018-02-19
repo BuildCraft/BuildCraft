@@ -6,17 +6,16 @@
 
 package buildcraft.builders.gui;
 
-import java.io.IOException;
-
+import buildcraft.api.BCItems;
+import buildcraft.builders.container.ContainerReplacer;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.ClientSnapshots;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiIcon;
-
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.container.ContainerReplacer;
-import buildcraft.builders.snapshot.ClientSnapshots;
+import java.io.IOException;
 
 public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/replacer.png");
@@ -41,7 +40,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
         ClientSnapshots.INSTANCE.renderSnapshot(
-            BCBuildersItems.snapshot.getHeader(container.tile.invSnapshot.getStackInSlot(0)),
+                ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getHeader(container.tile.invSnapshot.getStackInSlot(0)),
             guiLeft + 8,
             guiTop + 9,
             160,

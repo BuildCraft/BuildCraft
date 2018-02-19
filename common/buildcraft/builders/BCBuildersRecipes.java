@@ -4,7 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import net.minecraft.init.Items;
@@ -20,41 +23,34 @@ public class BCBuildersRecipes {
 //            GameRegistry.addRecipe(recipe);
 //        }
 
-        if (BCBuildersItems.snapshot != null) {
-            RecipeBuilderShaped recipe = new RecipeBuilderShaped();
-            recipe.add("ppp");
-            recipe.add("plp");
-            recipe.add("ppp");
-            recipe.map('l', "dyeBlack");
-            recipe.map('p', paper);
-            recipe.setResult(BCBuildersItems.snapshot.getClean(EnumSnapshotType.TEMPLATE));
-            recipe.register();
-        }
+        RecipeBuilderShaped recipe = new RecipeBuilderShaped();
+        recipe.add("ppp");
+        recipe.add("plp");
+        recipe.add("ppp");
+        recipe.map('l', "dyeBlack");
+        recipe.map('p', paper);
+        recipe.setResult(((ItemSnapshot) BCItems.Builders.SNAPSHOT).getClean(EnumSnapshotType.TEMPLATE));
+        recipe.register();
+        recipe = new RecipeBuilderShaped();
+        recipe.add("ppp");
+        recipe.add("plp");
+        recipe.add("ppp");
+        recipe.map('l', "gemLapis");
+        recipe.map('p', paper);
+        recipe.setResult(((ItemSnapshot) BCItems.Builders.SNAPSHOT).getClean(EnumSnapshotType.BLUEPRINT));
+        recipe.register();
 
-        if (BCBuildersItems.snapshot != null) {
-            RecipeBuilderShaped recipe = new RecipeBuilderShaped();
-            recipe.add("ppp");
-            recipe.add("plp");
-            recipe.add("ppp");
-            recipe.map('l', "gemLapis");
-            recipe.map('p', paper);
-            recipe.setResult(BCBuildersItems.snapshot.getClean(EnumSnapshotType.BLUEPRINT));
-            recipe.register();
-        }
-
-        if (BCBuildersBlocks.quarry != null) {
-            RecipeBuilderShaped recipe = new RecipeBuilderShaped();
-            recipe.add("iri");
-            recipe.add("gig");
-            recipe.add("dpd");
-            recipe.map('i', OredictionaryNames.GEAR_IRON);
-            recipe.map('g', OredictionaryNames.GEAR_GOLD);
-            recipe.map('d', OredictionaryNames.GEAR_DIAMOND);
-            recipe.map('r', "dustRedstone");
-            recipe.map('p', Items.DIAMOND_PICKAXE);
-            recipe.setResult(new ItemStack(BCBuildersBlocks.quarry));
-            recipe.register();
-        }
+        recipe = new RecipeBuilderShaped();
+        recipe.add("iri");
+        recipe.add("gig");
+        recipe.add("dpd");
+        recipe.map('i', OredictionaryNames.GEAR_IRON);
+        recipe.map('g', OredictionaryNames.GEAR_GOLD);
+        recipe.map('d', OredictionaryNames.GEAR_DIAMOND);
+        recipe.map('r', "dustRedstone");
+        recipe.map('p', Items.DIAMOND_PICKAXE);
+        recipe.setResult(new ItemStack(BCBlocks.Builders.QUARRY));
+        recipe.register();
 
         // if (BCBuildersItems.template != null) {
         // ItemStack out = new ItemStack(BCBuildersItems.template);
