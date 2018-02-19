@@ -8,4 +8,5 @@ BuildCraft version:
 Forge version: 
 Link to crash report or log: 
 Singleplayer or multiplayer: 
+Steps to reproduce: 
 Additional information: 
