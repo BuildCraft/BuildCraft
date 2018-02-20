@@ -7,6 +7,7 @@
 package buildcraft.transport.pipe.flow;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -242,7 +243,13 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                         }
                         Section s2 = sections.get(face2);
                         if (s2.powerQuery > 0) {
-                            long watts = Math.min(s.internalPower * s2.powerQuery / unusedPowerQuery, s.internalPower);
+                            long watts = Math.min(
+                                BigInteger.valueOf(s.internalPower)
+                                    .multiply(BigInteger.valueOf(s2.powerQuery))
+                                    .divide(BigInteger.valueOf(unusedPowerQuery))
+                                    .longValue(),
+                                s.internalPower
+                            );
                             unusedPowerQuery -= s2.powerQuery;
                             IPipe neighbour = pipe.getConnectedPipe(face2);
                             long leftover = watts;
