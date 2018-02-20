@@ -6,15 +6,17 @@
 
 package buildcraft.transport.client.model.plug;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.transport.BCTransportModels;
+import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.item.ItemPluggableFacade;
+import buildcraft.transport.plug.FacadeInstance;
+import buildcraft.transport.plug.FacadePhasedState;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -27,21 +29,16 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.client.model.MutableQuad;
-
-import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import buildcraft.transport.item.ItemPluggableFacade;
-import buildcraft.transport.plug.FacadeInstance;
-import buildcraft.transport.plug.FacadePhasedState;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public enum ModelFacadeItem implements IBakedModel {
     INSTANCE;
 
     private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder()//
-        .expireAfterAccess(1, TimeUnit.MINUTES)//
-        .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK, false)));
+            .expireAfterAccess(1, TimeUnit.MINUTES)//
+            .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK, false)));
 
     public static void onModelBake() {
         cache.invalidateAll();
@@ -106,7 +103,7 @@ public enum ModelFacadeItem implements IBakedModel {
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             FacadeInstance inst = ItemPluggableFacade.getStates(stack);
             FacadePhasedState state = inst.getCurrentStateForStack();
-            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, state.isHollow));
+            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, inst.isHollow));
         }
     }
 }

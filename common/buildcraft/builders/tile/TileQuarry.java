@@ -197,31 +197,27 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             // 8 corners were visited in the same iteration,
             // and somehow were the first 8 added.
             if (openSet.size() > 8 * 3) {
-                StringBuilder msg = new StringBuilder("OpenSet got too big!");
-                msg.append("\n  Position = ").append(pos);
-                msg.append("\n  Frame Box = ").append(frameBox);
-                msg.append("\n  Iteration Count = ").append(iterationCount);
-                msg.append("\n  OpenSet = " +
-                        openSet.stream()
-                                .map(Object::toString)
-                                .collect(Collectors.joining("\n  ", "[", "]")));
-                throw new IllegalStateException(msg.toString());
+                String msg = "OpenSet got too big!" + "\n  Position = " + pos +
+                        "\n  Frame Box = " + frameBox +
+                        "\n  Iteration Count = " + iterationCount +
+                        "\n  OpenSet = " + openSet.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining("\n  ", "[", "]"));
+                throw new IllegalStateException(msg);
             }
 
             // Ensure that we aren't going infinitely
             iterationCount++;
             if (iterationCount >= maxIterationCount) {
                 // We definitely failed. As maxIterationCount is an over-estimate
-                StringBuilder msg = new StringBuilder("Failed to generate a correct list of frame positions! Was the frame box wrong?");
-                msg.append("\n  Position = ").append(pos);
-                msg.append("\n  Frame Box = ").append(frameBox);
-                msg.append("\n  Iteration Count = ").append(iterationCount);
-                msg.append("\n  OpenSet = [");
-                msg.append("\n  OpenSet = " +
-                        openSet.stream()
-                                .map(Object::toString)
-                                .collect(Collectors.joining("\n  ", "[", "]")));
-                throw new IllegalStateException(msg.toString());
+                String msg = "Failed to generate a correct list of frame positions! Was the frame box wrong?" + "\n  Position = " + pos +
+                        "\n  Frame Box = " + frameBox +
+                        "\n  Iteration Count = " + iterationCount +
+                        "\n  OpenSet = [" +
+                        "\n  OpenSet = " + openSet.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining("\n  ", "[", "]"));
+                throw new IllegalStateException(msg);
             }
         } while (!openSet.isEmpty());
 

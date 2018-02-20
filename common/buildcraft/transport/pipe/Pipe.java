@@ -34,6 +34,8 @@ import java.util.EnumMap;
 import java.util.List;
 
 public final class Pipe implements IPipe, IDebuggable {
+    private static final float DEFAULT_CONNECTION_DISTANCE = 0.25f;
+
     public final IPipeHolder holder;
     public final PipeDefinition definition;
     public final PipeBehaviour behaviour;
@@ -62,13 +64,24 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
-        NBTUtilBC.readCompoundList(nbt.getTag("connected"))
-                .forEach(entryTag ->
-                        connected.put(
-                                NBTUtilBC.readEnum(entryTag.getTag("key"), EnumFacing.class),
-                                entryTag.getFloat("value")
-                        )
-                );
+
+        int connectionData = nbt.getInteger("con");
+        for (EnumFacing face : EnumFacing.VALUES) {
+            int data = (connectionData >>> (face.ordinal() * 2)) & 0b11;
+            // The only important aspect of this is the pipe type
+            // as the texture index is just used at the client (which is updated in the first tick)
+            // and the distance is only used on the server for item pipe travel times.
+            // (which is minor enough that it doesn't really matter)
+            if (data == 0b01) {
+                connected.put(face, DEFAULT_CONNECTION_DISTANCE);
+                types.put(face, ConnectedType.PIPE);
+                textures.put(face, 0);
+            } else if (data == 0b10) {
+                connected.put(face, DEFAULT_CONNECTION_DISTANCE);
+                types.put(face, ConnectedType.TILE);
+                textures.put(face, 0);
+            }
+        }
     }
 
     public NBTTagCompound writeToNbt() {
@@ -77,18 +90,16 @@ public final class Pipe implements IPipe, IDebuggable {
         nbt.setString("def", definition.identifier.toString());
         nbt.setTag("beh", behaviour.writeToNbt());
         nbt.setTag("flow", flow.writeToNbt());
-        nbt.setTag(
-                "connected",
-                NBTUtilBC.writeCompoundList(
-                        connected.entrySet().stream()
-                                .map(entry -> {
-                                    NBTTagCompound entryTag = new NBTTagCompound();
-                                    entryTag.setTag("key", NBTUtilBC.writeEnum(entry.getKey()));
-                                    entryTag.setFloat("value", entry.getValue());
-                                    return entryTag;
-                                })
-                )
-        );
+
+        int connectionData = 0;
+        for (EnumFacing face : EnumFacing.VALUES) {
+            ConnectedType type = types.get(face);
+            if (type != null) {
+                int data = type == ConnectedType.PIPE ? 0b01 : 0b10;
+                connectionData |= data << (face.ordinal() * 2);
+            }
+        }
+        nbt.setInteger("con", connectionData);
         return nbt;
     }
 
@@ -216,10 +227,15 @@ public final class Pipe implements IPipe, IDebuggable {
     // misc
 
     public void onLoad() {
-        updateConnections();
+        markForUpdate();
     }
 
     public void onTick() {
+        if (updateMarked) {
+            // Ensure that the behaviour and flow *always* get valid connection data
+            // (for example if we just read from disk)
+            updateConnections();
+        }
         behaviour.onTick();
         flow.onTick();
         if (updateMarked) {
@@ -257,7 +273,7 @@ public final class Pipe implements IPipe, IDebuggable {
                 PipePluggable oPlug = oTile.getCapability(PipeApi.CAP_PLUG, facing.getOpposite());
                 if (oPlug == null || !oPlug.isBlocking()) {
                     if (canPipesConnect(facing, this, oPipe)) {
-                        connected.put(facing, 0.25f);
+                        connected.put(facing, DEFAULT_CONNECTION_DISTANCE);
                         types.put(facing, ConnectedType.PIPE);
                         textures.put(facing, behaviour.getTextureIndex(facing));
                     }
@@ -272,7 +288,8 @@ public final class Pipe implements IPipe, IDebuggable {
             if (cust == null) {
                 cust = DefaultPipeConnection.INSTANCE;
             }
-            float ext = 0.25f + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
+            float ext = DEFAULT_CONNECTION_DISTANCE
+                    + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
 
             if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
                 connected.put(facing, ext);
