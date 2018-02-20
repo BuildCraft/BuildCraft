@@ -6,7 +6,6 @@
 
 package buildcraft.transport.item;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacade;
 import buildcraft.api.facades.IFacadeItem;
@@ -28,9 +27,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,20 +47,35 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         setHasSubtypes(true);
     }
 
-    @Nullable
+    @Nonnull
     public ItemStack createItemStack(FacadeInstance state) {
         ItemStack item = new ItemStack(this);
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
-        state.writeToNbt(nbt, "states");
+        nbt.setTag("facade", state.writeToNbt());
         return item;
     }
 
-    public static FacadeInstance getStates(ItemStack item) {
+    public static FacadeInstance getStates(@Nonnull ItemStack item) {
         NBTTagCompound nbt = NBTUtilBC.getItemData(item);
-        if (nbt.getBoolean("preview")) {
+
+        String strPreview = nbt.getString("preview");
+        if ("basic".equalsIgnoreCase(strPreview)) {
             return FacadeInstance.createSingle(FacadeStateManager.previewState, false);
         }
-        return FacadeInstance.readFromNbt(nbt, "states");
+
+        if (!nbt.hasKey("facade") && nbt.hasKey("states")) {
+            NBTTagList states = nbt.getTagList("states", Constants.NBT.TAG_COMPOUND);
+            if (states.tagCount() > 0) {
+                // Only migrate if we actually have a facade to migrate.
+                boolean isHollow = states.getCompoundTagAt(0).getBoolean("isHollow");
+                NBTTagCompound tagFacade = new NBTTagCompound();
+                tagFacade.setBoolean("isHollow", isHollow);
+                tagFacade.setTag("states", states);
+                nbt.setTag("facade", tagFacade);
+            }
+        }
+
+        return FacadeInstance.readFromNbt(nbt.getCompoundTag("facade"));
     }
 
     @Nullable
@@ -75,7 +91,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     @Override
     public PipePluggable onPlace(@Nonnull ItemStack stack, IPipeHolder holder, EnumFacing side, EntityPlayer player,
-        EnumHand hand) {
+                                 EnumHand hand) {
         FacadeInstance fullState = getStates(stack);
         SoundUtil.playBlockPlace(holder.getPipeWorld(), holder.getPipePos(), fullState.phasedStates[0].stateInfo.state);
         return new PluggableFacade(BCTransportPlugs.facade, holder, side, fullState);
@@ -88,15 +104,15 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         FacadeBlockStateInfo stone = FacadeStateManager.getInfoForBlock(Blocks.STONE);
         if (stone != null) {
             FacadePhasedState[] states = { //
-                FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(false, null), //
-                FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(false, EnumDyeColor.RED), //
-                FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(false, EnumDyeColor.CYAN),//
+                    FacadeStateManager.getInfoForBlock(Blocks.STONE).createPhased(null), //
+                    FacadeStateManager.getInfoForBlock(Blocks.PLANKS).createPhased(EnumDyeColor.RED), //
+                    FacadeStateManager.getInfoForBlock(Blocks.LOG).createPhased(EnumDyeColor.CYAN),//
             };
-            FacadeInstance inst = new FacadeInstance(states);
+            FacadeInstance inst = new FacadeInstance(states, false);
             subItems.add(createItemStack(inst));
 
             for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
-                if (!ForgeRegistries.BLOCKS.containsValue(info.state.getBlock())){
+                if (!ForgeRegistries.BLOCKS.containsValue(info.state.getBlock())) {
                     // Forge can de-register blocks if the server a client is connected to
                     // doesn't have the mods that created them.
                     continue;
@@ -110,7 +126,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         FacadeInstance fullState = getStates(stack);
         if (fullState.type == FacadeType.Basic) {
             String displayName = getFacadeStateDisplayName(fullState.phasedStates[0]);
@@ -122,19 +138,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     public static String getFacadeStateDisplayName(FacadePhasedState state) {
         ItemStack assumedStack = state.stateInfo.requiredStack;
-        String s = "item.FacadePhased.name";
-        if (!BCStackHelper.isEmpty(assumedStack) && assumedStack.getItem() != null) {
-            try {
-                s = assumedStack.getDisplayName();
-                if (state.isHollow) {
-                    s += " (" + LocaleUtil.localize("item.Facade.state_hollow") + ")";
-                }
-            } catch (NullPointerException e){
-                //Catch rare cases when display names would be null
-                BCLog.logger.error("Item " + assumedStack.getItem().getUnlocalizedName() + " threw NullPointerException on getDisplayName");
-            }
-        }
-        return s;
+        return BCStackHelper.isEmpty(assumedStack) ? "item.FacadePhased.name" : assumedStack.getDisplayName();
     }
 
     @SideOnly(Side.CLIENT)
