@@ -6,12 +6,15 @@
 
 package buildcraft.lib.misc;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,6 +27,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,6 +40,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -60,6 +65,8 @@ import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
@@ -106,8 +113,8 @@ public final class BlockUtil {
         return false;
     }
 
-    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, BlockPos ownerPos, GameProfile owner) {
-        FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -124,6 +131,20 @@ public final class BlockUtil {
         state.getBlock().onBlockHarvested(world, pos, state, fakePlayer);
         state.getBlock().harvestBlock(world, fakePlayer, pos, state, world.getTileEntity(pos), tool);
         world.setBlockToAir(pos);
+
+        return true;
+    }
+
+    public static boolean destroyBlock(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        FakePlayer fakePlayer = getFakePlayerWithTool(world, tool, owner);
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
+        MinecraftForge.EVENT_BUS.post(breakEvent);
+
+        if (breakEvent.isCanceled()) {
+            return false;
+        }
+
+        world.destroyBlock(pos, true);
 
         return true;
     }
@@ -172,6 +193,28 @@ public final class BlockUtil {
         entityitem.setDefaultPickupDelay();
 
         world.spawnEntity(entityitem);
+    }
+
+    public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+        AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(1);
+        Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
+        if (!harvestBlock(world, pos, tool, owner)) {
+            if (!destroyBlock(world, pos, tool, owner)) {
+                return Optional.empty();
+            }
+        }
+        List<ItemStack> stacks = new ArrayList<>();
+        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
+            if (entities.contains(entity)) {
+                continue;
+            }
+            TransactorEntityItem transactor = new TransactorEntityItem(entity);
+            ItemStack stack;
+            while (!(stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)).isEmpty()) {
+                stacks.add(stack);
+            }
+        }
+        return Optional.of(stacks);
     }
 
     public static boolean canChangeBlock(World world, BlockPos pos, GameProfile owner) {

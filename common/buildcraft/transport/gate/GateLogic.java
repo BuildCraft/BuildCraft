@@ -43,6 +43,7 @@ import buildcraft.api.transport.pipe.PipeEvent;
 import buildcraft.api.transport.pipe.PipeEventActionActivate;
 
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
@@ -133,6 +134,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             statements[i].trigger.readFromNbt(nbt.getCompoundTag(tName));
             statements[i].action.readFromNbt(nbt.getCompoundTag(aName));
         }
+
+        wireBroadcasts.addAll(NBTUtilBC.readEnumSet(nbt.getTag("wireBroadcasts"), EnumDyeColor.class));
     }
 
     public NBTTagCompound writeToNbt() {
@@ -151,6 +154,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             nbt.setTag("trigger[" + s + "]", statements[s].trigger.writeToNbt());
             nbt.setTag("action[" + s + "]", statements[s].action.writeToNbt());
         }
+        nbt.setTag("wireBroadcasts", NBTUtilBC.writeEnumSet(wireBroadcasts, EnumDyeColor.class));
         return nbt;
     }
 

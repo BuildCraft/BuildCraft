@@ -7,9 +7,12 @@
 package buildcraft.factory.tile;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -101,34 +104,40 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         if (!placer.world.isRemote) {
-            List<TileTank> tanks = getTanks();
-            FluidStack fluid = null;
-            for (TileTank tile : tanks) {
-                FluidStack held = tile.tank.getFluid();
-                if (held == null) {
-                    continue;
-                }
-                if (fluid == null) {
-                    fluid = held;
-                } else if (!fluid.isFluidEqual(held)) {
-                    return;
-                }
+            isPlayerInteracting = true;
+            balanceTankFluids();
+            isPlayerInteracting = false;
+        }
+    }
+
+    /** Moves fluids around to their preferred positions. (For gaseous fluids this will move everything as high as
+     * possible, for liquid fluids this will move everything as low as possible.) */
+    public void balanceTankFluids() {
+        List<TileTank> tanks = getTanks();
+        FluidStack fluid = null;
+        for (TileTank tile : tanks) {
+            FluidStack held = tile.tank.getFluid();
+            if (held == null) {
+                continue;
             }
             if (fluid == null) {
+                fluid = held;
+            } else if (!fluid.isFluidEqual(held)) {
                 return;
             }
-            if (fluid.getFluid().isGaseous(fluid)) {
-                Collections.reverse(tanks);
+        }
+        if (fluid == null) {
+            return;
+        }
+        if (fluid.getFluid().isGaseous(fluid)) {
+            Collections.reverse(tanks);
+        }
+        TileTank prev = null;
+        for (TileTank tile : tanks) {
+            if (prev != null) {
+                FluidUtilBC.move(tile.tank, prev.tank);
             }
-            TileTank prev = null;
-            isPlayerInteracting = true;
-            for (TileTank tile : tanks) {
-                if (prev != null) {
-                    FluidUtilBC.move(tile.tank, prev.tank);
-                }
-                prev = tile;
-            }
-            isPlayerInteracting = false;
+            prev = tile;
         }
     }
 
@@ -185,37 +194,66 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     // Tank helper methods
 
-    private TileTank getTank(BlockPos at) {
-        TileEntity tile = world.getTileEntity(at);
-        if (tile instanceof TileTank) {
-            return (TileTank) tile;
-        }
-        return null;
+    /** Tests to see if this tank can connect to the other one, in the given direction. BuildCraft itself only calls
+     * with {@link EnumFacing#UP} or {@link EnumFacing#DOWN}, however addons are free to call with any of the other 4
+     * non-null faces. (Although an addon calling from other faces must provide some way of transferring fluids around).
+     * 
+     * @param other The other tank.
+     * @param direction The direction that the other tank is, from this tank.
+     * @return True if this can connect, false otherwise. */
+    public boolean canConnectTo(TileTank other, EnumFacing direction) {
+        return true;
     }
 
+    /** Helper for {@link #canConnectTo(TileTank, EnumFacing)} that only returns true if both tanks can connect to each
+     * other.
+     * 
+     * @param from
+     * @param to
+     * @param direction The direction from the "from" tank, to the "to" tank, such that
+     *            {@link Objects#equals(Object, Object) Objects.equals(}{@link TileTank#getPos()
+     *            from.getPos()}.{@link BlockPos#offset(EnumFacing) offset(direction)}, {@link TileTank#getPos()
+     *            to.getPos()}) returns true.
+     * @return True if both could connect, false otherwise. */
+    public static boolean canTanksConnect(TileTank from, TileTank to, EnumFacing direction) {
+        return from.canConnectTo(to, direction) && to.canConnectTo(from, direction.getOpposite());
+    }
+
+    /** @return A list of all connected tanks around this block, ordered by position from bottom to top. */
     private List<TileTank> getTanks() {
-        List<TileTank> tanks = new ArrayList<>();
-        BlockPos currentPos = pos;
+        // double-ended queue rather than array list to avoid
+        // the copy operation when we search downwards
+        Deque<TileTank> tanks = new ArrayDeque<>();
+        tanks.add(this);
+        TileTank prevTank = this;
         while (true) {
-            TileTank tankUp = getTank(currentPos);
-            if (tankUp != null) {
-                tanks.add(tankUp);
+            TileEntity tileAbove = prevTank.getNeighbourTile(EnumFacing.UP);
+            if (!(tileAbove instanceof TileTank)) {
+                break;
+            }
+            TileTank tankUp = (TileTank) tileAbove;
+            if (tankUp != null && canTanksConnect(prevTank, tankUp, EnumFacing.UP)) {
+                tanks.addLast(tankUp);
             } else {
                 break;
             }
-            currentPos = currentPos.up();
+            prevTank = tankUp;
         }
-        currentPos = pos.down();
+        prevTank = this;
         while (true) {
-            TileTank tankBelow = getTank(currentPos);
-            if (tankBelow != null) {
-                tanks.add(0, tankBelow);
+            TileEntity tileBelow = prevTank.getNeighbourTile(EnumFacing.DOWN);
+            if (!(tileBelow instanceof TileTank)) {
+                break;
+            }
+            TileTank tankBelow = (TileTank) tileBelow;
+            if (tankBelow != null && canTanksConnect(prevTank, tankBelow, EnumFacing.DOWN)) {
+                tanks.addFirst(tankBelow);
             } else {
                 break;
             }
-            currentPos = currentPos.down();
+            prevTank = tankBelow;
         }
-        return tanks;
+        return new ArrayList<>(tanks);
     }
 
     // IFluidHandler

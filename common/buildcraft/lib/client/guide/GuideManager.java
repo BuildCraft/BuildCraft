@@ -56,8 +56,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
     public static final List<String> loadedMods = new ArrayList<>();
     public static final List<String> loadedOther = new ArrayList<>();
 
-    private static final String DEFAULT_LANG = "en_us";
-    private static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
+    public static final String DEFAULT_LANG = "en_us";
+    public static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
 
     private final List<PageEntry<?>> entries = new ArrayList<>();
     private final Map<String, GuidePageFactory> pages = new HashMap<>();

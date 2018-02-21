@@ -52,9 +52,7 @@ public class MessageDebugRequest implements IMessage {
 
     public static final IMessageHandler<MessageDebugRequest, MessageDebugResponse> HANDLER = (message, ctx) -> {
         EntityPlayer player = ctx.getServerHandler().player;
-        if (!player.capabilities.isCreativeMode &&
-            !(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger) &&
-            !(player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger)) {
+        if (!ItemDebugger.isShowDebugInfo(player)) {
             return new MessageDebugResponse();
         }
         TileEntity tile = player.world.getTileEntity(message.pos);

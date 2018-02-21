@@ -201,7 +201,7 @@ public final class ListHandler {
             if (handlersCustom.size() > 0) {
                 for (Item i : ForgeRegistries.ITEMS) {
                     NonNullList<ItemStack> examples = NonNullList.create();
-                    i.getSubItems(CreativeTabs.MISC, examples);
+                    i.getSubItems(CreativeTabs.SEARCH, examples);
                     for (ItemStack s : examples) {
                         for (ListMatchHandler mh : handlersCustom) {
                             if (mh.matches(type, firstStack, s, false)) {

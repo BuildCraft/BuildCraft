@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -32,11 +33,8 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.event.world.BlockEvent;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.misc.BlockUtil;
@@ -382,7 +380,7 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         long max = Math.min(
             (long) (
                 MAX_POWER_PER_TICK *
-                (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK / 10) /
+                    (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK / 10) /
                     (tile.getBattery().getCapacity() * 2)
             ),
             MAX_POWER_PER_TICK
@@ -403,27 +401,20 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                     )
                 );
                 if (breakTask.power >= target) {
-                    BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                        tile.getWorldBC(),
+                    tile.getWorldBC().profiler.startSection("work");
+                    tile.getWorldBC().sendBlockBreakProgress(
+                        breakTask.pos.hashCode(),
                         breakTask.pos,
-                        tile.getWorldBC().getBlockState(breakTask.pos),
-                        BuildCraftAPI.fakePlayerProvider.getFakePlayer(
-                            (WorldServer) tile.getWorldBC(),
-                            tile.getOwner(),
-                            tile.getBuilderPos()
-                        )
+                        -1
                     );
-                    MinecraftForge.EVENT_BUS.post(breakEvent);
-                    if (!breakEvent.isCanceled()) {
-                        tile.getWorldBC().profiler.startSection("work");
-                        tile.getWorldBC().sendBlockBreakProgress(
-                            breakTask.pos.hashCode(),
-                            breakTask.pos,
-                            -1
-                        );
-                        tile.getWorldBC().destroyBlock(breakTask.pos, false);
-                        tile.getWorldBC().profiler.endSection();
-                    } else {
+                    Optional<List<ItemStack>> stacks = BlockUtil.breakBlockAndGetDrops(
+                        (WorldServer) tile.getWorldBC(),
+                        breakTask.pos,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        tile.getOwner()
+                    );
+                    tile.getWorldBC().profiler.endSection();
+                    if (!stacks.isPresent()) {
                         cancelBreakTask(breakTask);
                     }
                     if (check(breakTask.pos)) {

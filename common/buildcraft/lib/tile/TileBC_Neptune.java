@@ -157,6 +157,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public final IBlockState getNeighbourState(EnumFacing offset) {
+        // In the future it is plausible that we might cache block states here.
+        // However, until that is implemented, just call the world directly.
         return getOffsetState(offset.getDirectionVec());
     }
 
@@ -171,6 +173,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public final TileEntity getNeighbourTile(EnumFacing offset) {
+        // In the future it is plausible that we might cache tile entities here.
+        // However, until that is implemented, just call the world directly.
         return getOffsetTile(offset.getDirectionVec());
     }
 

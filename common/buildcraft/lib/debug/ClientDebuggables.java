@@ -20,6 +20,8 @@ import net.minecraft.util.math.RayTraceResult;
 
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.lib.item.ItemDebugger;
+
 public class ClientDebuggables {
     public static final List<String> SERVER_LEFT = new ArrayList<>();
     public static final List<String> SERVER_RIGHT = new ArrayList<>();
@@ -27,8 +29,10 @@ public class ClientDebuggables {
     @Nullable
     public static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.gameSettings.reducedDebugInfo || mc.player.hasReducedDebug() || !mc.player.capabilities.isCreativeMode
-            || !mc.gameSettings.showDebugInfo) {
+        if (mc.gameSettings.reducedDebugInfo ||
+            mc.player.hasReducedDebug() ||
+            !mc.gameSettings.showDebugInfo ||
+            !ItemDebugger.isShowDebugInfo(mc.player)) {
             return null;
         }
         if (mouseOver == null) {

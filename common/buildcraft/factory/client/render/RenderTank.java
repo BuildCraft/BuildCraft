@@ -91,6 +91,9 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         TileEntity oTile = thisTank.getWorld().getTileEntity(pos);
         if (oTile instanceof TileTank) {
             TileTank oTank = (TileTank) oTile;
+            if (!TileTank.canTanksConnect(thisTank, oTank, face)) {
+                return false;
+            }
             FluidStackInterp forRender = oTank.getFluidForRender(partialTicks);
             if (forRender == null) {
                 return false;

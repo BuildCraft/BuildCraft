@@ -44,6 +44,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.ClientDebuggables;
+import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.MessageUtil;
@@ -184,13 +185,14 @@ public enum BCLibEventDist {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postTick();
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayerSP player = mc.player;
-            if (player != null && player.capabilities.isCreativeMode && mc.gameSettings.showDebugInfo) {
+            if (player != null && ItemDebugger.isShowDebugInfo(player)) {
                 RayTraceResult mouseOver = mc.objectMouseOver;
                 if (mouseOver != null) {
                     IDebuggable debuggable = ClientDebuggables.getDebuggableObject(mouseOver);
