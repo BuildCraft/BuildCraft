@@ -6,18 +6,17 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartItem;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.data.NonNullMatrix;
 import buildcraft.lib.recipe.ChangingItemStack;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class GuideCrafting extends GuidePartItem {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
@@ -68,9 +67,11 @@ public class GuideCrafting extends GuidePartItem {
             RenderHelper.enableGUIStandardItemLighting();
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
-                    GuiRectangle rect = ITEM_POSITION[itemX][itemY];
-                    ItemStack stack = input[itemX][itemY].get();
-                    drawItemStack(stack, x + (int) rect.x, y + (int) rect.y);
+                    //Check for null spaces before rendering
+                    if (input[itemX][itemY] != null) {
+                        GuiRectangle rect = ITEM_POSITION[itemX][itemY];
+                        drawItemStack(input[itemX][itemY].get(), x + (int) rect.x, y + (int) rect.y);
+                    }
                 }
             }
 
@@ -93,9 +94,12 @@ public class GuideCrafting extends GuidePartItem {
         if (current.page == index) {
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
-                    GuiRectangle rect = ITEM_POSITION[itemX][itemY];
-                    ItemStack stack = input[itemX][itemY].get();
-                    testClickItemStack(stack, x + (int) rect.x, y + (int) rect.y);
+                    //Check for null spaces before rendering
+                    if (input[itemX][itemY] != null) {
+                        GuiRectangle rect = ITEM_POSITION[itemX][itemY];
+                        testClickItemStack(input[itemX][itemY].get(), x + (int) rect.x, y + (int) rect.y);
+                    }
+
                 }
             }
 

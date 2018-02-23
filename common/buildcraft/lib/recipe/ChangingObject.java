@@ -17,9 +17,6 @@ public class ChangingObject<T> {
     private int timeGap = 1000;
 
     public ChangingObject(T[] options) {
-        if (options.length == 0) {
-            throw new IllegalStateException("Must provide at least 1 option!");
-        }
         this.options = options;
         hash = computeHash();
     }
@@ -30,6 +27,9 @@ public class ChangingObject<T> {
 
     /** @return The {@link ItemStack} that should be displayed at the current time. */
     public T get() {
+        if (options.length == 0)
+            //Prevent a null pointer crash on 1.10
+            return null;
         return get(0);
     }
 

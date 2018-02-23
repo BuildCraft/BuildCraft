@@ -82,7 +82,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
             ItemStack[][] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
             for (int x = 0; x < dimInput.length; x++) {
                 for (int y = 0; y < dimInput[x].length; y++) {
-                    dimInput[x][y] = input[x + y * dimInput.length].copy();
+                    if (!BCStackHelper.isEmpty(input[x + y * dimInput.length]))
+                        dimInput[x][y] = input[x + y * dimInput.length].copy();
                 }
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
@@ -114,7 +115,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
                 for (int y = 0; y < dimInput[x].length; y++) {
                     int index = x + y * dimInput.length;
                     if (index < input.size()) {
-                        dimInput[x][y] = input.get(index).copy();
+                        if (!BCStackHelper.isEmpty(input.get(index)))
+                            dimInput[x][y] = input.get(index).copy();
                     }
                 }
             }
