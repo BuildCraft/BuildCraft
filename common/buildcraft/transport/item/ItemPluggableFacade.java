@@ -138,7 +138,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     public static String getFacadeStateDisplayName(FacadePhasedState state) {
         ItemStack assumedStack = state.stateInfo.requiredStack;
-        return BCStackHelper.isEmpty(assumedStack) ? "item.FacadePhased.name" : assumedStack.getDisplayName();
+        //TODO Look into this
+        return BCStackHelper.isEmpty(assumedStack) ? "item.FacadePhased.name" :
+                assumedStack.getDisplayName() == null ? assumedStack.getUnlocalizedName() : assumedStack.getDisplayName();
     }
 
     @SideOnly(Side.CLIENT)

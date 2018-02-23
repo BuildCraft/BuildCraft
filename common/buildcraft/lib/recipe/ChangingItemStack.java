@@ -6,7 +6,6 @@
 
 package buildcraft.lib.recipe;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -30,7 +29,6 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
 
     private static ItemStack[] makeRecipeArray(List<ItemStack> stacks) {
         if (stacks.isEmpty()) {
-            BCLog.logger.error("Recipe returned 0 required stacks");
             return new ItemStack[0];
         } else {
             ItemStack[] stackArray = new ItemStack[stacks.size()];
@@ -45,7 +43,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStack>{
      * @param stack the stack to check. */
     public static ChangingItemStack create(ItemStack stack) {
         if (BCStackHelper.isEmpty(stack)) {
-            return new ChangingItemStack(StackUtil.listOf(null));
+            return null;
         } else if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             List<ItemStack> subs = Lists.newArrayList();
             stack.getItem().getSubItems(stack.getItem(), null, subs);
