@@ -225,15 +225,16 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
                     currentOutput = currentFuel.getPowerPerCycle(); // Comment out for constant power
                     addPower(currentFuel.getPowerPerCycle());
                     heat += currentFuel.getPowerPerCycle() * HEAT_PER_MJ / MjAPI.MJ;// * getBiomeTempScalar();
-                } else {
-                    // Burn time == 0 AND fuel.amount == 0
-                    tankFuel.setFluid(null);
                 }
             } else if (lastPowered) {
                 lastPowered = false;
                 penaltyCooling = 10;
                 // 10 tick of penalty on top of the cooling
             }
+        }
+
+        if (burnTime <= 0 && fuel.amount <= 0) {
+            tankFuel.setFluid(null);
         }
     }
 
