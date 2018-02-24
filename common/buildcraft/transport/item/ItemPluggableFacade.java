@@ -9,7 +9,6 @@ package buildcraft.transport.item;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacade;
 import buildcraft.api.facades.IFacadeItem;
-import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.transport.IItemPluggable;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -37,7 +36,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggable, IFacadeItem {
@@ -78,12 +76,12 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
         return FacadeInstance.readFromNbt(nbt.getCompoundTag("facade"));
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public ItemStack getFacadeForBlock(IBlockState state) {
         FacadeBlockStateInfo info = FacadeStateManager.validFacadeStates.get(state);
         if (info == null) {
-            return null;
+            return createItemStack(FacadeInstance.createSingle(FacadeStateManager.defaultState, false));
         } else {
             return createItemStack(FacadeInstance.createSingle(info, false));
         }
@@ -138,9 +136,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
 
     public static String getFacadeStateDisplayName(FacadePhasedState state) {
         ItemStack assumedStack = state.stateInfo.requiredStack;
-        //TODO Look into this
-        return BCStackHelper.isEmpty(assumedStack) ? "item.FacadePhased.name" :
-                assumedStack.getDisplayName() == null ? assumedStack.getUnlocalizedName() : assumedStack.getDisplayName();
+        return assumedStack.getDisplayName();
     }
 
     @SideOnly(Side.CLIENT)
