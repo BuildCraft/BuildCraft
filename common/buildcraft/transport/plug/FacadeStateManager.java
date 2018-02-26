@@ -298,16 +298,16 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         BCLog.logger.info("[transport.facade]   Added " + info);
                     }
                 } catch (Throwable t) {
-                    String msg = "Scanning facade states";
-                    msg += "\n\tState = " + state;
-                    msg += "\n\tBlock = " + safeToString(() -> state.getBlock().getRegistryName());
-                    msg += "\n\tStack = " + stack;
-                    msg += "\n\tvarying-properties: {";
+                    StringBuilder msg = new StringBuilder("Scanning facade states");
+                    msg.append("\n\tState = ").append(state);
+                    msg.append("\n\tBlock = ").append(safeToString(() -> state.getBlock().getRegistryName()));
+                    msg.append("\n\tStack = ").append(stack);
+                    msg.append("\n\tvarying-properties: {");
                     for (Entry<IProperty<?>, Comparable<?>> varEntry : vars.entrySet()) {
-                        msg += "\n\t\t" + varEntry.getKey() + " = " + varEntry.getValue();
+                        msg.append("\n\t\t").append(varEntry.getKey()).append(" = ").append(varEntry.getValue());
                     }
-                    msg += "\n\t}";
-                    throw new IllegalStateException(msg.replace("\t", "    "), t);
+                    msg.append("\n\t}");
+                    throw new IllegalStateException(msg.toString().replace("\t", "    "), t);
                 }
             }
         }
