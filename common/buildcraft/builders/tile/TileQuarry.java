@@ -861,13 +861,13 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     new ItemStack(Items.DIAMOND_PICKAXE),
                     getOwner()
             );
-            if (stacks.isPresent()) {
-                // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
-                // drop its contents
+            // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
+            // drop its contents
+            stacks.ifPresent(itemStacks -> {
                 if (drillPos != null) {
-                    stacks.get().forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
+                    itemStacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack));
                 }
-            }
+            });
             check(breakPos);
             return stacks.isPresent();
         }
