@@ -205,13 +205,6 @@ public class TilePump extends TileMiner {
     }
 
     @Override
-    protected void initCurrentPos() {
-        if (currentPos == null) {
-            nextPos();
-        }
-    }
-
-    @Override
     public void update() {
         if (!queueBuilt && !world.isRemote) {
             buildQueue();

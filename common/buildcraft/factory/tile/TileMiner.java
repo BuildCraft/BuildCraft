@@ -59,8 +59,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, () -> !isComplete, EnumPipePart.VALUES);
     }
 
-    protected abstract void initCurrentPos();
-
     protected abstract void mine();
 
     protected abstract IMjReceiver createMjReceiver();
@@ -87,8 +85,6 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         if (world.getTotalWorldTime() % 10 == offset) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
-
-        initCurrentPos();
 
         mine();
     }
