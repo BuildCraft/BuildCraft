@@ -388,19 +388,23 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         return true;
     }
 
+    private boolean canIgnoreInFrameBox(BlockPos blockPos) {
+        return !world.isAirBlock(blockPos) && BlockUtil.getFluidWithFlowing(world, blockPos) == null;
+    }
+
     private void check(BlockPos blockPos) {
         frameBreakBlockPoses.remove(blockPos);
         framePlaceFramePoses.remove(blockPos);
         if (shouldBeFrame(blockPos)) {
             if (world.getBlockState(blockPos).getBlock() != BCBuildersBlocks.frame) {
-                if (!world.isAirBlock(blockPos)) {
+                if (canIgnoreInFrameBox(blockPos)) {
                     frameBreakBlockPoses.add(blockPos);
                 } else {
                     framePlaceFramePoses.add(blockPos);
                 }
             }
         } else {
-            if (!world.isAirBlock(blockPos)) {
+            if (canIgnoreInFrameBox(blockPos)) {
                 frameBreakBlockPoses.add(blockPos);
             }
         }
@@ -956,14 +960,15 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         protected boolean onReceivePower() {
-            return !world.isAirBlock(framePos);
+            return canIgnoreInFrameBox(framePos);
         }
 
         @Override
         protected boolean finish() {
-            if (world.isAirBlock(framePos)) {
-                world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
+            if (canIgnoreInFrameBox(framePos)) {
+                return false;
             }
+            world.setBlockState(framePos, BCBuildersBlocks.frame.getDefaultState());
             return true;
         }
 
