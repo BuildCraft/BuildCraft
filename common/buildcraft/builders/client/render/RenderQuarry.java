@@ -121,7 +121,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         taskBreakBlock.prevClientPower +
                             (taskBreakBlock.clientPower - taskBreakBlock.prevClientPower) * (double) partialTicks
                     );
-                    AxisAlignedBB aabb = tile.getWorld().getBlockState(pos).getBoundingBox(tile.getWorld(), pos);;
+                    AxisAlignedBB aabb = tile.getWorld().getBlockState(pos).getBoundingBox(tile.getWorld(), pos);
                     double value = (double) power / taskBreakBlock.getTarget();
                     if (value < 0.9) {
                         value = 1 - value / 0.9;
