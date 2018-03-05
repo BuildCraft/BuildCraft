@@ -95,7 +95,7 @@ minecraft {
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
         if (!isFullBuild) {
-            project.version += "-" + repo.head().id.toString().substring(0, 12).toUpperCase(Locale.ROOT)
+            project.version += "-" + repo.head().id.toString().substring(0, 12)
         }
     } else {
         if (!isFullBuild) {
