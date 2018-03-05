@@ -566,12 +566,15 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return null;
     }
 
-    private double getPipeLength(EnumFacing side) {
+    double getPipeLength(EnumFacing side) {
         if (side == null) {
             return 0;
         }
         if (pipe.isConnected(side)) {
-            // TODO: Check the length between this pipes centre and the next block along
+            if (pipe.getConnectedType(side) == ConnectedType.TILE) {
+                // TODO: Check the length between this pipes centre and the next block along
+                return 0.5 + 0.25;// Tiny distance for fully pushing items in.
+            }
             return 0.5;
         } else {
             return 0.25;
