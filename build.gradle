@@ -99,11 +99,9 @@ minecraft {
         }
     } else {
         if (!isFullBuild) {
-            project.version += "SNAPSHOT"
+            project.version += "-SNAPSHOT"
         }
     }
-
-    System.out.println(project.version);
 
     // replacing stuff in the source
     replace "\$version", project.version
