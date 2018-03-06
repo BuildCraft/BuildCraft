@@ -108,7 +108,7 @@ public class PluggablePulsar extends PipePluggable {
         VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble(MODEL_STAGE);
         infoStage.cacheType = CacheType.IN_SET;
         infoStage.setIsComplete = false;
-        infoStage.possibleValues.add(0);
+        infoStage.possibleValues.add(0.0);
     }
 
     public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {

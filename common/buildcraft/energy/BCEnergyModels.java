@@ -32,10 +32,10 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.fluid.BCFluid;
+import buildcraft.lib.misc.ExpressionCompat;
 import buildcraft.lib.misc.data.ModelVariableData;
 
 import buildcraft.energy.tile.TileEngineIron_BC8;

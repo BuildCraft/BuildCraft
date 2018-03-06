@@ -22,8 +22,8 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.minecraft.ExpressionCompat;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
+import buildcraft.lib.misc.ExpressionCompat;
 
 /** A rule for changing a model's elements. The most basic example is rotating an entire model based of a single
  * property. */

@@ -68,9 +68,10 @@ dependencies {
 }
 
 
-task build_real {}
-
-task nop {}
+task build_real {
+    // Provided to allow changing the version number from "SNAPSHOT" or "ABCD1265" (a git commit hash) to the actual version.
+    // The code for this is below.
+}
 
 minecraft {
     version = config.mc_version + "-" + config.forge_version
@@ -117,7 +118,8 @@ sourceSets {
         java {
             srcDir "common"
             srcDir "common_old_license"
-            srcDir "src/autogen/java"
+            srcDir "sub_projects/expression/src/main/java"
+            srcDir "sub_projects/expression/src/autogen/java"
             // srcDir "src_old_license"
         }
         resources {
@@ -131,8 +133,13 @@ sourceSets {
             srcDir "BuildCraftAPI/api"
         }
     }
+    test {
+        java {
+            srcDir "src/test/java"
+            srcDir "sub_projects/expression/src/test/java"
+        }
+    }
 }
-
 
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
     checkstyle {
@@ -147,6 +154,27 @@ if (gradle.startParameter.taskNames.contains("checkstyle")) {
     tasks["checkstyleApi"].enabled = true
     tasks["checkstyleMain"].enabled = true
     tasks["checkstyleTest"].enabled = false
+}
+
+// Only generate sources if they don't already exist.
+if (!new File("sub_projects/expression/src/autogen/java/buildcraft").exists()) {
+
+    task setupSubProjectExpression(type: Exec) {
+        workingDir "sub_projects/expression"
+        // Obviously a problem with this is that we need to create
+        // a new gradle instance for every subproject :/
+        // How bad is it to do both tasks at once?
+        // just no point really...
+        commandLine './gradlew', 'generateSources'
+    }
+
+    task setupSubProjects(dependsOn: setupSubProjectExpression) {
+        // Just an inter-dependency task
+    }
+
+    eclipseClasspath.dependsOn setupSubProjects
+    ideaModule.dependsOn setupSubProjects
+    compileJava.dependsOn setupSubProjects
 }
 
 runClient.jvmArgs += "-Dbuildcraft.dev=true"
@@ -291,6 +319,25 @@ task libSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     }
 }
 
+task libExpressionJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = new File(libsDir, "misc")
+    appendix = "libexpression"
+
+    from(project.ext.jarFile) {
+        includes.addAll(["buildcraft/lib/expression/**", "LICENSE**"])
+    }
+}
+
+task libExpressionSrcJar(type: Jar, dependsOn: [reobfJar, unzipSourceJar]) {
+    destinationDir = modulesDirSrc
+    appendix = "libexpression"
+    classifier = "sources"
+
+    from (unzippedSourceJar) {
+        includes.addAll(["buildcraft/lib/expression/**", "LICENSE**"])
+    }
+}
+
 task coreJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "core"
@@ -425,6 +472,7 @@ artifacts {
     archives transportJar
     archives roboticsJar
     archives allJar
+    archives libExpressionJar
 }
 
 def sftp(String subPath, Closure antFileset = {}) {
