@@ -6,20 +6,27 @@
 
 package buildcraft.factory;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.util.registry.IRegistry;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.client.model.MutableQuad;
 
 import buildcraft.factory.client.model.ModelHeatExchange;
 import buildcraft.factory.client.render.RenderDistiller;
@@ -34,20 +41,34 @@ import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
 
 public class BCFactoryModels {
-    public static final ModelHolderVariable DISTILLER;
-    public static final ModelHolderVariable HEAT_EXCHANGE_STATIC;
-
-    static {
-        DISTILLER = getModel("tiles/distiller.json", TileDistiller_BC8.MODEL_FUNC_CTX);
-        HEAT_EXCHANGE_STATIC = getModel("tiles/heat_exchange_static.json", ModelHeatExchange.FUNCTION_CONTEXT);
-    }
-
-    private static ModelHolderVariable getModel(String loc, FunctionContext fnCtx) {
-        return new ModelHolderVariable("buildcraftfactory:models/" + loc, fnCtx);
-    }
+    public static final ModelHolderVariable DISTILLER = new ModelHolderVariable(
+        "buildcraftfactory:models/tiles/distiller.json",
+        TileDistiller_BC8.MODEL_FUNC_CTX
+    );
+    public static final ModelHolderVariable HEAT_EXCHANGE_STATIC = new ModelHolderVariable(
+        "buildcraftfactory:models/tiles/heat_exchange_static.json",
+        ModelHeatExchange.FUNCTION_CONTEXT
+    );
 
     public static void fmlPreInit() {
         MinecraftForge.EVENT_BUS.register(BCFactoryModels.class);
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void onModelRegistry(ModelRegistryEvent event) {
+        if (BCFactoryBlocks.heatExchange != null) {
+            ModelLoader.setCustomStateMapper(
+                BCFactoryBlocks.heatExchange,
+                new StateMapperBase() {
+                    @Nonnull
+                    @Override
+                    protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+                        return new ModelResourceLocation("buildcraftfactory:heat_exchange#normal");
+                    }
+                }
+            );
+        }
     }
 
     public static void fmlInit() {
@@ -60,25 +81,20 @@ public class BCFactoryModels {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        event.getModelManager().getBlockModelShapes().registerBlockWithStateMapper(BCFactoryBlocks.heatExchange,
-            new StateMapperBase() {
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                    return new ModelResourceLocation("buildcraftfactory:heat_exchange#normal");
-                }
-            });
-        IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
-        String start = "buildcraftfactory:";
-
-        ModelHeatExchange fullModel = new ModelHeatExchange();
-        registerModel(modelRegistry, start + "heat_exchange#normal", fullModel);
-
-        ModelItemSimple itemModel = new ModelItemSimple(fullModel.itemQuads, ModelItemSimple.TRANSFORM_BLOCK, true);
-        registerModel(modelRegistry, start + "heat_exchange#inventory", itemModel);
-    }
-
-    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg,
-        IBakedModel val) {
-        modelRegistry.putObject(new ModelResourceLocation(reg), val);
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcraftfactory:heat_exchange#normal"),
+            new ModelHeatExchange()
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcraftfactory:heat_exchange#inventory"),
+            new ModelItemSimple(
+                Arrays.stream(BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads())
+                    .map(MutableQuad::multShade)
+                    .map(MutableQuad::toBakedItem)
+                    .collect(Collectors.toList()),
+                ModelItemSimple.TRANSFORM_BLOCK,
+                true
+            )
+        );
     }
 }

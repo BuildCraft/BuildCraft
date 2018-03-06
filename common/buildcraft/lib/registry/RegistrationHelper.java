@@ -69,7 +69,7 @@ public final class RegistrationHelper {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public final void onRegisterModels(ModelRegistryEvent event) {
+    public final void onModelRegistry(ModelRegistryEvent event) {
         for (Item item : items) {
             if (item instanceof IItemBuildCraft) {
                 ((IItemBuildCraft) item).registerVariants();

@@ -53,7 +53,6 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_DIRECTION = FUNCTION_CONTEXT.putVariableObject("direction", EnumFacing.class);
     }
 
-    public final List<BakedQuad> itemQuads = new ArrayList<>();
     private final TextureAtlasSprite particle;
     private final List<List<BakedQuad>> cache = new ArrayList<>();
 
@@ -66,15 +65,11 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_CONNECTED_RIGHT.value = false;
         VAR_PART.value = EnumExchangePart.MIDDLE;
         VAR_DIRECTION.value = EnumFacing.NORTH;
-        for (MutableQuad quad : BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()) {
-            quad.multShade();
-            itemQuads.add(quad.toBakedItem());
-        }
 
-        if (itemQuads.isEmpty()) {
+        if (BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads().length == 0) {
             particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         } else {
-            particle = itemQuads.get(0).getSprite();
+            particle = BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()[0].toBakedItem().getSprite();
         }
 
         for (int i = 0; i < 4 * 8 * 3; i++) {

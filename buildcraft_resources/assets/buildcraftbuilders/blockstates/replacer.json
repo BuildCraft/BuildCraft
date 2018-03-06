@@ -1,0 +1,14 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftbuilders:replacer"
+    },
+    "variants": {
+        "facing": {
+            "east": {"y": 90},
+            "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0}
+        }
+    }
+}

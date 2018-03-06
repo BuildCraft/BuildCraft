@@ -139,7 +139,7 @@ public class TilePump extends TileMiner {
                         count++;
                     }
                 }
-                if (isWater && count > 2) {
+                if (isWater && count >= 2) {
                     IBlockState below = world.getBlockState(posToCheck.down());
                     // Same check as in BlockDynamicLiquid.updateTick:
                     // if that method changes how it checks for adjacent
@@ -202,13 +202,6 @@ public class TilePump extends TileMiner {
             return currentPos.getY() > fluidConnection.getY() ? fluidConnection : currentPos;
         }
         return currentPos;
-    }
-
-    @Override
-    protected void initCurrentPos() {
-        if (currentPos == null) {
-            nextPos();
-        }
     }
 
     @Override

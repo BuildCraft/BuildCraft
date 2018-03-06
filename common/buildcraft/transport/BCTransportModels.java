@@ -7,11 +7,9 @@
 package buildcraft.transport;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.registry.IRegistry;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -68,68 +66,77 @@ import buildcraft.transport.plug.PluggablePulsar;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class BCTransportModels {
-    public static final ModelHolderStatic BLOCKER;
-    public static final ModelHolderStatic LIGHT_SENSOR;
-    public static final ModelHolderStatic POWER_ADAPTER;
+    public static final ModelHolderStatic BLOCKER = new ModelHolderStatic(
+        "buildcrafttransport:models/plugs/blocker.json",
+        (String[][]) null,
+        false
+    );
+    public static final ModelHolderStatic LIGHT_SENSOR = new ModelHolderStatic(
+        "buildcrafttransport:models/plugs/light_sensor.json",
+        (String[][]) null,
+        false
+    );
+    public static final ModelHolderStatic POWER_ADAPTER = new ModelHolderStatic(
+        "buildcrafttransport:models/plugs/power_adapter.json",
+        (String[][]) null,
+        false
+    );
 
-    public static final ModelHolderVariable GATE_STATIC, GATE_DYNAMIC;
-    private static final ModelVariableData GATE_VAR_DATA_STATIC;
+    public static final ModelHolderVariable GATE_STATIC = new ModelHolderVariable(
+        "buildcrafttransport:models/plugs/gate.json",
+        PluggableGate.MODEL_FUNC_CTX_STATIC
+    );
+    public static final ModelHolderVariable GATE_DYNAMIC = new ModelHolderVariable(
+        "buildcrafttransport:models/plugs/gate_dynamic.json",
+        PluggableGate.MODEL_FUNC_CTX_DYNAMIC
+    );
+    private static final ModelVariableData GATE_VAR_DATA_STATIC = new ModelVariableData();
 
     private static final ModelHolderVariable LENS, FILTER;
     private static final NodeVariableBoolean LENS_HAS_COLOUR;
     private static final NodeVariableObject<EnumDyeColor> LENS_COLOUR;
     private static final NodeVariableObject<EnumFacing> LENS_SIDE;
 
-    public static final ModelHolderStatic PULSAR_STATIC;
-    public static final ModelHolderVariable PULSAR_DYNAMIC;
+    public static final ModelHolderStatic PULSAR_STATIC = new ModelHolderStatic(
+        "buildcrafttransport:models/plugs/pulsar_static.json",
+        (String[][]) null,
+        false
+    );
+    public static final ModelHolderVariable PULSAR_DYNAMIC = new ModelHolderVariable(
+        "buildcrafttransport:models/plugs/pulsar_dynamic.json",
+        PluggablePulsar.MODEL_FUNC_CTX
+    );
 
     private static final ModelHolderVariable STRIPES;
     private static final NodeVariableObject<EnumFacing> STRIPES_DIRECTION;
 
-    public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
-    public static final IPluggableStaticBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER;
-    public static final IPluggableStaticBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
-    public static final IPluggableStaticBaker<KeyPlugPowerAdaptor> BAKER_PLUG_POWER_ADAPTOR;
+    public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR = new PlugBakerSimple<>(
+        PULSAR_STATIC::getCutoutQuads
+    );
+    public static final IPluggableStaticBaker<KeyPlugBlocker> BAKER_PLUG_BLOCKER = new PlugBakerSimple<>(
+        BLOCKER::getCutoutQuads
+    );
+    public static final IPluggableStaticBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR = new PlugBakerSimple<>(
+        LIGHT_SENSOR::getCutoutQuads
+    );
+    public static final IPluggableStaticBaker<KeyPlugPowerAdaptor> BAKER_PLUG_POWER_ADAPTOR = new PlugBakerSimple<>(
+        POWER_ADAPTER::getCutoutQuads
+    );
 
     static {
-        BLOCKER = getModel("plugs/blocker.json");
-        LIGHT_SENSOR = getModel("plugs/light_sensor.json");
-        POWER_ADAPTER = getModel("plugs/power_adapter.json");
-        PULSAR_STATIC = getModel("plugs/pulsar_static.json");
-
-        GATE_STATIC = getModel("plugs/gate.json", PluggableGate.MODEL_FUNC_CTX_STATIC);
-        GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", PluggableGate.MODEL_FUNC_CTX_DYNAMIC);
-        GATE_VAR_DATA_STATIC = new ModelVariableData();
-
-        FunctionContext fnCtx = DefaultContexts.createWithAll();
-        LENS_COLOUR = fnCtx.putVariableObject("colour", EnumDyeColor.class);
-        LENS_SIDE = fnCtx.putVariableObject("side", EnumFacing.class);
-        LENS_HAS_COLOUR = fnCtx.putVariableBoolean("has_colour");
-        LENS = getModel("plugs/lens.json", fnCtx);
-        FILTER = getModel("plugs/filter.json", fnCtx);
-
-        PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", PluggablePulsar.MODEL_FUNC_CTX);
-
-        fnCtx = DefaultContexts.createWithAll();
-        STRIPES_DIRECTION = fnCtx.putVariableObject("side", EnumFacing.class);
-        STRIPES = getModel("pipes/stripes.json", fnCtx);
-
-        BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
-        BAKER_PLUG_BLOCKER = new PlugBakerSimple<>(BLOCKER::getCutoutQuads);
-        BAKER_PLUG_LIGHT_SENSOR = new PlugBakerSimple<>(LIGHT_SENSOR::getCutoutQuads);
-        BAKER_PLUG_POWER_ADAPTOR = new PlugBakerSimple<>(POWER_ADAPTER::getCutoutQuads);
-    }
-
-    private static ModelHolderStatic getModel(String loc) {
-        return getModel(loc, null, false);
-    }
-
-    private static ModelHolderStatic getModel(String loc, String[][] textures, boolean allowTextureFallthrough) {
-        return new ModelHolderStatic("buildcrafttransport:models/" + loc, textures, allowTextureFallthrough);
-    }
-
-    private static ModelHolderVariable getModel(String loc, FunctionContext fnCtx) {
-        return new ModelHolderVariable("buildcrafttransport:models/" + loc, fnCtx);
+        {
+            FunctionContext fnCtx = DefaultContexts.createWithAll();
+            LENS_COLOUR = fnCtx.putVariableObject("colour", EnumDyeColor.class);
+            LENS_SIDE = fnCtx.putVariableObject("side", EnumFacing.class);
+            LENS_HAS_COLOUR = fnCtx.putVariableBoolean("has_colour");
+            LENS = new ModelHolderVariable("buildcrafttransport:models/plugs/lens.json", fnCtx);
+            FILTER = new ModelHolderVariable("buildcrafttransport:models/plugs/filter.json", fnCtx);
+        }
+        {
+            FunctionContext fnCtx = DefaultContexts.createWithAll();
+            STRIPES_DIRECTION = fnCtx.putVariableObject("side", EnumFacing.class);
+            STRIPES = new ModelHolderVariable("buildcrafttransport:models/pipes/stripes.json", fnCtx);
+        }
     }
 
     public static void fmlPreInit() {
@@ -137,8 +144,10 @@ public class BCTransportModels {
     }
 
     public static void fmlInit() {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCTransportItems.plugGate,
-            GateMeshDefinition.INSTANCE);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(
+            BCTransportItems.plugGate,
+            GateMeshDefinition.INSTANCE
+        );
         ClientRegistry.bindTileEntitySpecialRenderer(TilePipeHolder.class, new RenderPipeHolder());
 
         PipeApiClient.registry.registerBaker(KeyPlugGate.class, PlugGateBaker.INSTANCE);
@@ -166,22 +175,43 @@ public class BCTransportModels {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
-        String start = "buildcrafttransport:";
-        registerModel(modelRegistry, start + "pipe_holder#normal", ModelPipe.INSTANCE);
-        registerModel(modelRegistry, start + "pipe_item#inventory", ModelPipeItem.INSTANCE);
-        registerModel(modelRegistry, start + "gate_item#inventory", ModelGateItem.INSTANCE);
-        registerModel(modelRegistry, start + "lens_item#inventory", ModelLensItem.INSTANCE);
-        registerModel(modelRegistry, start + "plug_blocker#inventory",
-            new ModelPluggableItem(BLOCKER.getCutoutQuads()));
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:pipe_holder#normal"),
+            ModelPipe.INSTANCE
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:pipe_item#inventory"),
+            ModelPipeItem.INSTANCE
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:gate_item#inventory"),
+            ModelGateItem.INSTANCE
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:lens_item#inventory"),
+            ModelLensItem.INSTANCE
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:plug_blocker#inventory"),
+            new ModelPluggableItem(BLOCKER.getCutoutQuads())
+        );
         PluggablePulsar.setModelVariablesForItem();
-        registerModel(modelRegistry, start + "plug_pulsar#inventory",
-            new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), PULSAR_DYNAMIC.getCutoutQuads()));
-        registerModel(modelRegistry, start + "plug_light_sensor#inventory",
-            new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
-        registerModel(modelRegistry, start + "plug_power_adaptor#inventory",
-            new ModelPluggableItem(POWER_ADAPTER.getCutoutQuads()));
-        registerModel(modelRegistry, start + "plug_facade#inventory", ModelFacadeItem.INSTANCE);
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:plug_pulsar#inventory"),
+            new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), PULSAR_DYNAMIC.getCutoutQuads())
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:plug_light_sensor#inventory"),
+            new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads())
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:plug_power_adaptor#inventory"),
+            new ModelPluggableItem(POWER_ADAPTER.getCutoutQuads())
+        );
+        event.getModelRegistry().putObject(
+            new ModelResourceLocation("buildcrafttransport:plug_facade#inventory"),
+            ModelFacadeItem.INSTANCE
+        );
 
         PlugGateBaker.onModelBake();
         PlugBakerLens.onModelBake();
@@ -190,11 +220,6 @@ public class BCTransportModels {
         ModelFacadeItem.onModelBake();
         PlugPulsarRenderer.onModelBake();
         PlugGateRenderer.onModelBake();
-    }
-
-    private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg,
-        IBakedModel val) {
-        modelRegistry.putObject(new ModelResourceLocation(reg), val);
     }
 
     public static MutableQuad[] getGateStaticQuads(EnumFacing side, GateVariant variant) {
