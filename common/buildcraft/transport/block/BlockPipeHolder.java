@@ -563,8 +563,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        NonNullList<ItemStack> toDrop = NonNullList.create();
+    public void getDrops(NonNullList<ItemStack> toDrop, IBlockAccess world, BlockPos pos, IBlockState state,
+        int fortune) {
         TilePipeHolder tile = getPipe(world, pos, false);
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable pluggable = tile.getPluggable(face);
@@ -579,7 +579,6 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (pipe != null) {
             pipe.addDrops(toDrop, fortune);
         }
-        return toDrop;
     }
 
     @Override

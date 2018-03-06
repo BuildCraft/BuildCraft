@@ -25,7 +25,6 @@ import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.PluggableRegistry;
-import buildcraft.transport.stripes.IPipeExtensionManager;
 import buildcraft.transport.stripes.PipeExtensionManager;
 import buildcraft.transport.stripes.StripesHandlerDispenser;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
@@ -39,17 +38,13 @@ import buildcraft.transport.stripes.StripesHandlerUse;
 
 public class BCTransportRegistries {
 
-    // TODO: Move to API
-    public static IPipeExtensionManager extensionManager;
-
     public static void preInit() {
         FacadeAPI.registry = FacadeStateManager.INSTANCE;
 
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
         PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;
-        // TODO: Move to API
-        BCTransportRegistries.extensionManager = PipeExtensionManager.INSTANCE;
+        PipeApi.extensionManager = PipeExtensionManager.INSTANCE;
         MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);
 
         PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
@@ -87,6 +82,6 @@ public class BCTransportRegistries {
         // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);
 
-        BCTransportRegistries.extensionManager.registerRetractionPipe(BCTransportPipes.voidItem);
+        PipeApi.extensionManager.registerRetractionPipe(BCTransportPipes.voidItem);
     }
 }

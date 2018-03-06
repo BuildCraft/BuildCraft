@@ -33,6 +33,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
@@ -40,12 +42,14 @@ import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeExtensionManager;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SoundUtil;
 
@@ -83,17 +87,21 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world.provider.getDimension())) {
-            List<PipeExtensionRequest> rList = requests.get(event.world.provider.getDimension());
-            for (PipeExtensionRequest r : rList) {
-                if (retractionPipeDefs.contains(r.pipeDef)) {
-                    retract(event.world, r);
-                } else {
-                    extend(event.world, r);
-                }
-            }
-            rList.clear();
+        if (event.phase != Phase.END || event.side != Side.SERVER) {
+            return;
         }
+        List<PipeExtensionRequest> rList = requests.get(event.world.provider.getDimension());
+        if (rList == null) {
+            return;
+        }
+        for (PipeExtensionRequest r : rList) {
+            if (retractionPipeDefs.contains(r.pipeDef)) {
+                retract(event.world, r);
+            } else {
+                extend(event.world, r);
+            }
+        }
+        rList.clear();
     }
 
     private void retract(World w, PipeExtensionRequest r) {
@@ -126,19 +134,23 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         BlockSnapshot blockSnapshot1 = BlockSnapshot.getBlockSnapshot(w, r.pos);
         IBlockState stripesStateOld = w.getBlockState(r.pos);
         TileEntity stripesTileOld = w.getTileEntity(r.pos);
-        if (!stripesTileOld.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
-            BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + stripesTileOld + " was not a pipe tile!");
-            return;
+        final GameProfile owner;
+        // Fetch owner
+        {
+            IPipeHolder holder = CapUtil.getCapability(stripesTileOld, PipeApi.CAP_PIPE_HOLDER, null);
+            if (stripesTileOld == null || holder == null) {
+                BCLog.logger
+                    .warn("Found an invalid request at " + r.pos + " as " + stripesTileOld + " was not a pipe tile!");
+                return;
+            }
+            owner = holder.getOwner();
+            PipeBehaviour behaviour = holder.getPipe().getBehaviour();
+            if (behaviour instanceof PipeBehaviourStripes) {
+                ((PipeBehaviourStripes) behaviour).direction = retractDir.getOpposite();
+            }
         }
 
         NBTTagCompound stripesNBTOld = new NBTTagCompound();
-
-        IPipeHolder holder = stripesTileOld.getCapability(PipeApi.CAP_PIPE_HOLDER, null);
-        PipeBehaviour behav = holder.getPipe().getBehaviour();
-        if (behav instanceof PipeBehaviourStripes) {
-            ((PipeBehaviourStripes) behav).direction = retractDir.getOpposite();
-        }
-        GameProfile owner = holder.getOwner();
         stripesTileOld.writeToNBT(stripesNBTOld);
 
         // Step 2: Remove previous pipe
@@ -216,11 +228,17 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
         IBlockState stripesStateOld = w.getBlockState(r.pos);
         NBTTagCompound stripesNBTOld = new NBTTagCompound();
         TileEntity stripesTileOld = w.getTileEntity(r.pos);
-        if (!stripesTileOld.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
-            BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + stripesTileOld + " was not a pipe tile!");
-            return;
+        final GameProfile owner;
+        // Fetch owner
+        {
+            IPipeHolder holder = CapUtil.getCapability(stripesTileOld, PipeApi.CAP_PIPE_HOLDER, null);
+            if (stripesTileOld == null || holder == null) {
+                BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + stripesTileOld + " was not a pipe tile!");
+                return;
+            }
+            owner = holder.getOwner();
         }
-        GameProfile owner = stripesTileOld.getCapability(PipeApi.CAP_PIPE_HOLDER, null).getOwner();
+
         stripesTileOld.writeToNBT(stripesNBTOld);
         BlockSnapshot blockSnapshot1 = BlockSnapshot.getBlockSnapshot(w, r.pos);
         boolean canceled = !BlockUtil.breakBlock((WorldServer) w, r.pos, NonNullList.create(), r.pos, owner);
@@ -283,6 +301,8 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
             } else {
                 stacksToSendBack.addAll(list);
             }
+        } else {
+            stacksToSendBack.addAll(list);
         }
 
         // Step 4: Hope for the best, clean up.
@@ -291,13 +311,19 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
     private void cleanup(World w, PipeExtensionRequest r, BlockPos p, NonNullList<ItemStack> stacksToSendBack, boolean canceled, NBTTagCompound stripesNBTOld) {
         TileEntity stripesTileNew = w.getTileEntity(canceled ? r.pos : p);
+        if (stripesTileNew == null) {
+            // Odd.
+            // Maybe it would be better to crash?
+            InventoryUtil.dropAll(w, p, stacksToSendBack);
+            return;
+        }
         if (!canceled) {
             stripesTileNew.readFromNBT(stripesNBTOld);
             stripesTileNew.onLoad();
         }
 
-        if (stripesTileNew.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
-            IPipeHolder stripesPipeHolderNew = stripesTileNew.getCapability(PipeApi.CAP_PIPE_HOLDER, null);
+        IPipeHolder stripesPipeHolderNew = CapUtil.getCapability(stripesTileNew, PipeApi.CAP_PIPE_HOLDER, null);
+        if (stripesPipeHolderNew != null) {
             if (!canceled) {
                 IWireManager wireManager = stripesPipeHolderNew.getWireManager();
                 if (wireManager instanceof WireManager) {
@@ -324,8 +350,8 @@ public enum PipeExtensionManager implements IPipeExtensionManager {
 
     private boolean isValidRetractionPath(World w, PipeExtensionRequest r, EnumFacing retractDir) {
         TileEntity tile = w.getTileEntity(r.pos.offset(retractDir));
-        if (tile != null && tile.hasCapability(PipeApi.CAP_PIPE, null)) {
-            IPipe pipe = tile.getCapability(PipeApi.CAP_PIPE, null);
+        IPipe pipe = CapUtil.getCapability(tile, PipeApi.CAP_PIPE, null);
+        if (pipe != null) {
             boolean connected = false;
             for (EnumFacing facing : EnumFacing.VALUES) {
                 if (pipe.getConnectedType(facing) == IPipe.ConnectedType.TILE) {

@@ -18,8 +18,6 @@ import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.transport.BCTransportRegistries;
-
 public class StripesHandlerPipes implements IStripesHandlerItem {
 
     @Override
@@ -31,7 +29,7 @@ public class StripesHandlerPipes implements IStripesHandlerItem {
         PipeDefinition pipeDefinition = ((IItemPipe) stack.getItem()).getDefinition();
         if (pipeDefinition.flowType == PipeApi.flowItems) {
             // Item pipe: request extending on end of tick
-            if (BCTransportRegistries.extensionManager.requestPipeExtension(world, pos, direction, activator, stack.copy())) {
+            if (PipeApi.extensionManager.requestPipeExtension(world, pos, direction, activator, stack.copy())) {
                 // No items should be sent back immediately, handled by the pipe extension manager later
                 player.inventory.clear();
                 return true;

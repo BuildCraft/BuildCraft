@@ -82,13 +82,14 @@ public final class BlockUtil {
             return null;
         }
 
-        NonNullList<ItemStack> dropsList = NonNullList.create();
-        block.getDrops(dropsList, world, pos, state, 0);
+        // Use the (old) method as not all mods have converted to the new one
+        // (and the old method calls the new one internally)
+        List<ItemStack> drops = block.getDrops(world, pos, state, 0);
         EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, pos);
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
+        float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         NonNullList<ItemStack> returnList = NonNullList.create();
-        for (ItemStack s : dropsList) {
+        for (ItemStack s : drops) {
             if (world.rand.nextFloat() <= dropChance) {
                 returnList.add(s);
             }
