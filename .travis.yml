@@ -10,7 +10,7 @@ addons:
 
 jobs:
   include:
-    - stage: libexpression
+    - stage: SubProject-Expression
       install: cd sub_projects/expression
       script: ./gradlew build publish
     - stage: build
