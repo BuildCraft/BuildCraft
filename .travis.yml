@@ -10,6 +10,9 @@ addons:
 
 jobs:
   include:
+    - stage: libexpression
+      install: cd sub_projects/expression
+      script: ./gradlew build publish
     - stage: build
       install: ./gradlew setupCiWorkspace
       script: ./gradlew build publish
