@@ -9,6 +9,8 @@ package buildcraft.transport;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.MinecraftForge;
+
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.PipeApi;
@@ -23,22 +25,32 @@ import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.FacadeStateManager;
 import buildcraft.transport.plug.PluggableRegistry;
+import buildcraft.transport.stripes.IPipeExtensionManager;
+import buildcraft.transport.stripes.PipeExtensionManager;
 import buildcraft.transport.stripes.StripesHandlerDispenser;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
 import buildcraft.transport.stripes.StripesHandlerHoe;
 import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
+import buildcraft.transport.stripes.StripesHandlerPipes;
 import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
 import buildcraft.transport.stripes.StripesHandlerPlant;
 import buildcraft.transport.stripes.StripesHandlerShears;
 import buildcraft.transport.stripes.StripesHandlerUse;
 
 public class BCTransportRegistries {
+
+    // TODO: Move to API
+    public static IPipeExtensionManager extensionManager;
+
     public static void preInit() {
         FacadeAPI.registry = FacadeStateManager.INSTANCE;
 
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
         PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;
+        // TODO: Move to API
+        BCTransportRegistries.extensionManager = PipeExtensionManager.INSTANCE;
+        MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);
 
         PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
         PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
@@ -55,7 +67,7 @@ public class BCTransportRegistries {
         // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
         PipeApi.stripeRegistry.addHandler(StripesHandlerShears.INSTANCE);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
+        PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
         // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipeWires());
         PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
@@ -74,5 +86,7 @@ public class BCTransportRegistries {
 
         // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);
+
+        BCTransportRegistries.extensionManager.registerRetractionPipe(BCTransportPipes.voidItem);
     }
 }
