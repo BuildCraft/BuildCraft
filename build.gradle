@@ -156,26 +156,22 @@ if (gradle.startParameter.taskNames.contains("checkstyle")) {
     tasks["checkstyleTest"].enabled = false
 }
 
-// Only generate sources if they don't already exist.
-if (!new File("sub_projects/expression/src/autogen/java/buildcraft").exists()) {
-
-    task setupSubProjectExpression(type: Exec) {
-        workingDir "sub_projects/expression"
-        // Obviously a problem with this is that we need to create
-        // a new gradle instance for every subproject :/
-        // How bad is it to do both tasks at once?
-        // just no point really...
-        commandLine './gradlew', 'generateSources'
-    }
-
-    task setupSubProjects(dependsOn: setupSubProjectExpression) {
-        // Just an inter-dependency task
-    }
-
-    eclipseClasspath.dependsOn setupSubProjects
-    ideaModule.dependsOn setupSubProjects
-    compileJava.dependsOn setupSubProjects
+task setupSubProjectExpression(type: Exec) {
+    workingDir "sub_projects/expression"
+    // Obviously a problem with this is that we need to create
+    // a new gradle instance for every subproject :/
+    // How bad is it to do both tasks at once?
+    // just no point really...
+    commandLine './gradlew', 'generateSources'
 }
+
+task setupSubProjects(dependsOn: setupSubProjectExpression) {
+    // Just an inter-dependency task
+}
+
+eclipseClasspath.dependsOn setupSubProjects
+ideaModule.dependsOn setupSubProjects
+compileJava.dependsOn setupSubProjects
 
 runClient.jvmArgs += "-Dbuildcraft.dev=true"
 for (String s :"-XX:+UseG1GC -Xmx2G -Xms2G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M".split(" ")) {
