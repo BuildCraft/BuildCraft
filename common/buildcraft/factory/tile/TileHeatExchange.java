@@ -116,7 +116,11 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                     }
                 }
             } else {
-                if (exchangers.size() < 3) {
+                if (exchangers.isEmpty()) {
+                    // Something went wrong when searching
+                    // (as normally this deque will contain this)
+                    checkNeighbours = true;
+                } else if (exchangers.size() < 3) {
                     // TODO: Remove all exchangers sections
                 } else if (exchangers.size() > 5) {
                     // TODO: Remove all exchangers sections
@@ -164,6 +168,10 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
     private Deque<TileHeatExchange> findAdjacentExchangers() {
         EnumFacing thisFacing = getFacing();
+        if (thisFacing == null) {
+            // Odd. This means that we are getting a property from a different block
+            return new ArrayDeque<>();
+        }
         EnumFacing dirToStart = thisFacing.rotateY();
         EnumFacing dirToEnd = thisFacing.rotateYCCW();
         Deque<TileHeatExchange> exchangers = new ArrayDeque<>();
@@ -246,7 +254,6 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         }
     }
 
-    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
