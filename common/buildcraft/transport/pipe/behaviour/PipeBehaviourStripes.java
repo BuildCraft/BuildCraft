@@ -6,10 +6,6 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.mj.IMjConnector;
@@ -37,6 +33,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
     private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
