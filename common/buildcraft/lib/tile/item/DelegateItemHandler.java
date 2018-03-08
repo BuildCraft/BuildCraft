@@ -12,7 +12,9 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class DelegateItemHandler implements IItemHandlerModifiable {
+import buildcraft.api.inventory.IItemHandlerFiltered;
+
+public class DelegateItemHandler implements IItemHandlerModifiable, IItemHandlerFiltered {
     private final IItemHandlerModifiable delegate;
 
     public DelegateItemHandler(IItemHandlerModifiable delegate) {
@@ -48,5 +50,13 @@ public class DelegateItemHandler implements IItemHandlerModifiable {
     @Override
     public int getSlotLimit(int slot) {
         return delegate.getSlotLimit(slot);
+    }
+
+    @Override
+    public ItemStack getFilter(int slot) {
+        if (delegate instanceof IItemHandlerFiltered) {
+            return ((IItemHandlerFiltered) delegate).getFilter(slot);
+        }
+        return IItemHandlerFiltered.super.getFilter(slot);
     }
 }

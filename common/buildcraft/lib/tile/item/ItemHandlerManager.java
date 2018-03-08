@@ -27,7 +27,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import buildcraft.api.core.EnumPipePart;
 
@@ -164,12 +163,17 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     private static class Wrapper {
         private final List<IItemHandlerModifiable> handlers = new ArrayList<>();
-        private CombinedInvWrapper combined = null;// TODO: This should be an IItemTransactor as well.
+        private IItemHandlerModifiable combined = null;// TODO: This should be an IItemTransactor as well.
 
         public void genWrapper() {
+            if (handlers.size() == 1) {
+                // No need to wrap it
+                combined = handlers.get(0);
+                return;
+            }
             IItemHandlerModifiable[] arr = new IItemHandlerModifiable[handlers.size()];
             arr = handlers.toArray(arr);
-            combined = new CombinedInvWrapper(arr);
+            combined = new CombinedItemHandlerWrapper(arr);
         }
     }
 }
