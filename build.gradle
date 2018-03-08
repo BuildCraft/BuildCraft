@@ -67,8 +67,7 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
-
-task build_real {
+task force_release_version {
     // Provided to allow changing the version number from "SNAPSHOT" or "ABCD1265" (a git commit hash) to the actual version.
     // The code for this is below.
 }
@@ -85,11 +84,11 @@ minecraft {
     mappings = config.mappings_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    def isFullBuild = gradle.startParameter.taskNames.contains("build_real")
+    def isFullBuild = gradle.startParameter.taskNames.contains("force_release_version")
 
     // Git versioning stuffs
     if (grgit != null) {
-        def repo = grgit.open()
+        def repo = grgit.open(dir: "$projectDir")
         replace "\${git_commit_hash}", repo.head().id
         // This is very ugly: we need 7(!) \ to produce a single \ in the final one. 
         replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
