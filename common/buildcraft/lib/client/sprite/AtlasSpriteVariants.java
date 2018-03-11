@@ -73,7 +73,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
         } else {
             int index = INDEX_COLOUR_BLIND.getAsInt();
             ResourceLocation location = VARIANT_COLOUR_BLIND.getAllPossibleVariants(baseName).get(index);
-            return new AtlasSpriteDirect(location.toString());
+            return makeAtlasSprite(location);
         }
     }
 

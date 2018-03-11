@@ -91,14 +91,14 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
         return false;
     }
 
-    public static AtlasSpriteDirect loadSprite(String name, ResourceLocation location, boolean careIfMissing) {
+    public static TextureAtlasSprite loadSprite(String name, ResourceLocation location, boolean careIfMissing) {
         return loadSprite(Minecraft.getMinecraft().getResourceManager(), name, location, careIfMissing);
     }
 
-    public static AtlasSpriteDirect loadSprite(IResourceManager manager, String name, ResourceLocation location,
+    public static TextureAtlasSprite loadSprite(IResourceManager manager, String name, ResourceLocation location,
         boolean careIfMissing) {
         // Load the initial variant
-        AtlasSpriteDirect sprite = new AtlasSpriteDirect(name);
+        TextureAtlasSprite sprite = makeAtlasSprite(new ResourceLocation(name));
         try {
             // Copied almost directly from TextureMap.
             PngSizeInfo pngsizeinfo = PngSizeInfo.makeFromResource(manager.getResource(location));
