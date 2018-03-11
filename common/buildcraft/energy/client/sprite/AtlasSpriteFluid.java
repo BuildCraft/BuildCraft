@@ -14,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.client.sprite.AtlasSpriteDirect;
 import buildcraft.lib.client.sprite.AtlasSpriteSwappable;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.SpriteUtil;
@@ -35,7 +34,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     @Override
     public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
         ResourceLocation from = SpriteUtil.transformLocation(fromName);
-        AtlasSpriteDirect sprite = loadSprite(manager, from.toString(), from, true);
+        TextureAtlasSprite sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
             return true;
