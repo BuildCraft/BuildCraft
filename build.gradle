@@ -68,6 +68,8 @@ dependencies {
 }
 
 task force_release_version {
+    description = ("Removes the git commit hash or 'SNAPSHOT' from the end of the version number.Used for building the jars used to release on the website.");
+    group = "build"
     // Provided to allow changing the version number from "SNAPSHOT" or "ABCD1265" (a git commit hash) to the actual version.
     // The code for this is below.
 }
@@ -84,7 +86,7 @@ minecraft {
     mappings = config.mappings_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    def isFullBuild = gradle.startParameter.taskNames.contains("force_release_version")
+    def addVersionDetails = !gradle.startParameter.taskNames.contains("force_release_version")
 
     // Git versioning stuffs
     if (grgit != null) {
@@ -94,11 +96,11 @@ minecraft {
         replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
-        if (!isFullBuild) {
+        if (addVersionDetails) {
             project.version += "-" + repo.head().id.toString().substring(0, 12)
         }
     } else {
-        if (!isFullBuild) {
+        if (addVersionDetails) {
             project.version += "-SNAPSHOT"
         }
     }
