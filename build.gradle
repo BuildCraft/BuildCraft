@@ -157,7 +157,7 @@ if (gradle.startParameter.taskNames.contains("checkstyle")) {
     tasks["checkstyleTest"].enabled = false
 }
 
-task setupSubProjects(dependsOn: ":sub_projects:generateSources") {
+task setupSubProjects(dependsOn: ":sub_projects:expression:generateSources") {
     // Just an inter-dependency task
 }
 
