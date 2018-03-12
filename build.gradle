@@ -115,7 +115,7 @@ minecraft {
 }
 
 task printVersion {
-    description = "Prints out the actual version used. Useful for testing the buildscript."
+    description = "Prints out the actual version used. Useful for testing the buildscript. (Add -Drelease=true to force this to the version specified in build.properties)"
     doLast {
         println "Version = " + project.version
     }
