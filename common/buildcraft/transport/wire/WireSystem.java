@@ -37,6 +37,7 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.WireNode;
 import buildcraft.api.transport.pipe.IPipe;

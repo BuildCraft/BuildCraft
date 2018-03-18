@@ -89,6 +89,9 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public IWireEmitter getEmitter(WireSystem.WireElement element) {
         if(element.type == WireSystem.WireElement.Type.EMITTER_SIDE) {
             if(!emittersCache.containsKey(element)) {
+                if (!world.isBlockLoaded(element.blockPos)) {
+                    BCLog.logger.warn("[transport.wire] Ghost loading " + element.blockPos + " to look for an emitter!");
+                }
                 TileEntity tile = world.getTileEntity(element.blockPos);
                 if(tile instanceof IPipeHolder) {
                     IPipeHolder holder = (IPipeHolder) tile;
@@ -107,6 +110,9 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public boolean isEmitterEmitting(WireSystem.WireElement element, EnumDyeColor color) {
+        if (!world.isBlockLoaded(element.blockPos)) {
+            BCLog.logger.warn("[transport.wire] Ghost loading " + element.blockPos + " to look for an emitter!");
+        }
         TileEntity tile = world.getTileEntity(element.blockPos);
         if(tile instanceof IPipeHolder) {
             IPipeHolder holder = (IPipeHolder) tile;
@@ -177,7 +183,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
 
     public static WorldSavedDataWireSystems get(World world) {
         if(world.isRemote) {
-            BCLog.logger.warn("Creating WireSystems on client, this is a bug");
+            throw new UnsupportedOperationException("Attempted to get WorldSavedDataWireSystems on the client!");
         }
         MapStorage storage = world.getPerWorldStorage();
         WorldSavedDataWireSystems instance = (WorldSavedDataWireSystems) storage.getOrLoadData(WorldSavedDataWireSystems.class, DATA_NAME);

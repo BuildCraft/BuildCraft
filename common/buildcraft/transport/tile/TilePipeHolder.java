@@ -38,6 +38,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipe;
@@ -59,6 +60,7 @@ import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.plug.FilterEventHandler;
 import buildcraft.transport.wire.WireManager;
+import buildcraft.transport.wire.WireSystem;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
 
@@ -216,13 +218,14 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public void invalidate() {
         super.invalidate();
         eventBus.fireEvent(new PipeEventTileState.Invalidate(this));
-        wireManager.removeParts(new ArrayList<>(wireManager.parts.keySet()));
+        wireManager.invalidate();
     }
 
     @Override
     public void validate() {
         super.validate();
         eventBus.fireEvent(new PipeEventTileState.Validate(this));
+        wireManager.validate();
     }
 
     @Override
@@ -237,6 +240,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (pipe != null) {
             pipe.onLoad();
         }
+        wireManager.validate();
     }
 
     // ITickable
@@ -278,10 +282,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             redrawBlock();
         }
 
-        if (!wireManager.inited) {
-            wireManager.updateBetweens(false);
-            wireManager.inited = true;
-        }
+        wireManager.tick();
 
         if (!Arrays.equals(redstoneValues, oldRedstoneValues)) {
             Block block = world.getBlockState(pos).getBlock();

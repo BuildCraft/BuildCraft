@@ -76,7 +76,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
-    public static final boolean DEBUG = BCDebugging.shouldDebugLog("tile.debug.network");
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.tile");
 
     protected static final IdAllocator IDS = new IdAllocator("tile");
 
@@ -169,6 +169,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link IBlockState} . */
     public final IBlockState getLocalState(BlockPos pos) {
+        if (DEBUG && !world.isBlockLoaded(pos)) {
+            BCLog.logger.warn("[lib.tile] Ghost-loading block at " + StringUtilBC.blockPosToString(pos) + " (from "
+                + StringUtilBC.blockPosToString(getPos()) + ")");
+        }
         return BlockUtil.getBlockState(world, pos, true);
     }
 
@@ -186,6 +190,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link TileEntity} . */
     public final TileEntity getLocalTile(BlockPos pos) {
+        if (DEBUG && !world.isBlockLoaded(pos)) {
+            BCLog.logger.warn("[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from "
+                + StringUtilBC.blockPosToString(getPos()) + ")");
+        }
         return BlockUtil.getTileEntity(world, pos, true);
     }
 
