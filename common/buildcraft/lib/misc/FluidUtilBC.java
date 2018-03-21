@@ -126,7 +126,9 @@ public class FluidUtilBC {
         FluidStack drained = from.drain(toDrain, true);
         if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
-            detail += ", actually drained = " + StringUtilBC.fluidToString(drained) + ")";
+            detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
+            detail += ",\nIFluidHandler (from) = " + from.getClass() + "(" + from + ")";
+            detail += ",\nIFluidHandler (to) = " + to.getClass() + "(" + to + ")";
             throw new IllegalStateException("Drained fluid did not equal expected fluid!\n" + detail);
         }
         int actuallyAccepted = to.fill(drained, true);

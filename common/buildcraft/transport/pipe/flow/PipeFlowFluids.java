@@ -57,6 +57,7 @@ import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -283,7 +284,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         filter.amount = millibuckets;
         FluidStack drained = handler.drain(filter, !simulate);
         if (drained != null) {
-
+            if (!filter.isFluidEqual(filter)) {
+                String detail = "(Filter = " + StringUtilBC.fluidToString(filter);
+                detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
+                detail += ",\nIFluidHandler = " + handler.getClass() + "(" + handler + ")";
+                throw new IllegalStateException("Drained fluid did not equal filter fluid!\n" + detail);
+            }
         }
         return drained;
     }
