@@ -67,8 +67,7 @@ public class GuiElementStatementDrag implements IMenuElement {
             boolean canPlace = false;
             for (IGuiElement element : gui.getElementsAt(gui.mouse.getX(), gui.mouse.getY())) {
                 if (element instanceof IReference<?>) {
-                    IReference<?> ref = (IReference<?>) element;
-                    if (ref.canSet(dragging)) {
+                    if (checkCanSet((IReference<?>) element, dragging)) {
                         canPlace = true;
                         break;
                     }
@@ -100,6 +99,14 @@ public class GuiElementStatementDrag implements IMenuElement {
             }
             GlStateManager.color(1, 1, 1);
         }
+    }
+
+    private static <T> boolean checkCanSet(IReference<T> ref, Object value) {
+        if (value == null) {
+            return ref.canSet(null);
+        }
+        T obj = ref.convertToType(value);
+        return obj != null && ref.canSet(obj);
     }
 
     // IInteractableElement

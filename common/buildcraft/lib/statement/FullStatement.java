@@ -113,14 +113,25 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
     }
 
     @Override
-    public boolean canSet(Object value) {
+    public boolean canSet(S value) {
         if (value == null) {
             return true;
         }
-        if (!type.clazz.isInstance(value)) {
-            return false;
+        return value.minParameters() <= params.length;
+    }
+
+    @Override
+    public S convertToType(Object value) {
+        S val = IReference.super.convertToType(value);
+        if (value != null && val == null) {
+            return type.convertToType(value);
         }
-        return ((IStatement) value).minParameters() <= params.length;
+        return val;
+    }
+
+    @Override
+    public Class<S> getHeldType() {
+        return type.clazz;
     }
 
     static class ParamRef implements IReference<IStatementParameter> {
@@ -145,16 +156,17 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         }
 
         @Override
-        public boolean canSet(Object value) {
+        public boolean canSet(IStatementParameter value) {
             IStatement statement = statementRef.get();
             if (statement == null) {
                 return false;
             }
-            if (value == null || value instanceof IStatementParameter) {
-                IStatementParameter param = (IStatementParameter) value;
-                return statement.createParameter(param, index) == param;
-            }
-            return false;
+            return statement.createParameter(value, index) == value;
+        }
+
+        @Override
+        public Class<IStatementParameter> getHeldType() {
+            return IStatementParameter.class;
         }
     }
 
@@ -172,7 +184,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         getParamRef(index).set(param);
     }
 
-    public boolean canSet(int index, Object param) {
+    public boolean canSet(int index, IStatementParameter param) {
         return getParamRef(index).canSet(param);
     }
 

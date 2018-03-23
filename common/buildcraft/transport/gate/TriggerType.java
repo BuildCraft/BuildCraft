@@ -9,16 +9,28 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.ITrigger;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.StatementType;
+
+import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternal;
 
 public class TriggerType extends StatementType<TriggerWrapper> {
     public static final TriggerType INSTANCE = new TriggerType();
 
     private TriggerType() {
         super(TriggerWrapper.class, null);
+    }
+
+    @Override
+    public TriggerWrapper convertToType(Object value) {
+        if (value instanceof ITriggerInternal) {
+            return new TriggerWrapperInternal((ITriggerInternal) value);
+        }
+        // We cannot convert sided actions (as they require a side)
+        return null;
     }
 
     @Override

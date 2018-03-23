@@ -115,7 +115,8 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
             }
             if (tile instanceof ITriggerExternalOverride) {
                 ITriggerExternalOverride override = (ITriggerExternalOverride) tile;
-                ITriggerExternalOverride.Result result = override.override(sourcePart.face, source, trigger, parameters);
+                ITriggerExternalOverride.Result result =
+                    override.override(sourcePart.face, source, trigger, parameters);
                 if (result == ITriggerExternalOverride.Result.FALSE) {
                     return false;
                 } else if (result == ITriggerExternalOverride.Result.TRUE) {

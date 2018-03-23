@@ -32,7 +32,12 @@ public class ForwardingReference<T> implements IReference<T> {
     }
 
     @Override
-    public boolean canSet(Object value) {
-        return clazz.isInstance(value);
+    public boolean canSet(T value) {
+        return true;
+    }
+
+    @Override
+    public Class<T> getHeldType() {
+        return clazz;
     }
 }

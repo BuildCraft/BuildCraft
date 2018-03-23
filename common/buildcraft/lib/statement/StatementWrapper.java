@@ -14,12 +14,17 @@ import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
+import buildcraft.api.statements.IAction;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITrigger;
 
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.transport.gate.ActionWrapper;
+import buildcraft.transport.gate.TriggerWrapper;
 
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;
@@ -95,6 +100,29 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
             list.add(LocaleUtil.localize("gate.side", translated));
         }
         return list;
+    }
+
+    @Override
+    public <T> T convertTo(Class<T> clazz) {
+        T t = delegate.convertTo(clazz);
+        if (t != null) {
+            return t;
+        }
+        // As we need to keep the wrapper it's not quite as simple as "return t;"
+        if (clazz.isAssignableFrom(TriggerWrapper.class)) {
+
+            ITrigger trigger = delegate.convertTo(ITrigger.class);
+            if (trigger != null) {
+                return clazz.cast(TriggerWrapper.wrap(trigger, sourcePart.face));
+            }
+        } else if (clazz.isAssignableFrom(ActionWrapper.class)) {
+
+            IAction action = delegate.convertTo(IAction.class);
+            if (action != null) {
+                return clazz.cast(ActionWrapper.wrap(action, sourcePart.face));
+            }
+        }
+        return null;
     }
 
     @Override

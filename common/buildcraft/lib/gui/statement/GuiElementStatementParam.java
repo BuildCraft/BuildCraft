@@ -51,8 +51,13 @@ public class GuiElementStatementParam extends GuiElementSimple
     }
 
     @Override
-    public boolean canSet(Object value) {
+    public boolean canSet(IStatementParameter value) {
         return ref.canSet(paramIndex, value);
+    }
+
+    @Override
+    public Class<IStatementParameter> getHeldType() {
+        return IStatementParameter.class;
     }
 
     // ITooltipElement

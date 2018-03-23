@@ -2,6 +2,9 @@
 Improvements:
 
 * Item pipes now send the item all the way into a block, rather than stopping when then item is half-way in.
+* [#4062] The gate GUI now allows equal actions to be assigned to trigger slots, and vice versa.
+  * Currently this means the following can be converted:
+    * Trigger "Redstone Signal is on" <-> Action "Turn On Redstone Signal"
 
 Ported content:
 

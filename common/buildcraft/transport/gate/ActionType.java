@@ -8,17 +8,29 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.statements.IAction;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.StatementType;
 
+import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternal;
+
 public class ActionType extends StatementType<ActionWrapper> {
     public static final ActionType INSTANCE = new ActionType();
 
     private ActionType() {
         super(ActionWrapper.class, null);
+    }
+
+    @Override
+    public ActionWrapper convertToType(Object value) {
+        if (value instanceof IActionInternal) {
+            return new ActionWrapperInternal((IActionInternal) value);
+        }
+        // We cannot convert sided actions (as they require a side)
+        return null;
     }
 
     @Override

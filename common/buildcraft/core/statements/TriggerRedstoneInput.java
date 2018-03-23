@@ -23,8 +23,8 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     public final boolean active;
 
     public TriggerRedstoneInput(boolean active) {
-        super("buildcraft:redstone.input." + (active ? "active" : "inactive"),//
-                "buildcraft.redstone.input." + (active ? "active" : "inactive"));
+        super("buildcraft:redstone.input." + (active ? "active" : "inactive"), //
+            "buildcraft.redstone.input." + (active ? "active" : "inactive"));
         this.active = active;
     }
 
@@ -57,9 +57,11 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
         if (container instanceof IRedstoneStatementContainer) {
             int level = ((IRedstoneStatementContainer) container).getRedstoneInput(null);
-            if (parameters.length > 0 && parameters[0] instanceof StatementParamGateSideOnly && ((StatementParamGateSideOnly) parameters[0]).isSpecific
+            if (parameters.length > 0 && parameters[0] instanceof StatementParamGateSideOnly
+                && ((StatementParamGateSideOnly) parameters[0]).isSpecific
                 && container instanceof ISidedStatementContainer) {
-                level = ((IRedstoneStatementContainer) container).getRedstoneInput(((ISidedStatementContainer) container).getSide());
+                level = ((IRedstoneStatementContainer) container)
+                    .getRedstoneInput(((ISidedStatementContainer) container).getSide());
             }
 
             return active ? level > 0 : level == 0;
@@ -71,5 +73,21 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     @Override
     public IStatement[] getPossible() {
         return BCCoreStatements.TRIGGER_REDSTONE;
+    }
+
+    @Override
+    public <T> T convertTo(Class<T> clazz) {
+        T obj = super.convertTo(clazz);
+        if (obj != null) {
+            return obj;
+        }
+
+        if (active) {
+            if (clazz.isInstance(BCCoreStatements.ACTION_REDSTONE)) {
+                return clazz.cast(BCCoreStatements.ACTION_REDSTONE);
+            }
+        }
+
+        return null;
     }
 }

@@ -21,6 +21,7 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
@@ -54,7 +55,8 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     }
 
     protected boolean isSideOnly(IStatementParameter[] parameters) {
-        if (parameters != null && parameters.length >= (getRGSOSlot() + 1) && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly) {
+        if (parameters != null && parameters.length >= (getRGSOSlot() + 1)
+            && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly) {
             return ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isSpecific;
         }
 
@@ -84,5 +86,17 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     @SideOnly(Side.CLIENT)
     public SpriteHolder getSprite() {
         return BCCoreSprites.ACTION_REDSTONE;
+    }
+
+    @Override
+    public <T> T convertTo(Class<T> clazz) {
+        T obj = super.convertTo(clazz);
+        if (obj != null) {
+            return obj;
+        }
+        if (clazz.isInstance(BCCoreStatements.TRIGGER_REDSTONE_ACTIVE)) {
+            return clazz.cast(BCCoreStatements.TRIGGER_REDSTONE_ACTIVE);
+        }
+        return null;
     }
 }

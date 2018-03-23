@@ -70,8 +70,18 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
     }
 
     @Override
-    public boolean canSet(Object value) {
+    public boolean canSet(S value) {
         return ref.canSet(value);
+    }
+
+    @Override
+    public S convertToType(Object value) {
+        return ref.convertToType(value);
+    }
+
+    @Override
+    public Class<S> getHeldType() {
+        return ref.getHeldType();
     }
 
     // ITooltipElement
