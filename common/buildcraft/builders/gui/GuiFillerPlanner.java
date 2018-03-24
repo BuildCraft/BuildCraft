@@ -23,6 +23,8 @@ public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
         BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
         preLoad(jsonGui);
         jsonGui.load();
+        xSize = jsonGui.getSizeX();
+        ySize = jsonGui.getSizeY();
     }
 
     protected void preLoad(BuildCraftJsonGui json) {

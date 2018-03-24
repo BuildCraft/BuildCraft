@@ -50,6 +50,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         jsonGui.properties.put("player.inventory", new InventorySlotHolder(container, container.player.inventory));
         this.mainGui = jsonGui;
         standardLedgerInit();
+        // Force subclasses to set this themselves after calling jsonGui.load
+        xSize = 10;
+        ySize = 10;
     }
 
     private final void standardLedgerInit() {

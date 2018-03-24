@@ -23,6 +23,8 @@ public class GuiGate extends GuiBC8<ContainerGate> {
         BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
         preLoad(jsonGui);
         jsonGui.load();
+        xSize = jsonGui.getSizeX();
+        ySize = jsonGui.getSizeY();
 
         MessageUtil.doDelayed(() -> {
             container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
