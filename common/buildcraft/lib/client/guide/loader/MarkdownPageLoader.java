@@ -107,7 +107,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             switch (post) {
                 case "new_page": {
                     BCLog.logger.warn("[lib.guide.markdown] Found deprecated element '" + line
-                            + "', it should be replaced with '<new_page/>'");
+                        + "', it should be replaced with '<new_page/>'");
                     return "<new_page/>";
                 }
                 case "all_crafting": {
@@ -134,7 +134,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                     }
                     String str = "<recipes_usages stack=\"" + stack + "\"" + additional + "/>";
                     BCLog.logger.warn("[lib.guide.markdown] Found deprecated element '" + line
-                            + "', it should be replaced with '" + str + "'");
+                        + "', it should be replaced with '" + str + "'");
                     return str;
                 }
                 default:

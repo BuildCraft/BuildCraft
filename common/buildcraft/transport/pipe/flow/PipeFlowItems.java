@@ -354,6 +354,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
         if (pipe.isConnected(item.side)) {
             ConnectedType type = pipe.getConnectedType(item.side);
+            EnumFacing oppositeSide = item.side.getOpposite();
             switch (type) {
                 case PIPE: {
                     IPipe oPipe = pipe.getConnectedPipe(item.side);
@@ -363,28 +364,29 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                     PipeFlow flow = oPipe.getFlow();
                     if (flow instanceof IFlowItems) {
                         IFlowItems oFlow = (IFlowItems) flow;
-                        excess = oFlow.injectItem(excess, true, item.side.getOpposite(), item.colour, item.speed);
-                        if (BCStackHelper.isEmpty(excess)) {
-                            return;
+                        ItemStack before = excess;
+                        excess = oFlow.injectItem(excess.copy(), true, oppositeSide, item.colour, item.speed);
+
+                        if (!BCStackHelper.isEmpty(excess)) {
+                            before.stackSize -= excess.stackSize;
                         }
+
+                        excess = fireEventEjectIntoPipe(oFlow, item.side, before, excess);
                     }
                     break;
                 }
                 case TILE: {
                     TileEntity tile = pipe.getConnectedTile(item.side);
-                    IInjectable injectable = ItemTransactorHelper.getInjectable(tile, item.side.getOpposite());
-                    excess = injectable.injectItem(excess, true, item.side.getOpposite(), item.colour, item.speed);
-                    if (BCStackHelper.isEmpty(excess)) {
-                        return;
+
+                    IInjectable injectable = ItemTransactorHelper.getInjectable(tile, oppositeSide);
+                    ItemStack before = excess;
+                    excess = injectable.injectItem(excess.copy(), true, oppositeSide, item.colour, item.speed);
+
+                    if (!BCStackHelper.isEmpty(excess)) {
+                        IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, oppositeSide);
+                        excess = transactor.insert(excess, false, false);
                     }
-
-                    IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, item.side.getOpposite());
-                    excess = transactor.insert(excess, false, false);
-
-                    if (BCStackHelper.isEmpty(excess)) {
-                        return;
-                    }
-
+                    excess = fireEventEjectIntoTile(tile, item.side, before, excess);
                     break;
                 }
             }
@@ -398,6 +400,21 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.genTimings(holder.getPipeWorld().getTotalWorldTime(), getPipeLength(item.side));
         items.add(item.timeToDest, item);
         sendItemDataToClient(item);
+    }
+
+    private ItemStack fireEventEjectIntoPipe(IFlowItems oFlow, EnumFacing to, ItemStack before, ItemStack excess) {
+        IPipeHolder holder = this.pipe.getHolder();
+        return fireEventEjected(holder, new PipeEventItem.Ejected.IntoPipe(holder, this, before, excess, to, oFlow));
+    }
+
+    private ItemStack fireEventEjectIntoTile(TileEntity tile, EnumFacing to, ItemStack before, ItemStack excess) {
+        IPipeHolder holder = this.pipe.getHolder();
+        return fireEventEjected(holder, new PipeEventItem.Ejected.IntoTile(holder, this, before, excess, to, tile));
+    }
+
+    private static ItemStack fireEventEjected(IPipeHolder holder, PipeEventItem.Ejected event) {
+        holder.fireEvent(event);
+        return event.getExcess();
     }
 
     private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion, double speed) {
@@ -534,12 +551,15 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return null;
     }
 
-    private double getPipeLength(EnumFacing side) {
+    double getPipeLength(EnumFacing side) {
         if (side == null) {
             return 0;
         }
         if (pipe.isConnected(side)) {
-            // TODO: Check the length between this pipes centre and the next block along
+            if (pipe.getConnectedType(side) == ConnectedType.TILE) {
+                // TODO: Check the length between this pipes centre and the next block along
+                return 0.5 + 0.25;// Tiny distance for fully pushing items in.
+            }
             return 0.5;
         } else {
             return 0.25;

@@ -289,7 +289,7 @@ public final class Pipe implements IPipe, IDebuggable {
                 cust = DefaultPipeConnection.INSTANCE;
             }
             float ext = DEFAULT_CONNECTION_DISTANCE
-                    + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
+                + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
 
             if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
                 connected.put(facing, ext);

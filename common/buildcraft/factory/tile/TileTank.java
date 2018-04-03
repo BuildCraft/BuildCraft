@@ -6,12 +6,19 @@
 
 package buildcraft.factory.tile;
 
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+import java.util.Objects;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.fluid.FluidSmoother;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -102,17 +109,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
     }
 
-
-
-    @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
-        isPlayerInteracting = true;
-        boolean didChange = FluidUtilBC.onTankActivated(player, pos, hand, this);
-        isPlayerInteracting = false;
-        return didChange;
-    }
-
     /** Moves fluids around to their preferred positions. (For gaseous fluids this will move everything as high as
      * possible, for liquid fluids this will move everything as low as possible.) */
     public void balanceTankFluids() {
@@ -142,6 +138,15 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             }
             prev = tile;
         }
+    }
+
+    @Override
+    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
+        isPlayerInteracting = true;
+        boolean didChange = FluidUtilBC.onTankActivated(player, pos, hand, this);
+        isPlayerInteracting = false;
+        return didChange;
     }
 
     // Networking
@@ -182,42 +187,38 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     // Rendering
 
     @SideOnly(Side.CLIENT)
-    public FluidStackInterp getFluidForRender(float partialTicks) {
+    public FluidSmoother.FluidStackInterp getFluidForRender(float partialTicks) {
         return smoothedTank.getFluidForRender(partialTicks);
     }
 
     // Tank helper methods
 
-    /**
-     * Tests to see if this tank can connect to the other one, in the given direction. BuildCraft itself only calls
+    /** Tests to see if this tank can connect to the other one, in the given direction. BuildCraft itself only calls
      * with {@link EnumFacing#UP} or {@link EnumFacing#DOWN}, however addons are free to call with any of the other 4
      * non-null faces. (Although an addon calling from other faces must provide some way of transferring fluids around).
-     *
+     * 
      * @param other The other tank.
      * @param direction The direction that the other tank is, from this tank.
-     * @return True if this can connect, false otherwise.
-     */
+     * @return True if this can connect, false otherwise. */
     public boolean canConnectTo(TileTank other, EnumFacing direction) {
         return true;
     }
 
-    /**
-     * Helper for {@link #canConnectTo(TileTank, EnumFacing)} that only returns true if both tanks can connect to each
+    /** Helper for {@link #canConnectTo(TileTank, EnumFacing)} that only returns true if both tanks can connect to each
      * other.
-     *
+     * 
+     * @param from
+     * @param to
      * @param direction The direction from the "from" tank, to the "to" tank, such that
-     *             {@link Objects#equals(Object, Object) Objects.equals(}{@link TileTank#getPos()
-     *             from.getPos()}.{@link BlockPos#offset(EnumFacing) offset(direction)}, {@link TileTank#getPos()
-     *             to.getPos()}) returns true.
-     * @return True if both could connect, false otherwise.
-     */
+     *            {@link Objects#equals(Object, Object) Objects.equals(}{@link TileTank#getPos()
+     *            from.getPos()}.{@link BlockPos#offset(EnumFacing) offset(direction)}, {@link TileTank#getPos()
+     *            to.getPos()}) returns true.
+     * @return True if both could connect, false otherwise. */
     public static boolean canTanksConnect(TileTank from, TileTank to, EnumFacing direction) {
         return from.canConnectTo(to, direction) && to.canConnectTo(from, direction.getOpposite());
     }
 
-    /**
-     * @return A list of all connected tanks around this block, ordered by position from bottom to top.
-     * */
+    /** @return A list of all connected tanks around this block, ordered by position from bottom to top. */
     private List<TileTank> getTanks() {
         // double-ended queue rather than array list to avoid
         // the copy operation when we search downwards

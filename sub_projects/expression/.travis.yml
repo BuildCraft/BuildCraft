@@ -1,0 +1,19 @@
+language: java
+jdk:
+  - oraclejdk8
+
+sudo: required
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
+jobs:
+  include:
+    - stage: build
+      install: echo "skipping default ./gradlew assemble"
+      script: ./gradlew build publish
+
+env:
+  global:
+    TERM=dumb

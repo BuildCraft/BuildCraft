@@ -29,6 +29,7 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
         }
         materialSlots = new SlotBase[9];
         for (int x = 0; x < 9; x++) {
+            // hide the filter slots, but still sync them
             addSlotToContainer(new SlotPhantom(tile.invMaterialFilter, x, -1000000, -1000000));
             addSlotToContainer(materialSlots[x] = new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
         }

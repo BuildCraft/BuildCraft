@@ -176,7 +176,7 @@ public class TravellingItem {
         return new Vec3d(x, y, z);
     }
 
-    public Vec3d getRenderPosition(BlockPos pos, long tick, float partialTicks) {
+    public Vec3d getRenderPosition(BlockPos pos, long tick, float partialTicks, PipeFlowItems flow) {
         long diff = tickFinished - tickStarted;
         long afterTick = tick - tickStarted;
 
@@ -184,7 +184,7 @@ public class TravellingItem {
         interp = Math.max(0, Math.min(1, interp));
 
         Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
-        Vec3d vecSide = side == null ? center : VecUtil.offset(center, side, 0.5);
+        Vec3d vecSide = side == null ? center : VecUtil.offset(center, side, flow.getPipeLength(side));
 
         Vec3d vecFrom;
         Vec3d vecTo;

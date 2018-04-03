@@ -17,7 +17,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -49,26 +48,21 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     public <T extends INBTSerializable<NBTTagCompound> & IItemHandlerModifiable> T addInvHandler(String key, T handler,
-                                                                                                 EnumAccess access, EnumPipePart... parts) {
+        EnumAccess access, EnumPipePart... parts) {
         if (parts == null) {
             parts = new EnumPipePart[0];
         }
         IItemHandlerModifiable external = handler;
-        switch (access) {
-            case NONE:
-            case PHANTOM:
-                external = null;
-                if (parts.length > 0) {
-                    throw new IllegalArgumentException(
-                            "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
-                }
-                break;
-            case EXTRACT:
-                external = new WrappedItemHandlerExtract(handler);
-                break;
-            case INSERT:
-                external = new WrappedItemHandlerInsert(handler);
-                break;
+        if (access == EnumAccess.NONE || access == EnumAccess.PHANTOM) {
+            external = null;
+            if (parts.length > 0) {
+                throw new IllegalArgumentException(
+                    "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
+            }
+        } else if (access == EnumAccess.EXTRACT) {
+            external = new WrappedItemHandlerExtract(handler);
+        } else if (access == EnumAccess.INSERT) {
+            external = new WrappedItemHandlerInsert(handler);
         }
 
         if (external != null) {
@@ -158,12 +152,17 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     private static class Wrapper {
         private final List<IItemHandlerModifiable> handlers = new ArrayList<>();
-        private CombinedInvWrapper combined = null;// TODO: This should be an IItemTransactor as well.
+        private IItemHandlerModifiable combined = null;// TODO: This should be an IItemTransactor as well.
 
         public void genWrapper() {
+            if (handlers.size() == 1) {
+                // No need to wrap it
+                combined = handlers.get(0);
+                return;
+            }
             IItemHandlerModifiable[] arr = new IItemHandlerModifiable[handlers.size()];
             arr = handlers.toArray(arr);
-            combined = new CombinedInvWrapper(arr);
+            combined = new CombinedItemHandlerWrapper(arr);
         }
     }
 }

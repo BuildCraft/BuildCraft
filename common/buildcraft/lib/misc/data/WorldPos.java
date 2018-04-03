@@ -32,10 +32,10 @@ public final class WorldPos {
     @Override
     public boolean equals(Object o) {
         return this == o ||
-                o != null &&
-                        getClass() == o.getClass() &&
-                        dimension == ((WorldPos) o).dimension &&
-                        pos.equals(((WorldPos) o).pos);
+            o != null &&
+                getClass() == o.getClass() &&
+                dimension == ((WorldPos) o).dimension &&
+                pos.equals(((WorldPos) o).pos);
     }
 
     @Override

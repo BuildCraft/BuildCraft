@@ -6,6 +6,25 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.mj.IMjConnector;
@@ -21,22 +40,6 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.transport.BCTransportStatements;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
     private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
@@ -168,10 +171,10 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
                     }
                 } else {
                     BlockUtil.breakBlockAndGetDrops(
-                            (WorldServer) world,
-                            offset,
-                            new ItemStack(Items.DIAMOND_PICKAXE),
-                            pipe.getHolder().getOwner()
+                        (WorldServer) world,
+                        offset,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        pipe.getHolder().getOwner()
                     ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
                     progress = 0;
                 }

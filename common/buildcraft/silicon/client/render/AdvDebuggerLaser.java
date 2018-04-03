@@ -6,6 +6,7 @@
 
 package buildcraft.silicon.client.render;
 
+import buildcraft.api.BCBlocks;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
@@ -23,6 +24,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.api.properties.BuildCraftProperties;
+
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.debug.DebugRenderHelper;
+import buildcraft.lib.misc.VolumeUtil;
+
+import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.tile.TileLaser;
+
 public class AdvDebuggerLaser implements DetachedRenderer.IDetachedRenderer {
     private static final int COLOUR_VISIBLE = 0xFF_99_FF_99;
     private static final int COLOUR_NOT_VISIBLE = 0xFF_11_11_99;
@@ -33,9 +43,9 @@ public class AdvDebuggerLaser implements DetachedRenderer.IDetachedRenderer {
     public AdvDebuggerLaser(TileLaser tile) {
         pos = tile.getPos();
         IBlockState state = tile.getWorld().getBlockState(pos);
-        face = state.getBlock() instanceof BlockLaser
-                ? state.getValue(BuildCraftProperties.BLOCK_FACING_6)
-                : null;
+        face = state.getBlock() == BCBlocks.Silicon.LASER
+            ? state.getValue(BuildCraftProperties.BLOCK_FACING_6)
+            : null;
     }
 
     @SideOnly(Side.CLIENT)

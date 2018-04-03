@@ -6,13 +6,17 @@
 
 package buildcraft.factory.tile;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import buildcraft.api.BCBlocks;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager;
-import buildcraft.api.recipes.IRefineryRecipeManager.ICoolableRecipe;
-import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.factory.block.BlockHeatExchange;
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -263,8 +267,8 @@ public class TileHeatExchangeStart extends TileBC_Neptune implements ITickable, 
         Tank h_in = tankHeatableIn;
         Tank h_out = tileEnd.tankHeatableOut;
         IRefineryRecipeManager reg = BuildcraftRecipeRegistry.refineryRecipes;
-        ICoolableRecipe c_recipe = reg.getCoolableRegistry().getRecipeForInput(c_in.getFluid());
-        IHeatableRecipe h_recipe = reg.getHeatableRegistry().getRecipeForInput(h_in.getFluid());
+        IRefineryRecipeManager.ICoolableRecipe c_recipe = reg.getCoolableRegistry().getRecipeForInput(c_in.getFluid());
+        IRefineryRecipeManager.IHeatableRecipe h_recipe = reg.getHeatableRegistry().getRecipeForInput(h_in.getFluid());
         if (h_recipe == null || c_recipe == null) {
             progressState = TileHeatExchange.EnumProgressState.STOPPING;
             return;

@@ -6,9 +6,13 @@ import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.misc.collect.TypedKeyMap;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.json.SpriteDelegate;
+import buildcraft.lib.misc.collect.TypedKeyMap;
 
 import buildcraft.builders.container.ContainerFillerPlanner;
 import buildcraft.builders.filler.FillerStatementContext;
@@ -19,6 +23,7 @@ public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
 
     public GuiFillerPlanner(ContainerFillerPlanner container) {
         super(container, LOCATION);
+
         BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
         preLoad(jsonGui);
         jsonGui.load();
@@ -36,8 +41,7 @@ public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.addon.inverted);
         properties.put("filler.invert",
-                (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive())
-        );
+            (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
     }
 
     @Override

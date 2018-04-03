@@ -9,6 +9,7 @@ package buildcraft.lib.misc;
 import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +18,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -79,5 +81,15 @@ public class CapUtil {
             throw new IllegalStateException("You must provide your own instances of " + clazz);
         };
         CapabilityManager.INSTANCE.register(clazz, ourStorage, factory);
+    }
+
+    /** Attempts to fetch the given capability from the given provider, or returns null if either of those two are
+     * null. */
+    @Nullable
+    public static <T> T getCapability(ICapabilityProvider provider, Capability<T> capability, EnumFacing facing) {
+        if (provider == null || capability == null) {
+            return null;
+        }
+        return provider.getCapability(capability, facing);
     }
 }

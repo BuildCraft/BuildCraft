@@ -26,6 +26,7 @@ import buildcraft.lib.client.guide.font.FontManager;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
+import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -402,9 +403,9 @@ public class GuiGuide extends GuiScreen {
         }
 
         currentPage.renderFirstPage(minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y,
-                (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
+            (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
         currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x, minY + (int) PAGE_RIGHT_TEXT.y,
-                (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
+            (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
 
         int chapterIndex = 0;
         for (GuideChapter chapter : chapters) {

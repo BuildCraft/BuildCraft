@@ -13,6 +13,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerFiltered;
 import com.google.common.collect.Lists;
@@ -33,15 +34,17 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.craft.IAutoCraft;
 import buildcraft.lib.tile.craft.WorkbenchCrafting;
+import buildcraft.lib.tile.item.ItemHandlerFiltered;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
-        implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
+    implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
 
     /** A redstone engine generates <code> 1 * {@link MjAPI#MJ}</code> per tick. This makes it a lot slower without one
      * powering it. */
@@ -156,7 +159,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
     }
 
     private void createFilters() {
-        if (crafting.getAssumedResult() == null) {
+        if (BCStackHelper.isEmpty(crafting.getAssumedResult())) {
             for (int s = 0; s < invMaterialFilter.getSlots(); s++) {
                 invMaterialFilter.setStackInSlot(s, null);
             }
@@ -167,7 +170,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
         int[] requirements = new int[slotCount];
         for (int s = 0; s < slotCount; s++) {
             ItemStack bptStack = invBlueprint.getStackInSlot(s);
-            if (bptStack != null) {
+            if (BCStackHelper.isEmpty(bptStack)) {
                 boolean foundMatch = false;
                 for (int i = 0; i < uniqueStacks.size(); i++) {
                     if (StackUtil.canMerge(bptStack, uniqueStacks.get(i))) {
@@ -216,6 +219,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
             throw new IllegalStateException("Somehow the balanced formula wasn't perfectly balanced!");
         }
     }
+
     // IMjRedstoneReceiver
 
     @Override

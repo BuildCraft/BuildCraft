@@ -1,0 +1,12 @@
+# folders
+build/*
+run/*
+.gradle/*
+.settings/*
+bin/*
+out/*
+src/autogen/java/*
+
+# files
+.project
+.classpath

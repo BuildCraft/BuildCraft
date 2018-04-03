@@ -475,6 +475,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 if (attached) {
                     return true;
                 }
+                if (attached) {
+                    return true;
+                }
             }
         }
         Pipe pipe = tile.getPipe();

@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
@@ -96,7 +97,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
         profiler.endSection();
         if (tile.frameBox.isInitialized()) {
-            double yOffset = 1;
+            double yOffset = 1 + 4 / 16D;
 
             profiler.startSection("laser");
             if (tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskBreakBlock) {
@@ -116,16 +117,18 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         taskBreakBlock.prevClientPower +
                             (taskBreakBlock.clientPower - taskBreakBlock.prevClientPower) * (double) partialTicks
                     );
-                    yOffset = (double) power / taskBreakBlock.getTarget();
-                    if (yOffset < 0.9) {
-                        yOffset = 1 - yOffset / 0.9;
+                    AxisAlignedBB aabb = tile.getWorld().getBlockState(pos).getBoundingBox(tile.getWorld(), pos);
+                    double value = (double) power / taskBreakBlock.getTarget();
+                    if (value < 0.9) {
+                        value = 1 - value / 0.9;
                     } else {
-                        yOffset = (yOffset - 0.9) / 0.1;
+                        value = (value - 0.9) / 0.1;
                     }
+                    double scaleMin = 1 - (1 - aabb.maxY) - (aabb.maxY - aabb.minY) / 2;
+                    double scaleMax = 1 + 4 / 16D;
+                    yOffset = scaleMin + value * (scaleMax - scaleMin);
                 }
             }
-
-            yOffset += 4 / 16D;
 
             profiler.endStartSection("frame");
             if (tile.clientDrillPos != null && tile.prevClientDrillPos != null) {

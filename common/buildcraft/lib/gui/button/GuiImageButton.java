@@ -14,6 +14,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.GuiUtil;
+
 /** An image button that draws its states downwards, starting at baseU. */
 @SideOnly(Side.CLIENT)
 @Deprecated

@@ -7,7 +7,13 @@
 package buildcraft.lib.gui.widget;
 
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.IInteractionElement;
+import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;

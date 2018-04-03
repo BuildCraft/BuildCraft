@@ -19,6 +19,12 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.core.IStackFilter;
+
+import buildcraft.lib.inventory.AbstractInvItemTransactor;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
+
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -130,9 +136,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
         }
         if (canSet(slot, stack)) {
             ItemStack current = stacks.get(slot);
-            InsertionResult result = inserter.modifyForInsertion(slot,
-                    BCStackHelper.isEmpty(current) ? null : current.copy(),
-                    BCStackHelper.isEmpty(stack) ? null : stack.copy());
+            if (!canSet(slot, current)) {
+                // A bit odd, but can happen if the filter changed
+                return stack;
+            }
+            InsertionResult result = inserter.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)",
@@ -140,6 +148,8 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 CrashReportCategory cat = report.makeCategory("Inventory details");
                 cat.addCrashSection("Existing Item", current);
                 cat.addCrashSection("Inserting Item", stack);
+                cat.addCrashSection("To Set", result.toSet);
+                cat.addCrashSection("To Return", result.toReturn);
                 cat.addCrashSection("Slot", slot);
                 cat.addCrashSection("Checker", checker.getClass());
                 cat.addCrashSection("Inserter", inserter.getClass());

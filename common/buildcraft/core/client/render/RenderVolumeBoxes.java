@@ -41,13 +41,13 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
             if (volumeBox.isEditingBy(player)) {
                 type = BuildCraftLaserManager.MARKER_VOLUME_SIGNAL;
             } else {
-                type =  volumeBox.getLockTargetsStream()
-                        .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
-                        .map(Lock.Target.TargetUsedByMachine.class::cast)
-                        .map(target -> target.type)
-                        .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
-                        .findFirst()
-                        .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
+                type = volumeBox.getLockTargetsStream()
+                    .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
+                    .map(Lock.Target.TargetUsedByMachine.class::cast)
+                    .map(target -> target.type)
+                    .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
+                    .findFirst()
+                    .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
             }
             LaserBoxRenderer.renderLaserBoxDynamic(volumeBox.box, type, bb, false);
 

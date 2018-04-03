@@ -65,13 +65,13 @@ public class TileBuilder extends TileBC_Neptune
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
 
     public final ItemHandlerSimple invSnapshot =
-            itemManager
-                    .addInvHandler("snapshot", 1,
-                            (slot, stack) -> stack.getItem() instanceof ItemSnapshot
-                                    && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
-                            EnumAccess.BOTH, EnumPipePart.VALUES);
+        itemManager
+            .addInvHandler("snapshot", 1,
+                (slot, stack) -> stack.getItem() instanceof ItemSnapshot
+                    && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+                EnumAccess.BOTH, EnumPipePart.VALUES);
     public final ItemHandlerSimple invResources =
-            itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
+        itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
 
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     private boolean canExcavate = true;
@@ -158,7 +158,7 @@ public class TileBuilder extends TileBC_Neptune
             snapshotType = snapshot.getType();
             if (canGetFacing) {
                 rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == world
-                        .getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING)).findFirst().orElse(null);
+                    .getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING)).findFirst().orElse(null);
             }
             if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
@@ -343,7 +343,7 @@ public class TileBuilder extends TileBC_Neptune
         super.readFromNBT(nbt);
         if (nbt.hasKey("path")) {
             path =
-                    NBTUtilBC.readCompoundList(nbt.getTag("path")).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
+                NBTUtilBC.readCompoundList(nbt.getTag("path")).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
         }
         basePoses = NBTUtilBC.readCompoundList(nbt.getTag("basePoses")).map(NBTUtil::getPosFromTag)
             .collect(Collectors.toList());
@@ -352,7 +352,7 @@ public class TileBuilder extends TileBC_Neptune
         if (nbt.hasKey("builder")) {
             updateSnapshot(false);
             Optional.ofNullable(getBuilder())
-                    .ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
+                .ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
         }
     }
 

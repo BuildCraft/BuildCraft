@@ -1,18 +1,21 @@
 package buildcraft.lib.client.guide.loader.entry;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import buildcraft.api.items.BCStackHelper;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.ItemStackKey;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
 

@@ -27,9 +27,9 @@ public class ColourUtil {
     public static final String COLOUR_SPECIAL_START;
 
     public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack =
-            ColourUtil::getTextFormatForBlack;
+        ColourUtil::getTextFormatForBlack;
     public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite =
-            ColourUtil::getTextFormatForWhite;
+        ColourUtil::getTextFormatForWhite;
 
     public static final EnumDyeColor[] COLOURS = EnumDyeColor.values();
 
@@ -130,7 +130,8 @@ public class ColourUtil {
         replaceColourForBlack(colour, with, with);
     }
 
-    private static void replaceColourForBlack(TextFormatting colour, TextFormatting normal, TextFormatting highContrast) {
+    private static void replaceColourForBlack(TextFormatting colour, TextFormatting normal,
+        TextFormatting highContrast) {
         REPLACE_FOR_BLACK[colour.ordinal()] = normal;
         REPLACE_FOR_BLACK_HIGH_CONTRAST[colour.ordinal()] = highContrast;
     }
@@ -139,7 +140,8 @@ public class ColourUtil {
         replaceColourForWhite(colour, with, with);
     }
 
-    private static void replaceColourForWhite(TextFormatting colour, TextFormatting normal, TextFormatting highContrast) {
+    private static void replaceColourForWhite(TextFormatting colour, TextFormatting normal,
+        TextFormatting highContrast) {
         REPLACE_FOR_WHITE[colour.ordinal()] = normal;
         REPLACE_FOR_WHITE_HIGH_CONTRAST[colour.ordinal()] = highContrast;
     }
@@ -179,7 +181,8 @@ public class ColourUtil {
     public static String getTextFullTooltip(EnumDyeColor colour) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertColourToTextFormat(colour);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeColour(colour)
+                + TextFormatting.RESET;
         } else {
             return LocaleUtil.localizeColour(colour);
         }
@@ -205,7 +208,8 @@ public class ColourUtil {
     public static String getTextFullTooltip(EnumFacing face) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertFaceToTextFormat(face);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeFacing(face) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + LocaleUtil.localizeFacing(face)
+                + TextFormatting.RESET;
         } else {
             return LocaleUtil.localizeFacing(face);
         }

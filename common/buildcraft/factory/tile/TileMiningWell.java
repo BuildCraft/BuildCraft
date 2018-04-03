@@ -6,7 +6,18 @@
 
 package buildcraft.factory.tile;
 
+import javax.annotation.Nonnull;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldEventListener;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.factory.block.BlockTube;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
@@ -14,11 +25,26 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.WorldServer;
+import buildcraft.lib.world.WorldEventListenerAdapter;
 
 public class TileMiningWell extends TileMiner {
+    private boolean shouldCheck = true;
+    private final SafeTimeTracker tracker = new SafeTimeTracker(256);
+    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
+        @Override
+        public void notifyBlockUpdate(@Nonnull World world,
+                                      @Nonnull BlockPos pos,
+                                      @Nonnull IBlockState oldState,
+                                      @Nonnull IBlockState newState,
+                                      int flags) {
+            if (pos.getX() == TileMiningWell.this.pos.getX() &&
+                pos.getY() <= TileMiningWell.this.pos.getY() &&
+                pos.getZ() == TileMiningWell.this.pos.getZ()) {
+                shouldCheck = true;
+            }
+        }
+    };
+
     public TileMiningWell() {
         super();
         caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
@@ -27,29 +53,31 @@ public class TileMiningWell extends TileMiner {
     @Override
     protected void mine() {
         if (currentPos != null && canBreak()) {
+            shouldCheck = true;
             long target = BlockUtil.computeBlockBreakPower(world, currentPos);
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 progress = 0;
                 world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
                 BlockUtil.breakBlockAndGetDrops(
-                        (WorldServer) world,
-                        currentPos,
-                        new ItemStack(Items.DIAMOND_PICKAXE),
-                        getOwner()
+                    (WorldServer) world,
+                    currentPos,
+                    new ItemStack(Items.DIAMOND_PICKAXE),
+                    getOwner()
                 ).ifPresent(stacks ->
-                        stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack))
+                    stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack))
                 );
                 nextPos();
-                updateLength();
             } else {
                 if (!world.isAirBlock(currentPos)) {
                     world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
                 }
             }
-        } else {
+        } else if (shouldCheck || tracker.markTimeIfDelay(world)) {
             nextPos();
-            updateLength();
+            if (currentPos == null) {
+                shouldCheck = false;
+            }
         }
     }
 
@@ -66,23 +94,27 @@ public class TileMiningWell extends TileMiner {
                 break;
             }
         }
-        updateLength();
         currentPos = null;
+        updateLength();
     }
 
     @Override
-    protected void initCurrentPos() {
-        if (currentPos == null) {
-            nextPos();
+    public void validate() {
+        super.validate();
+        if (!world.isRemote) {
+            world.addEventListener(worldEventListener);
         }
     }
 
     @Override
     public void invalidate() {
-        if (currentPos != null) {
-            world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
-        }
         super.invalidate();
+        if (!world.isRemote) {
+            world.removeEventListener(worldEventListener);
+            if (currentPos != null) {
+                world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+            }
+        }
     }
 
     @Override

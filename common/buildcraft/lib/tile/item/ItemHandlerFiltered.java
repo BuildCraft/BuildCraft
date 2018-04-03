@@ -1,5 +1,6 @@
 package buildcraft.lib.tile.item;
 
+import buildcraft.api.items.BCStackHelper;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.items.IItemHandler;
@@ -21,7 +22,7 @@ public class ItemHandlerFiltered extends ItemHandlerSimple implements IItemHandl
         this.filter = filter;
         setChecker((slot, stack) -> {
             ItemStack inSlot = filter.getStackInSlot(slot);
-            if (inSlot == null) {
+            if (BCStackHelper.isEmpty(inSlot)) {
                 return emptyIsAnything;
             } else {
                 return StackUtil.canMerge(stack, inSlot);
@@ -29,11 +30,10 @@ public class ItemHandlerFiltered extends ItemHandlerSimple implements IItemHandl
         });
     }
 
-
     @Override
     public ItemStack getFilter(int slot) {
         ItemStack current = getStackInSlot(slot);
-        if (current != null) {
+        if (!BCStackHelper.isEmpty(current)) {
             return current;
         }
         return filter.getStackInSlot(slot);

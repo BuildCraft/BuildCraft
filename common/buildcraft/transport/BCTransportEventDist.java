@@ -7,6 +7,7 @@
 package buildcraft.transport;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -35,5 +36,15 @@ public enum BCTransportEventDist {
     @SideOnly(Side.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Post event) {
         PipeWireRenderer.clearWireCache();
+    }
+
+    @SubscribeEvent
+    public void onBlockPlace(BlockEvent.PlaceEvent event) {
+        //event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
+        //event.setCanceled(true);
     }
 }

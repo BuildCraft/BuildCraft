@@ -1,5 +1,16 @@
 package buildcraft.lib.gui.json;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.inventory.Slot;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.client.model.ResourceLoaderContext;
@@ -21,9 +32,6 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 /** A GUI that is defined (mostly) in a json file. Note that callers generally have to add {@link Slot}'s,
  * {@link ISprite}'s and configure buttons in code - currently this only allows for completely defining simple elements

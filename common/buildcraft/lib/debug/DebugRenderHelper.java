@@ -61,18 +61,18 @@ public enum DebugRenderHelper implements IDetachedRenderer {
         bb.setTranslation(0, 0, 0);
         for (EnumFacing face : EnumFacing.VALUES) {
             MutableQuad quad = ModelUtil.createFace(
-                    face,
-                    new Point3f(
-                            (float) aabb.getCenter().xCoord,
-                            (float) aabb.getCenter().yCoord,
-                            (float) aabb.getCenter().zCoord
-                    ),
-                    new Point3f(
-                            (float) (aabb.maxX - aabb.minX) / 2,
-                            (float) (aabb.maxY - aabb.minY) / 2,
-                            (float) (aabb.maxZ - aabb.minZ) / 2
-                    ),
-                    null
+                face,
+                new Point3f(
+                    (float) aabb.getCenter().xCoord,
+                    (float) aabb.getCenter().yCoord,
+                    (float) aabb.getCenter().zCoord
+                ),
+                new Point3f(
+                    (float) (aabb.maxX - aabb.minX) / 2,
+                    (float) (aabb.maxY - aabb.minY) / 2,
+                    (float) (aabb.maxZ - aabb.minZ) / 2
+                ),
+                null
             );
             quad.lightf(1, 1);
             quad.texFromSprite(ModelLoader.White.INSTANCE);

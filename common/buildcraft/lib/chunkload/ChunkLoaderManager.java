@@ -6,19 +6,27 @@
 
 package buildcraft.lib.chunkload;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.WorldPos;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 
-import javax.annotation.Nonnull;
-import java.util.*;
+import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.BCLib;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.WorldPos;
 
 public class ChunkLoaderManager {
     private static final Map<WorldPos, ForgeChunkManager.Ticket> TICKETS = new HashMap<>();
@@ -29,16 +37,14 @@ public class ChunkLoaderManager {
      */
     public static <T extends TileEntity & IChunkLoadingTile> void loadChunksForTile(@Nonnull T tile) {
         if (TICKETS.containsKey(new WorldPos(tile))) {
-            // safety check in case we already have one
             updateChunksFor(tile);
             return;
         }
         ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(
-                BCLib.INSTANCE,
-                tile.getWorld(),
-                ForgeChunkManager.Type.NORMAL
+            BCLib.INSTANCE,
+            tile.getWorld(),
+            ForgeChunkManager.Type.NORMAL
         );
-
         if (ticket == null) {
             BCLog.logger.warn("Chunkloading failed, most likely the limit was reached");
             return;

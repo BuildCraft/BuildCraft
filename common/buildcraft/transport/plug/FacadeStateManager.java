@@ -6,6 +6,21 @@
 
 package buildcraft.transport.plug;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
+
+import javax.annotation.Nonnull;
+
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.*;
@@ -208,7 +223,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
             if (result.getType() != EnumActionResult.PASS && result.getType() != EnumActionResult.SUCCESS) {
                 if (DEBUG) {
                     BCLog.logger.info("[transport.facade] Disallowed block " + block.getRegistryName() + " because "
-                            + result.getResult());
+                        + result.getResult());
                 }
                 continue;
             } else if (DEBUG) {
@@ -232,7 +247,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     } else {
                         if (DEBUG) {
                             BCLog.logger.info(
-                                    "[transport.facade] Disallowed state " + state + " because " + result.getResult());
+                                "[transport.facade] Disallowed state " + state + " because " + result.getResult());
                         }
                         continue;
                     }

@@ -25,6 +25,80 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+        /*
+        GuiRecipeBookPhantom book;
+        try {
+            book = new GuiRecipeBookPhantom(this::sendRecipe);
+        } catch (ReflectiveOperationException e) {
+            BCLog.logger.warn("[silicon.gui] An exception was thrown while creating the recipe book gui!", e);
+            book = null;
+        }
+        recipeBook = book;
+        mainGui.shownElements.add(new LedgerHelp(mainGui, true));
+    }
+
+    private void sendRecipe(IRecipe recipe) {
+        List<ItemStack> stacks = new ArrayList<>(9);
+
+        int maxX = recipe instanceof IShapedRecipe ? ((IShapedRecipe) recipe).getRecipeWidth() : 3;
+        int maxY = recipe instanceof IShapedRecipe ? ((IShapedRecipe) recipe).getRecipeHeight() : 3;
+        int offsetX = maxX == 1 ? 1 : 0;
+        int offsetY = maxY == 1 ? 1 : 0;
+        List<Ingredient> ingredients = recipe.getIngredients();
+        if (ingredients.isEmpty()) {
+            return;
+        }
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
+                if (x < offsetX || y < offsetY) {
+                    stacks.add(ItemStack.EMPTY);
+                    continue;
+                }
+                int i = x - offsetX + (y - offsetY) * maxX;
+                if (i >= ingredients.size() || x - offsetX >= maxX) {
+                    stacks.add(ItemStack.EMPTY);
+                } else {
+                    Ingredient ing = ingredients.get(i);
+                    ItemStack[] matching = ing.getMatchingStacks();
+                    if (matching.length >= 1) {
+                        stacks.add(matching[0]);
+                    } else {
+                        stacks.add(ItemStack.EMPTY);
+                    }
+                }
+            }
+        }
+
+        container.sendSetPhantomSlots(container.tile.invBlueprint, stacks);
+    }
+
+    @Override
+    protected boolean shouldAddHelpLedger() {
+        // Don't add it on the left side because it clashes with the recipe book
+        return false;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        widthTooNarrow = this.width < SIZE_X + 176;
+        if (recipeBook != null) {
+            InventoryCrafting invCraft = container.tile.getWorkbenchCrafting();
+            recipeBook.func_194303_a(width, height, mc, widthTooNarrow, invCraft);
+            guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
+            recipeButton =
+                new GuiButtonImage(10, guiLeft + 5, height / 2 - 90, 20, 18, 0, 168, 19, VANILLA_CRAFTING_TABLE);
+            buttonList.add(this.recipeButton);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (recipeBook != null) {
+            recipeBook.tick();
+        }
+        */
     }
 
     @Override

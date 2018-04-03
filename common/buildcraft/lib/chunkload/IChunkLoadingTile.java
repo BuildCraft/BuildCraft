@@ -6,7 +6,8 @@
 
 package buildcraft.lib.chunkload;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 

@@ -67,6 +67,11 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+task force_release_version {
+    // Provided to allow changing the version number from "SNAPSHOT" or "ABCD1265" (a git commit hash) to the actual version.
+    // The code for this is below.
+}
+
 minecraft {
     version = config.mc_version + "-" + config.forge_version
     runDir = "run"
@@ -85,16 +90,31 @@ minecraft {
     // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
     replace "(gradle_replace_mcversion,)", "[" + version + "]"
     replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
+    def isFullBuild = gradle.startParameter.taskNames.contains("force_release_version")
 
     // Git versioning stuffs
     if (grgit != null) {
-        def repo = grgit.open()
+        def repo = grgit.open(dir: "$projectDir")
         replace "\${git_commit_hash}", repo.head().id
         // This is very ugly: we need 7(!) \ to produce a single \ in the final one. 
         replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
+        if (!isFullBuild) {
+            project.version += "-" + repo.head().id.toString().substring(0, 12)
+        }
+    } else {
+        if (!isFullBuild) {
+            project.version += "-SNAPSHOT"
+        }
     }
+
+    // replacing stuff in the source
+    replace "\$version", project.version
+    replace "\${mcversion}", version
+    // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
+    replace "(gradle_replace_mcversion,)", "[" + version + "]"
+    replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
 }
 
 // configure  the source folders
@@ -103,7 +123,8 @@ sourceSets {
         java {
             srcDir "common"
             srcDir "common_old_license"
-            srcDir "src/autogen/java"
+            srcDir "sub_projects/expression/src/main/java"
+            srcDir "sub_projects/expression/src/autogen/java"
             // srcDir "src_old_license"
         }
         resources {
@@ -117,8 +138,13 @@ sourceSets {
             srcDir "BuildCraftAPI/api"
         }
     }
+    test {
+        java {
+            srcDir "src/test/java"
+            srcDir "sub_projects/expression/src/test/java"
+        }
+    }
 }
-
 
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
     checkstyle {
@@ -134,6 +160,23 @@ if (gradle.startParameter.taskNames.contains("checkstyle")) {
     tasks["checkstyleMain"].enabled = true
     tasks["checkstyleTest"].enabled = false
 }
+
+task setupSubProjectExpression(type: Exec) {
+    workingDir "sub_projects/expression"
+    // Obviously a problem with this is that we need to create
+    // a new gradle instance for every subproject :/
+    // How bad is it to do both tasks at once?
+    // just no point really...
+    commandLine './gradlew', 'generateSources'
+}
+
+task setupSubProjects(dependsOn: setupSubProjectExpression) {
+    // Just an inter-dependency task
+}
+
+eclipseClasspath.dependsOn setupSubProjects
+ideaModule.dependsOn setupSubProjects
+compileJava.dependsOn setupSubProjects
 
 runClient.jvmArgs += "-Dbuildcraft.dev=true"
 for (String s :"-XX:+UseG1GC -Xmx2G -Xms2G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M".split(" ")) {
@@ -277,6 +320,25 @@ task libSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     }
 }
 
+task libExpressionJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = new File(libsDir, "misc")
+    appendix = "libexpression"
+
+    from(project.ext.jarFile) {
+        includes.addAll(["buildcraft/lib/expression/**", "LICENSE**"])
+    }
+}
+
+task libExpressionSrcJar(type: Jar, dependsOn: [reobfJar, unzipSourceJar]) {
+    destinationDir = modulesDirSrc
+    appendix = "libexpression"
+    classifier = "sources"
+
+    from (unzippedSourceJar) {
+        includes.addAll(["buildcraft/lib/expression/**", "LICENSE**"])
+    }
+}
+
 task coreJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = modulesDir
     appendix = "core"
@@ -411,6 +473,7 @@ artifacts {
     archives transportJar
     archives roboticsJar
     archives allJar
+    archives libExpressionJar
 }
 
 def sftp(String subPath, Closure antFileset = {}) {

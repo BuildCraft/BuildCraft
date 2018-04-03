@@ -138,25 +138,25 @@ public class BCEnergyFluids {
 
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
-        int b = (color) & 0xFF;
+        int b = color & 0xFF;
 
-        for (MapColor mapColor  : MapColor.COLORS) {
-            if (mapColor  == null || mapColor .colorValue == 0) {
+        for (MapColor mapColor : MapColor.COLORS) {
+            if (mapColor == null || mapColor.colorValue == 0) {
                 continue;
             }
-            int mr = (mapColor .colorValue >> 16) & 0xFF;
-            int mg = (mapColor .colorValue >> 8) & 0xFF;
-            int mb = (mapColor .colorValue) & 0xFF;
+            int mr = (mapColor.colorValue >> 16) & 0xFF;
+            int mg = (mapColor.colorValue >> 8) & 0xFF;
+            int mb = mapColor.colorValue & 0xFF;
 
             int dr = mr - r;
             int dg = mg - g;
             int db = mb - b;
 
-            int difference = dr * dr + dg * dg * db + db;
+            int difference = dr * dr + dg * dg + db * db;
 
             if (difference < currentDifference) {
                 currentDifference = difference;
-                bestMapColor = mapColor ;
+                bestMapColor = mapColor;
             }
         }
         return bestMapColor;

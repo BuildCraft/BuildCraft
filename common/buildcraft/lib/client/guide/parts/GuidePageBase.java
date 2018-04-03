@@ -71,7 +71,8 @@ public abstract class GuidePageBase extends GuidePart {
 
     public abstract List<GuideChapter> getChapters();
 
-    protected GuidePart getClicked(Iterable<GuidePart> iterable, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
+    protected GuidePart getClicked(Iterable<GuidePart> iterable, int x, int y, int width, int height, int mouseX,
+        int mouseY, int index) {
         PagePosition pos = new PagePosition(0, 0);
         for (GuidePart part : iterable) {
             pos = part.renderIntoArea(x, y, width, height, pos, -1);
@@ -130,12 +131,14 @@ public abstract class GuidePageBase extends GuidePart {
     }
 
     @Override
-    public final PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public final PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
         // NO-OP, use the below!
         return current;
     }
 
-    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton, int index, boolean isEditing) {
+    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton,
+        int index, boolean isEditing) {
         // Even => first page, test page back button and first page text clicks
         if (index % 2 == 0) {
             if (index != 0) {

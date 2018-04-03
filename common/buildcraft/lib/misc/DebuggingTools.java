@@ -6,14 +6,14 @@
 
 package buildcraft.lib.misc;
 
-import buildcraft.lib.world.WorldEventListenerAdapter;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+
+import buildcraft.lib.world.WorldEventListenerAdapter;
 
 public class DebuggingTools {
     public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.world");
@@ -49,6 +49,5 @@ public class DebuggingTools {
                 }
             }
         }
-
     }
 }

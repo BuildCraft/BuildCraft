@@ -1,14 +1,15 @@
 package buildcraft.lib.gui;
 
+import java.io.IOException;
+import java.util.function.Function;
+
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.ledger.LedgerHelp;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
-
-import java.io.IOException;
-import java.util.function.Function;
 
 /** Reference implementation for a gui that delegates to a {@link BuildCraftGui} for most of its functionality. */
 public class GuiScreenBuildCraft extends GuiScreen {

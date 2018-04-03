@@ -14,7 +14,6 @@ import java.util.List;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import net.minecraft.client.renderer.VertexBuffer;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -45,31 +44,31 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
         }
         List<ChunkPos> chunkPoses = new ArrayList<>(ChunkLoaderManager.getChunksToLoad(tile));
         chunkPoses.sort(
-                Comparator.comparingDouble(chunkPos ->
-                        -player.getPositionEyes(partialTicks).distanceTo(
-                                new Vec3d(
-                                        chunkPos.getXStart() + 0.5 + (chunkPos.getXEnd() - chunkPos.getXStart()) / 2,
-                                        player.getPositionEyes(partialTicks).yCoord,
-                                        chunkPos.getZStart() + 0.5 + (chunkPos.getZEnd() - chunkPos.getZStart()) / 2
-                                )
-                        )
+            Comparator.comparingDouble(chunkPos ->
+                -player.getPositionEyes(partialTicks).distanceTo(
+                    new Vec3d(
+                        chunkPos.getXStart() + 0.5 + (chunkPos.getXEnd() - chunkPos.getXStart()) / 2,
+                        player.getPositionEyes(partialTicks).yCoord,
+                        chunkPos.getZStart() + 0.5 + (chunkPos.getZEnd() - chunkPos.getZStart()) / 2
+                    )
                 )
+            )
         );
         GlStateManager.enableBlend();
         VertexBuffer bb = Tessellator.getInstance().getBuffer();
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         for (ChunkPos chunkPos : chunkPoses) {
             DebugRenderHelper.renderAABB(
-                    bb,
-                    new AxisAlignedBB(
-                            chunkPos.getXStart() + 0.5D,
-                            tile.frameBox.min().getY() + 0.5D,
-                            chunkPos.getZStart() + 0.5D,
-                            chunkPos.getXEnd() + 0.5D,
-                            tile.frameBox.max().getY() + 0.5D,
-                            chunkPos.getZEnd() + 0.5D
-                    ),
-                    COLOUR_CHUNK
+                bb,
+                new AxisAlignedBB(
+                    chunkPos.getXStart() + 0.5D,
+                    tile.frameBox.min().getY() + 0.5D,
+                    chunkPos.getZStart() + 0.5D,
+                    chunkPos.getXEnd() + 0.5D,
+                    tile.frameBox.max().getY() + 0.5D,
+                    chunkPos.getZEnd() + 0.5D
+                ),
+                COLOUR_CHUNK
             );
         }
         Tessellator.getInstance().draw();

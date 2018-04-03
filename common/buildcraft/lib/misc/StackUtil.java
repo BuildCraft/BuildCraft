@@ -6,6 +6,14 @@
 
 package buildcraft.lib.misc;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.items.IList;
 import buildcraft.api.recipes.StackDefinition;
@@ -16,13 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {
@@ -69,12 +71,12 @@ public class StackUtil {
     }
 
     /** Checks that passed stack meets stack definition requirements */
-    public static boolean contains(StackDefinition stackDefinition, ItemStack stack) {
+    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull ItemStack stack) {
         return !BCStackHelper.isEmpty(stack) && stackDefinition.filter.matches(stack) && stack.stackSize >= stackDefinition.count;
     }
 
     /** Checks that passed stack definition acceptable for stack collection */
-    public static boolean contains(StackDefinition stackDefinition, List<ItemStack> stacks) {
+    public static boolean contains(@Nonnull StackDefinition stackDefinition, @Nonnull List<ItemStack> stacks) {
         return stacks.stream().anyMatch((stack) -> contains(stackDefinition, stack));
     }
 
@@ -128,7 +130,6 @@ public class StackUtil {
         }
 
         return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
-
     }
 
     /** This doesn't take into account stack sizes.
@@ -186,7 +187,7 @@ public class StackUtil {
                 for (int id : idBase) {
                     for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
                         if (comparison.getItem() == itemstack.getItem()
-                                && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                            && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
                                 || comparison.getItemDamage() == itemstack.getItemDamage())) {
                             return true;
                         }
@@ -202,7 +203,9 @@ public class StackUtil {
         if (oreIDs.length > 0) {
             for (int id : oreIDs) {
                 for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                    if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+                    if (comparison.getItem() == itemstack.getItem()
+                        && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                            || comparison.getItemDamage() == itemstack.getItemDamage())) {
                         return true;
                     }
                 }

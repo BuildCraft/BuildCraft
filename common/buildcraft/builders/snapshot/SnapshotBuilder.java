@@ -24,6 +24,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
@@ -366,14 +367,15 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         tile.getWorldBC().theProfiler.startSection("do tasks");
         long max = Math.min(
-                (long) (
-                        MAX_POWER_PER_TICK *
-                                (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK / 10) /
-                                (tile.getBattery().getCapacity() * 2)
-                ),
-                MAX_POWER_PER_TICK
+            (long) (
+                MAX_POWER_PER_TICK *
+                    (double) (tile.getBattery().getStored() + MAX_POWER_PER_TICK / 10) /
+                    (tile.getBattery().getCapacity() * 2)
+            ),
+            MAX_POWER_PER_TICK
         );
         tile.getWorldBC().theProfiler.startSection("break");
+
         if (!breakTasks.isEmpty()) {
             for (Iterator<BreakTask> iterator = breakTasks.iterator(); iterator.hasNext(); ) {
                 BreakTask breakTask = iterator.next();
@@ -384,22 +386,22 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                 breakTask.power += tile.getBattery().extractPower(
                     0,
                     Math.min(
-                            target - breakTask.power,
-                            max / breakTasks.size()
+                        target - breakTask.power,
+                        max / breakTasks.size()
                     )
                 );
                 if (breakTask.power >= target) {
                     tile.getWorldBC().theProfiler.startSection("work");
                     tile.getWorldBC().sendBlockBreakProgress(
-                            breakTask.pos.hashCode(),
-                            breakTask.pos,
-                            -1
+                        breakTask.pos.hashCode(),
+                        breakTask.pos,
+                        -1
                     );
                     Optional<List<ItemStack>> stacks = BlockUtil.breakBlockAndGetDrops(
-                            (WorldServer) tile.getWorldBC(),
-                            breakTask.pos,
-                            new ItemStack(Items.DIAMOND_PICKAXE),
-                            tile.getOwner()
+                        (WorldServer) tile.getWorldBC(),
+                        breakTask.pos,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        tile.getOwner()
                     );
                     tile.getWorldBC().theProfiler.endSection();
                     if (!stacks.isPresent()) {
@@ -429,8 +431,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                 placeTask.power += tile.getBattery().extractPower(
                     0,
                     Math.min(
-                            target - placeTask.power,
-                            max / placeTasks.size()
+                        target - placeTask.power,
+                        max / placeTasks.size()
                     )
                 );
                 if (placeTask.power >= target) {

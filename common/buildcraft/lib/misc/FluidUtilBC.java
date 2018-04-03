@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FluidUtilBC {
+
     public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
         FluidStack potential = tank.drain(tank.getFluidAmount(), false);
         int drained = 0;
@@ -59,7 +60,7 @@ public class FluidUtilBC {
                 String strWorking = StringUtilBC.fluidToString(working);
                 String strActual = StringUtilBC.fluidToString(actuallyDrained);
                 throw new IllegalStateException("Bad tank! Could drain " + strWorking + " but only drained " + strActual
-                        + "( tank " + tank.getClass() + ")");
+                    + "( tank " + tank.getClass() + ")");
             }
         }
     }

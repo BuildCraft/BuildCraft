@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -46,9 +47,12 @@ public final class RegistrationHelper {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void registerModels() {
-        if (items.isEmpty()) throw new NullPointerException();
-        items.stream().filter(item -> item instanceof IItemBuildCraft).forEach(item -> ((IItemBuildCraft) item).registerVariants());
+    public final void onModelRegistry(ModelRegistryEvent event) {
+        for (Item item : items) {
+            if (item instanceof IItemBuildCraft) {
+                ((IItemBuildCraft) item).registerVariants();
+            }
+        }
     }
 
     @Nullable

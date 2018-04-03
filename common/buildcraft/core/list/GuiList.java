@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE =
-            new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
+        new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
     private static final int SIZE_X = 176, SIZE_Y = 191;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_HIGHLIGHT = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 16);
@@ -114,19 +114,21 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
             GuiImageButton buttonPrecise =
-                    new GuiImageButton(mainGui, bOff, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
+                new GuiImageButton(mainGui, bOff, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
             buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt"));
             buttonPrecise.setBehaviour(IButtonBehaviour.TOGGLE);
             mainGui.shownElements.add(buttonPrecise);
 
             GuiImageButton buttonType =
-                    new GuiImageButton(mainGui, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
+                new GuiImageButton(mainGui, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
+
             buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata"));
             buttonType.setBehaviour(IButtonBehaviour.TOGGLE);
             mainGui.shownElements.add(buttonType);
 
             GuiImageButton buttonMaterial =
-                    new GuiImageButton(mainGui, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
+                new GuiImageButton(mainGui, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
+
             buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict"));
             buttonMaterial.setBehaviour(IButtonBehaviour.TOGGLE);
             mainGui.shownElements.add(buttonMaterial);
@@ -217,7 +219,6 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             exampleList.clear();
         }
     }
-
     private List<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
         Map<ListMatchHandler.Type, List<ItemStack>> exampleList =
                 exampleCache.computeIfAbsent(lineId, k -> new EnumMap<>(ListMatchHandler.Type.class));

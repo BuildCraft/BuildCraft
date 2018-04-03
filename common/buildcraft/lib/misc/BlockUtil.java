@@ -6,14 +6,20 @@
 
 package buildcraft.lib.misc;
 
-import buildcraft.api.core.BuildCraftAPI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import buildcraft.api.items.BCStackHelper;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.compat.CompatManager;
-import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.world.SingleBlockAccess;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -47,9 +53,14 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.mj.MjAPI;
+
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
 
@@ -64,12 +75,14 @@ public final class BlockUtil {
             return null;
         }
 
-        List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
+        // Use the (old) method as not all mods have converted to the new one
+        // (and the old method calls the new one internally)
+        List<ItemStack> drops = block.getDrops(world, pos, state, 0);
         EntityPlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, pos);
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
+        float dropChance = ForgeEventFactory.fireBlockHarvesting(drops, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         List<ItemStack> returnList = Lists.newArrayList();
-        for (ItemStack s : dropsList) {
+        for (ItemStack s : drops) {
             if (world.rand.nextFloat() <= dropChance) {
                 returnList.add(s);
             }
@@ -178,6 +191,7 @@ public final class BlockUtil {
 
     public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
         AxisAlignedBB aabb = new AxisAlignedBB(pos).expandXyz(1);
+
         Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
         if (!harvestBlock(world, pos, tool, owner)) {
             if (!destroyBlock(world, pos, tool, owner)) {
@@ -191,6 +205,7 @@ public final class BlockUtil {
             }
             TransactorEntityItem transactor = new TransactorEntityItem(entity);
             ItemStack stack;
+
             while (!BCStackHelper.isEmpty((stack = transactor.extract(StackFilter.ALL, 0, Integer.MAX_VALUE, false)))) {
                 stacks.add(stack);
             }

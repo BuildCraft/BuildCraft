@@ -4,6 +4,16 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.gui;
 
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.vecmath.Vector3d;
+
 import buildcraft.api.BCItems;
 import buildcraft.api.items.BCStackHelper;
 import buildcraft.core.item.ItemPaintbrush_BC8;
@@ -12,7 +22,12 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.robotics.container.ContainerZonePlanner;
 import buildcraft.robotics.zone.*;
-import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
+
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -24,20 +39,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
-
-import javax.vecmath.Vector3d;
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");
@@ -75,7 +76,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
     private ItemStack getPaintbrush() {
         ItemStack currentStack = getCurrentStack();
-        if (!BCStackHelper.isEmpty(currentStack) && currentStack.getItem() instanceof ItemPaintbrush_BC8) {
+        if (!BCStackHelper.isEmpty(currentStack) && currentStack.getItem() == BCItems.Core.PAINTBRUSH) {
             return currentStack;
         }
         return null;
@@ -84,7 +85,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private ItemPaintbrush_BC8.Brush getPaintbrushBrush() {
         ItemStack paintbrush = getPaintbrush();
         if (paintbrush != null) {
-            ItemPaintbrush_BC8.Brush brush = ((ItemPaintbrush_BC8)BCItems.Core.PAINTBRUSH).getBrushFromStack(paintbrush);
+            ItemPaintbrush_BC8.Brush brush = ((ItemPaintbrush_BC8) BCItems.Core.PAINTBRUSH).getBrushFromStack(paintbrush);
             if (brush.colour != null) {
                 return brush;
             }
@@ -212,20 +213,20 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             int chunkX = (int) Math.round(rayPosition.getX()) >> 4;
             int chunkZ = (int) Math.round(rayPosition.getZ()) >> 4;
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                    mc.world,
-                    new ZonePlannerMapChunkKey(
-                            new ChunkPos(chunkX, chunkZ),
-                            mc.world.provider.getDimension(),
-                            container.tile.getLevel()
-                    )
+                mc.world,
+                new ZonePlannerMapChunkKey(
+                    new ChunkPos(chunkX, chunkZ),
+                    mc.world.provider.getDimension(),
+                    container.tile.getLevel()
+                )
             );
             if (zonePlannerMapChunk != null) {
                 BlockPos pos = new BlockPos(
-                        Math.round(rayPosition.getX()) - (chunkX << 4),
-                        Math.round(rayPosition.getY()),
-                        Math.round(rayPosition.getZ()) - (chunkZ << 4)
+                    Math.round(rayPosition.getX()) - (chunkX << 4),
+                    Math.round(rayPosition.getY()),
+                    Math.round(rayPosition.getZ()) - (chunkZ << 4)
                 );
-                MapColourData data = zonePlannerMapChunk.getData(pos.getX(), pos.getZ());
+                ZonePlannerMapChunk.MapColourData data = zonePlannerMapChunk.getData(pos.getX(), pos.getZ());
                 if (data != null && data.posY >= pos.getY()) {
                     found = new BlockPos(pos.getX() + (chunkX << 4), data.posY, pos.getZ() + (chunkZ << 4));
                     break;
@@ -258,7 +259,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             );
             BlockPos pos = null;
             if (zonePlannerMapChunk != null) {
-                MapColourData data = zonePlannerMapChunk.getData(posX, posZ);
+                ZonePlannerMapChunk.MapColourData data = zonePlannerMapChunk.getData(posX, posZ);
                 if (data != null) {
                     pos = new BlockPos(posX, data.posY, posZ);
                 }
@@ -323,15 +324,15 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int maxChunkZ = (posZ >> 4) + 8;
         // noinspection SuspiciousNameCombination
         List<ChunkPos> chunkPosBounds = Stream.of(
-                Pair.of(minScreenX, minScreenY),
-                Pair.of(minScreenX, maxScreenY),
-                Pair.of(maxScreenX, minScreenY),
-                Pair.of(maxScreenX, maxScreenY)
+            Pair.of(minScreenX, minScreenY),
+            Pair.of(minScreenX, maxScreenY),
+            Pair.of(maxScreenX, minScreenY),
+            Pair.of(maxScreenX, maxScreenY)
         )
-                .map(p -> rayTrace(p.getLeft(), p.getRight()))
-                .filter(Objects::nonNull)
-                .map(ChunkPos::new)
-                .collect(Collectors.toList());
+            .map(p -> rayTrace(p.getLeft(), p.getRight()))
+            .filter(Objects::nonNull)
+            .map(ChunkPos::new)
+            .collect(Collectors.toList());
         for (ChunkPos chunkPos : chunkPosBounds) {
             if (chunkPos.chunkXPos < minChunkX) {
                 minChunkX = chunkPos.chunkXPos;
@@ -365,22 +366,22 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         BlockPos found = null;
         int foundColor = 0;
         if (Mouse.getX() >= minScreenX &&
-                Mouse.getY() <= minScreenY &&
-                Mouse.getX() <= maxScreenX &&
-                Mouse.getY() >= maxScreenY) {
+            Mouse.getY() <= minScreenY &&
+            Mouse.getX() <= maxScreenX &&
+            Mouse.getY() >= maxScreenY) {
             found = rayTrace(Mouse.getX(), Mouse.getY());
         }
         if (found != null) {
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                    mc.world,
-                    new ZonePlannerMapChunkKey(
-                            new ChunkPos(found),
-                            mc.world.provider.getDimension(),
-                            container.tile.getLevel()
-                    )
+                mc.world,
+                new ZonePlannerMapChunkKey(
+                    new ChunkPos(found),
+                    mc.world.provider.getDimension(),
+                    container.tile.getLevel()
+                )
             );
             if (zonePlannerMapChunk != null) {
-                MapColourData data = zonePlannerMapChunk.getData(found.getX(), found.getZ());
+                ZonePlannerMapChunk.MapColourData data = zonePlannerMapChunk.getData(found.getX(), found.getZ());
                 if (data != null) {
                     foundColor = data.colour;
                 }
@@ -440,7 +441,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                         )
                                 );
                                 if (zonePlannerMapChunk != null) {
-                                    MapColourData data = zonePlannerMapChunk.getData(blockX, blockZ);
+                                    ZonePlannerMapChunk.MapColourData data = zonePlannerMapChunk.getData(blockX, blockZ);
                                     if (data != null) {
                                         height = data.posY;
                                     } else {

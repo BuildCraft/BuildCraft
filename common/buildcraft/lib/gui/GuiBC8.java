@@ -6,14 +6,10 @@
 
 package buildcraft.lib.gui;
 
-import buildcraft.api.core.render.ISprite;
-import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.gui.json.InventorySlotHolder;
-import buildcraft.lib.gui.ledger.LedgerHelp;
-import buildcraft.lib.gui.ledger.LedgerOwnership;
-import buildcraft.lib.gui.pos.GuiRectangle;
-import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.misc.GuiUtil;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -21,9 +17,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
+import buildcraft.api.core.render.ISprite;
+
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
+import buildcraft.lib.gui.json.InventorySlotHolder;
+import buildcraft.lib.gui.ledger.LedgerHelp;
+import buildcraft.lib.gui.ledger.LedgerOwnership;
+import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.misc.GuiUtil;
 
 /** Future rename: "GuiContainerBuildCraft" */
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {

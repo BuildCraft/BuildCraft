@@ -19,6 +19,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import buildcraft.lib.item.ItemDebugger;
+
 public class ClientDebuggables {
     public static final List<String> SERVER_LEFT = new ArrayList<>();
     public static final List<String> SERVER_RIGHT = new ArrayList<>();
@@ -27,10 +29,9 @@ public class ClientDebuggables {
     public static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.gameSettings.reducedDebugInfo ||
-                mc.player.hasReducedDebug() ||
-                !mc.player.capabilities.isCreativeMode ||
-                !mc.gameSettings.showDebugInfo ||
-                !ItemDebugger.isShowDebugInfo(mc.player)) {
+            mc.player.hasReducedDebug() ||
+            !mc.gameSettings.showDebugInfo ||
+            !ItemDebugger.isShowDebugInfo(mc.player)) {
             return null;
         }
         if (mouseOver == null) {

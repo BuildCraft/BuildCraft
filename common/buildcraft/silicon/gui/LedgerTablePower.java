@@ -13,11 +13,13 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 
+import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileLaserTableBase;
 
 public class LedgerTablePower extends Ledger_Neptune {

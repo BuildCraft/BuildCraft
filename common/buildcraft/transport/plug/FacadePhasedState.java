@@ -1,5 +1,7 @@
 package buildcraft.transport.plug;
 
+import javax.annotation.Nullable;
+
 import buildcraft.api.facades.IFacadePhasedState;
 import buildcraft.api.facades.IFacadeState;
 import buildcraft.lib.misc.MessageUtil;
@@ -10,8 +12,6 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-
-import javax.annotation.Nullable;
 
 public class FacadePhasedState implements IFacadePhasedState {
     public final FacadeBlockStateInfo stateInfo;
@@ -47,9 +47,9 @@ public class FacadePhasedState implements IFacadePhasedState {
             nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
         } catch (Throwable t) {
             throw new IllegalStateException("Writing facade block state"//
-                    + "\n\tState = " + stateInfo//
-                    + "\n\tBlock = " + stateInfo.state.getBlock() + "\n\tBlock Class = "
-                    + stateInfo.state.getBlock().getClass(), t);
+                + "\n\tState = " + stateInfo//
+                + "\n\tBlock = " + stateInfo.state.getBlock() + "\n\tBlock Class = "
+                + stateInfo.state.getBlock().getClass(), t);
         }
         if (activeColour != null) {
             nbt.setTag("activeColour", NBTUtilBC.writeEnum(activeColour));

@@ -12,7 +12,6 @@ import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 
-import buildcraft.lib.misc.ColourUtil;
 import net.minecraft.util.StringUtils;
 
 import buildcraft.api.core.BCLog;
@@ -21,6 +20,7 @@ import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.entry.PageEntryType;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.misc.ColourUtil;
 
 public class PageEntry<T> {
 
@@ -59,7 +59,7 @@ public class PageEntry<T> {
             }
         } else if (!StringUtils.isNullOrEmpty(entry.itemStack)) {
             BCLog.logger.warn(
-                    "[lib.guide] Invalid page entry: must only specify either 'item_stack' or 'source', but not both!");
+                "[lib.guide] Invalid page entry: must only specify either 'item_stack' or 'source', but not both!");
             return null;
         }
 
@@ -78,7 +78,7 @@ public class PageEntry<T> {
             BCLog.logger.warn("[lib.guide] Invalid page entry: a page is not specified!SSS");
             return null;
         }
-        return new PageEntry<>(title, entry.page, entry.typeTags, type, value);
+        return new PageEntry<T>(title, entry.page, entry.typeTags, type, value);
     }
 
     private PageEntry(String title, String page, JsonTypeTags typeTags, PageEntryType<T> entryType, T value) {

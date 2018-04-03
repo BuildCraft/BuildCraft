@@ -1,4 +1,19 @@
 
+<<<<<<< HEAD
 Bug fixes:
 
 * [#4031] Tanks that disallow connections via the new canConnectTo(tank) method doesn't render properly.
+=======
+Improvements:
+
+* Item pipes now send the item all the way into a block, rather than stopping when then item is half-way in.
+
+Ported content:
+
+* The stripes pipe can now extend and retract pipes.
+
+Bug fixes:
+
+* [#4031] Tanks that disallow connections via the new canConnectTo(tank) method doesn't render properly.
+* [#4067] The heat exchanger sometimes crashes when looking around for adjacent heat exchangers.
+>>>>>>> BuildCraft/8.0.x

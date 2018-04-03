@@ -24,6 +24,23 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 
+import buildcraft.api.inventory.IItemHandlerFiltered;
+import buildcraft.api.items.IList;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.StatementParameterItemStack;
+
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.ObjectUtilBC;
+import buildcraft.lib.misc.StackUtil;
+
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
+
 import java.util.Locale;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
@@ -54,7 +71,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container,
-                                   IStatementParameter[] parameters) {
+        IStatementParameter[] parameters) {
         IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
         if (itemHandler == null) {
             return false;

@@ -9,10 +9,14 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.tiles.IControllable.Mode;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
+import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
+import buildcraft.lib.misc.collect.TypedKeyMap;
 
 import buildcraft.builders.container.ContainerFiller;
 import buildcraft.builders.filler.FillerStatementContext;
@@ -25,6 +29,7 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
 
     public GuiFiller(ContainerFiller container) {
         super(container, LOCATION);
+
         BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
         preLoad(jsonGui);
         jsonGui.load();
@@ -51,13 +56,13 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.isInverted());
         properties.put("filler.invert",
-                (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
+            (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
 
         context.put_b("filler.excavate", container.tile::canExcavate);
         properties.put("filler.excavate", IButtonBehaviour.TOGGLE);
         properties.put("filler.excavate", container.tile.canExcavate());
         properties.put("filler.excavate",
-                (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive()));
+            (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive()));
     }
 
     @Override

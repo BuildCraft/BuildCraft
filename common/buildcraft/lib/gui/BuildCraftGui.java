@@ -1,5 +1,24 @@
 package buildcraft.lib.gui;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.DoubleSupplier;
+
+import gnu.trove.set.hash.TIntHashSet;
+
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import buildcraft.lib.gui.config.GuiConfigManager;
@@ -9,22 +28,6 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.misc.GuiUtil;
-import gnu.trove.set.hash.TIntHashSet;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.DoubleSupplier;
 
 /** A gui element that allows for easy implementation of an actual {@link GuiScreen} class.
  * <p>
@@ -120,46 +123,21 @@ public class BuildCraftGui {
     private static DoubleSupplier[] getGuiSize(GuiContainer gui) {
         DoubleSupplier[] sizes = new DoubleSupplier[4];
         //guiLeft
-        sizes[0] = () -> {
-            try {
-                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui,"field_147003_i", "guiLeft");
-            } catch (Exception e) {
-                //In rare cases this should fail, return the default value
-                return gui.width - 176 / 2;
-            }
-        };
+        sizes[0] = () ->
+            (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui,"field_147003_i", "guiLeft");
 
         //guiTop
-        sizes[1] = () -> {
-            try {
-                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_147009_r", "guiTop");
-            } catch (Exception e) {
-                //In rare cases this should fail, return the default value
-                return gui.height - 166 / 2;
-            }
-        };
+        sizes[1] = () ->
+            (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_147009_r", "guiTop");
 
         //xSize
-        sizes[2] = () -> {
-            try {
-                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_146999_f", "xSize");
-            } catch (Exception e) {
-                //In rare cases this should fail, return the default value
-                return 176;
-            }
-        };
+        sizes[2] = () ->
+            (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_146999_f", "xSize");
 
-        sizes[3] = () -> {
-            try {
-                return (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_147000_g", "ySize");
-            } catch (Exception  e){
-                //In rare cases this should fail, return the default value
-                return 166;
-            }
-        };
+        sizes[3] = () ->
+            (int) ReflectionHelper.getPrivateValue(GuiContainer.class, gui, "field_147000_g", "ySize");
 
         return sizes;
-
     }
 
     /** @return The current partial ticks value. */
