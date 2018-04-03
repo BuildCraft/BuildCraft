@@ -35,6 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -50,8 +51,8 @@ import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreConfig;
+import buildcraft.core.tile.ITileOilSpring;
 import buildcraft.energy.BCEnergyFluids;
-import buildcraft.energy.tile.TileSpringOil;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TilePump extends TileMiner {
@@ -100,8 +101,8 @@ public class TilePump extends TileMiner {
                 }
                 fluidConnection = posToCheck;
                 break;
-            } else if (!world.isAirBlock(posToCheck) &&
-                world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(posToCheck)
+                && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
@@ -110,7 +111,8 @@ public class TilePump extends TileMiner {
             return;
         }
         world.profiler.endStartSection("build");
-        boolean isWater = !BCCoreConfig.pumpsConsumeWater && FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
+        boolean isWater =
+            !BCCoreConfig.pumpsConsumeWater && FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
         final int maxLengthSquared = BCCoreConfig.pumpMaxDistance * BCCoreConfig.pumpMaxDistance;
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
@@ -153,13 +155,13 @@ public class TilePump extends TileMiner {
             }
         }
         world.profiler.endStartSection("oil_spring_search");
-        if (FluidUtilBC.areFluidsEqual(queueFluid, BCEnergyFluids.crudeOil[0])) {
+        if (isOil(queueFluid)) {
             List<BlockPos> springPositions = new ArrayList<>();
             BlockPos center = VecUtil.replaceValue(getPos(), Axis.Y, 0);
             for (BlockPos spring : BlockPos.getAllInBox(center.add(-10, 0, -10), center.add(10, 0, 10))) {
                 if (world.getBlockState(spring).getBlock() == BCCoreBlocks.spring) {
                     TileEntity tile = world.getTileEntity(spring);
-                    if (tile instanceof TileSpringOil) {
+                    if (tile instanceof ITileOilSpring) {
                         springPositions.add(spring);
                     }
                 }
@@ -177,6 +179,13 @@ public class TilePump extends TileMiner {
 
         }
         world.profiler.endSection();
+    }
+
+    private static boolean isOil(Fluid queueFluid) {
+        if (BCModules.ENERGY.isLoaded()) {
+            return FluidUtilBC.areFluidsEqual(queueFluid, BCEnergyFluids.crudeOil[0]);
+        }
+        return false;
     }
 
     private boolean canDrain(BlockPos blockPos) {
@@ -229,25 +238,27 @@ public class TilePump extends TileMiner {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                    if (drain != null &&
-                        paths.get(currentPos).stream()
-                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null) &&
-                        canDrain(currentPos)) {
+                    if (drain != null
+                        && paths.get(currentPos).stream()
+                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null)
+                        && canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         if (isInfiniteWaterSource) {
-                            if (BCCoreConfig.pumpsConsumeWater || !FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
-                                // The pump must have re-used the water queue for some other fluid. Or the config value changed.
+                            if (BCCoreConfig.pumpsConsumeWater
+                                || !FluidUtilBC.areFluidsEqual(drain.getFluid(), FluidRegistry.WATER)) {
+                                // The pump must have re-used the water queue for some other fluid. Or the config value
+                                // changed.
                                 isInfiniteWaterSource = false;
                             }
                         }
                         if (!isInfiniteWaterSource) {
                             BlockUtil.drainBlock(world, currentPos, true);
-                            if (FluidUtilBC.areFluidsEqual(drain.getFluid(), BCEnergyFluids.crudeOil[0])) {
+                            if (isOil(drain.getFluid())) {
                                 if (oilSpringPos != null) {
                                     TileEntity tile = world.getTileEntity(oilSpringPos);
-                                    if (tile instanceof TileSpringOil) {
-                                        ((TileSpringOil) tile).onPumpOil(this, currentPos);
+                                    if (tile instanceof ITileOilSpring) {
+                                        ((ITileOilSpring) tile).onPumpOil(getOwner(), currentPos);
                                     }
                                 }
                             }

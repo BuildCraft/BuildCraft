@@ -18,10 +18,10 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.factory.tile.TilePump;
+import buildcraft.core.tile.ITileOilSpring;
 
 // We don't extend TileBC here because we have no need of any of its functions.
-public class TileSpringOil extends TileEntity implements IDebuggable {
+public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSpring {
 
     private final Map<GameProfile, PlayerPumpInfo> pumpProgress = new ConcurrentHashMap<>();
 
@@ -31,10 +31,10 @@ public class TileSpringOil extends TileEntity implements IDebuggable {
      * Note that this SHOULD NEVER be set! (Except by the generator, and readFromNbt) */
     public int totalSources;
 
-    public void onPumpOil(TilePump pump, BlockPos oilPos) {
-        GameProfile profile = pump.getOwner();
+    @Override
+    public void onPumpOil(GameProfile profile, BlockPos oilPos) {
         if (profile == null) {
-//            BCLog.logger.warn("Unknown owner for pump at " + pump.getPos());
+            // BCLog.logger.warn("Unknown owner for pump at " + pump.getPos());
             return;
         }
         PlayerPumpInfo info = pumpProgress.computeIfAbsent(profile, PlayerPumpInfo::new);
@@ -42,9 +42,10 @@ public class TileSpringOil extends TileEntity implements IDebuggable {
         info.sourcesPumped++;
 
         String name = profile.getName();
-//        BCLog.logger.info("Pumped " + info.sourcesPumped + " / " + totalSources + " at " + oilPos + " (for " + System.identityHashCode(this) + ", "+getPos()+")");
+        // BCLog.logger.info("Pumped " + info.sourcesPumped + " / " + totalSources + " at " + oilPos + " (for " +
+        // System.identityHashCode(this) + ", "+getPos()+")");
         if (info.sourcesPumped >= totalSources * 7 / 8) {
-//            BCLog.logger.info("Pumped nearly all oil blocks!");
+            // BCLog.logger.info("Pumped nearly all oil blocks!");
             if (oilPos.equals(getPos().up())) {
                 BCLog.logger.info("Awarding advancement to " + name + "! Or we would do, if this was 1.12...");
             }

@@ -22,6 +22,10 @@ public class AdvancementUtil {
         if (player instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             AdvancementManager advancementManager = playerMP.getServerWorld().getAdvancementManager();
+            if (advancementManager == null) {
+                // Because this *can* happen
+                return;
+            }
             Advancement advancement = advancementManager.getAdvancement(advancementName);
             if (advancement != null) {
                 // never assume the advancement exists, we create them but they are removable by datapacks
