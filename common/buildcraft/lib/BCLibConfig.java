@@ -64,6 +64,10 @@ public class BCLibConfig {
      * get sprite issues with mods like optifine. */
     public static boolean useSwappableSprites = true;
 
+    /** If false then {@link AtlasSpriteVariants#updateAnimation()} will never update the animation for wrapped
+     * sprites. */
+    public static boolean enableAnimatedSprites = true;
+
     public static TimeGap displayTimeGap = TimeGap.SECONDS;
 
     /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */

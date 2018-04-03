@@ -21,6 +21,8 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.client.FMLClientHandler;
 
+import buildcraft.lib.BCLibConfig;
+
 /** Provides the basic implementation for */
 public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
     private TextureAtlasSprite current;
@@ -49,7 +51,7 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
             current.copyFrom(this);
             p.endSection();
         }
-        if (current.hasAnimationMetadata()) {
+        if (current.hasAnimationMetadata() && BCLibConfig.enableAnimatedSprites) {
             p.startSection("update");
             p.startSection(getIconName());
             current.updateAnimation();
