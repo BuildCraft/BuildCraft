@@ -160,9 +160,9 @@ public enum BCLibEventDist {
                         StackTraceElement[] trace = new Throwable().getStackTrace();
                         for (StackTraceElement elem : trace) {
                             if (GuiScreen.class.getName().equals(elem.getClassName())) {
-                                ConfigGuiFactoryBC.GuiConfigManager newGui = new ConfigGuiFactoryBC.GuiConfigManager(Minecraft.getMinecraft().currentScreen);
-                                Minecraft.getMinecraft().displayGuiScreen(
-                                    newGui);
+                                ConfigGuiFactoryBC.GuiConfigManager newGui =
+                                    new ConfigGuiFactoryBC.GuiConfigManager(Minecraft.getMinecraft().currentScreen);
+                                Minecraft.getMinecraft().displayGuiScreen(newGui);
                                 return null;
                             }
                         }

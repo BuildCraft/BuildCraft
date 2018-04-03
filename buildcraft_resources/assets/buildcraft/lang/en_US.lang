@@ -87,6 +87,7 @@ config.builders=Builders
 config.power=Power Usage
 config.experimental=Experimental
 config.display=Display
+config.performance=Performance
 config.worldgen=World Generation
 config.network=Networking
 config.buildcraft=BuildCraft Configuration
