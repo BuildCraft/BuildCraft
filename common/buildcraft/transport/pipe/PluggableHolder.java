@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
@@ -84,7 +85,7 @@ public final class PluggableHolder {
         }
     }
 
-    public void readCreationPayload(PacketBuffer buffer) {
+    public void readCreationPayload(PacketBuffer buffer) throws InvalidInputDataException {
         int id = buffer.readUnsignedByte();
         if (id == ID_CREATE_PLUG) {
             readCreateInternal(buffer);
@@ -94,7 +95,7 @@ public final class PluggableHolder {
         }
     }
 
-    private void readCreateInternal(PacketBuffer buffer) {
+    private void readCreateInternal(PacketBuffer buffer) throws InvalidInputDataException {
         ResourceLocation identifier = new ResourceLocation(buffer.readString(256));
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
