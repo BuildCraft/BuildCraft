@@ -13,7 +13,7 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
-group= "com.mod-buildcraft"
+group = "com.mod-buildcraft"
 archivesBaseName = "buildcraft-libexpression"
 
 sourceSets {
