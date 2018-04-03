@@ -4,9 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,6 +56,8 @@ import buildcraft.lib.net.MessageDebugRequest;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
+import buildcraft.core.client.ConfigGuiFactoryBC;
+
 public enum BCLibEventDist {
     INSTANCE;
 
@@ -79,7 +84,7 @@ public enum BCLibEventDist {
     public static void onConnectToServer(ClientConnectedToServerEvent event) {
         BuildCraftObjectCaches.onClientJoinServer();
         // Really obnoxious warning
-        if (!BCLib.DEV) {
+        if (!BCLib.DEV || true) {
             /* If people are in a dev environment or have toggled the flag then they probably already know about this */
             Runnable r = () -> {
                 try {
@@ -128,7 +133,44 @@ public enum BCLibEventDist {
                 textDesc.appendSibling(componentVersion);
                 textDesc.appendText(" in the description");
 
-                ITextComponent[] lines = { textWarn, textReport, textDesc };
+                TextComponentString textLag =
+                    new TextComponentString("  If you have performance problems then try disabling");
+                TextComponentString textConfigLink =
+                    new TextComponentString("everything in the perfomance config section.");
+                textConfigLink.setStyle(new Style() {
+
+                    {
+                        setUnderlined(true);
+                    }
+
+                    @Override
+                    public Style createShallowCopy() {
+                        return this;
+                    }
+
+                    @Override
+                    public Style createDeepCopy() {
+                        return this;
+                    }
+
+                    @Override
+                    @Nullable
+                    public ClickEvent getClickEvent() {
+                        // Very hacky, but it technically works
+                        StackTraceElement[] trace = new Throwable().getStackTrace();
+                        for (StackTraceElement elem : trace) {
+                            if (GuiScreen.class.getName().equals(elem.getClassName())) {
+                                ConfigGuiFactoryBC.GuiConfigManager newGui = new ConfigGuiFactoryBC.GuiConfigManager(Minecraft.getMinecraft().currentScreen);
+                                Minecraft.getMinecraft().displayGuiScreen(
+                                    newGui);
+                                return null;
+                            }
+                        }
+                        return null;
+                    }
+                });
+
+                ITextComponent[] lines = { textWarn, textReport, textDesc, textLag, textConfigLink };
                 GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
                 for (ITextComponent line : lines) {
                     chat.printChatMessage(line);
