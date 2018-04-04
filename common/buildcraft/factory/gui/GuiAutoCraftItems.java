@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.gui;
 
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -18,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implements IRecipeShownListener {
+public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
     private static final ResourceLocation TEXTURE_BASE =
         new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
     private static final ResourceLocation TEXTURE_MISC =
@@ -155,7 +156,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
                 int x = slot.xPos + (int) mainGui.rootElement.getX();
                 int y = slot.yPos + (int) mainGui.rootElement.getY();
                 itemRender.renderItemAndEffectIntoGUI(mc.player, filterStack, x, y);
-                itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, filterStack, x, y, null);
+                itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, filterStack, x, y, null);
             });
             RenderHelper.disableStandardItemLighting();
 
@@ -163,7 +164,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
             forEachFilter((slot, filterStack) -> {
                 ItemStack real = slot.getStack();
                 final GuiIcon icon;
-                if (real.isEmpty() || StackUtil.canMerge(real, filterStack)) {
+                if (BCStackHelper.isEmpty(real) || StackUtil.canMerge(real, filterStack)) {
                     icon = ICON_FILTER_OVERLAY_SAME;
                 } else {
                     icon = ICON_FILTER_OVERLAY_DIFFERENT;
@@ -180,7 +181,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         ItemHandlerSimple filters = container.tile.invMaterialFilter;
         for (int s = 0; s < filters.getSlots(); s++) {
             ItemStack filter = filters.getStackInSlot(s);
-            if (!filter.isEmpty()) {
+            if (!BCStackHelper.isEmpty(filter)) {
                 return true;
             }
         }
@@ -191,7 +192,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         ItemHandlerSimple filters = container.tile.invMaterialFilter;
         for (int s = 0; s < filters.getSlots(); s++) {
             ItemStack filter = filters.getStackInSlot(s);
-            if (!filter.isEmpty()) {
+            if (!BCStackHelper.isEmpty(filter)) {
                 iter.iterate(container.materialSlots[s], filter);
             }
         }
