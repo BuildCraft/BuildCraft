@@ -1,11 +1,9 @@
 package buildcraft.lib.tile.item;
 
+import buildcraft.api.inventory.IItemHandlerFiltered;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-
-import buildcraft.api.inventory.IItemHandlerFiltered;
 
 /** Combines several {@link IItemHandlerModifiable} into one class. Extends forge's {@link CombinedInvWrapper} in order
  * to do this.

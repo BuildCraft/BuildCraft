@@ -6,26 +6,24 @@
 
 package buildcraft.builders.client.render;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
+import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
-import net.minecraft.client.renderer.VertexBuffer;
-import org.lwjgl.opengl.GL11;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.debug.DebugRenderHelper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.debug.DebugRenderHelper;
-
-import buildcraft.builders.tile.TileQuarry;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
     private static final int COLOUR_CHUNK = 0x55_99_FF_99;

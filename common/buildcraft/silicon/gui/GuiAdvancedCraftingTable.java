@@ -4,15 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.silicon.gui;
 
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.registry.TagManager;
-
 import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/advanced_crafting_table.png");

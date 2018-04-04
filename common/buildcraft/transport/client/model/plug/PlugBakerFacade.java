@@ -6,18 +6,14 @@
 
 package buildcraft.transport.client.model.plug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
-import org.apache.commons.lang3.tuple.Pair;
-
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.transport.BCTransportModels;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import buildcraft.transport.client.model.key.KeyPlugFacade;
+import buildcraft.transport.plug.PluggableFacade;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -26,22 +22,18 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3d;
-
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.model.MutableVertex;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.client.model.key.KeyPlugBlocker;
-import buildcraft.transport.client.model.key.KeyPlugFacade;
-import buildcraft.transport.plug.PluggableFacade;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SideOnly(Side.CLIENT)
 public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {

@@ -6,20 +6,14 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.compat.CompatManager;
+import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.world.SingleBlockAccess;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -53,14 +47,9 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.compat.CompatManager;
-import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.world.SingleBlockAccess;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public final class BlockUtil {
 

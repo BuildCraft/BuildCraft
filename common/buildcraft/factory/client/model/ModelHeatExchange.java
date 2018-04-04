@@ -1,16 +1,8 @@
 package buildcraft.factory.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-
+import buildcraft.factory.BCFactoryModels;
+import buildcraft.factory.block.BlockHeatExchange;
+import buildcraft.factory.block.BlockHeatExchange.EnumExchangePart;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
@@ -20,10 +12,15 @@ import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
 
-import buildcraft.factory.BCFactoryModels;
-import buildcraft.factory.block.BlockHeatExchange;
-import buildcraft.factory.block.BlockHeatExchange.EnumExchangePart;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModelHeatExchange extends ModelItemSimple {
 

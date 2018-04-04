@@ -6,19 +6,15 @@
 
 package buildcraft.lib.expression.node.cast;
 
-import java.util.Collections;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.NodeStack;
-import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.*;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
-import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
-import buildcraft.lib.expression.api.INodeStack;
-import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeTypes;
+
+import java.util.Collections;
 
 public class NodeCasting {
     public static INodeObject<String> castToString(IExpressionNode node) {

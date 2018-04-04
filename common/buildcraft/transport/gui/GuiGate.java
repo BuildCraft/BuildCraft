@@ -2,20 +2,13 @@ package buildcraft.transport.gui;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.misc.collect.TypedKeyMap;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.collect.TypedKeyMap;
-
 import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gate.GateLogic;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiGate extends GuiBC8<ContainerGate> {
 

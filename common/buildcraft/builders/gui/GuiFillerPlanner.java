@@ -1,11 +1,7 @@
 package buildcraft.builders.gui;
 
-import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.misc.collect.TypedKeyMap;
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.builders.container.ContainerFillerPlanner;
+import buildcraft.builders.filler.FillerStatementContext;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
@@ -13,9 +9,7 @@ import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.json.SpriteDelegate;
 import buildcraft.lib.misc.collect.TypedKeyMap;
-
-import buildcraft.builders.container.ContainerFillerPlanner;
-import buildcraft.builders.filler.FillerStatementContext;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
     private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler_planner.json");

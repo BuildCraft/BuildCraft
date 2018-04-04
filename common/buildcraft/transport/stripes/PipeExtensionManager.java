@@ -6,15 +6,21 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.items.BCStackHelper;
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IWireManager;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
+import buildcraft.transport.wire.WireManager;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
-
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
@@ -37,27 +42,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IWireManager;
-import buildcraft.api.transport.pipe.IItemPipe;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeExtensionManager;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.SoundUtil;
-
-import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
-import buildcraft.transport.wire.WireManager;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public enum PipeExtensionManager implements IPipeExtensionManager {
     INSTANCE;

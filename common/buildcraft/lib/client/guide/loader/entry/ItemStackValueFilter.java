@@ -1,8 +1,8 @@
 package buildcraft.lib.client.guide.loader.entry;
 
-import java.util.Objects;
-
 import buildcraft.lib.misc.ItemStackKey;
+
+import java.util.Objects;
 
 public class ItemStackValueFilter {
     public final ItemStackKey stack;

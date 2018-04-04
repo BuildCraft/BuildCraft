@@ -6,25 +6,12 @@
 
 package buildcraft.lib.expression;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-
-import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.*;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.api.InvalidExpressionException;
-import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToLong.IFuncObjectLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong.IFuncObjectLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToObject.IFuncObjectObjectToObject;
@@ -36,14 +23,10 @@ import buildcraft.lib.expression.node.func.NodeFuncToDouble.IFuncToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncToLong;
 import buildcraft.lib.expression.node.func.NodeFuncToLong.IFuncToLong;
 import buildcraft.lib.expression.node.func.NodeFuncToObject;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
-import buildcraft.lib.expression.node.value.NodeConstantDouble;
-import buildcraft.lib.expression.node.value.NodeConstantLong;
-import buildcraft.lib.expression.node.value.NodeConstantObject;
-import buildcraft.lib.expression.node.value.NodeVariableBoolean;
-import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableObject;
+import buildcraft.lib.expression.node.value.*;
+
+import java.util.*;
+import java.util.function.Supplier;
 
 public class FunctionContext extends FunctionContextBase {
     public static final String FUNCTION_ARG_SEPARATOR = "@";

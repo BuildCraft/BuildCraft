@@ -1,14 +1,10 @@
 package buildcraft.builders.gui;
 
-import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.misc.collect.TypedKeyMap;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.tiles.IControllable.Mode;
-
+import buildcraft.builders.container.ContainerFiller;
+import buildcraft.builders.filler.FillerStatementContext;
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
@@ -17,10 +13,7 @@ import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
 import buildcraft.lib.misc.collect.TypedKeyMap;
-
-import buildcraft.builders.container.ContainerFiller;
-import buildcraft.builders.filler.FillerStatementContext;
-import buildcraft.core.BCCoreSprites;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiFiller extends GuiBC8<ContainerFiller> {
     private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");

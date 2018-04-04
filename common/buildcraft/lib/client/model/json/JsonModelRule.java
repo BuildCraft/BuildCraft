@@ -6,16 +6,6 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.List;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.math.MathHelper;
-
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.FunctionContext;
@@ -24,6 +14,14 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.misc.ExpressionCompat;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.math.MathHelper;
+
+import java.util.List;
 
 /** A rule for changing a model's elements. The most basic example is rotating an entire model based of a single
  * property. */

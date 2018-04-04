@@ -50,25 +50,6 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.client.model.ModelHolderRegistry;
-import buildcraft.lib.client.reload.ReloadManager;
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.debug.BCAdvDebugging;
-import buildcraft.lib.debug.ClientDebuggables;
-import buildcraft.lib.item.ItemDebugger;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.misc.FakePlayerProvider;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.data.ModelVariableData;
-import buildcraft.lib.net.MessageDebugRequest;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-
 public enum BCLibEventDist {
     INSTANCE;
 

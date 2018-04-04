@@ -6,21 +6,18 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
-
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class ColourUtil {
     public static final char MINECRAFT_FORMAT_CHAR;

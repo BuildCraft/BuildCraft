@@ -6,13 +6,6 @@
 
 package buildcraft.lib.gui.button;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import net.minecraft.client.gui.FontRenderer;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.IInteractionElement;
@@ -20,6 +13,12 @@ import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import net.minecraft.client.gui.FontRenderer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /** If this only has 1 subclass (GuiButtonDrawable), then why not merge them? */
 public abstract class GuiAbstractButton extends GuiElementSimple

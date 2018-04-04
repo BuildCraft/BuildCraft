@@ -6,16 +6,6 @@
 
 package buildcraft.transport;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
 import buildcraft.api.transport.pipe.PipeApiClient;
@@ -47,6 +37,14 @@ import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.plug.PluggablePulsar;
 import buildcraft.transport.tile.TilePipeHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class BCTransportModels {
     public static final ModelHolderStatic BLOCKER = new ModelHolderStatic(

@@ -6,22 +6,19 @@
 
 package buildcraft.lib.client.guide.loader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.guide.PageEntry;
+import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
-
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.guide.PageEntry;
-import buildcraft.lib.client.guide.parts.GuidePageFactory;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 
 public enum MarkdownPageLoader implements IPageLoaderText {
     INSTANCE;

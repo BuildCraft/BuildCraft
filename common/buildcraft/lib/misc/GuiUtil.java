@@ -6,16 +6,17 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.items.BCStackHelper;
-import org.lwjgl.opengl.GL11;
-
+import buildcraft.lib.client.render.fluid.FluidRenderer;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.client.sprite.SubSprite;
+import buildcraft.lib.expression.api.IConstantNode;
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -26,22 +27,16 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.core.render.ISprite;
-
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.sprite.SpriteNineSliced;
-import buildcraft.lib.client.sprite.SubSprite;
-import buildcraft.lib.expression.api.IConstantNode;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.GuiRectangle;
-import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.pos.IGuiPosition;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class GuiUtil {
 

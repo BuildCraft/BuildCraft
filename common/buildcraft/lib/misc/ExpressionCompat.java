@@ -1,12 +1,7 @@
 package buildcraft.lib.misc;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
-
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -16,6 +11,9 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionAbsolute;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 /** A special class dedicated to adding support to minecraft-specific types to "buildcraft.lib.expression". This isn't
  * part of that package as then we can safely distribute it separately. */

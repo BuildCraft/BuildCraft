@@ -6,21 +6,18 @@
 
 package buildcraft.lib.client.guide;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.util.StringUtils;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.entry.PageEntryType;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.ColourUtil;
+import net.minecraft.util.StringUtils;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 public class PageEntry<T> {
 

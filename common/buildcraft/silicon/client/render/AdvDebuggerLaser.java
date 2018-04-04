@@ -11,7 +11,6 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
 import buildcraft.lib.misc.VolumeUtil;
-import buildcraft.silicon.block.BlockLaser;
 import buildcraft.silicon.tile.TileLaser;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.Tessellator;
@@ -23,15 +22,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-
-import buildcraft.api.properties.BuildCraftProperties;
-
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.debug.DebugRenderHelper;
-import buildcraft.lib.misc.VolumeUtil;
-
-import buildcraft.silicon.BCSiliconBlocks;
-import buildcraft.silicon.tile.TileLaser;
 
 public class AdvDebuggerLaser implements DetachedRenderer.IDetachedRenderer {
     private static final int COLOUR_VISIBLE = 0xFF_99_FF_99;

@@ -6,12 +6,6 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import buildcraft.api.BCBlocks;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;

@@ -1,11 +1,11 @@
 package buildcraft.lib.client.render.font;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.List;
 
 public class DelegateFontRenderer extends FontRenderer {
     public final FontRenderer delegate;

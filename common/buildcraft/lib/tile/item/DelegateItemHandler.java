@@ -6,14 +6,12 @@
 
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.inventory.IItemHandlerFiltered;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.inventory.IItemHandlerFiltered;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DelegateItemHandler implements IItemHandlerModifiable, IItemHandlerFiltered {
     private final IItemHandlerModifiable delegate;

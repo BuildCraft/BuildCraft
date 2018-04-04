@@ -6,14 +6,9 @@
 
 package buildcraft.lib.misc;
 
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import buildcraft.api.inventory.IItemTransactor;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -26,7 +21,9 @@ import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.inventory.IItemTransactor;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 /** Provides various @Nonnull static final fields storing various capabilities. */
 public class CapUtil {

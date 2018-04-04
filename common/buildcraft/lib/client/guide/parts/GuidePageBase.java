@@ -6,12 +6,12 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.io.IOException;
-import java.util.List;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
+
+import java.io.IOException;
+import java.util.List;
 
 public abstract class GuidePageBase extends GuidePart {
     /** The current page that is being rendered */

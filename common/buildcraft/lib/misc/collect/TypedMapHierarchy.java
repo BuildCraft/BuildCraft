@@ -1,13 +1,7 @@
 package buildcraft.lib.misc.collect;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import javax.annotation.Nullable;
+import java.util.*;
 
 /** A {@link TypedMap} that is identical to {@link TypedMapDirect}, except that children of the specified class are also
  * returned.<br>
