@@ -13,6 +13,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.facades.FacadeAPI;
+import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
 import buildcraft.api.transport.pipe.PipeFlowType;
@@ -51,13 +52,12 @@ public class BCTransportRegistries {
         PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
         PipeApi.flowPower = new PipeFlowType(PipeFlowPower::new, PipeFlowPower::new);
         PipeApi.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new);
+        PipeApi.flowStructure.fallbackColourType = EnumPipeColourType.BORDER_OUTER;
     }
 
     public static void init() {
-        PipeConnectionAPI.registerConnection(
-            Blocks.BREWING_STAND,
-            (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0
-        );
+        PipeConnectionAPI.registerConnection(Blocks.BREWING_STAND,
+            (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0);
 
         // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
@@ -72,8 +72,8 @@ public class BCTransportRegistries {
         PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, EnumHandlerPriority.LOW);
 
         // For testing
-        //StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
-        //StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);
+        // StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
+        // StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);
 
         // StripesHandlerRightClick.items.add(Items.EGG);
         // StripesHandlerRightClick.items.add(Items.SNOWBALL);

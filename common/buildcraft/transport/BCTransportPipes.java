@@ -96,7 +96,9 @@ public class BCTransportPipes {
         DefinitionBuilder builder = new DefinitionBuilder();
 
         builder.logic(PipeBehaviourStructure::new, PipeBehaviourStructure::new);
+        builder.builder.enableBorderColouring();
         structure = builder.idTex("structure").flow(PipeApi.flowStructure).define();
+        builder.builder.enableColouring();
 
         builder.logic(PipeBehaviourWood::new, PipeBehaviourWood::new).texSuffixes("_clear", "_filled");
         woodItem = builder.idTexPrefix("wood_item").flowItem().define();

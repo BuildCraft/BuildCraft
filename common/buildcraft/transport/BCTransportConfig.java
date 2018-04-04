@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeDefinition;
@@ -42,11 +43,13 @@ public class BCTransportConfig {
     public static long mjPerMillibucket = 1_000;
     public static long mjPerItem = MjAPI.MJ;
     public static int baseFlowRate = 10;
+    public static boolean fluidPipeColourBorder;
     public static PowerLossMode lossMode = PowerLossMode.DEFAULT;
 
     private static Property propMjPerMillibucket;
     private static Property propMjPerItem;
     private static Property propBaseFlowRate;
+    private static Property propFluidPipeColourBorder;
     private static Property propLossMode;
 
     public static void preInit() {
@@ -61,6 +64,9 @@ public class BCTransportConfig {
         propBaseFlowRate = config.get("general", "pipes.baseFluidRate", baseFlowRate).setMinValue(1).setMaxValue(40);
         EnumRestartRequirement.WORLD.setTo(propBaseFlowRate);
 
+        propFluidPipeColourBorder = config.get("display", "pipes.fluidColourIsBorder", false);
+        EnumRestartRequirement.WORLD.setTo(propFluidPipeColourBorder);
+
         propLossMode = config.get("experimental", "kinesisLossMode", "lossless");
         ConfigUtil.setEnumProperty(propLossMode, PowerLossMode.VALUES);
         EnumRestartRequirement.WORLD.setTo(propLossMode);
@@ -69,6 +75,7 @@ public class BCTransportConfig {
     }
 
     public static void reloadConfig(EnumRestartRequirement restarted) {
+
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
             mjPerMillibucket = propMjPerMillibucket.getLong();
             if (mjPerMillibucket < MJ_REQ_MILLIBUCKET_MIN) {
@@ -82,6 +89,10 @@ public class BCTransportConfig {
 
             baseFlowRate = MathUtil.clamp(propBaseFlowRate.getInt(), 1, 40);
             int basePowerRate = 4;
+
+            fluidPipeColourBorder = propFluidPipeColourBorder.getBoolean();
+            PipeApi.flowFluids.fallbackColourType =
+                fluidPipeColourBorder ? EnumPipeColourType.BORDER_INNER : EnumPipeColourType.TRANSLUCENT;
 
             lossMode = ConfigUtil.parseEnumForConfig(propLossMode, PowerLossMode.DEFAULT);
 

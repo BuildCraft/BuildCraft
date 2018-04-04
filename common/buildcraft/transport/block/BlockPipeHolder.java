@@ -717,7 +717,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (pipe == null) {
             return EnumActionResult.FAIL;
         }
-        if (pipe.getColour() == paintColour) {
+        if (pipe.getColour() == paintColour || !pipe.definition.canBeColoured) {
             return EnumActionResult.FAIL;
         } else {
             pipe.setColour(paintColour);

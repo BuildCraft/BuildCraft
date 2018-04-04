@@ -75,6 +75,9 @@ public final class Pipe implements IPipe, IDebuggable {
         this.holder = holder;
         this.colour = NBTUtilBC.readEnum(nbt.getTag("col"), EnumDyeColor.class);
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
+        if (!definition.canBeColoured) {
+            colour = null;
+        }
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
 
@@ -219,8 +222,10 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @Override
     public void setColour(EnumDyeColor colour) {
-        this.colour = colour;
-        markForUpdate();
+        if (definition.canBeColoured) {
+            this.colour = colour;
+            markForUpdate();
+        }
     }
 
     // Caps

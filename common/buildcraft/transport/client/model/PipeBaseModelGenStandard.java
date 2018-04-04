@@ -12,6 +12,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
@@ -22,12 +23,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
@@ -110,19 +113,19 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             QUADS_COLOURED[0][face.ordinal()] = colQuads;
         }
 
-        int[][] uvsRot = {//
-            { 2, 0, 3, 3 },//
-            { 0, 2, 1, 1 },//
-            { 2, 0, 0, 2 },//
-            { 0, 2, 2, 0 },//
-            { 3, 3, 0, 2 },//
+        int[][] uvsRot = { //
+            { 2, 0, 3, 3 }, //
+            { 0, 2, 1, 1 }, //
+            { 2, 0, 0, 2 }, //
+            { 0, 2, 2, 0 }, //
+            { 3, 3, 0, 2 }, //
             { 1, 1, 2, 0 } //
         };
 
-        UvFaceData[] types = {//
-            UvFaceData.from16(4, 0, 12, 4),//
-            UvFaceData.from16(4, 12, 12, 16),//
-            UvFaceData.from16(0, 4, 4, 12),//
+        UvFaceData[] types = { //
+            UvFaceData.from16(4, 0, 12, 4), //
+            UvFaceData.from16(4, 12, 12, 16), //
+            UvFaceData.from16(0, 4, 4, 12), //
             UvFaceData.from16(12, 4, 16, 12) //
         };
 
@@ -131,13 +134,13 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         QUADS_COLOURED[1] = new MutableQuad[6][8];
         for (EnumFacing side : EnumFacing.VALUES) {
             center = new Point3f(//
-                side.getFrontOffsetX() * 0.375f,//
-                side.getFrontOffsetY() * 0.375f,//
+                side.getFrontOffsetX() * 0.375f, //
+                side.getFrontOffsetY() * 0.375f, //
                 side.getFrontOffsetZ() * 0.375f //
             );
             radius = new Vector3f(//
-                side.getAxis() == Axis.X ? 0.125f : 0.25f,//
-                side.getAxis() == Axis.Y ? 0.125f : 0.25f,//
+                side.getAxis() == Axis.X ? 0.125f : 0.25f, //
+                side.getAxis() == Axis.Y ? 0.125f : 0.25f, //
                 side.getAxis() == Axis.Z ? 0.125f : 0.25f //
             );//
             center.add(new Point3f(0.5f, 0.5f, 0.5f));
@@ -194,6 +197,11 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         List<MutableQuad> quads = new ArrayList<>();
 
         TextureAtlasSprite[] spriteArray = SPRITES.get(key.definition);
+        TextureAtlasSprite borderSprite = getBorderSprite(key);
+        int colour = borderSprite == null ? -1 : getPipeModelColour(key.colour);
+        int r = (colour >> 0) & 0xFF;
+        int g = (colour >> 8) & 0xFF;
+        int b = (colour >> 16) & 0xFF;
         for (EnumFacing face : EnumFacing.VALUES) {
             float size = key.connections[face.ordinal()];
             if (size > 0) {
@@ -201,12 +209,37 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             } else {
                 addQuads(QUADS[0][face.ordinal()], quads, getSprite(spriteArray, key.centerSprite));
             }
+            if (borderSprite != null) {
+                int startIndex = quads.size();
+                if (size > 0) {
+                    addQuads(QUADS[1][face.ordinal()], quads, borderSprite);
+                } else {
+                    addQuads(QUADS[0][face.ordinal()], quads, borderSprite);
+                }
+                for (int i = startIndex; i < quads.size(); i++) {
+                    quads.get(i).multColouri(r, g, b, 0xFF);
+                }
+            }
         }
         List<BakedQuad> bakedQuads = new ArrayList<>();
         for (MutableQuad q : quads) {
             bakedQuads.add(q.toBakedBlock());
         }
         return bakedQuads;
+    }
+
+    @Nullable
+    private static TextureAtlasSprite getBorderSprite(PipeBaseCutoutKey key) {
+        if (key.colour == null) {
+            return null;
+        }
+        if (key.colourType == EnumPipeColourType.BORDER_INNER) {
+            return BCTransportSprites.PIPE_COLOUR_BORDER_INNER.getSprite();
+        }
+        if (key.colourType == EnumPipeColourType.BORDER_OUTER) {
+            return BCTransportSprites.PIPE_COLOUR_BORDER_OUTER.getSprite();
+        }
+        return null;
     }
 
     private static TextureAtlasSprite getSprite(TextureAtlasSprite[] array, int index) {
@@ -230,13 +263,17 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                 addQuads(QUADS_COLOURED[0][face.ordinal()], quads, sprite);
             }
         }
-        int colour = 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(key.colour));
+        int colour = getPipeModelColour(key.colour);
         List<BakedQuad> bakedQuads = new ArrayList<>();
         for (MutableQuad q : quads) {
             q.colouri(colour);
             bakedQuads.add(q.toBakedBlock());
         }
         return bakedQuads;
+    }
+
+    private static int getPipeModelColour(EnumDyeColor c) {
+        return 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(c));
     }
 
     private static void addQuads(MutableQuad[] from, List<MutableQuad> to, TextureAtlasSprite sprite) {
