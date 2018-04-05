@@ -11,6 +11,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.api.transport.pipe.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
@@ -23,19 +24,16 @@ import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.IFlowFluid;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventFluid;
-import buildcraft.api.transport.pipe.PipeEventHandler;
 
 import buildcraft.lib.inventory.filter.StackFilter;
 
 import buildcraft.transport.BCTransportConfig;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
+
+    private static final PipeFaceTex TEX_CLEAR = PipeFaceTex.get(0);
+    private static final PipeFaceTex TEX_FILLED = PipeFaceTex.get(1);
 
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(this);
 
@@ -48,8 +46,8 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
-        return (face != null && face == getCurrentDir()) ? 1 : 0;
+    public PipeFaceTex getTextureData(EnumFacing face) {
+        return (face != null && face == getCurrentDir()) ? TEX_FILLED : TEX_CLEAR;
     }
 
     @Override

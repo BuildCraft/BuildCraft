@@ -325,7 +325,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
             message += "\n  Class = " + property.getClass();
             message += "\n  Method not overriden: IProperty.parseValue(String)";
             RuntimeException exception = new RuntimeException(message, error);
-            if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+            if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.10.2")) {
                 throw exception;
             } else {
                 BCLog.logger.error("[transport.facade] Invalid property!", exception);
@@ -360,7 +360,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 // or in a dev environment
                 // as this really needs to be fixed
                 RuntimeException exception = new RuntimeException(message);
-                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.10.2")) {
                     throw exception;
                 } else {
                     BCLog.logger.error("[transport.facade] Invalid property!", exception);

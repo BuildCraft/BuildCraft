@@ -1,22 +1,26 @@
 package buildcraft.energy.generation;
 
+import java.util.function.Predicate;
+
 import buildcraft.api.BCBlocks;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.core.block.BlockSpring;
-import buildcraft.energy.BCEnergyFluids;
-import buildcraft.energy.tile.TileSpringOil;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.Box;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.function.Predicate;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.enums.EnumSpring;
+
+import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
+
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.block.BlockSpring;
+import buildcraft.energy.BCEnergyFluids;
+import buildcraft.energy.tile.TileSpringOil;
 
 public abstract class OilGenStructure {
     public final Box box;
@@ -132,9 +136,9 @@ public abstract class OilGenStructure {
         @Override
         protected int countOilBlocks() {
             int count = 0;
-            for (boolean[] aPattern : pattern) {
-                for (boolean anAPattern : aPattern) {
-                    if (anAPattern) {
+            for (int x = 0; x < pattern.length; x++) {
+                for (int z = 0; z < pattern[x].length; z++) {
+                    if (pattern[x][z]) {
                         count++;
                     }
                 }
@@ -154,7 +158,7 @@ public abstract class OilGenStructure {
         }
 
         public static PatternTerrainHeight create(BlockPos start, ReplaceType replaceType, boolean[][] pattern,
-            int depth) {
+                                                  int depth) {
             BlockPos min = VecUtil.replaceValue(start, Axis.Y, 1);
             BlockPos max = min.add(pattern.length - 1, 255, pattern.length == 0 ? 0 : pattern[0].length - 1);
             Box box = new Box(min, max);
@@ -187,9 +191,9 @@ public abstract class OilGenStructure {
         @Override
         protected int countOilBlocks() {
             int count = 0;
-            for (boolean[] aPattern : pattern) {
-                for (boolean anAPattern : aPattern) {
-                    if (anAPattern) {
+            for (int x = 0; x < pattern.length; x++) {
+                for (int z = 0; z < pattern[x].length; z++) {
+                    if (pattern[x][z]) {
                         count++;
                     }
                 }
@@ -243,7 +247,7 @@ public abstract class OilGenStructure {
             count += tubeY.countOilBlocks();
             BlockPos base = worldTop;
             for (int r = radius; r >= 0; r--) {
-                //BCLog.logger.info(" - " + base + " = " + r);
+                // BCLog.logger.info(" - " + base + " = " + r);
                 OilGenStructure struct = OilGenerator.createTubeY(base, height, r);
                 struct.generate(world, struct.box);
                 base = base.add(0, height, 0);
@@ -294,13 +298,9 @@ public abstract class OilGenStructure {
                 world.setTileEntity(pos, spring);
             }
             spring.totalSources = count;
-            if (BCLib.DEV)
-                BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile)); // TODO:
-                                                                                                                   // This
-                                                                                                                   // might
-                                                                                                                   // not
-                                                                                                                   // work
-                                                                                                                   // properly!
+            if (BCLib.DEV) {
+                BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile));
+            }
         }
     }
 }

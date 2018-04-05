@@ -43,7 +43,6 @@ public final class Pipe implements IPipe, IDebuggable {
     private EnumDyeColor colour = null;
     private boolean updateMarked = true;
     private final EnumMap<EnumFacing, Float> connected = new EnumMap<>(EnumFacing.class);
-    private final EnumMap<EnumFacing, Integer> textures = new EnumMap<>(EnumFacing.class);
     private final EnumMap<EnumFacing, ConnectedType> types = new EnumMap<>(EnumFacing.class);
 
     @SideOnly(Side.CLIENT)
@@ -75,11 +74,9 @@ public final class Pipe implements IPipe, IDebuggable {
             if (data == 0b01) {
                 connected.put(face, DEFAULT_CONNECTION_DISTANCE);
                 types.put(face, ConnectedType.PIPE);
-                textures.put(face, 0);
             } else if (data == 0b10) {
                 connected.put(face, DEFAULT_CONNECTION_DISTANCE);
                 types.put(face, ConnectedType.TILE);
-                textures.put(face, 0);
             }
         }
     }
@@ -129,12 +126,10 @@ public final class Pipe implements IPipe, IDebuggable {
             buffer.writeByte(colour == null ? 0 : colour.getMetadata() + 1);
             for (EnumFacing face : EnumFacing.VALUES) {
                 Float con = connected.get(face);
-                if (con != null && textures.get(face) != null) {
+                if (con != null) {
                     buffer.writeBoolean(true);
                     buffer.writeFloat(con);
 
-                    Integer tex = textures.get(face);
-                    buffer.writeByte(tex);
                     MessageUtil.writeEnumOrNull(buffer, types.get(face));
                 } else {
                     buffer.writeBoolean(false);
@@ -148,7 +143,6 @@ public final class Pipe implements IPipe, IDebuggable {
     public void readPayload(PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         if (side == Side.CLIENT) {
             connected.clear();
-            textures.clear();
             types.clear();
 
             int nColour = buffer.readUnsignedByte();
@@ -157,10 +151,8 @@ public final class Pipe implements IPipe, IDebuggable {
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (buffer.readBoolean()) {
                     float dist = buffer.readFloat();
-                    int tex = buffer.readUnsignedByte();
 
                     connected.put(face, dist);
-                    textures.put(face, tex);
 
                     ConnectedType type = MessageUtil.readEnumOrNull(buffer, ConnectedType.class);
                     types.put(face, type);
@@ -253,7 +245,6 @@ public final class Pipe implements IPipe, IDebuggable {
 
         connected.clear();
         types.clear();
-        textures.clear();
 
         for (EnumFacing facing : EnumFacing.VALUES) {
             PipePluggable plug = getHolder().getPluggable(facing);
@@ -275,7 +266,6 @@ public final class Pipe implements IPipe, IDebuggable {
                     if (canPipesConnect(facing, this, oPipe)) {
                         connected.put(facing, DEFAULT_CONNECTION_DISTANCE);
                         types.put(facing, ConnectedType.PIPE);
-                        textures.put(facing, behaviour.getTextureIndex(facing));
                     }
                     continue;
                 }
@@ -294,7 +284,6 @@ public final class Pipe implements IPipe, IDebuggable {
             if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
                 connected.put(facing, ext);
                 types.put(facing, ConnectedType.TILE);
-                textures.put(facing, behaviour.getTextureIndex(facing));
             }
         }
         if (!old.equals(connected)) {
@@ -346,14 +335,14 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @SideOnly(Side.CLIENT)
     public PipeModelKey getModel() {
-        int[] sides = new int[6];
+        PipeFaceTex[] sides = new PipeFaceTex[6];
         float[] mc = new float[6];
         for (EnumFacing face : EnumFacing.VALUES) {
             int i = face.ordinal();
-            sides[i] = behaviour.getTextureIndex(face);
+            sides[i] = behaviour.getTextureData(face);
             mc[i] = getConnectedDist(face);
         }
-        return new PipeModelKey(definition, behaviour.getTextureIndex(null), sides, mc, colour);
+        return new PipeModelKey(definition, behaviour.getTextureData(null), sides, mc, colour);
     }
 
     @Override

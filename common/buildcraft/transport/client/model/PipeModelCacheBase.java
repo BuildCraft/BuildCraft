@@ -13,7 +13,9 @@ import java.util.Objects;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.EnumDyeColor;
 
+import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFaceTex;
 
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
@@ -41,9 +43,11 @@ public class PipeModelCacheBase {
 
     public static final class PipeBaseCutoutKey {
         public final PipeDefinition definition;
-        public final int centerSprite;
-        public final int[] sideSprites;
+        public final PipeFaceTex centerSprite;
+        public final PipeFaceTex[] sideSprites;
         public final float[] connections;
+        public final EnumDyeColor colour;
+        public final EnumPipeColourType colourType;
         private final int hashCode;
 
         public PipeBaseCutoutKey(PipeModelKey key) {
@@ -51,7 +55,20 @@ public class PipeModelCacheBase {
             centerSprite = key.center;
             sideSprites = key.sides;
             connections = key.connected;
-            hashCode = Objects.hash(System.identityHashCode(definition), centerSprite, Arrays.hashCode(sideSprites), Arrays.hashCode(connections));
+            EnumPipeColourType defColourType = key.definition.getColourType();
+            if (key.colour != null && canBakeCutoutColour(defColourType)) {
+                this.colour = key.colour;
+                this.colourType = defColourType;
+            } else {
+                this.colour = null;
+                this.colourType = null;
+            }
+            hashCode = Objects.hash(System.identityHashCode(definition), centerSprite, Arrays.hashCode(sideSprites),
+                    Arrays.hashCode(connections), colour, colourType);
+        }
+
+        private static boolean canBakeCutoutColour(EnumPipeColourType type) {
+            return type == EnumPipeColourType.BORDER_OUTER || type == EnumPipeColourType.BORDER_INNER;
         }
 
         @Override
@@ -65,12 +82,19 @@ public class PipeModelCacheBase {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PipeBaseCutoutKey other = (PipeBaseCutoutKey) obj;
-            return definition == other.definition && centerSprite == other.centerSprite && Arrays.equals(connections, other.connections) && Arrays.equals(sideSprites, other.sideSprites);
+            if (definition != other.definition) return false;
+            if (centerSprite != other.centerSprite) return false;
+            if (colour != other.colour) return false;
+            if (colourType != other.colourType) return false;
+            if (!Arrays.equals(connections, other.connections)) return false;
+            if (!Arrays.equals(sideSprites, other.sideSprites)) return false;
+            return true;
         }
 
         @Override
         public String toString() {
-            return "PipeBaseCutoutKey [center=" + centerSprite + ", sides=" + Arrays.toString(sideSprites) + ", connections=" + Arrays.toString(connections) + "]";
+            return "PipeBaseCutoutKey [center=" + centerSprite + ", sides=" + Arrays.toString(sideSprites)
+                    + ", connections=" + Arrays.toString(connections) + "]";
         }
     }
 
@@ -80,7 +104,11 @@ public class PipeModelCacheBase {
         private final int hashCode;
 
         public PipeBaseTranslucentKey(PipeModelKey key) {
-            this.colour = key.colour;
+            if (key.definition.getColourType() == EnumPipeColourType.TRANSLUCENT) {
+                this.colour = key.colour;
+            } else {
+                this.colour = null;
+            }
             if (colour == null) {
                 connections = null;
                 hashCode = 0;
@@ -105,9 +133,13 @@ public class PipeModelCacheBase {
             if (obj == null) return false;
             if (!(obj instanceof PipeBaseTranslucentKey)) return false;
             PipeBaseTranslucentKey other = (PipeBaseTranslucentKey) obj;
-            /* If we don't have any translucency and neither does the other then we don't care what the other variables
-             * are and are considered equal to the other one. */
-            return !shouldRender() && !other.shouldRender() || Arrays.equals(connections, other.connections) && colour == other.colour;
+            /*
+             * If we don't have any translucency and neither does the other then we don't care what the other variables
+             * are and are considered equal to the other one.
+             */
+            if (!shouldRender() && !other.shouldRender()) return true;
+            if (!Arrays.equals(connections, other.connections)) return false;
+            return colour == other.colour;
         }
 
         @Override
