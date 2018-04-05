@@ -15,36 +15,38 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFaceTex;
 
 @SideOnly(Side.CLIENT)
 public final class PipeModelKey {
     public static final PipeModelKey DEFAULT_KEY;
 
     static {
-        int sprite = -1;
-        int[] sides = { sprite, sprite, sprite, sprite, sprite, sprite };
+        PipeFaceTex sprite = PipeFaceTex.get(0);
+        PipeFaceTex[] sides = { sprite, sprite, sprite, sprite, sprite, sprite };
         float[] connected = { 0, 0, 0, 0, 0, 0 };
         DEFAULT_KEY = new PipeModelKey(null, sprite, sides, connected, null);
     }
 
     public final PipeDefinition definition;
-    public final int center;
-    public final int[] sides;
+    public final PipeFaceTex center;
+    public final PipeFaceTex[] sides;
     public final float[] connected;
     public final EnumDyeColor colour;
     private final int hash;
 
-    public PipeModelKey(PipeDefinition definition, int center, int[] sides, float[] connected, EnumDyeColor colour) {
+    public PipeModelKey(PipeDefinition definition, PipeFaceTex center, PipeFaceTex[] sides, float[] connected,
+        EnumDyeColor colour) {
         this.definition = definition;
         this.center = center;
         this.sides = sides;
         this.connected = connected;
         this.colour = colour;
-        this.hash = Arrays.hashCode(new int[] {//
-            Objects.hashCode(definition),//
-            center,//
-            Arrays.hashCode(sides),//
-            Arrays.hashCode(connected),//
+        this.hash = Arrays.hashCode(new int[] { //
+            Objects.hashCode(definition), //
+            Objects.hashCode(center), //
+            Arrays.hashCode(sides), //
+            Arrays.hashCode(connected), //
             Objects.hashCode(colour)//
         });
     }

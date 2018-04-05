@@ -33,6 +33,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFaceTex;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
@@ -199,25 +200,38 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         TextureAtlasSprite[] spriteArray = SPRITES.get(key.definition);
         TextureAtlasSprite borderSprite = getBorderSprite(key);
         int colour = borderSprite == null ? -1 : getPipeModelColour(key.colour);
-        int r = (colour >> 0) & 0xFF;
-        int g = (colour >> 8) & 0xFF;
-        int b = (colour >> 16) & 0xFF;
+        int border_r = (colour >> 0) & 0xFF;
+        int border_g = (colour >> 8) & 0xFF;
+        int border_b = (colour >> 16) & 0xFF;
         for (EnumFacing face : EnumFacing.VALUES) {
             float size = key.connections[face.ordinal()];
-            if (size > 0) {
-                addQuads(QUADS[1][face.ordinal()], quads, getSprite(spriteArray, key.sideSprites[face.ordinal()]));
-            } else {
-                addQuads(QUADS[0][face.ordinal()], quads, getSprite(spriteArray, key.centerSprite));
-            }
-            if (borderSprite != null) {
-                int startIndex = quads.size();
-                if (size > 0) {
-                    addQuads(QUADS[1][face.ordinal()], quads, borderSprite);
-                } else {
-                    addQuads(QUADS[0][face.ordinal()], quads, borderSprite);
+            PipeFaceTex tex = size > 0 ? key.sideSprites[face.ordinal()] : key.centerSprite;
+            int quadsIndex = size > 0 ? 1 : 0;
+            MutableQuad[] quadArray = QUADS[quadsIndex][face.ordinal()];
+
+            int startIndex = quads.size();
+
+            for (int i = 0; i < tex.getCount(); i++) {
+                addQuads(quadArray, quads, getSprite(spriteArray, tex, i));
+
+                int c = tex.getColour(i);
+                int r = (c >> 0) & 0xFF;
+                int g = (c >> 8) & 0xFF;
+                int b = (c >> 16) & 0xFF;
+
+                for (int q = startIndex; q < quads.size(); q++) {
+                    quads.get(q).multColouri(r, g, b, 0xFF);
                 }
+
+                startIndex = quads.size();
+            }
+
+            if (borderSprite != null) {
+
+                addQuads(quadArray, quads, borderSprite);
+
                 for (int i = startIndex; i < quads.size(); i++) {
-                    quads.get(i).multColouri(r, g, b, 0xFF);
+                    quads.get(i).multColouri(border_r, border_g, border_b, 0xFF);
                 }
             }
         }
@@ -240,6 +254,11 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             return BCTransportSprites.PIPE_COLOUR_BORDER_OUTER.getSprite();
         }
         return null;
+    }
+
+    private static TextureAtlasSprite getSprite(TextureAtlasSprite[] array, PipeFaceTex tex, int spriteIndex) {
+        int index = tex.getTexture(spriteIndex);
+        return getSprite(array, index);
     }
 
     private static TextureAtlasSprite getSprite(TextureAtlasSprite[] array, int index) {

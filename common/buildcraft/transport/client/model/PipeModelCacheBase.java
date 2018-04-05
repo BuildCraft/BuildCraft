@@ -15,6 +15,7 @@ import net.minecraft.item.EnumDyeColor;
 
 import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFaceTex;
 
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
@@ -42,8 +43,8 @@ public class PipeModelCacheBase {
 
     public static final class PipeBaseCutoutKey {
         public final PipeDefinition definition;
-        public final int centerSprite;
-        public final int[] sideSprites;
+        public final PipeFaceTex centerSprite;
+        public final PipeFaceTex[] sideSprites;
         public final float[] connections;
         public final EnumDyeColor colour;
         public final EnumPipeColourType colourType;

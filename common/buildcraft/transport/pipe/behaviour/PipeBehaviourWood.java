@@ -30,12 +30,16 @@ import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeFaceTex;
 
 import buildcraft.lib.inventory.filter.StackFilter;
 
 import buildcraft.transport.BCTransportConfig;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
+
+    private static final PipeFaceTex TEX_CLEAR = PipeFaceTex.get(0);
+    private static final PipeFaceTex TEX_FILLED = PipeFaceTex.get(1);
 
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(this);
 
@@ -48,8 +52,8 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
-        return (face != null && face == getCurrentDir()) ? 1 : 0;
+    public PipeFaceTex getTextureData(EnumFacing face) {
+        return (face != null && face == getCurrentDir()) ? TEX_FILLED : TEX_CLEAR;
     }
 
     @Override
