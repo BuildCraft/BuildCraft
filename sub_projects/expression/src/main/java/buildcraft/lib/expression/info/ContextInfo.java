@@ -6,6 +6,9 @@
 
 package buildcraft.lib.expression.info;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean;
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoDouble;
@@ -15,9 +18,6 @@ import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ContextInfo {
     public final FunctionContext fnCtx;

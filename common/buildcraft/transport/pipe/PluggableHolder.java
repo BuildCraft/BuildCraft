@@ -8,6 +8,7 @@ package buildcraft.transport.pipe;
 
 import java.io.IOException;
 
+import buildcraft.api.core.InvalidInputDataException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -84,7 +85,7 @@ public final class PluggableHolder {
         }
     }
 
-    public void readCreationPayload(PacketBuffer buffer) {
+    public void readCreationPayload(PacketBuffer buffer) throws InvalidInputDataException {
         int id = buffer.readUnsignedByte();
         if (id == ID_CREATE_PLUG) {
             readCreateInternal(buffer);
@@ -94,7 +95,7 @@ public final class PluggableHolder {
         }
     }
 
-    private void readCreateInternal(PacketBuffer buffer) {
+    private void readCreateInternal(PacketBuffer buffer) throws InvalidInputDataException {
         ResourceLocation identifier = new ResourceLocation(buffer.readString(256));
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {

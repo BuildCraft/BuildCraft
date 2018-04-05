@@ -6,10 +6,14 @@
 
 package buildcraft.lib.expression;
 
-import buildcraft.lib.expression.Tokenizer.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import buildcraft.lib.expression.Tokenizer.ITokenizerGobbler;
+import buildcraft.lib.expression.Tokenizer.ResultConsume;
+import buildcraft.lib.expression.Tokenizer.ResultDiscard;
+import buildcraft.lib.expression.Tokenizer.ResultInvalid;
+import buildcraft.lib.expression.Tokenizer.ResultSpecific;
 
 public class TokenizerDefaults {
     // Lots of gobblers.

@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,14 +29,13 @@ import java.util.function.Function;
  * item/block registry usage, as it looks like forge will start to support dynamically registered ones. (Perhaps we
  * could allow this to work dynamically by looking items up in the config on reload? Either way we need to see what
  * forge does in the future.) */
-@Mod.EventBusSubscriber
 public final class RegistrationHelper {
 
     private static final Map<String, Block> oredictBlocks = new HashMap<>();
     private static final Map<String, Item> oredictItems = new HashMap<>();
 
     //private static final List<Block> blocks = new ArrayList<>();
-    private static List<Item> items = Lists.newArrayList();
+    private static List<Item> items = Lists.newLinkedList();
 
     public static void registerOredictEntries() {
         for (Entry<String, Item> entry : oredictItems.entrySet()) {
@@ -47,7 +47,7 @@ public final class RegistrationHelper {
     }
 
     @SideOnly(Side.CLIENT)
-    public final void onModelRegistry(ModelRegistryEvent event) {
+    public static void registerModels() {
         for (Item item : items) {
             if (item instanceof IItemBuildCraft) {
                 ((IItemBuildCraft) item).registerVariants();

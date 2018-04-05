@@ -1,6 +1,19 @@
 package buildcraft.test.lib.expression;
 
-import buildcraft.lib.expression.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import buildcraft.lib.expression.Argument;
+import buildcraft.lib.expression.DefaultContexts;
+import buildcraft.lib.expression.ExpressionDebugManager;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.NodeStack;
+import buildcraft.lib.expression.VecLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
@@ -11,12 +24,6 @@ import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {

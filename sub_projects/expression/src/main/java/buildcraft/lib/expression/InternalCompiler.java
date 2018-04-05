@@ -6,18 +6,36 @@
 
 package buildcraft.lib.expression;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import buildcraft.lib.expression.Tokenizer.ITokenizingContext;
 import buildcraft.lib.expression.Tokenizer.ResultConsume;
 import buildcraft.lib.expression.Tokenizer.TokenResult;
-import buildcraft.lib.expression.api.*;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
+import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncLong;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
+import buildcraft.lib.expression.api.INodeStack;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.InvalidExpressionException;
+import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
 import buildcraft.lib.expression.node.cast.NodeCasting;
 import buildcraft.lib.expression.node.condition.NodeConditionalBoolean;
@@ -28,14 +46,11 @@ import buildcraft.lib.expression.node.func.NodeFuncGenericToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToLong;
 import buildcraft.lib.expression.node.func.NodeFuncGenericToObject;
+import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
-
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class InternalCompiler {
     private static final String UNARY_NEGATION = "¬";

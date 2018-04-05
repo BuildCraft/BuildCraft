@@ -39,8 +39,13 @@ public class ItemDebugger extends ItemBC_Neptune {
     }
 
     public static boolean isShowDebugInfo(EntityPlayer player) {
-        return player.capabilities.isCreativeMode ||
-            player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger ||
-            player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger;
+        if (player.capabilities.isCreativeMode)
+            return true;
+        ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+        if (stack != null && stack.getItem() instanceof ItemDebugger)
+            return true;
+
+        stack = player.getHeldItem(EnumHand.OFF_HAND);
+        return stack != null && stack.getItem() instanceof ItemDebugger;
     }
 }

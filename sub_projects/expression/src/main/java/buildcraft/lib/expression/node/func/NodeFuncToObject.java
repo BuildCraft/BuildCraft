@@ -6,12 +6,12 @@
 
 package buildcraft.lib.expression.node.func;
 
+import java.util.function.Supplier;
+
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.InvalidExpressionException;
-
-import java.util.function.Supplier;
 
 public class NodeFuncToObject<T> implements INodeFuncObject<T>, INodeObject<T> {
 

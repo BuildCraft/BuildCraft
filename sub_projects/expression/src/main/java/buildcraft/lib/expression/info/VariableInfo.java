@@ -6,12 +6,6 @@
 
 package buildcraft.lib.expression.info;
 
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.node.value.NodeVariableBoolean;
-import buildcraft.lib.expression.node.value.NodeVariableDouble;
-import buildcraft.lib.expression.node.value.NodeVariableLong;
-import buildcraft.lib.expression.node.value.NodeVariableObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,6 +13,12 @@ import java.util.List;
 import java.util.function.DoublePredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
+
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.node.value.NodeVariableBoolean;
+import buildcraft.lib.expression.node.value.NodeVariableDouble;
+import buildcraft.lib.expression.node.value.NodeVariableLong;
+import buildcraft.lib.expression.node.value.NodeVariableObject;
 
 public abstract class VariableInfo<N extends IVariableNode> {
     public final N node;

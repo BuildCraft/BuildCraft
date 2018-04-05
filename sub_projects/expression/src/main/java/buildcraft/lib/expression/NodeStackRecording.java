@@ -6,6 +6,9 @@
 
 package buildcraft.lib.expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
@@ -18,9 +21,6 @@ import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** A node stack that returns immutable values containing either 0, false or the empty string. Used to count the number
  * of nodes that a particular function requires. */
