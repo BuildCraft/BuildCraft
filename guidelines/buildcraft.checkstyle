@@ -9,7 +9,7 @@
     <module name="MissingOverride"/>
     <module name="AvoidStarImport"/>
     <module name="MethodName">
-      <property name="format" value="^[a-z][a-zA-Z0-9_]*$"/>
+      <property name="format" value="^([a-z]|___testing_)[a-zA-Z0-9_]*$"/>
     </module>
     <module name="ImportOrder">
       <property name="groups" value="java, javax,com,gnu,io,joptsimple,org,net.minecraft,net.minecraftforge,buildcraft.api,buildcraft.lib,buildcraft"/>

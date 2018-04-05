@@ -246,7 +246,7 @@ public abstract class OilGenStructure {
             count += tubeY.countOilBlocks();
             BlockPos base = worldTop;
             for (int r = radius; r >= 0; r--) {
-                //BCLog.logger.info(" - " + base + " = " + r);
+                // BCLog.logger.info(" - " + base + " = " + r);
                 OilGenStructure struct = OilGenerator.createTubeY(base, height, r);
                 struct.generate(world, struct.box);
                 base = base.add(0, height, 0);
@@ -297,13 +297,9 @@ public abstract class OilGenStructure {
                 world.setTileEntity(pos, spring);
             }
             spring.totalSources = count;
-            if (BCLib.DEV)
-                BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile)); // TODO:
-                                                                                                                   // This
-                                                                                                                   // might
-                                                                                                                   // not
-                                                                                                                   // work
-                                                                                                                   // properly!
+            if (BCLib.DEV) {
+                BCLog.logger.info("[energy.gen.oil] Generated TileSpringOil as " + System.identityHashCode(tile));
+            }
         }
     }
 }
