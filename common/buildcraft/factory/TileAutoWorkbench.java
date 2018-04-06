@@ -359,7 +359,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 					ItemStack inputInvStack = inputInv.getStackInSlot(j);
 
-					if (StackHelper.isMatchingItem(inputInvStack, comparedStack, true, false)
+					if (StackHelper.isMatchingItem(inputInvStack, comparedStack, true, true)
 							&& inputInvStack.stackSize > bindingCounts[j]) {
 						found = true;
 						bindings[i] = j;
