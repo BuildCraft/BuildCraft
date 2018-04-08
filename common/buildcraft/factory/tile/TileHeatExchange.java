@@ -115,6 +115,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                         ((ExchangeSectionStart) start.section).endSection = (ExchangeSectionEnd) end.section;
                     }
                 }
+                for (TileHeatExchange tile : exchangers) {
+                    tile.redrawBlock();
+                }
             } else {
                 if (exchangers.isEmpty()) {
                     // Something went wrong when searching

@@ -23,4 +23,5 @@ Bug fixes:
 * [#4031] Tanks that disallow connections via the new canConnectTo(tank) method doesn't render properly.
 * [#4067] The heat exchanger sometimes crashes when looking around for adjacent heat exchangers.
 * [#4100] The filler GUI doesn't resize itself properly.
+* [#4115] The heat exchanger doesn't render fluids in the correct place, nor does it update the model when the multiblock is complete.
 * [#4119] Not all pipe upgrade recipes are reversable.
