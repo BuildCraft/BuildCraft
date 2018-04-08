@@ -90,6 +90,8 @@ public class BCTransportRecipes {
         addPipeRecipe(BCTransportItems.pipeItemLapis, Blocks.LAPIS_BLOCK);
         addPipeRecipe(BCTransportItems.pipeItemDaizuli, Blocks.LAPIS_BLOCK, Items.DIAMOND);
         addPipeRecipe(BCTransportItems.pipeItemDiaWood, "plankWood", Items.DIAMOND);
+        addPipeRecipe(BCTransportItems.pipeItemStripes, "gearGold");
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeItemEmzuli, Blocks.LAPIS_BLOCK);
 
         Item waterproof = BCItems.Transport.WATERPROOF;
         if (waterproof == null) {
@@ -190,6 +192,7 @@ public class BCTransportRecipes {
             makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ);
 
             // And Gate <-> Or Gate (shapeless)
+            // TODO: Create a recipe class for this instead!
             for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
                 if (material == EnumGateMaterial.CLAY_BRICK) {
                     continue;

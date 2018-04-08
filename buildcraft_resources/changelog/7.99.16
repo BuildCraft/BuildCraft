@@ -23,3 +23,4 @@ Bug fixes:
 * [#4031] Tanks that disallow connections via the new canConnectTo(tank) method doesn't render properly.
 * [#4067] The heat exchanger sometimes crashes when looking around for adjacent heat exchangers.
 * [#4100] The filler GUI doesn't resize itself properly.
+* [#4119] Not all pipe upgrade recipes are reversable.
