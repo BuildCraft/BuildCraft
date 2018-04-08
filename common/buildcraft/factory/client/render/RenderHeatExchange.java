@@ -124,7 +124,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             EnumProgressState progressState = section.getProgressState();
             double progress = section.getProgress(partialTicks);
             if (progress > 0) {
-                double length = middles + 1 - 4 / 16.0 - 0.02;
+                double length = middles + 2 - 4 / 16.0 - 0.02;
                 double p0 = 2 / 16.0 + 0.01;
                 double p1 = p0 + length - 0.01;
                 double progressStart = p0;
@@ -139,7 +139,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
                 }
                 BlockPos diff = BlockPos.ORIGIN;
                 if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
-                    diff = diff.offset(face, middles);
+                    diff = diff.offset(face, middles + 1);
                 }
                 double otherStart = flip ? p0 : p1 - length * progress;
                 double otherEnd = flip ? p0 + length * progress : p1;
