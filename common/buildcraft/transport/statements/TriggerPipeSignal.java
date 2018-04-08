@@ -31,8 +31,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     private final EnumDyeColor colour;
 
     public TriggerPipeSignal(boolean active, EnumDyeColor colour) {
-        super("buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"),//
-            "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"));
+        super(
+            "buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
+                + (active ? ".active" : ".inactive"), //
+            "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
+                + (active ? ".active" : ".inactive"));
 
         this.active = active;
         this.colour = colour;
@@ -50,7 +53,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
+        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")),
+            ColourUtil.getTextFullTooltip(colour));
     }
 
     @Override
@@ -73,7 +77,10 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         for (IStatementParameter param : parameters) {
             if (param != null && param instanceof TriggerParameterSignal) {
                 TriggerParameterSignal signal = (TriggerParameterSignal) param;
-                if (signal.colour != null) {
+                if (signal.colour == null) {
+                    continue;
+                }
+                if (signal.active) {
                     if (!wires.isAnyPowered(signal.colour)) {
                         return false;
                     }
