@@ -47,7 +47,7 @@ import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
-import buildcraft.transport.plug.PluggableGate;
+import buildcraft.silicon.plug.PluggableGate;
 
 public class WireSystem {
     public final List<WireElement> elements = new ArrayList<>();

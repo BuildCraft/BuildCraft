@@ -11,8 +11,7 @@ public enum BCTransportGuis {
     FILTERED_BUFFER,
     PIPE_DIAMOND,
     PIPE_DIAMOND_WOOD,
-    PIPE_EMZULI,
-    GATE;
+    PIPE_EMZULI;
 
     public static final BCTransportGuis[] VALUES = values();
 

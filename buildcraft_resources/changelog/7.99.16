@@ -1,4 +1,10 @@
 
+Changes:
+
+* Most of the pipe pluggables have been moved from transport to silicon
+  * Specifically the gates, light sensor, facades, pulsar, lenses, and filters.
+  * This shouldn't cause any issues if you're using at least both transport and silicon already
+
 Improvements:
 
 * Item pipes now send the item all the way into a block, rather than stopping when then item is half-way in.

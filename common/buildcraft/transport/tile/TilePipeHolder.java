@@ -54,11 +54,11 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.silicon.plug.FilterEventHandler;
 import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
-import buildcraft.transport.plug.FilterEventHandler;
 import buildcraft.transport.wire.WireManager;
 import buildcraft.transport.wire.WireSystem;
 

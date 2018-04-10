@@ -19,22 +19,12 @@ import buildcraft.transport.statements.ActionParameterSignal;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.statements.ActionPipeSignal;
-import buildcraft.transport.statements.ActionPowerPulsar;
-import buildcraft.transport.statements.ActionProviderGates;
-import buildcraft.transport.statements.TriggerLightSensor;
+import buildcraft.transport.statements.ActionProviderPipes;
 import buildcraft.transport.statements.TriggerParameterSignal;
 import buildcraft.transport.statements.TriggerPipeSignal;
-import buildcraft.transport.statements.TriggerProviderGates;
+import buildcraft.transport.statements.TriggerProviderPipes;
 
 public class BCTransportStatements {
-
-    public static final TriggerLightSensor TRIGGER_LIGHT_LOW;
-    public static final TriggerLightSensor TRIGGER_LIGHT_HIGH;
-    public static final TriggerLightSensor[] TRIGGER_LIGHT;
-
-    public static final ActionPowerPulsar ACTION_PULSAR_CONSTANT;
-    public static final ActionPowerPulsar ACTION_PULSAR_SINGLE;
-    public static final ActionPowerPulsar[] ACTION_PULSAR;
 
     public static final TriggerPipeSignal[] TRIGGER_PIPE_SIGNAL;
     public static final ActionPipeSignal[] ACTION_PIPE_SIGNAL;
@@ -43,14 +33,6 @@ public class BCTransportStatements {
     public static final ActionPipeDirection[] ACTION_PIPE_DIRECTION;
 
     static {
-        TRIGGER_LIGHT_LOW = new TriggerLightSensor(false);
-        TRIGGER_LIGHT_HIGH = new TriggerLightSensor(true);
-        TRIGGER_LIGHT = new TriggerLightSensor[] { TRIGGER_LIGHT_LOW, TRIGGER_LIGHT_HIGH };
-
-        ACTION_PULSAR_CONSTANT = new ActionPowerPulsar(true);
-        ACTION_PULSAR_SINGLE = new ActionPowerPulsar(false);
-        ACTION_PULSAR = new ActionPowerPulsar[] { ACTION_PULSAR_CONSTANT, ACTION_PULSAR_SINGLE };
-
         TRIGGER_PIPE_SIGNAL = new TriggerPipeSignal[2 * ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 0] = new TriggerPipeSignal(true, colour);
@@ -82,7 +64,7 @@ public class BCTransportStatements {
     }
 
     public static void preInit() {
-        StatementManager.registerTriggerProvider(TriggerProviderGates.INSTANCE);
-        StatementManager.registerActionProvider(ActionProviderGates.INSTANCE);
+        StatementManager.registerTriggerProvider(TriggerProviderPipes.INSTANCE);
+        StatementManager.registerActionProvider(ActionProviderPipes.INSTANCE);
     }
 }

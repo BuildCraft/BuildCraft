@@ -14,6 +14,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeFaceTex;
 
@@ -67,5 +68,13 @@ public final class PipeModelKey {
     @Override
     public int hashCode() {
         return hash;
+    }
+
+    public EnumPipeColourType getColourType() {
+        if (this.definition != null) {
+            return definition.getColourType();
+        } else {
+            return EnumPipeColourType.TRANSLUCENT;
+        }
     }
 }

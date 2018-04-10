@@ -35,7 +35,7 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 
 import buildcraft.lib.net.MessageManager;
 
-import buildcraft.transport.plug.PluggableGate;
+import buildcraft.silicon.plug.PluggableGate;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
     public static final String DATA_NAME = "buildcraft_wire_systems";

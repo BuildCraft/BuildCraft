@@ -6,20 +6,15 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.transport.item.ItemPipeHolder;
-import buildcraft.transport.item.ItemPluggableFacade;
-import buildcraft.transport.item.ItemPluggableGate;
-import buildcraft.transport.item.ItemPluggableLens;
 import buildcraft.transport.item.ItemPluggableSimple;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.PipeRegistry;
-import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportItems {
     private static final RegistrationHelper HELPER = new RegistrationHelper();
@@ -79,11 +74,6 @@ public class BCTransportItems {
 
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableSimple plugPowerAdaptor;
-    public static ItemPluggableGate plugGate;
-    public static ItemPluggableLens plugLens;
-    public static ItemPluggableSimple plugPulsar;
-    public static ItemPluggableSimple plugLightSensor;
-    public static ItemPluggableFacade plugFacade;
 
     public static ItemWire wire;
 
@@ -134,14 +124,6 @@ public class BCTransportItems {
         plugBlocker = HELPER.addItem(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
         plugPowerAdaptor = HELPER.addItem(new ItemPluggableSimple("item.plug.power_adaptor",
             BCTransportPlugs.powerAdaptor, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER));
-        plugGate = HELPER.addItem(new ItemPluggableGate("item.plug.gate"));
-        plugLens = HELPER.addItem(new ItemPluggableLens("item.plug.lens"));
-        plugPulsar = HELPER.addItem(new ItemPluggableSimple("item.plug.pulsar", BCTransportPlugs.pulsar,
-            PluggablePulsar::new, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER));
-        plugLightSensor =
-            HELPER.addItem(new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor));
-        plugFacade = HELPER.addItem(new ItemPluggableFacade("item.plug.facade"));
-        FacadeAPI.facadeItem = plugFacade;
 
         wire = HELPER.addItem(new ItemWire("item.wire"));
     }

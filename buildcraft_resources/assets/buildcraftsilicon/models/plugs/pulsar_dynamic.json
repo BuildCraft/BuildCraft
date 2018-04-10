@@ -1,0 +1,104 @@
+{
+    "textures": {
+        "#pulsing_true":"buildcraftsilicon:plugs/pulsar_dynamic_on",
+        "#pulsing_false":"buildcraftsilicon:plugs/pulsar_dynamic_off",
+        "particle":"#pulsing_false"
+    },
+    "variables": {
+        "mirrored_pos": "2 * (stage > 0.5 ? 1 - stage : stage)",
+        "pos": "(1 - mirrored_pos) * 2 - 0.001"
+    },
+    "rules": [
+		{
+			"when": "side != Facing.WEST",
+			"type": "builtin:rotate_facing",
+			"from": "Facing.WEST",
+			"to": "side"
+		}
+	],
+    "inlines": {
+        "led_auto": {
+            "shade": "!auto",
+            "light": "auto ? 15 : 0",
+            "colour":"auto ? 0xFF_FF_99_99 : 0xFF_22_22_22",
+            "type":"led"
+        },
+        "led_manual": {
+            "shade": "!manual",
+            "light": "manual ? 15 : 0",
+            "colour":"manual ? 0xFF_99_FF_99 : 0xFF_22_22_22",
+            "type":"led"
+        }
+    },
+    "elements": [
+        {
+            "from": [ "pos", 6, 6 ],
+            "to": [ "pos+2", 10, 10 ],
+            "visible":"on",
+            "shade": "false",
+            "light":15,
+            "faces": {
+                "down":  { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "up":    { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "north": { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "south": { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "west":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_true'" },
+                "east":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_true'" }
+            }
+        },
+        {
+            "from": [ "pos", 6, 6 ],
+            "to": [ "pos + 2", 10, 10 ],
+            "visible":"!on",
+            "shade": "true",
+            "faces": {
+                "down":  { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "up":    { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "north": { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "south": { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "west":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_false'" },
+                "east":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_false'" }
+            }
+        },
+        {
+            "from":[ 2.5, 6.5, 4.9 ],
+            "to":  [ 3.5, 7.5, 5   ],
+            "inline":"led_auto"
+        },
+        {
+            "from": [ 2.5, 8.5, 4.9 ],
+            "to":   [ 3.5, 9.5, 5   ],
+            "inline":"led_manual"
+        },
+        {
+            "from":[ 2.5, 8.5, 11 ],
+            "to":  [ 3.5, 9.5, 11.1   ],
+            "inline":"led_auto"
+        },
+        {
+            "from": [ 2.5, 6.5, 11 ],
+            "to":   [ 3.5, 7.5, 11.1   ],
+            "inline":"led_manual"
+        },
+        {
+            "from":[ 2.5, 4.9, 8.5 ],
+            "to":  [ 3.5, 5  , 9.5 ],
+            "inline":"led_auto"
+        },
+        {
+            "from": [ 2.5, 4.9, 6.5 ],
+            "to":   [ 3.5, 5  , 7.5 ],
+            "inline":"led_manual"
+        },
+        {
+            "from":[ 2.5, 11  , 6.5 ],
+            "to":  [ 3.5, 11.1, 7.5 ],
+            "inline":"led_auto"
+        },
+        {
+            "from": [ 2.5, 11  , 8.5 ],
+            "to":   [ 3.5, 11.1, 9.5 ],
+            "inline":"led_manual"
+        }
+    ]
+}
