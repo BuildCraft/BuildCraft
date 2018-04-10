@@ -17,10 +17,11 @@ Improvements:
   * Added a new option: fluid pipes can switch between translucent colouring, and bordered colouring.
 * Added code to the API to allow pipes to render multiple sprites, each with their own colour.
   * See PipeBehaviour.getTextureData(EnumFacing side) and PipeFaceTex to details.
+* Added a config option to allow disabling client-side sprite animations.
 
 Ported content:
 
-* The stripes pipe can now extend and retract pipes.
+* The stripes pipe can now extend and retract pipes properly.
 
 Bug fixes:
 
