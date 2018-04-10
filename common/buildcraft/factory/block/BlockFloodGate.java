@@ -6,12 +6,10 @@
 
 package buildcraft.factory.block;
 
-import buildcraft.api.items.BCStackHelper;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.factory.tile.TileFloodGate;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -24,10 +22,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.tools.IToolWrench;
+
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
+
+import buildcraft.factory.tile.TileFloodGate;
 
 public class BlockFloodGate extends BlockBCTile_Neptune {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP;
@@ -64,8 +65,10 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!BCStackHelper.isEmpty(heldItem) && heldItem.getItem() instanceof IToolWrench) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+        EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack heldItem = player.getHeldItem(hand);
+        if (heldItem.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {
                 if (side != EnumFacing.UP) {
                     TileEntity tile = world.getTileEntity(pos);
@@ -84,6 +87,6 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
             }
             return false;
         }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 }

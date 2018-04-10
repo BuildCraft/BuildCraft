@@ -28,7 +28,6 @@ import buildcraft.core.BCCore;
 import buildcraft.silicon.plug.FacadeBlockStateInfo;
 import buildcraft.silicon.plug.FacadeInstance;
 import buildcraft.silicon.plug.FacadeStateManager;
-import buildcraft.transport.BCTransportStatements;
 
 //@formatter:off
 @Mod(

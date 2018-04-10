@@ -8,6 +8,7 @@ package buildcraft.transport.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.vecmath.Point3f;
 
 import net.minecraft.client.renderer.VertexBuffer;

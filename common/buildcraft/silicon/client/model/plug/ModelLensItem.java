@@ -25,8 +25,8 @@ import net.minecraft.world.World;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 
-import buildcraft.silicon.item.ItemPluggableLens.LensData;
 import buildcraft.silicon.BCSiliconModels;
+import buildcraft.silicon.item.ItemPluggableLens.LensData;
 
 public enum ModelLensItem implements IBakedModel {
     INSTANCE;

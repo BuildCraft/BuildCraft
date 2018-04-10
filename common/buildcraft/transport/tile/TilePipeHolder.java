@@ -8,7 +8,6 @@ package buildcraft.transport.tile;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -38,7 +37,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipe;
@@ -60,7 +58,6 @@ import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
-import buildcraft.transport.wire.WireSystem;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
 

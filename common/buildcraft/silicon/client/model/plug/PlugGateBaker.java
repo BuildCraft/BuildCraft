@@ -17,8 +17,8 @@ import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 
 import buildcraft.lib.client.model.MutableQuad;
 
-import buildcraft.silicon.client.model.key.KeyPlugGate;
 import buildcraft.silicon.BCSiliconModels;
+import buildcraft.silicon.client.model.key.KeyPlugGate;
 
 public enum PlugGateBaker implements IPluggableStaticBaker<KeyPlugGate> {
     INSTANCE;
