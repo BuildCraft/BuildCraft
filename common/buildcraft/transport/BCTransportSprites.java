@@ -33,6 +33,7 @@ public class BCTransportSprites {
     public static final SpriteHolder PIPE_COLOUR_BORDER_OUTER;
     public static final SpriteHolder PIPE_COLOUR_BORDER_INNER;
 
+    public static final SpriteHolder[] ACTION_PIPE_COLOUR;
     public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
@@ -47,6 +48,11 @@ public class BCTransportSprites {
         COLOUR_ITEM_BOX = getHolder("pipes/colour_item_box");
         PIPE_COLOUR_BORDER_OUTER = getHolder("pipes/colour_border_outer");
         PIPE_COLOUR_BORDER_INNER = getHolder("pipes/colour_border_inner");
+
+        ACTION_PIPE_COLOUR = new SpriteHolder[ColourUtil.COLOURS.length];
+        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            ACTION_PIPE_COLOUR[colour.ordinal()] = getHolder("core", "items/paintbrush/" + colour.getName());
+        }
 
         PIPE_SIGNAL_OFF = new EnumMap<>(EnumDyeColor.class);
         PIPE_SIGNAL_ON = new EnumMap<>(EnumDyeColor.class);
