@@ -6,7 +6,9 @@
 
 package buildcraft.silicon.client.render;
 
-import net.minecraft.client.renderer.VertexBuffer;
+
+import net.minecraft.client.renderer.BufferBuilder;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,7 +31,7 @@ public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {
     }
 
     @Override
-    public void render(PluggableGate gate, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+    public void render(PluggableGate gate, double x, double y, double z, float partialTicks, BufferBuilder vb) {
         vb.setTranslation(x, y, z);
         gate.setClientModelVariables();
         if (gate.clientModelData.hasNoNodes()) {
