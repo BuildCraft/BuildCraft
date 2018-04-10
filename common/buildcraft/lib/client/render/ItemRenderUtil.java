@@ -7,6 +7,7 @@
 package buildcraft.lib.client.render;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.vecmath.Vector3f;
 
 import com.google.common.cache.CacheBuilder;

@@ -26,7 +26,6 @@ import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.statements.TriggerPipeSignal;
 
 public enum TriggerProviderPipes implements ITriggerProvider {
     INSTANCE;

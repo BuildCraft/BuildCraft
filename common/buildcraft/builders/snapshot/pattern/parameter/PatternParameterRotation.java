@@ -24,7 +24,6 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
 
 import buildcraft.builders.BCBuildersSprites;
-import buildcraft.core.BCCoreSprites;
 
 public enum PatternParameterRotation implements IStatementParameter {
     NONE,

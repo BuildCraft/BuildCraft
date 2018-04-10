@@ -17,8 +17,8 @@ import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 import buildcraft.lib.client.model.AdvModelCache;
 import buildcraft.lib.client.model.MutableQuad;
 
-import buildcraft.silicon.plug.PluggableGate;
 import buildcraft.silicon.BCSiliconModels;
+import buildcraft.silicon.plug.PluggableGate;
 
 @SideOnly(Side.CLIENT)
 public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {

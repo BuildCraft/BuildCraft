@@ -19,8 +19,8 @@ import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 
 import buildcraft.lib.client.model.MutableQuad;
 
-import buildcraft.silicon.client.model.key.KeyPlugLens;
 import buildcraft.silicon.BCSiliconModels;
+import buildcraft.silicon.client.model.key.KeyPlugLens;
 
 public enum PlugBakerLens implements IPluggableStaticBaker<KeyPlugLens> {
     INSTANCE;

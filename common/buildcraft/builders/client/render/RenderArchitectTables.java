@@ -9,6 +9,7 @@ package buildcraft.builders.client.render;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.vecmath.Point3f;
 
 import org.lwjgl.opengl.GL11;

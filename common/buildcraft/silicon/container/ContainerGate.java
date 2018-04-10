@@ -29,9 +29,9 @@ import buildcraft.lib.statement.StatementWrapper;
 
 import buildcraft.silicon.gate.ActionWrapper;
 import buildcraft.silicon.gate.GateContext;
+import buildcraft.silicon.gate.GateContext.GateGroup;
 import buildcraft.silicon.gate.GateLogic;
 import buildcraft.silicon.gate.TriggerWrapper;
-import buildcraft.silicon.gate.GateContext.GateGroup;
 
 public class ContainerGate extends ContainerBC_Neptune {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");

@@ -26,7 +26,6 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.tile.TileFloodGate;
