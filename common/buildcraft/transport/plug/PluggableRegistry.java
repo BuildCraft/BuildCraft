@@ -20,8 +20,8 @@ public enum PluggableRegistry implements IPluggableRegistry {
     private final Map<ResourceLocation, PluggableDefinition> registered = new HashMap<>();
 
     @Override
-    public void register(PluggableDefinition definition) {
-        registered.put(definition.identifier, definition);
+    public void register(ResourceLocation id, PluggableDefinition definition) {
+        registered.put(id, definition);
     }
 
     @Override

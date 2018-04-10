@@ -6,25 +6,36 @@
 
 package buildcraft.transport.wire;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.EnumWirePart;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.transport.plug.PluggableGate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import com.google.common.base.Predicates;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
-import net.minecraftforge.common.util.Constants;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.world.storage.WorldSavedData;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import net.minecraftforge.common.util.Constants;
+
+import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.pipe.IPipeHolder;
+
+import buildcraft.lib.net.MessageManager;
+
+import buildcraft.silicon.plug.PluggableGate;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
     public static final String DATA_NAME = "buildcraft_wire_systems";
@@ -78,6 +89,9 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public IWireEmitter getEmitter(WireSystem.WireElement element) {
         if(element.type == WireSystem.WireElement.Type.EMITTER_SIDE) {
             if(!emittersCache.containsKey(element)) {
+                if (!world.isBlockLoaded(element.blockPos)) {
+                    BCLog.logger.warn("[transport.wire] Ghost loading " + element.blockPos + " to look for an emitter!");
+                }
                 TileEntity tile = world.getTileEntity(element.blockPos);
                 if(tile instanceof IPipeHolder) {
                     IPipeHolder holder = (IPipeHolder) tile;
@@ -96,6 +110,9 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public boolean isEmitterEmitting(WireSystem.WireElement element, EnumDyeColor color) {
+        if (!world.isBlockLoaded(element.blockPos)) {
+            BCLog.logger.warn("[transport.wire] Ghost loading " + element.blockPos + " to look for an emitter!");
+        }
         TileEntity tile = world.getTileEntity(element.blockPos);
         if(tile instanceof IPipeHolder) {
             IPipeHolder holder = (IPipeHolder) tile;
@@ -115,7 +132,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                     })
                     .forEach(changedSystems::add);
         }
-        world.getPlayers(EntityPlayerMP.class, entityPlayerMP -> true).forEach(player -> {
+        world.getPlayers(EntityPlayerMP.class, Predicates.alwaysTrue()).forEach(player -> {
             Map<Integer, WireSystem> changedWires = this.wireSystems.keySet().stream()
                     .filter(wireSystem -> wireSystem.isPlayerWatching(player) && (structureChanged || changedPlayers.contains(player)))
                     .collect(Collectors.toMap(WireSystem::getWiresHashCode, Function.identity()));
@@ -166,7 +183,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
 
     public static WorldSavedDataWireSystems get(World world) {
         if(world.isRemote) {
-            BCLog.logger.warn("Creating WireSystems on client, this is a bug");
+            throw new UnsupportedOperationException("Attempted to get WorldSavedDataWireSystems on the client!");
         }
         MapStorage storage = world.getPerWorldStorage();
         WorldSavedDataWireSystems instance = (WorldSavedDataWireSystems) storage.getOrLoadData(WorldSavedDataWireSystems.class, DATA_NAME);

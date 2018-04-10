@@ -15,31 +15,16 @@ import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReade
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
 
 import buildcraft.transport.plug.PluggableBlocker;
-import buildcraft.transport.plug.PluggableFacade;
-import buildcraft.transport.plug.PluggableGate;
-import buildcraft.transport.plug.PluggableLens;
-import buildcraft.transport.plug.PluggableLightSensor;
 import buildcraft.transport.plug.PluggablePowerAdaptor;
-import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportPlugs {
 
     public static PluggableDefinition blocker;
     public static PluggableDefinition powerAdaptor;
-    public static PluggableDefinition gate;
-    public static PluggableDefinition lens;
-    public static PluggableDefinition pulsar;
-    public static PluggableDefinition lightSensor;
-    public static PluggableDefinition facade;
 
     public static void preInit() {
         blocker = register("blocker", PluggableBlocker::new);
         powerAdaptor = register("power_adaptor", PluggablePowerAdaptor::new);
-        gate = register("gate", PluggableGate::new, PluggableGate::new);
-        lens = register("lens", PluggableLens::new, PluggableLens::new);
-        pulsar = register("pulsar", PluggablePulsar::new, PluggablePulsar::new);
-        lightSensor = register("daylight_sensor", PluggableLightSensor::new);
-        facade = register("facade", PluggableFacade::new, PluggableFacade::new);
     }
 
     private static PluggableDefinition register(String name, IPluggableCreator creator) {
@@ -59,5 +44,4 @@ public class BCTransportPlugs {
     private static ResourceLocation idFor(String name) {
         return new ResourceLocation("buildcrafttransport", name);
     }
-
 }

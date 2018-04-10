@@ -55,7 +55,7 @@ public class PipeModelCacheBase {
             centerSprite = key.center;
             sideSprites = key.sides;
             connections = key.connected;
-            EnumPipeColourType defColourType = key.definition.getColourType();
+            EnumPipeColourType defColourType = key.getColourType();
             if (key.colour != null && canBakeCutoutColour(defColourType)) {
                 this.colour = key.colour;
                 this.colourType = defColourType;
@@ -104,7 +104,7 @@ public class PipeModelCacheBase {
         private final int hashCode;
 
         public PipeBaseTranslucentKey(PipeModelKey key) {
-            if (key.definition.getColourType() == EnumPipeColourType.TRANSLUCENT) {
+            if (key.getColourType() == EnumPipeColourType.TRANSLUCENT) {
                 this.colour = key.colour;
             } else {
                 this.colour = null;

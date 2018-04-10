@@ -10,13 +10,19 @@ import net.minecraft.util.math.BlockPos;
 public enum BCSiliconGuis {
     ASSEMBLY_TABLE,
     ADVANCED_CRAFTING_TABLE,
-    INTEGRATION_TABLE;
+    INTEGRATION_TABLE,
+    GATE;
 
     public void openGUI(EntityPlayer player) {
         player.openGui(BCSilicon.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
     }
 
     public void openGUI(EntityPlayer player, BlockPos pos) {
-        player.openGui(BCSilicon.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
+        openGui(player, pos, 0);
+    }
+
+    public void openGui(EntityPlayer player, BlockPos pos, int data) {
+        int fullId = (data << 8) | ordinal();
+        player.openGui(BCSilicon.INSTANCE, fullId, player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
 }

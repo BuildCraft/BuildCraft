@@ -8,7 +8,6 @@ package buildcraft.transport;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,7 +21,6 @@ import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApiClient;
 import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.net.MessageManager;
 
@@ -32,16 +30,13 @@ import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
 import buildcraft.transport.container.ContainerFilteredBuffer_BC8;
-import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiEmzuliPipe_BC8;
 import buildcraft.transport.gui.GuiFilteredBuffer;
-import buildcraft.transport.gui.GuiGate;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
-import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.wire.MessageWireSystems;
 import buildcraft.transport.wire.MessageWireSystemsPowered;
@@ -107,19 +102,6 @@ public abstract class BCTransportProxy implements IGuiHandler {
                 }
                 break;
             }
-            case GATE: {
-                int ry = y >> 3;
-                EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
-                tile = world.getTileEntity(new BlockPos(x, ry, z));
-                if (tile instanceof IPipeHolder) {
-                    IPipeHolder holder = (IPipeHolder) tile;
-                    PipePluggable plug = holder.getPluggable(gateSide);
-                    if (plug instanceof PluggableGate) {
-                        return new ContainerGate(player, ((PluggableGate) plug).logic);
-                    }
-                }
-                break;
-            }
         }
         return null;
     }
@@ -134,16 +116,13 @@ public abstract class BCTransportProxy implements IGuiHandler {
         MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystemsPowered.class, Side.CLIENT);
     }
 
-    public void fmlInit() {
-    }
+    public void fmlInit() {}
 
-    public void fmlPostInit() {
-    }
+    public void fmlPostInit() {}
 
     @SuppressWarnings("unused")
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BCTransportProxy {
-    }
+    public static class ServerProxy extends BCTransportProxy {}
 
     @SuppressWarnings("unused")
     @SideOnly(Side.CLIENT)
@@ -222,19 +201,6 @@ public abstract class BCTransportProxy implements IGuiHandler {
                         if (behaviour instanceof PipeBehaviourEmzuli) {
                             PipeBehaviourEmzuli emzPipe = (PipeBehaviourEmzuli) behaviour;
                             return new GuiEmzuliPipe_BC8(player, emzPipe);
-                        }
-                    }
-                    break;
-                }
-                case GATE: {
-                    int ry = y >> 3;
-                    EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
-                    tile = world.getTileEntity(new BlockPos(x, ry, z));
-                    if (tile instanceof IPipeHolder) {
-                        IPipeHolder holder = (IPipeHolder) tile;
-                        PipePluggable plug = holder.getPluggable(gateSide);
-                        if (plug instanceof PluggableGate) {
-                            return new GuiGate(new ContainerGate(player, ((PluggableGate) plug).logic));
                         }
                     }
                     break;

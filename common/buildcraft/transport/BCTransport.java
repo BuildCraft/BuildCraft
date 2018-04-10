@@ -6,22 +6,8 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.BCItems;
-import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
-import buildcraft.core.BCCore;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.config.EnumRestartRequirement;
-import buildcraft.lib.registry.CreativeTabManager;
-import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
-import buildcraft.lib.registry.RegistryConfig;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
-import buildcraft.transport.item.ItemPluggableFacade;
-import buildcraft.transport.pipe.SchematicBlockPipe;
-import buildcraft.transport.plug.FacadeBlockStateInfo;
-import buildcraft.transport.plug.FacadeInstance;
-import buildcraft.transport.plug.FacadeStateManager;
+import java.util.function.Consumer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -31,7 +17,23 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import java.util.function.Consumer;
+import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.facades.FacadeAPI;
+import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+
+import buildcraft.lib.BCLib;
+import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
+import buildcraft.lib.registry.RegistryConfig;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.TagEntry;
+
+import buildcraft.core.BCCore;
+import buildcraft.silicon.plug.FacadeStateManager;
+import buildcraft.transport.pipe.SchematicBlockPipe;
 
 //@formatter:off
 @Mod(
@@ -49,7 +51,6 @@ public class BCTransport {
 
     private static CreativeTabBC tabPipes;
     private static CreativeTabBC tabPlugs;
-    private static CreativeTabBC tabFacades;
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
@@ -57,7 +58,6 @@ public class BCTransport {
 
         tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
         tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
-        tabFacades = CreativeTabManager.createTab("buildcraft.facades");
 
         BCTransportRegistries.preInit();
         BCTransportConfig.preInit();
@@ -71,7 +71,7 @@ public class BCTransport {
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
         tabPipes.setItem(BCTransportItems.pipeItemDiamond);
-        tabPlugs.setItem(BCItems.Transport.PLUG_GATE);
+        tabPlugs.setItem(BCTransportItems.plugBlocker);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
@@ -87,25 +87,51 @@ public class BCTransport {
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
         BCTransportRegistries.init();
-        BCTransportRecipes.init();
-        FacadeStateManager.init();
     }
+
+    // How much time we wasted during a tantrum
+    // We ensure that this never exceeds 15 seconds, even if we receive over a million invalid IMC messages
+    private static int totalTantrumTime;
 
     @Mod.EventHandler
     public static void onImcEvent(IMCEvent imc) {
         for (IMCMessage message : imc.getMessages()) {
-            FacadeStateManager.receiveInterModComms(message);
+            if (FacadeAPI.isFacadeMessageId(message.key)) {
+                // As this used to be in transport we will need to
+                // pass messages on to silicon
+
+                // Although we'll make a bit of a fuss about doing so
+                BCLog.logger.warn(
+                    "[transport] Recieved a facade IMC message that should be directed to 'buildcraftsilicon' instead!");
+
+                // a bit bigger fuss
+                new IllegalArgumentException().printStackTrace();
+
+                {
+                    // and a tantrum
+                    int time = 1000;
+                    if (time + totalTantrumTime > 15000) {
+                        time = 0;
+                    } else {
+                        totalTantrumTime += time;
+                        try {
+                            Thread.sleep(time);
+                        } catch (InterruptedException ignored) {
+                            // We don't really care about this error
+                        }
+                    }
+                }
+                // Ok, tantrum over
+                if (BCModules.SILICON.isLoaded()) {
+                    FacadeStateManager.receiveInterModComms(message);
+                }
+            }
         }
     }
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlPostInit();
-        if (BCItems.Transport.PLUG_FACADE != null) {
-            FacadeBlockStateInfo state = FacadeStateManager.previewState;
-            FacadeInstance inst = FacadeInstance.createSingle(state, false);
-            tabFacades.setItem(((ItemPluggableFacade)BCItems.Transport.PLUG_FACADE).createItemStack(inst));
-        }
     }
 
     static {
@@ -115,16 +141,8 @@ public class BCTransport {
             .model("waterproof");
         registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("plug_blocker")
             .tab("buildcraft.plugs");
-        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.plugs");
-        registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs");
-        registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar")
-            .tab("buildcraft.plugs");
-        registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor")
-            .tab("buildcraft.plugs");
         registerTag("item.plug.power_adaptor").reg("plug_power_adaptor").locale("PipePowerAdapter")
             .model("plug_power_adaptor").tab("buildcraft.plugs");
-        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade")
-            .tab("buildcraft.facades");
         registerTag("item.wire").reg("wire").locale("pipeWire").model("wire/").tab("buildcraft.plugs");
         // Pipes
         startBatch();// Pipes

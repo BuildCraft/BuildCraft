@@ -6,15 +6,20 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.PipeDefinition;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.registry.RegistrationHelper;
-import buildcraft.transport.item.*;
+
+import buildcraft.transport.item.ItemPipeHolder;
+import buildcraft.transport.item.ItemPluggableSimple;
+import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.PipeRegistry;
-import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportItems {
+    private static final RegistrationHelper HELPER = new RegistrationHelper();
+
+    public static ItemBC_Neptune waterproof;
 
     public static ItemPipeHolder pipeStructure;
 
@@ -67,8 +72,13 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeItemEmzuli;
     public static ItemPipeHolder pipeItemStripes;
 
+    public static ItemPluggableSimple plugBlocker;
+    public static ItemPluggableSimple plugPowerAdaptor;
+
+    public static ItemWire wire;
+
     public static void preInit() {
-        RegistrationHelper.addItem(new ItemBC_Neptune("item.waterproof"));
+        waterproof = HELPER.addItem(new ItemBC_Neptune("item.waterproof"));
 
         pipeStructure = makePipeItem(BCTransportPipes.structure);
 
@@ -111,17 +121,11 @@ public class BCTransportItems {
         // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
         pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
 
-        RegistrationHelper.addItem(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
-        RegistrationHelper.addItem(new ItemPluggableSimple("item.plug.power_adaptor",
+        plugBlocker = HELPER.addItem(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
+        plugPowerAdaptor = HELPER.addItem(new ItemPluggableSimple("item.plug.power_adaptor",
             BCTransportPlugs.powerAdaptor, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER));
-        RegistrationHelper.addItem(new ItemPluggableGate("item.plug.gate"));
-        RegistrationHelper.addItem(new ItemPluggableLens("item.plug.lens"));
-        RegistrationHelper.addItem(new ItemPluggableSimple("item.plug.pulsar", BCTransportPlugs.pulsar,
-            PluggablePulsar::new, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER));
-        RegistrationHelper.addItem(new ItemPluggableSimple("item.plug.light_sensor", BCTransportPlugs.lightSensor));
-        FacadeAPI.facadeItem = RegistrationHelper.addItem(new ItemPluggableFacade("item.plug.facade"));
 
-        RegistrationHelper.addItem(new ItemWire("item.wire"));
+        wire = HELPER.addItem(new ItemWire("item.wire"));
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {
