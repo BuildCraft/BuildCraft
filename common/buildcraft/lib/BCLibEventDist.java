@@ -4,7 +4,41 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.WorldServer;
+
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.tiles.IDebuggable;
+
 import buildcraft.lib.client.model.ModelHolderRegistry;
 import buildcraft.lib.client.reload.ReloadManager;
 import buildcraft.lib.client.render.DetachedRenderer;
@@ -21,34 +55,8 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.MessageDebugRequest;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.core.client.ConfigGuiFactoryBC;
 
 public enum BCLibEventDist {
     INSTANCE;
@@ -118,14 +126,51 @@ public enum BCLibEventDist {
                 textWarn.appendSibling(componentVersion);
                 textWarn.appendText(" is in ALPHA!");
 
-                TextComponentString textReport = new TextComponentString("  Report bugs you find ");
+                TextComponentString textReport = new TextComponentString("  Report BuildCraft bugs you find ");
                 textReport.appendSibling(componentGithubLink);
 
-                TextComponentString textDesc = new TextComponentString("  and include the version ");
+                TextComponentString textDesc = new TextComponentString("  and include the BuildCraft version ");
                 textDesc.appendSibling(componentVersion);
                 textDesc.appendText(" in the description");
 
-                ITextComponent[] lines = { textWarn, textReport, textDesc };
+                TextComponentString textLag =
+                    new TextComponentString("  If you have performance problems then try disabling");
+                TextComponentString textConfigLink =
+                    new TextComponentString("everything in the BuildCraft perfomance config section.");
+                textConfigLink.setStyle(new Style() {
+
+                    {
+                        setUnderlined(true);
+                    }
+
+                    @Override
+                    public Style createShallowCopy() {
+                        return this;
+                    }
+
+                    @Override
+                    public Style createDeepCopy() {
+                        return this;
+                    }
+
+                    @Override
+                    @Nullable
+                    public ClickEvent getClickEvent() {
+                        // Very hacky, but it technically works
+                        StackTraceElement[] trace = new Throwable().getStackTrace();
+                        for (StackTraceElement elem : trace) {
+                            if (GuiScreen.class.getName().equals(elem.getClassName())) {
+                                ConfigGuiFactoryBC.GuiConfigManager newGui =
+                                    new ConfigGuiFactoryBC.GuiConfigManager(Minecraft.getMinecraft().currentScreen);
+                                Minecraft.getMinecraft().displayGuiScreen(newGui);
+                                return null;
+                            }
+                        }
+                        return null;
+                    }
+                });
+
+                ITextComponent[] lines = { textWarn, textReport, textDesc, textLag, textConfigLink };
                 GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
                 for (ITextComponent line : lines) {
                     chat.printChatMessage(line);
