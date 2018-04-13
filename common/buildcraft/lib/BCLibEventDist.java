@@ -126,17 +126,17 @@ public enum BCLibEventDist {
                 textWarn.appendSibling(componentVersion);
                 textWarn.appendText(" is in ALPHA!");
 
-                TextComponentString textReport = new TextComponentString("  Report bugs you find ");
+                TextComponentString textReport = new TextComponentString("  Report BuildCraft bugs you find ");
                 textReport.appendSibling(componentGithubLink);
 
-                TextComponentString textDesc = new TextComponentString("  and include the version ");
+                TextComponentString textDesc = new TextComponentString("  and include the BuildCraft version ");
                 textDesc.appendSibling(componentVersion);
                 textDesc.appendText(" in the description");
 
                 TextComponentString textLag =
                     new TextComponentString("  If you have performance problems then try disabling");
                 TextComponentString textConfigLink =
-                    new TextComponentString("everything in the perfomance config section.");
+                    new TextComponentString("everything in the BuildCraft perfomance config section.");
                 textConfigLink.setStyle(new Style() {
 
                     {
