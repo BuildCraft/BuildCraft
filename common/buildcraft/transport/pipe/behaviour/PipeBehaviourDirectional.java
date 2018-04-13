@@ -65,14 +65,11 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
                                   EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
             EntityUtil.activateWrench(player);
-            if (part.face != getCurrentDir()) {
-                if (part == EnumPipePart.CENTER) {
-                    return advanceFacing();
-                } else {
-                    if (canFaceDirection(part.face)) {
-                        setCurrentDir(part.face);
-                    }
-                }
+
+            if (part == EnumPipePart.CENTER) {
+                return advanceFacing();
+            } else if (part.face != getCurrentDir() && canFaceDirection(part.face)) {
+                setCurrentDir(part.face);
             }
             return true;
         }
