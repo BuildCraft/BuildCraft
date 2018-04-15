@@ -16,6 +16,8 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.fluids.Fluid;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjReceiver;
@@ -84,7 +86,12 @@ public class TileMiningWell extends TileMiner {
     }
 
     private boolean canBreak() {
-        return !world.isAirBlock(currentPos) && !BlockUtil.isUnbreakableBlock(world, currentPos, getOwner());
+        if (world.isAirBlock(currentPos) || BlockUtil.isUnbreakableBlock(world, currentPos, getOwner())) {
+            return false;
+        }
+
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, currentPos);
+        return fluid == null || fluid.getViscosity() <= 1000;
     }
 
     private void nextPos() {
