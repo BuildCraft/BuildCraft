@@ -40,8 +40,6 @@ import buildcraft.transport.stripes.StripesHandlerUse;
 public class BCTransportRegistries {
 
     public static void preInit() {
-        FacadeAPI.registry = FacadeStateManager.INSTANCE;
-
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
         PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;
