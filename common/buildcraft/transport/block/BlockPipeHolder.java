@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockFaceShape;
@@ -74,8 +73,8 @@ import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 
 public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
-    public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE = new UnlistedNonNullProperty<>(
-        "tile");
+    public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE =
+        new UnlistedNonNullProperty<>("tile");
 
     private static final AxisAlignedBB BOX_CENTER = new AxisAlignedBB(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
     private static final AxisAlignedBB BOX_DOWN = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.25, 0.75);
@@ -125,7 +124,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox,
-                                      List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
+        List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
@@ -367,17 +366,6 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        TilePipeHolder pipe = getPipe(world, pos, true);
-        if (pipe != null) {
-            pipe.refreshNeighbours();
-            if (pipe.getPipe() != null) {
-                pipe.getPipe().markForUpdate();
-            }
-        }
-    }
-
-    @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
         EntityPlayer player) {
         TilePipeHolder tile = getPipe(world, pos, false);
@@ -413,8 +401,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             if (part != null && tile.wireManager.getColorOfPart(part) != null) {
                 return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
             } else if (between != null && tile.wireManager.getColorOfPart(between.parts[0]) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0])
-                    .getMetadata());
+                return new ItemStack(BCTransportItems.wire, 1,
+                    tile.wireManager.getColorOfPart(between.parts[0]).getMetadata());
             }
         }
         return ItemStack.EMPTY;
@@ -472,11 +460,12 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get((trace.hitVec.x % 1 + 1) % 1 > 0.5, (trace.hitVec.y % 1 + 1)
-                    % 1 > 0.5, (trace.hitVec.z % 1 + 1) % 1 > 0.5);
+                wirePart = EnumWirePart.get((trace.hitVec.x % 1 + 1) % 1 > 0.5, (trace.hitVec.y % 1 + 1) % 1 > 0.5,
+                    (trace.hitVec.z % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
-                boolean attached = attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
+                boolean attached =
+                    attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
                 attachTile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
                 if (attached && !player.capabilities.isCreativeMode) {
                     held.shrink(1);
@@ -538,8 +527,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else if (between != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1, tile.wireManager.getColorOfPart(
-                between.parts[0]).getMetadata()));
+            toDrop.add(new ItemStack(BCTransportItems.wire, between.to == null ? 2 : 1,
+                tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
             if (between.to == null) {
                 tile.wireManager.removeParts(Arrays.asList(between.parts));
             } else {
@@ -585,8 +574,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
         if (exploder != null) {
             Vec3d subtract = exploder.getPositionVector().subtract(new Vec3d(pos).add(VecUtil.VEC_HALF)).normalize();
-            EnumFacing side = Arrays.stream(EnumFacing.VALUES).min(Comparator.comparing(facing -> new Vec3d(facing
-                .getDirectionVec()).distanceTo(subtract))).orElseThrow(IllegalArgumentException::new);
+            EnumFacing side = Arrays.stream(EnumFacing.VALUES)
+                .min(Comparator.comparing(facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract)))
+                .orElseThrow(IllegalArgumentException::new);
             TilePipeHolder tile = getPipe(world, pos, true);
             if (tile != null) {
                 PipePluggable pluggable = tile.getPluggable(side);
@@ -746,8 +736,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
     @Override
     public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
-        if (side == null)
-            return false;
+        if (side == null) return false;
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile != null) {
             PipePluggable pluggable = tile.getPluggable(side.getOpposite());
