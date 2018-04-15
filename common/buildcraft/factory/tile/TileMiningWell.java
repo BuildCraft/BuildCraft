@@ -6,16 +6,8 @@
 
 package buildcraft.factory.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.factory.block.BlockTube;
-import buildcraft.lib.inventory.AutomaticProvidingTransactor;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.mj.MjBatteryReceiver;
-import buildcraft.lib.world.WorldEventListenerAdapter;
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -24,7 +16,20 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import javax.annotation.Nonnull;
+import net.minecraftforge.fluids.Fluid;
+
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.mj.IMjReceiver;
+
+import buildcraft.lib.inventory.AutomaticProvidingTransactor;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.mj.MjBatteryReceiver;
+import buildcraft.lib.world.WorldEventListenerAdapter;
+
+import buildcraft.factory.BCFactoryBlocks;
 
 public class TileMiningWell extends TileMiner {
     private boolean shouldCheck = true;
@@ -81,7 +86,12 @@ public class TileMiningWell extends TileMiner {
     }
 
     private boolean canBreak() {
-        return !world.isAirBlock(currentPos) && !BlockUtil.isUnbreakableBlock(world, currentPos, getOwner());
+        if (world.isAirBlock(currentPos) || BlockUtil.isUnbreakableBlock(world, currentPos, getOwner())) {
+            return false;
+        }
+
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, currentPos);
+        return fluid == null || fluid.getViscosity() <= 1000;
     }
 
     private void nextPos() {
@@ -89,7 +99,7 @@ public class TileMiningWell extends TileMiner {
             if (canBreak()) {
                 updateLength();
                 return;
-            } else if (!world.isAirBlock(currentPos) && !(world.getBlockState(currentPos).getBlock() instanceof BlockTube)) {
+            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
