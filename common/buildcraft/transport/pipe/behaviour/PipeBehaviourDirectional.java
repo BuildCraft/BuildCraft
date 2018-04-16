@@ -76,6 +76,19 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
         return false;
     }
 
+    @Override
+    public void onTick() {
+        if (pipe.getHolder().getPipeWorld().isRemote) {
+            return;
+        }
+
+        if (!canFaceDirection(getCurrentDir())) {
+            if (!advanceFacing()) {
+                setCurrentDir(null);
+            }
+        }
+    }
+
     protected abstract boolean canFaceDirection(EnumFacing dir);
 
     /** @return True if the facing direction changed. */
@@ -97,6 +110,9 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     }
 
     protected void setCurrentDir(EnumFacing setTo) {
+        if (this.currentDir.face == setTo) {
+            return;
+        }
         this.currentDir = EnumPipePart.fromFacing(setTo);
         if (!pipe.getHolder().getPipeWorld().isRemote) {
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
