@@ -1,4 +1,8 @@
 
+Ported content:
+
+* Re-added the config option to change the rate of oil well generation.
+
 Bug fixes:
 
 * [#4124] The direction of an iron pipe cannot be changed by clicking the centre unless the pipe is already facing a direction.

@@ -104,6 +104,7 @@ public enum OilGenerator implements IWorldGenerator {
         boolean oilBiome = BCEnergyConfig.surfaceDepositBiomes.contains(biome.getRegistryName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
+        bonus *= BCEnergyConfig.oilWellGenerationRate;
         if (BCEnergyConfig.excessiveBiomes.contains(biome.getRegistryName())) {
             bonus *= 30.0;
         }
