@@ -8,6 +8,7 @@ package buildcraft.silicon;
 
 import buildcraft.api.facades.FacadeAPI;
 
+import buildcraft.lib.item.ItemPluggableSimple;
 import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.silicon.item.ItemPluggableFacade;
@@ -15,7 +16,6 @@ import buildcraft.silicon.item.ItemPluggableGate;
 import buildcraft.silicon.item.ItemPluggableLens;
 import buildcraft.silicon.item.ItemRedstoneChipset;
 import buildcraft.silicon.plug.PluggablePulsar;
-import buildcraft.transport.item.ItemPluggableSimple;
 
 public class BCSiliconItems {
     private static final RegistrationHelper HELPER = new RegistrationHelper();

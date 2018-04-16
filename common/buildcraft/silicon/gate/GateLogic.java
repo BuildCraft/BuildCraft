@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.gates.IGate;
@@ -37,6 +38,7 @@ import buildcraft.api.statements.ITriggerInternalSided;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.transport.IWireEmitter;
 import buildcraft.api.transport.IWireManager;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEvent;
@@ -46,17 +48,18 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.statement.ActionWrapper;
 import buildcraft.lib.statement.FullStatement;
+import buildcraft.lib.statement.TriggerWrapper;
+import buildcraft.lib.statement.ActionWrapper.ActionWrapperExternal;
+import buildcraft.lib.statement.ActionWrapper.ActionWrapperInternal;
+import buildcraft.lib.statement.ActionWrapper.ActionWrapperInternalSided;
 import buildcraft.lib.statement.FullStatement.IStatementChangeListener;
+import buildcraft.lib.statement.TriggerWrapper.TriggerWrapperExternal;
+import buildcraft.lib.statement.TriggerWrapper.TriggerWrapperInternal;
+import buildcraft.lib.statement.TriggerWrapper.TriggerWrapperInternalSided;
 
-import buildcraft.silicon.gate.ActionWrapper.ActionWrapperExternal;
-import buildcraft.silicon.gate.ActionWrapper.ActionWrapperInternal;
-import buildcraft.silicon.gate.ActionWrapper.ActionWrapperInternalSided;
-import buildcraft.silicon.gate.TriggerWrapper.TriggerWrapperExternal;
-import buildcraft.silicon.gate.TriggerWrapper.TriggerWrapperInternal;
-import buildcraft.silicon.gate.TriggerWrapper.TriggerWrapperInternalSided;
 import buildcraft.silicon.plug.PluggableGate;
-import buildcraft.transport.wire.IWireEmitter;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
@@ -379,6 +382,24 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 for (int i = groupCount - 1; i >= 0; i--) {
                     int actionIndex = triggerIndex - i;
                     StatementPair fullAction = statements[actionIndex];
+
+                    // TODO: add merging / overriding functionality for actions
+                    // such that
+                    // - (face direction: east)
+                    // - (face direction: west)
+                    // can be merged (in a single tick) to just
+                    // - (face direction: west)
+                    // As there's no point in facing both east AND west at the same time
+                    // Currently this just faces the pipe east, then west
+                    // however it would be *really* useful to optimise that east face set out
+                    // in addition we want feedback in the GUI for:
+                    // - triggers are on/off
+                    // - current action state (for stateful actions)
+                    // - and if an action is being overriden (like in the example above)
+                    // We might need to expand GUI elements and statements a *lot* for this to work though.
+                    // (specifically adding full json-based statement icons and
+                    // and full GUI hovers for action + trigger states.)
+
                     ActionWrapper action = fullAction.action.get();
                     actionOn[actionIndex] = allActionsActive;
                     if (action != null) {
@@ -412,7 +433,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             turnedOn.removeAll(previousBroadcasts);
             // FIXME: add call to "wires.emittingColour(turnedOff)"
 
-            if (!getPipeHolder().getPipeWorld().isRemote) {
+            if (BCModules.TRANSPORT.isLoaded() && !getPipeHolder().getPipeWorld().isRemote) {
                 WorldSavedDataWireSystems.get(getPipeHolder().getPipeWorld()).gatesChanged = true;
             }
         }

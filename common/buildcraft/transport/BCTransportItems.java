@@ -9,10 +9,10 @@ package buildcraft.transport;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.item.ItemPluggableSimple;
 import buildcraft.lib.registry.RegistrationHelper;
 
 import buildcraft.transport.item.ItemPipeHolder;
-import buildcraft.transport.item.ItemPluggableSimple;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.PipeRegistry;
 

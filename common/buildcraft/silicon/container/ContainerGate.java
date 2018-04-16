@@ -25,13 +25,13 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.statement.ActionWrapper;
 import buildcraft.lib.statement.StatementWrapper;
+import buildcraft.lib.statement.TriggerWrapper;
 
-import buildcraft.silicon.gate.ActionWrapper;
 import buildcraft.silicon.gate.GateContext;
 import buildcraft.silicon.gate.GateContext.GateGroup;
 import buildcraft.silicon.gate.GateLogic;
-import buildcraft.silicon.gate.TriggerWrapper;
 
 public class ContainerGate extends ContainerBC_Neptune {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");

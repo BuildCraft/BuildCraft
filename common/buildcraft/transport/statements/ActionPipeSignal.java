@@ -13,6 +13,7 @@ import net.minecraft.item.EnumDyeColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.transport.IWireEmitter;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
@@ -21,7 +22,6 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.wire.IWireEmitter;
 
 public class ActionPipeSignal extends BCStatement implements IActionInternal {
 

@@ -26,6 +26,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacade;
 import buildcraft.api.facades.IFacadePhasedState;
@@ -170,7 +171,7 @@ public class PluggableFacade extends PipePluggable implements IFacade {
                 return null;
             }
             return new KeyPlugFacade(layer, side, blockState, isHollow());
-        } else if (layer == BlockRenderLayer.CUTOUT) {
+        } else if (layer == BlockRenderLayer.CUTOUT && BCModules.TRANSPORT.isLoaded()) {
             return new KeyPlugBlocker(side);
         }
         return null;

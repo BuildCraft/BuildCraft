@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.transport.item;
+package buildcraft.lib.item;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +23,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 
-import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
 
 public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggable {
@@ -42,14 +41,10 @@ public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggabl
     };
 
     private final PluggableDefinition definition;
-
-    @Nonnull
     private final IPlacementPredicate canPlace;
-
-    @Nonnull
     private final IPluggableCreator creator;
 
-    public ItemPluggableSimple(String id, PluggableDefinition definition, @Nonnull IPluggableCreator creator,
+    public ItemPluggableSimple(String id, PluggableDefinition definition, IPluggableCreator creator,
         @Nullable IPlacementPredicate canPlace) {
         super(id);
         this.definition = definition;

@@ -27,6 +27,8 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
+import buildcraft.api.BCModules;
+
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 
@@ -52,7 +54,8 @@ public enum ModelFacadeItem implements IBakedModel {
         for (MutableQuad quad : PlugBakerFacade.INSTANCE.bakeForKey(key)) {
             quads.add(quad.toBakedItem());
         }
-        if (key.state.isFullBlock() && !key.isHollow) {
+
+        if (BCModules.TRANSPORT.isLoaded() && key.state.isFullBlock() && !key.isHollow) {
             for (MutableQuad quad : BCTransportModels.BLOCKER.getCutoutQuads()) {
                 quads.add(quad.toBakedItem());
             }
@@ -103,10 +106,12 @@ public enum ModelFacadeItem implements IBakedModel {
         }
 
         @Override
-        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world,
+            EntityLivingBase entity) {
             FacadeInstance inst = ItemPluggableFacade.getStates(stack);
             FacadePhasedState state = inst.getCurrentStateForStack();
-            return cache.getUnchecked(new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, inst.isHollow));
+            return cache.getUnchecked(
+                new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, inst.isHollow));
         }
     }
 }

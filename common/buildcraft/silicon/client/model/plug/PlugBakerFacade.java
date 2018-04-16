@@ -29,6 +29,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 
 import buildcraft.lib.client.model.MutableQuad;
@@ -295,7 +296,7 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
         for (MutableQuad quad : mutableQuads) {
             baked.add(quad.toBakedItem());
         }
-        if (key.state.isFullBlock() && !key.isHollow) {
+        if (BCModules.TRANSPORT.isLoaded() && key.state.isFullBlock() && !key.isHollow) {
             baked.addAll(BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)));
         }
         return baked;

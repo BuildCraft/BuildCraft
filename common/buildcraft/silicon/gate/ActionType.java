@@ -13,9 +13,9 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.statement.ActionWrapper;
 import buildcraft.lib.statement.StatementType;
-
-import buildcraft.silicon.gate.ActionWrapper.ActionWrapperInternal;
+import buildcraft.lib.statement.ActionWrapper.ActionWrapperInternal;
 
 public class ActionType extends StatementType<ActionWrapper> {
     public static final ActionType INSTANCE = new ActionType();

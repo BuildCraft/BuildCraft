@@ -23,9 +23,6 @@ import buildcraft.api.statements.ITrigger;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
-import buildcraft.silicon.gate.ActionWrapper;
-import buildcraft.silicon.gate.TriggerWrapper;
-
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;
 

@@ -14,8 +14,8 @@ import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.StatementType;
-
-import buildcraft.silicon.gate.TriggerWrapper.TriggerWrapperInternal;
+import buildcraft.lib.statement.TriggerWrapper;
+import buildcraft.lib.statement.TriggerWrapper.TriggerWrapperInternal;
 
 public class TriggerType extends StatementType<TriggerWrapper> {
     public static final TriggerType INSTANCE = new TriggerType();

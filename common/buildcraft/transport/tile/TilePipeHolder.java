@@ -34,6 +34,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.tiles.IDebuggable;
@@ -148,7 +149,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 pipe = new Pipe(this, nbt.getCompoundTag("pipe"));
                 eventBus.registerHandler(pipe.behaviour);
                 eventBus.registerHandler(pipe.flow);
-                if (pipe.flow instanceof IFlowItems) {
+                if (pipe.flow instanceof IFlowItems && BCModules.SILICON.isLoaded()) {
                     eventBus.registerHandler(FilterEventHandler.class);
                 }
             } catch (InvalidInputDataException e) {
@@ -182,7 +183,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             this.pipe = new Pipe(this, definition);
             eventBus.registerHandler(pipe.behaviour);
             eventBus.registerHandler(pipe.flow);
-            if (pipe.flow instanceof IFlowItems) {
+            if (pipe.flow instanceof IFlowItems && BCModules.SILICON.isLoaded()) {
                 eventBus.registerHandler(FilterEventHandler.class);
             }
             int meta = stack.getMetadata();
@@ -355,7 +356,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     pipe = new Pipe(this, buffer, ctx);
                     eventBus.registerHandler(pipe.behaviour);
                     eventBus.registerHandler(pipe.flow);
-                    if (pipe.flow instanceof IFlowItems) {
+                    if (pipe.flow instanceof IFlowItems && BCModules.SILICON.isLoaded()) {
                         eventBus.registerHandler(FilterEventHandler.class);
                     }
                 } else if (pipe != null) {

@@ -38,6 +38,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.IWireEmitter;
 import buildcraft.api.transport.WireNode;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
@@ -45,8 +46,6 @@ import buildcraft.api.transport.pipe.PipeApi;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-
-import buildcraft.silicon.plug.PluggableGate;
 
 public class WireSystem {
     public final List<WireElement> elements = new ArrayList<>();
@@ -138,7 +137,7 @@ public class WireSystem {
                             Arrays.stream(EnumFacing.VALUES).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {
-                        if (holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
+                        if (holder.getPluggable(element.emitterSide) instanceof IWireEmitter) {
                             elements.add(new WireElement(element.blockPos, element.emitterSide));
                         }
                     }

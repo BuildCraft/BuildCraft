@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.silicon.gate;
+package buildcraft.lib.statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,6 @@ import buildcraft.api.statements.IActionSingle;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-
-import buildcraft.lib.statement.StatementWrapper;
 
 public abstract class ActionWrapper extends StatementWrapper implements IActionInternal {
 

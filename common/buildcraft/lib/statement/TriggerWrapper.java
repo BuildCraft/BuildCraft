@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.silicon.gate;
+package buildcraft.lib.statement;
 
 import javax.annotation.Nonnull;
 
@@ -19,8 +19,6 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerExternalOverride;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerInternalSided;
-
-import buildcraft.lib.statement.StatementWrapper;
 
 /** Wrapper class around ITriggerInternal to allow for treating all triggers as internal triggers. It also provides the
  * background colour for sides. */

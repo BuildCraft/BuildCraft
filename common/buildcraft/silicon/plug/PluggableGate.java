@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -26,6 +27,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.transport.IWireEmitter;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -54,7 +56,7 @@ import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateLogic;
 import buildcraft.silicon.gate.GateVariant;
 
-public class PluggableGate extends PipePluggable {
+public class PluggableGate extends PipePluggable implements IWireEmitter {
     public static final FunctionContext MODEL_FUNC_CTX_STATIC, MODEL_FUNC_CTX_DYNAMIC;
     private static final NodeVariableObject<String> MODEL_MATERIAL;
     private static final NodeVariableObject<String> MODEL_MODIFIER;
@@ -228,6 +230,16 @@ public class PluggableGate extends PipePluggable {
             BCSiliconGuis.GATE.openGui(player, pos, side.ordinal());
         }
         return true;
+    }
+
+    @Override
+    public boolean isEmitting(EnumDyeColor colour) {
+        return logic.isEmitting(colour);
+    }
+
+    @Override
+    public void emitWire(EnumDyeColor colour) {
+        logic.emitWire(colour);
     }
 
     // Gate methods

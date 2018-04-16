@@ -20,13 +20,13 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionInternalSided;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.transport.IWireEmitter;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventStatement;
 
 import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.wire.IWireEmitter;
 
 public enum ActionProviderPipes implements IActionProvider {
     INSTANCE;

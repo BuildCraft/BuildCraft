@@ -21,6 +21,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IFlowFluid;
@@ -236,14 +237,12 @@ public class PluggablePulsar extends PipePluggable {
             IMjRedstoneReceiver rsRec = (IMjRedstoneReceiver) holder.getPipe().getBehaviour();
             if (gateSinglePulses > 0) {
                 long power = MjAPI.MJ;
-                if (holder.getPipe().getFlow() instanceof IFlowFluid) {
-                    // Special extration logic for fluids:
-                    // Always extract either 1 bucket, or nothing.
-                    power = BCTransportConfig.mjPerMillibucket * 1000;
-                } else if (holder.getPipe().getFlow() instanceof IFlowItems) {
-                    power = BCTransportConfig.mjPerItem;
-                } else {
-                    power = MjAPI.MJ;
+                if (BCModules.TRANSPORT.isLoaded()) {
+                    if (holder.getPipe().getFlow() instanceof IFlowFluid) {
+                        power = BCTransportConfig.mjPerMillibucket * 1000;
+                    } else if (holder.getPipe().getFlow() instanceof IFlowItems) {
+                        power = BCTransportConfig.mjPerItem;
+                    }
                 }
                 long excess = rsRec.receivePower(power, true);
                 if (excess == 0) {

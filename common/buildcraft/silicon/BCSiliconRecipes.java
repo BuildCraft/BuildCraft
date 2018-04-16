@@ -41,6 +41,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
@@ -63,7 +64,6 @@ import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.recipe.FacadeAssemblyRecipes;
 import buildcraft.silicon.recipe.FacadeSwapRecipe;
-import buildcraft.transport.BCTransportItems;
 
 @Mod.EventBusSubscriber(modid = BCSilicon.MODID)
 public class BCSiliconRecipes {
@@ -79,7 +79,7 @@ public class BCSiliconRecipes {
             builder.add("mrm");
             builder.add(" b ");
             builder.map('r', "dustRedstone");
-            builder.map('b', BCTransportItems.plugBlocker, Blocks.COBBLESTONE);
+            builder.map('b', BCItems.Transport.PLUG_BLOCKER, Blocks.COBBLESTONE);
 
             // Base craftable types
 

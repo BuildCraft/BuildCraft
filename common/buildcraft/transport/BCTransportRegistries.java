@@ -12,13 +12,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 
 import buildcraft.api.core.EnumHandlerPriority;
-import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
 import buildcraft.api.transport.pipe.PipeFlowType;
 
-import buildcraft.silicon.plug.FacadeStateManager;
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.StripesRegistry;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;

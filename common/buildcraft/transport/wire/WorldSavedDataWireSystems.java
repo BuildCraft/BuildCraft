@@ -31,11 +31,11 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.EnumWirePart;
+import buildcraft.api.transport.IWireEmitter;
 import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 import buildcraft.lib.net.MessageManager;
-
-import buildcraft.silicon.plug.PluggableGate;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
     public static final String DATA_NAME = "buildcraft_wire_systems";
@@ -87,20 +87,20 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public IWireEmitter getEmitter(WireSystem.WireElement element) {
-        if(element.type == WireSystem.WireElement.Type.EMITTER_SIDE) {
-            if(!emittersCache.containsKey(element)) {
+        if (element.type == WireSystem.WireElement.Type.EMITTER_SIDE) {
+            if (!emittersCache.containsKey(element)) {
                 if (!world.isBlockLoaded(element.blockPos)) {
                     BCLog.logger.warn("[transport.wire] Ghost loading " + element.blockPos + " to look for an emitter!");
                 }
                 TileEntity tile = world.getTileEntity(element.blockPos);
-                if(tile instanceof IPipeHolder) {
+                if (tile instanceof IPipeHolder) {
                     IPipeHolder holder = (IPipeHolder) tile;
-                    if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
-                        PluggableGate gate = (PluggableGate) holder.getPluggable(element.emitterSide);
-                        emittersCache.put(element, gate.logic);
+                    PipePluggable plug = holder.getPluggable(element.emitterSide);
+                    if(plug instanceof IWireEmitter) {
+                        emittersCache.put(element, (IWireEmitter) plug);
                     }
                 }
-                if(!emittersCache.containsKey(element)) {
+                if (!emittersCache.containsKey(element)) {
                     throw new IllegalStateException("Tried to get a wire element when none existed! THIS IS A BUG " + element);
                 }
             }
@@ -116,7 +116,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         TileEntity tile = world.getTileEntity(element.blockPos);
         if(tile instanceof IPipeHolder) {
             IPipeHolder holder = (IPipeHolder) tile;
-            if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
+            if (holder.getPluggable(element.emitterSide) instanceof IWireEmitter) {
                 return getEmitter(element).isEmitting(color);
             }
         }
