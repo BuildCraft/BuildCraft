@@ -17,7 +17,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -63,26 +62,13 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
     @Override
     protected boolean canFaceDirection(EnumFacing dir) {
-        return pipe.getConnectedType(dir) == ConnectedType.TILE;
+        return dir != null && pipe.getConnectedType(dir) == ConnectedType.TILE;
     }
 
     @PipeEventHandler
     public void fluidSideCheck(PipeEventFluid.SideCheck sideCheck) {
         if (currentDir.face != null) {
             sideCheck.disallow(currentDir.face);
-        }
-    }
-
-    @Override
-    public void onTick() {
-        if (pipe.getHolder().getPipeWorld().isRemote) {
-            return;
-        }
-
-        if (currentDir == EnumPipePart.CENTER) {
-            advanceFacing();
-        } else if (!canFaceDirection(getCurrentDir())) {
-            currentDir = EnumPipePart.CENTER;
         }
     }
 

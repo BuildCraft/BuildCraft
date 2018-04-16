@@ -1,5 +1,7 @@
 
 Bug fixes:
 
+* [#3477] Only the wooden pipe attempts to always face a valid direction.
+  * (This only affects the iron pipe in buildcraft, however addon pipes that extend PipeBehaviourDirection but don't allow the centre will benefit from this).
 * [#4124] The direction of an iron pipe cannot be changed by clicking the centre unless the pipe is already facing a direction.
 * [#4082] Fluids can no longer be mined by Mining Well
