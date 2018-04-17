@@ -1,7 +1,7 @@
 
 Ported content:
 
-* Re-added the config option to change the rate of oil well generation and generation of a spout.
+* [#4080] Re-added the config option to change the rate of oil well generation and generation of a spout.
 
 Bug fixes:
 
