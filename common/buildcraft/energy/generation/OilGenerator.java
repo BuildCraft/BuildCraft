@@ -39,7 +39,7 @@ public enum OilGenerator implements IWorldGenerator {
     private static final double CHANCE_MEDIUM = 0.001;
     private static final double CHANCE_LAKE = 0.02;
 
-    public enum GenType {
+    private enum GenType {
         LARGE,
         MEDIUM,
         LAKE,
