@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -212,11 +213,13 @@ public class BCSiliconRecipes {
         IngredientStack... mods) {
         for (EnumGateLogic logic : EnumGateLogic.VALUES) {
             String name = String.format("gate-modifier-%s-%s-%s", logic, material, modifier);
-            ItemStack toUpgrade =
-                BCSiliconItems.plugGate.getStack(new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER));
+            GateVariant variantFrom = new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER);
+            ItemStack toUpgrade = BCSiliconItems.plugGate.getStack(variantFrom);
             ItemStack output = BCSiliconItems.plugGate.getStack(new GateVariant(logic, material, modifier));
-            ImmutableSet<IngredientStack> input =
-                new ImmutableSet.Builder<IngredientStack>().add(IngredientStack.of(toUpgrade)).add(mods).build();
+            Builder<IngredientStack> inputBuilder = new ImmutableSet.Builder<>();
+            inputBuilder.add(new IngredientStack(new IngredientNBTBC(toUpgrade)));
+            inputBuilder.add(mods);
+            ImmutableSet<IngredientStack> input = inputBuilder.build();
             AssemblyRecipeRegistry.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
         }
     }
@@ -224,7 +227,7 @@ public class BCSiliconRecipes {
     private static void makeGateAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
         EnumRedstoneChipset chipset, IngredientStack... additional) {
         ImmutableSet.Builder<IngredientStack> temp = ImmutableSet.builder();
-        temp.add(IngredientStack.of(chipset.getStack()));
+        temp.add(new IngredientStack(new IngredientNBTBC(chipset.getStack())));
         temp.add(additional);
         ImmutableSet<IngredientStack> input = temp.build();
 
