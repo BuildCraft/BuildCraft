@@ -1,4 +1,8 @@
 
+Ported content:
+
+* [#4080] Re-added the config option to change the rate of oil well generation and generation of a spout.
+
 Bug fixes:
 
 * [#3477] Only the wooden pipe attempts to always face a valid direction.

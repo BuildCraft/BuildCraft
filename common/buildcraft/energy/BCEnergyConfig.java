@@ -30,6 +30,8 @@ import buildcraft.core.BCCoreConfig;
 public class BCEnergyConfig {
 
     public static boolean enableOilGeneration;
+    public static double oilWellGenerationRate;
+    public static boolean enableOilSpouts;
     public static final TIntSet excludedDimensions = new TIntHashSet();
     public static final Set<ResourceLocation> excessiveBiomes = new HashSet<>();
     public static final Set<ResourceLocation> surfaceDepositBiomes = new HashSet<>();
@@ -37,6 +39,8 @@ public class BCEnergyConfig {
     public static SpecialEventType christmasEventStatus = SpecialEventType.DAY_ONLY;
 
     private static Property propEnableOilGeneration;
+    private static Property propOilWellGenerationRate;
+    private static Property propEnableOilSpouts;
     private static Property propExcessiveBiomes;
     private static Property propSurfaceDepositBiomes;
     private static Property propExcludedBiomes;
@@ -48,8 +52,16 @@ public class BCEnergyConfig {
         EnumRestartRequirement game = EnumRestartRequirement.GAME;
 
         propEnableOilGeneration = BCCoreConfig.config.get("worldgen", "enableOilGen", true);
-        propEnableOilGeneration.setComment("Should any oil sprouts or lakes generate, at all?");
+        propEnableOilGeneration.setComment("Should any oil sprouts or lakes be generated at all?");
         game.setTo(propEnableOilGeneration);
+
+        propOilWellGenerationRate = BCCoreConfig.config.get("worldgen", "oilWellGenerationRate", 1.0);
+        propOilWellGenerationRate.setComment("The rate of occurrence of oil wells.");
+        game.setTo(propOilWellGenerationRate);
+
+        propEnableOilSpouts = BCCoreConfig.config.get("worldgen", "enableOilSpouts", true);
+        propEnableOilSpouts.setComment("Whether oil spouts are generated or not. The oil spring at the bottom of large lakes will still exist.");
+        game.setTo(propEnableOilSpouts);
 
         String[] _excessive = { //
             BCEnergy.MODID + ":oil_desert", //
@@ -101,6 +113,8 @@ public class BCEnergyConfig {
 
             if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
+                oilWellGenerationRate = propOilWellGenerationRate.getDouble();
+                enableOilSpouts = propEnableOilSpouts.getBoolean();
                 christmasEventStatus = ConfigUtil.parseEnumForConfig(propChristmasEventType, SpecialEventType.DAY_ONLY);
             } else {
                 validateBiomeNames();
