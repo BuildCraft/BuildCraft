@@ -109,13 +109,16 @@ public enum OilGenerator implements IWorldGenerator {
             bonus *= 30.0;
         }
         final GenType type;
-        if (rand.nextDouble() <= CHANCE_LARGE * bonus) {
+
+        final double random_number = rand.nextDouble();
+
+        if (random_number <= CHANCE_LARGE * bonus) {
             // 0.04%
             type = GenType.LARGE;
-        } else if (rand.nextDouble() <= CHANCE_MEDIUM * bonus) {
+        } else if (random_number <= CHANCE_MEDIUM * bonus) {
             // 0.1%
             type = GenType.MEDIUM;
-        } else if (oilBiome && rand.nextDouble() <= CHANCE_LAKE * bonus) {
+        } else if (oilBiome && random_number <= CHANCE_LAKE * bonus) {
             // 2%
             type = GenType.LAKE;
         } else {
@@ -151,16 +154,17 @@ public enum OilGenerator implements IWorldGenerator {
             structures.add(createSphere(new BlockPos(x, wellY, z), radius));
 
             // Generate a spout
-
-            int height;
-            if (type == GenType.LARGE) {
-                height = 9 + rand.nextInt(10);
-                radius = 1;
-            } else {
-                height = 6 + rand.nextInt(7);
-                radius = 0;
-            }
-            structures.add(createSpout(new BlockPos(x, wellY, z), height, radius));
+            if (BCEnergyConfig.enableOilSpouts) {
+                int height;
+                if (type == GenType.LARGE) {
+                    height = 9 + rand.nextInt(10);
+                    radius = 1;
+                } else {
+                    height = 6 + rand.nextInt(7);
+                    radius = 0;
+                }
+                structures.add(createSpout(new BlockPos(x, wellY, z), height, radius));
+            };
 
             // Generate a spring at the very bottom
             if (type == GenType.LARGE) {
