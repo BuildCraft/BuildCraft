@@ -4,6 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
+
+/* Build info:
+
+ - Using a release version (e.g. 8.0.4 rather than 8.0.4-SNAPSHOT or 8.0.4-0A1B2C3D4E5) requires setting the "release" system property to true
+    - Add "-Drelease=true" to disallow adding the git commit hash to the end, or SNAPSHOT if we cannot find our git directory.
+
+*/
+
 // DON'T TOUCH THE BUILDSCRIPT[] BLOCK
 // its special, and it is only there to make ForgeGradle work correctly.
 
@@ -67,11 +75,6 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
-task force_release_version {
-    // Provided to allow changing the version number from "SNAPSHOT" or "ABCD1265" (a git commit hash) to the actual version.
-    // The code for this is below.
-}
-
 minecraft {
     version = config.mc_version + "-" + config.forge_version
     runDir = "run"
@@ -84,27 +87,21 @@ minecraft {
     mappings = config.mappings_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    // replacing stuff in the source
-    replace "\$version", project.version
-    replace "\${mcversion}", version
-    // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
-    replace "(gradle_replace_mcversion,)", "[" + version + "]"
-    replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
-    def isFullBuild = gradle.startParameter.taskNames.contains("force_release_version")
+    def addVersionDetails = !Boolean.getBoolean("release")
 
     // Git versioning stuffs
     if (grgit != null) {
         def repo = grgit.open(dir: "$projectDir")
         replace "\${git_commit_hash}", repo.head().id
-        // This is very ugly: we need 7(!) \ to produce a single \ in the final one. 
+        // This is very ugly: we need 7(!) \ to produce a single \ in the final one.
         replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
-        if (!isFullBuild) {
+        if (addVersionDetails) {
             project.version += "-" + repo.head().id.toString().substring(0, 12)
         }
     } else {
-        if (!isFullBuild) {
+        if (addVersionDetails) {
             project.version += "-SNAPSHOT"
         }
     }
@@ -115,6 +112,13 @@ minecraft {
     // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
     replace "(gradle_replace_mcversion,)", "[" + version + "]"
     replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
+}
+
+task printVersion {
+    description = "Prints out the actual version used. Useful for testing the buildscript. (Add -Drelease=true to force this to the version specified in build.properties)"
+    doLast {
+        println "Version = " + project.version
+    }
 }
 
 // configure  the source folders
@@ -161,16 +165,7 @@ if (gradle.startParameter.taskNames.contains("checkstyle")) {
     tasks["checkstyleTest"].enabled = false
 }
 
-task setupSubProjectExpression(type: Exec) {
-    workingDir "sub_projects/expression"
-    // Obviously a problem with this is that we need to create
-    // a new gradle instance for every subproject :/
-    // How bad is it to do both tasks at once?
-    // just no point really...
-    commandLine './gradlew', 'generateSources'
-}
-
-task setupSubProjects(dependsOn: setupSubProjectExpression) {
+task setupSubProjects(dependsOn: ":sub_projects:expression:generateSources") {
     // Just an inter-dependency task
 }
 
@@ -190,21 +185,21 @@ ext.jarFile = zipTree(jar.archivePath)
 idea.module.sourceDirs += sourceSets.api.java.srcDirs
 
 processResources
-{
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        // ${version}   and    ${mcversion}    are the exact strings being replaced
-        expand "version":project.version, "mcversion":project.minecraft.version
-    }
+        {
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
 
-    // copy everything else, that's not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+                // replace version and mcversion
+                // ${version}   and    ${mcversion}    are the exact strings being replaced
+                expand "version":project.version, "mcversion":project.minecraft.version
+            }
+
+            // copy everything else, that's not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
 
 compileJava {
     options.compilerArgs << "-Xmaxerrs" << "2000"
@@ -317,25 +312,6 @@ task libSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     from sourceSets.api.allSource
     from (unzippedSourceJar) {
         includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "LICENSE**"])
-    }
-}
-
-task libExpressionJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = new File(libsDir, "misc")
-    appendix = "libexpression"
-
-    from(project.ext.jarFile) {
-        includes.addAll(["buildcraft/lib/expression/**", "LICENSE**"])
-    }
-}
-
-task libExpressionSrcJar(type: Jar, dependsOn: [reobfJar, unzipSourceJar]) {
-    destinationDir = modulesDirSrc
-    appendix = "libexpression"
-    classifier = "sources"
-
-    from (unzippedSourceJar) {
-        includes.addAll(["buildcraft/lib/expression/**", "LICENSE**"])
     }
 }
 
@@ -473,7 +449,6 @@ artifacts {
     archives transportJar
     archives roboticsJar
     archives allJar
-    archives libExpressionJar
 }
 
 def sftp(String subPath, Closure antFileset = {}) {
@@ -481,12 +456,12 @@ def sftp(String subPath, Closure antFileset = {}) {
         taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
                 classpath: configurations.sshAntTask.asPath)
         Map sftpArgs = [
-                               verbose : 'yes',
-                               todir : priv.username + "@" + priv.host + ":" + priv.remotedir + version + "/" + subPath,
-                               port: priv.port,
-                               password: priv.password,
-                               sftp: true,
-                               trust: 'yes'
+                verbose : 'yes',
+                todir : priv.username + "@" + priv.host + ":" + priv.remotedir + version + "/" + subPath,
+                port: priv.port,
+                password: priv.password,
+                sftp: true,
+                trust: 'yes'
         ]
         delegate.scp(sftpArgs) {
             antFileset.delegate = delegate
@@ -626,12 +601,12 @@ uploadArchives {
                                 id 'SirSngir'
                                 name 'SirSengir'
                                 roles { role 'developer' }
-                            }   
+                            }
                             developer {
                                 id 'Krapht'
                                 name 'Krapht'
                                 roles { role 'developer' }
-                            }   
+                            }
 
                         }
                     }
