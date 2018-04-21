@@ -17,6 +17,7 @@ import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.ExpressionCompat;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
+import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistrationHelper;
 import buildcraft.lib.registry.TagManager;
@@ -114,6 +115,10 @@ public class BCLib {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
+        if (BCLibItems.guide != null)
+            BCLibItems.guide.setCreativeTab(
+                    CreativeTabManager.getTab("buildcraft.main"));
+
         BCLibProxy.getProxy().fmlInit();
 
         BCLibRegistries.fmlInit();

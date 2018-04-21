@@ -12,36 +12,35 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.api.recipes.AssemblyRecipeBasic;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.OreStackFilter;
+import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.RecipeSorter;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import buildcraft.api.core.BCLog;
+import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
@@ -69,9 +68,8 @@ import buildcraft.transport.BCTransportItems;
 public class BCSiliconRecipes {
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        scanForJsonRecipes();
+    public static void init() {
+        //scanForJsonRecipes();
         if (BCSiliconItems.plugGate != null) {
             // You can craft some of the basic gate types in a normal crafting table
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
@@ -94,7 +92,7 @@ public class BCSiliconRecipes {
 
             // Iron modifier addition
             GateVariant variant =
-                new GateVariant(EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER);
+                    new GateVariant(EnumGateLogic.AND, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER);
             ItemStack ironGateBase = BCSiliconItems.plugGate.getStack(variant);
             builder = new RecipeBuilderShaped();
             builder.add(" m ");
@@ -121,14 +119,48 @@ public class BCSiliconRecipes {
                     GateVariant varOr = new GateVariant(EnumGateLogic.OR, material, modifier);
                     ItemStack resultOr = BCSiliconItems.plugGate.getStack(varOr);
 
-                    String regNamePrefix = resultOr.getItem().getRegistryName() + "_" + modifier + "_" + material;
-                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultOr.getItem().getRegistryName(),
-                        resultAnd, "i", 'i', new IngredientNBTBC(resultOr)).setRegistryName(regNamePrefix + "_or"));
-                    ForgeRegistries.RECIPES.register(new ShapedOreRecipe(resultAnd.getItem().getRegistryName(),
-                        resultOr, "i", 'i', new IngredientNBTBC(resultAnd)).setRegistryName(regNamePrefix + "_and"));
+                    GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultAnd, "i", 'i', resultOr));
+                    GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(resultOr, "i", 'i', resultAnd));
                 }
             }
         }
+
+        if (BCSiliconItems.redstoneChipset != null) {
+            ItemStack output = new ItemStack(BCSiliconItems.redstoneChipset, 1, 4);
+            Set<StackDefinition> input = new HashSet<>();
+            input.add(OreStackFilter.definition(1, "dustRedstone"));
+            input.add(OreStackFilter.definition(1, "gemDiamond"));
+            AssemblyRecipe recipe = new AssemblyRecipeBasic("diamond_chipset", 80000 * MjAPI.MJ, input, output);
+            AssemblyRecipeRegistry.register(recipe);
+
+            input.clear();
+            output = new ItemStack(BCSiliconItems.redstoneChipset, 1, 3);
+            input.add(OreStackFilter.definition(1, "dustRedstone"));
+            input.add(OreStackFilter.definition(1, "gemQuartz"));
+            recipe = new AssemblyRecipeBasic("quartz_chipset", 60000 * MjAPI.MJ, input, output);
+            AssemblyRecipeRegistry.register(recipe);
+
+            input.clear();
+            output = new ItemStack(BCSiliconItems.redstoneChipset, 1, 2);
+            input.add(OreStackFilter.definition(1, "dustRedstone"));
+            input.add(OreStackFilter.definition(1, "ingotGold"));
+            recipe = new AssemblyRecipeBasic("gold_chipset", 40000 * MjAPI.MJ, input, output);
+            AssemblyRecipeRegistry.register(recipe);
+
+            input.clear();
+            output = new ItemStack(BCSiliconItems.redstoneChipset, 1, 1);
+            input.add(OreStackFilter.definition(1, "dustRedstone"));
+            input.add(OreStackFilter.definition(1, "ingotIron"));
+            recipe = new AssemblyRecipeBasic("iron_chipset", 20000 * MjAPI.MJ, input, output);
+            AssemblyRecipeRegistry.register(recipe);
+
+            input.clear();
+            output = new ItemStack(BCSiliconItems.redstoneChipset, 1, 0);
+            input.add(OreStackFilter.definition(1, "dustRedstone"));
+            recipe = new AssemblyRecipeBasic("redstone_chipset", 10000 * MjAPI.MJ, input, output);
+            AssemblyRecipeRegistry.register(recipe);
+        }
+
 
         if (BCSiliconItems.plugPulsar != null) {
             ItemStack output = new ItemStack(BCSiliconItems.plugPulsar);
@@ -140,93 +172,95 @@ public class BCSiliconRecipes {
                 redstoneEngine = new ItemStack(Blocks.REDSTONE_BLOCK);
             }
 
-            Set<IngredientStack> input = new HashSet<>();
-            input.add(new IngredientStack(Ingredient.fromStacks(redstoneEngine)));
-            input.add(new IngredientStack(CraftingHelper.getIngredient("ingotIron"), 2));
+            Set<StackDefinition > input = new HashSet<>();
+            input.add(ArrayStackFilter.definition(redstoneEngine));
+            input.add(OreStackFilter.definition(2, "ingotIron"));
             AssemblyRecipe recipe = new AssemblyRecipeBasic("plug_pulsar", 1000 * MjAPI.MJ, input, output);
             AssemblyRecipeRegistry.register(recipe);
         }
         if (BCSiliconItems.plugGate != null) {
-            IngredientStack lapis = IngredientStack.of("gemLapis");
+            StackDefinition lapis = OreStackFilter.definition("gemLapis");
             makeGateAssembly(20_000, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON);
             makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER,
-                EnumRedstoneChipset.IRON, IngredientStack.of(new ItemStack(Blocks.NETHER_BRICK)));
+                    EnumRedstoneChipset.IRON, ArrayStackFilter.definition(new ItemStack(Blocks.NETHER_BRICK)));
             makeGateAssembly(80_000, EnumGateMaterial.GOLD, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.GOLD);
 
             makeGateModifierAssembly(40_000, EnumGateMaterial.IRON, EnumGateModifier.LAPIS, lapis);
             makeGateModifierAssembly(60_000, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ,
-                IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
+                    ArrayStackFilter.definition(EnumRedstoneChipset.QUARTZ.getStack()));
             makeGateModifierAssembly(80_000, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND,
-                IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
+                    ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
 
             makeGateModifierAssembly(80_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.LAPIS, lapis);
             makeGateModifierAssembly(100_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.QUARTZ,
-                IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
+                    ArrayStackFilter.definition(EnumRedstoneChipset.QUARTZ.getStack()));
             makeGateModifierAssembly(120_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.DIAMOND,
-                IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
+                    ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
 
             makeGateModifierAssembly(100_000, EnumGateMaterial.GOLD, EnumGateModifier.LAPIS, lapis);
             makeGateModifierAssembly(140_000, EnumGateMaterial.GOLD, EnumGateModifier.QUARTZ,
-                IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
+                    ArrayStackFilter.definition(EnumRedstoneChipset.QUARTZ.getStack()));
             makeGateModifierAssembly(180_000, EnumGateMaterial.GOLD, EnumGateModifier.DIAMOND,
-                IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
+                    ArrayStackFilter.definition(EnumRedstoneChipset.DIAMOND.getStack()));
         }
 
         if (BCSiliconItems.plugLightSensor != null) {
             AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("light-sensor", 500 * MjAPI.MJ,
-                ImmutableSet.of(IngredientStack.of(Blocks.DAYLIGHT_DETECTOR)),
-                new ItemStack(BCSiliconItems.plugLightSensor)));
+                    ImmutableSet.of(ArrayStackFilter.definition(Blocks.DAYLIGHT_DETECTOR)),
+                    new ItemStack(BCSiliconItems.plugLightSensor)));
         }
 
         if (BCSiliconItems.plugFacade != null) {
             AssemblyRecipeRegistry.register(FacadeAssemblyRecipes.INSTANCE);
-            ForgeRegistries.RECIPES.register(FacadeSwapRecipe.INSTANCE);
+            GameRegistry.addRecipe(FacadeSwapRecipe.INSTANCE);
         }
 
         if (BCSiliconItems.plugLens != null) {
             for (EnumDyeColor colour : ColourUtil.COLOURS) {
                 String name = String.format("lens-regular-%s", colour.getUnlocalizedName());
-                IngredientStack stainedGlass = IngredientStack.of("blockGlass" + ColourUtil.getName(colour));
-                ImmutableSet<IngredientStack> input = ImmutableSet.of(stainedGlass);
+                StackDefinition stainedGlass = OreStackFilter.definition("blockGlass" + ColourUtil.getName(colour));
+                ImmutableSet<StackDefinition> input = ImmutableSet.of(stainedGlass);
                 ItemStack output = BCSiliconItems.plugLens.getStack(colour, false);
                 AssemblyRecipeRegistry.register(new AssemblyRecipeBasic(name, 500 * MjAPI.MJ, input, output));
 
                 name = String.format("lens-filter-%s", colour.getUnlocalizedName());
                 output = BCSiliconItems.plugLens.getStack(colour, true);
-                input = ImmutableSet.of(stainedGlass, IngredientStack.of(new ItemStack(Blocks.IRON_BARS)));
+                input = ImmutableSet.of(stainedGlass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
                 AssemblyRecipeRegistry.register(new AssemblyRecipeBasic(name, 500 * MjAPI.MJ, input, output));
             }
 
-            IngredientStack glass = IngredientStack.of("blockGlass");
-            ImmutableSet<IngredientStack> input = ImmutableSet.of(glass);
+            StackDefinition glass = OreStackFilter.definition("blockGlass");
+            ImmutableSet<StackDefinition> input = ImmutableSet.of(glass);
             ItemStack output = BCSiliconItems.plugLens.getStack(null, false);
             AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("lens-regular", 500 * MjAPI.MJ, input, output));
 
             output = BCSiliconItems.plugLens.getStack(null, true);
-            input = ImmutableSet.of(glass, IngredientStack.of(new ItemStack(Blocks.IRON_BARS)));
+            input = ImmutableSet.of(glass, ArrayStackFilter.definition(new ItemStack(Blocks.IRON_BARS)));
             AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("lens-filter", 500 * MjAPI.MJ, input, output));
         }
     }
 
     private static void makeGateModifierAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
-        IngredientStack... mods) {
+                                                 StackDefinition... mods) {
         for (EnumGateLogic logic : EnumGateLogic.VALUES) {
             String name = String.format("gate-modifier-%s-%s-%s", logic, material, modifier);
-            ItemStack toUpgrade =
-                BCSiliconItems.plugGate.getStack(new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER));
+            GateVariant variantFrom = new GateVariant(logic, material, EnumGateModifier.NO_MODIFIER);
+            ItemStack toUpgrade = BCSiliconItems.plugGate.getStack(variantFrom);
             ItemStack output = BCSiliconItems.plugGate.getStack(new GateVariant(logic, material, modifier));
-            ImmutableSet<IngredientStack> input =
-                new ImmutableSet.Builder<IngredientStack>().add(IngredientStack.of(toUpgrade)).add(mods).build();
+            ImmutableSet.Builder<StackDefinition> inputBuilder = new ImmutableSet.Builder<>();
+            inputBuilder.add(ArrayStackFilter.definition(toUpgrade));
+            inputBuilder.add(mods);
+            ImmutableSet<StackDefinition> input = inputBuilder.build();
             AssemblyRecipeRegistry.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
         }
     }
 
     private static void makeGateAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
-        EnumRedstoneChipset chipset, IngredientStack... additional) {
-        ImmutableSet.Builder<IngredientStack> temp = ImmutableSet.builder();
-        temp.add(IngredientStack.of(chipset.getStack()));
+                                         EnumRedstoneChipset chipset, StackDefinition... additional) {
+        ImmutableSet.Builder<StackDefinition> temp = ImmutableSet.builder();
+        temp.add(ArrayStackFilter.definition(chipset.getStack()));
         temp.add(additional);
-        ImmutableSet<IngredientStack> input = temp.build();
+        ImmutableSet<StackDefinition> input = temp.build();
 
         String name = String.format("gate-and-%s-%s", material, modifier);
         ItemStack output = BCSiliconItems.plugGate.getStack(new GateVariant(EnumGateLogic.AND, material, modifier));
@@ -234,88 +268,14 @@ public class BCSiliconRecipes {
 
         name = String.format("gate-or-%s-%s", material, modifier);
         output = BCSiliconItems.plugGate.getStack(new GateVariant(EnumGateLogic.OR, material, modifier));
-        AssemblyRecipeRegistry.register((new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output)));
+        AssemblyRecipeRegistry.register(new AssemblyRecipeBasic(name, MjAPI.MJ * multiplier, input, output));
     }
 
     private static void makeGateRecipe(RecipeBuilderShaped builder, EnumGateMaterial material,
-        EnumGateModifier modifier) {
+                                       EnumGateModifier modifier) {
         GateVariant variant = new GateVariant(EnumGateLogic.AND, material, modifier);
         builder.setResult(BCSiliconItems.plugGate.getStack(variant));
-        builder.registerNbtAware("buildcraftsilicon:plug_gate_create_" + material + "_" + modifier);
+        builder.registerNbtAware();
     }
 
-    private static void scanForJsonRecipes() {
-        for (ModContainer mod : Loader.instance().getActiveModList()) {
-            JsonContext ctx = new JsonContext(mod.getModId());
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/assembly_recipes", null, (root, file) -> {
-                String path = root.relativize(file).toString();
-                if (!FilenameUtils.getExtension(file.toString()).equals("json")) return true;
-                String name = FilenameUtils.removeExtension(path).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(mod.getModId(), name);
-                BufferedReader reader = null;
-                try {
-                    reader = Files.newBufferedReader(file);
-                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (json == null || json.isJsonNull()) throw new JsonSyntaxException("Json is null (empty file?)");
-
-                    ItemStack output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), ctx);
-                    long powercost = json.get("MJ").getAsLong() * MjAPI.MJ;
-
-                    ArrayList<IngredientStack> ingredients = new ArrayList<>();
-
-                    json.getAsJsonArray("components").forEach(element -> {
-                        JsonObject object = element.getAsJsonObject();
-                        ingredients.add(new IngredientStack(CraftingHelper.getIngredient(object.get("ingredient"), ctx),
-                            JsonUtils.getInt(object, "amount", 1)));
-                    });
-
-                    AssemblyRecipeRegistry.REGISTRY.put(key,
-                        new AssemblyRecipeBasic(key, powercost, ImmutableSet.copyOf(ingredients), output));
-
-                } catch (IOException e) {
-                    BCLog.logger.error("Couldn't read recipe {} from {}", key, file, e);
-                    return false;
-                } finally {
-                    IOUtils.closeQuietly(reader);
-                }
-                return true;
-            }, false, false);
-
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/integration_recipes", null, (root, file) -> {
-                String path = root.relativize(file).toString();
-                if (!FilenameUtils.getExtension(file.toString()).equals("json")) return true;
-                String name = FilenameUtils.removeExtension(path).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(mod.getModId(), name);
-                BufferedReader reader = null;
-                try {
-                    reader = Files.newBufferedReader(file);
-                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (json == null || json.isJsonNull()) throw new JsonSyntaxException("Json is null (empty file?)");
-
-                    ItemStack output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), ctx);
-                    IngredientStack centerStack =
-                        IngredientStack.of(CraftingHelper.getIngredient(json.getAsJsonObject("centerStack"), ctx));
-                    long powercost = json.get("MJ").getAsLong() * MjAPI.MJ;
-
-                    ArrayList<IngredientStack> ingredients = new ArrayList<>();
-
-                    json.getAsJsonArray("components").forEach(element -> {
-                        JsonObject object = element.getAsJsonObject();
-                        ingredients.add(new IngredientStack(CraftingHelper.getIngredient(object.get("ingredient"), ctx),
-                            JsonUtils.getInt(object, "amount", 1)));
-                    });
-
-                    IntegrationRecipeRegistry.INSTANCE
-                        .addRecipe(new IntegrationRecipeBasic(key, powercost, centerStack, ingredients, output));
-
-                } catch (IOException e) {
-                    BCLog.logger.error("Couldn't read recipe {} from {}", key, file, e);
-                    return false;
-                } finally {
-                    IOUtils.closeQuietly(reader);
-                }
-                return true;
-            }, false, false);
-        }
-    }
 }

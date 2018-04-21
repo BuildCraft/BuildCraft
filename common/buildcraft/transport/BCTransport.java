@@ -87,6 +87,7 @@ public class BCTransport {
     public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
         BCTransportRegistries.init();
+        BCTransportRecipes.init();
     }
 
     // How much time we wasted during a tantrum

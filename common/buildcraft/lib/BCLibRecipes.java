@@ -15,7 +15,7 @@ public class BCLibRecipes {
     public static void fmlInit() {
         RecipeSorter.register("buildcraftlib:nbt_aware_shaped_ore", NBTAwareShapedOreRecipe.class, RecipeSorter.Category.SHAPED, "after:forge:shapedore");
 
-        if (BCItems.Lib.GUIDE != null) {
+        if (BCLibItems.guide != null) {
             List<Object> input = new ArrayList<>(4);
             if (BCItems.Core.GEAR_WOOD != null) {
                 input.add(BCItems.Core.GEAR_WOOD);

@@ -18,6 +18,11 @@ public class FillerType extends StatementType<IFillerPattern> {
     }
 
     @Override
+    public IFillerPattern convertToType(Object value) {
+        return value instanceof IFillerPattern ? (IFillerPattern) value : null;
+    }
+
+    @Override
     public IFillerPattern readFromNbt(NBTTagCompound nbt) {
         String kind = nbt.getString("kind");
         IFillerPattern pattern = FillerManager.registry.getPattern(kind);

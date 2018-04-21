@@ -15,10 +15,11 @@ import net.minecraft.block.material.Material;
 
 public class BCTransportBlocks {
 
+    public static BlockFilteredBuffer filteredBuffer;
     public static BlockPipeHolder pipeHolder;
 
     public static void preInit() {
-        RegistrationHelper.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
+        filteredBuffer = RegistrationHelper.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
         pipeHolder = RegistrationHelper.addBlock(new BlockPipeHolder(Material.IRON, "block.pipe_holder"));
 
         RegistrationHelper.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");

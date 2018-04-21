@@ -11,9 +11,13 @@ import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCBuildersItems {
 
+    public static ItemSnapshot snapshot;
+    public static ItemSchematicSingle schematicSingle;
+    public static ItemFillerPlanner addonFillerPlanner;
+
     public static void fmlPreInit() {
-        RegistrationHelper.addItem(new ItemSnapshot("item.snapshot"));
-        RegistrationHelper.addItem(new ItemSchematicSingle("item.schematic.single"));
-        RegistrationHelper.addItem(new ItemFillerPlanner("item.filler_planner"));
+        snapshot = RegistrationHelper.addItem(new ItemSnapshot("item.snapshot"));
+        schematicSingle = RegistrationHelper.addItem(new ItemSchematicSingle("item.schematic.single"));
+        addonFillerPlanner = RegistrationHelper.addItem(new ItemFillerPlanner("item.filler_planner"));
     }
 }

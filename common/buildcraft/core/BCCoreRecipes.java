@@ -12,6 +12,7 @@ import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.AssemblyRecipeBasic;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.StackDefinition;
 import buildcraft.core.block.BlockEngine_BC8;
@@ -19,6 +20,7 @@ import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import buildcraft.lib.registry.TagManager;
@@ -81,7 +83,13 @@ public class BCCoreRecipes {
             }
         }
 
-        if (BCItems.Core.LIST != null) {
+        if (BCCoreItems.diamondShard != null) {
+            ItemStack diamondShard = new ItemStack(BCCoreItems.diamondShard);
+            Object[] input = { "d", 'd', "gemDiamond"};
+            GameRegistry.addRecipe(new ShapedOreRecipe(diamondShard, input));
+        }
+
+        if (BCCoreItems.list != null) {
             if (BCBlocks.Silicon.ASSEMBLY_TABLE != null) {
                 long mjCost = 2_000 * MjAPI.MJ;
                 ImmutableSet<StackDefinition> required = ImmutableSet.of(//
@@ -89,7 +97,7 @@ public class BCCoreRecipes {
                         OreStackFilter.definition(ColourUtil.getDyeName(EnumDyeColor.GREEN)),//
                         OreStackFilter.definition("dustRedstone")//
                 );
-                BuildcraftRecipeRegistry.assemblyRecipes.addRecipe(new AssemblyRecipe("list", mjCost, required,
+                AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("list", mjCost, required,
                         new ItemStack(BCItems.Core.LIST)));
             } else {
                 RecipeBuilderShaped recipe = new RecipeBuilderShaped();

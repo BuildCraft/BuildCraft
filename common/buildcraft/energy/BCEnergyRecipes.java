@@ -7,12 +7,14 @@
 package buildcraft.energy;
 
 import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
 import buildcraft.api.BCModules;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
+import buildcraft.core.BCCore;
 import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.MathUtil;
@@ -20,9 +22,8 @@ import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.fluids.*;
 
 public class BCEnergyRecipes {
     public static void init() {
@@ -130,6 +131,18 @@ public class BCEnergyRecipes {
 
             FluidStack lava = new FluidStack(FluidRegistry.LAVA, 5);
             BuildcraftRecipeRegistry.refineryRecipes.addCoolableRecipe(lava, null, 4, 2);
+
+            if (BCItems.Transport.WATERPROOF != null){
+                Fluid oil = FluidRegistry.getFluid("oil_residue");
+                if (oil != null) {
+                    ItemStack oilStack = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, oil);
+                    RecipeBuilderShaped builder = new RecipeBuilderShaped();
+                    builder.add("f");
+                    builder.map('f', oilStack);
+                    builder.setResult(new ItemStack(BCItems.Transport.WATERPROOF));
+                    builder.register();
+                }
+            }
         }
     }
 

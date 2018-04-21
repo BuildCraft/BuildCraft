@@ -83,14 +83,12 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        BCItems.Lib.GUIDE.setCreativeTab(
-                CreativeTabManager.getTab("buildcraft.main"));
-
         BCCoreProxy.getProxy().fmlInit();
+
+        BCCoreRecipes.init();
 
         MarkerCache.registerCache(VolumeCache.INSTANCE);
         MarkerCache.registerCache(PathCache.INSTANCE);
-        BCCoreRecipes.init();
     }
 
     @Mod.EventHandler

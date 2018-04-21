@@ -17,7 +17,6 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
-import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.block.BlockSpring;
 import buildcraft.energy.BCEnergyFluids;
 import buildcraft.energy.tile.TileSpringOil;

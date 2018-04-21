@@ -16,15 +16,21 @@ import net.minecraft.block.material.Material;
 
 public class BCSiliconBlocks {
 
+    public static BlockLaser laser;
+    public static BlockLaserTable assemblyTable;
+    public static BlockLaserTable advancedCraftingTable;
+    public static BlockLaserTable integrationTable;
+    public static BlockLaserTable chargingTable;
+    public static BlockLaserTable programmingTable;
 
     public static void preInit() {
-        RegistrationHelper.addBlockAndItem(new BlockLaser(Material.IRON, "block.laser"));
-        createLaserTable(EnumLaserTableType.ASSEMBLY_TABLE, "block.assembly_table");
-        createLaserTable(EnumLaserTableType.ADVANCED_CRAFTING_TABLE, "block.advanced_crafting_table");
-        createLaserTable(EnumLaserTableType.INTEGRATION_TABLE, "block.integration_table");
+        laser = RegistrationHelper.addBlockAndItem(new BlockLaser(Material.IRON, "block.laser"));
+        assemblyTable = createLaserTable(EnumLaserTableType.ASSEMBLY_TABLE, "block.assembly_table");
+        advancedCraftingTable = createLaserTable(EnumLaserTableType.ADVANCED_CRAFTING_TABLE, "block.advanced_crafting_table");
+        integrationTable = createLaserTable(EnumLaserTableType.INTEGRATION_TABLE, "block.integration_table");
         if (BCLib.DEV) {
-            createLaserTable(EnumLaserTableType.CHARGING_TABLE, "block.charging_table");
-            createLaserTable(EnumLaserTableType.PROGRAMMING_TABLE, "block.programming_table");
+            chargingTable = createLaserTable(EnumLaserTableType.CHARGING_TABLE, "block.charging_table");
+            programmingTable = createLaserTable(EnumLaserTableType.PROGRAMMING_TABLE, "block.programming_table");
         }
 
         RegistrationHelper.registerTile(TileLaser.class, "tile.laser");

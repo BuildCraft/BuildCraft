@@ -6,7 +6,6 @@
  */
 package buildcraft.builders.tile;
 
-import buildcraft.api.BCItems;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.enums.EnumOptionalSnapshotType;
@@ -16,6 +15,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.*;
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -120,7 +120,7 @@ public class TileBuilder extends TileBC_Neptune
                 currentBasePosIndex = 0;
                 snapshot = null;
                 if (after.getItem() instanceof ItemSnapshot) {
-                    Snapshot.Header header = ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getHeader(after);
+                    Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
                     if (header != null) {
                         Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
                         if (newSnapshot != null) {

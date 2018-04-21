@@ -6,9 +6,8 @@
 
 package buildcraft.builders.gui;
 
-import buildcraft.api.BCItems;
+import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.container.ContainerReplacer;
-import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.ClientSnapshots;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -40,7 +39,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
         ClientSnapshots.INSTANCE.renderSnapshot(
-                ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getHeader(container.tile.invSnapshot.getStackInSlot(0)),
+                BCBuildersItems.snapshot.getHeader(container.tile.invSnapshot.getStackInSlot(0)),
             guiLeft + 8,
             guiTop + 9,
             160,

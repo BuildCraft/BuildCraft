@@ -16,6 +16,7 @@ import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -47,7 +48,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     );
     public IntegrationRecipe recipe;
 
-    private boolean extract(StackDefinition item, ImmutableList<StackDefinition> items, boolean simulate) {
+    private boolean extract(StackDefinition item, ImmutableSet<StackDefinition> items, boolean simulate) {
         ItemStack targetStack = invTarget.getStackInSlot(0);
         if (BCStackHelper.isEmpty(targetStack)) return false;
         if (!StackUtil.contains(item, targetStack)) return false;

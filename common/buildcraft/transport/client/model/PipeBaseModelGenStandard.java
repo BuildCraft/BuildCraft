@@ -215,7 +215,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                 addQuads(quadArray, quads, getSprite(spriteArray, tex, i));
 
                 int c = tex.getColour(i);
-                int r = (c >> 0) & 0xFF;
+                int r = (c) & 0xFF;
                 int g = (c >> 8) & 0xFF;
                 int b = (c >> 16) & 0xFF;
 

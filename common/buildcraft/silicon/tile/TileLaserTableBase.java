@@ -8,11 +8,13 @@ package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import buildcraft.api.items.BCStackHelper;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -124,7 +126,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         left.add("target - " + LocaleUtil.localizeMj(getTarget()));
     }
 
-    protected boolean extract(ItemHandlerSimple inv, ImmutableList<StackDefinition> items, boolean simulate,
+    protected boolean extract(ItemHandlerSimple inv, Set<StackDefinition> items, boolean simulate,
                               boolean precise) {
         AtomicLong remainingStacks = new AtomicLong(inv.stacks.stream().filter(stack -> !BCStackHelper.isEmpty(stack)).count());
         boolean allItemsConsumed = items.stream().allMatch((definition) -> {

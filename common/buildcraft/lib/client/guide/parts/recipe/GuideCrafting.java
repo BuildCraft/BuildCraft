@@ -41,10 +41,10 @@ public class GuideCrafting extends GuidePartItem {
         this.input = new ChangingItemStack[input.getWidth()][input.getHeight()];
         for (int x = 0; x < input.getWidth(); x++) {
             for (int y = 0; y < input.getHeight(); y++) {
-                this.input[x][y] = ChangingItemStack.create(input.get(x, y));
+                this.input[x][y] = new ChangingItemStack(input.get(x, y));
             }
         }
-        this.output = ChangingItemStack.create(output);
+        this.output = new ChangingItemStack(output);
     }
 
     GuideCrafting(GuiGuide gui, ChangingItemStack[][] input, ChangingItemStack output) {
@@ -67,11 +67,9 @@ public class GuideCrafting extends GuidePartItem {
             RenderHelper.enableGUIStandardItemLighting();
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
-                    //Check for null spaces before rendering
-                    if (input[itemX][itemY] != null) {
-                        GuiRectangle rect = ITEM_POSITION[itemX][itemY];
-                        drawItemStack(input[itemX][itemY].get(), x + (int) rect.x, y + (int) rect.y);
-                    }
+                    GuiRectangle rect = ITEM_POSITION[itemX][itemY];
+                    ItemStack stack = input[itemX][itemY].get();
+                    drawItemStack(stack, x + (int) rect.x, y + (int) rect.y);
                 }
             }
 
@@ -94,12 +92,9 @@ public class GuideCrafting extends GuidePartItem {
         if (current.page == index) {
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
-                    //Check for null spaces before rendering
-                    if (input[itemX][itemY] != null) {
-                        GuiRectangle rect = ITEM_POSITION[itemX][itemY];
-                        testClickItemStack(input[itemX][itemY].get(), x + (int) rect.x, y + (int) rect.y);
-                    }
-
+                    GuiRectangle rect = ITEM_POSITION[itemX][itemY];
+                    ItemStack stack = input[itemX][itemY].get();
+                    testClickItemStack(stack, x + (int) rect.x, y + (int) rect.y);
                 }
             }
 

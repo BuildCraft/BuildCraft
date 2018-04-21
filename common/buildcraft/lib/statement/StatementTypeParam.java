@@ -20,6 +20,11 @@ public class StatementTypeParam extends StatementType<IStatementParameter> {
     }
 
     @Override
+    public IStatementParameter convertToType(Object value) {
+        return value instanceof IStatementParameter ? (IStatementParameter) value : null;
+    }
+
+    @Override
     public IStatementParameter readFromNbt(NBTTagCompound nbt) {
         String kind = nbt.getString("kind");
         IParameterReader reader = StatementManager.getParameterReader(kind);

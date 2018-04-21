@@ -7,9 +7,12 @@ package buildcraft.builders;
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreItems;
+import buildcraft.lib.BCLibItems;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -29,7 +32,7 @@ public class BCBuildersRecipes {
         recipe.add("ppp");
         recipe.map('l', "dyeBlack");
         recipe.map('p', paper);
-        recipe.setResult(((ItemSnapshot) BCItems.Builders.SNAPSHOT).getClean(EnumSnapshotType.TEMPLATE));
+        recipe.setResult(BCBuildersItems.snapshot.getClean(EnumSnapshotType.TEMPLATE));
         recipe.register();
         recipe = new RecipeBuilderShaped();
         recipe.add("ppp");
@@ -37,7 +40,7 @@ public class BCBuildersRecipes {
         recipe.add("ppp");
         recipe.map('l', "gemLapis");
         recipe.map('p', paper);
-        recipe.setResult(((ItemSnapshot) BCItems.Builders.SNAPSHOT).getClean(EnumSnapshotType.BLUEPRINT));
+        recipe.setResult(BCBuildersItems.snapshot.getClean(EnumSnapshotType.BLUEPRINT));
         recipe.register();
 
         recipe = new RecipeBuilderShaped();
@@ -50,6 +53,19 @@ public class BCBuildersRecipes {
         recipe.map('r', "dustRedstone");
         recipe.map('p', Items.DIAMOND_PICKAXE);
         recipe.setResult(new ItemStack(BCBlocks.Builders.QUARRY));
+        recipe.register();
+
+        recipe = new RecipeBuilderShaped();
+        recipe.add("bmb");
+        recipe.add("ycy");
+        recipe.add("dsd");
+        recipe.map('b', "dyeBlack");
+        recipe.map('m', BCCoreBlocks.markerVolume);
+        recipe.map('y', "dyeYellow");
+        recipe.map('c', Blocks.CRAFTING_TABLE);
+        recipe.map('d', "gearDiamond");
+        recipe.map('s', BCBuildersItems.snapshot);
+        recipe.setResult(new ItemStack(BCBlocks.Builders.ARCHITECT));
         recipe.register();
 
         // if (BCBuildersItems.template != null) {

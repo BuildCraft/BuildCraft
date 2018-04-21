@@ -71,6 +71,7 @@ public class BCSilicon {
     public static void init(FMLInitializationEvent evt) {
         BCSiliconProxy.getProxy().fmlInit();
         FacadeStateManager.init();
+        BCSiliconRecipes.init();
     }
 
     @Mod.EventHandler

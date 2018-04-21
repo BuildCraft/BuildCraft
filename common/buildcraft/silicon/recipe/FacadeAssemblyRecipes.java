@@ -13,16 +13,18 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import com.google.common.collect.ImmutableSet;
 
+import com.google.common.collect.Lists;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.IngredientStack;
 
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
@@ -34,8 +36,8 @@ import buildcraft.silicon.BCSiliconItems;
 import buildcraft.silicon.item.ItemPluggableFacade;
 import buildcraft.silicon.plug.FacadeBlockStateInfo;
 import buildcraft.silicon.plug.FacadeInstance;
+import buildcraft.silicon.plug.FacadePhasedState;
 import buildcraft.silicon.plug.FacadeStateManager;
-import buildcraft.transport.BCTransportItems;
 
 public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeViewable.IRecipePowered {
     public static final FacadeAssemblyRecipes INSTANCE = new FacadeAssemblyRecipes();
@@ -50,15 +52,15 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
 
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
         ItemStack stack = BCSiliconItems.plugFacade.createItemStack(FacadeInstance.createSingle(info, isHollow));
-        stack.setCount(6);
+        stack.stackSize = 6;
         return stack;
     }
 
     @Override
     public ChangingItemStack[] getRecipeInputs() {
         ChangingItemStack[] inputs = new ChangingItemStack[2];
-        inputs[0] = new ChangingItemStack(new ItemStack(BCTransportItems.pipeStructure, 3));
-        NonNullList<ItemStack> list = NonNullList.create();
+        inputs[0] = new ChangingItemStack(baseRequirementStack());
+        List<ItemStack> list = Lists.newLinkedList();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
             if (info.isVisible) {
                 list.add(info.requiredStack);
@@ -72,7 +74,7 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
 
     @Override
     public ChangingItemStack getRecipeOutputs() {
-        NonNullList<ItemStack> list = NonNullList.create();
+        List<ItemStack> list = Lists.newLinkedList();
         for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
             if (info.isVisible) {
                 list.add(createFacadeStack(info, false));
@@ -90,15 +92,15 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     }
 
     @Override
-    public Set<ItemStack> getOutputs(NonNullList<ItemStack> inputs) {
-        if (!StackUtil.contains(new ItemStack(BCTransportItems.pipeStructure, 3), inputs)) {
+    public Set<ItemStack> getOutputs(List<ItemStack> inputs) {
+        if (!StackUtil.contains(baseRequirementStack(), inputs)) {
             return Collections.emptySet();
         }
 
         ArrayList<ItemStack> stacks = new ArrayList<>();
         for (ItemStack stack : inputs) {
             stack = stack.copy();
-            stack.setCount(1);
+            stack.stackSize = 1;
             List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
             if (infos == null || infos.isEmpty()) {
                 continue;
@@ -111,18 +113,26 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
         return ImmutableSet.copyOf(stacks);
     }
 
+    private static ItemStack baseRequirementStack() {
+        if (BCItems.Transport.PIPE_STRUCTURE == null) {
+            return new ItemStack(Blocks.COBBLESTONE_WALL);
+        }
+        return new ItemStack(BCItems.Transport.PIPE_STRUCTURE, 3);
+    }
+
     @Override
     public Set<ItemStack> getOutputPreviews() {
         return Collections.emptySet();
     }
 
     @Override
-    public Set<IngredientStack> getInputsFor(@Nonnull ItemStack output) {
-        ImmutableSet<IngredientStack> stacks = ImmutableSet.of(
-            new IngredientStack(Ingredient
-                .fromStacks(ItemPluggableFacade.getStates(output).getCurrentStateForStack().stateInfo.requiredStack)),
-            new IngredientStack(Ingredient.fromItem(BCTransportItems.pipeStructure), 3));
-        return stacks;
+    public Set<StackDefinition> getInputsFor(@Nonnull ItemStack output) {
+        FacadePhasedState state = ItemPluggableFacade.getStates(output).getCurrentStateForStack();
+        ItemStack stateRequirement = state.stateInfo.requiredStack;
+        StackDefinition ingredientType = ArrayStackFilter.definition(stateRequirement);
+        StackDefinition ingredientBase = ArrayStackFilter.definition(3, baseRequirementStack());
+
+        return ImmutableSet.of(ingredientType, ingredientBase);
     }
 
     @Override

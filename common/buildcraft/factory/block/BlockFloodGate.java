@@ -30,6 +30,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.tile.TileFloodGate;
 
+import javax.annotation.Nullable;
+
 public class BlockFloodGate extends BlockBCTile_Neptune {
     public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP;
 
@@ -65,9 +67,8 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem,
         EnumFacing side, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand);
         if (heldItem.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {
                 if (side != EnumFacing.UP) {
@@ -87,6 +88,6 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
             }
             return false;
         }
-        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 }

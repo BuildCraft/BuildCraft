@@ -21,7 +21,6 @@ import buildcraft.lib.recipe.RefineryRecipeRegistry;
 
 public class BCLibRegistries {
     public static void fmlPreInit() {
-        BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;
         BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
         BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
         BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;

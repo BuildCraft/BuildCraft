@@ -15,7 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import buildcraft.lib.BCLib;
-import buildcraft.lib.misc.AdvancementUtil;
 
 public class ItemGuide extends ItemBC_Neptune {
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:guide");
@@ -25,9 +24,8 @@ public class ItemGuide extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStack, World world, EntityPlayer player, EnumHand hand) {
         player.openGui(BCLib.INSTANCE, 0, world, 0, 0, 0);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
     }
 }

@@ -6,46 +6,64 @@
 
 package buildcraft.transport;
 
+import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.AssemblyRecipeBasic;
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.lib.inventory.filter.OreStackFilter;
+import buildcraft.lib.recipe.RecipeBuilderShaped;
+import buildcraft.silicon.recipe.FacadeSwapRecipe;
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.recipes.AssemblyRecipeBasic;
-import buildcraft.api.recipes.IngredientStack;
 
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 
 import buildcraft.transport.item.ItemPipeHolder;
 
-@Mod.EventBusSubscriber(modid = BCTransport.MODID)
+@Mod.EventBusSubscriber()
 public class BCTransportRecipes {
-    @GameRegistry.ObjectHolder("buildcraftsilicon:assembly_table")
-    private static final Block SILICON_TABLE_ASSEMBLY = null;
 
-    @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+    public static void init() {
+        GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
+        GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.SLIME_BALL));
+
+        if (BCTransportBlocks.filteredBuffer != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("wdw");
+            builder.add("wcw");
+            builder.add("wpw");
+            builder.map('w', "plankWood");
+            builder.map('p', Blocks.PISTON);
+            builder.map('c', Blocks.CHEST);
+            builder.map('d', BCTransportItems.pipeItemDiamond, Items.DIAMOND);
+            builder.setResult(new ItemStack(BCTransportBlocks.filteredBuffer));
+            builder.register();
+        }
+
+        if (BCTransportItems.pipeStructure != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("cgc");
+            builder.map('c', "cobblestone");
+            builder.map('g', Blocks.GRAVEL);
+            builder.setResult(new ItemStack(BCTransportItems.pipeStructure, 8));
+            builder.register();
+        }
+
         addPipeRecipe(BCTransportItems.pipeItemWood, "plankWood");
         addPipeRecipe(BCTransportItems.pipeItemCobble, "cobblestone");
         addPipeRecipe(BCTransportItems.pipeItemStone, "stone");
@@ -95,11 +113,28 @@ public class BCTransportRecipes {
         if (BCTransportItems.wire != null) {
             for (EnumDyeColor color : ColourUtil.COLOURS) {
                 String name = String.format("wire-%s", color.getUnlocalizedName());
-                ImmutableSet<IngredientStack> input = ImmutableSet.of(IngredientStack.of("dustRedstone"),
-                    IngredientStack.of(ColourUtil.getDyeName(color)));
+                StackDefinition redstone = OreStackFilter.definition("dustRedstone");
+                StackDefinition colorStack = OreStackFilter.definition(ColourUtil.getDyeName(color));
+                ImmutableSet<StackDefinition> input = ImmutableSet.of(redstone, colorStack);
                 AssemblyRecipeRegistry.register(new AssemblyRecipeBasic(name, 10_000 * MjAPI.MJ, input,
-                    new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
+                        new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
+        }
+
+        GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.plugBlocker), new ItemStack(BCTransportItems.pipeStructure, 1));
+
+
+        if (BCTransportItems.plugPowerAdaptor != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add("sis");
+            builder.add("sgs");
+            builder.add("srs");
+            builder.map('s', BCTransportItems.pipeStructure);
+            builder.map('g', "gearStone");
+            builder.map('r', "dustRedstone");
+            builder.map('i', "ingotGold");
+            builder.setResult(new ItemStack(BCTransportItems.plugPowerAdaptor));
+            builder.register();
         }
     }
 
@@ -112,17 +147,15 @@ public class BCTransportRecipes {
             return;
         }
         ItemStack result = new ItemStack(pipe, 8);
-        IRecipe recipe = new ShapedOreRecipe(pipe.getRegistryName(), result, "lgr", 'l', left, 'r', right, 'g',
+        IRecipe recipe = new ShapedOreRecipe(result, "lgr", 'l', left, 'r', right, 'g',
             "blockGlassColorless");
-        recipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_colorless"));
-        ForgeRegistries.RECIPES.register(recipe);
+        GameRegistry.addRecipe(recipe);
 
         for (EnumDyeColor colour : EnumDyeColor.values()) {
             ItemStack resultStack = new ItemStack(pipe, 8, colour.getMetadata() + 1);
-            IRecipe colorRecipe = new ShapedOreRecipe(pipe.getRegistryName(), resultStack, "lgr", 'l', left, 'r', right,
+            IRecipe colorRecipe = new ShapedOreRecipe(resultStack, "lgr", 'l', left, 'r', right,
                 'g', "blockGlass" + ColourUtil.getName(colour));
-            colorRecipe.setRegistryName(new ResourceLocation(pipe.getRegistryName() + "_" + colour));
-            ForgeRegistries.RECIPES.register(colorRecipe);
+            GameRegistry.addRecipe(colorRecipe);
         }
     }
 
@@ -134,32 +167,16 @@ public class BCTransportRecipes {
             throw new NullPointerException("additional");
         }
 
-        IRecipe returnRecipe = new ShapelessOreRecipe(to.getRegistryName(), new ItemStack(from), new ItemStack(to))
-            .setRegistryName(new ResourceLocation(to.getRegistryName() + "_undo"));
-        ForgeRegistries.RECIPES.register(returnRecipe);
+        // TODO: Use RecipePipeColour instead!
 
-        NonNullList<Ingredient> list = NonNullList.create();
-        list.add(Ingredient.fromItem(from));
-        list.add(CraftingHelper.getIngredient(additional));
-
-        IRecipe upgradeRecipe = new ShapelessRecipes(to.getRegistryName().getResourcePath(), new ItemStack(to), list)
-            .setRegistryName(new ResourceLocation(to.getRegistryName() + "_colorless"));
-        ForgeRegistries.RECIPES.register(upgradeRecipe);
+        GameRegistry.addShapelessRecipe(new ItemStack(from), new ItemStack(to));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(to), new ItemStack(from), additional));
 
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ItemStack f = new ItemStack(from, 1, colour.getMetadata() + 1);
             ItemStack t = new ItemStack(to, 1, colour.getMetadata() + 1);
-            IRecipe returnRecipeColored = new ShapelessOreRecipe(to.getRegistryName(), f, t)
-                .setRegistryName(new ResourceLocation(to.getRegistryName() + "_" + colour.getName() + "_undo"));
-            ForgeRegistries.RECIPES.register(returnRecipeColored);
-
-            NonNullList<Ingredient> colorList = NonNullList.create();
-            colorList.add(Ingredient.fromStacks(f));
-            colorList.add(CraftingHelper.getIngredient(additional));
-
-            IRecipe upgradeRecipeColored = new ShapelessOreRecipe(to.getRegistryName(), colorList, t)
-                .setRegistryName(new ResourceLocation(to.getRegistryName() + "_" + colour.getName()));
-            ForgeRegistries.RECIPES.register(upgradeRecipeColored);
+            GameRegistry.addShapelessRecipe(f, t);
+            GameRegistry.addRecipe(new ShapelessOreRecipe(t, f, additional));
         }
     }
 }

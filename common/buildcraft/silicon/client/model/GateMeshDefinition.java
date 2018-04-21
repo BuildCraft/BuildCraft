@@ -13,10 +13,10 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.BCModules;
 
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.item.ItemPluggableGate;
+
+import javax.annotation.Nonnull;
 
 public enum GateMeshDefinition implements ItemMeshDefinition {
     INSTANCE;
@@ -24,8 +24,8 @@ public enum GateMeshDefinition implements ItemMeshDefinition {
     public static final ResourceLocation LOCATION_BASE = BCModules.SILICON.createLocation("gate_complex");
 
     @Override
-    public ModelResourceLocation getModelLocation(ItemStack stack) {
-        GateVariant var = ItemPluggableGate.getVariant(StackUtil.asNonNull(stack));
+    public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
+        GateVariant var = ItemPluggableGate.getVariant(stack);
         ResourceLocation loc = LOCATION_BASE;
         String variant = var.getVariantName();
         return new ModelResourceLocation(loc, variant);

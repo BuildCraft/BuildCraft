@@ -6,12 +6,10 @@
  */
 package buildcraft.builders;
 
-import buildcraft.api.BCItems;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.builders.client.ClientArchitectTables;
 import buildcraft.builders.item.ItemSchematicSingle;
-import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.Blueprint;
 import buildcraft.builders.snapshot.ClientSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
@@ -91,10 +89,10 @@ public enum BCBuildersEventDist {
     public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
         Snapshot snapshot = null;
         ItemStack stack = event.getStack();
-        Header header = BCItems.Builders.SNAPSHOT != null ? ((ItemSnapshot)BCItems.Builders.SNAPSHOT).getHeader(stack) : null;
+        Header header = BCBuildersItems.snapshot != null ? BCBuildersItems.snapshot.getHeader(stack) : null;
         if (header != null) {
             snapshot = ClientSnapshots.INSTANCE.getSnapshot(header.key);
-        } else if (BCItems.Builders.SCHEMATIC_SINGLE != null) {
+        } else if (BCBuildersItems.schematicSingle != null) {
             ISchematicBlock schematicBlock = ItemSchematicSingle.getSchematicSafe(stack);
             if (schematicBlock != null) {
                 Blueprint blueprint = new Blueprint();

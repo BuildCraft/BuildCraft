@@ -11,6 +11,10 @@ import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCLibItems {
 
+    public static ItemGuide guide;
+    public static ItemGuideNote note;
+    public static ItemDebugger debugger;
+
     private static boolean enableGuide, enableDebugger;
 
     public static void enableGuide() {
@@ -21,21 +25,13 @@ public class BCLibItems {
         enableDebugger = true;
     }
 
-    public static boolean isGuideEnabled() {
-        return enableGuide;
-    }
-
-    public static boolean isDebuggerEnabled() {
-        return enableDebugger;
-    }
-
     public static void fmlPreInit() {
-        if (isGuideEnabled()) {
-            RegistrationHelper.addForcedItem(new ItemGuide("item.guide"));
-            RegistrationHelper.addForcedItem(new ItemGuideNote("item.guide.note"));
+        if (enableGuide) {
+            guide = RegistrationHelper.addForcedItem(new ItemGuide("item.guide"));
+            note = RegistrationHelper.addForcedItem(new ItemGuideNote("item.guide.note"));
         }
-        if (isDebuggerEnabled()) {
-            RegistrationHelper.addForcedItem(new ItemDebugger("item.debugger"));
+        if (enableDebugger) {
+            debugger = RegistrationHelper.addForcedItem(new ItemDebugger("item.debugger"));
         }
     }
 }

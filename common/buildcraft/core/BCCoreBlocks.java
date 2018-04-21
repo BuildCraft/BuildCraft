@@ -17,14 +17,20 @@ import net.minecraft.block.material.Material;
 public class BCCoreBlocks {
 
     public static BlockEngine_BC8 engine;
+    public static BlockSpring spring;
+    public static BlockDecoration decorated;
+    public static BlockMarkerVolume markerVolume;
+    public static BlockMarkerPath markerPath;
+
+    public static BlockPowerConsumerTester powerTester;
 
     public static void preInit() {
-        RegistrationHelper.addBlockAndItem(new BlockSpring("block.spring"), ItemBlockSpring::new);
-        RegistrationHelper.addBlockAndItem(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
-        RegistrationHelper.addBlockAndItem(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
-        RegistrationHelper.addBlockAndItem(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
+        spring = RegistrationHelper.addBlockAndItem(new BlockSpring("block.spring"), ItemBlockSpring::new);
+        decorated = RegistrationHelper.addBlockAndItem(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
+        markerVolume = RegistrationHelper.addBlockAndItem(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
+        markerPath = RegistrationHelper.addBlockAndItem(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
         if (BCLib.DEV) {
-            RegistrationHelper.addBlockAndItem(new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
+            powerTester  = RegistrationHelper.addBlockAndItem(new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
         }
 
         engine = RegistrationHelper.addBlockAndItem(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8::new);

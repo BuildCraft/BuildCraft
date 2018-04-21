@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.silicon.tile.TileAssemblyTable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -86,17 +87,16 @@ public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
         fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 15, 0x404040);
     }
 
-
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (mouseButton == 0) {
             for (int i = 0; i < container.tile.recipesStates.size(); i++) {
-                AssemblyRecipe recipe = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
+                TileAssemblyTable.AssemblyInstruction instruction = new ArrayList<>(container.tile.recipesStates.keySet()).get(i);
                 EnumAssemblyRecipeState state = new ArrayList<>(container.tile.recipesStates.values()).get(i);
                 if (getArea(i).contains(mouseX, mouseY)) {
                     container.tile.sendRecipeStateToServer(
-                            recipe,
+                            instruction,
                             state == EnumAssemblyRecipeState.POSSIBLE
                                     ? EnumAssemblyRecipeState.SAVED
                                     : EnumAssemblyRecipeState.POSSIBLE

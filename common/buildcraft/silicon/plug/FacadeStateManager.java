@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.api.items.BCStackHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
@@ -33,7 +34,6 @@ import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,7 +58,6 @@ import buildcraft.api.facades.IFacadeState;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.silicon.recipe.FacadeSwapRecipe;
@@ -119,14 +118,14 @@ public enum FacadeStateManager implements IFacadeRegistry {
             NBTTagCompound nbt = message.getNBTValue();
             String regName = nbt.getString(FacadeAPI.NBT_CUSTOM_BLOCK_REG_KEY);
             int meta = nbt.getInteger(FacadeAPI.NBT_CUSTOM_BLOCK_META);
-            ItemStack stack = new ItemStack(nbt.getCompoundTag(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
+            ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(FacadeAPI.NBT_CUSTOM_ITEM_STACK));
             if (regName.isEmpty()) {
                 BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
                     + id + " should have a registry name for the block, stored as "
                     + FacadeAPI.NBT_CUSTOM_BLOCK_REG_KEY);
                 return;
             }
-            if (stack.isEmpty()) {
+            if (BCStackHelper.isEmpty(stack)) {
                 BCLog.logger.warn("[facade.imc] Received an invalid IMC message from " + message.getSender() + " - "
                     + id + " should have a valid ItemStack stored in " + FacadeAPI.NBT_CUSTOM_ITEM_STACK);
                 return;
@@ -196,14 +195,14 @@ public enum FacadeStateManager implements IFacadeRegistry {
         }
         Block block = state.getBlock();
         Item item = Item.getItemFromBlock(block);
-        if (item == Items.AIR) {
+        if (item == null) {
             item = block.getItemDropped(state, new Random(0), 0);
         }
         return new ItemStack(item, 1, block.damageDropped(state));
     }
 
     public static void init() {
-        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
+        defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), null, ImmutableSet.of());
         for (Block block : ForgeRegistries.BLOCKS) {
             if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getResourceDomain())) {
                 if (BCLib.VERSION.startsWith("7.99")) {
@@ -295,7 +294,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     ImmutableSet<IProperty<?>> varSet = ImmutableSet.copyOf(vars.keySet());
                     FacadeBlockStateInfo info = new FacadeBlockStateInfo(state, stack, varSet);
                     validFacadeStates.put(state, info);
-                    if (!info.requiredStack.isEmpty()) {
+                    if (!BCStackHelper.isEmpty(info.requiredStack)) {
                         ItemStackKey stackKey = new ItemStackKey(info.requiredStack);
                         stackFacades.computeIfAbsent(stackKey, k -> new ArrayList<>()).add(info);
                     }
@@ -346,7 +345,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
             message += "\n  Class = " + property.getClass();
             message += "\n  Method not overriden: IProperty.parseValue(String)";
             RuntimeException exception = new RuntimeException(message, error);
-            if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+            if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.10.2")) {
                 throw exception;
             } else {
                 BCLog.logger.error("[silicon.facade] Invalid property!", exception);
@@ -381,7 +380,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 // or in a dev environment
                 // as this really needs to be fixed
                 RuntimeException exception = new RuntimeException(message);
-                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.12.2")) {
+                if (BCLib.DEV || !BCLib.MC_VERSION.equals("1.10.2")) {
                     throw exception;
                 } else {
                     BCLog.logger.error("[silicon.facade] Invalid property!", exception);
