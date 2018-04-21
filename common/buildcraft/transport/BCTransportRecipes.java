@@ -6,34 +6,26 @@
 
 package buildcraft.transport;
 
-import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipeBasic;
 import buildcraft.api.recipes.StackDefinition;
 import buildcraft.lib.inventory.filter.OreStackFilter;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
-import buildcraft.silicon.recipe.FacadeSwapRecipe;
+import buildcraft.transport.item.ItemPipeHolder;
 import com.google.common.collect.ImmutableSet;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-
-import buildcraft.transport.item.ItemPipeHolder;
 
 @Mod.EventBusSubscriber()
 public class BCTransportRecipes {

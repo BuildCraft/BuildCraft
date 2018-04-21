@@ -6,63 +6,37 @@
 
 package buildcraft.silicon;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.IntStream;
-
-import buildcraft.api.core.BCLog;
-import buildcraft.api.recipes.AssemblyRecipeBasic;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.StackDefinition;
-import buildcraft.lib.inventory.filter.ArrayStackFilter;
-import buildcraft.lib.inventory.filter.OreStackFilter;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
-import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.RecipeSorter;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.AssemblyRecipeBasic;
-import buildcraft.api.recipes.IngredientStack;
-
+import buildcraft.api.recipes.StackDefinition;
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.OreStackFilter;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.lib.recipe.IngredientNBTBC;
-import buildcraft.lib.recipe.IntegrationRecipeBasic;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
-
-import buildcraft.core.BCCoreBlocks;
 import buildcraft.silicon.gate.EnumGateLogic;
 import buildcraft.silicon.gate.EnumGateMaterial;
 import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.recipe.FacadeAssemblyRecipes;
 import buildcraft.silicon.recipe.FacadeSwapRecipe;
-import buildcraft.transport.BCTransportItems;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = BCSilicon.MODID)
 public class BCSiliconRecipes {

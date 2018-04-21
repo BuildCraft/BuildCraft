@@ -5,11 +5,8 @@
 package buildcraft.builders;
 
 import buildcraft.api.BCBlocks;
-import buildcraft.api.BCItems;
 import buildcraft.api.enums.EnumSnapshotType;
 import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreItems;
-import buildcraft.lib.BCLibItems;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import net.minecraft.init.Blocks;

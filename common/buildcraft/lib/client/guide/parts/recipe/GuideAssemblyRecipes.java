@@ -8,14 +8,11 @@ package buildcraft.lib.client.guide.parts.recipe;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.IAssemblyRecipeProvider;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
-import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
-import buildcraft.lib.recipe.IRecipeViewable.IRecipePowered;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
