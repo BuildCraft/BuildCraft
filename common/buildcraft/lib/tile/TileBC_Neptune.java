@@ -204,7 +204,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Called whenever the block holding this tile is exploded. Called by
      * {@link Block#onBlockExploded(World, BlockPos, Explosion)} */
     public void onExplode(Explosion explosion) {
-        onRemove();
+
     }
 
     /** Called whenever the block is removed. Called by {@link #onExplode(Explosion)}, and
