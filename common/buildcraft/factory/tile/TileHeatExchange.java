@@ -584,17 +584,29 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 throw new IllegalStateException("Invalid recipe " + c_recipe + ", " + h_recipe);
             }
 
-            // TODO: Use "charge" to add mb to the charge
-            // Ok, so how is the API meant to work? It looks like we just drop the relative amounts...
-            // TODO: Make mult the *maximum* multiplier, not the exact one.
-            int max = FLUID_MULT[middleCount - 1];
+            // Find maximum multiple of the fluid that we can process from the different tanks.
+            // max_multiplier == 0 indicates that we can no longer process (tanks full/empty)
+            int max_multiplier = 0;
+            FluidStack c_in_f = setAmount(c_recipe.in(), max_multiplier);
+            FluidStack c_out_f = setAmount(c_recipe.out(), max_multiplier);
+            FluidStack h_in_f = setAmount(h_recipe.in(), max_multiplier);
+            FluidStack h_out_f = setAmount(h_recipe.out(), max_multiplier);
 
-            FluidStack c_in_f = setAmount(c_recipe.in(), max);
-            FluidStack c_out_f = setAmount(c_recipe.out(), max);
-            FluidStack h_in_f = setAmount(h_recipe.in(), max);
-            FluidStack h_out_f = setAmount(h_recipe.out(), max);
-            if (canFill(c_out, c_out_f) && canFill(h_out, h_out_f) && canDrain(c_in, c_in_f)
-                && canDrain(h_in, h_in_f)) {
+            // start from the maximum value, and go down until FLUID_MULT[0], the smallest multiple
+            for(int multiplier_i = middleCount - 1; multiplier_i >= 0; multiplier_i--) {
+                int max = FLUID_MULT[multiplier_i];
+                c_in_f = setAmount(c_recipe.in(), max);
+                c_out_f = setAmount(c_recipe.out(), max);
+                h_in_f = setAmount(h_recipe.in(), max);
+                h_out_f = setAmount(h_recipe.out(), max);
+                if (canFill(c_out, c_out_f) && canFill(h_out, h_out_f) &&
+                    canDrain(c_in, c_in_f) && canDrain(h_in, h_in_f)) {
+                    max_multiplier = max;
+                    break;
+                }
+            }
+
+            if (max_multiplier > 0) {
                 if (progressState == EnumProgressState.OFF) {
                     progressState = EnumProgressState.PREPARING;
                 } else if (progressState == EnumProgressState.RUNNING) {
