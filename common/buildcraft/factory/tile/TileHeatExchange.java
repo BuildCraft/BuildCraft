@@ -65,9 +65,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
     public static final int NET_ID_TANK_OUT = IDS.allocId("TANK_OUT");
     public static final int NET_ID_STATE = IDS.allocId("STATE");
 
-    /** Fluid amount multipliers -- this is the maximum amount of fluid that can be transfered per tick. All numbers
-     * need to be divisors of 1000 */
-    private static final int[] FLUID_MULT = { 10, 16, 20 };
+    /** the maximum amount of fluid that can be transferred per tick for each number of middle sections.
+     * numbers need to be divisors of 1000 */
+    private static final int[] FLUID_MULT = { 5, 10, 20 };
 
     @Override
     public IdAllocator getIdAllocator() {
