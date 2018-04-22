@@ -584,17 +584,10 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 throw new IllegalStateException("Invalid recipe " + c_recipe + ", " + h_recipe);
             }
 
-            FluidStack c_in_f_raw = c_recipe.in();
-            FluidStack c_out_f_raw = c_recipe.out();
-            FluidStack h_in_f_raw = h_recipe.in();
-            FluidStack h_out_f_raw = h_recipe.out();
-
             // TODO: Use "charge" to add mb to the charge
             // Ok, so how is the API meant to work? It looks like we just drop the relative amounts...
             // TODO: Make mult the *maximum* multiplier, not the exact one.
             int max = FLUID_MULT[middleCount - 1];
-            boolean needs_c = true;// heatProvided <= 0;
-            boolean needs_h = true;// coolingProvided <= 0;
 
             FluidStack c_in_f = setAmount(c_recipe.in(), max);
             FluidStack c_out_f = setAmount(c_recipe.out(), max);
@@ -605,19 +598,11 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 if (progressState == EnumProgressState.OFF) {
                     progressState = EnumProgressState.PREPARING;
                 } else if (progressState == EnumProgressState.RUNNING) {
-                    // heatProvided--;
-                    // coolingProvided--;
-                    if (needs_c) {
-                        // heatProvided += c_diff;
-                        fill(c_out, c_out_f);
-                        drain(c_in, c_in_f);
-                    }
+                    fill(c_out, c_out_f);
+                    drain(c_in, c_in_f);
 
-                    if (needs_h) {
-                        // coolingProvided += h_diff;
-                        fill(h_out, h_out_f);
-                        drain(h_in, h_in_f);
-                    }
+                    fill(h_out, h_out_f);
+                    drain(h_in, h_in_f);
                 }
             } else {
                 progressState = EnumProgressState.STOPPING;
