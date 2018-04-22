@@ -584,29 +584,30 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 throw new IllegalStateException("Invalid recipe " + c_recipe + ", " + h_recipe);
             }
 
-            // Find maximum multiple of the fluid that we can process from the different tanks.
-            // max_multiplier == 0 indicates that we can no longer process (tanks full/empty)
-            int max_multiplier = 0;
-            FluidStack c_in_f = setAmount(c_recipe.in(), max_multiplier);
-            FluidStack c_out_f = setAmount(c_recipe.out(), max_multiplier);
-            FluidStack h_in_f = setAmount(h_recipe.in(), max_multiplier);
-            FluidStack h_out_f = setAmount(h_recipe.out(), max_multiplier);
+            // Find the minimum common amount that we can process from each tank up to `max_amount`
+            // min_common_multiplier == 0 indicates that we can no longer process (tanks full/empty)
+            int max_amount = FLUID_MULT[middleCount - 1];
+            FluidStack c_in_f = setAmount(c_recipe.in(), max_amount);
+            FluidStack c_out_f = setAmount(c_recipe.out(), max_amount);
+            FluidStack h_in_f = setAmount(h_recipe.in(), max_amount);
+            FluidStack h_out_f = setAmount(h_recipe.out(), max_amount);
 
-            // start from the maximum value, and go down until FLUID_MULT[0], the smallest multiple
-            for(int multiplier_i = middleCount - 1; multiplier_i >= 0; multiplier_i--) {
-                int max = FLUID_MULT[multiplier_i];
-                c_in_f = setAmount(c_recipe.in(), max);
-                c_out_f = setAmount(c_recipe.out(), max);
-                h_in_f = setAmount(h_recipe.in(), max);
-                h_out_f = setAmount(h_recipe.out(), max);
-                if (canFill(c_out, c_out_f) && canFill(h_out, h_out_f) &&
-                    canDrain(c_in, c_in_f) && canDrain(h_in, h_in_f)) {
-                    max_multiplier = max;
-                    break;
-                }
-            }
+            // fluid == null => the fluid is consumed in the process (e.g. water, lava)
+            int c_out_amount = c_out_f == null ? max_amount : c_out.fillInternal(c_out_f, false);
+            int h_out_amount = h_out_f == null ? max_amount : h_out.fillInternal(h_out_f, false);
 
-            if (max_multiplier > 0) {
+            int c_in_amount = drainableAmount(c_in, c_in_f);
+            int h_in_amount = drainableAmount(h_in, h_in_f);
+
+            final int min_common_multiplier = Math.min(Math.min(Math.min(c_out_amount, h_out_amount),
+                    c_in_amount), h_in_amount);
+
+            if (min_common_multiplier > 0) {
+                c_in_f = setAmount(c_recipe.in(), min_common_multiplier);
+                c_out_f = setAmount(c_recipe.out(), min_common_multiplier);
+                h_in_f = setAmount(h_recipe.in(), min_common_multiplier);
+                h_out_f = setAmount(h_recipe.out(), min_common_multiplier);
+
                 if (progressState == EnumProgressState.OFF) {
                     progressState = EnumProgressState.PREPARING;
                 } else if (progressState == EnumProgressState.RUNNING) {
@@ -690,13 +691,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             return new FluidStack(fluid, mult);
         }
 
-        private static boolean canFill(Tank t, FluidStack fluid) {
-            return fluid == null || t.fillInternal(fluid, false) == fluid.amount;
-        }
-
-        private static boolean canDrain(Tank t, FluidStack fluid) {
+        private static int drainableAmount(Tank t, FluidStack fluid) {
             FluidStack f2 = t.drainInternal(fluid, false);
-            return f2 != null && f2.amount == fluid.amount;
+            return f2 == null ? 0 : f2.amount;
         }
 
         private static void fill(Tank t, FluidStack fluid) {
