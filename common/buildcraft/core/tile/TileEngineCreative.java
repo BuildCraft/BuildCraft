@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -20,10 +21,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.tools.IToolWrench;
 
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -116,7 +117,8 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
-        if (EntityUtil.getWrenchHand(player) != null /*&& player.isSneaking()*/) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {
                 currentOutputIndex++;
                 currentOutputIndex %= outputs.length;
@@ -126,7 +128,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
             }
             return true;
         }
-        return true;
+        return false;
     }
 
     @Override
