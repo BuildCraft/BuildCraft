@@ -55,9 +55,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
     public static final int NET_ID_TANK_OUT = IDS.allocId("TANK_OUT");
     public static final int NET_ID_STATE = IDS.allocId("STATE");
 
-    /** Fluid amount multipliers -- this is the maximum amount of fluid that can be transfered per tick. All numbers
-     * need to be divisors of 1000 */
-    private static final int[] FLUID_MULT = { 10, 16, 20 };
+    /** the maximum amount of fluid that can be transferred per tick for each number of middle sections.
+     * numbers need to be divisors of 1000 */
+    private static final int[] FLUID_MULT = { 5, 10, 20 };
 
     @Override
     public IdAllocator getIdAllocator() {
@@ -571,40 +571,38 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 throw new IllegalStateException("Invalid recipe " + c_recipe + ", " + h_recipe);
             }
 
-            FluidStack c_in_f_raw = c_recipe.in();
-            FluidStack c_out_f_raw = c_recipe.out();
-            FluidStack h_in_f_raw = h_recipe.in();
-            FluidStack h_out_f_raw = h_recipe.out();
+            // Find the minimum common amount that we can process from each tank up to `max_amount`
+            // min_common_multiplier == 0 indicates that we can no longer process (tanks full/empty)
+            int max_amount = FLUID_MULT[middleCount - 1];
+            FluidStack c_in_f = setAmount(c_recipe.in(), max_amount);
+            FluidStack c_out_f = setAmount(c_recipe.out(), max_amount);
+            FluidStack h_in_f = setAmount(h_recipe.in(), max_amount);
+            FluidStack h_out_f = setAmount(h_recipe.out(), max_amount);
 
-            // TODO: Use "charge" to add mb to the charge
-            // Ok, so how is the API meant to work? It looks like we just drop the relative amounts...
-            // TODO: Make mult the *maximum* multiplier, not the exact one.
-            int max = FLUID_MULT[middleCount - 1];
-            boolean needs_c = true;// heatProvided <= 0;
-            boolean needs_h = true;// coolingProvided <= 0;
+            // fluid == null => the fluid is consumed in the process (e.g. water, lava)
+            int c_out_amount = c_out_f == null ? max_amount : c_out.fillInternal(c_out_f, false);
+            int h_out_amount = h_out_f == null ? max_amount : h_out.fillInternal(h_out_f, false);
 
-            FluidStack c_in_f = setAmount(c_recipe.in(), max);
-            FluidStack c_out_f = setAmount(c_recipe.out(), max);
-            FluidStack h_in_f = setAmount(h_recipe.in(), max);
-            FluidStack h_out_f = setAmount(h_recipe.out(), max);
-            if (canFill(c_out, c_out_f) && canFill(h_out, h_out_f) && canDrain(c_in, c_in_f)
-                && canDrain(h_in, h_in_f)) {
+            int c_in_amount = drainableAmount(c_in, c_in_f);
+            int h_in_amount = drainableAmount(h_in, h_in_f);
+
+            final int min_common_multiplier = Math.min(Math.min(Math.min(c_out_amount, h_out_amount),
+                    c_in_amount), h_in_amount);
+
+            if (min_common_multiplier > 0) {
+                c_in_f = setAmount(c_recipe.in(), min_common_multiplier);
+                c_out_f = setAmount(c_recipe.out(), min_common_multiplier);
+                h_in_f = setAmount(h_recipe.in(), min_common_multiplier);
+                h_out_f = setAmount(h_recipe.out(), min_common_multiplier);
+
                 if (progressState == EnumProgressState.OFF) {
                     progressState = EnumProgressState.PREPARING;
                 } else if (progressState == EnumProgressState.RUNNING) {
-                    // heatProvided--;
-                    // coolingProvided--;
-                    if (needs_c) {
-                        // heatProvided += c_diff;
-                        fill(c_out, c_out_f);
-                        drain(c_in, c_in_f);
-                    }
+                    fill(c_out, c_out_f);
+                    drain(c_in, c_in_f);
 
-                    if (needs_h) {
-                        // coolingProvided += h_diff;
-                        fill(h_out, h_out_f);
-                        drain(h_in, h_in_f);
-                    }
+                    fill(h_out, h_out_f);
+                    drain(h_in, h_in_f);
                 }
             } else {
                 progressState = EnumProgressState.STOPPING;
@@ -680,13 +678,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             return new FluidStack(fluid, mult);
         }
 
-        private static boolean canFill(Tank t, FluidStack fluid) {
-            return fluid == null || t.fillInternal(fluid, false) == fluid.amount;
-        }
-
-        private static boolean canDrain(Tank t, FluidStack fluid) {
+        private static int drainableAmount(Tank t, FluidStack fluid) {
             FluidStack f2 = t.drainInternal(fluid, false);
-            return f2 != null && f2.amount == fluid.amount;
+            return f2 == null ? 0 : f2.amount;
         }
 
         private static void fill(Tank t, FluidStack fluid) {

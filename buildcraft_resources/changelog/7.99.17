@@ -1,7 +1,16 @@
 
+Improvements:
+
+* [#4135] Made Heat Exchanger process arbitrary amounts of fluid.
+
+Ported content:
+
+* [#4080] Re-added the config option to change the rate of oil well generation and generation of a spout.
+
 Bug fixes:
 
 * [#3477] Only the wooden pipe attempts to always face a valid direction.
   * (This only affects the iron pipe in buildcraft, however addon pipes that extend PipeBehaviourDirection but don't allow the centre will benefit from this).
-* [#4124] The direction of an iron pipe cannot be changed by clicking the centre unless the pipe is already facing a direction.
+* [#4014] Gate recipes in the assembly table don't check the NBT of the gate provided.
 * [#4082] Fluids can no longer be mined by Mining Well
+* [#4124] The direction of an iron pipe cannot be changed by clicking the centre unless the pipe is already facing a direction.
