@@ -4,28 +4,25 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.enums.EnumPowerStage;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.lib.engine.EngineConnector;
+import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
-
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.enums.EnumPowerStage;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.MjAPI;
-
-import buildcraft.lib.engine.EngineConnector;
-import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.net.PacketBufferBC;
+import javax.annotation.Nonnull;
+import java.io.IOException;
 
 public class TileEngineCreative extends TileEngineBase_BC8 {
     public static final long[] outputs = { 1, 2, 4, 8, 16, 32, 64, 128, 256 };
@@ -116,7 +113,8 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
-        if (EntityUtil.getWrenchHand(player) != null /*&& player.isSneaking()*/) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {
                 currentOutputIndex++;
                 currentOutputIndex %= outputs.length;
@@ -126,7 +124,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
             }
             return true;
         }
-        return true;
+        return false;
     }
 
     @Override
