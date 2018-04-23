@@ -6,13 +6,7 @@
 
 package buildcraft.builders.container;
 
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
+import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -20,8 +14,11 @@ import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.builders.tile.TileArchitectTable;
+import java.io.IOException;
 
 public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable> {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("architect_table");
@@ -38,11 +35,6 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
     @Override
     public IdAllocator getIdAllocator() {
         return IDS;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
     }
 
     public void sendNameToServer(String name) {

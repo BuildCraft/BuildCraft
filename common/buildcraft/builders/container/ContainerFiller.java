@@ -6,23 +6,19 @@
 
 package buildcraft.builders.container;
 
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.filler.IFillerPattern;
-
+import buildcraft.builders.filler.FillerType;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.builders.filler.FillerType;
-import buildcraft.builders.tile.TileFiller;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import java.io.IOException;
 
 public class ContainerFiller extends ContainerBCTile<TileFiller> implements IContainerFilling {
     private final FullStatement<IFillerPattern> patternStatementClient = new FullStatement<>(
@@ -91,10 +87,5 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         IContainerFilling.super.readMessage(id, buffer, side, ctx);
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
     }
 }

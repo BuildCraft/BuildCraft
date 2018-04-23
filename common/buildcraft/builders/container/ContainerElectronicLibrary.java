@@ -6,13 +6,8 @@
 
 package buildcraft.builders.container;
 
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
+import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.builders.tile.TileElectronicLibrary;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -20,9 +15,11 @@ import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.builders.tile.TileElectronicLibrary;
+import java.io.IOException;
 
 public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLibrary> {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("electronic_library");
@@ -42,11 +39,6 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
     @Override
     public IdAllocator getIdAllocator() {
         return IDS;
-    }
-    
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;
     }
 
     public void sendSelectedToServer(Snapshot.Key selected) {

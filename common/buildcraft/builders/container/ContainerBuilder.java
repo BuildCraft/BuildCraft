@@ -6,20 +6,17 @@
 
 package buildcraft.builders.container;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.enums.EnumSnapshotType;
-
+import buildcraft.builders.tile.TileBuilder;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.widget.WidgetFluidTank;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
-import buildcraft.builders.tile.TileBuilder;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
     public final List<WidgetFluidTank> widgetTanks;
@@ -54,10 +51,5 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
                 index < tile.blueprintBuilder.remainingDisplayRequired.size()
                 ? tile.blueprintBuilder.remainingDisplayRequired.get(index)
                 : null;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
     }
 }

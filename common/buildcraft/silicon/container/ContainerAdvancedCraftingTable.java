@@ -6,15 +6,13 @@
 
 package buildcraft.silicon.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.lib.gui.slot.SlotPhantom;
-
 import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvancedCraftingTable> {
     public ContainerAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable tile) {
@@ -40,10 +38,5 @@ public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvanced
                 addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 33 + x * 18, 16 + y * 18, false));
             }
         }
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
     }
 }

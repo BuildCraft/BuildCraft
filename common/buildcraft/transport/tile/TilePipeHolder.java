@@ -6,20 +6,24 @@
 
 package buildcraft.transport.tile;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.BCModules;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.lib.misc.data.IdAllocator;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.silicon.plug.FilterEventHandler;
+import buildcraft.transport.BCTransportBlocks;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.PipeEventBus;
+import buildcraft.transport.pipe.PluggableHolder;
+import buildcraft.transport.wire.WireManager;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,35 +33,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IItemPipe;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeDefinition;
-import buildcraft.api.transport.pipe.PipeEvent;
-import buildcraft.api.transport.pipe.PipeEventTileState;
-import buildcraft.api.transport.pipe.PipeFlow;
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.misc.data.IdAllocator;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.silicon.plug.FilterEventHandler;
-import buildcraft.transport.BCTransportBlocks;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.pipe.PipeEventBus;
-import buildcraft.transport.pipe.PluggableHolder;
-import buildcraft.transport.wire.WireManager;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
 
@@ -423,6 +406,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public Pipe getPipe() {
         return pipe;
+    }
+
+    @Override
+    public boolean canPlayerInteract(EntityPlayer player) {
+        return canInteractWith(player);
     }
 
     @Override

@@ -6,14 +6,12 @@
 
 package buildcraft.silicon.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotDisplay;
 import buildcraft.lib.gui.slot.SlotOutput;
-
 import buildcraft.silicon.tile.TileIntegrationTable;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTable> {
     public ContainerIntegrationTable(EntityPlayer player, TileIntegrationTable tile) {
@@ -31,10 +29,5 @@ public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTa
         addSlotToContainer(new SlotDisplay(i -> tile.recipe != null ? tile.recipe.output : null, 0, 101, 36));
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 138, 49));
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
     }
 }
