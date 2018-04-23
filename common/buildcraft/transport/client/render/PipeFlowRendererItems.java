@@ -68,12 +68,8 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
 
             ItemStack stack = item.clientItemLink.get();
             if (stack != null && !BCStackHelper.isEmpty(stack)) {
-                if (item.stackSize != stack.stackSize) {
-                    stack = stack.copy();
-                    stack.stackSize = item.stackSize;
-                }
-                ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
-                        stack, lightc, item.getRenderDirection(now, partialTicks), bb);
+                ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord, //
+                    stack, item.stackSize, lightc, item.getRenderDirection(now, partialTicks), bb);
             }
             if (item.colour != null) {
                 bb.setTranslation(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);

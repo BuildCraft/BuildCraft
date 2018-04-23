@@ -5,10 +5,17 @@ Improvements:
 
 Ported content:
 
+* (Most) items now show multiple items per stack when travelling in a pipe if the stack had more than a single item.
 * [#4080] Re-added the config option to change the rate of oil well generation and generation of a spout.
 
 Bug fixes:
 
+* Fixed all item pipes having an implict speedup. (Most buildcraft item pipes explicitly do this, so this doesn't really affect normal builds).
+  * Fix cobblestone item pipes sending items about 4 times as fast as they should.
+  * Fix stone item pipes not explicitly slowing down items
+  * Change sandstone item pipes to match stone item pipes.
+* Fixed item pipes allowing multi-tile tickers to send items down pipes faster then normal
+  * This is primarily a fix for tickers that don't also speed up the client. (Also this sort of speedup behaviour probably won't work with potential future optimisations)
 * [#3477] Only the wooden pipe attempts to always face a valid direction.
   * (This only affects the iron pipe in buildcraft, however addon pipes that extend PipeBehaviourDirection but don't allow the centre will benefit from this).
 * [#4014] Gate recipes in the assembly table don't check the NBT of the gate provided.

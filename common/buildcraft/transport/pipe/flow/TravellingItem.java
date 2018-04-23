@@ -139,12 +139,15 @@ public class TravellingItem {
     }
 
     public boolean canMerge(TravellingItem with) {
-        return !isPhantom && !with.isPhantom && toCenter == with.toCenter//
-                && colour == with.colour//
-                && side == with.side//
-                && Math.abs(tickFinished - with.tickFinished) < 10//
-                && stack.getMaxStackSize() >= stack.stackSize + with.stack.stackSize//
-                && StackUtil.canMerge(stack, with.stack);
+        if (isPhantom || with.isPhantom) {
+            return false;
+        }
+        return toCenter == with.toCenter//
+            && colour == with.colour//
+            && side == with.side//
+            && Math.abs(tickFinished - with.tickFinished) < 4//
+            && stack.getMaxStackSize() >= stack.stackSize + with.stack.stackSize//
+            && StackUtil.canMerge(stack, with.stack);
     }
 
     /** Attempts to merge the two travelling item's together, if they are close enough.
