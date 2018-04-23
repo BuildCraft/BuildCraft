@@ -22,3 +22,5 @@ Bug fixes:
 * [#4082] Fluids can no longer be mined by Mining Well
 * [#4124] The direction of an iron pipe cannot be changed by clicking the centre unless the pipe is already facing a direction.
 * [#4138] Dupe bugs everywhere with tiles and GUI's. No more details here, as it's an exploit.
+* [#4141] The recipe for the pipe plug requires the quarry to exist, rather than the structure pipe.
+  * This is only a partial fix for the entire issue, which encompasses *all* recipe mismatches.
