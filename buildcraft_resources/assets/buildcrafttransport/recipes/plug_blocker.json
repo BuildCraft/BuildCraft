@@ -13,4 +13,10 @@
       "data": 0
     }
   }
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcrafttransport:pipe_structure"
+    }
+  ]
 }
