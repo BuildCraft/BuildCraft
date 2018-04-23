@@ -23,9 +23,4 @@ public class ContainerChute extends ContainerBCTile<TileChute> {
         addSlotToContainer(new SlotBase(tile.inv, 2, 98, 18));
         addSlotToContainer(new SlotBase(tile.inv, 3, 80, 36));
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }

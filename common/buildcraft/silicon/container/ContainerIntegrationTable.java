@@ -32,9 +32,4 @@ public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTa
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 138, 49));
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }

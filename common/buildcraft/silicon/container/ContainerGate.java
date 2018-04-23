@@ -23,6 +23,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.StatementManager;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.ContainerPipe;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.ActionWrapper;
@@ -33,7 +34,7 @@ import buildcraft.silicon.gate.GateContext;
 import buildcraft.silicon.gate.GateContext.GateGroup;
 import buildcraft.silicon.gate.GateLogic;
 
-public class ContainerGate extends ContainerBC_Neptune {
+public class ContainerGate extends ContainerPipe {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
 
     public static final int ID_CONNECTION = IDS.allocId("CONNECTION");
@@ -50,7 +51,7 @@ public class ContainerGate extends ContainerBC_Neptune {
     public final GateContext<ActionWrapper> possibleActionsContext;
 
     public ContainerGate(EntityPlayer player, GateLogic logic) {
-        super(player);
+        super(player, logic.getPipeHolder());
         this.gate = logic;
         gate.getPipeHolder().onPlayerOpen(player);
 
@@ -86,11 +87,6 @@ public class ContainerGate extends ContainerBC_Neptune {
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
         gate.getPipeHolder().onPlayerClose(player);
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
     }
 
     private void refreshPossibleGroups() {

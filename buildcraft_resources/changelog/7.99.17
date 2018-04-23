@@ -14,3 +14,4 @@ Bug fixes:
 * [#4014] Gate recipes in the assembly table don't check the NBT of the gate provided.
 * [#4082] Fluids can no longer be mined by Mining Well
 * [#4124] The direction of an iron pipe cannot be changed by clicking the centre unless the pipe is already facing a direction.
+* [#4138] Dupe bugs everywhere with tiles and GUI's. No more details here, as it's an exploit.

@@ -92,9 +92,4 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
         super.readMessage(id, buffer, side, ctx);
         IContainerFilling.super.readMessage(id, buffer, side, ctx);
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }

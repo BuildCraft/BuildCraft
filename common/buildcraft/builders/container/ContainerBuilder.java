@@ -55,9 +55,4 @@ public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
                 ? tile.blueprintBuilder.remainingDisplayRequired.get(index)
                 : ItemStack.EMPTY;
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }

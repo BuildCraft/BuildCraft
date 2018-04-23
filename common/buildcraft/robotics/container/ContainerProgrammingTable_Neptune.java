@@ -16,9 +16,4 @@ public class ContainerProgrammingTable_Neptune extends ContainerBCTile<TileProgr
     public ContainerProgrammingTable_Neptune(EntityPlayer player, TileProgrammingTable_Neptune tile) {
         super(player, tile);
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
-        return tile.canInteractWith(playerIn);
-    }
 }

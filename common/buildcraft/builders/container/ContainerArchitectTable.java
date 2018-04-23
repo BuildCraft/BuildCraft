@@ -40,11 +40,6 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
         return IDS;
     }
 
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
-
     public void sendNameToServer(String name) {
         sendMessage(ID_NAME, buffer -> buffer.writeString(name));
     }

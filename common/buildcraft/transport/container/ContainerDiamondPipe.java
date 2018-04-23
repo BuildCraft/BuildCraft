@@ -9,18 +9,18 @@ package buildcraft.transport.container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.ContainerPipe;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
-public class ContainerDiamondPipe extends ContainerBC_Neptune {
+public class ContainerDiamondPipe extends ContainerPipe {
     private final PipeBehaviourDiamond behaviour;
     private final ItemHandlerSimple filterInv;
 
     public ContainerDiamondPipe(EntityPlayer player, PipeBehaviourDiamond pipe) {
-        super(player);
+        super(player, pipe.pipe.getHolder());
         this.behaviour = pipe;
         this.filterInv = pipe.filters;
         behaviour.pipe.getHolder().onPlayerOpen(player);
@@ -46,10 +46,5 @@ public class ContainerDiamondPipe extends ContainerBC_Neptune {
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
         behaviour.pipe.getHolder().onPlayerClose(player);
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;// FIXME!
     }
 }

@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.ContainerPipe;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.misc.MessageUtil;
@@ -27,13 +27,13 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 
-public class ContainerEmzuliPipe_BC8 extends ContainerBC_Neptune {
+public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
     public final PipeBehaviourEmzuli behaviour;
     public final EnumMap<SlotIndex, PaintWidget> paintWidgets = new EnumMap<>(SlotIndex.class);
     private final ItemHandlerSimple filterInv;
 
     public ContainerEmzuliPipe_BC8(EntityPlayer player, PipeBehaviourEmzuli behaviour) {
-        super(player);
+        super(player, behaviour.pipe.getHolder());
         this.behaviour = behaviour;
         this.filterInv = behaviour.invFilters;
         behaviour.pipe.getHolder().onPlayerOpen(player);
@@ -60,11 +60,6 @@ public class ContainerEmzuliPipe_BC8 extends ContainerBC_Neptune {
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
         behaviour.pipe.getHolder().onPlayerClose(player);
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;// FIXME!
     }
 
     public static class PaintWidget extends Widget_Neptune<ContainerEmzuliPipe_BC8> {

@@ -35,11 +35,6 @@ public class ContainerAssemblyTable extends ContainerBCTile<TileAssemblyTable> {
         }
     }
 
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
-
     private ItemStack getDisplay(int index) {
         return index < tile.recipesStates.size()
                 ? new ArrayList<>(tile.recipesStates.keySet()).get(index).output

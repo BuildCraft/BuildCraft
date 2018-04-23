@@ -81,7 +81,7 @@ public class ContainerList extends ContainerBC_Neptune {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return true;
+        return !getListItemStack().isEmpty();
     }
 
     @Nonnull

@@ -29,9 +29,4 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         addSlotToContainer(new SlotBase(tile.invOutputMapLocation, 0, 233, 27));
         addSlotToContainer(new SlotOutput(tile.invOutputResult, 0, 233, 75));
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }

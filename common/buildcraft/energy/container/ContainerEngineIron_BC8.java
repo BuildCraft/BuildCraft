@@ -31,11 +31,6 @@ public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8>
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return tile.canInteractWith(player);
-    }
-
-    @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         // The only slots are player slots -- try to interact with all of the tanks
 

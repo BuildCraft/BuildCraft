@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -424,6 +425,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public Pipe getPipe() {
         return pipe;
+    }
+
+    @Override
+    public boolean canPlayerInteract(EntityPlayer player) {
+        return canInteractWith(player);
     }
 
     @Override

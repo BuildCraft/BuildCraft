@@ -28,7 +28,7 @@ public abstract class ContainerBCTile<T extends TileBC_Neptune> extends Containe
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    public final boolean canInteractWith(EntityPlayer player) {
         return tile.canInteractWith(player);
     }
 

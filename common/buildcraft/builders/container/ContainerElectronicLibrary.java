@@ -43,11 +43,6 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
     public IdAllocator getIdAllocator() {
         return IDS;
     }
-    
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;
-    }
 
     public void sendSelectedToServer(Snapshot.Key selected) {
         sendMessage(ID_SELECTED, buffer -> {

@@ -41,9 +41,4 @@ public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvanced
             }
         }
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }

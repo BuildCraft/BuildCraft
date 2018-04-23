@@ -36,9 +36,4 @@ public class ContainerFilteredBuffer_BC8 extends ContainerBCTile<TileFilteredBuf
             addSlotToContainer(new SlotBase(tile.invMain, i, 8 + i * 18, 61));
         }
     }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
 }
