@@ -13,8 +13,8 @@ import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 
 public class PipeBehaviourCobble extends PipeBehaviourSeparate {
-    private static final double SPEED_DELTA = 0.03;
-    private static final double SPEED_TARGET = 0.04;
+    private static final double SPEED_DELTA = 0.02;
+    private static final double SPEED_TARGET = 0.01;
 
     public PipeBehaviourCobble(IPipe pipe) {
         super(pipe);

@@ -14,7 +14,7 @@ import buildcraft.api.transport.pipe.PipeEventItem;
 
 public class PipeBehaviourQuartz extends PipeBehaviourSeparate {
     private static final double SPEED_DELTA = 0.002;
-    private static final double SPEED_TARGET = 0.04;
+    private static final double SPEED_TARGET = 0.01;
 
     public PipeBehaviourQuartz(IPipe pipe) {
         super(pipe);

@@ -6,6 +6,7 @@
 
 package buildcraft.lib.client.render;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.vecmath.Vector3f;
@@ -32,6 +33,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,18 +49,21 @@ public class ItemRenderUtil {
 
     private static final LoadingCache<ItemStackKey, Integer> glListCache;
 
-    private static final EntityItem dummyEntityItem = new EntityItem(null);
-    private static final RenderEntityItem customItemRenderer = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
-        @Override
-        public boolean shouldSpreadItems() {
-            return false;
-        }
+    private static final Random modelOffsetRandom = new Random(0);
 
-        @Override
-        public boolean shouldBob() {
-            return false;
-        }
-    };
+    private static final EntityItem dummyEntityItem = new EntityItem(null);
+    private static final RenderEntityItem customItemRenderer =
+        new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
+            @Override
+            public boolean shouldSpreadItems() {
+                return false;
+            }
+
+            @Override
+            public boolean shouldBob() {
+                return false;
+            }
+        };
     static {
         glListCache = CacheBuilder.newBuilder()//
             .expireAfterAccess(40, TimeUnit.SECONDS)//
@@ -108,7 +113,15 @@ public class ItemRenderUtil {
 
     /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
      * You must call {@link #endItemBatch()} after your have rendered all of the items. */
-    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir, BufferBuilder bb) {
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, int lightc, EnumFacing dir,
+        BufferBuilder bb) {
+        renderItemStack(x, y, z, stack, stack.getCount(), lightc, dir, bb);
+    }
+
+    /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
+     * You must call {@link #endItemBatch()} after your have rendered all of the items. */
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, int stackCount, int lightc,
+        EnumFacing dir, BufferBuilder bb) {
         if (stack.isEmpty()) {
             return;
         }
@@ -122,28 +135,46 @@ public class ItemRenderUtil {
         boolean requireGl = stack.hasEffect() || model.isBuiltInRenderer();
 
         if (bb != null && !requireGl) {
-            bb.setTranslation(x, y, z);
-            float scale = 0.30f;
 
-            MutableQuad q = new MutableQuad(-1, null);
-            for (EnumPipePart part : EnumPipePart.VALUES) {
-                for (BakedQuad quad : model.getQuads(null, part.face, 0)) {
-                    q.fromBakedItem(quad);
-                    q.translated(-0.5, -0.5, -0.5);
-                    q.scaled(scale);
-                    q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
-                    if (quad.hasTintIndex()) {
-                        int colour = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, quad.getTintIndex());
-                        if (EntityRenderer.anaglyphEnable) {
-                            colour = TextureUtil.anaglyphColor(colour);
+            final int itemModelCount = getStackModelCount(stackCount);
+
+            if (itemModelCount > 1) {
+                setupModelOffsetRandom(stack);
+            }
+
+            for (int i = 0; i < itemModelCount; i++) {
+                if (i == 0) {
+                    bb.setTranslation(x, y, z);
+                } else {
+                    float dx = (modelOffsetRandom.nextFloat() * 2.0F - 1.0F) * 0.08F;
+                    float dy = (modelOffsetRandom.nextFloat() * 2.0F - 1.0F) * 0.08F;
+                    float dz = (modelOffsetRandom.nextFloat() * 2.0F - 1.0F) * 0.08F;
+                    bb.setTranslation(x + dx, y + dy, z + dz);
+                }
+
+                float scale = 0.30f;
+
+                MutableQuad q = new MutableQuad(-1, null);
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    for (BakedQuad quad : model.getQuads(null, part.face, 0)) {
+                        q.fromBakedItem(quad);
+                        q.translated(-0.5, -0.5, -0.5);
+                        q.scaled(scale);
+                        q.rotate(EnumFacing.SOUTH, dir, 0, 0, 0);
+                        if (quad.hasTintIndex()) {
+                            int colour =
+                                Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, quad.getTintIndex());
+                            if (EntityRenderer.anaglyphEnable) {
+                                colour = TextureUtil.anaglyphColor(colour);
+                            }
+                            q.multColouri(colour, colour >> 8, colour >> 16, 0xFF);
                         }
-                        q.multColouri(colour, colour >> 8, colour >> 16, 0xFF);
+                        q.lighti(lightc);
+                        Vector3f normal = q.getCalculatedNormal();
+                        q.normalvf(normal);
+                        q.multShade();
+                        q.render(bb);
                     }
-                    q.lighti(lightc);
-                    Vector3f normal = q.getCalculatedNormal();
-                    q.normalvf(normal);
-                    q.multShade();
-                    q.render(bb);
                 }
             }
 
@@ -159,8 +190,45 @@ public class ItemRenderUtil {
             GL11.glScaled(0.3, 0.3, 0.3);
             RenderHelper.disableStandardItemLighting();
         }
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightc % (float) 0x1_00_00, lightc / (float) 0x1_00_00);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightc % (float) 0x1_00_00,
+            lightc / (float) 0x1_00_00);
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
+    }
+
+    private static void setupModelOffsetRandom(ItemStack stack) {
+        final long seed;
+        if (stack.isEmpty()) {
+            seed = 137;
+        } else {
+            ResourceLocation regName = stack.getItem().getRegistryName();
+            if (regName == null) {
+                seed = 127;
+            } else {
+                int regNameSeed = regName.getResourceDomain().hashCode() ^ regName.getResourcePath().hashCode();
+                seed = (regNameSeed & 0x7F_FF_FF_FF) | (((long) stack.getMetadata()) << 32);
+            }
+        }
+        modelOffsetRandom.setSeed(seed);
+    }
+
+    private static int getStackModelCount(int stackCount) {
+        if (stackCount > 1) {
+            if (stackCount > 16) {
+                if (stackCount > 32) {
+                    if (stackCount > 48) {
+                        return 5;
+                    } else {
+                        return 4;
+                    }
+                } else {
+                    return 3;
+                }
+            } else {
+                return 2;
+            }
+        } else {
+            return 1;
+        }
     }
 
     public static void endItemBatch() {

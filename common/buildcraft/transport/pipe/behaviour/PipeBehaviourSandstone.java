@@ -12,8 +12,12 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventItem;
 
 public class PipeBehaviourSandstone extends PipeBehaviour {
+    private static final double SPEED_DELTA = PipeBehaviourStone.SPEED_DELTA;
+    private static final double SPEED_TARGET = PipeBehaviourStone.SPEED_TARGET;
 
     public PipeBehaviourSandstone(IPipe pipe) {
         super(pipe);
@@ -31,5 +35,10 @@ public class PipeBehaviourSandstone extends PipeBehaviour {
     @Override
     public boolean canConnect(EnumFacing face, TileEntity oTile) {
         return false;
+    }
+
+    @PipeEventHandler
+    public static void modifySpeed(PipeEventItem.ModifySpeed event) {
+        event.modifyTo(SPEED_TARGET, SPEED_DELTA);
     }
 }

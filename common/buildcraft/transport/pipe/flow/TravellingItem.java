@@ -146,7 +146,7 @@ public class TravellingItem {
         return toCenter == with.toCenter//
             && colour == with.colour//
             && side == with.side//
-            && Math.abs(tickFinished - with.tickFinished) < 10//
+            && Math.abs(tickFinished - with.tickFinished) < 4//
             && stack.getMaxStackSize() >= stack.getCount() + with.stack.getCount()//
             && StackUtil.canMerge(stack, with.stack);
     }

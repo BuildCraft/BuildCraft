@@ -54,6 +54,8 @@ import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
+import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
+
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
     public static final int NET_CREATE_ITEM = 2;
@@ -250,13 +252,19 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         World world = pipe.getHolder().getPipeWorld();
 
         List<TravellingItem> toTick = items.advance();
-        if (world.isRemote) {
-            // TODO: Client item advancing/intelligent stuffs
-            return;
-        }
+        long currentTime = world.getTotalWorldTime();
 
         for (TravellingItem item : toTick) {
+            if (item.tickFinished > currentTime) {
+                // Can happen if something ticks this tile multiple times in a single real tick
+                items.add((int) (item.tickFinished - currentTime), item);
+                continue;
+            }
             if (item.isPhantom) {
+                continue;
+            }
+            if (world.isRemote) {
+                // TODO: Client item advancing/intelligent stuffs
                 continue;
             }
             if (item.toCenter) {
@@ -315,21 +323,26 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 continue;
             }
             PipeEventItem.ModifySpeed modifySpeed = new PipeEventItem.ModifySpeed(holder, this, itemEntry, item.speed);
-            modifySpeed.modifyTo(0.04, 0.01);
-            holder.fireEvent(modifySpeed);
 
-            double target = modifySpeed.targetSpeed;
-            double maxDelta = modifySpeed.maxSpeedChange;
-            double nSpeed = item.speed;
-            if (nSpeed < target) {
-                nSpeed += maxDelta;
-                if (nSpeed > target) {
-                    nSpeed = target;
+            final double newSpeed;
+
+            if (holder.fireEvent(modifySpeed)) {
+                double target = modifySpeed.targetSpeed;
+                double maxDelta = modifySpeed.maxSpeedChange;
+                if (item.speed < target) {
+                    newSpeed = Math.min(target, item.speed + maxDelta);
+                } else if (item.speed > target) {
+                    newSpeed = Math.max(target, item.speed - maxDelta);
+                } else {
+                    newSpeed = item.speed;
                 }
-            } else if (nSpeed > target) {
-                nSpeed -= maxDelta;
-                if (nSpeed < target) {
-                    nSpeed = target;
+            } else {
+                // Nothing affected the speed
+                // so just fallback to a sensible default
+                if (item.speed > 0.03) {
+                    newSpeed = Math.max(0.03, item.speed - PipeBehaviourStone.SPEED_DELTA);
+                } else {
+                    newSpeed = item.speed;
                 }
             }
 
@@ -338,14 +351,14 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 destinations = findDest.generateRandomOrder();
             }
             if (destinations.size() == 0) {
-                dropItem(itemEntry.stack, null, item.side.getOpposite(), nSpeed);
+                dropItem(itemEntry.stack, null, item.side.getOpposite(), newSpeed);
             } else {
                 TravellingItem newItem = new TravellingItem(itemEntry.stack);
                 newItem.tried.addAll(item.tried);
                 newItem.toCenter = false;
                 newItem.colour = itemEntry.colour;
                 newItem.side = destinations.get(0);
-                newItem.speed = nSpeed;
+                newItem.speed = newSpeed;
                 newItem.genTimings(now, getPipeLength(newItem.side));
                 items.add(newItem.timeToDest, newItem);
                 sendItemDataToClient(newItem);
