@@ -6,17 +6,19 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.transport.pipe.EnumPipeColourType;
+import buildcraft.api.transport.pipe.IItemPipe;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeFaceTex;
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.SpriteUtil;
+import buildcraft.transport.BCTransportSprites;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -30,16 +32,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.pipe.IItemPipe;
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.ColourUtil;
-
-import buildcraft.transport.BCTransportSprites;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum ModelPipeItem implements IBakedModel {
     INSTANCE;
@@ -67,7 +64,7 @@ public enum ModelPipeItem implements IBakedModel {
             // QUADS_DIFFERENT = new MutableQuad[3];
         }
 
-        // Coloured pipes
+        // Translucent Coloured pipes
         {
             QUADS_COLOUR = new MutableQuad[6];
             Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
@@ -86,7 +83,8 @@ public enum ModelPipeItem implements IBakedModel {
         return ImmutableList.of();
     }
 
-    private static List<BakedQuad> getQuads(TextureAtlasSprite center, TextureAtlasSprite top, TextureAtlasSprite bottom, int colour) {
+    private static List<BakedQuad> getQuads(PipeFaceTex center, PipeFaceTex top, PipeFaceTex bottom,
+        TextureAtlasSprite[] sprites, int colour, EnumPipeColourType colourType) {
         // TEMP!
         top = center;
         bottom = center;
@@ -94,7 +92,7 @@ public enum ModelPipeItem implements IBakedModel {
         List<BakedQuad> quads = new ArrayList<>();
 
         // if (center == top && center == bottom) {
-        addQuads(QUADS_SAME, quads, center);
+        addQuads(QUADS_SAME, sprites, quads, center);
         // } else {
         // TODO: Differing sprite quads
         // }
@@ -102,23 +100,52 @@ public enum ModelPipeItem implements IBakedModel {
         if (colour > 0 && colour <= 16) {
             EnumDyeColor rColour = EnumDyeColor.byMetadata(colour - 1);
             int rgb = 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(rColour));
-            TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
-            addQuadsColoured(QUADS_COLOUR, quads, sprite, rgb);
+            if (colourType == EnumPipeColourType.TRANSLUCENT) {
+                TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
+                addQuadsColoured(QUADS_COLOUR, quads, sprite, rgb);
+            } else if (colourType == EnumPipeColourType.BORDER_OUTER) {
+                TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR_BORDER_OUTER.getSprite();
+                addQuadsColoured(QUADS_SAME, quads, sprite, rgb);
+            } else if (colourType == EnumPipeColourType.BORDER_INNER) {
+                TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR_BORDER_INNER.getSprite();
+                addQuadsColoured(QUADS_SAME, quads, sprite, rgb);
+            }
         }
 
         return quads;
     }
 
-    private static void addQuads(MutableQuad[] from, List<BakedQuad> to, TextureAtlasSprite sprite) {
-        for (MutableQuad f : from) {
-            if (f == null) {
-                continue;
+    private static void addQuads(MutableQuad[] from, TextureAtlasSprite[] sprites, List<BakedQuad> to,
+        PipeFaceTex face) {
+        MutableQuad copy = new MutableQuad();
+        for (int i = 0; i < face.getCount(); i++) {
+            int colour = face.getColour(i);
+            int spriteIndex = face.getTexture(i);
+            TextureAtlasSprite sprite = getSprite(sprites, spriteIndex);
+            for (MutableQuad f : from) {
+                if (f == null) {
+                    continue;
+                }
+                copy.copyFrom(f);
+                copy.texFromSprite(sprite);
+                copy.colouri(colour);
+                to.add(copy.toBakedItem());
             }
-            to.add(new MutableQuad(f).texFromSprite(sprite).toBakedItem());
         }
     }
 
-    private static void addQuadsColoured(MutableQuad[] from, List<BakedQuad> to, TextureAtlasSprite sprite, int colour) {
+    private static TextureAtlasSprite getSprite(TextureAtlasSprite[] sprites, int spriteIndex) {
+        TextureAtlasSprite sprite;
+        if (spriteIndex < 0 || spriteIndex >= sprites.length) {
+            sprite = SpriteUtil.missingSprite();
+        } else {
+            sprite = sprites[spriteIndex];
+        }
+        return sprite;
+    }
+
+    private static void addQuadsColoured(MutableQuad[] from, List<BakedQuad> to, TextureAtlasSprite sprite,
+        int colour) {
         for (MutableQuad f : from) {
             if (f == null) {
                 continue;
@@ -168,19 +195,26 @@ public enum ModelPipeItem implements IBakedModel {
         }
 
         @Override
-        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world,
+            EntityLivingBase entity) {
             Item item = stack.getItem();
-            TextureAtlasSprite center = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
-            TextureAtlasSprite top = center;
-            TextureAtlasSprite bottom = center;
+            PipeFaceTex center = PipeFaceTex.NO_SPRITE;
+            PipeFaceTex top = center;
+            PipeFaceTex bottom = center;
+            TextureAtlasSprite[] sprites = { SpriteUtil.missingSprite() };
 
+            EnumPipeColourType type;
             if (item instanceof IItemPipe) {
                 PipeDefinition def = ((IItemPipe) item).getDefinition();
-                top = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureTop);
-                center = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureCenter);
-                bottom = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureBottom);
+                top = def.itemModelTop;
+                center = def.itemModelCenter;
+                bottom = def.itemModelBottom;
+                type = def.getColourType();
+                sprites = PipeModelCacheBase.generator.getItemSprites(def);
+            } else {
+                type = EnumPipeColourType.TRANSLUCENT;
             }
-            List<BakedQuad> quads = getQuads(center, top, bottom, stack.getMetadata());
+            List<BakedQuad> quads = getQuads(center, top, bottom, sprites, stack.getMetadata(), type);
             return new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK, true);
         }
     }
