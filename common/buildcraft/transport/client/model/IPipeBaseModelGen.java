@@ -26,8 +26,7 @@ public interface IPipeBaseModelGen {
 
     List<BakedQuad> generateTranslucent(PipeBaseTranslucentKey key);
 
-    /** Gets a sprite that can be baked into the item model. */
-    TextureAtlasSprite getItemSprite(PipeDefinition def, int index);
+    TextureAtlasSprite[] getItemSprites(PipeDefinition def);
 
     void onTextureStitchPre(TextureMap map);
 }

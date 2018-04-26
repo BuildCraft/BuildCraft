@@ -76,8 +76,8 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     }
 
     @Override
-    public TextureAtlasSprite getItemSprite(PipeDefinition def, int index) {
-        return getSprite(SPRITES.get(def), index);
+    public TextureAtlasSprite[] getItemSprites(PipeDefinition def) {
+        return SPRITES.get(def);
     }
 
     // Models

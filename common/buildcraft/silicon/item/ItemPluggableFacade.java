@@ -172,6 +172,9 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
                     getFacadeStateDisplayName(defaultState)));
             }
         } else {
+            if (flag.isAdvanced()) {
+                tooltip.add(states.phasedStates[0].stateInfo.state.getBlock().getRegistryName().toString());
+            }
             String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
             FacadeBlockStateInfo info = states.phasedStates[0].stateInfo;
             BlockUtil.getPropertiesStringMap(info.state, info.varyingProperties)

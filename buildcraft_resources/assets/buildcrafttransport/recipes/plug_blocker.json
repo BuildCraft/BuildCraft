@@ -12,7 +12,7 @@
       "item": "buildcrafttransport:pipe_structure",
       "data": 0
     }
-  }
+  },
   "conditions": [
     {
       "type": "minecraft:item_exists",
