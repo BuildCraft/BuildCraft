@@ -5,6 +5,7 @@
 package buildcraft.core.tile;
 
 import buildcraft.api.enums.EnumPowerStage;
+import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tools.IToolWrench;
@@ -114,7 +115,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
         float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
+        if (!BCStackHelper.isEmpty(stack) && stack.getItem() instanceof IToolWrench) {
             if (!world.isRemote) {
                 currentOutputIndex++;
                 currentOutputIndex %= outputs.length;

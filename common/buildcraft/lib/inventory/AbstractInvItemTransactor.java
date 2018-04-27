@@ -31,6 +31,16 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         }
     }
 
+    /** Returns null if it was empty, or the input stack if it was not. */
+    @Nullable
+    public static ItemStack asValidCopy(@Nullable ItemStack stack) {
+        if (BCStackHelper.isEmpty(stack)) {
+            return null;
+        } else {
+            return stack.copy();
+        }
+    }
+
     @Nullable
     protected abstract ItemStack insert(int slot, @Nullable ItemStack stack, boolean simulate);
 

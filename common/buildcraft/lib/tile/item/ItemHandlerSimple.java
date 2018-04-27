@@ -134,7 +134,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor
                 // A bit odd, but can happen if the filter changed
                 return stack;
             }
-            InsertionResult result = inserter.modifyForInsertion(slot, asValid(current.copy()), asValid(stack.copy()));
+            InsertionResult result = inserter.modifyForInsertion(slot, asValidCopy(current), asValidCopy(stack));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)",

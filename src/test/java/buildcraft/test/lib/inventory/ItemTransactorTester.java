@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ItemTransactorTester extends VanillaSetupBaseTester {
+public class  ItemTransactorTester extends VanillaSetupBaseTester {
     @Test
     public void testSimpleMoving() {
         IItemTransactor trans = new ItemHandlerSimple(2, null);
