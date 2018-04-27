@@ -159,7 +159,7 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
                         getFacadeStateDisplayName(defaultState)));
             }
         } else {
-            if (flag.isAdvanced()) {
+            if (advanced) {
                 tooltip.add(states.phasedStates[0].stateInfo.state.getBlock().getRegistryName().toString());
             }
             String propertiesStart = TextFormatting.GRAY + "" + TextFormatting.ITALIC;
