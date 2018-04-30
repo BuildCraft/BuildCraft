@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "buildcrafttransport:plug_gate",
+      "item": "buildcraftsilicon:plug_gate",
       "nbt": "{gate:{material:3b,modifier:3b,logic:1b}}"
       },
     "title": {

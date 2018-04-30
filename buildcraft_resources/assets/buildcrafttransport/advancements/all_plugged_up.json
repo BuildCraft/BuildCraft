@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "buildcrafttransport:plug_light_sensor"
+      "item": "buildcraftsilicon:plug_light_sensor"
     },
     "title": {
       "translate": "advancements.buildcrafttransport.all_plugged_up.title"
