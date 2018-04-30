@@ -204,6 +204,11 @@ public enum FacadeStateManager implements IFacadeRegistry {
 
     public static void init() {
         defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), StackUtil.EMPTY, ImmutableSet.of());
+        if (FacadeAPI.facadeItem == null) {
+            previewState = defaultState;
+            return;
+        }
+
         for (Block block : ForgeRegistries.BLOCKS) {
             if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getResourceDomain())) {
                 if (BCLib.VERSION.startsWith("7.99")) {
@@ -252,8 +257,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         }
                     } else {
                         if (DEBUG) {
-                            BCLog.logger.info(
-                                "[silicon.facade] Disallowed state " + state + " because " + result.getResult());
+                            BCLog.logger
+                                .info("[silicon.facade] Disallowed state " + state + " because " + result.getResult());
                         }
                         continue;
                     }
@@ -333,9 +338,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
-        if (FacadeAPI.facadeItem != null) {
-            FacadeSwapRecipe.genRecipes();
-        }
+        FacadeSwapRecipe.genRecipes();
     }
 
     private static <V extends Comparable<V>> boolean doesPropertyConform(IProperty<V> property) {
