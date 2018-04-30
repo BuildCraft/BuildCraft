@@ -7,7 +7,6 @@
 package buildcraft.factory.tile;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.items.BCStackHelper;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -17,7 +16,6 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -25,7 +23,6 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -70,27 +67,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             .limit(PICKUP_MAX)
             .map(TransactorEntityItem::new)
             .forEach(transactor -> {
-                if (BCStackHelper.isEmpty(inv.insert(
-                    transactor.extract(
-                        StackFilter.ALL,
-                        0,
-                        Integer.MAX_VALUE,
-                        true
-                    ),
-                    true,
-                    true
-                ))) {
-                    inv.insert(
-                        transactor.extract(
-                            StackFilter.ALL,
-                            0,
-                            Integer.MAX_VALUE,
-                            false
-                        ),
-                        true,
-                        false
-                    );
-                }
+                ItemTransactorHelper.move(transactor, inv);
             });
     }
 
@@ -111,18 +88,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             .map(sideProvider -> ItemTransactorHelper.getTransactor(sideProvider.getRight(), sideProvider.getLeft().getOpposite()))
             .filter(Predicate.isEqual(NoSpaceTransactor.INSTANCE).negate())
             .forEach(transactor -> {
-                ItemStack item = inv.extract(
-                    stack -> {
-                        ItemStack leftOver = transactor.insert(stack.copy(), false, true);
-                        return BCStackHelper.isEmpty(leftOver) || leftOver.stackSize < stack.stackSize;
-                    },
-                    1,
-                    1,
-                    false
-                );
-                if (!BCStackHelper.isEmpty(item)) {
-                    transactor.insert(item, false, false);
-                }
+                ItemTransactorHelper.move(inv, transactor, 1);
             });
     }
 
