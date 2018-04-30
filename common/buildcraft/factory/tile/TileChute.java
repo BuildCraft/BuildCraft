@@ -78,27 +78,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             .limit(PICKUP_MAX)
             .map(TransactorEntityItem::new)
             .forEach(transactor -> {
-                if (inv.insert(
-                    transactor.extract(
-                        StackFilter.ALL,
-                        0,
-                        Integer.MAX_VALUE,
-                        true
-                    ),
-                    true,
-                    true
-                ).isEmpty()) {
-                    inv.insert(
-                        transactor.extract(
-                            StackFilter.ALL,
-                            0,
-                            Integer.MAX_VALUE,
-                            false
-                        ),
-                        true,
-                        false
-                    );
-                }
+                ItemTransactorHelper.move(transactor, inv);
             });
     }
 
@@ -119,18 +99,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             .map(sideProvider -> ItemTransactorHelper.getTransactor(sideProvider.getRight(), sideProvider.getLeft().getOpposite()))
             .filter(Predicate.isEqual(NoSpaceTransactor.INSTANCE).negate())
             .forEach(transactor -> {
-                ItemStack item = inv.extract(
-                    stack -> {
-                        ItemStack leftOver = transactor.insert(stack.copy(), false, true);
-                        return leftOver.isEmpty() || leftOver.getCount() < stack.getCount();
-                    },
-                    1,
-                    1,
-                    false
-                );
-                if (!item.isEmpty()) {
-                    transactor.insert(item, false, false);
-                }
+                ItemTransactorHelper.move(inv, transactor, 1);
             });
     }
 
