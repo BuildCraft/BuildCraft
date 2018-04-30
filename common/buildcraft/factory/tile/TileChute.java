@@ -19,9 +19,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -40,7 +40,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -49,15 +49,15 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.factory.block.BlockChute;
 
 public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
-    private static final int PICKUP_RADIUS = 3;
     private static final int PICKUP_MAX = 3;
+
     public final ItemHandlerSimple inv = itemManager.addInvHandler(
         "inv",
         4,
         EnumAccess.INSERT,
         EnumPipePart.VALUES
     );
-    @SuppressWarnings("PointlessArithmeticExpression")
+
     private final MjBattery battery = new MjBattery(1 * MjAPI.MJ);
     private int progress = 0;
 
@@ -71,15 +71,15 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void pickupItems(EnumFacing currentSide) {
-        world.getEntitiesWithinAABB(
-            EntityItem.class,
-            new AxisAlignedBB(pos.offset(currentSide, PICKUP_RADIUS)).grow(PICKUP_RADIUS)
-        ).stream()
-            .limit(PICKUP_MAX)
-            .map(TransactorEntityItem::new)
-            .forEach(transactor -> {
-                ItemTransactorHelper.move(transactor, inv);
-            });
+        AxisAlignedBB aabb = BoundingBoxUtil.extrudeFace(getPos(), currentSide, 0.25);
+        int count = PICKUP_MAX;
+        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb, EntitySelectors.IS_ALIVE)) {
+            int moved = ItemTransactorHelper.move(new TransactorEntityItem(entity), inv, count);
+            count -= moved;
+            if (count <= 0) {
+                return;
+            }
+        }
     }
 
     private void putInNearInventories(EnumFacing currentSide) {

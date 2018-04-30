@@ -10,6 +10,9 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -21,9 +24,8 @@ import buildcraft.lib.misc.data.Box;
 /** Various methods operating on (and creating) {@link AxisAlignedBB} */
 public class BoundingBoxUtil {
 
-    /** Creates an {@link AxisAlignedBB} from a block pos and a box.
-     * 
-     * Note that additional must NOT be null, but the box can be. */
+    /** Creates an {@link AxisAlignedBB} from a block pos and a box. Note that additional must NOT be null, but the box
+     * can be. */
     public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box) {
         if (box == null) {
             return new AxisAlignedBB(additional);
@@ -42,9 +44,8 @@ public class BoundingBoxUtil {
         return box.getBoundingBox();
     }
 
-    /** Creates an {@link AxisAlignedBB} from a block pos and 2 boxes
-     * 
-     * Note that additional must NOT be null, but (either of) the boxes can be. */
+    /** Creates an {@link AxisAlignedBB} from a block pos and 2 boxes Note that additional must NOT be null, but (either
+     * of) the boxes can be. */
     public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box1, @Nullable IBox box2) {
         if (box1 == null) {
             return makeFrom(additional, box2);
@@ -66,8 +67,7 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {
-        return new AxisAlignedBB(around.x, around.y, around.z, around.x, around.y,
-            around.z).grow(radius);
+        return new AxisAlignedBB(around.x, around.y, around.z, around.x, around.y, around.z).grow(radius);
     }
 
     public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
@@ -80,5 +80,21 @@ public class BoundingBoxUtil {
             }
         }
         return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+    }
+
+    /** Creates a box that extrudes from the specified face of the given block position. */
+    public static AxisAlignedBB extrudeFace(BlockPos pos, EnumFacing face, double depth) {
+        Vec3d from = new Vec3d(pos);
+        Vec3d to = new Vec3d(pos).addVector(1, 1, 1);
+
+        Axis axis = face.getAxis();
+        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
+            from = VecUtil.replaceValue(from, axis, VecUtil.getValue(from, axis) + 1);
+            to = VecUtil.replaceValue(to, axis, VecUtil.getValue(to, axis) + depth);
+        } else {
+            to = VecUtil.replaceValue(to, axis, VecUtil.getValue(to, axis) - 1);
+            from = VecUtil.replaceValue(from, axis, VecUtil.getValue(from, axis) - depth);
+        }
+        return makeFrom(from, to);
     }
 }
