@@ -16,6 +16,7 @@ Bug fixes:
   * Change sandstone item pipes to match stone item pipes.
 * Fixed item pipes allowing multi-tile tickers to send items down pipes faster then normal
   * This is primarily a fix for tickers that don't also speed up the client. (Also this sort of speedup behaviour probably won't work with potential future optimisations)
+* Fixed chutes having a *huge* pull radius. Use powered obsidian pipes for that.
 * [#3477] Only the wooden pipe attempts to always face a valid direction.
   * (This only affects the iron pipe in buildcraft, however addon pipes that extend PipeBehaviourDirection but don't allow the centre will benefit from this).
 * [#4014] Gate recipes in the assembly table don't check the NBT of the gate provided.
