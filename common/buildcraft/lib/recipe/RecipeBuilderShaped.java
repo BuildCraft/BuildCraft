@@ -16,6 +16,7 @@ import gnu.trove.map.hash.TCharObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -27,6 +28,12 @@ public class RecipeBuilderShaped {
     private ItemStack result = StackUtil.EMPTY;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
+
+    public void clear() {
+        result = StackUtil.EMPTY;
+        shape.clear();
+        objects.clear();
+    }
 
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
@@ -123,8 +130,9 @@ public class RecipeBuilderShaped {
 
     public void register() {
         ensureValid();
-        ForgeRegistries.RECIPES
-            .register(new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArray()));
+        ResourceLocation name = result.getItem().getRegistryName();
+        ShapedOreRecipe recipe = new ShapedOreRecipe(name, result, createRecipeObjectArray());
+        ForgeRegistries.RECIPES.register(recipe.setRegistryName(name));
     }
 
     public void registerNbtAware(String regName) {
