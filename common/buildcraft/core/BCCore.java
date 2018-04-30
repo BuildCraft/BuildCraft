@@ -60,6 +60,7 @@ public class BCCore {
         BCCoreBlocks.preInit();
         BCCoreItems.preInit();
         BCCoreStatements.preInit();
+        BCCoreRecipes.fmlPreInit();
 
         BCCoreProxy.getProxy().fmlPreInit();
 

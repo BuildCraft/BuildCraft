@@ -21,7 +21,6 @@ import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.OredictionaryNames;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
-import buildcraft.lib.registry.TagManager;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -69,15 +68,27 @@ public class BCCoreRecipes {
         }
 
         if (BCItems.Core.PAINTBRUSH != null) {
+            RecipeBuilderShaped builder = new RecipeBuilderShaped();
+            builder.add(" iw");
+            builder.add(" gi");
+            builder.add("s  ");
+            builder.map('i', Items.STRING);
+            builder.map('s', "stickWood");
+            builder.map('g', "gearWood");
+            builder.map('w', new ItemStack(Blocks.WOOL));
             ItemStack cleanPaintbrush = new ItemStack(BCItems.Core.PAINTBRUSH);
-            Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL,
-                    1, 0), 'i', Items.STRING };
-            GameRegistry.addRecipe(new ShapedOreRecipe(cleanPaintbrush, input));
+            builder.setResult(cleanPaintbrush);
+            builder.register();
 
             for (EnumDyeColor colour : EnumDyeColor.values()) {
-                ItemPaintbrush_BC8.Brush brush = ((ItemPaintbrush_BC8)BCItems.Core.PAINTBRUSH).new Brush(colour);
+                ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
                 ItemStack out = brush.save();
-                GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
+                Object[] inputs = { //
+                        cleanPaintbrush, //
+                        ColourUtil.getDyeName(colour),//
+                };
+
+                GameRegistry.addRecipe(new ShapelessOreRecipe(out, inputs));
             }
         }
 
@@ -123,23 +134,6 @@ public class BCCoreRecipes {
             builder.register();
         }
 
-        String[] gears = { "wood", "stone", "iron", "gold", "diamond" };
-        Object[] outers = { "stickWood", "cobblestone", "ingotIron", "ingotGold", "gemDiamond" };
-        for (int i = 0; i < gears.length; i++) {
-            String key = gears[i];
-            Item gear = TagManager.getItem("item.gear." + key);
-            if (gear == null) continue;
-            Object inner = i == 0 ? null : TagManager.getTag("item.gear." + gears[i - 1], TagManager.EnumTagType.OREDICT_NAME);
-            Object outer = outers[i];
-            Object[] arr;
-            if (inner == null) {
-                arr = new Object[] { " o ", "o o", " o ", 'o', outer };
-            } else {
-                arr = new Object[] { " o ", "oio", " o ", 'o', outer, 'i', inner };
-            }
-            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(gear), arr));
-        }
-
         if (BCBlocks.Core.DECORATED != null) {
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add("sss");
@@ -160,7 +154,7 @@ public class BCCoreRecipes {
 
             builder.map('s', Blocks.OBSIDIAN);
             builder.map('c', Blocks.REDSTONE_BLOCK);
-            builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 32, EnumDecoratedBlock.LASER_BACK.ordinal()));
+            builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16, EnumDecoratedBlock.LASER_BACK.ordinal()));
             builder.register();
         }
     }

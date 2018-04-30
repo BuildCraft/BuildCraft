@@ -6,25 +6,28 @@
 
 package buildcraft.lib.recipe;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import gnu.trove.map.hash.TCharObjectHashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeBuilderShaped {
     @Nonnull
     private ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
+
+    public void clear() {
+        result = null;
+        shape.clear();
+        objects.clear();
+    }
 
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
