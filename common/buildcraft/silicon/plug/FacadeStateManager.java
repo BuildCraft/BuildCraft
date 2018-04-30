@@ -6,27 +6,18 @@
 
 package buildcraft.silicon.plug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.facades.*;
 import buildcraft.api.items.BCStackHelper;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.ItemStackKey;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.silicon.recipe.FacadeSwapRecipe;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockLiquid;
@@ -42,25 +33,14 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.facades.FacadeAPI;
-import buildcraft.api.facades.IFacade;
-import buildcraft.api.facades.IFacadePhasedState;
-import buildcraft.api.facades.IFacadeRegistry;
-import buildcraft.api.facades.IFacadeState;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.ItemStackKey;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.silicon.recipe.FacadeSwapRecipe;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 
 public enum FacadeStateManager implements IFacadeRegistry {
     INSTANCE;
@@ -203,6 +183,11 @@ public enum FacadeStateManager implements IFacadeRegistry {
 
     public static void init() {
         defaultState = new FacadeBlockStateInfo(Blocks.AIR.getDefaultState(), null, ImmutableSet.of());
+        if (FacadeAPI.facadeItem == null) {
+            previewState = defaultState;
+            return;
+        }
+
         for (Block block : ForgeRegistries.BLOCKS) {
             if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getResourceDomain())) {
                 if (BCLib.VERSION.startsWith("7.99")) {
@@ -251,8 +236,8 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         }
                     } else {
                         if (DEBUG) {
-                            BCLog.logger.info(
-                                "[silicon.facade] Disallowed state " + state + " because " + result.getResult());
+                            BCLog.logger
+                                .info("[silicon.facade] Disallowed state " + state + " because " + result.getResult());
                         }
                         continue;
                     }
@@ -332,9 +317,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
             }
         }
         previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
-        if (FacadeAPI.facadeItem != null) {
-            FacadeSwapRecipe.genRecipes();
-        }
+        FacadeSwapRecipe.genRecipes();
     }
 
     private static <V extends Comparable<V>> boolean doesPropertyConform(IProperty<V> property) {
