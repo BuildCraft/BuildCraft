@@ -11,12 +11,15 @@ addons:
 jobs:
   include:
     - stage: Subproject-expression
+      before_install: chmod +x ./gradlew
       install: cd sub_projects/expression
       script: ./gradlew build publish
     - stage: build
+      before_install: chmod +x ./gradlew
       install: ./gradlew setupCiWorkspace
       script: ./gradlew build publish
     - stage: checkstyle
+      before_install: chmod +x ./gradlew
       install: echo "skipping default ./gradlew assemble"
       script: ./gradlew checkstyle
 
