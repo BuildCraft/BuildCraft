@@ -1,5 +1,5 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.block;
@@ -7,19 +7,35 @@ package buildcraft.lib.block;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAnvil;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
+import net.minecraft.block.BlockCocoa;
 import net.minecraft.block.BlockDirectional;
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockDoor.EnumDoorHalf;
 import net.minecraft.block.BlockDoor.EnumHingePosition;
+import net.minecraft.block.BlockEndRod;
+import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.BlockGlazedTerracotta;
+import net.minecraft.block.BlockHopper;
+import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;
+import net.minecraft.block.BlockObserver;
 import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.BlockPumpkin;
 import net.minecraft.block.BlockRedstoneDiode;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.BlockTorch;
+import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -27,13 +43,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.CustomRotationHelper;
+import buildcraft.api.blocks.ICustomRotationHandler;
 
 import buildcraft.lib.misc.collect.OrderedEnumMap;
 
 public class VanillaRotationHandlers {
     /* Player friendly rotations- these only rotate through sides that are touching (only 90 degree changes, in any
      * axis), rather than jumping around. */
-    public static final OrderedEnumMap<EnumFacing> ROTATE_HORIZONTAL, ROTATE_FACING, ROTATE_TORCH;
+    public static final OrderedEnumMap<EnumFacing> ROTATE_HORIZONTAL, ROTATE_FACING, ROTATE_TORCH, ROTATE_HOPPER;
     public static final OrderedEnumMap<EnumOrientation> ROTATE_LEVER;
 
     static {
@@ -43,6 +60,7 @@ public class VanillaRotationHandlers {
         ROTATE_HORIZONTAL = new OrderedEnumMap<>(EnumFacing.class, e, s, w, n);
         ROTATE_FACING = new OrderedEnumMap<>(EnumFacing.class, e, s, d, w, n, u);
         ROTATE_TORCH = new OrderedEnumMap<>(EnumFacing.class, e, s, w, n, u);
+        ROTATE_HOPPER = new OrderedEnumMap<>(EnumFacing.class, e, s, w, n, d);
 
         EnumOrientation[] leverFaces = new EnumOrientation[8];
         int index = 0;
@@ -62,13 +80,27 @@ public class VanillaRotationHandlers {
 
     public static void fmlInit() {
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockButton.class, VanillaRotationHandlers::rotateButton);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockTripWireHook.class, VanillaRotationHandlers::rotateTripWireHook);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockDoor.class, VanillaRotationHandlers::rotateDoor);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockPistonBase.class, VanillaRotationHandlers::rotatePiston);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockLever.class, VanillaRotationHandlers::rotateLever);
-        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockFenceGate.class, VanillaRotationHandlers::rotateGate);
-        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockRedstoneDiode.class, VanillaRotationHandlers::rotateDiode);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockShulkerBox.class, VanillaRotationHandlers::rotateShulkerBox);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockDispenser.class, getHandlerFreely(BlockDispenser.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockObserver.class, getHandlerFreely(BlockObserver.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockEndRod.class, getHandlerFreely(BlockEndRod.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockFenceGate.class, getHandlerHorizontalFreely(BlockFenceGate.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockRedstoneDiode.class, getHandlerHorizontalFreely(BlockRedstoneDiode.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockPumpkin.class, getHandlerHorizontalFreely(BlockPumpkin.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockGlazedTerracotta.class, getHandlerHorizontalFreely(BlockGlazedTerracotta.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockAnvil.class, getHandlerHorizontalFreely(BlockAnvil.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockEnderChest.class, getHandlerHorizontalFreely(BlockEnderChest.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockFurnace.class, getHandlerHorizontalFreely(BlockFurnace.class));
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockCocoa.class, VanillaRotationHandlers::rotateCocoa);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockTorch.class, VanillaRotationHandlers::rotateTorch);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockLadder.class, VanillaRotationHandlers::rotateLadder);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockHopper.class, VanillaRotationHandlers::rotateHopper);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockChest.class, VanillaRotationHandlers::rotateChest);
+        // TODO: DoubleChest, BannerHanging, BannerStanding, Bed, DoublePlant, EndPortalFrame (?), Stairs, TrapDoor, WallSign, StandingSign, Skull, CommandBlock (?)
     }
 
     public static <T> int getOrdinal(T side, T[] array) {
@@ -95,16 +127,22 @@ public class VanillaRotationHandlers {
     }
 
     private static EnumActionResult rotateButton(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (state.getBlock() instanceof BlockButton) {// Just check to make sure we have the right block...
-            IProperty<EnumFacing> prop = BlockDirectional.FACING;
-            return rotateEnumFacing(world, pos, state, prop, ROTATE_FACING);
+        if (state.getBlock() instanceof BlockButton) {
+            return rotateEnumFacing(world, pos, state, BlockButton.FACING, ROTATE_FACING);
         } else {
             return EnumActionResult.PASS;
         }
     }
 
+    private static EnumActionResult rotateTripWireHook(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockTripWireHook) {
+            return rotateEnumFacing(world, pos, state, BlockTripWireHook.FACING, ROTATE_HORIZONTAL);
+        }
+        return EnumActionResult.PASS;
+    }
+
     private static EnumActionResult rotatePiston(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (state.getBlock() instanceof BlockPistonBase) {// Just check to make sure we have the right block...
+        if (state.getBlock() instanceof BlockPistonBase) {
             boolean extended = state.getValue(BlockPistonBase.EXTENDED);
             if (extended) return EnumActionResult.FAIL;
             return rotateOnce(world, pos, state, BlockDirectional.FACING, ROTATE_FACING);
@@ -119,24 +157,75 @@ public class VanillaRotationHandlers {
         return EnumActionResult.PASS;
     }
 
-    private static EnumActionResult rotateGate(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (state.getBlock() instanceof BlockFenceGate) {
-            return rotateOnce(world, pos, state, BlockFenceGate.FACING, ROTATE_HORIZONTAL);
+    private static EnumActionResult rotateHopper(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockHopper) {
+            return rotateOnce(world, pos, state, BlockHopper.FACING, ROTATE_HOPPER);
         }
         return EnumActionResult.PASS;
     }
 
-    private static EnumActionResult rotateDiode(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (state.getBlock() instanceof BlockRedstoneDiode) {
-            return rotateOnce(world, pos, state, BlockRedstoneDiode.FACING, ROTATE_HORIZONTAL);
+    private static EnumActionResult rotateShulkerBox(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockShulkerBox) {
+            return rotateOnce(world, pos, state, BlockShulkerBox.FACING, ROTATE_FACING);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static ICustomRotationHandler getHandlerFreely(Class<? extends Block> blockClass) {
+        return (world, pos, state, sideWrenched) -> rotateFreely(world, pos, state, sideWrenched, blockClass);
+    }
+
+    private static EnumActionResult rotateFreely(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched, Class<? extends Block> blockClass) {
+        if (blockClass.isInstance(state.getBlock())) {
+            return rotateOnce(world, pos, state, BlockDirectional.FACING, ROTATE_FACING);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static ICustomRotationHandler getHandlerHorizontalFreely(Class<? extends Block> blockClass) {
+        return (world, pos, state, sideWrenched) -> rotateHorizontalFreely(world, pos, state, sideWrenched, blockClass);
+    }
+
+    private static EnumActionResult rotateHorizontalFreely(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched, Class<? extends Block> blockClass) {
+        if (blockClass.isInstance(state.getBlock())) {
+            return rotateOnce(world, pos, state, BlockHorizontal.FACING, ROTATE_HORIZONTAL);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateCocoa(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockCocoa) {
+            return rotateAnyTypeManual(world, pos, state, BlockCocoa.FACING, ROTATE_HORIZONTAL, toTry -> ((BlockCocoa) state.getBlock()).canBlockStay(world, pos, state.withProperty(BlockCocoa.FACING, toTry)));
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateLadder(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockLadder) {
+            Predicate<EnumFacing> tester = toTry -> {
+                BlockPos offsetPos = pos.offset(toTry.getOpposite());
+                IBlockState offsetState = world.getBlockState(offsetPos);
+                return !offsetState.canProvidePower() && offsetState.getBlockFaceShape(world, offsetPos, toTry) == BlockFaceShape.SOLID && !BlockBCBase_Neptune.isExceptBlockForAttachWithPiston(offsetState.getBlock());
+            };
+            return rotateAnyTypeManual(world, pos, state, BlockLadder.FACING, ROTATE_HORIZONTAL, tester);
         }
         return EnumActionResult.PASS;
     }
 
     private static EnumActionResult rotateTorch(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (state.getBlock() instanceof BlockTorch) {// Just check to make sure we have the right block...
+        if (state.getBlock() instanceof BlockTorch) {
             IProperty<EnumFacing> prop = BlockTorch.FACING;
-            Predicate<EnumFacing> tester = toTry -> world.isSideSolid(pos.offset(toTry.getOpposite()), toTry);
+            Predicate<EnumFacing> tester = toTry -> {
+                BlockPos offsetPos = pos.offset(toTry.getOpposite());
+                IBlockState offsetState = world.getBlockState(offsetPos);
+
+                if (toTry == EnumFacing.UP && offsetState.getBlock().canPlaceTorchOnTop(state, world, offsetPos)) {
+                    return true;
+                } else if (toTry != EnumFacing.UP && toTry != EnumFacing.DOWN) {
+                    return offsetState.getBlockFaceShape(world, offsetPos, toTry) == BlockFaceShape.SOLID && !BlockBCBase_Neptune.isExceptBlockForAttachWithPiston(offsetState.getBlock());
+                }
+                return false;
+            };
             return rotateAnyTypeManual(world, pos, state, prop, ROTATE_TORCH, tester);
         } else {
             return EnumActionResult.PASS;
@@ -144,7 +233,23 @@ public class VanillaRotationHandlers {
     }
 
     private static EnumActionResult rotateChest(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        return EnumActionResult.PASS;// TODO (Limited rotation for double chests though)
+        if (state.getBlock() instanceof BlockChest) {
+
+            boolean doubleChest = false;
+            for (EnumFacing facing : EnumFacing.Plane.HORIZONTAL) {
+                if (world.getBlockState(pos.offset(facing)).getBlock() == state.getBlock()) {
+                    doubleChest = true;
+                    break;
+                }
+            }
+
+            if (doubleChest) {
+                // TODO: Limited rotation for double chests
+            } else {
+                return rotateOnce(world, pos, state, BlockChest.FACING, ROTATE_HORIZONTAL);
+            }
+        }
+        return EnumActionResult.PASS;
     }
 
     public static EnumActionResult rotateEnumFacing(World world, BlockPos pos, IBlockState state, IProperty<EnumFacing> prop, OrderedEnumMap<EnumFacing> possible) {
@@ -152,14 +257,14 @@ public class VanillaRotationHandlers {
     }
 
     public static <E extends Enum<E> & Comparable<E>> EnumActionResult rotateOnce
-    //@formatter:off
-        (
-            World world,
-            BlockPos pos,
-            IBlockState state,
-            IProperty<E> prop,
-            OrderedEnumMap<E> possible
-        )
+        //@formatter:off
+    (
+        World world,
+        BlockPos pos,
+        IBlockState state,
+        IProperty<E> prop,
+        OrderedEnumMap<E> possible
+    )
     //@formatter:on
     {
         E current = state.getValue(prop);
@@ -169,15 +274,15 @@ public class VanillaRotationHandlers {
     }
 
     public static <E extends Enum<E> & Comparable<E>> EnumActionResult rotateAnyTypeAuto
-    //@formatter:off
-        (
-            World world,
-            BlockPos pos,
-            IBlockState state,
-            IProperty<E> prop,
-            OrderedEnumMap<E> possible,
-            Function<E, EnumFacing> mapper
-        )
+        //@formatter:off
+    (
+        World world,
+        BlockPos pos,
+        IBlockState state,
+        IProperty<E> prop,
+        OrderedEnumMap<E> possible,
+        Function<E, EnumFacing> mapper
+    )
     //@formatter:on
     {
         Predicate<E> tester = toTry -> state.getBlock().canPlaceBlockOnSide(world, pos, mapper.apply(toTry));
@@ -185,15 +290,15 @@ public class VanillaRotationHandlers {
     }
 
     public static <E extends Enum<E> & Comparable<E>> EnumActionResult rotateAnyTypeManual
-    //@formatter:off
-        (
-            World world,
-            BlockPos pos,
-            IBlockState state,
-            IProperty<E> prop,
-            OrderedEnumMap<E> possible,
-            Predicate<E> canPlace
-        )
+        //@formatter:off
+    (
+        World world,
+        BlockPos pos,
+        IBlockState state,
+        IProperty<E> prop,
+        OrderedEnumMap<E> possible,
+        Predicate<E> canPlace
+    )
     //@formatter:on
     {
         E current = state.getValue(prop);
