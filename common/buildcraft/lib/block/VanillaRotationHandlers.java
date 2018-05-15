@@ -275,15 +275,14 @@ public class VanillaRotationHandlers {
     private static EnumActionResult rotateTrapDoor(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockTrapDoor) {
 
-            if (sideWrenched.getAxis().isHorizontal()) {
+            if (state.getValue(BlockTrapDoor.FACING) == ROTATE_HORIZONTAL.get(0)) {
                 BlockTrapDoor.DoorHalf half = state.getValue(BlockTrapDoor.HALF);
                 if (half == BlockTrapDoor.DoorHalf.TOP) {
                     half = BlockTrapDoor.DoorHalf.BOTTOM;
                 } else {
                     half = BlockTrapDoor.DoorHalf.TOP;
                 }
-                world.setBlockState(pos, state.withProperty(BlockTrapDoor.HALF, half));
-                return EnumActionResult.SUCCESS;
+                state = state.withProperty(BlockTrapDoor.HALF, half);
             }
 
             return rotateOnce(world, pos, state, BlockTrapDoor.FACING, ROTATE_HORIZONTAL);
@@ -293,16 +292,15 @@ public class VanillaRotationHandlers {
 
     private static EnumActionResult rotateStairs(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockStairs) {
-
-            if (sideWrenched.getAxis().isHorizontal()) {
+            
+            if (state.getValue(BlockStairs.FACING) == ROTATE_HORIZONTAL.get(0)) {
                 BlockStairs.EnumHalf half = state.getValue(BlockStairs.HALF);
                 if (half == BlockStairs.EnumHalf.TOP) {
                     half = BlockStairs.EnumHalf.BOTTOM;
                 } else {
                     half = BlockStairs.EnumHalf.TOP;
                 }
-                world.setBlockState(pos, state.withProperty(BlockStairs.HALF, half));
-                return EnumActionResult.SUCCESS;
+                state = state.withProperty(BlockStairs.HALF, half);
             }
 
             return rotateOnce(world, pos, state, BlockStairs.FACING, ROTATE_HORIZONTAL);
