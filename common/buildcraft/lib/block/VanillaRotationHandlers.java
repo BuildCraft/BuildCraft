@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAnvil;
+import net.minecraft.block.BlockBanner;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockCocoa;
@@ -32,15 +33,24 @@ import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockPumpkin;
 import net.minecraft.block.BlockRedstoneDiode;
 import net.minecraft.block.BlockShulkerBox;
+import net.minecraft.block.BlockSkull;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockStandingSign;
 import net.minecraft.block.BlockTorch;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.BlockTripWireHook;
+import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import buildcraft.api.blocks.CustomRotationHelper;
 import buildcraft.api.blocks.ICustomRotationHandler;
@@ -100,7 +110,13 @@ public class VanillaRotationHandlers {
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockLadder.class, VanillaRotationHandlers::rotateLadder);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockHopper.class, VanillaRotationHandlers::rotateHopper);
         CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockChest.class, VanillaRotationHandlers::rotateChest);
-        // TODO: DoubleChest, BannerHanging, BannerStanding, Bed, DoublePlant, EndPortalFrame (?), Stairs, TrapDoor, WallSign, StandingSign, Skull, CommandBlock (?)
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockTrapDoor.class, VanillaRotationHandlers::rotateTrapDoor);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockStairs.class, VanillaRotationHandlers::rotateStairs);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockSkull.class, VanillaRotationHandlers::rotateSkull);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockBanner.BlockBannerHanging.class, VanillaRotationHandlers::rotateHangingBanner);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockWallSign.class, VanillaRotationHandlers::rotateWallSign);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockBanner.BlockBannerStanding.class, VanillaRotationHandlers::rotateStandingBanner);
+        CustomRotationHelper.INSTANCE.registerHandlerForAll(BlockStandingSign.class, VanillaRotationHandlers::rotateStandingSign);
     }
 
     public static <T> int getOrdinal(T side, T[] array) {
@@ -129,9 +145,8 @@ public class VanillaRotationHandlers {
     private static EnumActionResult rotateButton(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockButton) {
             return rotateEnumFacing(world, pos, state, BlockButton.FACING, ROTATE_FACING);
-        } else {
-            return EnumActionResult.PASS;
         }
+        return EnumActionResult.PASS;
     }
 
     private static EnumActionResult rotateTripWireHook(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
@@ -214,7 +229,6 @@ public class VanillaRotationHandlers {
 
     private static EnumActionResult rotateTorch(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockTorch) {
-            IProperty<EnumFacing> prop = BlockTorch.FACING;
             Predicate<EnumFacing> tester = toTry -> {
                 BlockPos offsetPos = pos.offset(toTry.getOpposite());
                 IBlockState offsetState = world.getBlockState(offsetPos);
@@ -226,28 +240,127 @@ public class VanillaRotationHandlers {
                 }
                 return false;
             };
-            return rotateAnyTypeManual(world, pos, state, prop, ROTATE_TORCH, tester);
-        } else {
-            return EnumActionResult.PASS;
+            return rotateAnyTypeManual(world, pos, state, BlockTorch.FACING, ROTATE_TORCH, tester);
         }
+        return EnumActionResult.PASS;
     }
 
     private static EnumActionResult rotateChest(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockChest) {
 
-            boolean doubleChest = false;
+            BlockPos otherPos = null;
             for (EnumFacing facing : EnumFacing.Plane.HORIZONTAL) {
-                if (world.getBlockState(pos.offset(facing)).getBlock() == state.getBlock()) {
-                    doubleChest = true;
+                BlockPos candidate = pos.offset(facing);
+                if (world.getBlockState(candidate).getBlock() == state.getBlock()) {
+                    otherPos = candidate;
                     break;
                 }
             }
 
-            if (doubleChest) {
-                // TODO: Limited rotation for double chests
-            } else {
-                return rotateOnce(world, pos, state, BlockChest.FACING, ROTATE_HORIZONTAL);
+            if (otherPos != null) {
+                IBlockState otherState = world.getBlockState(otherPos);
+                EnumFacing facing = state.getValue(BlockChest.FACING);
+                if (otherState.getValue(BlockChest.FACING) == facing) {
+                    world.setBlockState(pos, state.withProperty(BlockChest.FACING, facing.getOpposite()));
+                    world.setBlockState(otherPos, otherState.withProperty(BlockChest.FACING, facing.getOpposite()));
+                    return EnumActionResult.SUCCESS;
+                }
             }
+
+            return rotateOnce(world, pos, state, BlockChest.FACING, ROTATE_HORIZONTAL);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateTrapDoor(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockTrapDoor) {
+
+            if (sideWrenched.getAxis().isHorizontal()) {
+                BlockTrapDoor.DoorHalf half = state.getValue(BlockTrapDoor.HALF);
+                if (half == BlockTrapDoor.DoorHalf.TOP) {
+                    half = BlockTrapDoor.DoorHalf.BOTTOM;
+                } else {
+                    half = BlockTrapDoor.DoorHalf.TOP;
+                }
+                world.setBlockState(pos, state.withProperty(BlockTrapDoor.HALF, half));
+                return EnumActionResult.SUCCESS;
+            }
+
+            return rotateOnce(world, pos, state, BlockTrapDoor.FACING, ROTATE_HORIZONTAL);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateStairs(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockStairs) {
+
+            if (sideWrenched.getAxis().isHorizontal()) {
+                BlockStairs.EnumHalf half = state.getValue(BlockStairs.HALF);
+                if (half == BlockStairs.EnumHalf.TOP) {
+                    half = BlockStairs.EnumHalf.BOTTOM;
+                } else {
+                    half = BlockStairs.EnumHalf.TOP;
+                }
+                world.setBlockState(pos, state.withProperty(BlockStairs.HALF, half));
+                return EnumActionResult.SUCCESS;
+            }
+
+            return rotateOnce(world, pos, state, BlockStairs.FACING, ROTATE_HORIZONTAL);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateSkull(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockSkull) {
+
+            if (state.getValue(BlockSkull.FACING).getAxis().isVertical()) {
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile instanceof TileEntitySkull) {
+                    TileEntitySkull tileSkull = (TileEntitySkull) tile;
+
+                    int rot = ObfuscationReflectionHelper.getPrivateValue(TileEntitySkull.class, tileSkull, "skullRotation", "field_" + "145910_i");
+                    rot = (rot + 1) % 16;
+
+                    tileSkull.setSkullRotation(rot);
+                    tileSkull.markDirty();
+                    world.notifyBlockUpdate(pos, state, state, 3);
+
+                    return EnumActionResult.SUCCESS;
+                }
+                return EnumActionResult.PASS;
+            }
+
+            return rotateOnce(world, pos, state, BlockSkull.FACING, ROTATE_HORIZONTAL);
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateHangingBanner(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockBanner.BlockBannerHanging) {
+            return rotateAnyTypeManual(world, pos, state, BlockBanner.FACING, ROTATE_HORIZONTAL, toTry -> world.getBlockState(pos.offset(toTry.getOpposite())).getMaterial().isSolid());
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateWallSign(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockWallSign) {
+            return rotateAnyTypeManual(world, pos, state, BlockWallSign.FACING, ROTATE_HORIZONTAL, toTry -> world.getBlockState(pos.offset(toTry.getOpposite())).getMaterial().isSolid());
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateStandingBanner(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockBanner.BlockBannerStanding) {
+            world.setBlockState(pos, state.withProperty(BlockBanner.ROTATION, (state.getValue(BlockBanner.ROTATION) + 1) % 16));
+            return EnumActionResult.SUCCESS;
+        }
+        return EnumActionResult.PASS;
+    }
+
+    private static EnumActionResult rotateStandingSign(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        if (state.getBlock() instanceof BlockStandingSign) {
+            world.setBlockState(pos, state.withProperty(BlockStandingSign.ROTATION, (state.getValue(BlockStandingSign.ROTATION) + 1) % 16));
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
