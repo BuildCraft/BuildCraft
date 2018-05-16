@@ -16,8 +16,6 @@ import net.minecraft.block.BlockCocoa;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockDoor.EnumDoorHalf;
-import net.minecraft.block.BlockDoor.EnumHingePosition;
 import net.minecraft.block.BlockEndRod;
 import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.BlockFenceGate;
@@ -127,17 +125,39 @@ public class VanillaRotationHandlers {
     }
 
     private static EnumActionResult rotateDoor(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        if (state.getBlock() instanceof BlockDoor) {// Just check to make sure we have the right block...
-            EnumDoorHalf half = state.getValue(BlockDoor.HALF);
-            if (half == EnumDoorHalf.UPPER) {
-                EnumHingePosition hinge = state.getValue(BlockDoor.HINGE);
-                if (hinge == EnumHingePosition.LEFT) hinge = EnumHingePosition.RIGHT;
-                else hinge = EnumHingePosition.LEFT;
-                world.setBlockState(pos, state.withProperty(BlockDoor.HINGE, hinge));
-            } else {// Lower
-                rotateOnce(world, pos, state, BlockDoor.FACING, ROTATE_HORIZONTAL);
+        if (state.getBlock() instanceof BlockDoor) {
+            BlockPos upperPos, lowerPos;
+            IBlockState upperState, lowerState;
+
+            if (state.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER) {
+                upperPos = pos;
+                upperState = state;
+                lowerPos = upperPos.down();
+                lowerState = world.getBlockState(lowerPos);
+                if (!(lowerState.getBlock() instanceof BlockDoor)) {
+                    return EnumActionResult.PASS;
+                }
+            } else {
+                lowerPos = pos;
+                lowerState = state;
+                upperPos = lowerPos.up();
+                upperState = world.getBlockState(upperPos);
+                if (!(upperState.getBlock() instanceof BlockDoor)) {
+                    return EnumActionResult.PASS;
+                }
             }
-            return EnumActionResult.SUCCESS;
+
+            if (lowerState.getValue(BlockDoor.FACING) == ROTATE_HORIZONTAL.get(0)) {
+                BlockDoor.EnumHingePosition hinge = upperState.getValue(BlockDoor.HINGE);
+                if (hinge == BlockDoor.EnumHingePosition.LEFT) {
+                    hinge = BlockDoor.EnumHingePosition.RIGHT;
+                } else {
+                    hinge = BlockDoor.EnumHingePosition.LEFT;
+                }
+                world.setBlockState(upperPos, upperState.withProperty(BlockDoor.HINGE, hinge));
+            }
+
+            return rotateOnce(world, lowerPos, lowerState, BlockTrapDoor.FACING, ROTATE_HORIZONTAL);
         }
         return EnumActionResult.PASS;
     }
@@ -247,7 +267,6 @@ public class VanillaRotationHandlers {
 
     private static EnumActionResult rotateChest(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockChest) {
-
             BlockPos otherPos = null;
             for (EnumFacing facing : EnumFacing.Plane.HORIZONTAL) {
                 BlockPos candidate = pos.offset(facing);
@@ -292,7 +311,7 @@ public class VanillaRotationHandlers {
 
     private static EnumActionResult rotateStairs(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
         if (state.getBlock() instanceof BlockStairs) {
-            
+
             if (state.getValue(BlockStairs.FACING) == ROTATE_HORIZONTAL.get(0)) {
                 BlockStairs.EnumHalf half = state.getValue(BlockStairs.HALF);
                 if (half == BlockStairs.EnumHalf.TOP) {
