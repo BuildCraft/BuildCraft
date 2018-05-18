@@ -75,7 +75,7 @@ public class PageEntry<T> {
             title = ColourUtil.stripAllFormatCodes(tooltip.get(0));
         }
         if (StringUtils.isNullOrEmpty(entry.page)) {
-            BCLog.logger.warn("[lib.guide] Invalid page entry: a page is not specified!SSS");
+            BCLog.logger.warn("[lib.guide] Invalid page entry: a page is not specified!");
             return null;
         }
         return new PageEntry<T>(title, entry.page, entry.typeTags, type, value);
@@ -104,6 +104,7 @@ public class PageEntry<T> {
         return entryType.matches(value, obj);
     }
 
+    @Nullable
     public ISimpleDrawable createDrawable() {
         return entryType.createDrawable(value);
     }

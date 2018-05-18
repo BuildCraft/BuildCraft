@@ -19,6 +19,7 @@ public abstract class PageEntryType<T> {
         // Item stack's are the default if no type is specified.
         register("", EntryTypeItem.INSTANCE);
         register(EntryTypeItem.ID, EntryTypeItem.INSTANCE);
+        register(EntryTypeSeperate.ID, EntryTypeSeperate.INSTANCE);
         register(EntryTypeStatement.ID, EntryTypeStatement.INSTANCE);
     }
 

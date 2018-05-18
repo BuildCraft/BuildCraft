@@ -12,6 +12,16 @@
                 "type": "item",
                 "sub_type": "tool"
             }
+        },
+        {
+            "type": "seperate",
+            "source": "guide_entries",
+            "page": "guide_format.md",
+            "title": "buildcraft.guide.page.guide_format",
+            "type_tags": {
+                "type": "config",
+                "sub_type": "resourcepack"
+            }
         }
     ]
 }

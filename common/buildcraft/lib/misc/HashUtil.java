@@ -152,7 +152,7 @@ public class HashUtil {
             // Normal NBT writing is package-private
             // We can skip around it with hacks though
             try {
-                HANDLE_NBT_WRITE.invoke(nbt, out);
+                HANDLE_NBT_WRITE.invokeExact(nbt, out);
             } catch (Throwable t) {
                 throw Throwables.propagate(t);
             }
