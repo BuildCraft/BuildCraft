@@ -14,7 +14,7 @@
             }
         },
         {
-            "type": "seperate",
+            "type": "external",
             "source": "guide_entries",
             "page": "guide_format.md",
             "title": "buildcraft.guide.page.guide_format",
