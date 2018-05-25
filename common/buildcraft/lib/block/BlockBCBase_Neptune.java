@@ -163,4 +163,8 @@ public class BlockBCBase_Neptune extends Block {
         }
         return super.rotateBlock(world, pos, axis);
     }
+
+    public static boolean isExceptBlockForAttachWithPiston(Block attachBlock) {
+        return Block.isExceptBlockForAttachWithPiston(attachBlock);
+    }
 }
