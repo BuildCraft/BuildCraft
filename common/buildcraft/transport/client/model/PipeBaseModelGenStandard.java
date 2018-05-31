@@ -68,6 +68,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                     } else {
                         BCLog.logger.warn("Couldn't override " + name + ", using existing sprite " + sprite.getClass());
                     }
+                    sprites.put(name, sprite);
                 }
                 array[i] = sprite;
             }
