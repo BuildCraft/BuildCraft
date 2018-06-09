@@ -5,4 +5,5 @@ Improvements:
 
 Bug fixes:
 
-* Fixed gates sometimes not correctly synchronising the light on the gate when it is first turned on.  
+* [#4133] The fluid triggers relating to percentage of a tank filled don't recognise gaseous fluids properly.
+* Fixed gates sometimes not correctly synchronising the light on the gate when it is first turned on.
