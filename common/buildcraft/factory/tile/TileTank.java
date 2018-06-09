@@ -262,7 +262,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     public IFluidTankProperties[] getTankProperties() {
         List<TileTank> tanks = getTanks();
         TileTank bottom = tanks.get(0);
+        TileTank top = tanks.get(tanks.size() - 1);
         FluidStack total = bottom.tank.getFluid();
+        if(total == null) {
+            total = top.tank.getFluid();
+        }
         int capacity = 0;
         if (total == null) {
             for (TileTank t : tanks) {
