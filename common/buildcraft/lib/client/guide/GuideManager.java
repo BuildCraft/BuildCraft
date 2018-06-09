@@ -70,6 +70,14 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
+        reload(resourceManager);
+    }
+
+    public void reload() {
+        reload(Minecraft.getMinecraft().getResourceManager());
+    }
+
+    private void reload(IResourceManager resourceManager) {
         Stopwatch watch = Stopwatch.createStarted();
         entries.clear();
         loadedDomains.clear();

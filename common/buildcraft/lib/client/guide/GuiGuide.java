@@ -13,6 +13,8 @@ import java.util.List;
 
 import com.google.common.collect.Queues;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,12 +23,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
+import buildcraft.lib.BCLibItems;
+import buildcraft.lib.client.ToastInformation;
 import buildcraft.lib.client.guide.font.FontManager;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiStack;
+import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
@@ -507,6 +513,33 @@ public class GuiGuide extends GuiScreen {
         super.keyTyped(typedChar, keyCode);
         if (currentPage.keyTyped(typedChar, keyCode)) {
             return;
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_F3) && keyCode == Keyboard.KEY_T) {
+            GuideManager.INSTANCE.reload();
+            while (true) {
+                currentPage = currentPage.createReloaded();
+                if (currentPage != null) {
+                    break;
+                }
+                currentPage = pages.poll();
+                if (currentPage == null) {
+                    throw new IllegalStateException("Didn't find the contents page!");
+                }
+            }
+            GuidePageBase[] history = pages.toArray(new GuidePageBase[0]);
+            pages.clear();
+            for (int i = 0; i < history.length; i++) {
+                GuidePageBase page = history[i].createReloaded();
+                if (page != null) {
+                    pages.add(page);
+                }
+            }
+            ISimpleDrawable icon = null;
+            if (BCLibItems.guide != null) {
+                GuiStack stackIcon = new GuiStack(new ItemStack(BCLibItems.guide));
+                icon = (x, y) -> stackIcon.drawAt(x + 8, y + 8);
+            }
+            mc.getToastGui().add(new ToastInformation("buildcraft.guide_book.reloaded", icon));
         }
         if (keyCode == mc.gameSettings.keyBindLeft.getKeyCode()) {
             currentPage.lastPage();

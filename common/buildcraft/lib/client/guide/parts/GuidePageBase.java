@@ -9,7 +9,10 @@ package buildcraft.lib.client.guide.parts;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
@@ -67,6 +70,15 @@ public abstract class GuidePageBase extends GuidePart {
 
     public boolean shouldPersistHistory() {
         return true;
+    }
+
+    /** Called when the {@link GuideManager} is reloaded.
+     * 
+     * @return A page that can be shown and is valid after the reload, or null if this page cannot continue through a
+     *         reload. */
+    @Nullable
+    public GuidePageBase createReloaded() {
+        return null;
     }
 
     public abstract List<GuideChapter> getChapters();

@@ -82,6 +82,18 @@ public class GuidePageContents extends GuidePageBase {
         searchText.setTextColor(0xFF_00_00_00);
     }
 
+    @Override
+    public GuidePageBase createReloaded() {
+        GuidePageContents newPage = new GuidePageContents(gui);
+        newPage.searchText.setText(searchText.getText());
+        newPage.searchText.setCursorPosition(searchText.getCursorPosition());
+        newPage.searchText.setFocused(searchText.isFocused());
+        newPage.searchText.setSelectionPos(searchText.getSelectionEnd());
+        newPage.numPages = numPages;
+        newPage.goToPage(getIndex());
+        return newPage;
+    }
+
     public void loadMainGui() {
         TypeOrder order = GuiGuide.SORTING_TYPES[gui.sortingOrderIndex];
         contents.clear();

@@ -44,4 +44,10 @@ public class GuidePageStandInRecipes extends GuidePage {
     public boolean shouldPersistHistory() {
         return false;
     }
+
+    @Override
+    public GuidePageBase createReloaded() {
+        // Recipes won't have reloaded, so there's no need to change what is displayed.
+        return this;
+    }
 }
