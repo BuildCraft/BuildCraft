@@ -46,7 +46,7 @@ import buildcraft.api.transport.pipe.PipeEventActionActivate;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.ActionWrapper;
 import buildcraft.lib.statement.ActionWrapper.ActionWrapperExternal;
@@ -63,13 +63,23 @@ import buildcraft.silicon.plug.PluggableGate;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
-    public static final int NET_ID_RESOLVE = 3;
-    public static final int NET_ID_CHANGE = 4;
 
-    /*
-     * Ideally we wouldn't use a pluggable, but we would use a more generic way of looking at a gate -- perhaps one
-     * that's embedded in a robot, or in a minecart.
-     */
+    protected static final IdAllocator ID_ALLOC = new IdAllocator("GateLogic");
+
+    /** Sent when any of {@link #triggerOn}, {@link #actionOn}, or {@link #connections} change. */
+    public static final int NET_ID_RESOLVE = ID_ALLOC.allocId("RESOLVE");
+
+    /** Sent when a single statement changed. */
+    public static final int NET_ID_CHANGE = ID_ALLOC.allocId("STATEMENT_CHANGE");
+
+    /** Sent when {@link #isOn} is true. */
+    public static final int NET_ID_GLOWING = ID_ALLOC.allocId("GLOWING");
+
+    /** Sent when {@link #isOn} is false. */
+    public static final int NET_ID_DARK = ID_ALLOC.allocId("DARK");
+
+    /* Ideally we wouldn't use a pluggable, but we would use a more generic way of looking at a gate -- perhaps one
+     * that's embedded in a robot, or in a minecart. */
     @Deprecated
     public final PluggableGate pluggable;
     public final GateVariant variant;
@@ -199,12 +209,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         }
     }
 
-    /** Helper method to send a custom payload to the other side via the pluggable. */
-    public final void sendPayload(int id, IPayloadWriter writer) {
-        pluggable.sendMessage(id, writer);
-    }
-
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+        int id = buffer.readUnsignedByte();
         if (id == NET_ID_CHANGE) {
             boolean isAction = buffer.readBoolean();
             int slot = buffer.readUnsignedByte();
@@ -221,22 +227,21 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 MessageUtil.readBooleanArray(buffer, triggerOn);
                 MessageUtil.readBooleanArray(buffer, actionOn);
                 MessageUtil.readBooleanArray(buffer, connections);
-                boolean on = false;
-                for (int i = 0; i < statements.length; i++) {
-                    boolean b = actionOn[i];
-                    on |= b && (statements[i].action.get() != null);
-                }
-                isOn = on;
+            } else if (id == NET_ID_GLOWING) {
+                isOn = true;
+            } else if (id == NET_ID_DARK) {
+                isOn = false;
             } else {
-                BCLog.logger.warn("Unknown ID " + id);
+                BCLog.logger.warn("Unknown ID " + ID_ALLOC.getNameFor(id));
             }
         } else {
-            BCLog.logger.warn("Unknown side + ID" + id);
+            BCLog.logger.warn("Unknown side " + side + " + ID " + ID_ALLOC.getNameFor(id));
         }
     }
 
     public void sendStatementUpdate(boolean isAction, int slot) {
-        pluggable.sendMessage(NET_ID_CHANGE, (buffer) -> {
+        pluggable.sendGuiMessage((buffer) -> {
+            buffer.writeByte(NET_ID_CHANGE);
             buffer.writeBoolean(isAction);
             buffer.writeByte(slot);
             StatementPair s = statements[slot];
@@ -245,10 +250,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     }
 
     public void sendResolveData() {
-        pluggable.sendMessage(NET_ID_RESOLVE, (buffer) -> {
+        pluggable.sendGuiMessage((buffer) -> {
+            buffer.writeByte(NET_ID_RESOLVE);
             MessageUtil.writeBooleanArray(buffer, triggerOn);
             MessageUtil.writeBooleanArray(buffer, actionOn);
             MessageUtil.writeBooleanArray(buffer, connections);
+        });
+    }
+
+    public void sendIsOn() {
+        pluggable.sendMessage(buffer -> {
+            buffer.writeByte(isOn ? NET_ID_GLOWING : NET_ID_DARK);
         });
     }
 
@@ -347,6 +359,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         int groupCount = 0;
         int groupActive = 0;
 
+        boolean prevIsOn = isOn;
+        isOn = false;
         boolean[] prevTriggers = Arrays.copyOf(triggerOn, triggerOn.length);
         boolean[] prevActions = Arrays.copyOf(actionOn, actionOn.length);
 
@@ -404,6 +418,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                     actionOn[actionIndex] = allActionsActive;
                     if (action != null) {
                         if (allActionsActive) {
+                            isOn = true;
                             StatementSlot slot = new StatementSlot();
                             slot.statement = action.delegate;
                             slot.parameters = fullAction.action.getParameters().clone();
@@ -436,6 +451,10 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             if (BCModules.TRANSPORT.isLoaded() && !getPipeHolder().getPipeWorld().isRemote) {
                 WorldSavedDataWireSystems.get(getPipeHolder().getPipeWorld()).gatesChanged = true;
             }
+        }
+
+        if (isOn != prevIsOn) {
+            sendIsOn();
         }
 
         if (!Arrays.equals(prevTriggers, triggerOn) || !Arrays.equals(prevActions, actionOn)) {

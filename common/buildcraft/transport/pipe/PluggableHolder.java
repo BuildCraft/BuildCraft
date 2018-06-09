@@ -18,25 +18,27 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 
+import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.tile.TilePipeHolder;
 
 public final class PluggableHolder {
-    private static final int ID_REMOVE_PLUG = 0;
-    private static final int ID_UPDATE_PLUG = 1;
-    private static final int ID_CREATE_PLUG = 2;
+    // TODO: Networking is kinda sub-par at the moment for pluggables
+    // perhaps add some sort of interface for allowing pluggables to correctly write data?
+    private static final IdAllocator ID_ALLOC = new IdAllocator("PlugHolder");
+    public static final int ID_REMOVE_PLUG = ID_ALLOC.allocId("REMOVE_PLUG");
+    public static final int ID_UPDATE_PLUG = ID_ALLOC.allocId("UPDATE_PLUG");
+    public static final int ID_CREATE_PLUG = ID_ALLOC.allocId("CREATE_PLUG");
 
     public final TilePipeHolder holder;
     public final EnumFacing side;
     public PipePluggable pluggable;
-    /** Used to determine if a full "create" message should be sent when {@link #writePayload(PacketBufferBC, Side)} is
-     * called. If this is false it means that last time it was null, and a create message should. */
-    private boolean lastGeneralExisted = false;
 
     public PluggableHolder(TilePipeHolder holder, EnumFacing side) {
         this.holder = holder;
@@ -69,11 +71,16 @@ public final class PluggableHolder {
         } else {
             pluggable = def.readFromNbt(holder, side, data);
             holder.eventBus.registerHandler(pluggable);
-            lastGeneralExisted = true;
         }
     }
 
     // Network
+
+    /** Called by {@link TilePipeHolder#replacePluggable(EnumFacing, PipePluggable)} to inform clients about the new
+     * pluggable. */
+    public void sendNewPluggableData() {
+        holder.sendMessage(PipeMessageReceiver.PLUGGABLES[side.ordinal()], this::writeCreationPayload);
+    }
 
     public void writeCreationPayload(PacketBuffer buffer) {
         if (pluggable == null) {
@@ -89,9 +96,11 @@ public final class PluggableHolder {
         int id = buffer.readUnsignedByte();
         if (id == ID_CREATE_PLUG) {
             readCreateInternal(buffer);
-        } else {
+        } else if (id == ID_REMOVE_PLUG) {
             holder.eventBus.unregisterHandler(pluggable);
             pluggable = null;
+        } else {
+            throw new InvalidInputDataException("Invalid ID for creation! " + ID_ALLOC.getNameFor(id));
         }
     }
 
@@ -99,7 +108,10 @@ public final class PluggableHolder {
         ResourceLocation identifier = new ResourceLocation(buffer.readString(256));
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
-            throw new IllegalStateException("Unknown remote pluggable \"" + identifier + "\"");
+            throw new InvalidInputDataException("Unknown remote pluggable \"" + identifier + "\"");
+        }
+        if (pluggable != null) {
+            holder.eventBus.unregisterHandler(pluggable);
         }
         pluggable = def.loadFromBuffer(holder, side, buffer);
         holder.eventBus.registerHandler(pluggable);
@@ -113,15 +125,10 @@ public final class PluggableHolder {
             }
         } else {
             if (pluggable == null) {
-                lastGeneralExisted = false;
                 buffer.writeByte(ID_REMOVE_PLUG);
-            } else if (lastGeneralExisted) {
+            } else {
                 buffer.writeByte(ID_UPDATE_PLUG);
                 pluggable.writePayload(buffer, netSide);
-            } else {
-                // The last general one did NOT exist, and so we need to create it
-                lastGeneralExisted = true;
-                writeCreationPayload(buffer);
             }
         }
     }
@@ -134,7 +141,7 @@ public final class PluggableHolder {
                     pluggable.readPayload(buffer, netSide, ctx);
                 }
             } else {
-                BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+                throw new InvalidInputDataException("Unknown ID " + ID_ALLOC.getNameFor(id));
             }
         } else {
             if (id == ID_REMOVE_PLUG) {
@@ -145,7 +152,7 @@ public final class PluggableHolder {
             } else if (id == ID_CREATE_PLUG) {
                 readCreateInternal(buffer);
             } else {
-                BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
+                throw new InvalidInputDataException("Unknown ID " + ID_ALLOC.getNameFor(id));
             }
         }
     }

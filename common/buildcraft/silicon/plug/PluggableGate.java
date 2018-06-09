@@ -55,6 +55,7 @@ import buildcraft.silicon.gate.EnumGateMaterial;
 import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateLogic;
 import buildcraft.silicon.gate.GateVariant;
+import buildcraft.transport.pipe.PluggableHolder;
 
 public class PluggableGate extends PipePluggable implements IWireEmitter {
     public static final FunctionContext MODEL_FUNC_CTX_STATIC, MODEL_FUNC_CTX_DYNAMIC;
@@ -159,43 +160,34 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
         logic.writeCreationToBuf(PacketBufferBC.asPacketBufferBc(buffer));
     }
 
-    public void sendMessage(int id, IPayloadWriter writer) {
+    public void sendMessage(IPayloadWriter writer) {
         PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
         holder.sendMessage(to, (buffer) -> {
-            /*
-             * The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
-             * ourselves
-             */
-            buffer.writeByte(1);
-            buffer.writeByte(id);
+            /* The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
+             * ourselves */
+            buffer.writeByte(PluggableHolder.ID_UPDATE_PLUG);
             writer.write(PacketBufferBC.asPacketBufferBc(buffer));
         });
     }
 
-    public void sendGuiMessage(int id, IPayloadWriter writer) {
+    public void sendGuiMessage(IPayloadWriter writer) {
         PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
         holder.sendGuiMessage(to, (buffer) -> {
-            /*
-             * The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
-             * ourselves
-             */
-            buffer.writeByte(1);
-            buffer.writeByte(id);
+            /* The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
+             * ourselves */
+            buffer.writeByte(PluggableHolder.ID_UPDATE_PLUG);
             writer.write(PacketBufferBC.asPacketBufferBc(buffer));
         });
     }
 
     @Override
     public void writePayload(PacketBuffer buffer, Side side) {
-        // What???
-        buffer.writeByte(0);
+        throw new Error("All messages must have an ID, and we can't just write a payload directly!");
     }
 
     @Override
     public void readPayload(PacketBuffer b, Side side, MessageContext ctx) throws IOException {
-        PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(b);
-        int id = buffer.readUnsignedByte();
-        logic.readPayload(id, buffer, side, ctx);
+        logic.readPayload(PacketBufferBC.asPacketBufferBc(b), side, ctx);
     }
 
     // PipePluggable

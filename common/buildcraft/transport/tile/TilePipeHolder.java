@@ -450,10 +450,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (pipe != null) {
             pipe.markForUpdate();
         }
-        if (!world.isRemote && old != with) {
-            wireManager.getWireSystems().rebuildWireSystemsAround(this);
+        if (!world.isRemote) {
+            if (old != with) {
+                wireManager.getWireSystems().rebuildWireSystemsAround(this);
+            }
+            holder.sendNewPluggableData();
         }
-        scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
         world.neighborChanged(pos.offset(side), BCTransportBlocks.pipeHolder, pos);
         return old;

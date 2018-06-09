@@ -2,3 +2,7 @@
 Improvements:
 
 * Pressing F3+T while in the guide book will reload it in-place.
+
+Bug fixes:
+
+* Fixed gates sometimes not correctly synchronising the light on the gate when it is first turned on.  
