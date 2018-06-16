@@ -96,8 +96,8 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
+    public void onRemove() {
+        super.onRemove();
         for (int y = pos.getY() - 1; y > 0; y--) {
             BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
             if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
