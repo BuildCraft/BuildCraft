@@ -21,7 +21,7 @@
   "conditions": [
     {
       "type": "minecraft:item_exists",
-      "item": "buildcraftfactory:chute"
+      "item": "buildcraftfactory:distiller"
     }
   ]
 }
