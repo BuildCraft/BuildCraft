@@ -27,7 +27,7 @@
   "conditions": [
     {
       "type": "minecraft:item_exists",
-      "item": "buildcraftbuilders:quarry"
+      "item": "buildcraftsilicon:integration_table"
     }
   ]
 }
