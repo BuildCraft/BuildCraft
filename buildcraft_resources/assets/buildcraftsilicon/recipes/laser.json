@@ -19,11 +19,5 @@
     "o": {
       "item": "minecraft:obsidian"
     }
-  },
-  "conditions": [
-    {
-      "type": "minecraft:item_exists",
-      "item": "buildcraftbuilders:quarry"
-    }
-  ]
+  }
 }
