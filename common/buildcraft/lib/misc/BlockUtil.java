@@ -71,9 +71,7 @@ import buildcraft.lib.world.SingleBlockAccess;
 
 public final class BlockUtil {
 
-    /**
-     * @return A list of itemstacks that are dropped from the block, or null if the block is air
-     */
+    /** @return A list of itemstacks that are dropped from the block, or null if the block is air */
     @Nullable
     public static NonNullList<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, GameProfile owner) {
         IBlockState state = world.getBlockState(pos);
@@ -102,7 +100,8 @@ public final class BlockUtil {
         return breakBlock(world, pos, BCLibConfig.itemLifespan * 20, ownerPos, owner);
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos ownerPos, GameProfile owner) {
+    public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos ownerPos,
+        GameProfile owner) {
         NonNullList<ItemStack> items = NonNullList.create();
 
         if (breakBlock(world, pos, items, ownerPos, owner)) {
@@ -131,7 +130,8 @@ public final class BlockUtil {
 
         state.getBlock().onBlockHarvested(world, pos, state, fakePlayer);
         state.getBlock().harvestBlock(world, fakePlayer, pos, state, world.getTileEntity(pos), tool);
-        world.setBlockToAir(pos);
+        // Don't drop items as we do that ourselves
+        world.destroyBlock(pos, /* dropBlock = */ false);
 
         return true;
     }
@@ -166,7 +166,8 @@ public final class BlockUtil {
         return player;
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos, GameProfile owner) {
+    public static boolean breakBlock(WorldServer world, BlockPos pos, NonNullList<ItemStack> drops, BlockPos ownerPos,
+        GameProfile owner) {
         FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(world, owner, ownerPos);
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), fakePlayer);
         MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -196,7 +197,8 @@ public final class BlockUtil {
         world.spawnEntity(entityitem);
     }
 
-    public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos, @Nonnull ItemStack tool, GameProfile owner) {
+    public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos,
+        @Nonnull ItemStack tool, GameProfile owner) {
         AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(1);
         Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
         if (!harvestBlock(world, pos, tool, owner)) {
@@ -374,7 +376,8 @@ public final class BlockUtil {
             }
 
             if (player.getDistanceSq(pos) < 4096) {
-                ((EntityPlayerMP) player).connection.sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(), null));
+                ((EntityPlayerMP) player).connection
+                    .sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(), null));
             }
         }
     }
@@ -402,11 +405,14 @@ public final class BlockUtil {
         return CompatManager.getState(world, pos, force);
     }
 
-    public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, BlockPos pos, EnumFacing direction) {
-        boolean done = stack.getItem().onItemUseFirst(player, world, pos, direction, 0.5F, 0.5F, 0.5F, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS;
+    public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, BlockPos pos,
+        EnumFacing direction) {
+        boolean done = stack.getItem().onItemUseFirst(player, world, pos, direction, 0.5F, 0.5F, 0.5F,
+            EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS;
 
         if (!done) {
-            done = stack.getItem().onItemUse(player, world, pos, EnumHand.MAIN_HAND, direction, 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS;
+            done = stack.getItem().onItemUse(player, world, pos, EnumHand.MAIN_HAND, direction, 0.5F, 0.5F,
+                0.5F) == EnumActionResult.SUCCESS;
         }
         return done;
     }
@@ -444,7 +450,8 @@ public final class BlockUtil {
         return null;
     }
 
-    public static <T extends Comparable<T>> IBlockState copyProperty(IProperty<T> property, IBlockState dst, IBlockState src) {
+    public static <T extends Comparable<T>> IBlockState copyProperty(IProperty<T> property, IBlockState dst,
+        IBlockState src) {
         return dst.getPropertyKeys().contains(property) ? dst.withProperty(property, src.getValue(property)) : dst;
     }
 
@@ -452,11 +459,13 @@ public final class BlockUtil {
         return a.getValue(property).compareTo(b.getValue(property));
     }
 
-    public static <T extends Comparable<T>> String getPropertyStringValue(IBlockState blockState, IProperty<T> property) {
+    public static <T extends Comparable<T>> String getPropertyStringValue(IBlockState blockState,
+        IProperty<T> property) {
         return property.getName(blockState.getValue(property));
     }
 
-    public static Map<String, String> getPropertiesStringMap(IBlockState blockState, Collection<IProperty<?>> properties) {
+    public static Map<String, String> getPropertiesStringMap(IBlockState blockState,
+        Collection<IProperty<?>> properties) {
         ImmutableMap.Builder<String, String> mapBuilder = new ImmutableMap.Builder<>();
         for (IProperty<?> property : properties) {
             mapBuilder.put(property.getName(), getPropertyStringValue(blockState, property));
@@ -475,10 +484,8 @@ public final class BlockUtil {
             if (blockA != blockB) {
                 return blockA.getRegistryName().toString().compareTo(blockB.getRegistryName().toString());
             }
-            for (IProperty<?> property : Sets.intersection(
-                    new HashSet<>(blockStateA.getPropertyKeys()),
-                    new HashSet<>(blockStateB.getPropertyKeys())
-            )) {
+            for (IProperty<?> property : Sets.intersection(new HashSet<>(blockStateA.getPropertyKeys()),
+                new HashSet<>(blockStateB.getPropertyKeys()))) {
                 int compareResult = BlockUtil.compareProperty(property, blockStateA, blockStateB);
                 if (compareResult != 0) {
                     return compareResult;
@@ -488,27 +495,28 @@ public final class BlockUtil {
         };
     }
 
-    public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b, Collection<IProperty<?>> ignoredProperties) {
+    public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b,
+        Collection<IProperty<?>> ignoredProperties) {
         return Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
-                .filter(property -> !ignoredProperties.contains(property))
-                .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
+            .filter(property -> !ignoredProperties.contains(property))
+            .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesWithoutBlockEqual(IBlockState a, IBlockState b) {
         return Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
-                .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
+            .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesEqual(IBlockState a, IBlockState b, Collection<IProperty<?>> ignoredProperties) {
-        return a.getBlock() == b.getBlock() &&
-                Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+        return a.getBlock() == b.getBlock()
+            && Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .filter(property -> !ignoredProperties.contains(property))
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
     public static boolean blockStatesEqual(IBlockState a, IBlockState b) {
-        return a.getBlock() == b.getBlock() &&
-                Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
+        return a.getBlock() == b.getBlock()
+            && Sets.intersection(new HashSet<>(a.getPropertyKeys()), new HashSet<>(b.getPropertyKeys())).stream()
                 .allMatch(property -> Objects.equals(a.getValue(property), b.getValue(property)));
     }
 
