@@ -21,7 +21,7 @@ import net.minecraftforge.fluids.Fluid;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjReceiver;
-
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
@@ -95,7 +95,7 @@ public class TileMiningWell extends TileMiner {
     }
 
     private void nextPos() {
-        for (currentPos = pos.down(); currentPos.getY() >= 0; currentPos = currentPos.down()) {
+        for (currentPos = pos.down(); currentPos.getY() >= BCLibConfig.worldMin; currentPos = currentPos.down()) {
             if (canBreak()) {
                 updateLength();
                 return;

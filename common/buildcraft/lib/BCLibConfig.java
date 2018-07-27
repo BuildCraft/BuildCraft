@@ -78,6 +78,9 @@ public class BCLibConfig {
     public static ChunkLoaderLevel chunkLoadingLevel = ChunkLoaderLevel.SELF_TILES;
 
     public static final List<Runnable> configChangeListeners = new ArrayList<>();
+    
+    /** The Y height level that is the lowest in the world */
+    public static int worldMin = 0;
 
     /** Resets cached values across various BCLib classes that rely on these config options. */
     public static void refreshConfigs() {
