@@ -29,7 +29,6 @@ import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.misc.ExpressionCompat;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
@@ -133,7 +132,6 @@ public class BCLib {
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
         MessageManager.fmlPostInit();
-        CubicChunksChecker.postInit();
     }
 
     @Mod.EventHandler

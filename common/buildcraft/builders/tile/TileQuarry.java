@@ -64,7 +64,6 @@ import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -115,6 +114,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d prevClientDrillPos;
     private long debugPowerRate = 0;
     public List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
+    private final BlockPos subZeroPos = new BlockPos(0, -1, 0);
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
@@ -358,7 +358,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBox.setMin(min);
         frameBox.setMax(max);
         miningBox.reset();
-        miningBox.setMin(new BlockPos(min.getX() + 1, CubicChunksChecker.worldMin, min.getZ() + 1));
+        if(world.isOutsideBuildHeight(subZeroPos)) {
+        	miningBox.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
+        }
+        else {
+        	miningBox.setMin(new BlockPos(min.getX() + 1, -1073741824, min.getZ() + 1));
+        }
         miningBox.setMax(new BlockPos(max.getX() - 1, max.getY() - 1, max.getZ() - 1));
         updatePoses();
     }

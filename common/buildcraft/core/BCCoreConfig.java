@@ -29,7 +29,6 @@ import buildcraft.lib.BCLibConfig.TimeGap;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.misc.ConfigUtil;
-import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.registry.RegistryConfig;
 
 public class BCCoreConfig {

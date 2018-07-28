@@ -24,7 +24,6 @@ import buildcraft.api.mj.IMjReceiver;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.world.WorldEventListenerAdapter;
@@ -95,7 +94,7 @@ public class TileMiningWell extends TileMiner {
     }
 
     private void nextPos() {
-        for (currentPos = pos.down(); currentPos.getY() >= CubicChunksChecker.worldMin; currentPos = currentPos.down()) {
+        for (currentPos = pos.down(); !world.isOutsideBuildHeight(currentPos); currentPos = currentPos.down()) {
             if (canBreak()) {
                 updateLength();
                 return;
