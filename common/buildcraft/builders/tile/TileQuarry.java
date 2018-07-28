@@ -55,7 +55,6 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.chunkload.ChunkLoaderManager;
 import buildcraft.lib.chunkload.IChunkLoadingTile;
@@ -65,6 +64,7 @@ import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -358,7 +358,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBox.setMin(min);
         frameBox.setMax(max);
         miningBox.reset();
-        miningBox.setMin(new BlockPos(min.getX() + 1, BCLibConfig.worldMin, min.getZ() + 1));
+        miningBox.setMin(new BlockPos(min.getX() + 1, CubicChunksChecker.worldMin, min.getZ() + 1));
         miningBox.setMax(new BlockPos(max.getX() - 1, max.getY() - 1, max.getZ() - 1));
         updatePoses();
     }

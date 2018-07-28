@@ -29,6 +29,7 @@ import buildcraft.lib.BCLibConfig.TimeGap;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.misc.ConfigUtil;
+import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.registry.RegistryConfig;
 
 public class BCCoreConfig {
@@ -69,7 +70,6 @@ public class BCCoreConfig {
     private static Property propMarkerMaxDistance;
     private static Property propPumpMaxDistance;
     private static Property propNetworkUpdateRate;
-    private static Property propWorldMin;
 
     public static void preInit(File cfgFolder) {
         config = new Configuration(new File(cfgFolder, "main.cfg"));
@@ -197,12 +197,6 @@ public class BCCoreConfig {
         propNetworkUpdateRate.setComment(
             "How often, in ticks, should network update packets be sent? Increasing this might help network performance.");
         none.setTo(propNetworkUpdateRate);
-        
-        propWorldMin = config.get(general, "worldMin", 0);
-        propWorldMin.setMinValue(-2147483648).setMaxValue(2147483647);
-        propWorldMin
-            .setComment("How deep is the Minecraft world? (Vanilla = 0, default = 0, Cubic Chuncks = -1073741824)");
-        none.setTo(propItemLifespan);
 
         reloadConfig(game);
         addReloadListener(BCCoreConfig::reloadConfig);
@@ -256,7 +250,6 @@ public class BCCoreConfig {
         BCLibConfig.rotateTravelingItems =
             ConfigUtil.parseEnumForConfig(propItemRenderRotation, RenderRotation.ENABLED);
         BCLibConfig.enableAnimatedSprites = propEnableAnimatedSprites.getBoolean();
-        BCLibConfig.worldMin = propWorldMin.getInt();
 
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
             BCLibConfig.chunkLoadingLevel =

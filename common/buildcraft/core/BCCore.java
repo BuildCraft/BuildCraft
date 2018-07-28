@@ -21,6 +21,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.TagManager;

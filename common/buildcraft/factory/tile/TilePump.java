@@ -39,10 +39,10 @@ import buildcraft.api.BCModules;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.CubicChunksChecker;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.VecUtil;
@@ -90,7 +90,7 @@ public class TilePump extends TileMiner {
         isInfiniteWaterSource = false;
         Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        for (BlockPos posToCheck = pos.down(); posToCheck.getY() > BCLibConfig.worldMin; posToCheck = posToCheck.down()) {
+        for (BlockPos posToCheck = pos.down(); posToCheck.getY() > CubicChunksChecker.worldMin; posToCheck = posToCheck.down()) {
             if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
                 queueFluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
                 nextPosesToCheck.add(posToCheck);
