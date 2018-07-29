@@ -114,7 +114,6 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d prevClientDrillPos;
     private long debugPowerRate = 0;
     public List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
-    private final BlockPos subZeroPos = new BlockPos(0, -1, 0);
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
@@ -358,7 +357,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBox.setMin(min);
         frameBox.setMax(max);
         miningBox.reset();
-        if(world.isOutsideBuildHeight(subZeroPos)) {
+        if(world.isOutsideBuildHeight(new BlockPos(0, -1, 0))) {
         	miningBox.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
         }
         else {
