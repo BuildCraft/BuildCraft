@@ -76,6 +76,7 @@ public class BCCore {
 
         OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
         MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+        BCCoreConfig.saveConfigs();
     }
 
     private static void setItemTab(Item item, CreativeTabBC tab) {
@@ -86,6 +87,7 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
+        BCCoreConfig.saveConfigs();
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
 
         BCCoreProxy.getProxy().fmlInit();
@@ -96,6 +98,7 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event) {
+        BCCoreConfig.saveConfigs();
         BCCoreProxy.getProxy().fmlPostInit();
         BCCoreConfig.postInit();
     }

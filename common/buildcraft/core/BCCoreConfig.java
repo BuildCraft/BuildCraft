@@ -223,6 +223,10 @@ public class BCCoreConfig {
 
     public static void postInit() {
         ConfigUtil.setLang(config);
+        saveConfigs();
+    }
+
+    public static void saveConfigs() {
         if (config.hasChanged()) {
             config.save();
         }
@@ -261,11 +265,6 @@ public class BCCoreConfig {
             }
         }
         BCLibConfig.refreshConfigs();
-        if (config.hasChanged()) {
-            config.save();
-        }
-        if (objConfig.hasChanged()) {
-            objConfig.save();
-        }
+        saveConfigs();
     }
 }

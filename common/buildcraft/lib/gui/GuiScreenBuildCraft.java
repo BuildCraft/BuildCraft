@@ -59,6 +59,12 @@ public class GuiScreenBuildCraft extends GuiScreen {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        mainGui.tick();
+    }
+
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         mainGui.drawBackgroundLayer(partialTicks, mouseX, mouseY, this::drawMenuBackground);
         mainGui.drawElementBackgrounds();

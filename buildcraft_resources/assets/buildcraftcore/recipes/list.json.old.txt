@@ -1,6 +1,13 @@
 {
   "conditions": [
     {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "buildcraftsilicon"
+      }
+    },
+    {
       "type": "minecraft:item_exists",
       "item": "buildcraftcore:list"
     }
