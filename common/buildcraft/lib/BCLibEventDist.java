@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
@@ -25,6 +28,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -84,7 +88,7 @@ public enum BCLibEventDist {
     public static void onConnectToServer(ClientConnectedToServerEvent event) {
         BuildCraftObjectCaches.onClientJoinServer();
         // Really obnoxious warning
-        if (!BCLib.DEV) {
+        if (true | !BCLib.DEV) {
             /* If people are in a dev environment or have toggled the flag then they probably already know about this */
             Runnable r = () -> {
                 try {
@@ -115,7 +119,27 @@ public enum BCLibEventDist {
                 // styleVersion.setHoverEvent(new HoverEvent(HoverEvent.Action., valueIn));
                 componentVersion.setStyle(styleVersion);
 
-                String githubIssuesUrl = "https://github.com/BuildCraft/BuildCraft/issues";
+                String bodyText = "<!--\n" //
+                    + "If your issue is more of a question (like how does a machine work or a sugestion), please use our Discord instead: https://discord.gg/BuildCraft\n"//
+                    + "Please fill in all relavant information below.\n"//
+                    + "Please do not put the entire log here, upload it on pastebin (https://pastebin.com/) or gist (https://gist.github.com/) and paste here the link.\n"//
+                    + "-->\n\n" //
+                    + "BuildCraft version: " + BCLib.VERSION + "\n" //
+                    + "Forge version: " + ForgeVersion.getVersion() + "\n" //
+                    + "Link to crash report or log: {none given}\n" //
+                    + "Singleplayer or multiplayer: \n" //
+                    + "Steps to reproduce: \n" //
+                    + "Additional information: \n"//
+                    + "Mod list: \n\n"
+                    + Loader.instance().getCrashInformation().replaceAll("UCHIJA+", "Loaded").replace("\t|", "|");
+
+                String githubIssuesUrl;
+                try {
+                    githubIssuesUrl = "https://github.com/BuildCraft/BuildCraft/issues/new?body="
+                        + URLEncoder.encode(bodyText, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new Error("UTF-8 isn't a valid charset? What?", e);
+                }
                 ITextComponent componentGithubLink = new TextComponentString("here");
                 Style styleGithubLink = new Style();
                 styleGithubLink.setUnderlined(Boolean.TRUE);

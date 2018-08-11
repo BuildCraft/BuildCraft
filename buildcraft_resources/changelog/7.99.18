@@ -7,10 +7,12 @@ Improvements:
 
 * Pressing F3+T while in the guide book will reload it in-place.
 * The config files are saved more often during init, which should help when you need to change a config option just to boot the game but can't because the config file is empty. 
+* The github issue link shown in the open-world warning message now prefills some useful information.
 
 Bug fixes:
 
 * [#4133] The fluid triggers relating to percentage of a tank filled don't recognise gaseous fluids properly.
+* [#4245] Random stack trace caused by a null world in a WorldTickEvent.
 * Fixed gates sometimes not correctly synchronising the light on the gate when it is first turned on.
 * Fixed a few recipes requiring the quarry to be present, rather than itself.
 * Fixed GuiScreenBuildCraft not passing on tick()'s to child listeners. Only affects addon developers, as BC itself doesn't use this class for anything yet.
