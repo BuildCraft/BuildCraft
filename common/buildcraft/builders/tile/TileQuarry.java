@@ -80,6 +80,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
 import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.BCBuildersConfig;
 import buildcraft.builders.BCBuildersEventDist;
 import buildcraft.builders.client.render.AdvDebuggerQuarry;
 import buildcraft.core.marker.VolumeCache;
@@ -351,8 +352,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                     break;
             }
         }
-        if (max.getY() - min.getY() < 4) {
-            max = new BlockPos(max.getX(), min.getY() + 4, max.getZ());
+        if (max.getY() - min.getY() < BCBuildersConfig.quarryFrameMinHeight) {
+            max = new BlockPos(max.getX(), min.getY() + BCBuildersConfig.quarryFrameMinHeight, max.getZ());
         }
         frameBox.reset();
         frameBox.setMin(min);

@@ -69,6 +69,8 @@ import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.world.SingleBlockAccess;
 
+import buildcraft.core.BCCoreConfig;
+
 public final class BlockUtil {
 
     /** @return A list of itemstacks that are dropped from the block, or null if the block is air */
@@ -385,7 +387,7 @@ public final class BlockUtil {
     public static long computeBlockBreakPower(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         float hardness = state.getBlockHardness(world, pos);
-        return (long) Math.floor(16 * MjAPI.MJ * ((hardness + 1) * 2));
+        return (long) Math.floor(16 * MjAPI.MJ * ((hardness + 1) * 2) * BCCoreConfig.miningMultiplier);
     }
 
     /** The following functions let you avoid unnecessary chunk loads, which is nice. */

@@ -47,6 +47,7 @@ public class BCCoreConfig {
     public static int markerMaxDistance;
     public static int pumpMaxDistance;
     public static int networkUpdateRate = 10;
+    public static double miningMultiplier = 1;
 
     private static Property propColourBlindMode;
     private static Property propWorldGen;
@@ -69,6 +70,7 @@ public class BCCoreConfig {
     private static Property propMarkerMaxDistance;
     private static Property propPumpMaxDistance;
     private static Property propNetworkUpdateRate;
+    private static Property propMiningMultiplier;
 
     public static void preInit(File cfgFolder) {
         config = new Configuration(new File(cfgFolder, "main.cfg"));
@@ -197,6 +199,11 @@ public class BCCoreConfig {
             "How often, in ticks, should network update packets be sent? Increasing this might help network performance.");
         none.setTo(propNetworkUpdateRate);
 
+        propMiningMultiplier = config.get(general, "miningMultiplier", 1.0);
+        propMiningMultiplier.setMinValue(0.2).setMaxValue(200);
+        propMiningMultiplier.setComment("How much power should be required for all mining machines?");
+        none.setTo(propMiningMultiplier);
+
         reloadConfig(game);
         addReloadListener(BCCoreConfig::reloadConfig);
 
@@ -253,6 +260,7 @@ public class BCCoreConfig {
         BCLibConfig.rotateTravelingItems =
             ConfigUtil.parseEnumForConfig(propItemRenderRotation, RenderRotation.ENABLED);
         BCLibConfig.enableAnimatedSprites = propEnableAnimatedSprites.getBoolean();
+        miningMultiplier = propMiningMultiplier.getDouble();
 
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
             BCLibConfig.chunkLoadingLevel =
