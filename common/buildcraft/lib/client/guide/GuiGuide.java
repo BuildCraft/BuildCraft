@@ -60,8 +60,11 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon PAGE_LEFT_BACK = new GuiIcon(LEFT_PAGE_BACK, 0, 0, 193, 248);
     public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
 
-    public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(23, 25, 168, 190);
-    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(4, 25, 168, 190);
+    public static final int PAGE_WIDTH = 168;
+    public static final int PAGE_HEIGHT = 190;
+
+    public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(23, 25, PAGE_WIDTH, PAGE_HEIGHT);
+    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(4, 25, PAGE_WIDTH, PAGE_HEIGHT);
 
     public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 14, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);
@@ -140,7 +143,7 @@ public class GuiGuide extends GuiScreen {
 
     public final MousePosition mouse = new MousePosition();
 
-    public int sortingOrderIndex = 0;
+    public TypeOrder sortingOrder = SORTING_TYPES[0];
     private boolean isOpen = false, isEditing = false;
     private boolean isOpening = false;
 
@@ -534,6 +537,7 @@ public class GuiGuide extends GuiScreen {
                     pages.add(page);
                 }
             }
+            refreshChapters();
             ISimpleDrawable icon = null;
             if (BCLibItems.guide != null) {
                 GuiStack stackIcon = new GuiStack(new ItemStack(BCLibItems.guide));

@@ -14,4 +14,20 @@ public class TypeOrder {
     public TypeOrder(ETypeTag... tags) {
         this.tags = ImmutableList.copyOf(tags);
     }
+
+    @Override
+    public int hashCode() {
+        return tags.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TypeOrder other = (TypeOrder) obj;
+        return tags.equals(other.tags);
+    }
 }

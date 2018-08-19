@@ -7,6 +7,8 @@
 package buildcraft.lib.misc;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -66,5 +68,12 @@ public class ArrayUtil {
             }
         }
         return true;
+    }
+
+    /** Like {@link Collections#addAll(Collection, Object...)}, but adds the array in reverse order. */
+    public static <T> void addAllReversed(Collection<T> dest, T[] src) {
+        for (int i = src.length - 1; i >= 0; i--) {
+            dest.add(src[i]);
+        }
     }
 }

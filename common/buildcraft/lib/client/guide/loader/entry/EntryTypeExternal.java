@@ -26,4 +26,9 @@ public class EntryTypeExternal extends PageEntryType<String> {
     public ISimpleDrawable createDrawable(String value) {
         return null;
     }
+
+    @Override
+    public void iterateAllDefault(IEntryLinkConsumer consumer) {
+        // NO-OP
+    }
 }

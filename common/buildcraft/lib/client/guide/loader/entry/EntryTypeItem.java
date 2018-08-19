@@ -4,19 +4,26 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.parts.contents.PageLinkItemStack;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.ItemStackKey;
 
 public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
+
+    private static final JsonTypeTags TAGS = new JsonTypeTags("buildcraft.guide.contents.item_stacks");
 
     public static final String ID = "minecraft:item_stack";
     public static final EntryTypeItem INSTANCE = new EntryTypeItem();
@@ -88,5 +95,31 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
     @Nullable
     public ISimpleDrawable createDrawable(ItemStackValueFilter value) {
         return new GuiStack(value.stack.baseStack);
+    }
+
+    @Override
+    public Object getBasicValue(ItemStackValueFilter value) {
+        return value.stack.baseStack.getItem();
+    }
+
+    @Override
+    public void iterateAllDefault(IEntryLinkConsumer consumer) {
+        for (Item item : ForgeRegistries.ITEMS) {
+            if (!GuideManager.INSTANCE.objectsAdded.add(item)) {
+                continue;
+            }
+            NonNullList<ItemStack> stacks = NonNullList.create();
+            item.getSubItems(CreativeTabs.SEARCH, stacks);
+            for (int i = 0; i < stacks.size(); i++) {
+                ItemStack stack = stacks.get(i);
+
+                consumer.addChild(TAGS, new PageLinkItemStack(false, stack));
+                if (i > 50) {
+                    // Woah there, lets not fill up entire pages with what is
+                    // most likely the same item
+                    break;
+                }
+            }
+        }
     }
 }

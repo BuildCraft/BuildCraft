@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.gui.ISimpleDrawable;
 
 /** @param <T> The type. This should either override {@link #equals(Object)} and {@link #hashCode()} unless the object
@@ -41,4 +42,12 @@ public abstract class PageEntryType<T> {
 
     @Nullable
     public abstract ISimpleDrawable createDrawable(T value);
+
+    /** @return A value to be added to {@link GuideManager#objectsAdded} so that
+     *         {@link #iterateAllDefault(IEntryLinkConsumer)} can ignore similar entries. */
+    public Object getBasicValue(T value) {
+        return value;
+    }
+
+    public abstract void iterateAllDefault(IEntryLinkConsumer consumer);
 }

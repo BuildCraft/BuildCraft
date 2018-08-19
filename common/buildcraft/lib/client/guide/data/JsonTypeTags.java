@@ -37,7 +37,17 @@ public class JsonTypeTags {
         this.subType = subType;
     }
 
+    public JsonTypeTags(String type) {
+        this(null, null, type, null);
+    }
+
     public String[] getOrdered(TypeOrder typeOrder) {
+
+        if (mod == null && subMod == null && subType == null) {
+            // Built-in type for "others"
+            return new String[] { "buildcraft.guide.contents.all_group", type };
+        }
+
         String[] strings = new String[typeOrder.tags.size()];
         for (int i = 0; i < strings.length; i++) {
             ETypeTag tag = typeOrder.tags.get(i);

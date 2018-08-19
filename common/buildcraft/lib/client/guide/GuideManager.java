@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +33,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.Language;
+import net.minecraft.client.util.SuffixArray;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -40,13 +44,24 @@ import net.minecraftforge.fml.common.ModContainer;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.client.guide.data.JsonContents;
 import buildcraft.lib.client.guide.data.JsonEntry;
+import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.loader.entry.IEntryLinkConsumer;
+import buildcraft.lib.client.guide.loader.entry.PageEntryType;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageStandInRecipes;
+import buildcraft.lib.client.guide.parts.contents.ContentsNode;
+import buildcraft.lib.client.guide.parts.contents.ContentsNodeGui;
+import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
+import buildcraft.lib.client.guide.parts.contents.IContentsNode;
+import buildcraft.lib.client.guide.parts.contents.PageLink;
+import buildcraft.lib.client.guide.parts.contents.PageLinkNormal;
+import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.LocaleUtil;
 
 public enum GuideManager implements IResourceManagerReloadListener {
@@ -63,6 +78,13 @@ public enum GuideManager implements IResourceManagerReloadListener {
     private final Map<String, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
+
+    /** Internal use only! Use {@link #addChild(JsonTypeTags, PageLink)} instead! */
+    public SuffixArray<PageLink> quickSearcher;
+    private final Map<TypeOrder, ContentsNode> contents = new HashMap<>();
+
+    /** Every object added to the guide. Generally this means {@link Item}'s and {@link IStatement}'s. */
+    public final Set<Object> objectsAdded = new HashSet<>();
 
     static {
         PAGE_LOADERS.put("md", MarkdownPageLoader.INSTANCE);
@@ -146,6 +168,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
         if (!DEFAULT_LANG.equals(langCode)) {
             loadLangInternal(resourceManager, langCode);
         }
+
+        generateContentsPage();
+
         watch.stop();
         long time = watch.elapsed(TimeUnit.MILLISECONDS);
         int p = entries.size();
@@ -227,6 +252,63 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
     }
 
+    private void generateContentsPage() {
+        objectsAdded.clear();
+        contents.clear();
+        for (TypeOrder order : GuiGuide.SORTING_TYPES) {
+            contents.put(order, new ContentsNode("root", -1));
+        }
+        quickSearcher = new SuffixArray<>();
+
+        for (PageEntry<?> entry : GuideManager.INSTANCE.getAllEntries()) {
+            GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(entry);
+
+            String translatedTitle = LocaleUtil.localize(entry.title);
+            ISimpleDrawable icon = entry.createDrawable();
+            PageLine line = new PageLine(icon, icon, 2, translatedTitle, true);
+
+            if (entryFactory != null) {
+                objectsAdded.add(entry.getBasicValue());
+                PageLinkNormal pageLink = new PageLinkNormal(line, true, entry.getTooltip(), entryFactory);
+                addChild(entry.typeTags, pageLink);
+            }
+        }
+
+        final IEntryLinkConsumer adder = this::addChild;
+        for (PageEntryType<?> type : new HashSet<>(PageEntryType.REGISTRY.values())) {
+            type.iterateAllDefault(adder);
+        }
+
+        quickSearcher.generate();
+        for (ContentsNode node : contents.values()) {
+            node.sort();
+        }
+    }
+
+    private void addChild(JsonTypeTags tags, PageLink page) {
+        for (Entry<TypeOrder, ContentsNode> entry : contents.entrySet()) {
+            TypeOrder order = entry.getKey();
+            ContentsNode node = entry.getValue();
+
+            String[] ordered = tags.getOrdered(order);
+            for (int i = 0; i < ordered.length; i++) {
+                String title = LocaleUtil.localize(ordered[i]);
+                IContentsNode subNode = node.getChild(title);
+                if (subNode instanceof ContentsNode) {
+                    node = (ContentsNode) subNode;
+                } else if (subNode == null) {
+                    ContentsNode subContents = new ContentsNode(title, i);
+                    node.addChild(subContents);
+                    node = subContents;
+                } else {
+                    throw new IllegalStateException("Unknown node type " + subNode.getClass());
+                }
+            }
+            node.addChild(page);
+            quickSearcher.add(page, node.getSearchName());
+        }
+    }
+
     public ImmutableList<PageEntry<?>> getAllEntries() {
         return ImmutableList.copyOf(entries);
     }
@@ -255,5 +337,16 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
         // Create a dummy page for the stack
         return generatedPages.computeIfAbsent(stack, GuidePageStandInRecipes::createFactory);
+    }
+
+    public ContentsNodeGui getGuiContents(GuiGuide gui, GuidePageContents guidePageContents, TypeOrder sortingOrder) {
+
+        ContentsNode node = contents.get(sortingOrder);
+
+        if (node == null) {
+            throw new IllegalStateException("Unknown sorting order " + sortingOrder);
+        }
+
+        return new ContentsNodeGui(gui, guidePageContents, node);
     }
 }

@@ -6,7 +6,6 @@
 
 package buildcraft.lib.client.guide;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -28,8 +27,6 @@ public class PageEntry<T> {
     public final JsonTypeTags typeTags;
     public final PageEntryType<T> entryType;
     public final T value;
-
-    private final List<String> searchTags = new ArrayList<>();
 
     @Nullable
     public static PageEntry<?> createPageEntry(JsonEntry entry) {
@@ -87,17 +84,6 @@ public class PageEntry<T> {
         this.typeTags = typeTags;
         this.entryType = entryType;
         this.value = value;
-
-        searchTags.add(title);
-        searchTags.add(typeTags.mod);
-        searchTags.add(typeTags.subMod);
-        searchTags.add(typeTags.type);
-        searchTags.add(typeTags.subType);
-        searchTags.addAll(entryType.getTooltip(value));
-    }
-
-    public List<String> getSearchTags() {
-        return searchTags;
     }
 
     public boolean matches(Object obj) {
@@ -109,8 +95,16 @@ public class PageEntry<T> {
         return entryType.createDrawable(value);
     }
 
+    public Object getBasicValue() {
+        return entryType.getBasicValue(value);
+    }
+
     @Override
     public String toString() {
         return "PageEntry [title=" + title + ", page=" + page + "]";
+    }
+
+    public List<String> getTooltip() {
+        return entryType.getTooltip(value);
     }
 }

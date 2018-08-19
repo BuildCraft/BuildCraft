@@ -23,11 +23,12 @@ import net.minecraft.profiler.Profiler;
 import buildcraft.api.data.NbtSquishConstants;
 
 import buildcraft.lib.misc.HashUtil;
+import buildcraft.lib.misc.ProfilerUtil;
 import buildcraft.lib.nbt.NbtSquisher;
 
 public class NbtSquisherTester {
     private static final String[] IDS = { //
-        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick",//
+        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick", //
         "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
     };
 
@@ -415,40 +416,9 @@ public class NbtSquisherTester {
         }
 
         NbtSquisher.profiler.endSection();
-        writeProfilerResults(0, "root.write", NbtSquisher.profiler);
+        ProfilerUtil.printProfilerResults(NbtSquisher.profiler, "root.write");
         watchWhole.stop();
         System.out.println("Whole test took " + watchWhole.elapsed(TimeUnit.MINUTES) + "m, "
             + watchWhole.elapsed(TimeUnit.SECONDS) % 60 + "s");
-    }
-
-    private static void writeProfilerResults(int indent, String sectionName, Profiler profiler) {
-        List<Profiler.Result> list = profiler.getProfilingData(sectionName);
-
-        if (!list.isEmpty() && list.size() >= 3) {
-            for (int i = 1; i < list.size(); ++i) {
-                Profiler.Result profiler$result = list.get(i);
-                StringBuilder builder = new StringBuilder();
-                builder.append(String.format("[%02d] ", indent));
-
-                for (int j = 0; j < indent; ++j) {
-                    builder.append("|   ");
-                }
-
-                builder.append(profiler$result.profilerName);
-                builder.append(" - ");
-                builder.append(String.format("%.2f", profiler$result.usePercentage));
-                builder.append("%/");
-                builder.append(String.format("%.2f", profiler$result.totalUsePercentage));
-                System.out.println(builder.toString());
-
-                if (!"unspecified".equals(profiler$result.profilerName)) {
-                    try {
-                        writeProfilerResults(indent + 1, sectionName + "." + profiler$result.profilerName, profiler);
-                    } catch (Exception exception) {
-                        System.out.println("[[ EXCEPTION " + exception + " ]]");
-                    }
-                }
-            }
-        }
     }
 }

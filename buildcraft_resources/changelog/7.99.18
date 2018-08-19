@@ -18,6 +18,7 @@ Bug fixes:
 
 * [#4133] The fluid triggers relating to percentage of a tank filled don't recognise gaseous fluids properly.
 * [#4245] Random stack trace caused by a null world in a WorldTickEvent.
+* [#4249] The guidebook gui lags when it is opened.
 * Fixed gates sometimes not correctly synchronising the light on the gate when it is first turned on.
 * Fixed a few recipes requiring the quarry to be present, rather than itself.
 * Fixed GuiScreenBuildCraft not passing on tick()'s to child listeners. Only affects addon developers, as BC itself doesn't use this class for anything yet.
