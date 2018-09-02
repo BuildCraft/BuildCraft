@@ -88,7 +88,7 @@ public enum BCLibEventDist {
     public static void onConnectToServer(ClientConnectedToServerEvent event) {
         BuildCraftObjectCaches.onClientJoinServer();
         // Really obnoxious warning
-        if (true | !BCLib.DEV) {
+        if (!BCLib.DEV) {
             /* If people are in a dev environment or have toggled the flag then they probably already know about this */
             Runnable r = () -> {
                 try {
