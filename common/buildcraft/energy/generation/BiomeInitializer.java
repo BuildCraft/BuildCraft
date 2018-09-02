@@ -14,10 +14,19 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class BiomeInitializer {
     @SubscribeEvent
     public void initBiomeGens(WorldTypeEvent.InitBiomeGens event) {
+
+        boolean oilOcean = GenLayerAddOilOcean.getOilBiomeId() >= 0;
+        boolean oilDesert = GenLayerAddOilDesert.getOilBiomeId() >= 0;
+
+        if (!oilOcean && !oilDesert) {
+            // The biomes aren't registered, so don't bother creating a new array.
+            return;
+        }
+
         GenLayer[] newBiomeGens = event.getNewBiomeGens().clone();
         for (int i = 0; i < newBiomeGens.length; i++) {
-            newBiomeGens[i] = new GenLayerAddOilOcean(event.getSeed(), 1500L, newBiomeGens[i]);
-            newBiomeGens[i] = new GenLayerAddOilDesert(event.getSeed(), 1500L, newBiomeGens[i]);
+            if (oilOcean) newBiomeGens[i] = new GenLayerAddOilOcean(event.getSeed(), 1500L, newBiomeGens[i]);
+            if (oilDesert) newBiomeGens[i] = new GenLayerAddOilDesert(event.getSeed(), 1500L, newBiomeGens[i]);
         }
         event.setNewBiomeGens(newBiomeGens);
     }

@@ -18,14 +18,15 @@ public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
     private static final double NOISE_FIELD_SCALE = 0.001;
     private static final double NOISE_FIELD_THRESHOLD = 0.7;
 
-    private static final List<BiomeDictionary.Type> REQUIRED_TYPES = Arrays.asList(
-        BiomeDictionary.Type.HOT,
-        BiomeDictionary.Type.DRY,
-        BiomeDictionary.Type.SANDY
-    );
+    private static final List<BiomeDictionary.Type> REQUIRED_TYPES =
+        Arrays.asList(BiomeDictionary.Type.HOT, BiomeDictionary.Type.DRY, BiomeDictionary.Type.SANDY);
 
     public GenLayerAddOilDesert(long worldSeed, long seed, GenLayer parent) {
-        super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, Biome.getIdForBiome(BiomeOilDesert.INSTANCE));
+        super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, getOilBiomeId());
+    }
+
+    public static int getOilBiomeId() {
+        return Biome.getIdForBiome(BiomeOilDesert.INSTANCE);
     }
 
     @Override

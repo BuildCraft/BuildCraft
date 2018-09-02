@@ -18,11 +18,7 @@ public final class BiomeOilOcean extends BiomeOcean {
     public static final Biome INSTANCE = null;
 
     public BiomeOilOcean() {
-        super(
-                new BiomeProperties("Ocean Oil Field")
-                        .setBaseHeight(-1.0F)
-                        .setHeightVariation(0.1F)
-        );
+        super(new BiomeProperties("Ocean Oil Field").setBaseHeight(-1.0F).setHeightVariation(0.1F));
         setRegistryName("oil_ocean");
     }
 }

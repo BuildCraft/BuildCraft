@@ -21,21 +21,8 @@ public abstract class GenLayerBiomeReplacer extends GenLayer {
     protected final double noiseThreshold;
     protected final int newBiomeId;
 
-    /**
-     * @param worldSeed
-     * @param seed
-     * @param parent
-     * @param noiseScale     The scale of the noise field, smaller numbers zoom in the noise field.
-     * @param noiseThreshold The strength the field must reach to replace the biome. Larger numbers result in smaller
-     *                       patches.
-     * @param newBiomeId
-     */
-    public GenLayerBiomeReplacer(long worldSeed,
-                                 long seed,
-                                 GenLayer parent,
-                                 double noiseScale,
-                                 double noiseThreshold,
-                                 int newBiomeId) {
+    public GenLayerBiomeReplacer(long worldSeed, long seed, GenLayer parent, double noiseScale, double noiseThreshold,
+        int newBiomeId) {
         super(seed);
         this.parent = parent;
         this.noiseScale = noiseScale;
@@ -59,11 +46,8 @@ public abstract class GenLayerBiomeReplacer extends GenLayer {
             for (int zIter = 0; zIter < length; ++zIter) {
                 initChunkSeed(xIter + x, zIter + z);
                 int currentBiomeId = inputBiomeIDs[xIter + 1 + (zIter + 1) * (width + 2)];
-                if (canReplaceBiome(currentBiomeId) &&
-                        SimplexNoise.noise(
-                                (xIter + x + xOffset) * noiseScale,
-                                (zIter + z + zOffset) * noiseScale
-                        ) > noiseThreshold) {
+                if (canReplaceBiome(currentBiomeId) && SimplexNoise.noise((xIter + x + xOffset) * noiseScale,
+                    (zIter + z + zOffset) * noiseScale) > noiseThreshold) {
                     outputBiomeIDs[xIter + zIter * width] = newBiomeId;
                 } else {
                     outputBiomeIDs[xIter + zIter * width] = currentBiomeId;

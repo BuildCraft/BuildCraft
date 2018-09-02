@@ -18,13 +18,14 @@ public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
     private static final double NOISE_FIELD_SCALE = 0.0005;
     private static final double NOISE_FIELD_THRESHOLD = 0.9;
 
-    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-    private static final List<BiomeDictionary.Type> REQUIRED_TYPES = Arrays.asList(
-        BiomeDictionary.Type.OCEAN
-    );
+    private static final List<BiomeDictionary.Type> REQUIRED_TYPES = Arrays.asList(BiomeDictionary.Type.OCEAN);
 
     public GenLayerAddOilOcean(long worldSeed, long seed, GenLayer parent) {
-        super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, Biome.getIdForBiome(BiomeOilOcean.INSTANCE));
+        super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, getOilBiomeId());
+    }
+
+    public static int getOilBiomeId() {
+        return Biome.getIdForBiome(BiomeOilOcean.INSTANCE);
     }
 
     @Override
