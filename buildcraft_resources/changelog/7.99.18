@@ -25,3 +25,4 @@ Bug fixes:
 * Fixed a few recipes requiring the quarry to be present, rather than itself.
 * Fixed GuiScreenBuildCraft not passing on tick()'s to child listeners. Only affects addon developers, as BC itself doesn't use this class for anything yet.
 * Fixed the quarry not using the config option "quarryFrameMinHeight".
+* Made a lot of tiles mark the containing chunk as dirty every tick. This should fix all of the strange dupe-on-save-load bugs.

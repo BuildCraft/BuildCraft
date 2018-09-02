@@ -39,6 +39,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -61,6 +62,7 @@ import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.ChunkUtil;
 import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
@@ -162,7 +164,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return getOffsetState(offset.getDirectionVec());
     }
 
-    /** @param offset The position of the {@link IBlockState}, <i>relative</i> to this {@link TileEntity#getPos()} . */
+    /** @param offset The position of the {@link IBlockState}, <i>relative</i> to this {@link TileEntity#getPos()}. */
     public final IBlockState getOffsetState(Vec3i offset) {
         return getLocalState(pos.add(offset));
     }
@@ -297,7 +299,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
         @Nonnull ItemStack after) {
         if (world.isBlockLoaded(pos)) {
-            markDirty();
+            if (getCurrentState().hasComparatorInputOverride()) {
+                markDirty();
+            } else {
+                markChunkDirty();
+            }
+        }
+    }
+
+    /** Cheaper version of {@link #markDirty()} that doesn't update nearby comparators, so all it will do is ensure that
+     * the current chunk is saved after the last tick. */
+    public void markChunkDirty() {
+        if (world != null) {
+            Chunk chunk = ChunkUtil.getChunk(getWorld(), getPos(), false);
+            if (chunk != null) {
+                chunk.markDirty();
+            }
         }
     }
 

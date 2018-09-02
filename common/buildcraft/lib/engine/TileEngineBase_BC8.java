@@ -331,6 +331,8 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         if (!overheat) {
             burn();
         }
+
+        markChunkDirty();
     }
 
     private long getPowerToExtract(boolean doExtract) {

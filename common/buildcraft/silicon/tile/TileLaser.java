@@ -212,6 +212,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         if (!Objects.equals(previousTargetPos, targetPos) || true) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
+
+        markChunkDirty();
     }
 
     @Override

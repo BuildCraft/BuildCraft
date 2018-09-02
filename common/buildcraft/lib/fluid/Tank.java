@@ -41,6 +41,7 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper functions. Can
  * optionally specify a filter to only allow a limited types of fluids in the tank. */
@@ -189,6 +190,14 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             return drain(maxDrain, doDrain);
         }
         return null;
+    }
+
+    @Override
+    protected void onContentsChanged() {
+        super.onContentsChanged();
+        if (tile instanceof TileBC_Neptune) {
+            ((TileBC_Neptune) tile).markChunkDirty();
+        }
     }
 
     @Override

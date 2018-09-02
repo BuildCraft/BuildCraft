@@ -303,6 +303,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             }
             oldRedstoneValues = redstoneValues;
         }
+
+        /* It's difficult to check to see if we actually have changed at all. So let's just always mark the chunk as
+         * dirty instead of making every component do it indervidually. */
+        markChunkDirty();
     }
 
     // Network
