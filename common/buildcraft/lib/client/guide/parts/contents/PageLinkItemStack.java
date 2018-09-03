@@ -1,9 +1,11 @@
 package buildcraft.lib.client.guide.parts.contents;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.PageLine;
@@ -22,7 +24,8 @@ public class PageLinkItemStack extends PageLink {
         super(createPageLine(stack), startVisible);
         this.stack = stack;
         tooltip = GuiUtil.getFormattedTooltip(stack);
-        searchText = tooltip.stream().collect(Collectors.joining(" ", "", ""));
+        String joinedTooltip = tooltip.stream().collect(Collectors.joining(" ", "", ""));
+        searchText = TextFormatting.getTextWithoutFormattingCodes(joinedTooltip).toLowerCase(Locale.ROOT);
     }
 
     private static PageLine createPageLine(ItemStack stack) {

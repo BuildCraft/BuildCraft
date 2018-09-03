@@ -93,13 +93,14 @@ public class GuidePageContents extends GuidePageBase {
                 searchText.setFocused(false);
             }
         } else {
-            lastSearchText = searchText.getText().toLowerCase(Locale.ROOT);
+            lastSearchText = searchText.getText();
             numPages = -1;
             if (lastSearchText.isEmpty()) {
                 contents.node.resetVisibility();
                 contents.invalidate();
             } else {
-                Set<PageLink> matches = new HashSet<>(GuideManager.INSTANCE.quickSearcher.search(lastSearchText));
+                String text = lastSearchText.toLowerCase(Locale.ROOT);
+                Set<PageLink> matches = new HashSet<>(GuideManager.INSTANCE.quickSearcher.search(text));
 
                 contents.node.setVisible(matches);
                 contents.invalidate();

@@ -305,7 +305,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
                 }
             }
             node.addChild(page);
-            quickSearcher.add(page, node.getSearchName());
+            quickSearcher.add(page, page.getSearchName());
         }
     }
 
@@ -346,6 +346,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         if (node == null) {
             throw new IllegalStateException("Unknown sorting order " + sortingOrder);
         }
+        node.resetVisibility();
 
         return new ContentsNodeGui(gui, guidePageContents, node);
     }

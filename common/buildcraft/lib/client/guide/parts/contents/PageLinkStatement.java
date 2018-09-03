@@ -1,9 +1,12 @@
 package buildcraft.lib.client.guide.parts.contents;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
+
+import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.api.statements.IStatement;
 
@@ -26,10 +29,11 @@ public class PageLinkStatement extends PageLink {
         if (tip.isEmpty()) {
             String uniqueTag = statement.getUniqueTag();
             this.tooltip = ImmutableList.of(uniqueTag);
-            this.searchText = uniqueTag;
+            this.searchText = uniqueTag.toLowerCase(Locale.ROOT);
         } else {
             this.tooltip = tip;
-            this.searchText = tip.stream().collect(Collectors.joining(" ", "", ""));
+            String joinedTooltip = tip.stream().collect(Collectors.joining(" ", "", ""));
+            this.searchText = TextFormatting.getTextWithoutFormattingCodes(joinedTooltip).toLowerCase(Locale.ROOT);
         }
     }
 
