@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -43,6 +44,7 @@ import buildcraft.api.recipes.IRefineryRecipeManager.IHeatableRecipe;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.cap.CapabilityHelper;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.Tank;
@@ -50,13 +52,16 @@ import buildcraft.lib.fluid.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.block.BlockHeatExchange;
 
 public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchanger");
@@ -65,8 +70,8 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
     public static final int NET_ID_TANK_OUT = IDS.allocId("TANK_OUT");
     public static final int NET_ID_STATE = IDS.allocId("STATE");
 
-    /** the maximum amount of fluid that can be transferred per tick for each number of middle sections.
-     * numbers need to be divisors of 1000 */
+    /** the maximum amount of fluid that can be transferred per tick for each number of middle sections. numbers need to
+     * be divisors of 1000 */
     private static final int[] FLUID_MULT = { 5, 10, 20 };
 
     @Override
@@ -124,7 +129,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                     // (as normally this deque will contain this)
                     checkNeighbours = true;
                 } else if (exchangers.size() < 3) {
-                    // TODO: Remove all exchangers sections
+                    for (TileHeatExchange tile : exchangers) {
+                        tile.removeSection();
+                    }
                 } else if (exchangers.size() > 5) {
                     // TODO: Remove all exchangers sections
                 } else {
@@ -167,6 +174,18 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         if (section != null) {
             section.tick();
         }
+    }
+
+    private void removeSection() {
+        if (section == null) {
+            return;
+        }
+        BCLog.logger.info("[] removing section...");
+        NonNullList<ItemStack> list = NonNullList.create();
+        section.tankManager.addDrops(list);
+        InventoryUtil.dropAll(getWorld(), getPos(), list);
+        section = null;
+        sendNetworkUpdate(NET_ID_CHANGE_SECTION);
     }
 
     private Deque<TileHeatExchange> findAdjacentExchangers() {
@@ -313,6 +332,57 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         if (section != null) {
             section.tankManager.addDrops(toDrop);
         }
+    }
+
+    /** Called by {@link Block#rotateBlock(World, BlockPos, EnumFacing)} and
+     * {@link ICustomRotationHandler#attemptRotation(World, BlockPos, IBlockState, EnumFacing)} when the
+     * {@link EnumFacing} is {@link EnumFacing#UP} or {@link EnumFacing#DOWN}.
+     * <p>
+     * If this exchanger is not part of a larger structure then this will rotate this block 90 degrees. If this is part
+     * of a larger structure then all adjacent heat exchangers will be rotated 180 degrees to swap the start and end
+     * blocks. */
+    public boolean rotate() {
+        EnumFacing thisFacing = getFacing();
+        if (thisFacing == null) {
+            return false;
+        }
+        Deque<TileHeatExchange> exchangers = findAdjacentExchangers();
+        if (exchangers.size() == 1) {
+            // Just this one tile, so rotate this by 90 degrees
+            world.setBlockState(getPos(), getCurrentState().withProperty(BlockHeatExchange.PROP_FACING,
+                VanillaRotationHandlers.ROTATE_HORIZONTAL.next(thisFacing)));
+        } else {
+            // Rotate every heat exchanger 180 degrees
+            ExchangeSectionStart start = null;
+            ExchangeSectionEnd end = null;
+            for (TileHeatExchange exchange : exchangers) {
+                if (exchange.section instanceof ExchangeSectionStart) {
+                    start = (ExchangeSectionStart) exchange.section;
+                } else if (exchange.section instanceof ExchangeSectionEnd) {
+                    end = (ExchangeSectionEnd) exchange.section;
+                }
+                exchange.section = null;
+                world.setBlockState(exchange.getPos(),
+                    exchange.getCurrentState().withProperty(BlockHeatExchange.PROP_FACING, thisFacing.getOpposite()));
+                exchange.checkNeighbours = true;
+            }
+            if (start != null) {
+                TileHeatExchange tile = exchangers.getLast();
+                tile.section = start;
+                start.tile = tile;
+                tile.sendNetworkUpdate(NET_ID_CHANGE_SECTION);
+            }
+
+            if (end != null) {
+                TileHeatExchange tile = exchangers.getFirst();
+                tile.section = end;
+                end.tile = tile;
+                tile.sendNetworkUpdate(NET_ID_CHANGE_SECTION);
+            }
+        }
+
+        SoundUtil.playSlideSound(getWorld(), getPos());
+        return true;
     }
 
     public boolean isStart() {
@@ -599,8 +669,8 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             int c_in_amount = drainableAmount(c_in, c_in_f);
             int h_in_amount = drainableAmount(h_in, h_in_f);
 
-            final int min_common_multiplier = Math.min(Math.min(Math.min(c_out_amount, h_out_amount),
-                    c_in_amount), h_in_amount);
+            final int min_common_multiplier =
+                Math.min(Math.min(Math.min(c_out_amount, h_out_amount), c_in_amount), h_in_amount);
 
             if (min_common_multiplier > 0) {
                 c_in_f = setAmount(c_recipe.in(), min_common_multiplier);

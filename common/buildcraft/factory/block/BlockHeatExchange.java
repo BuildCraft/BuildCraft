@@ -16,6 +16,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
@@ -101,6 +102,26 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
             return neighbour.getValue(PROP_FACING) == thisFacing;
         }
         return false;
+    }
+
+    @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileHeatExchange) {
+            TileHeatExchange exchange = (TileHeatExchange) tile;
+            return exchange.rotate();
+        }
+        return false;
+    }
+
+    @Override
+    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileHeatExchange) {
+            TileHeatExchange exchange = (TileHeatExchange) tile;
+            return exchange.rotate() ? EnumActionResult.PASS : EnumActionResult.FAIL;
+        }
+        return EnumActionResult.FAIL;
     }
 
     @Override

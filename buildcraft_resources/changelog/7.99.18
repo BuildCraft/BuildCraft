@@ -13,6 +13,7 @@ Improvements:
 * Pressing F3+T while in the guide book will reload it in-place.
 * The config files are saved more often during init, which should help when you need to change a config option just to boot the game but can't because the config file is empty. 
 * The github issue link shown in the open-world warning message now prefills some useful information.
+* Rotating the heat exchanger now also rotates the adjacent heat exchangers.
 
 Bug fixes:
 
