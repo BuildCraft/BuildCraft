@@ -70,6 +70,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     public static final List<String> loadedDomains = new ArrayList<>();
     public static final List<String> loadedMods = new ArrayList<>();
     public static final List<String> loadedOther = new ArrayList<>();
+    public static final Set<BCModules> buildCraftModules = EnumSet.noneOf(BCModules.class);
 
     public static final String DEFAULT_LANG = "en_us";
     public static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
@@ -116,19 +117,18 @@ public enum GuideManager implements IResourceManagerReloadListener {
         Collections.sort(loadedDomains);
         // Special sort -- replace mod domains with mod names
 
-        // Treat BC modules specially
-        Set<BCModules> modules = EnumSet.noneOf(BCModules.class);
+        buildCraftModules.clear();
         for (BCModules module : BCModules.VALUES) {
             if (loadedDomains.remove(module.getModId())) {
-                modules.add(module);
+                buildCraftModules.add(module);
             }
         }
 
-        int moduleCount = modules.size();
+        int moduleCount = buildCraftModules.size();
         int maxModuleCount = BCModules.VALUES.length;
         if (moduleCount == maxModuleCount) {
             loadedMods.add("BuildCraft (+Compat)");
-        } else if (moduleCount == maxModuleCount - 1 && !modules.contains(BCModules.COMPAT)) {
+        } else if (moduleCount == maxModuleCount - 1 && !buildCraftModules.contains(BCModules.COMPAT)) {
             loadedMods.add("BuildCraft");
         } else if (moduleCount > 2) {
             loadedMods.add("BuildCraft (§o" + (moduleCount - 2) + " modules§r)");

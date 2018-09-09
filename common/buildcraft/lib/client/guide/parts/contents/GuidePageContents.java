@@ -12,10 +12,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
+
+import buildcraft.api.BCModules;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.client.guide.GuiGuide;
@@ -158,9 +162,32 @@ public class GuidePageContents extends GuidePageBase {
 
             drawCenteredText(TextFormatting.BOLD + "Loaded Mods:", x, _y, width);
             _y += perLineHeight;
+            boolean first = true;
             for (String text : GuideManager.loadedMods) {
+
+                if (first && text.contains("modules")) {
+                    // BuildCraft
+                    double mouseX = gui.mouse.getX();
+                    double mouseY = gui.mouse.getY();
+                    if (mouseX >= x + width / 2 && mouseX <= x + width * 7 / 8//
+                        && mouseY >= _y && mouseY <= _y + perLineHeight) {
+                        gui.tooltip.add(LocaleUtil.localize("buildcraft.guide.contents.loaded_modules"));
+                        for (BCModules module : BCModules.getLoadedModules()) {
+                            gui.tooltip.add((GuideManager.buildCraftModules.contains(module) ? " + " : " - ")
+                                + StringUtils.capitalize(module.lowerCaseName));
+                        }
+                        if (BCModules.getMissingModules().length > 0) {
+                            gui.tooltip.add(LocaleUtil.localize("buildcraft.guide.contents.missing_modules"));
+                            for (BCModules module : BCModules.getMissingModules()) {
+                                gui.tooltip.add(" - " + StringUtils.capitalize(module.lowerCaseName));
+                            }
+                        }
+                    }
+                }
+
                 drawCenteredText(text, x, _y, width);
                 _y += perLineHeight;
+                first = false;
             }
             if (GuideManager.loadedOther.size() > 0) {
                 drawCenteredText(TextFormatting.BOLD + "Loaded Resource Packs:", x, _y, width);
