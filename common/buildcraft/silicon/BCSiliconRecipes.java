@@ -6,10 +6,6 @@
 
 package buildcraft.silicon;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,11 +13,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -29,21 +20,15 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.BCItems;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
@@ -54,8 +39,6 @@ import buildcraft.api.recipes.IngredientStack;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IngredientNBTBC;
-import buildcraft.lib.recipe.IntegrationRecipeBasic;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 import buildcraft.core.BCCoreBlocks;
@@ -72,7 +55,6 @@ public class BCSiliconRecipes {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        scanForJsonRecipes();
         if (BCSiliconItems.plugGate != null) {
             // You can craft some of the basic gate types in a normal crafting table
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
@@ -207,6 +189,28 @@ public class BCSiliconRecipes {
             input = ImmutableSet.of(glass, IngredientStack.of(new ItemStack(Blocks.IRON_BARS)));
             AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("lens-filter", 500 * MjAPI.MJ, input, output));
         }
+
+        if (BCSiliconItems.redstoneChipset != null) {
+            ImmutableSet<IngredientStack> input = ImmutableSet.of(IngredientStack.of("dustRedstone"));
+            ItemStack output = EnumRedstoneChipset.RED.getStack(1);
+            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("redstone_chipset", 10000 * MjAPI.MJ, input, output));
+
+            input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("ingotIron"));
+            output = EnumRedstoneChipset.IRON.getStack(1);
+            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("iron_chipset", 20000 * MjAPI.MJ, input, output));
+
+            input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("ingotGold"));
+            output = EnumRedstoneChipset.GOLD.getStack(1);
+            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("gold_chipset", 40000 * MjAPI.MJ, input, output));
+
+            input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("gemQuartz"));
+            output = EnumRedstoneChipset.QUARTZ.getStack(1);
+            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("quartz_chipset", 60000 * MjAPI.MJ, input, output));
+
+            input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("gemDiamond"));
+            output = EnumRedstoneChipset.DIAMOND.getStack(1);
+            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("diamond_chipset", 80000 * MjAPI.MJ, input, output));
+        }
     }
 
     private static void makeGateModifierAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
@@ -245,80 +249,5 @@ public class BCSiliconRecipes {
         GateVariant variant = new GateVariant(EnumGateLogic.AND, material, modifier);
         builder.setResult(BCSiliconItems.plugGate.getStack(variant));
         builder.registerNbtAware("buildcraftsilicon:plug_gate_create_" + material + "_" + modifier);
-    }
-
-    private static void scanForJsonRecipes() {
-        for (ModContainer mod : Loader.instance().getActiveModList()) {
-            JsonContext ctx = new JsonContext(mod.getModId());
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/assembly_recipes", null, (root, file) -> {
-                String path = root.relativize(file).toString();
-                if (!FilenameUtils.getExtension(file.toString()).equals("json")) return true;
-                String name = FilenameUtils.removeExtension(path).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(mod.getModId(), name);
-                BufferedReader reader = null;
-                try {
-                    reader = Files.newBufferedReader(file);
-                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (json == null || json.isJsonNull()) throw new JsonSyntaxException("Json is null (empty file?)");
-
-                    ItemStack output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), ctx);
-                    long powercost = json.get("MJ").getAsLong() * MjAPI.MJ;
-
-                    ArrayList<IngredientStack> ingredients = new ArrayList<>();
-
-                    json.getAsJsonArray("components").forEach(element -> {
-                        JsonObject object = element.getAsJsonObject();
-                        ingredients.add(new IngredientStack(CraftingHelper.getIngredient(object.get("ingredient"), ctx),
-                            JsonUtils.getInt(object, "amount", 1)));
-                    });
-
-                    AssemblyRecipeRegistry.REGISTRY.put(key,
-                        new AssemblyRecipeBasic(key, powercost, ImmutableSet.copyOf(ingredients), output));
-
-                } catch (IOException e) {
-                    BCLog.logger.error("Couldn't read recipe {} from {}", key, file, e);
-                    return false;
-                } finally {
-                    IOUtils.closeQuietly(reader);
-                }
-                return true;
-            }, false, false);
-
-            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/integration_recipes", null, (root, file) -> {
-                String path = root.relativize(file).toString();
-                if (!FilenameUtils.getExtension(file.toString()).equals("json")) return true;
-                String name = FilenameUtils.removeExtension(path).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(mod.getModId(), name);
-                BufferedReader reader = null;
-                try {
-                    reader = Files.newBufferedReader(file);
-                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (json == null || json.isJsonNull()) throw new JsonSyntaxException("Json is null (empty file?)");
-
-                    ItemStack output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), ctx);
-                    IngredientStack centerStack =
-                        IngredientStack.of(CraftingHelper.getIngredient(json.getAsJsonObject("centerStack"), ctx));
-                    long powercost = json.get("MJ").getAsLong() * MjAPI.MJ;
-
-                    ArrayList<IngredientStack> ingredients = new ArrayList<>();
-
-                    json.getAsJsonArray("components").forEach(element -> {
-                        JsonObject object = element.getAsJsonObject();
-                        ingredients.add(new IngredientStack(CraftingHelper.getIngredient(object.get("ingredient"), ctx),
-                            JsonUtils.getInt(object, "amount", 1)));
-                    });
-
-                    IntegrationRecipeRegistry.INSTANCE
-                        .addRecipe(new IntegrationRecipeBasic(key, powercost, centerStack, ingredients, output));
-
-                } catch (IOException e) {
-                    BCLog.logger.error("Couldn't read recipe {} from {}", key, file, e);
-                    return false;
-                } finally {
-                    IOUtils.closeQuietly(reader);
-                }
-                return true;
-            }, false, false);
-        }
     }
 }

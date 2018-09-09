@@ -113,7 +113,7 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
             for (int i = 0; i < stacks.size(); i++) {
                 ItemStack stack = stacks.get(i);
 
-                consumer.addChild(TAGS, new PageLinkItemStack(true, stack));
+                consumer.addChild(TAGS, new PageLinkItemStack(false, stack));
                 if (i > 50) {
                     // Woah there, lets not fill up entire pages with what is
                     // most likely the same item

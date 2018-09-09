@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "buildcraftcore:goggles"
+      "item": "minecraft:iron_helmet"
     },
     "title": {
       "translate": "advancements.buildcraftcore.goggles.title"

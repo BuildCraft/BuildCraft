@@ -4,6 +4,10 @@ Ported content:
 * [#4162] Re-added the quarry mining multiplier. Now this applies to everything in buildcraft that breaks a block.
   * This doesn't allow configuring for each machine individually at the moment, but it seems reasonable to add something like that if someone asks.
 
+Breaking changes:
+
+* Removed JSON-based assembly and integration recipes. These were never hooked up to the config folder and they will be done properly later with the MJ changes.
+
 Additions:
 
 * Re-added the list recipe as a crafting recipe, at least until the new assembly table API is finished.
