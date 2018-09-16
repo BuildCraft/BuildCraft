@@ -33,7 +33,16 @@ public abstract class PageLink implements IContentsLeaf {
 
     /** @return The tooltip to be shown if it is different to the search name and displayed text. */
     @Nullable
-    public abstract List<String> getTooltip();
+    protected List<String> getTooltip() {
+        return null;
+    }
+
+    public void appendTooltip(GuiGuide gui) {
+        List<String> tooltip = getTooltip();
+        if (tooltip != null) {
+            gui.tooltip.addAll(tooltip);
+        }
+    }
 
     @Override
     public boolean isVisible() {
@@ -52,7 +61,12 @@ public abstract class PageLink implements IContentsLeaf {
 
     @Override
     public GuidePart createGuidePart(GuiGuide gui) {
-        return new GuideText(gui, text);
+        return new GuideText(gui, text) {
+            @Override
+            protected void renderTooltip() {
+                appendTooltip(gui);
+            }
+        };
     }
 
     public abstract GuidePageFactory getFactoryLink();

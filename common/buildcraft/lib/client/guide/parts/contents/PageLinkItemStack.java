@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
+import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
@@ -41,6 +42,13 @@ public class PageLinkItemStack extends PageLink {
     @Override
     public List<String> getTooltip() {
         return tooltip.size() == 1 ? null : tooltip;
+    }
+
+    @Override
+    public void appendTooltip(GuiGuide gui) {
+        if (tooltip.size() > 1) {
+            gui.tooltipStack = stack;
+        }
     }
 
     @Override

@@ -155,8 +155,11 @@ public abstract class GuidePart {
             GuiRectangle rect = new GuiRectangle(_x, _y, _w, neededSpace);
             wasHovered |= rect.contains(gui.mouse);
             if (render) {
-                if (wasHovered && line.link) {
-                    Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y - 2 + neededSpace, 0xFFD3AD6C);
+                if (wasHovered) {
+                    if (line.link) {
+                        Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y - 2 + neededSpace, 0xFFD3AD6C);
+                    }
+                    renderTooltip();
                 }
                 fontRenderer.drawString(text, _x, _y, 0);
             }
@@ -180,5 +183,9 @@ public abstract class GuidePart {
 
     protected PagePosition renderLines(Iterable<PageLine> lines, int x, int y, int width, int height, int index) {
         return renderLines(lines, new PagePosition(0, 0), x, y, width, height, index);
+    }
+
+    protected void renderTooltip() {
+
     }
 }
