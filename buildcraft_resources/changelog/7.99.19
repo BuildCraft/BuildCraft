@@ -1,4 +1,8 @@
 
+Minor improvements:
+
+* Added more detail to certain crashes when loading guide book entries.
+
 Bug fixes:
 
 * [#4263] The guide book contents page doesn't display the full item tooltips. 
