@@ -116,8 +116,8 @@ public class EntryTypeItem extends PageEntryType<ItemStackValueFilter> {
                 try {
                     consumer.addChild(TAGS, new PageLinkItemStack(false, stack));
                 } catch (RuntimeException e) {
-                    throw new Error("Failed to create a page link for " + item.getRegistryName() + " ("
-                        + stack.serializeNBT() + ")", e);
+                    throw new Error("Failed to create a page link for " + item.getRegistryName() + " " + item.getClass()
+                        + " (" + stack.serializeNBT() + ")", e);
                 }
                 if (i > 50) {
                     // Woah there, lets not fill up entire pages with what is

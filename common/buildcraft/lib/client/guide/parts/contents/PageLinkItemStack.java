@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+
+import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
@@ -31,7 +34,16 @@ public class PageLinkItemStack extends PageLink {
 
     private static PageLine createPageLine(ItemStack stack) {
         ISimpleDrawable icon = new GuiStack(stack);
-        return new PageLine(icon, icon, 2, stack.getDisplayName(), true);
+        String title = stack.getDisplayName();
+        if (title == null) {
+            // Temp workaround for headcrumbs
+            // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
+            Item item = stack.getItem();
+            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
+            BCLog.logger.warn("[lib.guide] Found null display name! " + info);
+            title = "!!NULL stack.getDisplayName(): " + info;
+        }
+        return new PageLine(icon, icon, 2, title, true);
     }
 
     @Override
