@@ -241,13 +241,13 @@ public abstract class OilGenStructure {
                     break;
                 }
             }
-            OilGenStructure tubeY = OilGenerator.createTubeY(start, worldTop.getY() - start.getY(), radius);
+            OilGenStructure tubeY = OilGenerator.createTube(start, worldTop.getY() - start.getY(), radius, Axis.Y);
             tubeY.generate(world, tubeY.box);
             count += tubeY.countOilBlocks();
             BlockPos base = worldTop;
             for (int r = radius; r >= 0; r--) {
                 // BCLog.logger.info(" - " + base + " = " + r);
-                OilGenStructure struct = OilGenerator.createTubeY(base, height, r);
+                OilGenStructure struct = OilGenerator.createTube(base, height, r, Axis.Y);
                 struct.generate(world, struct.box);
                 base = base.add(0, height, 0);
                 count += struct.countOilBlocks();
