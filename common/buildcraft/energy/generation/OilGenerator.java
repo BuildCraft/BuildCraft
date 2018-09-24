@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -50,7 +51,10 @@ public enum OilGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
         IChunkProvider provider) {
 
-        if (BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension())) {
+        if (
+                world.getWorldType() == WorldType.FLAT ||
+                BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension())
+        ) {
             return;
         }
 
