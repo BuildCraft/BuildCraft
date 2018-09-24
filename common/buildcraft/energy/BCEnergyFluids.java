@@ -44,17 +44,17 @@ public class BCEnergyFluids {
     public static void preInit() {
         int[][] data = { //@formatter:off
             // Tabular form of all the fluid values
-            // density, viscosity, boil, spread,  tex_light, tex_dark, sticky
-            {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05, 1 },// Crude Oil
-            {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42, 1 },// Residue
-            {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20, 1 },// Heavy Oil
-            {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24, 1 },// Dense Oil
-            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00, 0 },// Distilled Oil
-            {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00, 0 },// Dense Fuel
-            {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00, 0 },// Mixed Heavy Fuels
-            {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00, 0 },// Light Fuel
-            {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00, 0 },// Mixed Light Fuels
-            {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00, 0 },// Gas Fuel
+            // density, viscosity, boil, spread,  tex_light,   tex_dark, sticky, flammable
+            {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05,      1,         1 },// Crude Oil
+            {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42,      1,         0 },// Residue
+            {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20,      1,         1 },// Heavy Oil
+            {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24,      1,         1 },// Dense Oil
+            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00,      0,         1 },// Distilled Oil
+            {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00,      0,         1 },// Dense Fuel
+            {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00,      0,         1 },// Mixed Heavy Fuels
+            {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00,      0,         1 },// Light Fuel
+            {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00,      0,         1 },// Mixed Light Fuels
+            {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00,      0,         1 },// Gas Fuel
         };//@formatter:on
         if (BCModules.FACTORY.isLoaded()) {
             int index = 0;
@@ -100,6 +100,7 @@ public class BCEnergyFluids {
         final int texLight = data[4];
         final int texDark = data[5];
         final boolean sticky = data[6] == 1;
+        final boolean flammable = BCEnergyConfig.enableOilBurn ? data[7] == 1 : false;
 
         String fullName = name + (heat == 0 ? "" : "_heat_" + heat);
         int tempAdjustedViscosity = baseViscosity * (4 - heat) / 4;
@@ -110,7 +111,7 @@ public class BCEnergyFluids {
             new ResourceLocation(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
         def.setMapColour(getMapColor(texDark));
-        def.setFlammable(BCEnergyConfig.enableOilBurn);
+        def.setFlammable(flammable);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
         def.setTemperature(300 + 20 * heat);
