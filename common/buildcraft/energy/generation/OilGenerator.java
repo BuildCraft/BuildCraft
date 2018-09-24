@@ -36,10 +36,6 @@ public enum OilGenerator implements IWorldGenerator {
      * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
 
-    private static final double CHANCE_LARGE = 0.0004;
-    private static final double CHANCE_MEDIUM = 0.001;
-    private static final double CHANCE_LAKE = 0.02;
-
     private enum GenType {
         LARGE,
         MEDIUM,
