@@ -32,6 +32,7 @@ public class BCEnergyConfig {
     public static boolean enableOilGeneration;
     public static double oilWellGenerationRate;
     public static boolean enableOilSpouts;
+    public static boolean enableOilBurn;
 
     public static int smallSpoutMinHeight;
     public static int smallSpoutMaxHeight;
@@ -51,6 +52,7 @@ public class BCEnergyConfig {
     private static Property propEnableOilGeneration;
     private static Property propOilWellGenerationRate;
     private static Property propEnableOilSpouts;
+    private static Property propEnableOilBurn;
 
     private static Property propSmallSpoutMinHeight;
     private static Property propSmallSpoutMaxHeight;
@@ -72,8 +74,12 @@ public class BCEnergyConfig {
         EnumRestartRequirement game = EnumRestartRequirement.GAME;
 
         propEnableOilGeneration = BCCoreConfig.config.get(
-            "worldgen.oil", "enable", true,
-            "Should any oil sprouts or lakes be generated at all?"
+                "worldgen.oil", "enable", true,
+                "Should any oil sprouts or lakes be generated at all?"
+        );
+        propEnableOilBurn = BCCoreConfig.config.get(
+                "worldgen.oil", "can_burn", true,
+                "Can oil blocks burn?"
         );
 
         propOilWellGenerationRate = BCCoreConfig.config.get(
@@ -82,16 +88,21 @@ public class BCEnergyConfig {
         );
 
         propSmallOilGenProb = BCCoreConfig.config.get(
-            "worldgen.oil.spawn_probability", "small", 0.02,
-            "The probability of a small oil spawn"
+            "worldgen.oil.spawn_probability", "small", 2.0,
+            "The percentage probability of a small oil spawn"
         );
         propMediumOilGenProb = BCCoreConfig.config.get(
-            "worldgen.oil.spawn_probability", "medium", 0.001,
-            "The probability of a medium oil spawn"
+            "worldgen.oil.spawn_probability", "medium", 0.1,
+            "The percentage probability of a medium oil spawn"
         );
         propLargeOilGenProb = BCCoreConfig.config.get(
-            "worldgen.oil.spawn_probability", "large", 0.0004,
-            "The probability of a large oil spawn"
+            "worldgen.oil.spawn_probability", "large", 0.04,
+            "The percentage probability of a large oil spawn"
+        );
+
+        propEnableOilSpouts = BCCoreConfig.config.get(
+                "worldgen.oil.spouts", "enable", true,
+                "Whether oil spouts are generated or not. The oil spring at the bottom of large lakes will still exist."
         );
 
         propSmallSpoutMinHeight = BCCoreConfig.config.get(
@@ -112,21 +123,17 @@ public class BCEnergyConfig {
             "The maximum height for large oil spouts"
         );
 
-        propEnableOilSpouts = BCCoreConfig.config.get(
-            "worldgen.oil.spouts", "enable", true,
-            "Whether oil spouts are generated or not. The oil spring at the bottom of large lakes will still exist."
-        );
-
         game.setTo(propEnableOilGeneration);
         game.setTo(propOilWellGenerationRate);
+        game.setTo(propEnableOilBurn);
         game.setTo(propSmallOilGenProb);
         game.setTo(propMediumOilGenProb);
         game.setTo(propLargeOilGenProb);
+        game.setTo(propEnableOilSpouts);
         game.setTo(propSmallSpoutMinHeight);
         game.setTo(propSmallSpoutMaxHeight);
         game.setTo(propLargeSpoutMinHeight);
         game.setTo(propLargeSpoutMaxHeight);
-        game.setTo(propEnableOilSpouts);
 
         String[] _excessive = { //
             BCEnergy.MODID + ":oil_desert", //
@@ -180,15 +187,16 @@ public class BCEnergyConfig {
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
                 oilWellGenerationRate = propOilWellGenerationRate.getDouble();
                 enableOilSpouts = propEnableOilSpouts.getBoolean();
+                enableOilBurn = propEnableOilBurn.getBoolean();
 
                 smallSpoutMinHeight = propSmallSpoutMinHeight.getInt();
                 smallSpoutMaxHeight = propSmallSpoutMaxHeight.getInt();
                 largeSpoutMinHeight = propLargeSpoutMinHeight.getInt();
                 largeSpoutMaxHeight = propLargeSpoutMaxHeight.getInt();
 
-                smallOilGenProb = propSmallOilGenProb.getDouble();
-                mediumOilGenProb = propMediumOilGenProb.getDouble();
-                largeOilGenProb = propLargeOilGenProb.getDouble();
+                smallOilGenProb = propSmallOilGenProb.getDouble() / 100;
+                mediumOilGenProb = propMediumOilGenProb.getDouble() / 100;
+                largeOilGenProb = propLargeOilGenProb.getDouble() / 100;
 
                 christmasEventStatus = ConfigUtil.parseEnumForConfig(propChristmasEventType, SpecialEventType.DAY_ONLY);
             } else {

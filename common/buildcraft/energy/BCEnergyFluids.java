@@ -110,7 +110,7 @@ public class BCEnergyFluids {
             new ResourceLocation(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
         def.setMapColour(getMapColor(texDark));
-        def.setFlammable(true);
+        def.setFlammable(BCEnergyConfig.enableOilBurn);
         def.setHeat(heat);
         def.setUnlocalizedName(name);
         def.setTemperature(300 + 20 * heat);
