@@ -309,6 +309,9 @@ public final class Pipe implements IPipe, IDebuggable {
                 boolean o = old.containsKey(face);
                 boolean n = connected.containsKey(face);
                 if (o != n) {
+                    // behaviour.connectionUpdated(face);
+                    try {behaviour.connectionUpdated(face);} catch (NoSuchMethodException e){}
+
                     IPipe oPipe = getHolder().getNeighbourPipe(face);
                     if (oPipe != null) {
                         oPipe.markForUpdate();
