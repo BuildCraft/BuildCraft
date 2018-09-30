@@ -1,5 +1,11 @@
 
+Improvements:
+
+* [#3966] Added config options to tweak the hight of oil spouts (sca)
+* [#4256] Added a config option to change oil's flamibility (sca)
+
 Bug fixes:
 
+* [#3837] Oil spouts spawn in superflat (sca)
 * [#4263] The guide book contents page doesn't display the full item tooltips.
 * [#4268] Partial fix for crash when loading with headcrumbs
