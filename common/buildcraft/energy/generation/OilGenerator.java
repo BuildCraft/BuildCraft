@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -35,10 +36,6 @@ public enum OilGenerator implements IWorldGenerator {
      * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
 
-    private static final double CHANCE_LARGE = 0.0004;
-    private static final double CHANCE_MEDIUM = 0.001;
-    private static final double CHANCE_LAKE = 0.02;
-
     private enum GenType {
         LARGE,
         MEDIUM,
@@ -50,7 +47,10 @@ public enum OilGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
         IChunkProvider provider) {
 
-        if (BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension())) {
+        if (
+                world.getWorldType() == WorldType.FLAT ||
+                BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension())
+        ) {
             return;
         }
 
@@ -110,13 +110,13 @@ public enum OilGenerator implements IWorldGenerator {
         }
         final GenType type;
 
-        if (rand.nextDouble() <= CHANCE_LARGE * bonus) {
+        if (rand.nextDouble() <= BCEnergyConfig.largeOilGenProb * bonus) {
             // 0.04%
             type = GenType.LARGE;
-        } else if (rand.nextDouble() <= CHANCE_MEDIUM * bonus) {
+        } else if (rand.nextDouble() <= BCEnergyConfig.mediumOilGenProb * bonus) {
             // 0.1%
             type = GenType.MEDIUM;
-        } else if (oilBiome && rand.nextDouble() <= CHANCE_LAKE * bonus) {
+        } else if (oilBiome && rand.nextDouble() <= BCEnergyConfig.smallOilGenProb * bonus) {
             // 2%
             type = GenType.LAKE;
         } else {
@@ -153,20 +153,25 @@ public enum OilGenerator implements IWorldGenerator {
 
             // Generate a spout
             if (BCEnergyConfig.enableOilSpouts) {
-                int height;
+                int maxHeight, minHeight;
+
                 if (type == GenType.LARGE) {
-                    height = 9 + rand.nextInt(10);
+                    minHeight = BCEnergyConfig.largeSpoutMinHeight;
+                    maxHeight = BCEnergyConfig.largeSpoutMaxHeight;
                     radius = 1;
                 } else {
-                    height = 6 + rand.nextInt(7);
+                    minHeight = BCEnergyConfig.smallSpoutMinHeight;
+                    maxHeight = BCEnergyConfig.smallSpoutMaxHeight;
                     radius = 0;
                 }
+
+                int height = minHeight + rand.nextInt(maxHeight - minHeight);
                 structures.add(createSpout(new BlockPos(x, wellY, z), height, radius));
             }
 
             // Generate a spring at the very bottom
             if (type == GenType.LARGE) {
-                structures.add(createTubeY(new BlockPos(x, 1, z), wellY, radius));
+                structures.add(createTube(new BlockPos(x, 1, z), wellY, radius, Axis.Y));
                 structures.add(createSpring(new BlockPos(x, 0, z)));
             }
         }
@@ -181,27 +186,19 @@ public enum OilGenerator implements IWorldGenerator {
         return createTube(base, height, radius, Axis.Y);
     }
 
-    public static OilGenStructure createTubeX(BlockPos start, int length, int radius) {
-        return createTube(start, length, radius, Axis.X);
-    }
-
-    public static OilGenStructure createTubeZ(BlockPos start, int length, int radius) {
-        return createTube(start, length, radius, Axis.Z);
-    }
-
     public static OilGenStructure createSpring(BlockPos at) {
         return new OilGenStructure.Spring(at);
     }
 
-    private static OilGenStructure createTube(BlockPos center, int length, int radius, Axis axis) {
+    public static OilGenStructure createTube(BlockPos center, int length, int radius, Axis axis) {
         int valForAxis = VecUtil.getValue(center, axis);
         BlockPos min = VecUtil.replaceValue(center.add(-radius, -radius, -radius), axis, valForAxis);
         BlockPos max = VecUtil.replaceValue(center.add(radius, radius, radius), axis, valForAxis + length);
         double radiusSq = radius * radius;
         int toReplace = valForAxis;
-        Predicate<BlockPos> tester = p -> {
-            return VecUtil.replaceValue(p, axis, toReplace).distanceSq(center) <= radiusSq;
-        };
+        Predicate<BlockPos> tester = p -> VecUtil
+                .replaceValue(p, axis, toReplace)
+                .distanceSq(center) <= radiusSq;
         return new GenByPredicate(new Box(min, max), ReplaceType.ALWAYS, tester);
     }
 
