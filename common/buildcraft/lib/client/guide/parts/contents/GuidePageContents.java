@@ -6,12 +6,7 @@
 
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -22,15 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.util.text.TextFormatting;
 
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
 import buildcraft.api.BCModules;
-import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLib;
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.TypeOrder;
@@ -42,8 +34,6 @@ import buildcraft.lib.client.render.font.ConfigurableFontRenderer;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.ProfilerUtil;
-import buildcraft.lib.misc.ProfilerUtil.ILogAcceptor;
 import buildcraft.lib.misc.RenderUtil;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
@@ -55,6 +45,7 @@ public class GuidePageContents extends GuidePageBase {
     private ContentsNodeGui contents;
     private final GuiTextField searchText;
     private String lastSearchText = "";
+    private int realResultCount = -1;
 
     public GuidePageContents(GuiGuide gui) {
         super(gui);
@@ -108,66 +99,31 @@ public class GuidePageContents extends GuidePageBase {
                 searchText.setFocused(false);
             }
         } else {
-            int __setSize = 0;
-            int __listSize = 0;
-            Profiler p = new Profiler();
-            long start = System.nanoTime();
-            p.profilingEnabled = true;
-            p.startSection("root");
             lastSearchText = searchText.getText();
             numPages = -1;
             if (lastSearchText.isEmpty()) {
-                p.startSection("reset");
                 contents.node.resetVisibility();
-                p.endStartSection("invalidate");
                 contents.invalidate();
-                p.endSection();
             } else {
-                p.startSection("search");
                 String text = lastSearchText.toLowerCase(Locale.ROOT);
                 List<PageLink> ret = GuideManager.INSTANCE.quickSearcher.search(text);
-                __listSize = ret.size();
-                p.endStartSection("make_set");
+                if (ret.size() > BCLibConfig.maxGuideSearchCount) {
+                    realResultCount = ret.size();
+                    ret.subList(BCLibConfig.maxGuideSearchCount, ret.size()).clear();
+                } else {
+                    realResultCount = -1;
+                }
                 Set<PageLink> matches = new HashSet<>(ret);
-                __setSize = matches.size();
-                p.endStartSection("setVisible");
                 contents.node.setVisible(matches);
-                p.endStartSection("invalidate");
                 contents.invalidate();
 
-                p.endStartSection("check_isVisible");
                 if (contents.node.isVisible()) {
                     searchText.setTextColor(0xFF_00_00_00);
                 } else {
                     searchText.setTextColor(0xFF_FF_00_00);
                 }
-                p.endSection();
             }
-            p.startSection("refresh_chapters");
             gui.refreshChapters();
-            p.endSection();
-            p.endSection();
-            long end = System.nanoTime();
-            try (BufferedWriter writer = Files.newBufferedWriter(new File("bc_perf_guide_search.txt").toPath(),
-                StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
-                ILogAcceptor<IOException> dest = s -> {
-                    writer.write(s);
-                    writer.newLine();
-                };
-                dest.write("INFO:");
-                dest.write("Date = " + LocalDateTime.now());
-                dest.write("Item Count = " + ForgeRegistries.ITEMS.getValues().size());
-                dest.write("Block Count = " + ForgeRegistries.BLOCKS.getValues().size());
-                dest.write("Search text = '" + lastSearchText + "'");
-                dest.write("Time = " + (end - start) + "ns (" + ((end - start) / 10_000 / 100.0) + "ms)");
-                dest.write("List size = " + __listSize);
-                dest.write("Set size = " + __setSize);
-                dest.write("RESULTS:");
-                ProfilerUtil.writeProfilerResults(p, "root", dest);
-                dest.write("@end");
-            } catch (IOException e) {
-                BCLog.logger.warn("[lib.guide] Failed to save guide searching profiler results!", e);
-            }
         }
     }
 
@@ -260,6 +216,10 @@ public class GuidePageContents extends GuidePageBase {
                 GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 25);
             }
             searchText.drawTextBox();
+            if (realResultCount >= 0) {
+                String text = LocaleUtil.localize("buildcraft.guide.too_many_results", realResultCount);
+                getFontRenderer().drawString(text, x + 105, y - 23, -1);
+            }
         }
         RenderUtil.setGLColorFromInt(-1);
         PagePosition pos = new PagePosition(2, 0);

@@ -63,6 +63,7 @@ public class BCCoreConfig {
     private static Property propDisplayTimeGap;
     private static Property propUseSwappableSprites;
     private static Property propEnableAnimatedSprites;
+    private static Property propMaxGuideSearchResults;
     private static Property propChunkLoadLevel;
     private static Property propItemRenderRotation;
     private static Property propItemLifespan;
@@ -158,6 +159,11 @@ public class BCCoreConfig {
         propEnableAnimatedSprites.setComment(
             "Disable this if you get sub-standard framerates due to buildcraft's ~60 sprites animating every frame.");
         none.setTo(propEnableAnimatedSprites);
+
+        propMaxGuideSearchResults = config.get(performance, "maxGuideSearchResults", 1200);
+        propMaxGuideSearchResults.setComment("The maximum number of search results to display in the guide book.");
+        propMaxGuideSearchResults.setMinValue(500).setMaxValue(5000);
+        none.setTo(propMaxGuideSearchResults);
 
         propItemRenderRotation =
             config.get(display, "itemRenderRotation", RenderRotation.ENABLED.name().toLowerCase(Locale.ROOT));

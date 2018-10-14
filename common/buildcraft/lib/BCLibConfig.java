@@ -68,6 +68,9 @@ public class BCLibConfig {
      * sprites. */
     public static boolean enableAnimatedSprites = true;
 
+    /** The maximum number of results to display in the guide contents page for the search bar. */
+    public static int maxGuideSearchCount = 1200;
+
     public static TimeGap displayTimeGap = TimeGap.SECONDS;
 
     /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */
