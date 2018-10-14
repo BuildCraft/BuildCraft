@@ -1,4 +1,9 @@
 
+Additions:
+
+* Make the water gelifier craftable with 4 sand and a bucket of residue.
+  * The recipe unlocks when you have sand in your inventory. 
+
 Improvements:
 
 * [#3966] Added config options to tweak the hight of oil spouts (sca)
