@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -36,40 +34,34 @@ public class ChunkLoaderManager {
      * This should be called in {@link TileEntity#validate()}, if a tile entity might be able to load. A check is
      * performed to see if the config allows it
      */
-    public static <T extends TileEntity & IChunkLoadingTile> void loadChunksForTile(@Nonnull T tile) {
-        if (TICKETS.containsKey(new WorldPos(tile))) {
-            updateChunksFor(tile);
-            return;
-        }
-        ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(
-            BCLib.INSTANCE,
-            tile.getWorld(),
-            ForgeChunkManager.Type.NORMAL
-        );
-        if (ticket == null) {
-            BCLog.logger.warn("Chunkloading failed, most likely the limit was reached");
-            return;
-        }
+    public static <T extends TileEntity & IChunkLoadingTile> void loadChunksForTile(T tile) {
         if (!canLoadFor(tile)) {
+            releaseChunksFor(tile);
             return;
         }
-        ticket.getModData().setTag("location", NBTUtilBC.writeBlockPos(tile.getPos()));
-        for (ChunkPos chunkPos : getChunksToLoad(tile)) {
-            ForgeChunkManager.forceChunk(ticket, chunkPos);
-        }
-        TICKETS.put(new WorldPos(tile), ticket);
+        updateChunksFor(tile);
     }
 
-    public static <T extends TileEntity & IChunkLoadingTile> void releaseChunksFor(@Nonnull T tile) {
-        ForgeChunkManager.releaseTicket(TICKETS.get(new WorldPos(tile)));
-        TICKETS.remove(new WorldPos(tile));
+    public static <T extends TileEntity & IChunkLoadingTile> void releaseChunksFor(T tile) {
+        ForgeChunkManager.releaseTicket(TICKETS.remove(new WorldPos(tile)));
     }
 
-    private static <T extends TileEntity & IChunkLoadingTile> void updateChunksFor(@Nonnull T tile) {
-        if (!TICKETS.containsKey(new WorldPos(tile))) {
-            loadChunksForTile(tile);
+    private static <T extends TileEntity & IChunkLoadingTile> void updateChunksFor(T tile) {
+        WorldPos wPos = new WorldPos(tile);
+        ForgeChunkManager.Ticket ticket = TICKETS.get(wPos);
+        if (ticket == null) {
+            ticket = ForgeChunkManager.requestTicket(
+                BCLib.INSTANCE,
+                tile.getWorld(),
+                ForgeChunkManager.Type.NORMAL
+            );
+            if (ticket == null) {
+                BCLog.logger.warn("[lib.chunkloading] Failed to chunkload " + tile.getClass().getName() + " at " + tile.getPos());
+                return;
+            }
+            ticket.getModData().setTag("location", NBTUtilBC.writeBlockPos(tile.getPos()));
+            TICKETS.put(wPos, ticket);
         }
-        ForgeChunkManager.Ticket ticket = TICKETS.get(new WorldPos(tile));
         Set<ChunkPos> chunks = getChunksToLoad(tile);
         for (ChunkPos pos : ticket.getChunkList()) {
             if (!chunks.contains(pos)) {
@@ -83,7 +75,7 @@ public class ChunkLoaderManager {
         }
     }
 
-    public static <T extends TileEntity & IChunkLoadingTile> Set<ChunkPos> getChunksToLoad(@Nonnull T tile) {
+    public static <T extends TileEntity & IChunkLoadingTile> Set<ChunkPos> getChunksToLoad(T tile) {
         Set<ChunkPos> chunksToLoad = tile.getChunksToLoad();
         Set<ChunkPos> chunkPoses = new HashSet<>(chunksToLoad != null ? chunksToLoad : Collections.emptyList());
         chunkPoses.add(new ChunkPos(tile.getPos()));
@@ -99,17 +91,18 @@ public class ChunkLoaderManager {
                     ForgeChunkManager.releaseTicket(ticket);
                     continue;
                 }
-                if (TICKETS.containsKey(new WorldPos(world, pos))) {
+                WorldPos wPos = new WorldPos(world, pos);
+                if (TICKETS.containsKey(wPos)) {
                     ForgeChunkManager.releaseTicket(ticket);
                     continue;
                 }
-                TICKETS.put(new WorldPos(world, pos), ticket);
                 TileEntity tile = world.getTileEntity(pos);
                 if (tile == null || !(tile instanceof IChunkLoadingTile) || !canLoadFor((IChunkLoadingTile) tile)) {
-                    TICKETS.remove(new WorldPos(world, pos));
+                    TICKETS.remove(wPos);
                     ForgeChunkManager.releaseTicket(ticket);
                     continue;
                 }
+                TICKETS.put(wPos, ticket);
                 for (ChunkPos chunkPos : getChunksToLoad((TileEntity & IChunkLoadingTile) tile)) {
                     ForgeChunkManager.forceChunk(ticket, chunkPos);
                 }

@@ -533,7 +533,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public int getRedstoneInput(EnumFacing side) {
         if (side == null) {
-            return world.isBlockPowered(pos) ? 15 : 0;
+            return world.isBlockIndirectlyGettingPowered(pos);
         } else {
             return world.getRedstonePower(pos.offset(side), side);
         }

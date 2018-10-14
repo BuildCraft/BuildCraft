@@ -28,7 +28,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.schematics.ISchematicBlock;
 
 import buildcraft.builders.client.ClientArchitectTables;
@@ -46,10 +45,9 @@ public enum BCBuildersEventDist {
     private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
 
     public void validateQuarry(TileQuarry quarry) {
-        Deque<WeakReference<TileQuarry>> quarries = allQuarries.computeIfAbsent(quarry.getWorld(),
-            k -> new LinkedList<>());
+        Deque<WeakReference<TileQuarry>> quarries =
+            allQuarries.computeIfAbsent(quarry.getWorld(), k -> new LinkedList<>());
         quarries.add(new WeakReference<>(quarry));
-        BCLog.logger.info("Added quarry to checking list");
     }
 
     public void invalidateQuarry(TileQuarry quarry) {
@@ -64,7 +62,6 @@ public enum BCBuildersEventDist {
             TileQuarry pos = ref.get();
             if (pos == null || pos == quarry) {
                 iter.remove();
-                BCLog.logger.info("Removed quarry from checking list");
             }
         }
     }
@@ -106,7 +103,7 @@ public enum BCBuildersEventDist {
                 Blueprint blueprint = new Blueprint();
                 blueprint.size = new BlockPos(1, 1, 1);
                 blueprint.offset = BlockPos.ORIGIN;
-                blueprint.data = new int[] {0};
+                blueprint.data = new int[] { 0 };
                 blueprint.palette.add(schematicBlock);
                 blueprint.computeKey();
                 snapshot = blueprint;

@@ -2,4 +2,5 @@
 Bug fixes:
 
 * [#4263] The guide book contents page doesn't display the full item tooltips.
-* [#4268] Partial fix for crash when loading with headcrumbs
+* [#4268] Partial fix for crash when loading with headcrumbs.
+* [#####] Fix an
