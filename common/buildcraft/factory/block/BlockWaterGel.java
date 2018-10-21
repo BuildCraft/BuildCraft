@@ -6,9 +6,10 @@
 
 package buildcraft.factory.block;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -54,13 +55,13 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
 
         GelStage(float pitch, boolean spreading, float hardness) {
             this.soundType = new SoundType(//
-                    SoundType.SLIME.volume,//
-                    pitch,//
-                    SoundEvents.BLOCK_SLIME_BREAK,//
-                    SoundEvents.BLOCK_SLIME_STEP,//
-                    SoundEvents.BLOCK_SLIME_PLACE,//
-                    SoundEvents.BLOCK_SLIME_HIT,//
-                    SoundEvents.BLOCK_SLIME_FALL//
+                SoundType.SLIME.volume, //
+                pitch, //
+                SoundEvents.BLOCK_SLIME_BREAK, //
+                SoundEvents.BLOCK_SLIME_STEP, //
+                SoundEvents.BLOCK_SLIME_PLACE, //
+                SoundEvents.BLOCK_SLIME_HIT, //
+                SoundEvents.BLOCK_SLIME_FALL//
             );
             this.spreading = spreading;
             this.hardness = hardness;
@@ -124,23 +125,21 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
         GelStage next = stage.next();
         IBlockState nextState = state.withProperty(PROP_STAGE, next);
         if (stage.spreading) {
-            List<BlockPos> openSet = new ArrayList<>();
-            Set<BlockPos> closedSet = new HashSet<>();
+            Deque<BlockPos> openQueue = new ArrayDeque<>();
+            Set<BlockPos> seenSet = new HashSet<>();
             List<BlockPos> changeable = new ArrayList<>();
             List<EnumFacing> faces = new ArrayList<>();
             Collections.addAll(faces, EnumFacing.VALUES);
             Collections.shuffle(faces);
+            seenSet.add(pos);
             for (EnumFacing face : faces) {
-                openSet.add(pos.offset(face));
+                openQueue.add(pos.offset(face));
             }
             Collections.shuffle(faces);
             int tries = 0;
 
-            while (openSet.size() > 0 && changeable.size() < 3 && tries < 10_000) {
-                openSet.sort(Comparator.comparingDouble(a -> a.distanceSq(pos)));
-
-                BlockPos test = openSet.remove(0);
-                closedSet.add(test);
+            while (openQueue.size() > 0 && changeable.size() < 3 && tries < 10_000) {
+                BlockPos test = openQueue.removeFirst();
 
                 boolean water = isWater(world, test);
                 boolean spreadable = water || canSpread(world, test);
@@ -152,8 +151,8 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
                     Collections.shuffle(faces);
                     for (EnumFacing face : faces) {
                         BlockPos n = test.offset(face);
-                        if (!closedSet.contains(n) && !openSet.contains(n)) {
-                            openSet.add(n);
+                        if (seenSet.add(n)) {
+                            openQueue.add(n);
                         }
                     }
                 }

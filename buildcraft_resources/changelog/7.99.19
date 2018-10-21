@@ -15,3 +15,4 @@ Bug fixes:
 * [#4263] The guide book contents page doesn't display the full item tooltips.
 * [#4268] Partial fix for crash when loading with headcrumbs.
 * [#4283] Limit the maximum number of guide book results to 1200 (Compared to some modpacks which have ~25000 results for 'a')
+* Optimise the water gel spearing algorithm so that it doesn't take a minute with large bodies of water.

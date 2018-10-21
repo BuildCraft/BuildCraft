@@ -206,7 +206,7 @@ public class BCCoreConfig {
         none.setTo(propNetworkUpdateRate);
 
         propMiningMultiplier = config.get(general, "miningMultiplier", 1.0);
-        propMiningMultiplier.setMinValue(0.2).setMaxValue(200);
+        propMiningMultiplier.setMinValue(1).setMaxValue(200);
         propMiningMultiplier.setComment("How much power should be required for all mining machines?");
         none.setTo(propMiningMultiplier);
 
