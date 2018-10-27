@@ -91,7 +91,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
                 return true;
             }
         }
-        return false;
+        return !makeup.contains(to) && box.isCorner(to);
     }
 
     public boolean mergeWith(VolumeConnection other) {

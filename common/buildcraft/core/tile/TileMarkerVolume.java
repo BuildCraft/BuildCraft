@@ -11,7 +11,9 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,7 +28,6 @@ import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.tiles.TilesAPI;
 
 import buildcraft.lib.marker.MarkerSubCache;
-import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -135,13 +136,31 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     public void onManualConnectionAttempt(EntityPlayer player) {
-        if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock())) {
-            MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
-            for (BlockPos other : cache.getValidConnections(getPos())) {
-                TileMarkerVolume tile = (TileMarkerVolume) cache.getMarker(other);
-                if (tile == null) continue;
-                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock())) {
-                    cache.tryConnect(getPos(), other);
+        MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
+        for (BlockPos other : cache.getValidConnections(getPos())) {
+            cache.tryConnect(getPos(), other);
+        }
+        VolumeConnection c = getCurrentConnection();
+        if (c != null) {
+            for (BlockPos corner : PositionUtil.getCorners(c.getBox().min(), c.getBox().max())) {
+                if (!c.getMarkerPositions().contains(corner) && cache.hasLoadedOrUnloadedMarker(corner)) {
+                    c.addMarker(corner);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+        super.onPlacedBy(placer, stack);
+        // Check if we are the corner of an existing box
+        MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
+        for (BlockPos other : cache.getValidConnections(getPos())) {
+            VolumeConnection c = cache.getConnection(other);
+            if (c != null && c.getBox().isCorner(pos)) {
+                if (c.addMarker(pos)) {
+                    // In theory we can't be the corner for multiple boxes
+                    break;
                 }
             }
         }

@@ -6,6 +6,9 @@ Additions:
 
 Improvements:
 
+* Land marker improvements:
+  * [#3403] Allow all 8 corners of a land marker cuboid to be part of the entire volume, rather than just the minimum required to define the cuboid.
+  * Newly placed land markers in the corner of an existing box will try to add themselves to it.
 * [#3966] Added config options to tweak the hight of oil spouts (sca)
 * [#4256] Added a config option to change oil's flamibility (sca)
 
