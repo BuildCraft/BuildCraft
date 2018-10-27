@@ -37,6 +37,7 @@ import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
 import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.api.transport.pipe.PipeEventConnectionChange;
 import buildcraft.api.transport.pipe.PipeFaceTex;
 import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -313,6 +314,7 @@ public final class Pipe implements IPipe, IDebuggable {
                     if (oPipe != null) {
                         oPipe.markForUpdate();
                     }
+                    holder.fireEvent(new PipeEventConnectionChange(holder, face));
                 }
             }
         }
