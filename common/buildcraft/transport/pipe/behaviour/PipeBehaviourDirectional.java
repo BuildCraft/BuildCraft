@@ -74,7 +74,7 @@ public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
         EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
-            EntityUtil.activateWrench(player);
+            EntityUtil.activateWrench(player, trace);
 
             if (part == EnumPipePart.CENTER) {
                 return advanceFacing();

@@ -20,6 +20,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -63,17 +64,17 @@ public class EntityUtil {
         return null;
     }
 
-    public static void activateWrench(EntityPlayer player) {
+    public static void activateWrench(EntityPlayer player, RayTraceResult trace) {
         ItemStack stack = player.getHeldItemMainhand();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
-            wrench.wrenchUsed(player, EnumHand.MAIN_HAND, stack, null);
+            wrench.wrenchUsed(player, EnumHand.MAIN_HAND, stack, trace);
             return;
         }
         stack = player.getHeldItemOffhand();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
-            wrench.wrenchUsed(player, EnumHand.OFF_HAND, stack, null);
+            wrench.wrenchUsed(player, EnumHand.OFF_HAND, stack, trace);
         }
     }
 

@@ -95,7 +95,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
             return EntityUtil.getWrenchHand(player) != null;
         }
         if (EntityUtil.getWrenchHand(player) != null) {
-            EntityUtil.activateWrench(player);
+            EntityUtil.activateWrench(player, trace);
             int n = colour.getMetadata() + (player.isSneaking() ? 15 : 1);
             colour = EnumDyeColor.byMetadata(n & 15);
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
