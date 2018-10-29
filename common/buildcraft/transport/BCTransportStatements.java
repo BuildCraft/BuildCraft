@@ -22,11 +22,13 @@ import buildcraft.transport.statements.ActionPipeSignal;
 import buildcraft.transport.statements.ActionProviderPipes;
 import buildcraft.transport.statements.TriggerParameterSignal;
 import buildcraft.transport.statements.TriggerPipeSignal;
+import buildcraft.transport.statements.TriggerPowerRequested;
 import buildcraft.transport.statements.TriggerProviderPipes;
 
 public class BCTransportStatements {
 
     public static final TriggerPipeSignal[] TRIGGER_PIPE_SIGNAL;
+    public static final TriggerPowerRequested TRIGGER_POWER_REQUESTED;
     public static final ActionPipeSignal[] ACTION_PIPE_SIGNAL;
     public static final ActionPipeColor[] ACTION_PIPE_COLOUR;
     public static final ActionExtractionPreset[] ACTION_EXTRACTION_PRESET;
@@ -58,6 +60,8 @@ public class BCTransportStatements {
         for (EnumFacing face : EnumFacing.VALUES) {
             ACTION_PIPE_DIRECTION[face.ordinal()] = new ActionPipeDirection(face);
         }
+
+        TRIGGER_POWER_REQUESTED = new TriggerPowerRequested();
 
         StatementManager.registerParameter(TriggerParameterSignal::readFromNbt, TriggerParameterSignal::readFromBuf);
         StatementManager.registerParameter(ActionParameterSignal::readFromNbt);
