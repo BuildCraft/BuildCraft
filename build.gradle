@@ -219,18 +219,26 @@ javadoc {
 // extra jar section
 // -------------------
 
-def createMCModInfo(def id, def taskName)
+def createMCModInfo(String taskName)
+{
+    return new File("build/processing/" + taskName + "/mcmod.info")
+}
+
+def writeMCModInfo(String taskName, int... ids)
 {
     File temp = new File("build/processing/" + taskName + "/mcmod.info")
     temp.parentFile.mkdirs()
     if (temp.exists())
         temp.delete()
     temp.createNewFile()
-    String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
-    prettyPrinted = prettyPrinted.replace("\${version}", project.version)
+    def elements = []
+    for (int id : ids) {
+        elements += ext.mcModInfo[id];
+    }
+    String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(elements))
+    prettyPrinted = prettyPrinted.replace("\$version", project.version)
     prettyPrinted = prettyPrinted.replace("\${mcversion}", project.minecraft.version)
     temp.write(prettyPrinted)
-    temp.deleteOnExit()
     return temp
 }
 
@@ -278,7 +286,21 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
-task apiJar(type: Jar, dependsOn: reobfJar) {
+task writeModInfos() {
+    outputs.upToDateWhen { false }
+    doLast {
+        writeMCModInfo("lib", 0)
+        writeMCModInfo("core", 0, 1)
+        writeMCModInfo("builders", 2)
+        writeMCModInfo("energy", 3)
+        writeMCModInfo("factory", 4)
+        writeMCModInfo("silicon", 5)
+        writeMCModInfo("transport", 6)
+        writeMCModInfo("robotics", 7)
+    }
+}
+
+task apiJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
     destinationDir = libsDir
     appendix = "api"
 
@@ -294,11 +316,11 @@ task apiSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     from sourceSets.api.allSource
 }
 
-task libJar(type: Jar, dependsOn: reobfJar) {
+task libJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
     destinationDir = modulesDir
     appendix = 'lib'
 
-    from(createMCModInfo(0, name).parentFile)
+    from(createMCModInfo("lib").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
     }
@@ -315,77 +337,77 @@ task libSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
     }
 }
 
-task coreJar(type: Jar, dependsOn: reobfJar) {
+task coreJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
     destinationDir = modulesDir
     appendix = "core"
 
-    from(createMCModInfo(1, name).parentFile)
+    from(createMCModInfo("core").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "assets/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
     }
 }
 
-task buildersJar(type: Jar, dependsOn: reobfJar) {
+task buildersJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     destinationDir = modulesDir
     appendix = "builders"
 
-    from(createMCModInfo(2, name).parentFile)
+    from(createMCModInfo("builders").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "LICENSE"])
     }
 }
 
-task energyJar(type: Jar, dependsOn: reobfJar) {
+task energyJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     destinationDir = modulesDir
     appendix = "energy"
 
-    from(createMCModInfo(3, name).parentFile)
+    from(createMCModInfo("energy").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "LICENSE"])
     }
 }
 
-task factoryJar(type: Jar, dependsOn: reobfJar) {
+task factoryJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     destinationDir = modulesDir
     appendix = "factory"
 
-    from(createMCModInfo(4, name).parentFile)
+    from(createMCModInfo("factory").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "LICENSE"])
     }
 }
 
-task siliconJar(type: Jar, dependsOn: reobfJar) {
+task siliconJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     destinationDir = modulesDir
     appendix = "silicon"
 
-    from(createMCModInfo(5, name).parentFile)
+    from(createMCModInfo("silicon").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "LICENSE"])
     }
 }
 
-task transportJar(type: Jar, dependsOn: reobfJar) {
+task transportJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     destinationDir = modulesDir
     appendix = "transport"
 
-    from(createMCModInfo(6, name).parentFile)
+    from(createMCModInfo("transport").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "LICENSE"])
     }
 }
 
-task roboticsJar(type: Jar, dependsOn: reobfJar) {
+task roboticsJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     destinationDir = modulesDir
     appendix = "robotics"
 
-    from(createMCModInfo(7, name).parentFile)
+    from(createMCModInfo("robotics").parentFile)
     from(project.ext.jarFile) {
         includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "LICENSE"])
     }

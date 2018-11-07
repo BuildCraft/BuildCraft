@@ -21,3 +21,4 @@ Bug fixes:
 * [#4283] Limit the maximum number of guide book results to 1200 (Compared to some modpacks which have ~25000 results for 'a')
 * [#4288] Crash when using an enderIO yeta wrench on a buildcraft pipe.
 * Optimise the water gel spreading algorithm so that it doesn't take a minute with large bodies of water.
+* Fixed some of the mcmod.info files not being generated properly.
