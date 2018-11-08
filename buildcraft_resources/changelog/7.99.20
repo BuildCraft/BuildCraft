@@ -1,0 +1,4 @@
+
+Bug fixes:
+
+* [#4296] The marker connector recipe requires buildcraft wooden gears rather than any item that has an ore-dictionary name of "gearWood" (AlexIIL)

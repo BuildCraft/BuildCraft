@@ -13,7 +13,8 @@
       "item": "minecraft:redstone_torch"
     },
     "g": {
-      "item": "buildcraftcore:gear_wood"
+      "type": "forge:ore_dict",
+      "ore": "gearWood"
     },
     "w": {
       "item": "buildcraftcore:wrench"
