@@ -1,4 +1,5 @@
 
 Bug fixes:
 
+* [#4044] Vanilla flowing water blocks are invisible with BC installed (AlexIIL)
 * [#4296] The marker connector recipe requires buildcraft wooden gears rather than any item that has an ore-dictionary name of "gearWood" (AlexIIL)

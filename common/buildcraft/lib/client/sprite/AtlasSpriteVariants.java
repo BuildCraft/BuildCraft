@@ -62,6 +62,12 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
     }
 
     public static TextureAtlasSprite createForConfig(ResourceLocation baseName) {
+        if (baseName.getResourceDomain().startsWith("minecraft")) {
+            // Vanilla sprites never have colourblind variants, so don't bother
+            // This is mostly just a fix for optifine compat as this shouldn't be a problem normally.
+            return makeAtlasSprite(baseName);
+        }
+
         if (BCLibConfig.useSwappableSprites) {
             AtlasSpriteVariants sprite = new AtlasSpriteVariants(baseName, VARIANT_COLOUR_BLIND, INDEX_COLOUR_BLIND);
             ReloadSource to = new ReloadSource(SpriteUtil.transformLocation(baseName), SourceType.SPRITE);
