@@ -2,6 +2,9 @@ package buildcraft.transport.statements;
 
 import net.minecraft.util.EnumFacing;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 import javax.annotation.Nullable;
 
 import buildcraft.api.core.render.ISprite;
@@ -25,18 +28,14 @@ public class TriggerPowerRequested extends BCStatement implements ITriggerIntern
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
         final TilePipeHolder tile = (TilePipeHolder) source.getTile();
 
-        IMjReceiver recv = null;
-        // this doesn't like null facing so we have to cycle all facings
-        for (EnumFacing f : EnumFacing.VALUES) {
-            recv = tile.getCapability(MjAPI.CAP_RECEIVER, f);
-            if (recv != null) break;
-        }
+        long requested = Stream.of(EnumFacing.VALUES)
+            .map(f -> tile.getCapability(MjAPI.CAP_RECEIVER, f))
+            .filter(Objects::nonNull)
+            .filter(IMjReceiver::canReceive)
+            .mapToLong(IMjReceiver::getPowerRequested)
+            .max().orElse(0);
 
-        if (recv != null) {
-            return recv.canReceive() && recv.getPowerRequested() >= MjAPI.MJ;
-        }
-
-        return false;
+        return requested >= MjAPI.MJ;
     }
 
     @Override
