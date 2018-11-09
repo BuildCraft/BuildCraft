@@ -90,7 +90,10 @@ public class TilePump extends TileMiner {
         isInfiniteWaterSource = false;
         Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        for (BlockPos posToCheck = pos.down(); posToCheck.getY() > 0; posToCheck = posToCheck.down()) {
+        for (BlockPos posToCheck = pos.down(); !world.isOutsideBuildHeight(posToCheck); posToCheck = posToCheck.down()) {
+            if (pos.getY() - posToCheck.getY() > BCCoreConfig.miningMaxDepth) {
+                break;
+            }
             if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
                 queueFluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
                 nextPosesToCheck.add(posToCheck);
@@ -121,7 +124,7 @@ public class TilePump extends TileMiner {
                 int count = 0;
                 for (EnumFacing side : SEARCH_DIRECTIONS) {
                     BlockPos offsetPos = posToCheck.offset(side);
-                    if (offsetPos.distanceSq(pos) > maxLengthSquared) {
+                    if (offsetPos.distanceSq(currentPos) > maxLengthSquared) {
                         continue;
                     }
                     if (checked.add(offsetPos)) {

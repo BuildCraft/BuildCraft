@@ -29,6 +29,7 @@ import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
+import buildcraft.core.BCCoreConfig;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TileMiningWell extends TileMiner {
@@ -95,7 +96,15 @@ public class TileMiningWell extends TileMiner {
     }
 
     private void nextPos() {
-        for (currentPos = pos.down(); currentPos.getY() >= 0; currentPos = currentPos.down()) {
+        currentPos = pos;
+        while (true) {
+            currentPos = currentPos.down();
+            if (world.isOutsideBuildHeight(currentPos)) {
+                break;
+            }
+            if (pos.getY() - currentPos.getY() > BCCoreConfig.miningMaxDepth) {
+                break;
+            }
             if (canBreak()) {
                 updateLength();
                 return;

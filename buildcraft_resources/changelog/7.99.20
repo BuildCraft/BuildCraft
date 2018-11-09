@@ -5,6 +5,9 @@ Additions:
   * Currently they will crash the game if any errors are detected in any of the json files - although it will print out every error before crashing.
   * The "pre_mj" bit is important - these assembly recipe formats will change in the future MJ update, so please don't create a lot of them or you will just have to rewrite them in the future.
   * Integration recipes haven't been readded though.
+* Added a config option for tweaking the maximum depth that the mining well, quarry, and pump can extend their tubes.
+  * This is called "general.miningMaxDepth" and can be changed from anywhere between 32 and 4096.
+  * (Values above 256 make no difference in vanilla, this is primarily for Cubic Chunk support)
 
 Ported content:
 
@@ -12,5 +15,7 @@ Ported content:
 
 Bug fixes:
 
+* Fix the quarry, pump, and mining well not digging below Y=0 when cubic chunks is installed. (AlexIIL)
+* Slightly fix the quarry being slower than it should be - it's now a tiny bit faster than it used to be.
 * [#4044] Vanilla flowing water blocks are invisible with BC installed (AlexIIL)
 * [#4296] The marker connector recipe requires buildcraft wooden gears rather than any item that has an ore-dictionary name of "gearWood" (AlexIIL)

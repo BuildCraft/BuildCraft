@@ -50,6 +50,7 @@ public class BCCoreConfig {
     public static int pumpMaxDistance;
     public static int networkUpdateRate = 10;
     public static double miningMultiplier = 1;
+    public static int miningMaxDepth;
 
     private static Property propColourBlindMode;
     private static Property propWorldGen;
@@ -74,6 +75,7 @@ public class BCCoreConfig {
     private static Property propPumpMaxDistance;
     private static Property propNetworkUpdateRate;
     private static Property propMiningMultiplier;
+    private static Property propMiningMaxDepth;
 
     public static void preInit(File cfgFolder) {
         configFolder = cfgFolder;
@@ -213,6 +215,12 @@ public class BCCoreConfig {
         propMiningMultiplier.setComment("How much power should be required for all mining machines?");
         none.setTo(propMiningMultiplier);
 
+        propMiningMaxDepth = config.get(general, "miningMaxDepth", 512);
+        propMiningMaxDepth.setMinValue(32).setMaxValue(4096);
+        propMiningMaxDepth.setComment("How much further down can miners (like the quarry or the mining well) dig?"
+            + "\n(Note: values above 256 only have an effect if a mod like cubic chunks is installed).");
+        none.setTo(propMiningMaxDepth);
+
         reloadConfig(game);
         addReloadListener(BCCoreConfig::reloadConfig);
 
@@ -270,6 +278,7 @@ public class BCCoreConfig {
             ConfigUtil.parseEnumForConfig(propItemRenderRotation, RenderRotation.ENABLED);
         BCLibConfig.enableAnimatedSprites = propEnableAnimatedSprites.getBoolean();
         miningMultiplier = propMiningMultiplier.getDouble();
+        miningMaxDepth = propMiningMaxDepth.getInt();
 
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {
             BCLibConfig.chunkLoadingLevel =

@@ -36,6 +36,7 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+import buildcraft.core.BCCoreConfig;
 import buildcraft.factory.BCFactoryBlocks;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -98,7 +99,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     @Override
     public void onRemove() {
         super.onRemove();
-        for (int y = pos.getY() - 1; y > 0; y--) {
+        for (int y = pos.getY() - 1; y > pos.getY() - BCCoreConfig.miningMaxDepth; y--) {
             BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
             if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
                 world.setBlockToAir(blockPos);
@@ -112,7 +113,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
         int newY = getTargetPos() != null ? getTargetPos().getY() : pos.getY();
         int newLength = pos.getY() - newY;
         if (newLength != wantedLength) {
-            for (int y = pos.getY() - 1; y > 0; y--) {
+            for (int y = pos.getY() - 1; y > pos.getY() - BCCoreConfig.miningMaxDepth; y--) {
                 BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
                 if (world.getBlockState(blockPos).getBlock() == BCFactoryBlocks.tube) {
                     world.setBlockToAir(blockPos);

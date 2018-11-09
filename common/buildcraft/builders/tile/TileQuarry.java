@@ -83,6 +83,7 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.BCBuildersConfig;
 import buildcraft.builders.BCBuildersEventDist;
 import buildcraft.builders.client.render.AdvDebuggerQuarry;
+import buildcraft.core.BCCoreConfig;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.core.marker.VolumeSubCache;
@@ -359,7 +360,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         frameBox.setMin(min);
         frameBox.setMax(max);
         miningBox.reset();
-        miningBox.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
+        int minY = max.getY() - 1 - BCCoreConfig.miningMaxDepth;
+        if (world.isOutsideBuildHeight(new BlockPos(min.getX(), minY, min.getZ()))) {
+            // TODO: Ask cubic chunks's world for the actual minimum height, rather than just assume 0!
+            minY = 0;
+        }
+        miningBox.setMin(new BlockPos(min.getX() + 1, minY, min.getZ() + 1));
         miningBox.setMax(new BlockPos(max.getX() - 1, max.getY() - 1, max.getZ() - 1));
         updatePoses();
     }
@@ -544,9 +550,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {
                 currentTask = null;
+            } else {
+                sendNetworkUpdate(NET_RENDER_DATA);
+                return;
             }
-            sendNetworkUpdate(NET_RENDER_DATA);
-            return;
         }
 
         if (!firstChecked) {
