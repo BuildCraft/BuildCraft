@@ -1,4 +1,11 @@
 
+Additions:
+
+* Re-added JSON-based assembly recipes, and made them load from "/config/buildcraft/assembly_recipes_pre_mj" folder. (AlexIIL)
+  * Currently they will crash the game if any errors are detected in any of the json files - although it will print out every error before crashing.
+  * The "pre_mj" bit is important - these assembly recipe formats will change in the future MJ update, so please don't create a lot of them or you will just have to rewrite them in the future.
+  * Integration recipes haven't been readded though.
+
 Ported content:
 
 * [#4299] Re-added the power requested trigger (therealfarfetchd)

@@ -6,6 +6,14 @@
 
 package buildcraft.silicon;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +21,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -20,15 +31,21 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.BCItems;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.mj.MjAPI;
@@ -42,6 +59,7 @@ import buildcraft.lib.recipe.IngredientNBTBC;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreConfig;
 import buildcraft.silicon.gate.EnumGateLogic;
 import buildcraft.silicon.gate.EnumGateMaterial;
 import buildcraft.silicon.gate.EnumGateModifier;
@@ -193,7 +211,8 @@ public class BCSiliconRecipes {
         if (BCSiliconItems.redstoneChipset != null) {
             ImmutableSet<IngredientStack> input = ImmutableSet.of(IngredientStack.of("dustRedstone"));
             ItemStack output = EnumRedstoneChipset.RED.getStack(1);
-            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("redstone_chipset", 10000 * MjAPI.MJ, input, output));
+            AssemblyRecipeRegistry
+                .register(new AssemblyRecipeBasic("redstone_chipset", 10000 * MjAPI.MJ, input, output));
 
             input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("ingotIron"));
             output = EnumRedstoneChipset.IRON.getStack(1);
@@ -209,8 +228,11 @@ public class BCSiliconRecipes {
 
             input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("gemDiamond"));
             output = EnumRedstoneChipset.DIAMOND.getStack(1);
-            AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("diamond_chipset", 80000 * MjAPI.MJ, input, output));
+            AssemblyRecipeRegistry
+                .register(new AssemblyRecipeBasic("diamond_chipset", 80000 * MjAPI.MJ, input, output));
         }
+
+        scanForJsonRecipes();
     }
 
     private static void makeGateModifierAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier,
@@ -249,5 +271,87 @@ public class BCSiliconRecipes {
         GateVariant variant = new GateVariant(EnumGateLogic.AND, material, modifier);
         builder.setResult(BCSiliconItems.plugGate.getStack(variant));
         builder.registerNbtAware("buildcraftsilicon:plug_gate_create_" + material + "_" + modifier);
+    }
+
+    private static void scanForJsonRecipes() {
+        final boolean[] failed = { false };
+        for (ModContainer mod : Loader.instance().getActiveModList()) {
+            JsonContext ctx = new JsonContext(mod.getModId());
+            CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/assembly_recipes_pre_mj", null, (root, file) -> {
+                try {
+                    readAndAddJsonRecipe(ctx, root, file);
+                    return true;
+                } catch (IOException io) {
+                    BCLog.logger.error("Couldn't read recipe " + root.relativize(file) + " from " + file, io);
+                    failed[0] = true;
+                    return true;
+                }
+            }, false, false);
+        }
+
+        Path configRoot = BCCoreConfig.configFolder.toPath().resolve("assembly_recipes_pre_mj");
+        if (!Files.isDirectory(configRoot)) {
+            try {
+                Files.createDirectory(configRoot);
+            } catch (IOException e) {
+                BCLog.logger.warn("[silicon.assembly] Unable to create the folder " + configRoot);
+                failed[0] = true;
+                return;
+            }
+        }
+
+        try {
+            JsonContext ctx = new JsonContext("_config");
+            Files.walkFileTree(configRoot, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        readAndAddJsonRecipe(ctx, configRoot, file);
+                    } catch (JsonParseException e) {
+                        e.printStackTrace();
+                        failed[0] = true;
+                    } catch (IOException io) {
+                        io.printStackTrace();
+                        failed[0] = true;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            BCLog.logger.warn("[silicon.assembly] Failed to walk the config folder " + configRoot, e);
+            failed[0] = false;
+        }
+
+        if (failed[0]) {
+            throw new IllegalStateException("Failed to read some assembly recipe files! Check the log for details");
+        }
+    }
+
+    private static void readAndAddJsonRecipe(JsonContext ctx, Path root, Path file)
+        throws JsonParseException, IOException {
+        if (!file.toString().endsWith(".json")) {
+            return;
+        }
+
+        String name = root.relativize(file).toString().replace("\\", "/");
+        ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
+            JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+            if (json == null || json.isJsonNull()) throw new JsonSyntaxException("Json is null (empty file?)");
+
+            ItemStack output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), ctx);
+            long powercost = json.get("MJ").getAsLong() * MjAPI.MJ;
+
+            ArrayList<IngredientStack> ingredients = new ArrayList<>();
+
+            json.getAsJsonArray("components").forEach(element -> {
+                JsonObject object = element.getAsJsonObject();
+                ingredients.add(new IngredientStack(CraftingHelper.getIngredient(object.get("ingredient"), ctx),
+                    JsonUtils.getInt(object, "amount", 1)));
+            });
+
+            AssemblyRecipeRegistry.REGISTRY.put(key,
+                new AssemblyRecipeBasic(key, powercost, ImmutableSet.copyOf(ingredients), output));
+        }
     }
 }

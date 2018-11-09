@@ -34,6 +34,8 @@ import buildcraft.lib.registry.RegistryConfig;
 public class BCCoreConfig {
     private static final List<Consumer<EnumRestartRequirement>> reloadListeners = new ArrayList<>();
 
+    public static File configFolder;
+
     public static Configuration config;
     public static Configuration objConfig;
     public static FileConfigManager detailedConfigManager;
@@ -74,6 +76,7 @@ public class BCCoreConfig {
     private static Property propMiningMultiplier;
 
     public static void preInit(File cfgFolder) {
+        configFolder = cfgFolder;
         config = new Configuration(new File(cfgFolder, "main.cfg"));
         objConfig = RegistryConfig.setRegistryConfig(BCCore.MODID, new File(cfgFolder, "objects.cfg"));
         BCLibConfig.guiConfigFile = new File(cfgFolder, "gui.json");
