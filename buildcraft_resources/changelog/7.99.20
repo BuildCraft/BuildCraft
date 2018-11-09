@@ -1,4 +1,8 @@
 
+Ported content:
+
+* [#4299] Re-added the power requested trigger (therealfarfetchd)
+
 Bug fixes:
 
 * [#4044] Vanilla flowing water blocks are invisible with BC installed (AlexIIL)
