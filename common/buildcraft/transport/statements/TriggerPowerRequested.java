@@ -3,10 +3,11 @@ package buildcraft.transport.statements;
 import javax.annotation.Nullable;
 
 import buildcraft.api.core.render.ISprite;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.transport.BCTransportSprites;
@@ -23,7 +24,7 @@ public class TriggerPowerRequested extends BCStatement implements ITriggerIntern
         if (!(source instanceof IGate)) {
             return false;
         }
-        IPipeFlow f = ((IGate) source).getPipeHolder().getPipe().getFlow();
+        PipeFlow f = ((IGate) source).getPipeHolder().getPipe().getFlow();
         if (!(f instanceof PipeFlowPower)) {
             return false;
         }
