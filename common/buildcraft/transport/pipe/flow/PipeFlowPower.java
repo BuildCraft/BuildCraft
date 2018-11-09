@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.ToLongFunction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -358,6 +359,16 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
     }
 
+    public long getPowerRequested(@Nullable EnumFacing side) {
+        long req = 0;
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (side == null || face != side) {
+                req += sections.get(face).powerQuery;
+            }
+        }
+        return req;
+    }
+
     public double getMaxTransferForRender(float partialTicks) {
         double max = 0;
         for (Section s : sections.values()) {
@@ -407,13 +418,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         @Override
         public long getPowerRequested() {
-            long req = 0;
-            for (EnumFacing face : EnumFacing.VALUES) {
-                if (face != this.side) {
-                    req += sections.get(face).powerQuery;
-                }
-            }
-            return req;
+            return PipeFlowPower.this.getPowerRequested(side);
         }
 
         long receivePowerInternal(long sent) {

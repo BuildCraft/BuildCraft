@@ -33,6 +33,8 @@ public class BCTransportSprites {
     public static final SpriteHolder PIPE_COLOUR_BORDER_OUTER;
     public static final SpriteHolder PIPE_COLOUR_BORDER_INNER;
 
+    public static final SpriteHolder POWER_REQUESTED;
+
     public static final SpriteHolder[] ACTION_PIPE_COLOUR;
     public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
     private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
@@ -75,6 +77,8 @@ public class BCTransportSprites {
         }
 
         POWER_FLOW = getHolder("core", "blocks/misc/texture_cyan");
+
+        POWER_REQUESTED = getHolder("transport", "triggers/trigger_pipecontents_requestsenergy");
     }
 
     private static SpriteHolder getHolder(String loc) {
