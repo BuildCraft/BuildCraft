@@ -8,8 +8,10 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.pipe.PipeFlow;
-import buildcraft.core.statements.BCStatement;
+
 import buildcraft.lib.misc.LocaleUtil;
+
+import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 
