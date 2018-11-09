@@ -20,7 +20,14 @@ public class TriggerPowerRequested extends BCStatement implements ITriggerIntern
 
     @Override
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
-        final PipeFlowPower flow = (PipeFlowPower) ((IPipeHolder) source.getTile()).getPipe().getFlow();
+        if (!(source instanceof IGate)) {
+            return false;
+        }
+        IPipeFlow f = ((IGate) source).getPipeHolder().getPipe().getFlow();
+        if (!(f instanceof PipeFlowPower)) {
+            return false;
+        }
+        final PipeFlowPower flow = (PipeFlowPower) f;
 
         return flow.getPowerRequested(null) > 0;
     }
