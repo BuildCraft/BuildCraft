@@ -15,7 +15,7 @@ jobs:
       script: ./gradlew build publish
     - stage: build
       install: ./gradlew setupCiWorkspace
-      script: ./gradlew build publish
+      script: ./gradlew test
     - stage: checkstyle
       install: echo "skipping default ./gradlew assemble"
       script: ./gradlew checkstyle
