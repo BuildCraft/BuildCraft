@@ -98,7 +98,12 @@ minecraft {
         if (rootProject == project) {
             gitDir = "$projectDir";
         } else {
-            gitDir = rootProject.file(".git/modules/BuildCraft").toString()
+            File dotGit = project.file(".git");
+            if (dotGit.isDirectory()) {
+                gitDir = dotGit;
+            } else {
+                gitDir = rootProject.file(".git/modules/BuildCraft").toString()
+            }
         }
         def repo = grgit.open(dir: gitDir)
         replace "\${git_commit_hash}", repo.head().id
