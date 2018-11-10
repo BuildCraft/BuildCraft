@@ -39,7 +39,10 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'maven-publish' // for uploading to a maven repo
-apply plugin: "org.ajoberstar.grgit"
+if (!hasProperty("grgit")) {
+    // As otherwise it logs a warning as grgit gets applied twice
+    apply plugin: "org.ajoberstar.grgit"
+}
 
 if (gradle.startParameter.taskNames.contains("checkstyle")) {
     apply plugin: "checkstyle"
@@ -91,14 +94,21 @@ minecraft {
 
     // Git versioning stuffs
     if (grgit != null) {
-        def repo = grgit.open(dir: "$projectDir")
+        String gitDir;
+        if (rootProject == project) {
+            gitDir = "$projectDir";
+        } else {
+            gitDir = rootProject.file(".git/modules/BuildCraft").toString()
+        }
+        def repo = grgit.open(dir: gitDir)
         replace "\${git_commit_hash}", repo.head().id
         // This is very ugly: we need 7(!) \ to produce a single \ in the final one. 
         replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
         replace "\${git_commit_author}", repo.head().author.name
         replace "\${git_branch}", repo.branch.current().getName()
         if (addVersionDetails) {
-            project.version += "-" + repo.head().id.toString().substring(0, 12)
+            // Always use the compat commit for the version.
+            project.version += "-" + grgit.open().head().id.toString().substring(0, 12)
         }
     } else {
         if (addVersionDetails) {
@@ -165,7 +175,7 @@ if (gradle.startParameter.taskNames.contains("checkstyle")) {
     tasks["checkstyleTest"].enabled = false
 }
 
-task setupSubProjects(dependsOn: ":sub_projects:expression:generateSources") {
+task setupSubProjects(dependsOn: "sub_projects:expression:generateSources") {
     // Just an inter-dependency task
 }
 
@@ -221,12 +231,12 @@ javadoc {
 
 def createMCModInfo(String taskName)
 {
-    return new File("build/processing/" + taskName + "/mcmod.info")
+    return new File("$projectDir/build/processing/" + taskName + "/mcmod.info")
 }
 
 def writeMCModInfo(String taskName, int... ids)
 {
-    File temp = new File("build/processing/" + taskName + "/mcmod.info")
+    File temp = createMCModInfo(taskName)
     temp.parentFile.mkdirs()
     if (temp.exists())
         temp.delete()
@@ -252,8 +262,8 @@ def parseConfig(File config) {
     }
 }
 
-def unzippedSourceJar = new File("build/processing/tasks/unzipped_src_jar/unzip")
-def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/", version)
+def unzippedSourceJar = new File("$projectDir/build/processing/tasks/unzipped_src_jar/unzip")
+def libsDir = new File(System.getenv("LIBS_DIR") ?: "$projectDir/build/libs/", version)
 def modulesDir = new File(libsDir, "modules")
 def modulesDirSrc = new File(modulesDir, "src")
 
@@ -274,13 +284,15 @@ javadoc {
 // add a javadoc jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
     destinationDir = libsDir
+    appendix = "main"
     classifier = 'javadoc'
-    from 'build/docs/javadoc'
+    from '$projectDir/build/docs/javadoc'
 }
 
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {
     destinationDir = libsDir
+    appendix = "main"
     from sourceSets.main.output
     from sourceSets.api.output
     classifier = 'dev'
@@ -301,7 +313,7 @@ task writeModInfos() {
 }
 
 task apiJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-    destinationDir = libsDir
+    destinationDir = modulesDir
     appendix = "api"
 
     from(project.ext.jarFile) {
@@ -318,7 +330,7 @@ task apiSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
 
 task libJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
     destinationDir = modulesDir
-    appendix = 'lib'
+    appendix = "lib"
 
     from(createMCModInfo("lib").parentFile)
     from(project.ext.jarFile) {
@@ -347,82 +359,30 @@ task coreJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
     }
 }
 
-task buildersJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
+for (String module : ["builders", "energy", "factory", "silicon", "transport", "robotics"]) {
+    task (module + "Jar", type: Jar, dependsOn: [reobfJar, writeModInfos]) {
+        destinationDir = modulesDir
+        appendix = module
 
-    destinationDir = modulesDir
-    appendix = "builders"
-
-    from(createMCModInfo("builders").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "LICENSE"])
+        from(createMCModInfo(module).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraft$module/**", "buildcraft/$module/**", "LICENSE"])
+        }
     }
 }
 
-task energyJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-
-    destinationDir = modulesDir
-    appendix = "energy"
-
-    from(createMCModInfo("energy").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "LICENSE"])
-    }
-}
-
-task factoryJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-
-    destinationDir = modulesDir
-    appendix = "factory"
-
-    from(createMCModInfo("factory").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "LICENSE"])
-    }
-}
-
-task siliconJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-
-    destinationDir = modulesDir
-    appendix = "silicon"
-
-    from(createMCModInfo("silicon").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "LICENSE"])
-    }
-}
-
-task transportJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-
-    destinationDir = modulesDir
-    appendix = "transport"
-
-    from(createMCModInfo("transport").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "LICENSE"])
-    }
-}
-
-task roboticsJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-
-    destinationDir = modulesDir
-    appendix = "robotics"
-
-    from(createMCModInfo("robotics").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "LICENSE"])
-    }
-}
-
-task allJar(type: Jar, dependsOn:reobfJar) {
+task mainJar(type: Jar, dependsOn:reobfJar) {
     destinationDir = libsDir
+    appendix = "main"
 
     from(project.ext.jarFile) {
         includes.addAll("**")
     }
 }
 
-task allSrcJar(type: Jar, dependsOn:[reobfJar, unzipSourceJar]) {
+task mainSrcJar(type: Jar, dependsOn:[reobfJar, unzipSourceJar]) {
     destinationDir = libsDir
+    appendix = "main"
     classifier = "sources"
 
     from sourceSets.api.allSource
@@ -431,13 +391,30 @@ task allSrcJar(type: Jar, dependsOn:[reobfJar, unzipSourceJar]) {
     }
 }
 
+// Configure BC compat
+if (rootProject != project) {
+    rootProject.allJar.
+        from (project.ext.jarFile) {
+            includes.addAll("**")
+            exclude("mcmod.info")
+        }
+    rootProject.allJar.dependsOn(mainJar)
+
+    rootProject.allSrcJar.
+        from (unzippedSourceJar) {
+            includes.add("**")
+            exclude("mcmod.info")
+        }
+    rootProject.allJar.dependsOn(unzipSourceJar)
+}
+
 // add api classes to main package
 jar {
     from sourceSets.api.output
 }
 
 // make sure all of these happen when we run build
-build.dependsOn allSrcJar, apiJar, deobfJar, javadocJar
+build.dependsOn mainSrcJar, apiJar, deobfJar, javadocJar
 
 // --------------------
 // maven section
@@ -470,7 +447,7 @@ artifacts {
     archives siliconJar
     archives transportJar
     archives roboticsJar
-    archives allJar
+    archives mainJar
 }
 
 def sftp(String subPath, Closure antFileset = {}) {
@@ -495,7 +472,7 @@ def sftp(String subPath, Closure antFileset = {}) {
 publishing {
     repositories {
         maven {
-            url System.getenv("MAVEN_DIR") ?: "build/maven"
+            url System.getenv("MAVEN_DIR") ?: "$projectDir/build/maven"
         }
     }
     publications {
@@ -527,19 +504,19 @@ publishing {
 
             artifact libSrcJar
         }
-        pub_allJar(MavenPublication) {
+        pub_mainJar(MavenPublication) {
             groupId "com.mod-buildcraft"
-            artifactId "buildcraft"
+            artifactId "buildcraft-main"
             version project.version
 
-            artifact allJar
+            artifact mainJar
         }
-        pub_allSrcJar(MavenPublication) {
+        pub_mainSrcJar(MavenPublication) {
             groupId "com.mod-buildcraft"
-            artifactId "buildcraft"
+            artifactId "buildcraft-main"
             version project.version
 
-            artifact allSrcJar
+            artifact mainSrcJar
         }
     }
 }
@@ -565,81 +542,7 @@ uploadArchives {
     //dependsOn "reobf"
 
     repositories {
-        if (project.hasProperty("filesmaven")) { // if this is the Forge server, and this stuff is defined...
-            logger.info('Publishing to files server')
-
-            mavenDeployer {
-                // specify the jars that maven needs to deploy here
-                configuration = configurations.deployerJars
-
-                // authentication, again, specially set in the forge server environment
-                repository(url: project.filesmaven.url) {
-                    authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
-                }
-
-                // here you specify all your metadata
-                // this is the definition of the maven pom.xml. This is simply a DSL to define the XML. Not actual fields or things to set.
-                pom {
-                    groupId = project.group
-                    version = project.version
-                    artifactId = project.archivesBaseName
-                    project {
-                        name project.archivesBaseName
-                        packaging 'jar'
-                        description 'A Minecraft mod adding all sorts of machinery'
-                        url 'http://www.mod-buildcraft.com/'
-
-                        scm {
-                            url 'https://github.com/BuildCraft/BuildCraft'
-                            connection 'scm:git:git://github.com/BuildCraft/BuildCraft.git'
-                            developerConnection 'scm:git:git@github.com:BuildCraft/BuildCraft.git'
-                        }
-
-                        issueManagement {
-                            system 'github'
-                            url 'https://github.com/BuildCraft/BuildCraft/issues'
-                        }
-
-                        licenses {
-                            license {
-                                name 'Minecraft Mod Public License'
-                                url 'http://www.mod-buildcraft.com/MMPL-1.0.txt'
-                                distribution 'repo'
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id 'SpaceToad'
-                                name 'SpaceToad'
-                                roles { role 'developer' }
-                            }
-                            developer {
-                                id 'CovertJaguar'
-                                name 'CovertJaguar'
-                                roles { role 'developer' }
-                            }
-                            developer {
-                                id 'SirSngir'
-                                name 'SirSengir'
-                                roles { role 'developer' }
-                            }   
-                            developer {
-                                id 'Krapht'
-                                name 'Krapht'
-                                roles { role 'developer' }
-                            }   
-
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            // otherwise publishing to the local repo in ~/.m2 is fine...
-            add project.repositories.mavenLocal()
-        }
+        add project.repositories.mavenLocal()
     }
 }
 

@@ -35,7 +35,7 @@
 },
 {
   "modid": "buildcraftbuilders",
-  "name": "BC Builders",
+  "name": "BuildCraft Builders",
   "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Builders Component)",
@@ -52,7 +52,7 @@
 },
 {
   "modid": "buildcraftenergy",
-  "name": "BC Energy",
+  "name": "BuildCraft Energy",
   "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Energy Component)",
@@ -69,7 +69,7 @@
 },
 {
   "modid": "buildcraftfactory",
-  "name": "BC Factory",
+  "name": "BuildCraft Factory",
   "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Factory Component)",
@@ -86,7 +86,7 @@
 },
 {
   "modid": "buildcraftsilicon",
-  "name": "BC Silicon",
+  "name": "BuildCraft Silicon",
   "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Silicon Component)",
@@ -103,7 +103,7 @@
 },
 {
   "modid": "buildcrafttransport",
-  "name": "BC Transport",
+  "name": "BuildCraft Transport",
   "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
@@ -120,7 +120,7 @@
 },
 {
   "modid": "buildcraftrobotics",
-  "name": "BC Robotics",
+  "name": "BuildCraft Robotics",
   "version": "$version",
   "mcversion": "${mcversion}",
   "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Robotics Component)",
