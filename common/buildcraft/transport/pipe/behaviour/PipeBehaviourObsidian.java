@@ -92,7 +92,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         }
         EnumFacing openFace = getOpenFace();
         if (openFace != null) {
-            trySuckEntity(entity, openFace, 0, false);
+            trySuckEntity(entity, openFace, Long.MAX_VALUE, false);
         }
     }
 
@@ -154,10 +154,16 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         IItemTransactor transactor = ItemTransactorHelper.getTransactorForEntity(entity, faceFrom.getOpposite());
 
         if (flowItem != null) {
-            double distance = Math.sqrt(entity.getDistanceSqToCenter(pipe.getHolder().getPipePos()));
-            long powerReqPerItem = (long) (distance * POWER_PER_METRE + POWER_PER_ITEM);
-
-            int max = power == 0 ? 1 : (int) (power / powerReqPerItem);
+            long powerReqPerItem;
+            int max;
+            if (power == Long.MAX_VALUE) {
+                max = Integer.MAX_VALUE;
+                powerReqPerItem = 0;
+            } else {
+                double distance = Math.sqrt(entity.getDistanceSqToCenter(pipe.getHolder().getPipePos()));
+                powerReqPerItem = (long) (Math.max(1, distance) * POWER_PER_METRE + POWER_PER_ITEM);
+                max = (int) (power / powerReqPerItem);
+            }
             ItemStack extracted = transactor.extract(StackFilter.ALL, 1, max, simulate);
             if (!extracted.isEmpty()) {
                 if (!simulate) {
