@@ -9,6 +9,13 @@ Additions:
   * This is called "general.miningMaxDepth" and can be changed from anywhere between 32 and 4096.
   * (Values above 256 make no difference in vanilla, this is primarily for Cubic Chunk support)
 
+Improvements:
+
+* [meta] BuildCraftCompat is now included in an "all" jar file (named "buildcraft-all-7.99.20.jar").
+  * The previous "buildcraft-7.99.19" jar file has been renamed "buildcraft-main-7.99.20.jar"
+  * As such the compat module will have the same version number as the rest of buildcraft
+  * In addition it no longer has a separate changelog. 
+
 Ported content:
 
 * [#4299] Re-added the power requested trigger (therealfarfetchd)
