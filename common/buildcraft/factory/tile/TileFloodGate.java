@@ -26,8 +26,6 @@ import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -48,7 +46,6 @@ import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -56,8 +53,12 @@ import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.block.BlockFloodGate;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
-    private static final EnumFacing[] SEARCH_DIRECTIONS = new EnumFacing[] { //
+    private static final EnumFacing[] SEARCH_NORMAL = new EnumFacing[] { //
         EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, //
+        EnumFacing.WEST, EnumFacing.EAST //
+    };
+    private static final EnumFacing[] SEARCH_GASEOUS = new EnumFacing[] { //
+        EnumFacing.UP, EnumFacing.NORTH, EnumFacing.SOUTH, //
         EnumFacing.WEST, EnumFacing.EAST //
     };
 
@@ -83,7 +84,8 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         world.profiler.startSection("prepare");
         queue.clear();
         paths.clear();
-        if (tank.isEmpty()) {
+        FluidStack fluid = tank.getFluid();
+        if (fluid == null || fluid.amount <= 0) {
             world.profiler.endSection();
             return;
         }
@@ -95,6 +97,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             nextPosesToCheck.add(offset);
             paths.put(offset, ImmutableList.of(offset));
         }
+        EnumFacing[] directions = fluid.getFluid().isGaseous(fluid) ? SEARCH_GASEOUS : SEARCH_NORMAL;
         world.profiler.endStartSection("build");
         outer: while (!nextPosesToCheck.isEmpty()) {
             List<BlockPos> nextPosesToCheckCopy = new ArrayList<>(nextPosesToCheck);
@@ -112,18 +115,8 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                             }
                         }
                         List<BlockPos> checkPath = paths.get(toCheck);
-                        for (EnumFacing side : SEARCH_DIRECTIONS) {
+                        for (EnumFacing side : directions) {
                             BlockPos next = toCheck.offset(side);
-                            if (!openSides.contains(side)) {
-                                Axis axis = side.getAxis();
-                                int dist = VecUtil.getValue(next, axis) - VecUtil.getValue(getPos(), axis);
-                                if (side.getAxisDirection() == AxisDirection.NEGATIVE) {
-                                    dist = -dist;
-                                }
-                                if (dist > 0) {
-                                    continue;
-                                }
-                            }
                             if (checked.contains(next)) {
                                 continue;
                             }
@@ -214,7 +207,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             }
         }
 
-        if (queue.isEmpty() && tick % getCurrentDelay() == 0) {
+        if (queue.isEmpty() && tick >= getCurrentDelay()) {
             delayIndex = Math.min(delayIndex + 1, REBUILD_DELAYS.length - 1);
             tick = 0;
             buildQueue();

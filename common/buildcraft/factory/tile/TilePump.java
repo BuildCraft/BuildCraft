@@ -56,8 +56,13 @@ import buildcraft.energy.BCEnergyFluids;
 import buildcraft.factory.BCFactoryBlocks;
 
 public class TilePump extends TileMiner {
-    private static final EnumFacing[] SEARCH_DIRECTIONS = new EnumFacing[] { //
+    private static final EnumFacing[] SEARCH_NORMAL = new EnumFacing[] { //
         EnumFacing.UP, EnumFacing.NORTH, EnumFacing.SOUTH, //
+        EnumFacing.WEST, EnumFacing.EAST //
+    };
+
+    private static final EnumFacing[] SEARCH_GASEOUS = new EnumFacing[] { //
+        EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, //
         EnumFacing.WEST, EnumFacing.EAST //
     };
 
@@ -67,6 +72,9 @@ public class TilePump extends TileMiner {
     private BlockPos fluidConnection;
     private final Deque<BlockPos> queue = new ArrayDeque<>();
     private boolean isInfiniteWaterSource;
+
+    /** The position just below the bottom of the pump tube. */
+    private BlockPos targetPos;
 
     @Nullable
     private BlockPos oilSpringPos;
@@ -90,30 +98,30 @@ public class TilePump extends TileMiner {
         isInfiniteWaterSource = false;
         Set<BlockPos> checked = new HashSet<>();
         List<BlockPos> nextPosesToCheck = new ArrayList<>();
-        for (BlockPos posToCheck = pos.down(); !world.isOutsideBuildHeight(posToCheck);
-            posToCheck = posToCheck.down()) {
-            if (pos.getY() - posToCheck.getY() > BCCoreConfig.miningMaxDepth) {
+        for (targetPos = pos.down(); !world.isOutsideBuildHeight(targetPos); targetPos = targetPos.down()) {
+            if (pos.getY() - targetPos.getY() > BCCoreConfig.miningMaxDepth) {
                 break;
             }
-            if (BlockUtil.getFluidWithFlowing(world, posToCheck) != null) {
-                queueFluid = BlockUtil.getFluidWithFlowing(world, posToCheck);
-                nextPosesToCheck.add(posToCheck);
-                paths.put(posToCheck, Collections.singletonList(posToCheck));
-                checked.add(posToCheck);
-                if (BlockUtil.getFluid(world, posToCheck) != null) {
-                    queue.add(posToCheck);
+            if (BlockUtil.getFluidWithFlowing(world, targetPos) != null) {
+                queueFluid = BlockUtil.getFluidWithFlowing(world, targetPos);
+                nextPosesToCheck.add(targetPos);
+                paths.put(targetPos, Collections.singletonList(targetPos));
+                checked.add(targetPos);
+                if (BlockUtil.getFluid(world, targetPos) != null) {
+                    queue.add(targetPos);
                 }
-                fluidConnection = posToCheck;
+                fluidConnection = targetPos;
                 break;
-            } else if (!world.isAirBlock(posToCheck)
-                && world.getBlockState(posToCheck).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAirBlock(targetPos)
+                && world.getBlockState(targetPos).getBlock() != BCFactoryBlocks.tube) {
                 break;
             }
         }
-        if (nextPosesToCheck.isEmpty()) {
+        if (nextPosesToCheck.isEmpty() || queueFluid == null) {
             world.profiler.endSection();
             return;
         }
+        EnumFacing[] directions = queueFluid.isGaseous() ? SEARCH_GASEOUS : SEARCH_NORMAL;
         world.profiler.endStartSection("build");
         boolean isWater =
             !BCCoreConfig.pumpsConsumeWater && FluidUtilBC.areFluidsEqual(queueFluid, FluidRegistry.WATER);
@@ -123,9 +131,9 @@ public class TilePump extends TileMiner {
             nextPosesToCheck.clear();
             for (BlockPos posToCheck : nextPosesToCheckCopy) {
                 int count = 0;
-                for (EnumFacing side : SEARCH_DIRECTIONS) {
+                for (EnumFacing side : directions) {
                     BlockPos offsetPos = posToCheck.offset(side);
-                    if (offsetPos.distanceSq(currentPos == null ? pos : currentPos) > maxLengthSquared) {
+                    if (offsetPos.distanceSq(targetPos) > maxLengthSquared) {
                         continue;
                     }
                     if (checked.add(offsetPos)) {
@@ -211,10 +219,10 @@ public class TilePump extends TileMiner {
 
     @Override
     protected BlockPos getTargetPos() {
-        if (currentPos != null && fluidConnection != null) {
-            return currentPos.getY() > fluidConnection.getY() ? fluidConnection : currentPos;
+        if (queue.isEmpty()) {
+            return null;
         }
-        return currentPos;
+        return targetPos;
     }
 
     @Override
@@ -242,10 +250,7 @@ public class TilePump extends TileMiner {
                 progress += battery.extractPower(0, target - progress);
                 if (progress >= target) {
                     FluidStack drain = BlockUtil.drainBlock(world, currentPos, false);
-                    if (drain != null
-                        && paths.get(currentPos).stream()
-                            .allMatch(blockPos -> BlockUtil.getFluidWithFlowing(world, blockPos) != null)
-                        && canDrain(currentPos)) {
+                    if (drain != null && isValidPath(currentPos) && canDrain(currentPos)) {
                         tank.fillInternal(drain, true);
                         progress = 0;
                         if (isInfiniteWaterSource) {
@@ -279,6 +284,22 @@ public class TilePump extends TileMiner {
                 nextPos();
             }
         }
+    }
+
+    private boolean isValidPath(BlockPos from) {
+        List<BlockPos> path = paths.get(from);
+        if (path == null) {
+            return false;
+        }
+        if (path.isEmpty()) {
+            return true;
+        }
+        for (BlockPos p : path) {
+            if (BlockUtil.getFluidWithFlowing(world, p) == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // NBT
