@@ -6,7 +6,11 @@
 
 package buildcraft.lib.expression.node.func;
 
+import java.util.Objects;
+
 import buildcraft.lib.expression.NodeInliningHelper;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
@@ -17,6 +21,7 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
 import buildcraft.lib.expression.node.func.{$StringFunction};
 import buildcraft.lib.expression.node.func.NodeFuncBase;
+import buildcraft.lib.expression.node.func.NodeFuncBase.IFunctionNode;
 import buildcraft.lib.expression.node.value.NodeConstant{$ReturnOnly};
 
 {$AutoGenWarning}
@@ -41,14 +46,26 @@ public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} extends NodeFuncBase impl
     }
 
     @Override
-    public INode{$Return} getNode(INodeStack stack) throws InvalidExpressionException {
-{$NodeStackPops}
-        return new Func({$StringFunctionArgs});
+    public NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} setNeverInline() {
+        super.setNeverInline();
+        return this;
     }
 
-    private class Func implements INode{$Return} {
+    @Override
+    public INode{$Return} getNode(INodeStack stack) throws InvalidExpressionException {
+{$NodeStackPops}
+        return create({$StringFunctionArgs});
+    }
+
+    /** Shortcut to create a new {@link Func{$Args}To{$ReturnOnly}} without needing to create
+     *  and populate an {@link INodeStack} to pass to {@link #getNode(INodeStack)}. */
+    public Func{$Args}To{$ReturnOnly} create({$ObjectNodeArgs}) {
+        return new Func{$Args}To{$ReturnOnly}({$StringFunctionArgsL}); 
+    }
+
+    public class Func{$Args}To{$ReturnOnly} implements INode{$Return}, IDependantNode, IFunctionNode {
 {$ObjectNodeFields}
-        public Func({$ObjectNodeArgs}) {
+        public Func{$Args}To{$ReturnOnly}({$ObjectNodeArgs}) {
 {$ObjectNodeFieldSet}
         }
 {$ObjectGetType2}
@@ -62,19 +79,51 @@ public class NodeFunc{$Args}To{$ReturnOnly}{$TypeArgs} extends NodeFuncBase impl
             if (!canInline) {
                 // Note that we can still inline the arguments, just not *this* function
                 return NodeInliningHelper.tryInline(this, {$StringFunctionArgsL},
-                    ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs}),
-                    ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs})
+                    ({$StringFunctionArgs}) -> new Func{$Args}To{$ReturnOnly}({$StringFunctionArgs}),
+                    ({$StringFunctionArgs}) -> new Func{$Args}To{$ReturnOnly}({$StringFunctionArgs})
                 );
             }
             return NodeInliningHelper.tryInline(this, {$StringFunctionArgsL},
-                ({$StringFunctionArgs}) -> new Func({$StringFunctionArgs}),
+                ({$StringFunctionArgs}) -> new Func{$Args}To{$ReturnOnly}({$StringFunctionArgs}),
                 ({$StringFunctionArgs}) -> {$NodeConstantGetter}function.apply({$NodeEvaluations}))
             );
         }
 
         @Override
+        public void visitDependants(IDependancyVisitor visitor) {
+            if (!canInline) {
+                if (function instanceof IDependantNode) {
+                    visitor.dependOn((IDependantNode) function);
+                } else {
+                    visitor.dependOnExplictly(this);
+                }
+            }
+            visitor.dependOn({$StringFunctionArgsL});
+        }
+
+        @Override
         public String toString() {
             return stringFunction.apply({$NodeToStringArgs});
+        }
+
+        @Override
+        public NodeFuncBase getFunction() {
+            return NodeFunc{$Args}To{$ReturnOnly}.this;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash({$StringFunctionArgsL});
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            Func{$Args}To{$ReturnOnly} other = (Func{$Args}To{$ReturnOnly}) obj;
+{$ReturnEquals}
         }
     }
 

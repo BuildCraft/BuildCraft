@@ -6,11 +6,13 @@
 
 package buildcraft.lib.expression.node.condition;
 
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
-public class NodeConditionalDouble implements INodeDouble {
+public class NodeConditionalDouble implements INodeDouble, IDependantNode {
     private final INodeBoolean condition;
     private final INodeDouble ifTrue, ifFalse;
 
@@ -31,12 +33,20 @@ public class NodeConditionalDouble implements INodeDouble {
         INodeDouble t = ifTrue.inline();
         INodeDouble f = ifFalse.inline();
         if (c instanceof NodeConstantBoolean && t instanceof NodeConstantDouble && f instanceof NodeConstantDouble) {
-            return new NodeConstantDouble(((NodeConstantBoolean) c).value ? ((NodeConstantDouble) t).value : ((NodeConstantDouble) f).value);
+            return new NodeConstantDouble(
+                ((NodeConstantBoolean) c).value ? ((NodeConstantDouble) t).value : ((NodeConstantDouble) f).value);
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalDouble(c, t, f);
+        } else if (c instanceof NodeConstantBoolean) {
+            return ((NodeConstantBoolean) c).value ? t : f;
         } else {
             return this;
         }
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        visitor.dependOn(condition, ifTrue, ifFalse);
     }
 
     @Override

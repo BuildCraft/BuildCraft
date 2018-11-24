@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 import buildcraft.api.core.BCLog;
 
+@Deprecated
 public class JsonEntry {
     public final String title;
     public final String page;

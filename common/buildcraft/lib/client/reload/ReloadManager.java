@@ -126,8 +126,6 @@ public enum ReloadManager {
             BCLog.logger.fatal("  - " + r);
         }
         throw new IllegalStateException("Cyclic dependency chain!");
-
-        // TODO: Throw error.
     }
 
     private static final class Reloadable {

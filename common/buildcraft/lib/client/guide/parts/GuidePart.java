@@ -152,12 +152,12 @@ public abstract class GuidePart {
 
             int _y = y + current.pixel;
             int _w = fontRenderer.getStringWidth(text);
-            GuiRectangle rect = new GuiRectangle(_x, _y, _w, neededSpace);
+            GuiRectangle rect = new GuiRectangle(_x, _y - 2, _w, neededSpace + 3);
             wasHovered |= rect.contains(gui.mouse);
             if (render) {
                 if (wasHovered) {
                     if (line.link) {
-                        Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y - 2 + neededSpace, 0xFFD3AD6C);
+                        Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y + 1 + neededSpace, 0xFFD3AD6C);
                     }
                     renderTooltip();
                 }

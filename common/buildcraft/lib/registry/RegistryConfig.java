@@ -5,11 +5,15 @@
 package buildcraft.lib.registry;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -22,6 +26,7 @@ import buildcraft.api.transport.pipe.IItemPipe;
 public class RegistryConfig {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.registry");
     private static final Map<ModContainer, Configuration> modObjectConfigs = new IdentityHashMap<>();
+    private static final Map<String, Set<String>> disabled = new HashMap<>();
 
     // #######################
     //
@@ -68,6 +73,26 @@ public class RegistryConfig {
         return isEnabled(getActiveMod(), category, resourcePath, langKey);
     }
 
+    public static boolean hasItemBeenDisabled(ResourceLocation loc) {
+        return hasObjectBeenDisabled("items", loc) || hasObjectBeenDisabled("pipes", loc);
+    }
+
+    public static boolean hasBlockBeenDisabled(ResourceLocation loc) {
+        return hasObjectBeenDisabled("blocks", loc);
+    }
+
+    /** @return True if
+     *         <ol>
+     *         <li>The given location has been passed in non-null instance to {@link #isEnabled(Block)},
+     *         {@link #isEnabled(Item)}, or {@link #isEnabled(String, String, String)}.</li> and
+     *         <li>That method returned false.</li>
+     *         </ol>
+     */
+    public static boolean hasObjectBeenDisabled(String category, ResourceLocation loc) {
+        Set<String> locations = disabled.get(category);
+        return locations != null && locations.contains(loc.getResourcePath());
+    }
+
     // #######################
     //
     // Internals
@@ -93,7 +118,15 @@ public class RegistryConfig {
         prop.setLanguageKey(langKey);
         prop.setRequiresMcRestart(true);
         prop.setRequiresWorldRestart(true);
-        return prop.getBoolean(true);
+        boolean isEnabled = prop.getBoolean(true);
+        if (!isEnabled) {
+            setDisabled(category, resourcePath);
+        }
+        return isEnabled;
+    }
+
+    static void setDisabled(String category, String resourcePath) {
+        disabled.computeIfAbsent(category, k -> new HashSet<>()).add(resourcePath);
     }
 
     private static ModContainer getMod(String modid) {

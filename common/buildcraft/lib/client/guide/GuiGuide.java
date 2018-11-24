@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Queues;
 
 import org.lwjgl.input.Keyboard;
@@ -30,12 +32,17 @@ import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
+import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.MousePosition;
+import buildcraft.lib.guide.GuideBook;
+import buildcraft.lib.guide.GuideBookRegistry;
+import buildcraft.lib.guide.GuideContentsData;
 
 public class GuiGuide extends GuiScreen {
     public static final ResourceLocation ICONS_1 = Gui.ICONS;
@@ -49,6 +56,10 @@ public class GuiGuide extends GuiScreen {
         new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
     public static final ResourceLocation RIGHT_PAGE_BACK =
         new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
+    public static final ResourceLocation LEFT_PAGE_FIRST =
+        new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_first.png");
+    public static final ResourceLocation RIGHT_PAGE_LAST =
+        new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_last.png");
     public static final ResourceLocation NOTE = new ResourceLocation("buildcraftlib:textures/gui/guide/note.png");
 
     public static final GuiIcon BOOK_COVER = new GuiIcon(COVER, 0, 0, 202, 248);
@@ -59,6 +70,9 @@ public class GuiGuide extends GuiScreen {
 
     public static final GuiIcon PAGE_LEFT_BACK = new GuiIcon(LEFT_PAGE_BACK, 0, 0, 193, 248);
     public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
+
+    public static final GuiIcon PAGE_LEFT_FIRST = new GuiIcon(LEFT_PAGE_FIRST, 0, 0, 193, 248);
+    public static final GuiIcon PAGE_RIGHT_LAST = new GuiIcon(RIGHT_PAGE_LAST, 0, 0, 193, 248);
 
     public static final int PAGE_WIDTH = 168;
     public static final int PAGE_HEIGHT = 190;
@@ -92,6 +106,10 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon BOX_SELECTED_PLUS = new GuiIcon(ICONS_2, 32, 180, 16, 16);
     public static final GuiIcon BOX_SELECTED_TICKED = new GuiIcon(ICONS_2, 48, 180, 16, 16);
     public static final GuiIcon BOX_SELECTED_CHAPTER = new GuiIcon(ICONS_2, 64, 180, 16, 16);
+
+    public static final SpriteRaw BOX_CODE_SPRITE = new SpriteRaw(ICONS_2, 80, 164, 16, 16, 256);
+    public static final GuiIcon BOX_CODE = new GuiIcon(BOX_CODE_SPRITE, 256);
+    public static final SpriteNineSliced BOX_CODE_SLICED = new SpriteNineSliced(BOX_CODE_SPRITE, 4, 4, 12, 12, 16);
 
     public static final GuiIcon BORDER_TOP_LEFT = new GuiIcon(ICONS_2, 0, 196, 13, 13);
     public static final GuiIcon BORDER_TOP_RIGHT = new GuiIcon(ICONS_2, 13, 196, 13, 13);
@@ -143,6 +161,9 @@ public class GuiGuide extends GuiScreen {
 
     public final MousePosition mouse = new MousePosition();
 
+    public final GuideBook book;
+    public final GuideContentsData bookData;
+
     public TypeOrder sortingOrder = SORTING_TYPES[0];
     private boolean isOpen = false, isEditing = false;
     private boolean isOpening = false;
@@ -165,23 +186,18 @@ public class GuiGuide extends GuiScreen {
     private float lastPartialTicks;
 
     public GuiGuide() {
+        this((GuideBook) null);
+    }
+
+    public GuiGuide(String bookName) {
+        this(GuideBookRegistry.INSTANCE.getBook(bookName));
+    }
+
+    private GuiGuide(@Nullable GuideBook book) {
+        this.book = book;
+        this.bookData = book != null ? book.data : GuideManager.BOOK_ALL_DATA;
         mc = Minecraft.getMinecraft();
         openPage(new GuidePageContents(this));
-        // TODO: Add a full screen option, with a constant colour (or gradiant, or computed noise?)
-    }
-
-    public GuiGuide(String noteId) {
-        mc = Minecraft.getMinecraft();
-        // TODO (AlexIIL): add support for notes!
-        // TODO (AlexIIL): Separate text drawing from everything else (layer [gl, buffered, gl])
-    }
-
-    public void initForExport() {
-        // TODO: Move this out of this gui, and also change factories in some way to support
-        // exporting to other formats.
-        isOpening = true;
-        isOpen = true;
-        setWorldAndResolution(Minecraft.getMinecraft(), 1920, 1080);
     }
 
     public void openPage(GuidePageBase page) {
@@ -386,19 +402,36 @@ public class GuiGuide extends GuiScreen {
     }
 
     private void drawOpen(float partialTicks) {
-        // Draw the pages
-        mc.renderEngine.bindTexture(LEFT_PAGE);
-        PAGE_LEFT.drawAt(minX, minY);
 
-        mc.renderEngine.bindTexture(RIGHT_PAGE);
-        PAGE_RIGHT.drawAt(minX + PAGE_LEFT.width, minY);
+        int cp = currentPage.getPage();
+        int pc = currentPage.getPageCount();
+        boolean isHalfPageShown = cp + 1 == pc;
+        {
+            (cp == 0 ? PAGE_LEFT_FIRST : PAGE_LEFT).drawAt(minX, minY);
+            final GuiIcon lastPageIcon;
+            if (cp + 2 == pc) {
+                lastPageIcon = PAGE_RIGHT_LAST;
+            } else if (isHalfPageShown) {
+                lastPageIcon = PAGE_RIGHT_BACK;
+            } else {
+                lastPageIcon = PAGE_RIGHT;
+            }
+
+            lastPageIcon.drawAt(minX + PAGE_LEFT.width, minY);
+        }
 
         isOverHover = PEN_HIDDEN_AREA.offset(minX, minY).contains(mouse);
 
         // Now draw the actual contents of the book
         String title = currentPage.getTitle();
         if (title != null) {
-            int x = /* this.minX + */ (width - currentFont.getStringWidth(title)) / 2;
+            final int x;
+            int titleWidth = currentFont.getStringWidth(title);
+            if (isHalfPageShown) {
+                x = (int) (minX + PAGE_LEFT_TEXT.x + (PAGE_LEFT_TEXT.width - titleWidth) / 2);
+            } else {
+                x = (width - titleWidth) / 2;
+            }
             currentFont.drawString(title, x, minY + 12, 0);
         }
 

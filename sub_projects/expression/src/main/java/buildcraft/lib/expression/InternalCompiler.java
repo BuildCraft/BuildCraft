@@ -509,7 +509,8 @@ public class InternalCompiler {
             functionOrder.add(0, nodeType);
             ctxs[n++] = NodeTypes.getContext(nodeType);
         }
-        functions.putAll(new FunctionContext(ctxs).getFunctions(name));
+        FunctionContext typeAwareContext = new FunctionContext(ctxs);
+        functions.putAll(typeAwareContext.getFunctions(name));
 
         INodeFunc bestFunction = null;
         int bestCastCount = Integer.MAX_VALUE;
@@ -610,7 +611,7 @@ public class InternalCompiler {
                 ExpressionDebugManager.debugPrintln("Using implicit object equality comparison.");
             } else {
                 throw new InvalidExpressionException("No viable function called '" + name + "' found for "
-                    + fnOrderNames + getValidFunctionsErrorString(context));
+                    + fnOrderNames + getValidFunctionsErrorString(typeAwareContext));
             }
         }
 

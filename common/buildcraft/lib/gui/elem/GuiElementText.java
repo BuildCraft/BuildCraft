@@ -7,18 +7,20 @@
 package buildcraft.lib.gui.elem;
 
 import java.util.List;
+import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import buildcraft.lib.client.guide.font.MinecraftFont;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
-import buildcraft.lib.misc.RenderUtil;
 
 public class GuiElementText extends GuiElementSimple {
     public boolean dropShadow = false;
@@ -27,11 +29,18 @@ public class GuiElementText extends GuiElementSimple {
 
     private final Supplier<String> text;
     private final IntSupplier colour;
+    private final DoubleSupplier scale;// TODO: Use this and then use this for the guide!
 
     public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
-        super(gui, GuiRectangle.ZERO.offset(parent));
+        this(gui, parent, text, colour, NodeConstantDouble.ONE);
+    }
+
+    public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour,
+        DoubleSupplier scale) {
+        super(gui, GuiRectangle.ZERO.offset(parent));// TODO: link this up like in GuidePageContents!
         this.text = text;
         this.colour = colour;
+        this.scale = scale;
     }
 
     public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, int colour) {
@@ -84,16 +93,24 @@ public class GuiElementText extends GuiElementSimple {
     }
 
     private void draw() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        if (centered) {
-            String str = text.get();
-            int width = fr.getStringWidth(str);
-            double x = getX() - width / 2;
-            fr.drawString(str, (float) x, (float) getY(), colour.getAsInt(), dropShadow);
-        } else {
-            fr.drawString(text.get(), (float) getX(), (float) getY(), colour.getAsInt(), dropShadow);
-        }
-        RenderUtil.setGLColorFromInt(-1);
+        MinecraftFont.INSTANCE.drawString(text.get(), (int) getX(), (int) getY(), colour.getAsInt(), dropShadow,
+            centered, (float) scale.getAsDouble());
+        // final double s = scale.getAsDouble();
+        // final boolean needsScaling = s != 1;
+        // FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+        // if (needsScaling) {
+        // GuiUtil.drawScaledText(fr, text.get(), getX(), getY(), colour.getAsInt(), dropShadow, centered, s);
+        // return;
+        // }
+        // if (centered) {
+        // String str = text.get();
+        // int width = fr.getStringWidth(str);
+        // double x = getX() - width / 2;
+        // fr.drawString(str, (float) x, (float) getY(), colour.getAsInt(), dropShadow);
+        // } else {
+        // fr.drawString(text.get(), (float) getX(), (float) getY(), colour.getAsInt(), dropShadow);
+        // }
+        // RenderUtil.setGLColorFromInt(-1);
     }
 
     @Override

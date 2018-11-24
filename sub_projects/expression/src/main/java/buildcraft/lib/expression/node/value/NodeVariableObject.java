@@ -6,13 +6,17 @@
 
 package buildcraft.lib.expression.node.value;
 
+import buildcraft.lib.expression.api.IDependancyVisitor;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeObject;
 import buildcraft.lib.expression.api.NodeType;
 import buildcraft.lib.expression.api.NodeTypes;
 
-public class NodeVariableObject<T> extends NodeVariable implements IVariableNodeObject<T> {
+public class NodeVariableObject<T> extends NodeVariable implements IVariableNodeObject<T>, IDependantNode {
     public final Class<T> type;
     public T value;
+    private INodeObject<T> src;
 
     public NodeVariableObject(String name, Class<T> type) {
         super(name);
@@ -31,13 +35,15 @@ public class NodeVariableObject<T> extends NodeVariable implements IVariableNode
 
     @Override
     public T evaluate() {
-        return value;
+        return src != null ? src.evaluate() : value;
     }
 
     @Override
     public INodeObject<T> inline() {
         if (isConst) {
             return new NodeConstantObject<>(getType(), value);
+        } else if (src != null) {
+            return src.inline();
         }
         return this;
     }
@@ -45,5 +51,26 @@ public class NodeVariableObject<T> extends NodeVariable implements IVariableNode
     @Override
     public void set(T value) {
         this.value = value;
+    }
+
+    @Override
+    public void setConstantSource(IExpressionNode source) {
+        if (src != null) {
+            throw new IllegalStateException("Already have a constant source");
+        }
+        INodeObject<?> obj = (INodeObject<?>) source;
+        if (obj.getType() != getType()) {
+            throw new IllegalArgumentException("Cannot convert " + obj.getType() + " to " + getType());
+        }
+        src = (INodeObject<T>) source;
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        if (src != null) {
+            visitor.dependOn(src);
+        } else {
+            visitor.dependOnExplictly(this);
+        }
     }
 }

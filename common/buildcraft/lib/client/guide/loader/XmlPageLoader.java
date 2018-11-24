@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.oredict.OreDictionary;
@@ -30,13 +31,15 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 
-import buildcraft.lib.client.guide.PageEntry;
+import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
+import buildcraft.lib.client.guide.entry.PageEntry;
 import buildcraft.lib.client.guide.parts.GuideChapterWithin;
 import buildcraft.lib.client.guide.parts.GuideImageFactory;
-import buildcraft.lib.client.guide.parts.GuidePage;
+import buildcraft.lib.client.guide.parts.GuidePageEntry;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuidePartCodeBlock;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.client.guide.parts.GuidePartMulti;
 import buildcraft.lib.client.guide.parts.GuidePartNewPage;
@@ -61,6 +64,19 @@ public enum XmlPageLoader implements IPageLoaderText {
     public static boolean SHOW_HINTS = false;
     public static boolean SHOW_DETAIL = false;
     public static boolean SHOW_DESCRIPTION = true;
+
+    private static final class GuideTextFactory implements GuidePartFactory {
+        public final String text;
+
+        private GuideTextFactory(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public GuidePart createNew(GuiGuide gui) {
+            return new GuideText(gui, text);
+        }
+    }
 
     @FunctionalInterface
     public interface SpecialParser {
@@ -98,6 +114,8 @@ public enum XmlPageLoader implements IPageLoaderText {
         putMulti("usages", XmlPageLoader::loadAllUsages);
         putMulti("recipes_usages", XmlPageLoader::loadAllRecipesAndUsages);
         putSingle("image", XmlPageLoader::loadImage);
+        putCode("json_insn"/* , CodeDisplay.JSON_INSN */);
+        // putCode("markdown"/*, CodeDisplay.MARKDOWN*/);
     }
 
     public static void putDuelMultiPartType(String name, BooleanSupplier isVisible) {
@@ -115,6 +133,41 @@ public enum XmlPageLoader implements IPageLoaderText {
         });
     }
 
+    public static void putCode(String name) {
+        putMultiPartType(name, (tag, factories) -> {
+            List<String> lines = new ArrayList<>();
+            for (GuidePartFactory factory : factories) {
+                if (factory instanceof GuideTextFactory) {
+                    lines.add(((GuideTextFactory) factory).text);
+                } else {
+
+                }
+            }
+            for (int i = 0; i < lines.size(); i++) {
+                String str = lines.get(i);
+                if (str.startsWith("~{") && str.endsWith("}") && str.indexOf('{', 2) == -1
+                    && str.indexOf('}') == str.length() - 1) {
+                    lines.set(i, TextFormatting.DARK_PURPLE + str);
+                    continue;
+                }
+                // FIXME: This doesn't really work properly! We will need to use the same system that the rest of the
+                // xml does for this...
+                // (So basically generate colour tags around everything that we want to change)
+                // TODO: Move this outside of this method! (We might need to do it directly in the main loadPage so that
+                // everything is simpler)
+                // and then we only need a map of lang name to a def class with all of the formatting defs.
+                // (And customisable syntax highlighting? Why?)
+                str = str.replace("{", TextFormatting.DARK_GREEN + "{" + TextFormatting.RESET);
+                str = str.replace("}", TextFormatting.DARK_GREEN + "}" + TextFormatting.RESET);
+                str = str.replaceAll("\"(.+)\"", TextFormatting.DARK_BLUE + "$0" + TextFormatting.RESET);
+                str = str.replaceAll("%[0-9]+", TextFormatting.DARK_PURPLE + "$0" + TextFormatting.RESET);
+                str = str.replaceAll("//", TextFormatting.DARK_GREEN + "//");
+                lines.set(i, str);
+            }
+            return gui -> new GuidePartCodeBlock(gui, lines);
+        });
+    }
+
     public static void putMultiPartType(String name, MultiPartJoiner joiner) {
         GUIDE_PART_MULTIS.put(name, joiner);
     }
@@ -128,7 +181,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, PageEntry entry) throws IOException {
+    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry entry) throws IOException {
         // Needs to support:
         // - start/end tags (such as <lore></lore>)
         // - nested tags (such as <lore>Spooky<bold> Skeletons</bold></lore>)
@@ -194,13 +247,13 @@ public enum XmlPageLoader implements IPageLoaderText {
                         if (nestedTags.isEmpty()) {
                             throw new InvalidInputDataException("Tried to close " + tag.name + " before openining it!");
                         }
-                        XmlTag name = nestedTags.pop();
-                        if (!tag.name.equals(name.name)) {
+                        XmlTag nameTag = nestedTags.pop();
+                        if (!tag.name.equals(nameTag.name)) {
                             throw new InvalidInputDataException(
-                                "Tried to close " + tag.name + " before instead of " + name.name + "!");
+                                "Tried to close " + tag.name + " before instead of " + nameTag.name + "!");
                         }
                         List<GuidePartFactory> subParts = nestedParts.pop();
-                        GuidePartFactory joined = joiner.join(name, subParts);
+                        GuidePartFactory joined = joiner.join(nameTag, subParts);
                         if (joined == null) {
                             nestedParts.peek().addAll(subParts);
                             int len = tag.originalString.length();
@@ -259,7 +312,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
 
             final String modLine = completeLine;
-            nestedParts.peek().add((gui) -> new GuideText(gui, modLine));
+            nestedParts.peek().add(new GuideTextFactory(modLine));
         }
         List<GuidePartFactory> factories = nestedParts.pop();
         if (nestedParts.size() != 0) {
@@ -270,8 +323,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             for (GuidePartFactory factory : factories) {
                 parts.add(factory.createNew(gui));
             }
-            String title = I18n.format(entry.title);
-            return new GuidePage(gui, parts, title);
+            return new GuidePageEntry(gui, parts, name, entry);
         };
     }
 

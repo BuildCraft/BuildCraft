@@ -7,11 +7,13 @@
 package buildcraft.lib.expression.node.cast;
 
 import buildcraft.lib.expression.NodeInliningHelper;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 
-public class NodeCastToString implements INodeObject<String> {
+public class NodeCastToString implements INodeObject<String>, IDependantNode {
     private final IExpressionNode from;
 
     public NodeCastToString(IExpressionNode from) {
@@ -32,6 +34,11 @@ public class NodeCastToString implements INodeObject<String> {
     public INodeObject<String> inline() {
         return NodeInliningHelper.tryInline(this, from, NodeCastToString::new,
             (f) -> new NodeConstantObject<>(String.class, f.evaluateAsString()));
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        visitor.dependOn(from);
     }
 
     @Override

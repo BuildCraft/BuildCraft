@@ -13,11 +13,12 @@ public class DefaultContexts {
     public static final FunctionContext MATH_SCALAR = new FunctionContext("Math: Scalar");
     public static final FunctionContext MATH_VECTOR = new FunctionContext("Math: Vector", NodeTypes.VEC_LONG, NodeTypes.VEC_DOUBLE);
     public static final FunctionContext RENDERING = new FunctionContext("Rendering");
+    public static final FunctionContext LOCALIZATION = new FunctionContext("Localization");
     public static final FunctionContext CONFIG = new FunctionContext("Config");
 
     public static final NodeVariableDouble RENDER_PARTIAL_TICKS;
 
-    private static final FunctionContext[] CTX_ARRAY_ALL = { NodeTypes.STRING, MATH_SCALAR, MATH_VECTOR, RENDERING };
+    private static final FunctionContext[] CTX_ARRAY_ALL = { NodeTypes.STRING, MATH_SCALAR, MATH_VECTOR, RENDERING, LOCALIZATION };
 
     /** Creates a new {@link FunctionContext} with all of the functions given in this class. */
     public static FunctionContext createWithAll() {
@@ -29,11 +30,6 @@ public class DefaultContexts {
     }
 
     static {
-        // STRINGS.put_sl_s("string_at", (a, b) -> Character.toString(a.charAt(b)));
-        // STRINGS.put_sl_s("substring", (a, b) -> a.substring(b));
-        // STRINGS.put_sll_s("substring", (a, b, c) -> a.substring(b, c));
-        // STRINGS.put_sll_s("substring_rel", (a, b, c) -> a.substring(b, b + c));
-
         MATH_SCALAR.putConstantDouble("pi", Math.PI);
         MATH_SCALAR.putConstantDouble("e", Math.E);
 

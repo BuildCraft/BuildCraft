@@ -14,13 +14,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.client.guide.PageEntry;
+import buildcraft.lib.client.guide.entry.PageEntry;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 
 public enum MarkdownPageLoader implements IPageLoaderText {
@@ -87,7 +88,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, PageEntry entry) throws IOException {
+    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry)
+        throws IOException {
         StringBuilder replaced = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -97,7 +99,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             replaced.append('\n');
         }
 
-        return XmlPageLoader.INSTANCE.loadPage(new BufferedReader(new StringReader(replaced.toString())), entry);
+        return XmlPageLoader.INSTANCE.loadPage(new BufferedReader(new StringReader(replaced.toString())), name, entry);
     }
 
     private static String replaceSpecialForXml(String line) {

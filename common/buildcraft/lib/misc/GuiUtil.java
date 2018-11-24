@@ -33,6 +33,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 
 import buildcraft.api.core.render.ISprite;
 
+import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SubSprite;
@@ -444,5 +445,37 @@ public class GuiUtil {
     private static ITooltipFlag getTooltipFlags() {
         boolean adv = Minecraft.getMinecraft().gameSettings.advancedItemTooltips;
         return adv ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
+    }
+
+    public static WrappedTextData getWrappedTextData(String text, IFontRenderer fontRenderer, int maxWidth,
+        boolean shadow, float scale) {
+        List<String> lines = fontRenderer.wrapString(text, maxWidth, shadow, scale);
+        return new WrappedTextData(fontRenderer, lines.toArray(new String[0]), shadow, scale, maxWidth,
+            (int) (lines.size() * fontRenderer.getFontHeight("Ly") * scale));
+    }
+
+    public static class WrappedTextData {
+        public final IFontRenderer renderer;
+        public final String[] lines;
+        public final float scale;
+        public final boolean shadow;
+        public final int width, height;
+
+        public WrappedTextData(IFontRenderer renderer, String[] lines, boolean shadow, float scale, int width,
+            int height) {
+            this.renderer = renderer;
+            this.lines = lines;
+            this.shadow = shadow;
+            this.scale = scale;
+            this.width = width;
+            this.height = height;
+        }
+
+        public void drawAt(int x, int y, int colour, boolean centered) {
+            for (String line : lines) {
+                renderer.drawString(line, x, y, colour, shadow, centered, scale);
+                y += renderer.getFontHeight(line) * scale;
+            }
+        }
     }
 }

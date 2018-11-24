@@ -12,6 +12,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -51,7 +53,12 @@ public class GuideFont implements IFontRenderer {
     }
 
     @Override
-    public int drawString(String text, int x, int y, int shade, float scale) {
+    public int getMaxFontHeight() {
+        return g2d.getFontMetrics().getHeight();
+    }
+
+    @Override
+    public int drawString(String text, int x, int y, int shade, boolean shadow, boolean centered, float scale) {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution res = new ScaledResolution(mc);
         double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
@@ -60,16 +67,19 @@ public class GuideFont implements IFontRenderer {
         g2d.fillRect(0, 0, 512, 512);
         g2d.setColor(new Color(0xFF_FF_FF));
         Font f2 = font.deriveFont(font.getSize2D() * scale * (float) scaleFactor);
+        if (shadow) {
+            f2 = f2.deriveFont(Font.BOLD);
+        }
         FontMetrics metrics = g2d.getFontMetrics(f2);
         g2d.setFont(f2);
         Rectangle2D rect = metrics.getStringBounds(text, g2d);
         // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // int font_height = (int) (getFontHeight() * scaleFactor);
-        int font_height = (int) rect.getHeight();
-        g2d.drawString(text, 0, font_height);
+        int font_height = (int) rect.getHeight() + metrics.getMaxDescent();
+        g2d.drawString(text, 0, (int) rect.getHeight());
 
         for (int _x = 0; _x < 512; _x++) {
-            for (int _y = 0; _y < font_height; _y++) {
+            for (int _y = 0; _y <= font_height; _y++) {
                 int rgb = img.getRGB(_x, _y);
                 if ((rgb & 0xFF) == 0) rgb = 0;
                 tex.setColor(_x, _y, rgb);
@@ -85,12 +95,23 @@ public class GuideFont implements IFontRenderer {
             shade |= 0xFF_00_00_00;
         }
         RenderUtil.setGLColorFromIntPlusAlpha(shade);
-        tex.draw((int) (x * scaleFactor), (int) (y * scaleFactor - metrics.getDescent()), 0);
+        if (centered) {
+            x -= rect.getWidth() / 2 / scaleFactor;
+        }
+        tex.draw((int) (x * scaleFactor), (int) (y * scaleFactor - metrics.getMaxDescent()), 0, 0, 0,
+            (int) (rect.getWidth()), (int) (rect.getHeight() + 1));
         // tex.draw(x, y, 0);
         GlStateManager.popMatrix();
         GlStateManager.color(1, 1, 1);
         GlStateManager.enableDepth();
 
-        return g2d.getFontMetrics().stringWidth(text);
+        return (int) rect.getWidth();
+    }
+
+    @Override
+    public List<String> wrapString(String text, int maxWidth, boolean shadow, float scale) {
+        return Collections.singletonList(text);
+        // TODO Auto-generated method stub
+        // throw new AbstractMethodError("// TODO: Implement this!");
     }
 }

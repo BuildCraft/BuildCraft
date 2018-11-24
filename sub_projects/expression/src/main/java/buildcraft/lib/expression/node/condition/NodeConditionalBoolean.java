@@ -6,10 +6,12 @@
 
 package buildcraft.lib.expression.node.condition;
 
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 
-public class NodeConditionalBoolean implements INodeBoolean {
+public class NodeConditionalBoolean implements INodeBoolean, IDependantNode {
     private final INodeBoolean condition;
     private final INodeBoolean ifTrue, ifFalse;
 
@@ -33,9 +35,16 @@ public class NodeConditionalBoolean implements INodeBoolean {
             return ((NodeConstantBoolean) c).value ? t : f;
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalBoolean(c, t, f);
+        } else if (c instanceof NodeConstantBoolean) {
+            return ((NodeConstantBoolean) c).value ? t : f;
         } else {
             return this;
         }
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        visitor.dependOn(condition, ifTrue, ifFalse);
     }
 
     @Override

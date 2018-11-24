@@ -9,7 +9,7 @@ package buildcraft.lib.expression.node.value;
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 
-public class NodeConstantDouble implements INodeDouble, IConstantNode {
+public final class NodeConstantDouble implements INodeDouble, IConstantNode {
     public static final NodeConstantDouble ZERO = new NodeConstantDouble(0);
     public static final NodeConstantDouble ONE = new NodeConstantDouble(1);
 
@@ -36,5 +36,18 @@ public class NodeConstantDouble implements INodeDouble, IConstantNode {
     @Override
     public String toString() {
         return Double.toString(value) + "D";
+    }
+
+    @Override
+    public int hashCode() {
+        return Double.hashCode(value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        return value == ((NodeConstantDouble) obj).value;
     }
 }

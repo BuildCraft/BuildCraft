@@ -515,7 +515,6 @@ item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
 item.buildcraft.guide.name=BuildCraft Guide Book
-item.buildcraft.guide_note.name=BuildCraft Guide Note
 item.buildcraft.robot_goggles.name=Robot Goggles
 item.buildcraft.filler_planner.name=Filler Planner
 
@@ -716,6 +715,7 @@ command.buildcraft.buildcraft.changelog.format=Format: /%s
 
 buildcraft.item.nonclean.usage=Shift-right click to clean
 
+buildcraft.guide.book.meta.name=BuildCraft Configuration Guide
 buildcraft.guide_book.reloaded=Guide Book Reloaded
 buildcraft.guide.too_many_results=Too many results to display: %s
 buildcraft.guide.contents.loaded_modules=Loaded modules:
@@ -774,7 +774,8 @@ buildcraft.guide.chapter.submod.transport=Transport
 
 buildcraft.guide.chapter.title.gate_base=Gates
 
-buildcraft.guide.page.guide_format=Guide Pages
+buildcraft.guide.page.json_insn_format=Json Instruction File Format
+buildcraft.guide.page.registry_overview=Json Registry Overview
 
 buildcraft.help.tank.generic=Clicking this with an empty bucket will\nempty this tank into the bucket, or\nusing a full bucket will fill this tank\nfrom the bucket.
 buildcraft.help.tank.title.tankFuel=Fuel Tank

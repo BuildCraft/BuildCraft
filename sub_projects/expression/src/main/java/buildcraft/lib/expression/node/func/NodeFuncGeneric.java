@@ -7,6 +7,8 @@
 package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.api.IConstantNode;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeStack;
@@ -31,7 +33,8 @@ public abstract class NodeFuncGeneric implements INodeFunc {
         for (int i = 0; i < types.length; i++) {
             Class<?> givenType = types[i];
             if (NodeTypes.getType(nodes[i]) != givenType) {
-                throw new IllegalArgumentException("Types did not match! (given " + givenType + ", node is " + nodes[i].getClass() + ")");
+                throw new IllegalArgumentException(
+                    "Types did not match! (given " + givenType + ", node is " + nodes[i].getClass() + ")");
             }
         }
     }
@@ -39,7 +42,7 @@ public abstract class NodeFuncGeneric implements INodeFunc {
     protected IExpressionNode[] popArgs(INodeStack stack) throws InvalidExpressionException {
         IExpressionNode[] nodes = new IExpressionNode[types.length];
         for (int i = types.length; i > 0; i--) {
-            nodes[i-1] = stack.pop(types[i-1]);
+            nodes[i - 1] = stack.pop(types[i - 1]);
         }
         return nodes;
     }
@@ -49,7 +52,7 @@ public abstract class NodeFuncGeneric implements INodeFunc {
         return "somefunc(" + node.toString() + ")";
     }
 
-    protected abstract class Func implements IExpressionNode {
+    protected abstract class Func implements IExpressionNode, IDependantNode {
         protected final IExpressionNode[] realArgs;
 
         public Func(IExpressionNode[] argsIn) {
@@ -87,6 +90,11 @@ public abstract class NodeFuncGeneric implements INodeFunc {
             }
 
             return total + "]";
+        }
+
+        @Override
+        public void visitDependants(IDependancyVisitor visitor) {
+            visitor.dependOn(realArgs);
         }
 
         @Override

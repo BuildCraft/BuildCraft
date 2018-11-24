@@ -9,7 +9,7 @@ package buildcraft.lib.expression.node.value;
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 
-public class NodeConstantLong implements INodeLong, IConstantNode {
+public final class NodeConstantLong implements INodeLong, IConstantNode {
     public static final NodeConstantLong ZERO = new NodeConstantLong(0);
     public final long value;
 
@@ -34,5 +34,20 @@ public class NodeConstantLong implements INodeLong, IConstantNode {
     @Override
     public String toString() {
         return value + "L";
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        NodeConstantLong other = (NodeConstantLong) obj;
+        return value == other.value;
     }
 }

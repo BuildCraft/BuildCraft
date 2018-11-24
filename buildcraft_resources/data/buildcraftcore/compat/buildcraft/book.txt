@@ -1,0 +1,4 @@
+~{buildcraft/json/insn}
+add "main" `{
+    "title": "item.buildcraft.guide.name"
+}`

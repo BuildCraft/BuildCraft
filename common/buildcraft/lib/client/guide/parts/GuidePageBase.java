@@ -49,13 +49,17 @@ public abstract class GuidePageBase extends GuidePart {
         if (index < 0) {
             index = 0;
         }
-        if (index >= numPages) {
+        if (numPages >= 0 && index >= numPages) {
             index = numPages - 1;
         }
     }
 
     public int getPage() {
         return index;
+    }
+
+    public int getPageCount() {
+        return numPages;
     }
 
     public void tick() {}
@@ -112,11 +116,11 @@ public abstract class GuidePageBase extends GuidePart {
             // Back page button
             if (index != 0) {
                 GuiIcon icon = GuiGuide.TURN_BACK;
-                GuiRectangle turnBox = new GuiRectangle(x, y + height, icon.width, icon.height);
+                GuiRectangle turnBox = new GuiRectangle(x - 30, y + height, icon.width + 30, icon.height + 30);
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_BACK_HOVERED;
                 }
-                icon.drawAt(turnBox);
+                icon.drawAt(turnBox.offset(30, 0));
             }
             // Page index
             String text = (index + 1) + " / " + numPages;
@@ -127,7 +131,8 @@ public abstract class GuidePageBase extends GuidePart {
             // Back page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
-                GuiRectangle turnBox = new GuiRectangle(x + width - icon.width, y + height, icon.width, icon.height);
+                GuiRectangle turnBox =
+                    new GuiRectangle(x + width - icon.width, y + height, icon.width + 30, icon.height + 30);
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_FORWARDS_HOVERED;
                 }
@@ -155,7 +160,7 @@ public abstract class GuidePageBase extends GuidePart {
         if (index % 2 == 0) {
             if (index != 0) {
                 GuiIcon icon = GuiGuide.TURN_BACK;
-                GuiRectangle turnBox = new GuiRectangle(x, y + height, icon.width, icon.height);
+                GuiRectangle turnBox = new GuiRectangle(x - 30, y + height, icon.width + 30, icon.height + 30);
                 if (turnBox.contains(gui.mouse)) {
                     lastPage();
                 }
@@ -164,7 +169,8 @@ public abstract class GuidePageBase extends GuidePart {
             // Odd => second page, test forward page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
-                GuiRectangle turnBox = new GuiRectangle(x + width - icon.width, y + height, icon.width, icon.height);
+                GuiRectangle turnBox =
+                    new GuiRectangle(x + width - icon.width, y + height, icon.width + 30, icon.height + 30);
                 if (turnBox.contains(gui.mouse)) {
                     nextPage();
                 }

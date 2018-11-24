@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.guide.font;
 
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -27,11 +29,16 @@ public enum MinecraftFont implements IFontRenderer {
 
     @Override
     public int getFontHeight(String text) {
+        return getMaxFontHeight();
+    }
+
+    @Override
+    public int getMaxFontHeight() {
         return getFontRenderer().FONT_HEIGHT;
     }
 
     @Override
-    public int drawString(String text, int x, int y, int colour, float scale) {
+    public int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered, float scale) {
         boolean _scale = scale != 1;
         if (_scale) {
             GlStateManager.pushMatrix();
@@ -39,7 +46,10 @@ public enum MinecraftFont implements IFontRenderer {
             x = (int) (x / scale);
             y = (int) (y / scale);
         }
-        int v = getFontRenderer().drawString(text, x, y, colour);
+        if (centered) {
+            x -= getStringWidth(text) / 2;
+        }
+        int v = getFontRenderer().drawString(text, x, y, colour, shadow);
         v -= x;
         GlStateManager.color(1f, 1f, 1f);
         if (_scale) {
@@ -47,5 +57,10 @@ public enum MinecraftFont implements IFontRenderer {
             v = (int) (v * scale);
         }
         return v;
+    }
+
+    @Override
+    public List<String> wrapString(String text, int maxWidth, boolean shadow, float scale) {
+        return getFontRenderer().listFormattedStringToWidth(text, (int) (maxWidth / scale));
     }
 }

@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 public class NodeFunc_A_To_B extends AutoGenerateFile {
 
+    private static final String TAB_3 = "\t\t\t".replace("\t", "    ");
     static final String[] ARG_COUNT = { "$$NOPE$$", "Bi", "Tri", "Quad", "Penta", "Hex" };
 
     public enum NodeTypeStr {
@@ -65,7 +66,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
                 prop_ObjectClassFieldSet = "\t\tthis.argType{$INDEX} = argType{$INDEX};\n";
 
                 prop_ObjectNodeArg = "INodeObject<{$INDEX}> arg{$INDEX}";
-                prop_ObjectNodeField = "\t\tprivate final INodeObject<{$INDEX}> arg{$INDEX};\n";
+                prop_ObjectNodeField = "\t\tpublic final INodeObject<{$INDEX}> arg{$INDEX};\n";
                 prop_ObjectNodeFieldSet = "\t\t\tthis.arg{$INDEX} = arg{$INDEX};\n";
                 prop_ObjectTypeArg = "{$INDEX}";
                 prop_NodePop = "\t\tINodeObject<{$INDEX}> {$index} = stack.popObject(argType{$INDEX});";
@@ -80,7 +81,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
                 prop_ObjectClassArgPass = "";
                 prop_ObjectClassFieldSet = "";
                 prop_ObjectNodeArg = "INode" + prop_Capitalised + " arg{$INDEX}";
-                prop_ObjectNodeField = "\t\tprivate final INode" + prop_Capitalised + " arg{$INDEX};\n";
+                prop_ObjectNodeField = "\t\tpublic final INode" + prop_Capitalised + " arg{$INDEX};\n";
                 prop_ObjectNodeFieldSet = "\t\t\tthis.arg{$INDEX} = arg{$INDEX};\n";
                 prop_ObjectTypeArg = "";
                 prop_NodePop = "\t\tINode" + prop_Capitalised + " {$index} = stack.pop" + prop_Capitalised + "();";
@@ -142,6 +143,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         generateType(_obj, _obj);
         generateType(_obj, _obj, _long);
         generateType(_obj, _obj, _long, _long);
+        generateType(_obj, _obj, _bool);
         generateType(_obj, _obj, _obj);
         generateType(_obj, _obj, _obj, _obj);
         generateType(_obj, _obj, _obj, _obj, _obj);
@@ -202,6 +204,7 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         map.put("FunctionArgs", join1(args, NodeTypeStr::_InstanceArg, ", "));
         map.put("ToStringArgs", join1(args, t -> "\"{{$INDEX}}\"", ", "));
         map.put("NodeToStringArgs", join1(args, t -> t.prop_StringArgL + ".toString()", ", "));
+        map.put("ReturnEquals", joinReturn(args));
 
         map.put("return", ret.prop_return);
         map.put("Args", join1(args, NodeTypeStr::_Capitalised, ""));
@@ -249,6 +252,21 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
         }
         s += add;
         return s;
+    }
+
+    private static String joinReturn(NodeTypeStr[] arr) {
+        String s = TAB_3 + "return ";
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0) {
+                s += TAB_3 + "&&";
+            }
+            String name = replaceForIndex(i, arr[i].prop_StringArgL);
+            s += "Objects.equals(" + name + ", other." + name + ")";
+            if (i + 1 < arr.length) {
+                s += " //\n";
+            }
+        }
+        return s + ";";
     }
 
     private static String replaceForIndex(int i, String string) {

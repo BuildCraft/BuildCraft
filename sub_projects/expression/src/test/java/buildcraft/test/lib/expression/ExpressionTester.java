@@ -25,7 +25,6 @@ import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 
-@SuppressWarnings("static-method")
 public class ExpressionTester {
     static {
         ExpressionDebugManager.debug = true;

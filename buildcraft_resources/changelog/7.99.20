@@ -1,7 +1,7 @@
 
 Breaking changes:
 
-* The flood gate no longer uses the open sides to determine the sides to fill out in-world.
+* The flood gate no longer uses the open sides to determine the sides to fill out in-world. (AlexIIL)
 
 Additions:
 
@@ -19,6 +19,9 @@ Improvements:
   * The previous "buildcraft-7.99.19" jar file has been renamed "buildcraft-main-7.99.20.jar"
   * As such the compat module will have the same version number as the rest of buildcraft
   * In addition it no longer has a separate changelog.
+* Many improvements to the guide book:
+  * The open book now shows more visibly if you are on the first or last page in the current chapter.
+  * Made the next page and previous page buttons have a much bigger clickable area.
 
 Ported content:
 
@@ -28,7 +31,7 @@ Bug fixes:
 
 * Fix the quarry, pump, and mining well not digging below Y=0 when cubic chunks is installed. (AlexIIL)
 * Slightly fix the quarry being slower than it should be - it's now a tiny bit faster than it used to be. (AlexIIL)
-* Fixed the pump and flood gate not working correctly with gaseous fluids.
+* Fixed the pump and flood gate not working correctly with gaseous fluids. (AlexIIL)
 * [#4044] Vanilla flowing water blocks are invisible with BC installed (AlexIIL)
 * [#4296] The marker connector recipe requires buildcraft wooden gears rather than any item that has an ore-dictionary name of "gearWood" (AlexIIL)
-* [#4300] The obsidian pipe doesn't instantly pull in the entire stack of item entities that collide with it.
+* [#4300] The obsidian pipe doesn't instantly pull in the entire stack of item entities that collide with it. (AlexIIL)

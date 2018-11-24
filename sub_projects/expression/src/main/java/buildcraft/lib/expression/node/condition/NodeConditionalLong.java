@@ -6,11 +6,13 @@
 
 package buildcraft.lib.expression.node.condition;
 
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 
-public class NodeConditionalLong implements INodeLong {
+public class NodeConditionalLong implements INodeLong, IDependantNode {
     private final INodeBoolean condition;
     private final INodeLong ifTrue, ifFalse;
 
@@ -31,12 +33,20 @@ public class NodeConditionalLong implements INodeLong {
         INodeLong t = ifTrue.inline();
         INodeLong f = ifFalse.inline();
         if (c instanceof NodeConstantBoolean && t instanceof NodeConstantLong && f instanceof NodeConstantLong) {
-            return new NodeConstantLong(((NodeConstantBoolean) c).value ? ((NodeConstantLong) t).value : ((NodeConstantLong) f).value);
+            return new NodeConstantLong(
+                ((NodeConstantBoolean) c).value ? ((NodeConstantLong) t).value : ((NodeConstantLong) f).value);
         } else if (c != condition || t != ifTrue || f != ifFalse) {
             return new NodeConditionalLong(c, t, f);
+        } else if (c instanceof NodeConstantBoolean) {
+            return ((NodeConstantBoolean) c).value ? t : f;
         } else {
             return this;
         }
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        visitor.dependOn(condition, ifTrue, ifFalse);
     }
 
     @Override

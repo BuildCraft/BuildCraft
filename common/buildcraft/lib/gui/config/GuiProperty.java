@@ -17,4 +17,14 @@ public abstract class GuiProperty implements IVariableNode {
     public abstract JsonElement writeToJson();
 
     public abstract void readFromJson(JsonElement json);
+
+    @Override
+    public void setConstant(boolean isConst) {
+        throw new UnsupportedOperationException("Cannot make config options constant!");
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
 }

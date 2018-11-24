@@ -17,6 +17,9 @@ import java.util.function.Supplier;
 
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncBoolean;
 import buildcraft.lib.expression.api.INodeFunc.INodeFuncDouble;
@@ -25,10 +28,14 @@ import buildcraft.lib.expression.api.INodeFunc.INodeFuncObject;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleToObject.IFuncDoubleToObject;
+import buildcraft.lib.expression.node.func.NodeFuncLongToObject.IFuncLongToObject;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongLongToLong.IFuncObjectLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectLongToLong.IFuncObjectLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncObjectObjectToObject.IFuncObjectObjectToObject;
+import buildcraft.lib.expression.node.func.NodeFuncObjectToBoolean.IFuncObjectToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncObjectToLong.IFuncObjectToLong;
+import buildcraft.lib.expression.node.func.NodeFuncObjectToObject.IFuncObjectToObject;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncToBoolean.IFuncToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncToDouble;
@@ -164,19 +171,39 @@ public class FunctionContext extends FunctionContextBase {
     }
 
     public void putConstantLong(String name, long value) {
-        putVariable(name, new NodeConstantLong(value) {
+        putVariable(name, new INodeLong() {
             @Override
             public String toString() {
-                return name;
+                return name + " = " + value + "L";
+            }
+
+            @Override
+            public long evaluate() {
+                return value;
+            }
+
+            @Override
+            public INodeLong inline() {
+                return new NodeConstantLong(value);
             }
         });
     }
 
     public void putConstantDouble(String name, double value) {
-        putVariable(name, new NodeConstantDouble(value) {
+        putVariable(name, new INodeDouble() {
             @Override
             public String toString() {
-                return name;
+                return name + " = " + value + "D";
+            }
+
+            @Override
+            public double evaluate() {
+                return value;
+            }
+
+            @Override
+            public INodeDouble inline() {
+                return new NodeConstantDouble(value);
             }
         });
     }
@@ -195,13 +222,33 @@ public class FunctionContext extends FunctionContextBase {
 
             @Override
             public String toString() {
-                return name;
+                return name + " = " + value;
             }
         });
     }
 
     public <T> void putConstant(String name, Class<T> type, T value) {
-        putVariable(name, new NodeConstantObject<>(type, value));
+        putVariable(name, new INodeObject<T>() {
+            @Override
+            public T evaluate() {
+                return value;
+            }
+
+            @Override
+            public Class<T> getType() {
+                return type;
+            }
+
+            @Override
+            public INodeObject<T> inline() {
+                return new NodeConstantObject<>(type, value);
+            }
+
+            @Override
+            public String toString() {
+                return name + " = " + value;
+            }
+        });
     }
 
     public void putParsedConstant(String name, String value) {
@@ -300,6 +347,18 @@ public class FunctionContext extends FunctionContextBase {
         return putFunction(name, new NodeFuncToObject<>(name, type, func));
     }
 
+    public INodeFuncObject<String> put_l_s(String name, IFuncLongToObject<String> func) {
+        return put_l_o(name, String.class, func);
+    }
+
+    public INodeFuncObject<String> put_d_s(String name, IFuncDoubleToObject<String> func) {
+        return put_d_o(name, String.class, func);
+    }
+
+    public INodeFuncBoolean put_s_b(String name, IFuncObjectToBoolean<String> func) {
+        return put_o_b(name, String.class, func);
+    }
+
     public INodeFuncLong put_s_l(String name, IFuncObjectToLong<String> func) {
         return put_o_l(name, String.class, func);
     }
@@ -310,6 +369,14 @@ public class FunctionContext extends FunctionContextBase {
 
     public INodeFuncLong put_sl_l(String name, IFuncObjectLongLongToLong<String> func) {
         return put_oll_l(name, String.class, func);
+    }
+
+    public <A> INodeFuncObject<String> put_o_s(String name, Class<A> argA, IFuncObjectToObject<A, String> func) {
+        return put_o_o(name, argA, String.class, func);
+    }
+
+    public INodeFuncObject<String> put_s_s(String name, IFuncObjectToObject<String, String> func) {
+        return put_o_o(name, String.class, String.class, func);
     }
 
     public INodeFuncObject<String> put_ss_s(String name, IFuncObjectObjectToObject<String, String, String> func) {

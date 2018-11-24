@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.registry.BuildCraftRegistryManager;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
@@ -37,6 +38,7 @@ import buildcraft.lib.registry.RegistrationHelper;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
+import buildcraft.lib.script.ReloadableRegistryManager;
 
 //@formatter:off
 @Mod(
@@ -127,6 +129,10 @@ public class BCLib {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
+        ReloadableRegistryManager.DATA_PACKS.reloadAll();
+        if (BuildCraftRegistryManager.managerResourcePacks != null) {
+            ReloadableRegistryManager.RESOURCE_PACKS.reloadAll();
+        }
         BCLibProxy.getProxy().fmlPostInit();
         BuildCraftObjectCaches.fmlPostInit();
         VanillaListHandlers.fmlPostInit();

@@ -6,15 +6,27 @@
 
 package buildcraft.lib.client.guide.font;
 
+import java.util.List;
+
 public interface IFontRenderer {
     int getStringWidth(String text);
 
     int getFontHeight(String text);
 
+    int getMaxFontHeight();
+
     default int drawString(String text, int x, int y, int colour) {
-        return drawString(text, x, y, colour, 1);
+        return drawString(text, x, y, colour, false, false, 1);
+    }
+
+    default int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered) {
+        return drawString(text, x, y, colour, shadow, centered, 1);
     }
 
     /** @param scale The scale, relative to {@link #getFontHeight(String)} */
-    int drawString(String text, int x, int y, int colour, float scale);
+    int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered, float scale);
+
+    /** Breaks a string into a list of pieces where the width of each line is always less than or equal to the provided
+     * width. Formatting codes will be preserved between lines. */
+    List<String> wrapString(String text, int maxWidth, boolean shadow, float scale);
 }

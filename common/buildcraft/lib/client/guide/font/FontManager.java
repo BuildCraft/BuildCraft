@@ -6,6 +6,7 @@
 
 package buildcraft.lib.client.guide.font;
 
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,11 @@ public enum FontManager {
         // GuideFont value = new GuideFont(font);
         // fonts.put(name, value);
         // return value;
-        return MinecraftFont.INSTANCE;
+        if (false) {
+            return new GuideFont(new Font(name, 0, size));
+        } else {
+            return MinecraftFont.INSTANCE;
+        }
     }
 
     public void registerFont(String name, IFontRenderer font) {

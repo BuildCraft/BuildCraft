@@ -12,11 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,9 +21,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 
 import net.minecraft.client.Minecraft;
@@ -38,21 +35,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-
-import buildcraft.api.BCModules;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.client.guide.data.JsonContents;
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
+import buildcraft.lib.client.guide.entry.IEntryIterable;
+import buildcraft.lib.client.guide.entry.IEntryLinkConsumer;
+import buildcraft.lib.client.guide.entry.PageEntry;
 import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
-import buildcraft.lib.client.guide.loader.entry.IEntryLinkConsumer;
-import buildcraft.lib.client.guide.loader.entry.PageEntryType;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageStandInRecipes;
 import buildcraft.lib.client.guide.parts.contents.ContentsNode;
@@ -62,33 +57,50 @@ import buildcraft.lib.client.guide.parts.contents.IContentsNode;
 import buildcraft.lib.client.guide.parts.contents.PageLink;
 import buildcraft.lib.client.guide.parts.contents.PageLinkNormal;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.guide.GuideBook;
+import buildcraft.lib.guide.GuideBookRegistry;
+import buildcraft.lib.guide.GuideContentsData;
 import buildcraft.lib.misc.LocaleUtil;
 
 public enum GuideManager implements IResourceManagerReloadListener {
     INSTANCE;
 
-    public static final List<String> loadedDomains = new ArrayList<>();
-    public static final List<String> loadedMods = new ArrayList<>();
-    public static final List<String> loadedOther = new ArrayList<>();
-    public static final Set<BCModules> buildCraftModules = EnumSet.noneOf(BCModules.class);
-
     public static final String DEFAULT_LANG = "en_us";
     public static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
+    public static final GuideContentsData BOOK_ALL_DATA = new GuideContentsData(null);
 
     private final List<PageEntry<?>> entries = new ArrayList<>();
-    private final Map<String, GuidePageFactory> pages = new HashMap<>();
+
+    /** The keys are the partial paths, not the full ones!
+     * <p>
+     * For example a partial path might be "buildcraftcore:wrench.md" and the */
+    private final Map<ResourceLocation, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
 
-    /** Internal use only! Use {@link #addChild(JsonTypeTags, PageLink)} instead! */
+    /** Internal use only! Use {@link #addChild(ResourceLocation, JsonTypeTags, PageLink)} instead! */
     public SuffixArray<PageLink> quickSearcher;
-    private final Map<TypeOrder, ContentsNode> contents = new HashMap<>();
+    private final Map<GuideBook, Map<TypeOrder, ContentsNode>> contents = new HashMap<>();
 
     /** Every object added to the guide. Generally this means {@link Item}'s and {@link IStatement}'s. */
     public final Set<Object> objectsAdded = new HashSet<>();
 
+    private boolean isInReload = false;
+
     static {
         PAGE_LOADERS.put("md", MarkdownPageLoader.INSTANCE);
+    }
+
+    public void onRegistryReload(EventBuildCraftReload.FinishLoad event) {
+        if (isInReload) {
+            // We reload the book registry while reloading this registry, so we don't need to reload it twice.
+            // hang on... isn't this a bit hacky?
+            // I feel like we shouldn't allow reloading everything by default?
+            return;
+        }
+        if (event.reloadingRegistries.contains(GuideBookRegistry.INSTANCE)) {
+            reload();
+        }
     }
 
     @Override
@@ -101,55 +113,46 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void reload(IResourceManager resourceManager) {
+        if (isInReload) {
+            throw new IllegalStateException("Cannot reload while we are reloading!");
+        }
+        try {
+            isInReload = true;
+            reload0(resourceManager);
+        } finally {
+            isInReload = false;
+        }
+    }
+
+    private void reload0(IResourceManager resourceManager) {
         Stopwatch watch = Stopwatch.createStarted();
+        GuideBookRegistry.INSTANCE.reload();
+        GuidePageRegistry.INSTANCE.reload();
         entries.clear();
-        loadedDomains.clear();
-        loadedMods.clear();
-        loadedOther.clear();
-        List<JsonEntry> loaded = loadAll(resourceManager);
-        for (JsonEntry entry : loaded) {
-            PageEntry<?> pageEntry = PageEntry.createPageEntry(entry);
-            if (pageEntry == null) {
+        // Don't add permanent as we need the resource domain
+        GuidePageRegistry manager = GuidePageRegistry.INSTANCE;
+        Map<GuideBook, Set<String>> domains = new HashMap<>();
+        domains.put(null, new HashSet<>());
+        for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
+            domains.put(book, new HashSet<>());
+        }
+
+        for (PageEntry<?> entry : manager.getAllEntries()) {
+            domains.get(null).add(entry.typeTags.domain);
+            GuideBook book = GuideBookRegistry.INSTANCE.getBook(entry.book.toString());
+            Set<String> domainSet = domains.get(book);
+            if (domainSet != null && book != null) {
+                domainSet.add(entry.typeTags.domain);
+            }
+            entries.add(entry);
+        }
+        BOOK_ALL_DATA.generate(domains.get(null));
+        for (Entry<GuideBook, Set<String>> entry : domains.entrySet()) {
+            if (entry.getKey() == null) {
                 continue;
             }
-            entries.add(pageEntry);
+            entry.getKey().data.generate(entry.getValue());
         }
-        Collections.sort(loadedDomains);
-        // Special sort -- replace mod domains with mod names
-
-        buildCraftModules.clear();
-        for (BCModules module : BCModules.VALUES) {
-            if (loadedDomains.remove(module.getModId())) {
-                buildCraftModules.add(module);
-            }
-        }
-
-        int moduleCount = buildCraftModules.size();
-        int maxModuleCount = BCModules.VALUES.length;
-        if (moduleCount == maxModuleCount) {
-            loadedMods.add("BuildCraft (+Compat)");
-        } else if (moduleCount == maxModuleCount - 1 && !buildCraftModules.contains(BCModules.COMPAT)) {
-            loadedMods.add("BuildCraft");
-        } else if (moduleCount > 2) {
-            loadedMods.add("BuildCraft (§o" + (moduleCount - 2) + " modules§r)");
-        } else if (moduleCount == 2) {
-            loadedMods.add("BuildCraft (Core)");
-        } else {
-            loadedMods.add("BuildCraft (Lib)");
-        }
-
-        Iterator<String> domainIter = loadedDomains.iterator();
-        String domain;
-        while (domainIter.hasNext()) {
-            domain = domainIter.next();
-            ModContainer mod = Loader.instance().getIndexedModList().get(domain);
-            if (mod != null) {
-                loadedMods.add(mod.getName());
-            } else {
-                loadedOther.add(LocaleUtil.localize(domain + ".compat.buildcraft.guide.domain_name"));
-            }
-        }
-
         pages.clear();
 
         Language currentLanguage = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
@@ -188,7 +191,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
             JsonContents contents = loadContents(resourceManager, domain);
 
             if (contents != null) {
-                GuideManager.loadedDomains.add(domain);
+                // GuideManager.loadedDomains.add(domain);
                 contents = contents.inheritMissingTags();
                 for (JsonEntry entry : contents.contents) {
                     allEntries.add(entry);
@@ -225,102 +228,136 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang) {
-        for (PageEntry<?> data : entries) {
-            String page = data.page.replaceAll("<lang>", lang);
-            String ending = page.substring(page.lastIndexOf('.') + 1);
+        main_iteration: for (Entry<ResourceLocation, PageEntry> mapEntry : GuidePageRegistry.INSTANCE
+            .getReloadableEntryMap().entrySet()) {
+            ResourceLocation entryKey = mapEntry.getKey();
+            String domain = entryKey.getResourceDomain();
+            String path = "compat/buildcraft/guide/" + lang + "/" + entryKey.getResourcePath();
 
-            IPageLoader loader = PAGE_LOADERS.get(ending);
-            if (loader == null) {
-                BCLog.logger.warn("[lib.guide.loader] Unable to load guide page '" + page
-                    + "', as we don't know how to load it! (Known file type endings are " + PAGE_LOADERS.keySet()
-                    + ")");
+            for (Entry<String, IPageLoader> entry : PAGE_LOADERS.entrySet()) {
+                ResourceLocation fLoc = new ResourceLocation(domain, path + "." + entry.getKey());
+
+                try (InputStream stream = resourceManager.getResource(fLoc).getInputStream()) {
+                    GuidePageFactory factory = entry.getValue().loadPage(stream, entryKey, mapEntry.getValue());
+                    // put the original page in so that the different lang variants override it
+                    pages.put(entryKey, factory);
+                    if (GuideManager.DEBUG) {
+                        BCLog.logger.info("[lib.guide.loader] Loaded page '" + entryKey + "'.");
+                    }
+                    continue main_iteration;
+                } catch (FileNotFoundException f) {
+                    // Ignore it, we'll log this later
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
+            }
+
+            if (pages.containsKey(entryKey)) {
+                // We are overriding a different language so it's ok if we miss something.
                 continue;
             }
-            try (InputStream stream = resourceManager.getResource(new ResourceLocation(page)).getInputStream()) {
-                GuidePageFactory factory = loader.loadPage(stream, data);
-                // put the original page in so that the different lang variants override it
-                pages.put(data.page, factory);
-                if (GuideManager.DEBUG) {
-                    BCLog.logger.info("[lib.guide.loader] Loaded page '" + page + "'.");
-                }
-            } catch (FileNotFoundException fnfe) {
-                BCLog.logger.warn("[lib.guide.loader] Unable to load guide page '" + page
-                    + "' because we couldn't find it in any resource pack!");
-            } catch (IOException io) {
-                io.printStackTrace();
+
+            String endings;
+            if (PAGE_LOADERS.size() == 1) {
+                endings = PAGE_LOADERS.keySet().iterator().next();
+            } else {
+                endings = PAGE_LOADERS.keySet().toString();
             }
+            BCLog.logger.warn(
+                "[lib.guide.loader] Unable to load guide page '" + entryKey + "' (full path = '" + domain + ":" + path
+                    + "." + endings + "') because we couldn't find any of the valid paths in any resource pack!");
         }
     }
 
     private void generateContentsPage() {
         objectsAdded.clear();
         contents.clear();
-        for (TypeOrder order : GuiGuide.SORTING_TYPES) {
-            contents.put(order, new ContentsNode("root", -1));
+        contents.put(null, new HashMap<>());
+        for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
+            Map<TypeOrder, ContentsNode> map = new HashMap<>();
+            contents.put(book, map);
+            for (TypeOrder order : GuiGuide.SORTING_TYPES) {
+                map.put(order, new ContentsNode("root", -1));
+            }
         }
         quickSearcher = new SuffixArray<>();
 
-        for (PageEntry<?> entry : GuideManager.INSTANCE.getAllEntries()) {
-            GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(entry);
+        for (Entry<ResourceLocation, PageEntry> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
+            .entrySet()) {
+            ResourceLocation partialLocation = mapEntry.getKey();
+            GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(partialLocation);
 
-            String translatedTitle = LocaleUtil.localize(entry.title);
+            PageEntry<?> entry = mapEntry.getValue();
+            String translatedTitle = entry.title.getFormattedText();
             ISimpleDrawable icon = entry.createDrawable();
             PageLine line = new PageLine(icon, icon, 2, translatedTitle, true);
 
             if (entryFactory != null) {
                 objectsAdded.add(entry.getBasicValue());
                 PageLinkNormal pageLink = new PageLinkNormal(line, true, entry.getTooltip(), entryFactory);
-                addChild(entry.typeTags, pageLink);
+                addChild(entry.book, entry.typeTags, pageLink);
             }
         }
 
-        final IEntryLinkConsumer adder = this::addChild;
-        for (PageEntryType<?> type : new HashSet<>(PageEntryType.REGISTRY.values())) {
+        final IEntryLinkConsumer adder = (tags, page) -> addChild(null, tags, page);
+        for (IEntryIterable type : GuidePageRegistry.ENTRY_ITERABLES) {
             type.iterateAllDefault(adder);
         }
 
         quickSearcher.generate();
-        for (ContentsNode node : contents.values()) {
-            node.sort();
-        }
-    }
-
-    private void addChild(JsonTypeTags tags, PageLink page) {
-        for (Entry<TypeOrder, ContentsNode> entry : contents.entrySet()) {
-            TypeOrder order = entry.getKey();
-            ContentsNode node = entry.getValue();
-
-            String[] ordered = tags.getOrdered(order);
-            for (int i = 0; i < ordered.length; i++) {
-                String title = LocaleUtil.localize(ordered[i]);
-                IContentsNode subNode = node.getChild(title);
-                if (subNode instanceof ContentsNode) {
-                    node = (ContentsNode) subNode;
-                } else if (subNode == null) {
-                    ContentsNode subContents = new ContentsNode(title, i);
-                    node.addChild(subContents);
-                    node = subContents;
-                } else {
-                    throw new IllegalStateException("Unknown node type " + subNode.getClass());
-                }
+        for (Map<TypeOrder, ContentsNode> map : contents.values()) {
+            for (ContentsNode node : map.values()) {
+                node.sort();
             }
-            node.addChild(page);
-            quickSearcher.add(page, page.getSearchName());
         }
     }
 
-    public ImmutableList<PageEntry<?>> getAllEntries() {
-        return ImmutableList.copyOf(entries);
+    private void addChild(ResourceLocation bookType, JsonTypeTags tags, PageLink page) {
+        for (Entry<GuideBook, Map<TypeOrder, ContentsNode>> bookEntry : contents.entrySet()) {
+
+            @Nullable
+            GuideBook book = bookEntry.getKey();
+            if (bookType == null) {
+                if (book != null && !book.appendAllEntries) {
+                    continue;
+                }
+            } else if (book != null && !book.name.equals(bookType)) {
+                continue;
+            }
+            Map<TypeOrder, ContentsNode> map = bookEntry.getValue();
+            for (Entry<TypeOrder, ContentsNode> entry : map.entrySet()) {
+                TypeOrder order = entry.getKey();
+                ContentsNode node = entry.getValue();
+
+                String[] ordered = tags.getOrdered(order);
+                for (int i = 0; i < ordered.length; i++) {
+                    String title = LocaleUtil.localize(ordered[i]);
+                    IContentsNode subNode = node.getChild(title);
+                    if (subNode instanceof ContentsNode) {
+                        node = (ContentsNode) subNode;
+                    } else if (subNode == null) {
+                        ContentsNode subContents = new ContentsNode(title, i);
+                        node.addChild(subContents);
+                        node = subContents;
+                    } else {
+                        throw new IllegalStateException("Unknown node type " + subNode.getClass());
+                    }
+                }
+                node.addChild(page);
+                quickSearcher.add(page, page.getSearchName());
+            }
+        }
+
     }
 
-    public GuidePageFactory getFactoryFor(PageEntry<?> entry) {
-        return pages.get(entry.page);
+    public GuidePageFactory getFactoryFor(ResourceLocation partialLocation) {
+        return pages.get(partialLocation);
     }
 
-    public PageEntry<?> getEntryFor(Object obj) {
-        for (PageEntry<?> entry : entries) {
-            if (entry.matches(obj)) {
-                return entry;
+    public static ResourceLocation getEntryFor(Object obj) {
+        for (Entry<ResourceLocation, PageEntry> entry : GuidePageRegistry.INSTANCE.getReloadableEntryMap().entrySet()) {
+            if (entry.getValue().matches(obj)) {
+                return entry.getKey();
             }
         }
         return null;
@@ -328,7 +365,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     @Nonnull
     public GuidePageFactory getPageFor(@Nonnull ItemStack stack) {
-        PageEntry<?> entry = getEntryFor(stack);
+        ResourceLocation entry = getEntryFor(stack);
         if (entry != null) {
             GuidePageFactory factory = getFactoryFor(entry);
             if (factory != null) {
@@ -340,9 +377,11 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     public ContentsNodeGui getGuiContents(GuiGuide gui, GuidePageContents guidePageContents, TypeOrder sortingOrder) {
-
-        ContentsNode node = contents.get(sortingOrder);
-
+        Map<TypeOrder, ContentsNode> map = contents.get(gui.book);
+        if (map == null) {
+            throw new IllegalStateException("Unknown book " + gui.book);
+        }
+        ContentsNode node = map.get(sortingOrder);
         if (node == null) {
             throw new IllegalStateException("Unknown sorting order " + sortingOrder);
         }

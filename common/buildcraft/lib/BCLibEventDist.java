@@ -41,8 +41,10 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.model.ModelHolderRegistry;
 import buildcraft.lib.client.reload.ReloadManager;
 import buildcraft.lib.client.render.DetachedRenderer;
@@ -81,6 +83,13 @@ public enum BCLibEventDist {
         if (event.getWorld() instanceof WorldServer) {
             FakePlayerProvider.INSTANCE.unloadWorld((WorldServer) event.getWorld());
         }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void onReloadFinish(EventBuildCraftReload.FinishLoad event) {
+        // Note: when you need to add server-side listeners the client listeners need to be moved to BCLibProxy
+        GuideManager.INSTANCE.onRegistryReload(event);
     }
 
     @SubscribeEvent

@@ -6,14 +6,16 @@
 
 package buildcraft.lib.expression.node.value;
 
+import javax.annotation.Nullable;
+
 import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.NodeTypes;
 
 public class NodeUpdatable implements ITickableNode, ITickableNode.Source {
     public final String name;
-    public final IVariableNode variable;
+    public final NodeVariable variable;
     private IExpressionNode source;
+    private boolean finalised;
 
     public NodeUpdatable(String name, IExpressionNode source) {
         this.name = name;
@@ -40,5 +42,18 @@ public class NodeUpdatable implements ITickableNode, ITickableNode.Source {
     public void setSource(IExpressionNode source) {
         this.source = source;
         refresh();
+    }
+
+    public void makeSourceConstant() {
+        if (source == null) {
+            throw new IllegalStateException("Source not set yet!");
+        }
+        finalised = true;
+        variable.setConstantSource(source);
+    }
+
+    @Nullable
+    public IExpressionNode getConstantSource() {
+        return finalised ? source : null;
     }
 }

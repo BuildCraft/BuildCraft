@@ -157,6 +157,9 @@ public final class RegistrationHelper {
         B added = addBlock(block, force);
         if (added != null) {
             addForcedItem(itemBlockConstructor.apply(added));
+        } else {
+            // FIXME: This won't work if the item has a different reg name to the block!
+            RegistryConfig.setDisabled("items", block.getRegistryName().getResourcePath());
         }
         return added;
     }

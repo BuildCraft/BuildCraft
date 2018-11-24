@@ -6,10 +6,14 @@
 
 package buildcraft.lib.expression.node.value;
 
+import buildcraft.lib.expression.api.IDependancyVisitor;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 
-public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBoolean {
+public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBoolean, IDependantNode {
     public boolean value;
+    private INodeBoolean src = null;
 
     public NodeVariableBoolean(String name) {
         super(name);
@@ -17,13 +21,15 @@ public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBo
 
     @Override
     public boolean evaluate() {
-        return value;
+        return src != null ? src.evaluate() : value;
     }
 
     @Override
     public INodeBoolean inline() {
         if (isConst) {
             return NodeConstantBoolean.of(value);
+        } else if (src != null) {
+            return src.inline();
         }
         return this;
     }
@@ -31,5 +37,22 @@ public class NodeVariableBoolean extends NodeVariable implements IVariableNodeBo
     @Override
     public void set(boolean value) {
         this.value = value;
+    }
+
+    @Override
+    public void setConstantSource(IExpressionNode source) {
+        if (src != null) {
+            throw new IllegalStateException("Already have a constant source");
+        }
+        src = (INodeBoolean) source;
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        if (src != null) {
+            visitor.dependOn(src);
+        } else {
+            visitor.dependOnExplictly(this);
+        }
     }
 }

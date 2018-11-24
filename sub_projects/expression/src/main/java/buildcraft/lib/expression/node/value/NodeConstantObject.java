@@ -6,10 +6,12 @@
 
 package buildcraft.lib.expression.node.value;
 
+import java.util.Objects;
+
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 
-public class NodeConstantObject<T> implements INodeObject<T>, IConstantNode {
+public final class NodeConstantObject<T> implements INodeObject<T>, IConstantNode {
     public static final NodeConstantObject<String> EMPTY_STRING = new NodeConstantObject<>(String.class, "");
 
     public final Class<T> type;
@@ -38,5 +40,20 @@ public class NodeConstantObject<T> implements INodeObject<T>, IConstantNode {
     @Override
     public String toString() {
         return value instanceof String ? ("'" + value + "'") : value.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
+        }
+        NodeConstantObject<?> other = (NodeConstantObject<?>) obj;
+        return getType() == other.getType() && Objects.equals(value, other.value);
     }
 }

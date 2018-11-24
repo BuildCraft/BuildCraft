@@ -1,0 +1,12 @@
+~{buildcraft/json/insn}
+
+import "buildcraftlib:util" "buildcraftcore:main"
+
+alias "loop" `loop
+
+loop
+`
+
+loop
+block_engine "engine_stone" "{buildcraftcore:engine, 1, 1}"
+block_engine "engine_iron" "{buildcraftcore:engine, 1, 2}"

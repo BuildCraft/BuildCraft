@@ -6,5 +6,13 @@
 
 package buildcraft.lib.expression.api;
 
-/** Marker interface that means calling evaluate() on this will *always* return the same value. */
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantDouble;
+import buildcraft.lib.expression.node.value.NodeConstantLong;
+import buildcraft.lib.expression.node.value.NodeConstantObject;
+
+/** Marker interface that means calling evaluate() on this will *always* return the same value.
+ * <p>
+ * This is provided for a single interface to check, however there should only ever be four classes that implement this:
+ * {@link NodeConstantBoolean}, {@link NodeConstantLong}, {@link NodeConstantDouble}, and {@link NodeConstantObject}. */
 public interface IConstantNode extends IExpressionNode {}

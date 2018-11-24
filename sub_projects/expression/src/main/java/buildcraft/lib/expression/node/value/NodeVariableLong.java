@@ -6,10 +6,14 @@
 
 package buildcraft.lib.expression.node.value;
 
+import buildcraft.lib.expression.api.IDependancyVisitor;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeLong;
 
-public class NodeVariableLong extends NodeVariable implements IVariableNodeLong {
+public class NodeVariableLong extends NodeVariable implements IVariableNodeLong, IDependantNode {
     public long value;
+    private INodeLong src;
 
     public NodeVariableLong(String name) {
         super(name);
@@ -17,13 +21,15 @@ public class NodeVariableLong extends NodeVariable implements IVariableNodeLong 
 
     @Override
     public long evaluate() {
-        return value;
+        return src != null ? src.evaluate() : value;
     }
 
     @Override
     public INodeLong inline() {
         if (isConst) {
             return new NodeConstantLong(value);
+        } else if (src != null) {
+            return src.inline();
         }
         return this;
     }
@@ -31,5 +37,22 @@ public class NodeVariableLong extends NodeVariable implements IVariableNodeLong 
     @Override
     public void set(long value) {
         this.value = value;
+    }
+
+    @Override
+    public void setConstantSource(IExpressionNode source) {
+        if (src != null) {
+            throw new IllegalStateException("Already have a constant source");
+        }
+        src = (INodeLong) source;
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        if (src != null) {
+            visitor.dependOn(src);
+        } else {
+            visitor.dependOnExplictly(this);
+        }
     }
 }

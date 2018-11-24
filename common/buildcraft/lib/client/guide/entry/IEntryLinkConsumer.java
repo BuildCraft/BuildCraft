@@ -1,4 +1,4 @@
-package buildcraft.lib.client.guide.loader.entry;
+package buildcraft.lib.client.guide.entry;
 
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.parts.contents.PageLink;

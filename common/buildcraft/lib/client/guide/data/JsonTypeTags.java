@@ -6,11 +6,6 @@
 
 package buildcraft.lib.client.guide.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.gson.annotations.SerializedName;
-
 import net.minecraft.util.StringUtils;
 
 import buildcraft.api.core.BCLog;
@@ -19,31 +14,24 @@ import buildcraft.lib.client.guide.ETypeTag;
 import buildcraft.lib.client.guide.TypeOrder;
 
 public class JsonTypeTags {
-    public static final JsonTypeTags EMPTY = new JsonTypeTags("", "", "", "");
+    public static final JsonTypeTags EMPTY = new JsonTypeTags("", "", "");
 
-    public final String mod;
+    public final String domain;
     public final String type;
-
-    @SerializedName("sub_mod")
-    public final String subMod;
-
-    @SerializedName("sub_type")
     public final String subType;
 
-    public JsonTypeTags(String mod, String subMod, String type, String subType) {
-        this.mod = mod;
-        this.subMod = subMod;
+    public JsonTypeTags(String domain, String type, String subType) {
+        this.domain = domain;
         this.type = type;
         this.subType = subType;
     }
 
     public JsonTypeTags(String type) {
-        this(null, null, type, null);
+        this(null, type, null);
     }
 
     public String[] getOrdered(TypeOrder typeOrder) {
-
-        if (mod == null && subMod == null && subType == null) {
+        if (domain == null && subType == null) {
             // Built-in type for "others"
             return new String[] { "buildcraft.guide.contents.all_group", type };
         }
@@ -59,9 +47,9 @@ public class JsonTypeTags {
     private String getTyped(ETypeTag tag) {
         String typed;
         if (tag == ETypeTag.MOD) {
-            typed = mod;
+            typed = getMod(domain, 0);
         } else if (tag == ETypeTag.SUB_MOD) {
-            typed = subMod;
+            typed = getMod(domain, 1);
         } else if (tag == ETypeTag.TYPE) {
             typed = type;
         } else if (tag == ETypeTag.SUB_TYPE) {
@@ -72,12 +60,18 @@ public class JsonTypeTags {
         return tag.preText + typed;
     }
 
+    private static String getMod(String domain, int index) {
+        if (domain.startsWith("buildcraft")) {
+            return index == 0 ? "buildcraft" : domain.substring("buildcraft".length());
+        }
+        return index == 0 ? domain : "";
+    }
+
     public JsonTypeTags inheritMissingTags(JsonTypeTags parent) {
-        String m = firstNonEmpty(this.mod, parent.mod, "unknown");
-        String sm = firstNonEmpty(this.subMod, parent.subMod);
+        String d = firstNonEmpty(this.domain, parent.domain, "unknown");
         String t = firstNonEmpty(this.type, parent.type, "unknown");
         String st = firstNonEmpty(this.subType, parent.subType, "unknown");
-        return new JsonTypeTags(m, sm, t, st);
+        return new JsonTypeTags(d, t, st);
     }
 
     private static String firstNonEmpty(String... strings) {
@@ -97,19 +91,8 @@ public class JsonTypeTags {
             f.append("  ");
             indent--;
         }
-        BCLog.logger.info(f + "mod = " + mod + ",");
-        BCLog.logger.info(f + "sub_mod = " + subMod + ",");
+        BCLog.logger.info(f + "domain = " + domain + ",");
         BCLog.logger.info(f + "type = " + type + ",");
         BCLog.logger.info(f + "sub_type = " + subType);
-    }
-
-    public Map<String, String> createMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("mod", mod);
-        map.put("sub_mod", subMod);
-        map.put("type", type);
-        map.put("sub_type", subType);
-
-        return map;
     }
 }

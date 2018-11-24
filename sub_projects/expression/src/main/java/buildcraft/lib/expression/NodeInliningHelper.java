@@ -23,6 +23,12 @@ public class NodeInliningHelper {
      * @return A new node that has been inlined fully. */
     public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, F subNode,
         Function<F, T> changer, Function<F, T> inlinedChanger) {
+        {
+            T inlined = (T) OptimizingInliningHelper.tryOptimizedInline(node);
+            if (inlined != null) {
+                return inlined;
+            }
+        }
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         @SuppressWarnings("unchecked")
@@ -43,6 +49,12 @@ public class NodeInliningHelper {
 
     public static <L extends IExpressionNode, R extends IExpressionNode, T extends IExpressionNode> T tryInline(T node,
         L subNodeLeft, R subNodeRight, BiFunction<L, R, T> changer, BiFunction<L, R, T> inlinedChanger) {
+        {
+            T inlined = (T) OptimizingInliningHelper.tryOptimizedInline(node);
+            if (inlined != null) {
+                return inlined;
+            }
+        }
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         L leftInlined = (L) subNodeLeft.inline();
@@ -61,12 +73,15 @@ public class NodeInliningHelper {
         }
     }
 
-    public static <
-        A extends IExpressionNode,
-        B extends IExpressionNode,
-        C extends IExpressionNode,
+    public static <A extends IExpressionNode, B extends IExpressionNode, C extends IExpressionNode,
         R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, TriFunction<A, B, C, R> changer,
             TriFunction<A, B, C, R> inlinedChanger) {
+        {
+            R inlined = (R) OptimizingInliningHelper.tryOptimizedInline(node);
+            if (inlined != null) {
+                return inlined;
+            }
+        }
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         A inlinedA = (A) nodeA.inline();
@@ -87,13 +102,15 @@ public class NodeInliningHelper {
         }
     }
 
-    public static <
-        A extends IExpressionNode,
-        B extends IExpressionNode,
-        C extends IExpressionNode,
-        D extends IExpressionNode,
-        R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD,
-                                               QuadFunction<A, B, C, D, R> changer, QuadFunction<A, B, C, D, R> inlinedChanger) {
+    public static <A extends IExpressionNode, B extends IExpressionNode, C extends IExpressionNode,
+        D extends IExpressionNode, R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD,
+            QuadFunction<A, B, C, D, R> changer, QuadFunction<A, B, C, D, R> inlinedChanger) {
+        {
+            R inlined = (R) OptimizingInliningHelper.tryOptimizedInline(node);
+            if (inlined != null) {
+                return inlined;
+            }
+        }
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         A inlinedA = (A) nodeA.inline();
@@ -115,14 +132,16 @@ public class NodeInliningHelper {
         }
     }
 
-    public static <
-        A extends IExpressionNode,
-        B extends IExpressionNode,
-        C extends IExpressionNode,
-        D extends IExpressionNode,
-        E extends IExpressionNode,
-        R extends IExpressionNode> R tryInline(R node, A nodeA, B nodeB, C nodeC, D nodeD, E nodeE,
-                                               PentaFunction<A, B, C, D, E, R> changer, PentaFunction<A, B, C, D, E, R> inlinedChanger) {
+    public static <A extends IExpressionNode, B extends IExpressionNode, C extends IExpressionNode,
+        D extends IExpressionNode, E extends IExpressionNode, R extends IExpressionNode> R tryInline(R node, A nodeA,
+            B nodeB, C nodeC, D nodeD, E nodeE, PentaFunction<A, B, C, D, E, R> changer,
+            PentaFunction<A, B, C, D, E, R> inlinedChanger) {
+        {
+            R inlined = (R) OptimizingInliningHelper.tryOptimizedInline(node);
+            if (inlined != null) {
+                return inlined;
+            }
+        }
         ExpressionDebugManager.debugStart("Inlining " + node);
         // Nothing we can do about these unchecked warnings without making IExpressionNode generic
         A inlinedA = (A) nodeA.inline();

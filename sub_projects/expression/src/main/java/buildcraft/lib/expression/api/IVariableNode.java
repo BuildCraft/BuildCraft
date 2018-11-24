@@ -12,6 +12,13 @@ public interface IVariableNode extends IExpressionNode {
      * not of the correct type. */
     void set(IExpressionNode from);
 
+    /** Sets the return value (and subsequent behaviour) of {@link #isConstant()}. */
+    void setConstant(boolean isConst);
+
+    /** If this is true, then calls to {@link #inline()} will return an {@link IConstantNode} (which is independent to
+     * this node), but if false then {@link #inline()} will return this variable. */
+    boolean isConstant();
+
     public interface IVariableNodeLong extends IVariableNode, INodeLong {
         void set(long value);
 

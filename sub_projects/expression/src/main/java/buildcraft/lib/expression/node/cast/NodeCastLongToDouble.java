@@ -7,10 +7,12 @@
 package buildcraft.lib.expression.node.cast;
 
 import buildcraft.lib.expression.NodeInliningHelper;
+import buildcraft.lib.expression.api.IDependantNode;
+import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 
-public class NodeCastLongToDouble implements INodeDouble {
+public class NodeCastLongToDouble implements INodeDouble, IDependantNode {
     private final INodeLong from;
 
     public NodeCastLongToDouble(INodeLong from) {
@@ -24,7 +26,13 @@ public class NodeCastLongToDouble implements INodeDouble {
 
     @Override
     public INodeDouble inline() {
-        return NodeInliningHelper.tryInline(this, from, NodeCastLongToDouble::new, (f) -> new NodeConstantDouble(f.evaluate()));
+        return NodeInliningHelper.tryInline(this, from, NodeCastLongToDouble::new,
+            (f) -> new NodeConstantDouble(f.evaluate()));
+    }
+
+    @Override
+    public void visitDependants(IDependancyVisitor visitor) {
+        visitor.dependOn(from);
     }
 
     @Override

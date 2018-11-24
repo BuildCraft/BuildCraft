@@ -12,14 +12,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
-
-import buildcraft.api.BCModules;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibConfig;
@@ -33,6 +29,8 @@ import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.render.font.ConfigurableFontRenderer;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.GuiUtil;
+import buildcraft.lib.misc.GuiUtil.WrappedTextData;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
 
@@ -131,76 +129,43 @@ public class GuidePageContents extends GuidePageBase {
     protected void renderPage(int x, int y, int width, int height, int index) {
         IFontRenderer f = getFontRenderer();
         if (index == 0) {
-            String text = "BuildCraft";
-            float scale = 3;
-            int fWidth = (int) (f.getStringWidth(text) * scale);
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(scale, scale, 1);
-            f.drawString(text, (int) ((x + (width - fWidth) / 2) / scale), (int) ((y + height / 2 - 62) / scale), 0);
-            GlStateManager.popMatrix();
-
-            text = "v" + BCLib.VERSION;
-            fWidth = f.getStringWidth(text);
-            f.drawString(text, x + (width - fWidth) / 2, y + height / 2 - 36, 0);
-
-            scale = 1.5f;
-            text = LocaleUtil.localize("options.title");
-            fWidth = (int) (f.getStringWidth(text) * scale);
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(scale, scale, 1);
-            f.drawString(text, (int) ((x + (width - fWidth) / 2) / scale), (int) ((y + height / 2 - 4) / scale), 0);
-            GlStateManager.popMatrix();
-
-            text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
-            fWidth = f.getStringWidth(text);
-            f.drawString(text, x + (width - fWidth) / 2, y + height / 2 + 12, 0);
-
-            text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
-            fWidth = f.getStringWidth(text);
-            f.drawString(text, x + (width - fWidth) / 2, y + height / 2 + 26, 0);
+            int xMiddle = x + width / 2;
+            int _y = y;
+            String text = gui.book == null ? "Everything" : gui.book.title.getUnformattedText();
+            WrappedTextData wrapped = GuiUtil.getWrappedTextData(text, f, width, false, 3f);
+            wrapped.drawAt(xMiddle, _y, 0, true);
+            _y += wrapped.height;
+            if (true) {
+                f.drawString("v" + BCLib.VERSION, xMiddle, _y, 0, false, true);
+            }
+            _y = y + height - 80;
+            f.drawString(LocaleUtil.localize("options.title"), xMiddle, _y, 0, false, true, 2f);
+            _y += 28;
+            f.drawString("Show Lore " + (XmlPageLoader.SHOW_LORE ? "[x]" : "[ ]"), xMiddle, _y, 0, false, true);
+            _y += 14;
+            f.drawString("Show Hints " + (XmlPageLoader.SHOW_HINTS ? "[x]" : "[ ]"), xMiddle, _y, 0, false, true);
         } else if (index == 1) {
-            int _height = GuideManager.loadedMods.size() + 1;
-            if (GuideManager.loadedOther.size() > 0) {
+            int _height = gui.bookData.loadedMods.size() + 1;
+            if (gui.bookData.loadedOther.size() > 0) {
                 _height++;
-                _height += GuideManager.loadedOther.size();
+                _height += gui.bookData.loadedOther.size();
             }
             int perLineHeight = f.getFontHeight("Ly") + 3;
             _height *= perLineHeight;
             int _y = y + (height - _height) / 2;
 
-            drawCenteredText(TextFormatting.BOLD + "Loaded Mods:", x, _y, width);
-            _y += perLineHeight;
-            boolean first = true;
-            for (String text : GuideManager.loadedMods) {
-
-                if (first && text.contains("modules")) {
-                    // BuildCraft
-                    double mouseX = gui.mouse.getX();
-                    double mouseY = gui.mouse.getY();
-                    if (mouseX >= x + width / 2 && mouseX <= x + width * 7 / 8//
-                        && mouseY >= _y && mouseY <= _y + perLineHeight) {
-                        gui.tooltip.add(LocaleUtil.localize("buildcraft.guide.contents.loaded_modules"));
-                        for (BCModules module : BCModules.getLoadedModules()) {
-                            gui.tooltip.add((GuideManager.buildCraftModules.contains(module) ? " + " : " - ")
-                                + StringUtils.capitalize(module.lowerCaseName));
-                        }
-                        if (BCModules.getMissingModules().length > 0) {
-                            gui.tooltip.add(LocaleUtil.localize("buildcraft.guide.contents.missing_modules"));
-                            for (BCModules module : BCModules.getMissingModules()) {
-                                gui.tooltip.add(" - " + StringUtils.capitalize(module.lowerCaseName));
-                            }
-                        }
-                    }
-                }
-
-                drawCenteredText(text, x, _y, width);
+            if (gui.bookData.loadedMods.size() > 0) {
+                drawCenteredText(TextFormatting.BOLD + "Loaded Mods:", x, _y, width);
                 _y += perLineHeight;
-                first = false;
+                for (String text : gui.bookData.loadedMods) {
+                    drawCenteredText(text, x, _y, width);
+                    _y += perLineHeight;
+                }
             }
-            if (GuideManager.loadedOther.size() > 0) {
+            if (gui.bookData.loadedOther.size() > 0) {
                 drawCenteredText(TextFormatting.BOLD + "Loaded Resource Packs:", x, _y, width);
                 _y += perLineHeight;
-                for (String text : GuideManager.loadedOther) {
+                for (String text : gui.bookData.loadedOther) {
                     drawCenteredText(text, x, _y, width);
                     _y += perLineHeight;
                 }
@@ -298,14 +263,14 @@ public class GuidePageContents extends GuidePageBase {
                 String text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
                 int fWidth = f.getStringWidth(text);
                 GuiRectangle rect;
-                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 12, fWidth, f.getFontHeight(text));
+                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height - 52, fWidth, f.getFontHeight(text));
                 if (rect.contains(mouseX, mouseY)) {
                     XmlPageLoader.SHOW_LORE = !XmlPageLoader.SHOW_LORE;
                 }
 
                 text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
                 fWidth = f.getStringWidth(text);
-                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height / 2 + 26, fWidth, f.getFontHeight(text));
+                rect = new GuiRectangle(x + (width - fWidth) / 2, y + height - 38, fWidth, f.getFontHeight(text));
                 if (rect.contains(mouseX, mouseY)) {
                     XmlPageLoader.SHOW_HINTS = !XmlPageLoader.SHOW_HINTS;
                 }
