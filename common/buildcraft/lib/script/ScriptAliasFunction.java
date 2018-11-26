@@ -1,31 +1,8 @@
 package buildcraft.lib.script;
 
-import java.util.function.Function;
-
 import javax.annotation.Nullable;
 
-import buildcraft.lib.script.SimpleScript.LineData;
-
 public class ScriptAliasFunction {
-    @Deprecated
-    public enum ArgType {
-        STRING(SimpleScript::nextQuotedArg),
-        NUMBER(SimpleScript::nextSimpleArg);
-
-        @Deprecated
-        private final Function<SimpleScript, String> getter;
-
-        private ArgType(Function<SimpleScript, String> getter) {
-            this.getter = getter;
-        }
-
-        @Deprecated
-        @Nullable
-        public final String next(SimpleScript script) {
-            return getter.apply(script);
-        }
-    }
-
     public static class AliasBuilder {
         public String name;
         public LineData[] rawOutputs;

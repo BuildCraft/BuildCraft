@@ -29,11 +29,15 @@ alias statement 4 `add_basic "%2" "statement" "%0" "%1" \`,
 alias item 3 `item_stack "item" "%0" "%1" "%2"`
 alias block_full 3 `item_stack "block" "%0" "%1" "%2"`
 alias block 2 `item_stack "block" "%0" "%1" "${domain}:%1"`
+alias pipe 3 `item_stack "pipe" "%0" "%1" "%2"`
 alias trigger 3 `statement "trigger" "%0" "%1" "%2"`
 alias action 3 `statement "action" "%0" "%1" "%2"`
 
 alias item_tool 2 `item "tool" "%0" "%1"`
 alias item_gear 2 `item "gear" "%0" "%1"`
+alias pipe_item 2 `pipe "pipe_item" "%0" "%1"`
+alias pipe_fluid 2 `pipe "pipe_fluid" "%0" "%1"`
+// no "pipe_power" - no point writing the pages as they will be gone soonish :)
 alias block_engine 2 `block "engine" "%0" "%1"`
 alias block_refining 1 `block "refining" "%0"`
 alias block_fluid 1 `block "fluid" "%0"`

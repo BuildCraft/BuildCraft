@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -197,6 +196,7 @@ public class SimpleScript {
             if (!token.isValid) {
                 continue;
             }
+            int tokenStart = token.datas[0].original.line;
             switch (token.type) {
                 case COMMENT:
                     continue;
@@ -277,31 +277,40 @@ public class SimpleScript {
                         break;
                     }
                     String source = srcToken.joinLines(false);
-                    List<String> replements = loadLinesFromLib(source, registry, roots);
-                    if (replements == null) {
+                    List<String> replacements = loadLinesFromLib(source, registry, roots);
+                    if (replacements == null) {
                         // Already logged by loadLinesFromLib
                         break;
                     }
-                    LineData[] rdata = new LineData[replements.size()];
-                    SourceFile file = new SourceFile(source, replements.size());
-                    for (int i = 0; i < replements.size(); i++) {
-                        rdata[i] = new LineData(replements.get(i), file, i);
+                    LineData[] rdata = new LineData[replacements.size()];
+                    SourceFile file = new SourceFile(source, replacements.size());
+                    for (int i = 0; i < replacements.size(); i++) {
+                        rdata[i] = new LineData(replacements.get(i), file, i);
                     }
+                    int current = lines.lineIterator.previous().original.line;
+                    lines.lineIterator.next();
                     if (!lines.replace(token.datas[0], rdata, s -> s)) {
                         log("Recursive import!");
                     }
                     break;
                 }
                 case "alias": {
-                    function = nextSimpleArg();
-                    BCLog.logger.info("ALIAS " + function);
-                    int startLine = lines.lineIterator.previousIndex();
-                    String argCount = nextSimpleArg();
-
-                    if (argCount == null) {
-                        log("Expected a number, but got nothing!");
+                    LineToken nameToken = lines.nextToken(false);
+                    if (nameToken == null || !nameToken.isValid || nameToken.type != TokenType.SEPARATE) {
+                        log("Missing name!");
                         break;
                     }
+                    function = nameToken.joinLines(false);
+                    int startLine = lines.lineIterator.previousIndex();
+                    LineToken argToken = lines.nextToken(false);
+                    if (argToken == null) {
+                        log("Missing argument count!");
+                        break;
+                    } else if (!argToken.isValid || argToken.type != TokenType.SEPARATE) {
+                        log("Invalid argument count!");
+                        break;
+                    }
+                    String argCount = argToken.joinLines(false);
 
                     int argCountNumber;
                     try {
@@ -316,7 +325,13 @@ public class SimpleScript {
 
                     LineToken next = lines.nextToken(false);
                     if (next == null || !next.isValid) {
-                        log("Didn't find a backtick (`) or quote (\") to start the alias function!");
+                        log("Expected replcement but got nothing!");
+                        break;
+                    }
+
+                    LineToken extra = lines.nextToken(false);
+                    if (extra != null) {
+                        log("Found additional data!");
                         break;
                     }
 
@@ -346,7 +361,6 @@ public class SimpleScript {
                         }
                         break;
                     }
-                    BCLog.logger.info("INVOKE " + function);
                     LineData start = token.datas[0];
                     ScriptAliasFunction alias = customFunctions.get(function);
                     if (alias != null) {
@@ -473,7 +487,6 @@ public class SimpleScript {
 
     @Nullable
     private String[] parseArgValues(int count) {
-        BCLog.logger.info("Grabbing " + count + " values");
         String[] args = new String[count];
         boolean invalid = false;
         for (int i = 0; i < count; i++) {
@@ -488,7 +501,7 @@ public class SimpleScript {
                 invalid = true;
                 args[i] = "";
             } else {
-                // FIXME: I think we need a way to
+                // FIXME: I think we need a way to get the lines as-is?
                 args[i] = next.joinLines(true);
             }
         }
@@ -598,11 +611,14 @@ public class SimpleScript {
     /** Attempts to parse the next stage as a normal argument, or returns the empty string if the end of the line has
      * been reached. */
     String nextSimpleArg() {
+        String ret;
         LineToken next = lines.nextToken(false);
         if (next == null || !next.isValid || next.type != TokenType.SEPARATE) {
-            return "";
+            ret = "";
+        } else {
+            ret = next.joinLines(false);
         }
-        return next.joinLines(false);
+        return ret;
     }
 
     @Nullable
@@ -620,9 +636,7 @@ public class SimpleScript {
     String[] nextQuotedArgAsArray() {
         String[] arr = null;
         LineToken next = lines.nextToken(false);
-        if (next == null || !next.isValid) {
-
-        } else {
+        if (next != null && next.isValid) {
             arr = next.lines;
         }
         return arr;
@@ -688,9 +702,11 @@ public class SimpleScript {
         public final LineData[] datas;
         public final TokenType type;
         public final boolean isValid;
+        public final int startIndex, endIndex;
 
-        public LineToken(String singleLine, LineData data, TokenType type, boolean isValid) {
-            this(new String[] { singleLine }, new LineData[] { data }, type, isValid);
+        public LineToken(String singleLine, LineData data, TokenType type, boolean isValid, int startIndex,
+            int endIndex) {
+            this(new String[] { singleLine }, new LineData[] { data }, type, isValid, startIndex, endIndex);
         }
 
         public String joinLines(boolean separateWithNewLine) {
@@ -713,7 +729,8 @@ public class SimpleScript {
             return sb.toString();
         }
 
-        public LineToken(String[] lines, LineData[] datas, TokenType type, boolean isValid) {
+        public LineToken(String[] lines, LineData[] datas, TokenType type, boolean isValid, int startIndex,
+            int endIndex) {
             if (type == TokenType.BACKTICK_STRING || type == TokenType.QUOTED_STRING) {
                 char ctype = type == TokenType.BACKTICK_STRING ? '`' : '"';
                 StringBuilder sb = new StringBuilder();
@@ -740,74 +757,15 @@ public class SimpleScript {
             this.datas = datas;
             this.type = type;
             this.isValid = isValid;
-            BCLog.logger.info("nextToken() = " + isValid + type + Arrays.toString(lines));
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
         }
     }
 
     public static class MutableLineList {
         public final SourceFile file;
         private final List<LineData> lines = new LinkedList<>();
-        private final ListIterator<LineData> lineIterator =
-
-            lines.listIterator();
-        private final Object o =
-
-            new ListIterator<SimpleScript.LineData>() {
-                final ListIterator<LineData> real = lines.listIterator();
-
-                @Override
-                public boolean hasNext() {
-                    return real.hasNext();
-                }
-
-                @Override
-                public LineData next() {
-                    LineData value = real.next();
-                    BCLog.logger.info("next() = " + value);
-                    return value;
-                }
-
-                @Override
-                public boolean hasPrevious() {
-                    return real.hasPrevious();
-                }
-
-                @Override
-                public LineData previous() {
-                    LineData value = real.previous();
-                    BCLog.logger.info("previous() = " + value);
-                    return value;
-                }
-
-                @Override
-                public int nextIndex() {
-                    return real.nextIndex();
-                }
-
-                @Override
-                public int previousIndex() {
-                    return real.previousIndex();
-                }
-
-                @Override
-                public void remove() {
-                    BCLog.logger.info("remove()");
-                    real.remove();
-                }
-
-                @Override
-                public void set(LineData e) {
-                    BCLog.logger.info("set(" + e + ")");
-                    real.set(e);
-                }
-
-                @Override
-                public void add(LineData e) {
-                    BCLog.logger.info("add(" + e + ")");
-                    real.add(e);
-                }
-
-            };
+        private final ListIterator<LineData> lineIterator = lines.listIterator();
         private int currentIndexInLine = -1;
 
         public MutableLineList(SourceFile file, List<String> rawData) {
@@ -846,7 +804,8 @@ public class SimpleScript {
                         }
                         case '/': {
                             if (i + 1 == line.length()) {
-                                return new LineToken(line.substring(i), data, TokenType.COMMENT, false);
+                                return new LineToken(line.substring(i), data, TokenType.COMMENT, false, i,
+                                    line.length());
                             }
                             isComment = true;
                             if (!line.startsWith("/**", i)) {
@@ -854,7 +813,7 @@ public class SimpleScript {
                                 currentIndexInLine = -1;
                                 // Don't go to the previous() element
                                 return new LineToken(line.substring(i), data, TokenType.COMMENT,
-                                    line.startsWith("//", i));
+                                    line.startsWith("//", i), i, line.length());
                             }
                             start = i + 3;
                             break start_search;
@@ -900,13 +859,13 @@ public class SimpleScript {
                                     currentIndexInLine = j + 1;
                                     // Ensure that the next iteration will take the line
                                     lineIterator.previous();
-                                    return new LineToken(line.substring(i, j), data, TokenType.SEPARATE, true);
+                                    return new LineToken(line.substring(i, j), data, TokenType.SEPARATE, true, i, j);
                                 }
                             }
                             currentIndexInLine = line.length();
                             // Ensure that the next iteration will take the line
                             lineIterator.previous();
-                            return new LineToken(line.substring(i), data, TokenType.SEPARATE, true);
+                            return new LineToken(line.substring(i), data, TokenType.SEPARATE, true, i, line.length());
                         }
                     }
                 }
@@ -920,7 +879,8 @@ public class SimpleScript {
                             currentIndexInLine = i + 3;
                             // Ensure that the next iteration will take the line
                             lineIterator.previous();
-                            return new LineToken(line.substring(start, i + 3), data, TokenType.FUNC_DOCS, true);
+                            return new LineToken(line.substring(start, i + 3), data, TokenType.FUNC_DOCS, true, start,
+                                i + 3);
                         }
                     }
 
@@ -936,7 +896,8 @@ public class SimpleScript {
                             currentIndexInLine = i + 1;
                             // Ensure that the next iteration will take the line
                             lineIterator.previous();
-                            return new LineToken(line.substring(start, i), data, TokenType.QUOTED_STRING, true);
+                            return new LineToken(line.substring(start, i), data, TokenType.QUOTED_STRING, true, start,
+                                i);
                         }
                     }
                     if (!isMultiLine) {
@@ -946,7 +907,8 @@ public class SimpleScript {
 
                         // Invalid token - we found the start but not the end
                         // so we'll return the invalid part
-                        return new LineToken(line.substring(start + 1), data, TokenType.BACKTICK_STRING, false);
+                        return new LineToken(line.substring(start + 1), data, TokenType.BACKTICK_STRING, false,
+                            start + 1, line.length());
                     }
                     break start_search_line;
                 }
@@ -1003,7 +965,7 @@ public class SimpleScript {
                 tokenData.add(data);
             }
             return new LineToken(tokenLines.toArray(new String[0]), tokenData.toArray(new LineData[0]),
-                isComment ? TokenType.FUNC_DOCS : TokenType.BACKTICK_STRING, true);
+                isComment ? TokenType.FUNC_DOCS : TokenType.BACKTICK_STRING, true, start, currentIndexInLine);
         }
 
         public boolean replace(LineData start, LineData[] with, Function<String, String> transform) {
@@ -1046,95 +1008,6 @@ public class SimpleScript {
 
         public int size() {
             return lines.size();
-        }
-    }
-
-    public static class LineData {
-        public final String text;
-        public final String lineNumbers;
-        public final SourceLine original;
-        /** All sources. Doesn't include the original. */
-        public final ImmutableList<SourceLine> firstLineSources;
-
-        public LineData(String text, SourceFile file, int line) {
-            this.text = text;
-            this.original = new SourceLine(file, line);
-            this.firstLineSources = ImmutableList.of();
-            this.lineNumbers = line + 1 + "";
-        }
-
-        public LineData(LineData from, String text) {
-            this.text = text;
-            this.lineNumbers = from.lineNumbers;
-            this.original = from.original;
-            this.firstLineSources = from.firstLineSources;
-        }
-
-        private LineData(String text, LineData original, int nextLine, ImmutableList<SourceLine> sources) {
-            this.text = text;
-            this.original = original.original;
-            this.firstLineSources = sources;
-            this.lineNumbers = original.lineNumbers + "(" + (nextLine + 1) + ")";
-        }
-
-        public LineData createReplacement(String newText, SourceLine newSource, int newLine) {
-            ImmutableList<SourceLine> list =
-                ImmutableList.<SourceLine> builder().addAll(firstLineSources).add(newSource).build();
-            return new LineData(newText, this, newLine, list);
-        }
-
-        @Override
-        public String toString() {
-            return original + " " + lineNumbers + ": " + firstLineSources + " " + text;
-        }
-    }
-
-    public static final class SourceLine {
-        public final SourceFile file;
-        public final int line;
-
-        public SourceLine(SourceFile file, int line) {
-            this.file = file;
-            this.line = line;
-        }
-
-        public void appendLineNumber(StringBuilder sb) {
-            // Actually we don't do this do we?
-            sb.append(line);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(file, line);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (obj == null || obj.getClass() != getClass()) {
-                return false;
-            }
-            SourceLine other = (SourceLine) obj;
-            return line == other.line && file.equals(other.file);
-        }
-
-        @Override
-        public String toString() {
-            return file.name + "." + (line + 1);
-        }
-    }
-
-    public static final class SourceFile {
-        public final String name;
-        public final int lineCount;
-        private final int lineWidth;
-
-        public SourceFile(String name, int lineCount) {
-            this.name = name;
-            this.lineCount = lineCount;
-            lineWidth = Integer.toString(lineCount).length();
         }
     }
 
