@@ -12,6 +12,9 @@ Additions:
 * Added a config option for tweaking the maximum depth that the mining well, quarry, and pump can extend their tubes. (AlexIIL)
   * This is called "general.miningMaxDepth" and can be changed from anywhere between 32 and 4096.
   * (Values above 256 make no difference in vanilla, this is primarily for Cubic Chunk support)
+* Added the command "/buildcraft reload" which reloads all buildcraft data registries. (AlexIIL)
+  * In 1.13 this will be merged into the vanilla minecraft "/reload" command.
+  * This currently doesn't reload client-side registries, although you can still reload the guide page registry by using F3+T while in the guide GUI.
 
 Improvements:
 

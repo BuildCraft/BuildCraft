@@ -9,6 +9,7 @@ public class CommandBuildCraft extends CommandTreeBase {
     public CommandBuildCraft() {
         addSubcommand(new CommandVersion());
         addSubcommand(new CommandChangelog());
+        addSubcommand(new CommandReloadRegistries());
     }
 
     @Override
