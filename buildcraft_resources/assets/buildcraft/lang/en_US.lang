@@ -747,6 +747,7 @@ buildcraft.guide.chapter.subtype.tool=Tools
 buildcraft.guide.chapter.subtype.fluid=Fluid
 buildcraft.guide.chapter.subtype.mining=Mining
 buildcraft.guide.chapter.subtype.engine=Engines
+buildcraft.guide.chapter.subtype.automation=Automation
 buildcraft.guide.chapter.subtype.pipe_item=Item Transport
 buildcraft.guide.chapter.subtype.pipe_fluid=Fluid Transport
 buildcraft.guide.chapter.subtype.pipe_plug=Pluggables
