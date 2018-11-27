@@ -6,8 +6,6 @@
 
 package buildcraft.transport.client.render;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -28,7 +26,8 @@ import buildcraft.transport.tile.TilePipeHolder;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
     @Override
-    public void renderTileEntityFast(@Nonnull TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
+    public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks,
+        int destroyStage, float partial, BufferBuilder buffer) {
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
@@ -48,7 +47,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks,
+        BufferBuilder bb) {
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable plug = pipe.getPluggable(face);
             if (plug == null) {
@@ -58,7 +58,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private static <P extends PipePluggable> void renderPlug(P plug, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static <P extends PipePluggable> void renderPlug(P plug, double x, double y, double z, float partialTicks,
+        BufferBuilder bb) {
         IPlugDynamicRenderer<P> renderer = PipeRegistryClient.getPlugRenderer(plug);
         if (renderer != null) {
             Minecraft.getMinecraft().mcProfiler.startSection(plug.getClass());
@@ -67,7 +68,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private static void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks,
+        BufferBuilder bb) {
         Pipe p = pipe.getPipe();
         if (p == null) {
             return;
@@ -80,7 +82,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private static <F extends PipeFlow> void renderFlow(F flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static <F extends PipeFlow> void renderFlow(F flow, double x, double y, double z, float partialTicks,
+        BufferBuilder bb) {
         IPipeFlowRenderer<F> renderer = PipeRegistryClient.getFlowRenderer(flow);
         if (renderer != null) {
             Minecraft.getMinecraft().mcProfiler.startSection(flow.getClass());
@@ -89,7 +92,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, double x, double y, double z,
+        float partialTicks, BufferBuilder bb) {
         IPipeBehaviourRenderer<B> renderer = PipeRegistryClient.getBehaviourRenderer(behaviour);
         if (renderer != null) {
             Minecraft.getMinecraft().mcProfiler.startSection(behaviour.getClass());

@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -28,6 +27,8 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.RenderUtil.AutoTessellator;
 
 import buildcraft.factory.tile.TileTank;
 
@@ -55,29 +56,32 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        bb.setTranslation(x, y, z);
+        try (AutoTessellator tess = RenderUtil.getThreadLocalUnusedTessellator()) {
+            BufferBuilder bb = tess.tessellator.getBuffer();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            bb.setTranslation(x, y, z);
 
-        boolean[] sideRender = { true, true, true, true, true, true };
-        boolean connectedUp = isFullyConnected(tile, EnumFacing.UP, partialTicks);
-        boolean connectedDown = isFullyConnected(tile, EnumFacing.DOWN, partialTicks);
-        sideRender[EnumFacing.DOWN.ordinal()] = !connectedDown;
-        sideRender[EnumFacing.UP.ordinal()] = !connectedUp;
+            boolean[] sideRender = { true, true, true, true, true, true };
+            boolean connectedUp = isFullyConnected(tile, EnumFacing.UP, partialTicks);
+            boolean connectedDown = isFullyConnected(tile, EnumFacing.DOWN, partialTicks);
+            sideRender[EnumFacing.DOWN.ordinal()] = !connectedDown;
+            sideRender[EnumFacing.UP.ordinal()] = !connectedUp;
 
-        Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
-        Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
-        FluidStack fluid = forRender.fluid;
-        int blocklight = fluid.getFluid().getLuminosity(fluid);
-        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), blocklight);
+            Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
+            Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
+            FluidStack fluid = forRender.fluid;
+            int blocklight = fluid.getFluid().getLuminosity(fluid);
+            int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), blocklight);
 
-        FluidRenderer.vertex.lighti(combinedLight);
+            FluidRenderer.vertex.lighti(combinedLight);
 
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, forRender.amount, tile.tank.getCapacity(), min, max, bb, sideRender);
+            FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, forRender.amount, tile.tank.getCapacity(), min, max,
+                bb, sideRender);
 
-        // buffer finish
-        bb.setTranslation(0, 0, 0);
-        Tessellator.getInstance().draw();
+            // buffer finish
+            bb.setTranslation(0, 0, 0);
+            tess.tessellator.draw();
+        }
 
         // gl state finish
         RenderHelper.enableStandardItemLighting();
@@ -101,8 +105,8 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
             FluidStack fluid = forRender.fluid;
             if (fluid == null || forRender.amount <= 0) {
                 return false;
-            } else if (thisTank.getFluidForRender(partialTicks) == null ||
-                !fluid.isFluidEqual(thisTank.getFluidForRender(partialTicks).fluid)) {
+            } else if (thisTank.getFluidForRender(partialTicks) == null
+                || !fluid.isFluidEqual(thisTank.getFluidForRender(partialTicks).fluid)) {
                 return false;
             }
             if (fluid.getFluid().isGaseous(fluid)) {

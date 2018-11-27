@@ -12,11 +12,13 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.RenderUtil.AutoTessellator;
 
 @SideOnly(Side.CLIENT)
 public abstract class LaserCompiledList {
@@ -24,18 +26,22 @@ public abstract class LaserCompiledList {
 
     public abstract void delete();
 
-    public static class Builder implements ILaserRenderer {
+    public static class Builder implements ILaserRenderer, AutoCloseable {
+        private final AutoTessellator tess;
         private final boolean useColour;
 
         public Builder(boolean useNormalColour) {
             this.useColour = useNormalColour;
-            BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-            bufferBuilder.begin(GL11.GL_QUADS, useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
+            tess = RenderUtil.getThreadLocalUnusedTessellator();
+            BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
+            bufferBuilder.begin(GL11.GL_QUADS,
+                useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
         }
 
         @Override
-        public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz, float diffuse) {
-            BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz,
+            float diffuse) {
+            BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
             bufferBuilder.pos(x, y, z);
             bufferBuilder.tex(u, v);
             bufferBuilder.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
@@ -47,7 +53,7 @@ public abstract class LaserCompiledList {
 
         public LaserCompiledList build() {
             if (OpenGlHelper.useVbo()) {
-                BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+                BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
                 VertexBuffer vertexBuffer = new VertexBuffer(bufferBuilder.getVertexFormat());
                 bufferBuilder.finishDrawing();
                 bufferBuilder.reset();
@@ -56,10 +62,15 @@ public abstract class LaserCompiledList {
             } else {
                 int glList = GLAllocation.generateDisplayLists(1);
                 GL11.glNewList(glList, GL11.GL_COMPILE);
-                Tessellator.getInstance().draw();
+                tess.tessellator.draw();
                 GL11.glEndList();
                 return new GlList(glList);
             }
+        }
+
+        @Override
+        public void close() {
+            tess.close();
         }
     }
 

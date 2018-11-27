@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
@@ -31,6 +30,8 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.RenderUtil.AutoTessellator;
 import buildcraft.lib.misc.data.WorldPos;
 
 import buildcraft.robotics.BCRoboticsBlocks;
@@ -41,9 +42,7 @@ import buildcraft.robotics.zone.ZonePlannerMapDataClient;
 
 public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner> {
     private static final Cache<WorldPos, DynamicTextureBC> TEXTURES = CacheBuilder.newBuilder()
-            .expireAfterWrite(5, TimeUnit.MINUTES)
-            .removalListener(RenderZonePlanner::onRemove)
-            .build();
+        .expireAfterWrite(5, TimeUnit.MINUTES).removalListener(RenderZonePlanner::onRemove).build();
     private static final int TEXTURE_WIDTH = 10;
     private static final int TEXTURE_HEIGHT = 8;
 
@@ -55,7 +54,8 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
     }
 
     @Override
-    public final void render(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public final void render(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage,
+        float alpha) {
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("zone");
 
@@ -77,64 +77,65 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         if (texture == null) {
             return;
         }
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        texture.updateTexture();
-        texture.bindGlTexture();
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        GlStateManager.disableBlend();
-        GlStateManager.disableCull();
-        if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        } else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
+        try (AutoTessellator tessellator = RenderUtil.getThreadLocalUnusedTessellator()) {
+            BufferBuilder buffer = tessellator.tessellator.getBuffer();
+            texture.updateTexture();
+            texture.bindGlTexture();
+            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.disableTexture2D();
+            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+            GlStateManager.disableBlend();
+            GlStateManager.disableCull();
+            if (Minecraft.isAmbientOcclusionEnabled()) {
+                GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            } else {
+                GlStateManager.shadeModel(GL11.GL_FLAT);
+            }
+
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            buffer.setTranslation(x, y, z);
+
+            Vec3d min;
+            Vec3d max;
+
+            float minU = 0;
+            float maxU = texture.getMaxU();
+            float minV = 0;
+            float maxV = texture.getMaxV();
+
+            switch (side) {
+                case NORTH:
+                    min = new Vec3d(minX, minY, maxZ);
+                    max = new Vec3d(maxX, maxY, maxZ);
+                    break;
+                case EAST:
+                    min = new Vec3d(minZ, minY, minX);
+                    max = new Vec3d(minZ, maxY, maxX);
+                    break;
+                case SOUTH:
+                    min = new Vec3d(minX, minY, minZ);
+                    max = new Vec3d(maxX, maxY, minZ);
+                    break;
+                case WEST:
+                default:
+                    min = new Vec3d(maxZ, minY, minX);
+                    max = new Vec3d(maxZ, maxY, maxX);
+                    break;
+            }
+
+            MutableVertex vertex = new MutableVertex();
+
+            vertex.colouri(-1);
+            vertex.lighti(0xF, 0xF);
+
+            vertex.positiond(min.x, min.y, min.z).texf(minU, minV).render(buffer);
+            vertex.positiond(max.x, min.y, max.z).texf(maxU, minV).render(buffer);
+            vertex.positiond(max.x, max.y, max.z).texf(maxU, maxV).render(buffer);
+            vertex.positiond(min.x, max.y, min.z).texf(minU, maxV).render(buffer);
+
+            buffer.setTranslation(0, 0, 0);
+            tessellator.tessellator.draw();
         }
-
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        buffer.setTranslation(x, y, z);
-
-        Vec3d min;
-        Vec3d max;
-
-        float minU = 0;
-        float maxU = texture.getMaxU();
-        float minV = 0;
-        float maxV = texture.getMaxV();
-
-        switch (side) {
-            case NORTH:
-                min = new Vec3d(minX, minY, maxZ);
-                max = new Vec3d(maxX, maxY, maxZ);
-                break;
-            case EAST:
-                min = new Vec3d(minZ, minY, minX);
-                max = new Vec3d(minZ, maxY, maxX);
-                break;
-            case SOUTH:
-                min = new Vec3d(minX, minY, minZ);
-                max = new Vec3d(maxX, maxY, minZ);
-                break;
-            case WEST:
-            default:
-                min = new Vec3d(maxZ, minY, minX);
-                max = new Vec3d(maxZ, maxY, maxX);
-                break;
-        }
-
-        MutableVertex vertex = new MutableVertex();
-
-        vertex.colouri(-1);
-        vertex.lighti(0xF, 0xF);
-
-        vertex.positiond(min.x, min.y, min.z).texf(minU, minV).render(buffer);
-        vertex.positiond(max.x, min.y, max.z).texf(maxU, minV).render(buffer);
-        vertex.positiond(max.x, max.y, max.z).texf(maxU, maxV).render(buffer);
-        vertex.positiond(min.x, max.y, min.z).texf(minU, maxV).render(buffer);
-
-        buffer.setTranslation(0, 0, 0);
-        tessellator.draw();
         RenderHelper.enableStandardItemLighting();
 
         Minecraft.getMinecraft().mcProfiler.endSection();
@@ -181,18 +182,12 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                 }
                 ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
                 texture.setColor(textureX, textureY, -1);
-                ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(
-                        chunkPos,
-                        tile.getWorld().provider.getDimension(),
-                        tile.getLevel()
-                );
-                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(tile.getWorld(), key);
+                ZonePlannerMapChunkKey key =
+                    new ZonePlannerMapChunkKey(chunkPos, tile.getWorld().provider.getDimension(), tile.getLevel());
+                ZonePlannerMapChunk zonePlannerMapChunk =
+                    ZonePlannerMapDataClient.INSTANCE.getChunk(tile.getWorld(), key);
                 if (zonePlannerMapChunk != null) {
-                    texture.setColor(
-                            textureX,
-                            textureY,
-                            zonePlannerMapChunk.getColour(posX, posZ) | 0xFF_00_00_00
-                    );
+                    texture.setColor(textureX, textureY, zonePlannerMapChunk.getColour(posX, posZ) | 0xFF_00_00_00);
                 } else {
                     return null;
                 }

@@ -40,13 +40,13 @@ public class LaserRenderer_BC8 {
 
     static {
         COMPILED_STATIC_LASERS = CacheBuilder.newBuilder()//
-                .expireAfterWrite(5, TimeUnit.SECONDS)//
-                .removalListener(LaserRenderer_BC8::removeCompiledLaser)//
-                .build(CacheLoader.from(LaserRenderer_BC8::makeStaticLaser));
+            .expireAfterWrite(5, TimeUnit.SECONDS)//
+            .removalListener(LaserRenderer_BC8::removeCompiledLaser)//
+            .build(CacheLoader.from(LaserRenderer_BC8::makeStaticLaser));
 
         COMPILED_DYNAMIC_LASERS = CacheBuilder.newBuilder()//
-                .expireAfterWrite(5, TimeUnit.SECONDS)//
-                .build(CacheLoader.from(LaserRenderer_BC8::makeDynamicLaser));
+            .expireAfterWrite(5, TimeUnit.SECONDS)//
+            .build(CacheLoader.from(LaserRenderer_BC8::makeDynamicLaser));
 
         FORMAT_LESS = new VertexFormat();
         FORMAT_LESS.addElement(DefaultVertexFormats.POSITION_3F);
@@ -72,9 +72,10 @@ public class LaserRenderer_BC8 {
     }
 
     private static LaserCompiledList makeStaticLaser(LaserData_BC8 data) {
-        LaserCompiledList.Builder renderer = new LaserCompiledList.Builder(data.enableDiffuse);
-        makeLaser(data, renderer);
-        return renderer.build();
+        try (LaserCompiledList.Builder renderer = new LaserCompiledList.Builder(data.enableDiffuse)) {
+            makeLaser(data, renderer);
+            return renderer.build();
+        }
     }
 
     private static LaserCompiledBuffer makeDynamicLaser(LaserData_BC8 data) {
@@ -99,7 +100,8 @@ public class LaserRenderer_BC8 {
     public static int computeLightmap(double x, double y, double z, int minBlockLight) {
         World world = Minecraft.getMinecraft().world;
         if (world == null) return 0;
-        int blockLight = minBlockLight >= 15 ? 15 : Math.max(minBlockLight, getLightFor(world, EnumSkyBlock.BLOCK, x, y, z));
+        int blockLight =
+            minBlockLight >= 15 ? 15 : Math.max(minBlockLight, getLightFor(world, EnumSkyBlock.BLOCK, x, y, z));
         int skyLight = getLightFor(world, EnumSkyBlock.SKY, x, y, z);
         return skyLight << 20 | blockLight << 4;
     }

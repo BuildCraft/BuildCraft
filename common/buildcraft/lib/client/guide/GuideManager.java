@@ -10,7 +10,6 @@ package buildcraft.lib.client.guide;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Stopwatch;
-import com.google.gson.Gson;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
@@ -40,8 +38,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.api.statements.IStatement;
 
-import buildcraft.lib.client.guide.data.JsonContents;
-import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.entry.IEntryIterable;
 import buildcraft.lib.client.guide.entry.IEntryLinkConsumer;
@@ -181,50 +177,6 @@ public enum GuideManager implements IResourceManagerReloadListener {
         int e = p - a;
         BCLog.logger.info("[lib.guide] Loaded " + p + " possible and " + a + " actual guide pages (" + e
             + " not found) in " + time + "ms.");
-    }
-
-    private static List<JsonEntry> loadAll(IResourceManager resourceManager) {
-        List<JsonEntry> allEntries = new ArrayList<>();
-
-        for (String domain : resourceManager.getResourceDomains()) {
-
-            JsonContents contents = loadContents(resourceManager, domain);
-
-            if (contents != null) {
-                // GuideManager.loadedDomains.add(domain);
-                contents = contents.inheritMissingTags();
-                for (JsonEntry entry : contents.contents) {
-                    allEntries.add(entry);
-                }
-            }
-        }
-        return allEntries;
-    }
-
-    private static JsonContents loadContents(IResourceManager resourceManager, String domain) {
-        ResourceLocation location = new ResourceLocation(domain, "compat/buildcraft/guide/contents.json");
-
-        try (InputStream is = resourceManager.getResource(location).getInputStream()) {
-            if (is != null) {
-                InputStreamReader isr = new InputStreamReader(is);
-                return new Gson().fromJson(isr, JsonContents.class);
-            }
-            return null;
-        } catch (FileNotFoundException fnfe) {
-            if (GuideManager.DEBUG) {
-                BCLog.logger.warn(
-                    "[lib.guide.loader] Looks like there is no guide contents page for " + location + ", skipping.");
-            }
-            return null;
-        } catch (IOException io) {
-            if (GuideManager.DEBUG) {
-                BCLog.logger.warn("[lib.guide.loader] Failed to load the contents file for " + domain + "!", io);
-            } else {
-                BCLog.logger
-                    .warn("[lib.guide.loader] Failed to load the contents file for " + domain + ": " + io.getMessage());
-            }
-            return null;
-        }
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang) {

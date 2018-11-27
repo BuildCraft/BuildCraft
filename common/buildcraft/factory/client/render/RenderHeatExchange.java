@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -31,6 +30,8 @@ import buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.RenderUtil.AutoTessellator;
 import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.factory.BCFactoryBlocks;
@@ -101,65 +102,67 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        bb.setTranslation(x, y, z);
-
-        profiler.startSection("tank");
-
-        EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
-        TankSideData sideTank = TANK_SIDES.get(face);
-
-        renderTank(TANK_BOTTOM, section.smoothedTankInput, combinedLight, partialTicks, bb);
-        renderTank(sideTank.start, section.smoothedTankOutput, combinedLight, partialTicks, bb);
-
-        int middles = section.middleCount;
-        if (sectionEnd != null) {
-            // TODO: Move this into the other renderer!
-            BlockPos diff = sectionEnd.getTile().getPos().subtract(tile.getPos());
-            bb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
-            renderTank(TANK_TOP, sectionEnd.smoothedTankOutput, combinedLight, partialTicks, bb);
-            renderTank(sideTank.end, sectionEnd.smoothedTankInput, combinedLight, partialTicks, bb);
+        try (AutoTessellator tess = RenderUtil.getThreadLocalUnusedTessellator()) {
+            BufferBuilder bb = tess.tessellator.getBuffer();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
             bb.setTranslation(x, y, z);
-        }
 
-        profiler.endStartSection("flow");
+            profiler.startSection("tank");
 
-        if (middles > 0 && sectionEnd != null) {
-            EnumProgressState progressState = section.getProgressState();
-            double progress = section.getProgress(partialTicks);
-            if (progress > 0) {
-                double length = middles + 2 - 4 / 16.0 - 0.02;
-                double p0 = 2 / 16.0 + 0.01;
-                double p1 = p0 + length - 0.01;
-                double progressStart = p0;
-                double progressEnd = p0 + length * progress;
+            EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
+            TankSideData sideTank = TANK_SIDES.get(face);
 
-                boolean flip = progressState == EnumProgressState.PREPARING;
-                flip ^= face.getAxisDirection() == AxisDirection.NEGATIVE;
+            renderTank(TANK_BOTTOM, section.smoothedTankInput, combinedLight, partialTicks, bb);
+            renderTank(sideTank.start, section.smoothedTankOutput, combinedLight, partialTicks, bb);
 
-                if (flip) {
-                    progressStart = p1 - length * progress;
-                    progressEnd = p1;
-                }
-                BlockPos diff = BlockPos.ORIGIN;
-                if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
-                    diff = diff.offset(face, middles + 1);
-                }
-                double otherStart = flip ? p0 : p1 - length * progress;
-                double otherEnd = flip ? p0 + length * progress : p1;
-                Vec3d vDiff = new Vec3d(diff).addVector(x, y, z);
-                renderFlow(vDiff, face, bb, progressStart + 0.01, progressEnd - 0.01,
-                    sectionEnd.smoothedTankInput.getFluidForRender(), 4, partialTicks);
-                renderFlow(vDiff, face.getOpposite(), bb, otherStart, otherEnd,
-                    section.smoothedTankInput.getFluidForRender(), 2, partialTicks);
+            int middles = section.middleCount;
+            if (sectionEnd != null) {
+                // TODO: Move this into the other renderer!
+                BlockPos diff = sectionEnd.getTile().getPos().subtract(tile.getPos());
+                bb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
+                renderTank(TANK_TOP, sectionEnd.smoothedTankOutput, combinedLight, partialTicks, bb);
+                renderTank(sideTank.end, sectionEnd.smoothedTankInput, combinedLight, partialTicks, bb);
+                bb.setTranslation(x, y, z);
             }
-        }
 
-        // buffer finish
-        bb.setTranslation(0, 0, 0);
-        profiler.endStartSection("draw");
-        Tessellator.getInstance().draw();
+            profiler.endStartSection("flow");
+
+            if (middles > 0 && sectionEnd != null) {
+                EnumProgressState progressState = section.getProgressState();
+                double progress = section.getProgress(partialTicks);
+                if (progress > 0) {
+                    double length = middles + 2 - 4 / 16.0 - 0.02;
+                    double p0 = 2 / 16.0 + 0.01;
+                    double p1 = p0 + length - 0.01;
+                    double progressStart = p0;
+                    double progressEnd = p0 + length * progress;
+
+                    boolean flip = progressState == EnumProgressState.PREPARING;
+                    flip ^= face.getAxisDirection() == AxisDirection.NEGATIVE;
+
+                    if (flip) {
+                        progressStart = p1 - length * progress;
+                        progressEnd = p1;
+                    }
+                    BlockPos diff = BlockPos.ORIGIN;
+                    if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+                        diff = diff.offset(face, middles + 1);
+                    }
+                    double otherStart = flip ? p0 : p1 - length * progress;
+                    double otherEnd = flip ? p0 + length * progress : p1;
+                    Vec3d vDiff = new Vec3d(diff).addVector(x, y, z);
+                    renderFlow(vDiff, face, bb, progressStart + 0.01, progressEnd - 0.01,
+                        sectionEnd.smoothedTankInput.getFluidForRender(), 4, partialTicks);
+                    renderFlow(vDiff, face.getOpposite(), bb, otherStart, otherEnd,
+                        section.smoothedTankInput.getFluidForRender(), 2, partialTicks);
+                }
+            }
+
+            // buffer finish
+            bb.setTranslation(0, 0, 0);
+            profiler.endStartSection("draw");
+            tess.tessellator.draw();
+        }
 
         // gl state finish
         RenderHelper.enableStandardItemLighting();

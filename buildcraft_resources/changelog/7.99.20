@@ -38,3 +38,4 @@ Bug fixes:
 * [#4044] Vanilla flowing water blocks are invisible with BC installed (AlexIIL)
 * [#4296] The marker connector recipe requires buildcraft wooden gears rather than any item that has an ore-dictionary name of "gearWood" (AlexIIL)
 * [#4300] The obsidian pipe doesn't instantly pull in the entire stack of item entities that collide with it. (AlexIIL)
+* [#4305] Crash when rendering inside an enderIO gui. (AlexIIL)
