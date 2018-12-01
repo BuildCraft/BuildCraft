@@ -189,7 +189,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
                 while (iter.hasNext()) {
                     Path subFolder = iter.next();
                     // subFolder will be "/data/[mod_id]"
-                    String scriptDomain = subFolder.getFileName().toString();
+                    String scriptDomain = subFolder.getFileName().toString().replace("/", "");
                     Path scriptDir = subFolder.resolve(postPath);
                     Path scriptFile = subFolder.resolve(postPath + ".txt");
                     if (!Files.exists(scriptFile)) {
