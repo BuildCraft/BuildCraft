@@ -25,9 +25,13 @@ Improvements:
 * Many improvements to the guide book:
   * The open book now shows more visibly if you are on the first or last page in the current chapter.
   * Made the next page and previous page buttons have a much bigger clickable area.
-  * Added groups: related entries. Currently these can only be specified through code.  
+  * Added a second guide book for configuration information. It doesn't have a recipe because it isn't useful in the game
+    * This implies that you can add your own additional guide books, although there's not much point in doing so because addons should continue to use the main book "buildcraftcore:main"
+    * Alternative guide books can be created by running /give @a buildcraftlib:guide 1 0 {BookName: "domain:path"}
+  * Added groups: related entries. Currently these can only be specified through code.
   * Auto-add a chapter with the name of the page entry at the very start (so that we don't need to do this manually)
   * Auto-add the relevant groups and recipes to the end of every page entry. Recipes won't be auto-added if they have been manually specified earlier in the entry.
+  * The page title has been changed to brown rather than black, so that it stands out less than the actual text.
 
 Ported content:
 
