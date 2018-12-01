@@ -339,7 +339,7 @@ task libJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     from(createMCModInfo("lib").parentFile)
     from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
+        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "data/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
     }
 }
 
@@ -360,7 +360,7 @@ task coreJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
 
     from(createMCModInfo("core").parentFile)
     from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "assets/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
+        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "data/buildcraftlib/**", "assets/buildcraftcore/**", "data/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
     }
 }
 
@@ -371,7 +371,7 @@ for (String module : ["builders", "energy", "factory", "silicon", "transport", "
 
         from(createMCModInfo(module).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraft$module/**", "buildcraft/$module/**", "LICENSE"])
+            includes.addAll(["assets/buildcraft$module/**", "data/buildcraft$module/**", "buildcraft/$module/**", "LICENSE"])
         }
     }
 }
