@@ -17,9 +17,10 @@ public class GuidePartNewPage extends GuidePart {
     public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
         return current.newPage();
     }
-    
+
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
         return current.newPage();
     }
 }

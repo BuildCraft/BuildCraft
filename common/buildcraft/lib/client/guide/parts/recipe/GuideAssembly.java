@@ -6,9 +6,10 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
+import java.util.Arrays;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartItem;
@@ -23,7 +24,8 @@ public class GuideAssembly extends GuidePartItem {
     public static final GuiRectangle[] ITEM_POSITION = new GuiRectangle[6];
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(77, 19, 16, 16);
     public static final GuiRectangle MJ_POSITION = new GuiRectangle(50, 4, 6, 46);
-    public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - INPUT_LIST.width) / 2, 0, INPUT_LIST.width, INPUT_LIST.height);
+    public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - INPUT_LIST.width) / 2,
+        0, INPUT_LIST.width, INPUT_LIST.height);
     public static final int PIXEL_HEIGHT = 60;
 
     static {
@@ -37,12 +39,30 @@ public class GuideAssembly extends GuidePartItem {
     private final ChangingItemStack[] input;
     private final ChangingItemStack output;
     private final ChangingObject<Long> mjCost;
+    private final int hash;
 
     GuideAssembly(GuiGuide gui, ChangingItemStack[] input, ChangingItemStack output, ChangingObject<Long> mjCost) {
         super(gui);
         this.input = input;
         this.output = output;
         this.mjCost = mjCost;
+        this.hash = Arrays.deepHashCode(new Object[] { input, output, mjCost });
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        GuideAssembly other = (GuideAssembly) obj;
+        return Arrays.equals(input, other.input) && output.equals(other.output) && mjCost.equals(other.mjCost);
     }
 
     @Override
@@ -59,8 +79,7 @@ public class GuideAssembly extends GuidePartItem {
             RenderHelper.enableGUIStandardItemLighting();
             for (int i = 0; i < input.length; i++) {
                 GuiRectangle rect = ITEM_POSITION[i];
-                ItemStack stack = input[i].get();
-                drawItemStack(stack, x + (int) rect.x, y + (int) rect.y);
+                drawItemStack(input[i].get(), x + (int) rect.x, y + (int) rect.y);
             }
 
             drawItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
@@ -77,7 +96,8 @@ public class GuideAssembly extends GuidePartItem {
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
@@ -86,8 +106,7 @@ public class GuideAssembly extends GuidePartItem {
         if (current.page == index) {
             for (int i = 0; i < input.length; i++) {
                 GuiRectangle rect = ITEM_POSITION[i];
-                ItemStack stack = input[i].get();
-                testClickItemStack(stack, x + (int) rect.x, y + (int) rect.y);
+                testClickItemStack(input[i].get(), x + (int) rect.x, y + (int) rect.y);
             }
 
             testClickItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);

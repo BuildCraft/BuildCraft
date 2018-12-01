@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import java.util.List;
+
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 
@@ -23,11 +25,19 @@ public class GuideText extends GuidePart {
 
     @Override
     public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
-        return renderLine(current, text, x, y, width, height, index);
+        PagePosition newPos = renderLine(current, text, x, y, width, height, index);
+        if (wasHovered && didRender) {
+            List<String> tooltip = text.getTooltip();
+            if (tooltip != null) {
+                gui.tooltip.addAll(tooltip);
+            }
+        }
+        return newPos;
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
         return renderLine(current, text, x, y, width, height, -1);
     }
 

@@ -11,7 +11,7 @@ public class GuideBookRegistry extends ScriptableRegistry<GuideBook> {
     public static final GuideBookRegistry INSTANCE = new GuideBookRegistry();
 
     private GuideBookRegistry() {
-        super(PackType.DATA_PACK, "buildcraft/book", GuideBook.class);
+        super(PackType.DATA_PACK, "buildcraft/book");
         addCustomType("", GuideBook.DESERIALISER);
     }
 

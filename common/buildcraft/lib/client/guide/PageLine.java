@@ -6,8 +6,12 @@
 
 package buildcraft.lib.client.guide;
 
+import java.util.List;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
 import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.misc.StringUtilBC;
 
 /** Stores information about a single line of text. This may be displayed as more than a single line though. */
 public class PageLine implements Comparable<PageLine> {
@@ -19,17 +23,27 @@ public class PageLine implements Comparable<PageLine> {
     public final String text;
     public final boolean link;
 
+    @Nullable
+    public final Supplier<List<String>> tooltipSupplier;
+
     public PageLine(int indent, String text, boolean isLink) {
         this(null, null, indent, text, isLink);
     }
 
-    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, boolean isLink) {
+    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text,
+        boolean isLink) {
+        this(startIcon, startIconHovered, indent, text, isLink, null);
+    }
+
+    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, boolean link,
+        @Nullable Supplier<List<String>> tooltipSupplier) {
         if (text == null) throw new NullPointerException("text");
         this.startIcon = startIcon;
         this.startIconHovered = startIconHovered;
         this.indent = indent;
-        this.text = StringUtilBC.formatStringForWhite(text);
-        this.link = isLink;
+        this.text = text;
+        this.link = link;
+        this.tooltipSupplier = tooltipSupplier;
     }
 
     @Override
@@ -68,5 +82,10 @@ public class PageLine implements Comparable<PageLine> {
             if (other.text != null) return false;
         } else if (!text.equals(other.text)) return false;
         return true;
+    }
+
+    @Nullable
+    public List<String> getTooltip() {
+        return tooltipSupplier == null ? null : tooltipSupplier.get();
     }
 }

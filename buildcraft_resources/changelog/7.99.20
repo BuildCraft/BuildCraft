@@ -25,6 +25,9 @@ Improvements:
 * Many improvements to the guide book:
   * The open book now shows more visibly if you are on the first or last page in the current chapter.
   * Made the next page and previous page buttons have a much bigger clickable area.
+  * Added groups: related entries. Currently these can only be specified through code.  
+  * Auto-add a chapter with the name of the page entry at the very start (so that we don't need to do this manually)
+  * Auto-add the relevant groups and recipes to the end of every page entry. Recipes won't be auto-added if they have been manually specified earlier in the entry.
 
 Ported content:
 

@@ -18,23 +18,16 @@ import buildcraft.api.registry.IReloadableRegistryManager;
 
 public class SimpleReloadableRegistry<E> implements IReloadableRegistry<E> {
     public final IReloadableRegistryManager manager;
-    public final Class<E> entryClass;
     public final List<E> permanent = new ArrayList<>();
     public final Map<ResourceLocation, E> reloadable = new HashMap<>();
 
-    public SimpleReloadableRegistry(IReloadableRegistryManager manager, Class<E> entryClass) {
+    public SimpleReloadableRegistry(IReloadableRegistryManager manager) {
         this.manager = manager;
-        this.entryClass = entryClass;
     }
 
     @Override
     public IReloadableRegistryManager getManager() {
         return manager;
-    }
-
-    @Override
-    public Class<E> getEntryClass() {
-        return entryClass;
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.function.BooleanSupplier;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 
+@Deprecated
 public class GuidePartMulti extends GuidePart {
 
     public final List<GuidePart> parts;

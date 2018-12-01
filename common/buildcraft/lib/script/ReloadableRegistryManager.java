@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
@@ -105,28 +103,15 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
     }
 
     @Override
-    @Nullable
-    public <R> IReloadableRegistry<R> getRegistry(Class<R> recipeClass) {
-        // Unfortunately we can't cache this at the moment because the map can be modified
-        // by anyone, anytime, without calling this manager.
-        for (IReloadableRegistry<?> registry : registries.values()) {
-            if (registry.getClass() == recipeClass) {
-                return (IReloadableRegistry<R>) registry;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public <R> IReloadableRegistry<R> createRegistry(String name, Class<R> clazz) {
-        SimpleReloadableRegistry<R> registry = new SimpleReloadableRegistry<>(this, clazz);
+    public <R> IReloadableRegistry<R> createRegistry(String name) {
+        SimpleReloadableRegistry<R> registry = new SimpleReloadableRegistry<>(this);
         getAllRegistries().put(name, registry);
         return registry;
     }
 
     @Override
-    public <R> IScriptableRegistry<R> createScriptableRegistry(String entryPath, Class<R> clazz) {
-        ScriptableRegistry<R> registry = new ScriptableRegistry<>(this, entryPath, clazz);
+    public <R> IScriptableRegistry<R> createScriptableRegistry(String entryPath) {
+        ScriptableRegistry<R> registry = new ScriptableRegistry<>(this, entryPath);
         registerRegistry(registry);
         return registry;
     }

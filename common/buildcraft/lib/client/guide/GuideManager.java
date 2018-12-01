@@ -39,9 +39,10 @@ import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.client.guide.data.JsonTypeTags;
-import buildcraft.lib.client.guide.entry.IEntryIterable;
 import buildcraft.lib.client.guide.entry.IEntryLinkConsumer;
+import buildcraft.lib.client.guide.entry.ItemStackValueFilter;
 import buildcraft.lib.client.guide.entry.PageEntry;
+import buildcraft.lib.client.guide.entry.PageValueType;
 import buildcraft.lib.client.guide.loader.IPageLoader;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
@@ -52,10 +53,12 @@ import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
 import buildcraft.lib.client.guide.parts.contents.IContentsNode;
 import buildcraft.lib.client.guide.parts.contents.PageLink;
 import buildcraft.lib.client.guide.parts.contents.PageLinkNormal;
+import buildcraft.lib.client.guide.ref.GuideGroupManager;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.guide.GuideBook;
 import buildcraft.lib.guide.GuideBookRegistry;
 import buildcraft.lib.guide.GuideContentsData;
+import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.LocaleUtil;
 
 public enum GuideManager implements IResourceManagerReloadListener {
@@ -121,6 +124,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void reload0(IResourceManager resourceManager) {
+        GuideGroupManager.get("lols", "hi");
         Stopwatch watch = Stopwatch.createStarted();
         GuideBookRegistry.INSTANCE.reload();
         GuidePageRegistry.INSTANCE.reload();
@@ -180,7 +184,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang) {
-        main_iteration: for (Entry<ResourceLocation, PageEntry> mapEntry : GuidePageRegistry.INSTANCE
+        main_iteration: for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE
             .getReloadableEntryMap().entrySet()) {
             ResourceLocation entryKey = mapEntry.getKey();
             String domain = entryKey.getResourceDomain();
@@ -234,13 +238,13 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
         quickSearcher = new SuffixArray<>();
 
-        for (Entry<ResourceLocation, PageEntry> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
+        for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
             .entrySet()) {
             ResourceLocation partialLocation = mapEntry.getKey();
             GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(partialLocation);
 
             PageEntry<?> entry = mapEntry.getValue();
-            String translatedTitle = entry.title.getFormattedText();
+            String translatedTitle = entry.title;
             ISimpleDrawable icon = entry.createDrawable();
             PageLine line = new PageLine(icon, icon, 2, translatedTitle, true);
 
@@ -252,7 +256,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
 
         final IEntryLinkConsumer adder = (tags, page) -> addChild(null, tags, page);
-        for (IEntryIterable type : GuidePageRegistry.ENTRY_ITERABLES) {
+        for (PageValueType<?> type : GuidePageRegistry.INSTANCE.types) {
             type.iterateAllDefault(adder);
         }
 
@@ -302,12 +306,27 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     }
 
+    @Nullable
     public GuidePageFactory getFactoryFor(ResourceLocation partialLocation) {
         return pages.get(partialLocation);
     }
 
+    @Nullable
+    public GuidePageFactory getFactoryFor(Object value) {
+        if (value instanceof ItemStackValueFilter) {
+            value = ((ItemStackValueFilter) value).stack.baseStack;
+        } else if (value instanceof ItemStackKey) {
+            value = ((ItemStackKey) value).baseStack;
+        }
+        if (value instanceof ItemStack) {
+            return getPageFor((ItemStack) value);
+        }
+        return getFactoryFor(getEntryFor(value));
+    }
+
     public static ResourceLocation getEntryFor(Object obj) {
-        for (Entry<ResourceLocation, PageEntry> entry : GuidePageRegistry.INSTANCE.getReloadableEntryMap().entrySet()) {
+        for (Entry<ResourceLocation, PageEntry<?>> entry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
+            .entrySet()) {
             if (entry.getValue().matches(obj)) {
                 return entry.getKey();
             }
@@ -317,6 +336,14 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     @Nonnull
     public GuidePageFactory getPageFor(@Nonnull ItemStack stack) {
+        // TODO: Make this generation much more flexible!
+        // (Basically return a stand-in page that contains groups, recipes, and all known info)
+        // Or should that be implicit for *all* pages? Yes?
+        // (Specifically all that extend [GuidePage] as that won't include the contents page)
+        // This implies merging GuidePage up into GuidePageEntry and deleting GuidePageStandInRecipes
+        // we will also need to ensure we don't generate groups or recipes multiple times.
+        // Although we do need to generate the info for it first and cache it?
+        // Also the "Recipes" chapter title needs a JEI integration button!
         ResourceLocation entry = getEntryFor(stack);
         if (entry != null) {
             GuidePageFactory factory = getFactoryFor(entry);

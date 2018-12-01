@@ -432,7 +432,7 @@ public class GuiGuide extends GuiScreen {
             } else {
                 x = (width - titleWidth) / 2;
             }
-            currentFont.drawString(title, x, minY + 12, 0);
+            currentFont.drawString(title, x, minY + 12, 0x90816a);
         }
 
         tooltipStack = null;

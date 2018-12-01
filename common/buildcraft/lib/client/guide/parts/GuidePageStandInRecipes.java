@@ -16,11 +16,15 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.entry.ItemStackValueFilter;
+import buildcraft.lib.client.guide.entry.PageEntryItemStack;
+import buildcraft.lib.client.guide.entry.PageValue;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
 
+@Deprecated
 public class GuidePageStandInRecipes extends GuidePage {
     public GuidePageStandInRecipes(GuiGuide gui, List<GuidePart> parts, ItemStack stack) {
-        super(gui, parts, stack.getDisplayName());
+        super(gui, parts, new PageValue<>(PageEntryItemStack.INSTANCE, new ItemStackValueFilter(stack)));
     }
 
     @Nonnull

@@ -13,12 +13,10 @@ import buildcraft.lib.client.guide.entry.PageEntry;
 public class GuidePageEntry extends GuidePage {
 
     public final ResourceLocation name;
-    public final PageEntry<?> entry;
 
-    public GuidePageEntry(GuiGuide gui, List<GuidePart> parts, ResourceLocation name, PageEntry<?> entry) {
-        super(gui, parts, entry.title.getFormattedText());
+    public GuidePageEntry(GuiGuide gui, List<GuidePart> parts, PageEntry<?> entry, ResourceLocation name) {
+        super(gui, parts, entry);
         this.name = name;
-        this.entry = entry;
     }
 
     @Override

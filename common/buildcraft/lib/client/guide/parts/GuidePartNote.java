@@ -7,6 +7,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 
+@Deprecated
 public class GuidePartNote extends GuidePartMulti {
 
     public static final int WIDTH = 140;

@@ -64,6 +64,7 @@ public abstract class GuideChapter extends GuidePart {
 
     @Override
     public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+        current = current.guaranteeSpace(getFontRenderer().getMaxFontHeight() * 4, height);
         PagePosition n = renderLine(current, chapter, x, y, width, height, index);
         index /= 2;
         if (n.page / 2 < index) {
@@ -75,7 +76,9 @@ public abstract class GuideChapter extends GuidePart {
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
+        current = current.guaranteeSpace(getFontRenderer().getMaxFontHeight() * 4, height);
         return renderLine(current, chapter, x, y, width, height, -1);
     }
 

@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -16,17 +15,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import buildcraft.api.registry.IScriptableRegistry.IEntryDeserializer;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 
+import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
+import buildcraft.lib.client.guide.loader.XmlPageLoader;
+import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.contents.PageLinkItemStack;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -34,14 +33,18 @@ import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.registry.RegistryConfig;
 
-public class PageEntryItemStack extends PageEntry<ItemStackValueFilter> {
+public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
 
+    public static final PageEntryItemStack INSTANCE = new PageEntryItemStack();
     private static final JsonTypeTags TAGS = new JsonTypeTags("buildcraft.guide.contents.item_stacks");
 
-    public static final IEntryIterable ITERABLE = PageEntryItemStack::iterateAllDefault;
-    public static final IEntryDeserializer<PageEntryItemStack> DESERIALISER = PageEntryItemStack::deserialize;
+    @Override
+    public Class<ItemStackValueFilter> getEntryClass() {
+        return ItemStackValueFilter.class;
+    }
 
-    private static void iterateAllDefault(IEntryLinkConsumer consumer) {
+    @Override
+    public void iterateAllDefault(IEntryLinkConsumer consumer) {
         for (Item item : ForgeRegistries.ITEMS) {
             if (!GuideManager.INSTANCE.objectsAdded.add(item)) {
                 continue;
@@ -66,7 +69,8 @@ public class PageEntryItemStack extends PageEntry<ItemStackValueFilter> {
         }
     }
 
-    private static OptionallyDisabled<PageEntryItemStack> deserialize(ResourceLocation name, JsonObject json,
+    @Override
+    public OptionallyDisabled<PageEntry<ItemStackValueFilter>> deserialize(ResourceLocation name, JsonObject json,
         JsonDeserializationContext ctx) {
         JsonElement jStack = json.get("stack");
         if (jStack == null) {
@@ -106,37 +110,29 @@ public class PageEntryItemStack extends PageEntry<ItemStackValueFilter> {
             throw new JsonSyntaxException("Unknown item " + jStack);
         }
         ItemStackValueFilter filter = new ItemStackValueFilter(new ItemStackKey(stack), matchMeta, matchNbt);
-        TextComponentString title = new TextComponentString(stack.getDisplayName());
-        return new OptionallyDisabled<>(new PageEntryItemStack(name, json, filter, title, ctx));
-    }
-
-    public PageEntryItemStack(ResourceLocation name, JsonObject json, ItemStackValueFilter value, ITextComponent title,
-        JsonDeserializationContext ctx) throws JsonParseException {
-        super(name, json, value, title, ctx);
-    }
-
-    public PageEntryItemStack(ResourceLocation name, JsonObject json, ItemStackValueFilter value,
-        JsonDeserializationContext ctx) throws JsonParseException {
-        super(name, json, value, ctx);
-    }
-
-    public PageEntryItemStack(JsonTypeTags typeTags, ResourceLocation book, ITextComponent title,
-        ItemStackValueFilter value) {
-        super(typeTags, book, title, value);
+        return new OptionallyDisabled<>(new PageEntry<>(this, name, json, filter));
     }
 
     @Override
-    public List<String> getTooltip() {
+    public String getTitle(ItemStackValueFilter value) {
+        return value.stack.baseStack.getDisplayName();
+    }
+
+    @Override
+    public List<String> getTooltip(ItemStackValueFilter value) {
         return GuiUtil.getFormattedTooltip(value.stack.baseStack);
     }
 
     @Override
-    public boolean matches(Object obj) {
+    public boolean matches(ItemStackValueFilter entry, Object obj) {
+        if (obj instanceof ItemStackValueFilter) {
+            obj = ((ItemStackValueFilter) obj).stack.baseStack;
+        }
         if (obj instanceof ItemStackKey) {
             obj = ((ItemStackKey) obj).baseStack;
         }
         if (obj instanceof ItemStack) {
-            ItemStack base = value.stack.baseStack;
+            ItemStack base = entry.stack.baseStack;
             ItemStack test = (ItemStack) obj;
             if (base.isEmpty() || test.isEmpty()) {
                 return false;
@@ -144,12 +140,12 @@ public class PageEntryItemStack extends PageEntry<ItemStackValueFilter> {
             if (base.getItem() != test.getItem()) {
                 return false;
             }
-            if (value.matchMeta) {
+            if (entry.matchMeta) {
                 if (base.getMetadata() != test.getMetadata()) {
                     return false;
                 }
             }
-            if (value.matchNbt) {
+            if (entry.matchNbt) {
                 if (!ItemStack.areItemStackTagsEqual(base, test)) {
                     return false;
                 }
@@ -161,12 +157,17 @@ public class PageEntryItemStack extends PageEntry<ItemStackValueFilter> {
 
     @Override
     @Nullable
-    public ISimpleDrawable createDrawable() {
+    public ISimpleDrawable createDrawable(ItemStackValueFilter value) {
         return new GuiStack(value.stack.baseStack);
     }
 
     @Override
-    public Object getBasicValue() {
+    public Object getBasicValue(ItemStackValueFilter value) {
         return value.stack.baseStack.getItem();
+    }
+
+    @Override
+    public void addPageEntries(ItemStackValueFilter value, GuiGuide gui, List<GuidePart> parts) {
+        XmlPageLoader.appendAllCrafting(value.stack.baseStack, parts, gui);
     }
 }

@@ -778,6 +778,17 @@ buildcraft.guide.chapter.title.gate_base=Gates
 buildcraft.guide.page.json_insn_format=Json Instruction File Format
 buildcraft.guide.page.registry_overview=Json Registry Overview
 
+buildcraft.guide.meta.group.linking_to=Linked To
+buildcraft.guide.meta.group.linked_from=Linked From
+buildcraft.guide.group.to.buildcraft.pipe_power_providers=Pipe Power Providers
+buildcraft.guide.group.from.buildcraft.pipe_power_providers=Pipe Power Receivers
+buildcraft.guide.group.to.buildcraft.full_power_providers=Full Power Providers
+buildcraft.guide.group.from.buildcraft.full_power_providers=Full Power Receivers
+buildcraft.guide.group.to.buildcraft.laser_power_providers=Laser Power Providers
+buildcraft.guide.group.from.buildcraft.laser_power_providers=Laser Power Receivers
+buildcraft.guide.group.to.buildcraft.area_markers=Area Markers
+buildcraft.guide.group.from.buildcraft.area_markers=Area dependent blocks
+
 buildcraft.help.tank.generic=Clicking this with an empty bucket will\nempty this tank into the bucket, or\nusing a full bucket will fill this tank\nfrom the bucket.
 buildcraft.help.tank.title.tankFuel=Fuel Tank
 buildcraft.help.tank.title.tankCoolant=Coolant Tank

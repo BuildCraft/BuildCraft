@@ -12,19 +12,73 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.entry.PageValue;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.guide.ref.GuideGroupManager;
+import buildcraft.lib.client.guide.ref.GuideGroupSet;
+import buildcraft.lib.client.guide.ref.GuideGroupSet.GroupDirection;
+import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class GuidePage extends GuidePageBase {
     public final ImmutableList<GuidePart> parts;
     public final String title;
     public final GuideChapter chapterContents;
+    public final PageValue<?> entry;
 
-    public GuidePage(GuiGuide gui, List<GuidePart> parts, String title) {
+    public GuidePage(GuiGuide gui, List<GuidePart> parts, PageValue<?> entry) {
         super(gui);
-        this.parts = ImmutableList.copyOf(parts);
-        this.title = StringUtilBC.formatStringForWhite(title);
+        this.title = StringUtilBC.formatStringForWhite(entry.title);
         this.chapterContents = new GuideChapterContents(gui);
+        this.entry = entry;
+        List<GuidePart> from = parts;
+        // Defensive copy as we modify it
+        parts = new ArrayList<>();
+        // First: Prepend the list with a chapter title
+        parts.add(new GuideChapterWithin(gui, title));
+
+        // Re-add everything that we missed before
+        parts.addAll(from);
+
+        // Now add relevant groups
+        List<GuidePartGroup> linksToOther = new ArrayList<>();
+        List<GuidePartGroup> linksToThis = new ArrayList<>();
+        PageValue<?> value = entry.copyToValue();
+        for (GuideGroupSet set : GuideGroupManager.sets.values()) {
+            if (set.sources.contains(value)) {
+                linksToOther.add(new GuidePartGroup(gui, set, GroupDirection.SRC_TO_ENTRY));
+            } else if (set.entries.contains(value)) {
+                linksToThis.add(new GuidePartGroup(gui, set, GroupDirection.ENTRY_TO_SRC));
+            }
+        }
+
+        // Ensure we don't get duplicates if they have been manually specified earlier
+        linksToOther.removeAll(parts);
+        linksToThis.removeAll(parts);
+
+        if (!linksToOther.isEmpty()) {
+            parts.add(new GuideChapterWithin(gui, LocaleUtil.localize("buildcraft.guide.meta.group.linking_to")));
+            for (GuidePartGroup g : linksToOther) {
+                parts.add(g);
+                parts.add(new GuidePartNewPage(gui));
+            }
+        }
+
+        if (!linksToThis.isEmpty()) {
+            parts.add(new GuideChapterWithin(gui, LocaleUtil.localize("buildcraft.guide.meta.group.linked_from")));
+            for (GuidePartGroup g : linksToThis) {
+                parts.add(g);
+                parts.add(new GuidePartNewPage(gui));
+            }
+        }
+
+        addTypeSpecific(gui, parts, entry);
+
+        this.parts = ImmutableList.copyOf(parts);
+    }
+
+    private static <T> void addTypeSpecific(GuiGuide gui, List<GuidePart> parts, PageValue<T> entry) {
+        entry.type.addPageEntries(entry.value, gui, parts);
     }
 
     @Override

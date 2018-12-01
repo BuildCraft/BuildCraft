@@ -48,14 +48,14 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
     private final Map<String, Class<? extends E>> types = new HashMap<>();
     private final Map<String, IEntryDeserializer<? extends E>> deserializers = new HashMap<>();
 
-    public ScriptableRegistry(IReloadableRegistryManager manager, String entryPath, Class<E> entryClass) {
-        super(manager, entryClass);
+    public ScriptableRegistry(IReloadableRegistryManager manager, String entryPath) {
+        super(manager);
         this.entryPath = entryPath;
     }
 
-    public ScriptableRegistry(PackType type, String entryPath, Class<E> entryClass) {
+    public ScriptableRegistry(PackType type, String entryPath) {
         this(type == PackType.DATA_PACK ? ReloadableRegistryManager.DATA_PACKS
-            : ReloadableRegistryManager.RESOURCE_PACKS, entryPath, entryClass);
+            : ReloadableRegistryManager.RESOURCE_PACKS, entryPath);
     }
 
     @Override

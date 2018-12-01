@@ -15,18 +15,18 @@ import net.minecraft.util.NonNullList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.lib.misc.ArrayUtil;
+import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
 
 /** Defines an {@link ItemStack} that changes between a specified list of stacks. Useful for displaying possible inputs
  * or outputs for recipes that use the oredictionary, or recipes that vary the output depending on the metadata of the
  * input (for example a pipe colouring recipe) */
-public final class ChangingItemStack extends ChangingObject<ItemStack> {
+public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
     /** Creates a stack list that iterates through all of the given stacks. This does NOT check possible variants.
      * 
      * @param stacks The list to iterate through. */
     public ChangingItemStack(NonNullList<ItemStack> stacks) {
-        super(stacks.toArray(new ItemStack[0]));
+        super(makeListArray(stacks));
     }
 
     public ChangingItemStack(@Nonnull Ingredient ingredient) {
@@ -41,36 +41,43 @@ public final class ChangingItemStack extends ChangingObject<ItemStack> {
         this(OreDictionary.getOres(oreId));
     }
 
-    private static ItemStack[] makeStackArray(ItemStack stack) {
+    private static ItemStackKey[] makeListArray(NonNullList<ItemStack> stacks) {
+        return makeStackArray(stacks.toArray(new ItemStack[0]));
+    }
+
+    private static ItemStackKey[] makeStackArray(ItemStack stack) {
         if (stack.isEmpty()) {
-            return new ItemStack[] { ItemStack.EMPTY };
+            return new ItemStackKey[] { ItemStackKey.EMPTY };
         }
         if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
             NonNullList<ItemStack> subs = NonNullList.create();
             stack.getItem().getSubItems(CreativeTabs.SEARCH, subs);
-            return subs.toArray(new ItemStack[0]);
+            return makeListArray(subs);
         } else {
-            return new ItemStack[] { stack };
+            return new ItemStackKey[] { new ItemStackKey(stack) };
         }
     }
 
-    private static ItemStack[] makeRecipeArray(Ingredient ingredient) {
+    private static ItemStackKey[] makeRecipeArray(Ingredient ingredient) {
         ItemStack[] stacks = ingredient.getMatchingStacks();
-        if (stacks.length == 0) {
-            return new ItemStack[] { ItemStack.EMPTY };
-        } else {
-            return stacks.clone();
-        }
+        return makeStackArray(stacks);
     }
 
-    @Override
-    protected int computeHash() {
-        return ArrayUtil.manualHash(options, StackUtil::hash);
+    private static ItemStackKey[] makeStackArray(ItemStack[] stacks) {
+        if (stacks.length == 0) {
+            return new ItemStackKey[] { ItemStackKey.EMPTY };
+        } else {
+            ItemStackKey[] arr = new ItemStackKey[stacks.length];
+            for (int i = 0; i < stacks.length; i++) {
+                arr[i] = new ItemStackKey(stacks[i]);
+            }
+            return arr;
+        }
     }
 
     public boolean matches(ItemStack target) {
-        for (ItemStack s : options) {
-            if (StackUtil.isCraftingEquivalent(s, target, false)) {
+        for (ItemStackKey s : options) {
+            if (StackUtil.isCraftingEquivalent(s.baseStack, target, false)) {
                 return true;
             }
         }

@@ -18,7 +18,6 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -41,16 +40,21 @@ import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePartCodeBlock;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.client.guide.parts.GuidePartGroup;
 import buildcraft.lib.client.guide.parts.GuidePartMulti;
 import buildcraft.lib.client.guide.parts.GuidePartNewPage;
 import buildcraft.lib.client.guide.parts.GuidePartNote;
 import buildcraft.lib.client.guide.parts.GuideText;
 import buildcraft.lib.client.guide.parts.recipe.IStackRecipes;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
+import buildcraft.lib.client.guide.ref.GuideGroupManager;
+import buildcraft.lib.client.guide.ref.GuideGroupSet;
+import buildcraft.lib.client.guide.ref.GuideGroupSet.GroupDirection;
 import buildcraft.lib.expression.Tokenizer.ITokenizingContext;
 import buildcraft.lib.expression.Tokenizer.ResultConsume;
 import buildcraft.lib.expression.Tokenizer.TokenResult;
 import buildcraft.lib.expression.TokenizerDefaults;
+import buildcraft.lib.misc.LocaleUtil;
 
 // This isn't a proper XML loader - there isn't a root tag.
 // Instead it just assumes everything is a paragraph, unless more specific tags are given
@@ -110,6 +114,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         putSingle("new_page", attr -> GuidePartNewPage::new);
         putSingle("chapter", XmlPageLoader::loadChapter);
         putSingle("recipe", XmlPageLoader::loadRecipe);
+        putSingle("group", XmlPageLoader::loadGroup);
         putMulti("recipes", XmlPageLoader::loadAllRecipes);
         putMulti("usages", XmlPageLoader::loadAllUsages);
         putMulti("recipes_usages", XmlPageLoader::loadAllRecipesAndUsages);
@@ -181,7 +186,8 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry entry) throws IOException {
+    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry)
+        throws IOException {
         // Needs to support:
         // - start/end tags (such as <lore></lore>)
         // - nested tags (such as <lore>Spooky<bold> Skeletons</bold></lore>)
@@ -323,7 +329,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             for (GuidePartFactory factory : factories) {
                 parts.add(factory.createNew(gui));
             }
-            return new GuidePageEntry(gui, parts, name, entry);
+            return new GuidePageEntry(gui, parts, entry, name);
         };
     }
 
@@ -544,12 +550,67 @@ public enum XmlPageLoader implements IPageLoaderText {
         return list;
     }
 
+    public static void appendAllCrafting(ItemStack stack, List<GuidePart> parts, GuiGuide gui) {
+        List<GuidePartFactory> recipeFactories = RecipeLookupHelper.getAllRecipes(stack);
+        List<GuidePart> recipeParts = new ArrayList<>();
+        for (GuidePartFactory factory : recipeFactories) {
+            recipeParts.add(factory.createNew(gui));
+        }
+        recipeParts.removeAll(parts);
+        if (recipeParts.size() > 0) {
+            parts.add(new GuidePartNewPage(gui));
+            if (recipeParts.size() == 1) {
+                parts.add(chapter("buildcraft.guide.recipe.create").createNew(gui));
+            } else {
+                parts.add(chapter("buildcraft.guide.recipe.create.plural").createNew(gui));
+            }
+            parts.addAll(recipeParts);
+        }
+        List<GuidePartFactory> usageFactories = RecipeLookupHelper.getAllUsages(stack);
+        List<GuidePart> usageParts = new ArrayList<>();
+        for (GuidePartFactory factory : usageFactories) {
+            usageParts.add(factory.createNew(gui));
+        }
+        usageParts.removeAll(parts);
+        if (usageParts.size() > 0) {
+            if (usageParts.size() != 1) {
+                parts.add(new GuidePartNewPage(gui));
+            }
+            if (usageParts.size() == 1) {
+                parts.add(chapter("buildcraft.guide.recipe.use").createNew(gui));
+            } else {
+                parts.add(chapter("buildcraft.guide.recipe.use.plural").createNew(gui));
+            }
+            parts.addAll(usageParts);
+        }
+    }
+
     public static GuidePartFactory chapter(String after) {
-        return (gui) -> new GuideChapterWithin(gui, I18n.format(after));
+        return (gui) -> new GuideChapterWithin(gui, LocaleUtil.localize(after));
     }
 
     public static GuidePartFactory translate(String text) {
-        return gui -> new GuideText(gui, new PageLine(0, I18n.format(text), false));
+        return gui -> new GuideText(gui, new PageLine(0, LocaleUtil.localize(text), false));
+    }
+
+    public static GuidePartFactory loadGroup(XmlTag tag) {
+        String domain = tag.get("domain");
+        String group = tag.get("group");
+        if (domain == null) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Missing domain tag in " + tag);
+        }
+        if (group == null) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Missing group tag in " + tag);
+        }
+        if (domain == null || group == null) {
+            return null;
+        }
+        GuideGroupSet set = GuideGroupManager.get(domain, group);
+        if (set == null) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Unknown group " + domain + ":" + group);
+            return null;
+        }
+        return gui -> new GuidePartGroup(gui, set, GroupDirection.SRC_TO_ENTRY);
     }
 
     public static ItemStack loadItemStack(XmlTag tag) {

@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -30,12 +32,30 @@ public class GuideSmelting extends GuidePartItem {
 
     private final ChangingItemStack input, output;
     private final ItemStack furnace;
+    private final int hash;
 
     public GuideSmelting(GuiGuide gui, @Nonnull ItemStack input, @Nonnull ItemStack output) {
         super(gui);
         this.input = new ChangingItemStack(input);
         this.output = new ChangingItemStack(output);
         furnace = new ItemStack(Blocks.FURNACE);
+        this.hash = Objects.hash(input, output);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
+        GuideSmelting other = (GuideSmelting) obj;
+        // Shortcut out of this full itemstack comparison as its really expensive
+        if (hash != other.hash) return false;
+        return input.equals(other.input) && output.equals(other.output);
     }
 
     @Override

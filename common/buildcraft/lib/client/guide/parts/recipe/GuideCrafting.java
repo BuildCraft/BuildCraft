@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
+import java.util.Arrays;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,7 +26,8 @@ public class GuideCrafting extends GuidePartItem {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
     public static final GuiRectangle[][] ITEM_POSITION = new GuiRectangle[3][3];
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(95, 19, 16, 16);
-    public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width, CRAFTING_GRID.height);
+    public static final GuiRectangle OFFSET = new GuiRectangle(
+        (GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width, CRAFTING_GRID.height);
     public static final int PIXEL_HEIGHT = 60;
 
     static {
@@ -37,6 +40,7 @@ public class GuideCrafting extends GuidePartItem {
 
     private final ChangingItemStack[][] input;
     private final ChangingItemStack output;
+    private final int hash;
 
     GuideCrafting(GuiGuide gui, NonNullMatrix<Ingredient> input, @Nonnull ItemStack output) {
         super(gui);
@@ -47,12 +51,30 @@ public class GuideCrafting extends GuidePartItem {
             }
         }
         this.output = new ChangingItemStack(output);
+        this.hash = Arrays.deepHashCode(new Object[] { input, output });
     }
 
     GuideCrafting(GuiGuide gui, ChangingItemStack[][] input, ChangingItemStack output) {
         super(gui);
         this.input = input;
         this.output = output;
+        this.hash = Arrays.deepHashCode(new Object[] { input, output });
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        GuideCrafting other = (GuideCrafting) obj;
+        return Arrays.deepEquals(input, other.input) && output.equals(other.output);
     }
 
     @Override
@@ -70,8 +92,7 @@ public class GuideCrafting extends GuidePartItem {
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
                     GuiRectangle rect = ITEM_POSITION[itemX][itemY];
-                    ItemStack stack = input[itemX][itemY].get();
-                    drawItemStack(stack, x + (int) rect.x, y + (int) rect.y);
+                    drawItemStack(input[itemX][itemY].get(), x + (int) rect.x, y + (int) rect.y);
                 }
             }
 
@@ -85,7 +106,8 @@ public class GuideCrafting extends GuidePartItem {
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+        int mouseX, int mouseY) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
@@ -95,8 +117,7 @@ public class GuideCrafting extends GuidePartItem {
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
                     GuiRectangle rect = ITEM_POSITION[itemX][itemY];
-                    ItemStack stack = input[itemX][itemY].get();
-                    testClickItemStack(stack, x + (int) rect.x, y + (int) rect.y);
+                    testClickItemStack(input[itemX][itemY].get(), x + (int) rect.x, y + (int) rect.y);
                 }
             }
 

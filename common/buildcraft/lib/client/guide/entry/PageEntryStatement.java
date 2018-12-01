@@ -7,15 +7,12 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 
-import buildcraft.api.registry.IScriptableRegistry.ISimpleEntryDeserializer;
+import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 import buildcraft.api.statements.IAction;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.ITrigger;
@@ -27,15 +24,20 @@ import buildcraft.lib.client.guide.parts.contents.PageLinkStatement;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.statement.GuiElementStatementSource;
 
-public class PageEntryStatement extends PageEntry<IStatement> {
+public class PageEntryStatement extends PageValueType<IStatement> {
+
+    public static final PageEntryStatement INSTANCE = new PageEntryStatement();
 
     private static final JsonTypeTags TRIGGER_TAGS = new JsonTypeTags("buildcraft.guide.contents.triggers");
     private static final JsonTypeTags ACTION_TAGS = new JsonTypeTags("buildcraft.guide.contents.actions");
 
-    public static final IEntryIterable ITERABLE = PageEntryStatement::iterateAllDefault;
-    public static final ISimpleEntryDeserializer<PageEntryStatement> DESERIALISER = PageEntryStatement::deserialize;
+    @Override
+    public Class<IStatement> getEntryClass() {
+        return IStatement.class;
+    }
 
-    private static void iterateAllDefault(IEntryLinkConsumer consumer) {
+    @Override
+    public void iterateAllDefault(IEntryLinkConsumer consumer) {
         for (IStatement statement : new TreeMap<>(StatementManager.statements).values()) {
             if (!GuideManager.INSTANCE.objectsAdded.add(statement)) {
                 continue;
@@ -55,45 +57,35 @@ public class PageEntryStatement extends PageEntry<IStatement> {
         }
     }
 
-    private static PageEntryStatement deserialize(ResourceLocation name, JsonObject json,
+    @Override
+    public OptionallyDisabled<PageEntry<IStatement>> deserialize(ResourceLocation name, JsonObject json,
         JsonDeserializationContext ctx) {
         String stmntName = JsonUtils.getString(json, "statement");
         IStatement stmnt = StatementManager.statements.get(stmntName);
         if (stmnt == null) {
             throw new JsonSyntaxException("Unknown statement '" + stmntName + "'");
         }
-        List<String> tooltip = stmnt.getTooltip();
-        ITextComponent title;
-        if (tooltip.isEmpty()) {
-            title = new TextComponentString(stmnt.getClass().toString());
-        } else {
-            title = new TextComponentString(tooltip.get(0));
-        }
-        return new PageEntryStatement(name, json, stmnt, title, ctx);
-    }
-
-    public PageEntryStatement(ResourceLocation name, JsonObject json, IStatement value, ITextComponent title,
-        JsonDeserializationContext ctx) throws JsonParseException {
-        super(name, json, value, title, ctx);
-    }
-
-    public PageEntryStatement(ResourceLocation name, JsonObject json, IStatement value, JsonDeserializationContext ctx)
-        throws JsonParseException {
-        super(name, json, value, ctx);
-    }
-
-    public PageEntryStatement(JsonTypeTags typeTags, ResourceLocation book, ITextComponent title, IStatement value) {
-        super(typeTags, book, title, value);
+        return new OptionallyDisabled<>(new PageEntry<>(this, name, json, stmnt));
     }
 
     @Override
-    public List<String> getTooltip() {
+    public List<String> getTooltip(IStatement value) {
         return value.getTooltip();
     }
 
     @Override
+    public String getTitle(IStatement value) {
+        List<String> tooltip = value.getTooltip();
+        if (tooltip.isEmpty()) {
+            return value.getClass().toString();
+        } else {
+            return tooltip.get(0);
+        }
+    }
+
+    @Override
     @Nullable
-    public ISimpleDrawable createDrawable() {
+    public ISimpleDrawable createDrawable(IStatement value) {
         return (x, y) -> GuiElementStatementSource.drawGuiSlot(value, x, y);
     }
 }

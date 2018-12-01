@@ -14,12 +14,17 @@ import net.minecraft.item.ItemStack;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.ItemStackKey;
 
 public abstract class GuidePartItem extends GuidePart {
     public static final GuiRectangle STACK_RECT = new GuiRectangle(0, 0, 16, 16);
 
     public GuidePartItem(GuiGuide gui) {
         super(gui);
+    }
+
+    protected void drawItemStack(ItemStackKey stack, int x, int y) {
+        drawItemStack(stack.baseStack, x, y);
     }
 
     protected void drawItemStack(ItemStack stack, int x, int y) {
@@ -33,6 +38,10 @@ public abstract class GuidePartItem extends GuidePart {
             }
             GlStateManager.color(1, 1, 1);
         }
+    }
+
+    protected void testClickItemStack(ItemStackKey stack, int x, int y) {
+        testClickItemStack(stack.baseStack, x, y);
     }
 
     protected void testClickItemStack(ItemStack stack, int x, int y) {

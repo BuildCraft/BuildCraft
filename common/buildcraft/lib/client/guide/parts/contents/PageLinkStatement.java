@@ -11,6 +11,8 @@ import net.minecraft.util.text.TextFormatting;
 import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.client.guide.PageLine;
+import buildcraft.lib.client.guide.entry.PageEntryStatement;
+import buildcraft.lib.client.guide.entry.PageValue;
 import buildcraft.lib.client.guide.parts.GuidePage;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -58,6 +60,6 @@ public class PageLinkStatement extends PageLink {
     @Override
     public GuidePageFactory getFactoryLink() {
         // TODO: Populate this with useful information!
-        return g -> new GuidePage(g, ImmutableList.of(), tooltip.get(0));
+        return g -> new GuidePage(g, ImmutableList.of(), new PageValue<>(PageEntryStatement.INSTANCE, statement));
     }
 }

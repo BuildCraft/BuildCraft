@@ -61,6 +61,7 @@ public abstract class GuidePart {
     private IFontRenderer fontRenderer;
     protected boolean wasHovered = false;
     protected boolean wasIconHovered = false;
+    protected boolean didRender = false;
 
     public GuidePart(GuiGuide gui) {
         this.gui = gui;
@@ -143,6 +144,7 @@ public abstract class GuidePart {
             }
             icon.drawAt(iconX, iconY);
         }
+        didRender = false;
 
         while (next != null) {
             FormatString[] strings = next.wrap(fontRenderer, allowedWidth);
@@ -155,6 +157,7 @@ public abstract class GuidePart {
             GuiRectangle rect = new GuiRectangle(_x, _y - 2, _w, neededSpace + 3);
             wasHovered |= rect.contains(gui.mouse);
             if (render) {
+                didRender = true;
                 if (wasHovered) {
                     if (line.link) {
                         Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y + 1 + neededSpace, 0xFFD3AD6C);
