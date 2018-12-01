@@ -228,13 +228,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
     private void generateContentsPage() {
         objectsAdded.clear();
         contents.clear();
-        contents.put(null, new HashMap<>());
+        genTypeMap(null);
         for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
-            Map<TypeOrder, ContentsNode> map = new HashMap<>();
-            contents.put(book, map);
-            for (TypeOrder order : GuiGuide.SORTING_TYPES) {
-                map.put(order, new ContentsNode("root", -1));
-            }
+            genTypeMap(book);
         }
         quickSearcher = new SuffixArray<>();
 
@@ -265,6 +261,14 @@ public enum GuideManager implements IResourceManagerReloadListener {
             for (ContentsNode node : map.values()) {
                 node.sort();
             }
+        }
+    }
+
+    private void genTypeMap(GuideBook book) {
+        Map<TypeOrder, ContentsNode> map = new HashMap<>();
+        contents.put(book, map);
+        for (TypeOrder order : GuiGuide.SORTING_TYPES) {
+            map.put(order, new ContentsNode("root", -1));
         }
     }
 
