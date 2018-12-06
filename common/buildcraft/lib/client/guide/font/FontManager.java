@@ -13,6 +13,8 @@ import java.util.Map;
 public enum FontManager {
     INSTANCE;
 
+    private static final boolean ENABLE_SMOOTH_FONT = Boolean.getBoolean("buildcraft.guide.smooth_font");
+
     private final Map<String, IFontRenderer> fonts = new HashMap<>();
 
     public IFontRenderer getOrLoadFont(String name, int size) {
@@ -26,7 +28,7 @@ public enum FontManager {
         // GuideFont value = new GuideFont(font);
         // fonts.put(name, value);
         // return value;
-        if (false) {
+        if (ENABLE_SMOOTH_FONT) {
             return new GuideFont(new Font(name, 0, size));
         } else {
             return MinecraftFont.INSTANCE;

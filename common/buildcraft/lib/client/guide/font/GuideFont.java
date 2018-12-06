@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 
 import buildcraft.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.RenderUtil;
 
 public class GuideFont implements IFontRenderer {
@@ -54,11 +55,12 @@ public class GuideFont implements IFontRenderer {
 
     @Override
     public int getMaxFontHeight() {
-        return g2d.getFontMetrics().getHeight();
+        return g2d.getFontMetrics().getMaxAscent() + g2d.getFontMetrics().getMaxDescent();
     }
 
     @Override
     public int drawString(String text, int x, int y, int shade, boolean shadow, boolean centered, float scale) {
+        text = ColourUtil.stripAllFormatCodes(text);
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution res = new ScaledResolution(mc);
         double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
@@ -73,10 +75,10 @@ public class GuideFont implements IFontRenderer {
         FontMetrics metrics = g2d.getFontMetrics(f2);
         g2d.setFont(f2);
         Rectangle2D rect = metrics.getStringBounds(text, g2d);
-        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         // int font_height = (int) (getFontHeight() * scaleFactor);
-        int font_height = (int) rect.getHeight() + metrics.getMaxDescent();
-        g2d.drawString(text, 0, (int) rect.getHeight());
+        int font_height = metrics.getMaxAscent() + metrics.getMaxDescent();
+        g2d.drawString(text, 0, metrics.getMaxAscent());
 
         for (int _x = 0; _x < 512; _x++) {
             for (int _y = 0; _y <= font_height; _y++) {
@@ -110,8 +112,40 @@ public class GuideFont implements IFontRenderer {
 
     @Override
     public List<String> wrapString(String text, int maxWidth, boolean shadow, float scale) {
+        FontState state = new FontState(this, scale, shadow);
+
         return Collections.singletonList(text);
         // TODO Auto-generated method stub
         // throw new AbstractMethodError("// TODO: Implement this!");
+    }
+
+    private static class FontState {
+        /**
+         * <ol start="0">
+         * <li>PLAIN</li>
+         * <li>BOLD</li>
+         * <li>ITALIC</li>
+         * <li>BOLD ITALIC</li>
+         * </ol>
+         */
+        final FontMetrics[] metrics = new FontMetrics[4];
+        final boolean defaultShadow;
+
+        FontState(GuideFont font, float scale, boolean shadow) {
+            this.defaultShadow = shadow;
+            Minecraft mc = Minecraft.getMinecraft();
+            ScaledResolution res = new ScaledResolution(mc);
+            double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+
+            Font f2 = font.font.deriveFont(font.font.getSize2D() * scale * (float) scaleFactor);
+
+            for (int i : new int[] { 0, Font.BOLD, Font.ITALIC, Font.BOLD | Font.ITALIC }) {
+                metrics[i] = font.g2d.getFontMetrics(f2.deriveFont(i));
+            }
+        }
+
+        public int getPixelWidth(String text) {
+            return 0;
+        }
     }
 }
