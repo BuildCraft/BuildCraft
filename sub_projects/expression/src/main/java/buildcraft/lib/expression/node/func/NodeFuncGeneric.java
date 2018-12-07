@@ -7,8 +7,8 @@
 package buildcraft.lib.expression.node.func;
 
 import buildcraft.lib.expression.api.IConstantNode;
-import buildcraft.lib.expression.api.IDependantNode;
 import buildcraft.lib.expression.api.IDependancyVisitor;
+import buildcraft.lib.expression.api.IDependantNode;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.INodeFunc;
 import buildcraft.lib.expression.api.INodeStack;

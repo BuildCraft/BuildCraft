@@ -6,8 +6,8 @@
 
 package buildcraft.lib.expression.node.condition;
 
-import buildcraft.lib.expression.api.IDependantNode;
 import buildcraft.lib.expression.api.IDependancyVisitor;
+import buildcraft.lib.expression.api.IDependantNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 

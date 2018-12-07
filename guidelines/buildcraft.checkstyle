@@ -40,5 +40,10 @@
         <property name="ignoreComments" value="true"/>
         <property name="message" value="Standard output/error stream should not be used."/>
     </module>
+    <module name="RegexpSinglelineJava">
+        <property name="format" value="import org.apache.commons.compress"/>
+        <property name="ignoreComments" value="true"/>
+        <property name="message" value="Apache commons-compress isn't included in the 1.12.2 server!"/>
+    </module>
   </module>
 </module>

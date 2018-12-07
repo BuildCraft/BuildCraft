@@ -196,7 +196,6 @@ public class SimpleScript {
             if (!token.isValid) {
                 continue;
             }
-            int tokenStart = token.datas[0].original.line;
             switch (token.type) {
                 case COMMENT:
                     continue;
@@ -287,7 +286,6 @@ public class SimpleScript {
                     for (int i = 0; i < replacements.size(); i++) {
                         rdata[i] = new LineData(replacements.get(i), file, i);
                     }
-                    int current = lines.lineIterator.previous().original.line;
                     lines.lineIterator.next();
                     if (!lines.replace(token.datas[0], rdata, s -> s)) {
                         log("Recursive import!");
@@ -798,124 +796,98 @@ public class SimpleScript {
                 char end = ' ';
                 start_search: for (int i = Math.max(0, currentIndexInLine); i < line.length(); i++) {
                     char c = line.charAt(i);
-                    switch (c) {
-                        case ' ': {
-                            continue;
-                        }
-                        case '/': {
-                            if (i + 1 == line.length()) {
-                                return new LineToken(line.substring(i), data, TokenType.COMMENT, false, i,
-                                    line.length());
-                            }
-                            isComment = true;
-                            if (!line.startsWith("/**", i)) {
-                                // The comment extends for the rest of the line
-                                currentIndexInLine = -1;
-                                // Don't go to the previous() element
-                                return new LineToken(line.substring(i), data, TokenType.COMMENT,
-                                    line.startsWith("//", i), i, line.length());
-                            }
-                            start = i + 3;
-                            break start_search;
-                        }
-                        case '"': {
-                            end = '"';
-                            start = i + 1;
-                            break start_search;
-                        }
-                        case '`': {
-                            end = '`';
-                            isMultiLine = true;
-                            start = i + 1;
-                            break start_search;
-                        }
-                        case '¬': {
-                            boolean isLast = true;
-                            // Check to ensure that this is the last char
-                            for (int j = i; j < line.length(); j++) {
-                                if (!Character.isWhitespace(line.charAt(j))) {
-                                    if (!line.startsWith("//", j)) {
-                                        isLast = false;
-                                    }
-                                    break;
-                                }
-                            }
-                            if (isLast) {
-                                foundNextLineSymbol = true;
-                                currentIndexInLine = -1;
-                                continue start_search_line;
-                            }
-                            // Intentionally treat it as part of a separate token
-                        }
-                        //$FALL-THROUGH$ (Intentional)
-                        default: {
-                            if (Character.isWhitespace(c)) {
+                    known_char: {
+                        switch (c) {
+                            case ' ': {
                                 continue;
                             }
-                            // Must be the start of a single-word element
-                            for (int j = i; j < line.length(); j++) {
-                                char d = line.charAt(j);
-                                if (Character.isWhitespace(d)) {
-                                    currentIndexInLine = j + 1;
-                                    // Ensure that the next iteration will take the line
-                                    lineIterator.previous();
-                                    return new LineToken(line.substring(i, j), data, TokenType.SEPARATE, true, i, j);
+                            case '/': {
+                                if (i + 1 == line.length()) {
+                                    return new LineToken(line.substring(i), data, TokenType.COMMENT, false, i,
+                                        line.length());
                                 }
+                                isComment = true;
+                                if (!line.startsWith("/**", i)) {
+                                    // The comment extends for the rest of the line
+                                    currentIndexInLine = -1;
+                                    // Don't go to the previous() element
+                                    return new LineToken(line.substring(i), data, TokenType.COMMENT,
+                                        line.startsWith("//", i), i, line.length());
+                                }
+                                start = i + 3;
+                                break start_search;
                             }
-                            currentIndexInLine = line.length();
-                            // Ensure that the next iteration will take the line
-                            lineIterator.previous();
-                            return new LineToken(line.substring(i), data, TokenType.SEPARATE, true, i, line.length());
+                            case '"': {
+                                end = '"';
+                                start = i + 1;
+                                break start_search;
+                            }
+                            case '`': {
+                                end = '`';
+                                isMultiLine = true;
+                                start = i + 1;
+                                break start_search;
+                            }
+                            case '¬': {
+                                boolean isLast = true;
+                                // Check to ensure that this is the last char
+                                for (int j = i; j < line.length(); j++) {
+                                    if (!Character.isWhitespace(line.charAt(j))) {
+                                        if (!line.startsWith("//", j)) {
+                                            isLast = false;
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (isLast) {
+                                    foundNextLineSymbol = true;
+                                    currentIndexInLine = -1;
+                                    continue start_search_line;
+                                }
+                                // Intentionally treat it as part of a separate token
+                                break known_char;
+                            }
+                            default: {
+                                break known_char;
+                            }
                         }
                     }
+                    if (Character.isWhitespace(c)) {
+                        continue;
+                    }
+                    // Must be the start of a single-word element
+                    for (int j = i; j < line.length(); j++) {
+                        char d = line.charAt(j);
+                        if (Character.isWhitespace(d)) {
+                            currentIndexInLine = j + 1;
+                            // Ensure that the next iteration will take the line
+                            lineIterator.previous();
+                            return new LineToken(line.substring(i, j), data, TokenType.SEPARATE, true, i, j);
+                        }
+                    }
+                    currentIndexInLine = line.length();
+                    // Ensure that the next iteration will take the line
+                    lineIterator.previous();
+                    return new LineToken(line.substring(i), data, TokenType.SEPARATE, true, i, line.length());
                 }
                 if (start < 0) {
                     currentIndexInLine = -1;
                     continue;
                 }
-                if (isComment) {
-                    for (int i = start; i < line.length(); i++) {
-                        if (line.startsWith("*/", i)) {
-                            currentIndexInLine = i + 3;
-                            // Ensure that the next iteration will take the line
-                            lineIterator.previous();
-                            return new LineToken(line.substring(start, i + 3), data, TokenType.FUNC_DOCS, true, start,
-                                i + 3);
-                        }
-                    }
-
-                    break start_search_line;
-                } else {
-                    for (int i = start; i < line.length(); i++) {
-                        char c = line.charAt(i);
-                        if (c == '\\') {
-                            i++;
-                            continue;
-                        }
-                        if (c == end) {
-                            currentIndexInLine = i + 1;
-                            // Ensure that the next iteration will take the line
-                            lineIterator.previous();
-                            return new LineToken(line.substring(start, i), data, TokenType.QUOTED_STRING, true, start,
-                                i);
-                        }
-                    }
-                    if (!isMultiLine) {
-                        currentIndexInLine = line.length();
-                        // Ensure that the next iteration will take the line
-                        lineIterator.previous();
-
-                        // Invalid token - we found the start but not the end
-                        // so we'll return the invalid part
-                        return new LineToken(line.substring(start + 1), data, TokenType.BACKTICK_STRING, false,
-                            start + 1, line.length());
-                    }
-                    break start_search_line;
+                LineToken stringToken = checkForString(isComment, start, data, line, isMultiLine, end);
+                if (stringToken != null) {
+                    return stringToken;
                 }
+                break start_search_line;
             } while (jumpToNextLine || foundNextLineSymbol);
             if (start < 0) {
                 return null;
             }
+            return handleMultiLineToken(isComment, start, data, line);
+        }
+
+        @Nullable
+        private LineToken handleMultiLineToken(boolean isComment, int start, LineData data, String line) {
             // Now we have:
             // - a multiline thing
             // - that is either a /* \n* \n* \n*/
@@ -966,6 +938,47 @@ public class SimpleScript {
             }
             return new LineToken(tokenLines.toArray(new String[0]), tokenData.toArray(new LineData[0]),
                 isComment ? TokenType.FUNC_DOCS : TokenType.BACKTICK_STRING, true, start, currentIndexInLine);
+        }
+
+        @Nullable
+        private LineToken checkForString(boolean isComment, int start, LineData data, String line, boolean isMultiLine,
+            char end) {
+            if (isComment) {
+                for (int i = start; i < line.length(); i++) {
+                    if (line.startsWith("*/", i)) {
+                        currentIndexInLine = i + 3;
+                        // Ensure that the next iteration will take the line
+                        lineIterator.previous();
+                        return new LineToken(line.substring(start, i + 3), data, TokenType.FUNC_DOCS, true, start,
+                            i + 3);
+                    }
+                }
+            } else {
+                for (int i = start; i < line.length(); i++) {
+                    char c = line.charAt(i);
+                    if (c == '\\') {
+                        i++;
+                        continue;
+                    }
+                    if (c == end) {
+                        currentIndexInLine = i + 1;
+                        // Ensure that the next iteration will take the line
+                        lineIterator.previous();
+                        return new LineToken(line.substring(start, i), data, TokenType.QUOTED_STRING, true, start, i);
+                    }
+                }
+                if (!isMultiLine) {
+                    currentIndexInLine = line.length();
+                    // Ensure that the next iteration will take the line
+                    lineIterator.previous();
+
+                    // Invalid token - we found the start but not the end
+                    // so we'll return the invalid part
+                    return new LineToken(line.substring(start + 1), data, TokenType.BACKTICK_STRING, false, start + 1,
+                        line.length());
+                }
+            }
+            return null;
         }
 
         public boolean replace(LineData start, LineData[] with, Function<String, String> transform) {

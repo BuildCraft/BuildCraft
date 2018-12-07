@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
@@ -158,25 +158,22 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
     private Path getRoot(List<FileSystem> openFileSystems, File file) {
         final PackType sourceType = manager.getType();
         Path scriptDirRoot = file.toPath();
-        final Path root;
         if (file.isDirectory()) {
-            root = scriptDirRoot.resolve(sourceType.prefix);
-        } else {
-            FileSystem fileSystem = null;
-            try {
-                fileSystem = FileSystems.newFileSystem(scriptDirRoot, null);
-                openFileSystems.add(fileSystem);
-                root = fileSystem.getPath("/" + sourceType.prefix);
-            } catch (IOException e) {
-                IOUtils.closeQuietly(fileSystem);
-                BCLog.logger.error("Unable to load " + file + " as a separate file system!", e);
+            Path root = scriptDirRoot.resolve(sourceType.prefix);
+            return Files.exists(root) ? root : null;
+        }
+        try {
+            FileSystem fileSystem = FileSystems.newFileSystem(scriptDirRoot, null);
+            Path root = fileSystem.getPath("/" + sourceType.prefix);
+            if (!Files.exists(root)) {
                 return null;
             }
-        }
-        if (!Files.exists(root)) {
+            openFileSystems.add(fileSystem);
+            return root;
+        } catch (IOException e) {
+            BCLog.logger.error("Unable to load " + file + " as a separate file system!", e);
             return null;
         }
-        return root;
     }
 
     private void loadScripts(List<FileSystem> openFileSystems, List<ScriptAction> actions, File file, Path root,

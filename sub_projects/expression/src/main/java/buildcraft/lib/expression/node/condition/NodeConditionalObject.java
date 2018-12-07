@@ -8,8 +8,8 @@ package buildcraft.lib.expression.node.condition;
 
 import buildcraft.lib.expression.ExpressionDebugManager;
 import buildcraft.lib.expression.api.IConstantNode;
-import buildcraft.lib.expression.api.IDependantNode;
 import buildcraft.lib.expression.api.IDependancyVisitor;
+import buildcraft.lib.expression.api.IDependantNode;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 
 public class NodeConditionalObject<T> implements INodeObject<T>, IDependantNode {
