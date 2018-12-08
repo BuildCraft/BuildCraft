@@ -26,4 +26,9 @@ public final class PageEntry<T> extends PageValue<T> {
         String subType = JsonUtils.getString(json, "tag_subtype");
         this.typeTags = new JsonTypeTags(name.getResourceDomain(), tagType, subType);
     }
+
+    @Override
+    public String toString() {
+        return value.getClass().getSimpleName() + ": " + value;
+    }
 }

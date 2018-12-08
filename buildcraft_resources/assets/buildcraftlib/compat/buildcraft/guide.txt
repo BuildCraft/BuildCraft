@@ -14,3 +14,4 @@ alias cfg_res 1 `add_basic "%0" "external" "config" "resourcepack" \`,
 
 cfg_res "registry_overview"
 cfg_res "json_insn_format"
+cfg_res "guide_page_format"

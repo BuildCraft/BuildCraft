@@ -37,4 +37,17 @@ public class ItemStackValueFilter {
     public int hashCode() {
         return Objects.hash(stack, matchNbt, matchMeta);
     }
+
+    @Override
+    public String toString() {
+        String matchString;
+        if (matchMeta) {
+            matchString = matchNbt ? "Matching meta+NBT of " : "Matching meta of ";
+        } else if (matchNbt) {
+            matchString = "Matching NBT of ";
+        } else {
+            matchString = "";
+        }
+        return matchString + stack.baseStack;
+    }
 }

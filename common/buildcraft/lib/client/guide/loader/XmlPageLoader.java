@@ -120,7 +120,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         putMulti("recipes_usages", XmlPageLoader::loadAllRecipesAndUsages);
         putSingle("image", XmlPageLoader::loadImage);
         putCode("json_insn"/* , CodeDisplay.JSON_INSN */);
-        // putCode("markdown"/*, CodeDisplay.MARKDOWN*/);
+        putCode("guide_md"/* , CodeDisplay.MARKDOWN */);
     }
 
     public static void putDuelMultiPartType(String name, BooleanSupplier isVisible) {
@@ -223,6 +223,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                 // Ignore comments
                 continue;
             }
+            if (line.startsWith("\\/\\/")) {
+                line = "//" + line.substring(4);
+            }
             XmlTag tag = parseTag(line);
             if (tag != null) {
                 if (tag.state == XmlTagState.COMPLETE) {
@@ -312,6 +315,12 @@ public enum XmlPageLoader implements IPageLoaderText {
                             continue;
                         }
                     }
+                } else if (line.startsWith("&lt;", i)) {
+                    c = '<';
+                    i += 3;
+                } else if (line.startsWith("&gt;", i)) {
+                    c = '>';
+                    i += 3;
                 }
                 completeLine += c;
                 i++;

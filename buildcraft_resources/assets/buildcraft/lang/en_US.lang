@@ -775,6 +775,7 @@ buildcraft.guide.chapter.submod.transport=Transport
 
 buildcraft.guide.chapter.title.gate_base=Gates
 
+buildcraft.guide.page.guide_page_format=Guide Page File Format
 buildcraft.guide.page.json_insn_format=Json Instruction File Format
 buildcraft.guide.page.registry_overview=Json Registry Overview
 

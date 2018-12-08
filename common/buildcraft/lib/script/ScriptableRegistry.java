@@ -37,6 +37,7 @@ import buildcraft.api.registry.IScriptableRegistry;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.JsonUtil;
+import buildcraft.lib.misc.TimeUtil;
 import buildcraft.lib.script.SimpleScript.ScriptAction;
 import buildcraft.lib.script.SimpleScript.ScriptActionAdd;
 import buildcraft.lib.script.SimpleScript.ScriptActionRemove;
@@ -75,7 +76,13 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
 
     void loadScripts(Gson gson) {
         try (AutoCloseable fle = SimpleScript.createLogFile(entryPath)) {
+            long start = System.currentTimeMillis();
+            SimpleScript.logForAll("Started at: " + TimeUtil.formatNow());
+
             loadScripts0(gson);
+
+            long end = System.currentTimeMillis();
+            SimpleScript.logForAll("Finished at: " + TimeUtil.formatNow() + ", took " + (end - start) + "ms");
         } catch (Exception e) {
             e.printStackTrace();
         }

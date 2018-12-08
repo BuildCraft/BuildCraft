@@ -470,10 +470,12 @@ public class GuiGuide extends GuiScreen {
         if (isEditing) {
             mc.renderEngine.bindTexture(ICONS_2);
 
+            double _x = minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2;
+            double _y = (this.height - PAGE_LEFT.height - 20) / 2;
             if (isOverHover) {
-                PEN_UP.drawAt(mouse.getX() - PEN_UP.width / 2, mouse.getY() - PEN_UP.height);
+                PEN_UP.drawAt(_x, _y - PEN_UP.height);
             } else {
-                PEN_ANGLED.drawAt(mouse.getX() - 2, mouse.getY() - PEN_ANGLED.height - 2);
+                PEN_ANGLED.drawAt(_x, _y - PEN_ANGLED.height - 2);
             }
         } else {
             int h = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);

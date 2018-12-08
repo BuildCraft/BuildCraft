@@ -1,4 +1,3 @@
-# How to write Insn files
 Files should be located in [...]
 On the very first line should be
 <json_insn>
@@ -12,23 +11,12 @@ Functions can take 3 different types of arguments: either numbers, strings, or m
 Numbers cannot contain spaces.
 Strings must be started and finished with a quote (")
 Multi-line strings must be started and finished with backticks (`)
-For example with the function "debug":
+For example with the function "remove":
 <json_insn>
-debug 42.7 // Will error because debug can't take a number
-debug "on"
-debug `
-all
+remove "buildcraftenergy:oil"
+remove `
+buildcraftenergy:oil
 `
-</json_insn>
-
-<new_page/>
-## The debug function
-This function takes one argument: either "all" or "on".
-In other words it must be written exactly as either of these:
-<json_insn>
-debug "on"
-
-debug "all"
 </json_insn>
 
 <new_page/>
@@ -64,6 +52,72 @@ then the wrench guide page will be loaded from
 <json_insn>
 "assets/buildcraftcore/compat/buildcraft/guide/item/wrench.md"
 </json_insn>
+<new_page/>
+## The replace function
+This function will remove an entry with the first name, and add an entry with the second name but only if the first entry was actually added by something else.
+This function takes two arguments: the name to remove, and the name to add.
+This also takes an optional third argument, the json to add. (This acts in exactly the same way as the add function, if you ignore the first argument).
+<new_page/>
+## The modify function
+This function acts in a very similar way to the replace function, except that this will inherit the json tags from the removed entry.
 
+For example if we wanted to make a combustion engine fuel recipe using buildcraft oil, but only generate reside if buildcraft factory is installed we might do it like this:
+<json_insn>
+add "oil" `{
+ "fuel": {
+  "id": "buildcraftenergy:oil", "amount": 4
+ },
+ "power": 3
+}`
+</json_insn>
+Then an entry in buildcraftfactory could look like this:
+<json_insn>
+modify "buildcraftenergy:oil" "oil" `{
+ "residue": {
+  "id": "buildcraftenergy:residue",
+  "amount": 2
+ }
+}`
+</json_insn>
+Which would result in only a single fuel recipe being added: "buildcraftfactory:oil"
+<json_insn>
+{
+ "fuel": {
+  "id": "buildcraftenergy:oil", "amount": 4
+ },
+ "residue": {
+  "id": "buildcraftenergy:residue",
+  "amount": 2
+ },
+ "power": 3
+}
+</json_insn>
+
+(Note: combustion engine fuel recipes aren't configurable this way quite yet - you'll have to wait for the MJ update before this is actually valid)
 <new_page/>
 ## Custom functions with alias
+(TODO: Explanation)
+<json_insn>
+alias "add_fuel" 2 `
+ add "%0" \`{
+  "fuel": {
+    "id": "${domain}:%0"
+  }
+ }\`
+`
+</json_insn>
+
+## Using pre-made alias files
+(TODO: Explanation)
+<json_insn>
+import "buildcraftlib:util"
+</json_insn>
+
+Imported files must start with
+<json_insn>
+~{buildcraft/json/lib}
+</json_insn>
+and may optionally include an argument count
+<json_insn>
+~args 3
+</json_insn>

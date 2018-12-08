@@ -40,13 +40,12 @@ import buildcraft.lib.script.ScriptAliasFunction.AliasBuilder;
 
 public class SimpleScript {
 
-    public static final boolean DEBUG_ALL = BCDebugging.shouldDebugLog("lib.script");
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.script");
     private static final FunctionContext CONTEXT = DefaultContexts.createWithAll("scripts");
 
     static final Gson GSON = new Gson();
     static final Map<String, ScriptActionLoader> functions = new HashMap<>();
     static BufferedWriter logWriter;
-    public static boolean debugAll = false;
 
     static {
         CONTEXT.put_s_b("is_mod_loaded", Loader::isModLoaded);
@@ -72,19 +71,6 @@ public class SimpleScript {
         // - replace <old> <new>
         // except that <new> inherits tags from <old>
 
-        functions.put("debug", script -> {
-            String arg = script.nextSimpleArg();
-            if ("all".equals(arg)) {
-                debugAll = true;
-                script.log("Enabling debugging for all scripts. (And all reloads)");
-            } else if ("on".equals(arg)) {
-                script.isDebugEnabled = true;
-                script.log("Enabling debugging for *this* script only");
-            } else {
-                script.log("Debug must be followed by either 'on' or 'all'");
-            }
-            return null;
-        });
         functions.put("add", script -> {
             String name = script.nextQuotedArg();
             if (name == null) {
@@ -123,24 +109,6 @@ public class SimpleScript {
             }
             ResourceLocation id = new ResourceLocation(script.domain, toAdd);
             return ImmutableList.of(new ScriptActionReplace(toRemove, id, json, false));
-        });
-        functions.put("overwrite", script -> {
-            String toRemove = script.nextQuotedArg();
-            String toAdd = script.nextQuotedArg();
-            if (toRemove == null) {
-                script.log("Missing to_remove!");
-                return null;
-            }
-            if (toAdd == null) {
-                script.log("Missing to_add!");
-                return null;
-            }
-            JsonObject json = script.nextJson();
-            if (json == null) {
-                json = script.loadJson(toAdd);
-            }
-            ResourceLocation id = new ResourceLocation(script.domain, toAdd);
-            return ImmutableList.of(new ScriptActionRemove(toRemove), new ScriptActionAdd(id, json));
         });
         functions.put("modify", script -> {
             String toRemove = script.nextQuotedArg();
@@ -531,33 +499,23 @@ public class SimpleScript {
     }
 
     void log(String line) {
-        if (DEBUG_ALL || debugAll || isDebugEnabled) {
-            log0(getLineNumber() + ": " + line);
-        }
+        log0(getLineNumber() + ": " + line);
     }
 
     void log(String line, Path path) {
-        if (DEBUG_ALL || debugAll || isDebugEnabled) {
-            log0(getLineNumber() + ": " + line + scriptDirRoot.relativize(path));
-        }
+        log0(getLineNumber() + ": " + line + scriptDirRoot.relativize(path));
     }
 
     void logPure(String line) {
-        if (DEBUG_ALL || debugAll || isDebugEnabled) {
-            log0(line);
-        }
+        log0(line);
     }
 
     void logPure(String line, Path path) {
-        if (DEBUG_ALL || debugAll || isDebugEnabled) {
-            log0(line + scriptDirRoot.relativize(path));
-        }
+        log0(line + scriptDirRoot.relativize(path));
     }
 
     public static void logForAll(String line) {
-        if (DEBUG_ALL || debugAll) {
-            log0(line);
-        }
+        log0(line);
     }
 
     private static void log0(String line) {
@@ -570,7 +528,9 @@ public class SimpleScript {
                 closeLog();
             }
         }
-        BCLog.logger.info(line);
+        if (DEBUG) {
+            BCLog.logger.info(line);
+        }
     }
 
     public static AutoCloseable createLogFile(String path) {

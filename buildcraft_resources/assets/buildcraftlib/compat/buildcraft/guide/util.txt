@@ -23,7 +23,7 @@ alias item_stack 4 `add_basic "%2" "item_stack" "%0" "%1" \`,
     "stack": "%3"
 \``
 alias statement 4 `add_basic "%2" "statement" "%0" "%1" \`,
-    "statement": "buildcraftcore:%3"
+    "statement": "${domain}:%3"
 \``
 
 alias item 3 `item_stack "item" "%0" "%1" "%2"`
@@ -45,8 +45,8 @@ alias block_mining 1 `block "mining" "%0"`
 alias block_auto 1 `block "automation" "%0"`
 alias block_engine 2 `block_full "engine" "%0" "%1"`
 
-alias tool 1 `item_tool "%0" "buildcraftcore:%0"`
-alias gear 1 `item_gear "%0" "buildcraftcore:%0"`
+alias tool 1 `item_tool "%0" "${domain}:%0"`
+alias gear 1 `item_gear "%0" "${domain}:%0"`
 
 alias block_refining 1 `block "refining" "%0"`
 alias block_fluid 1 `block "fluid" "%0"`
