@@ -15,6 +15,7 @@ Additions:
 * Added the command "/buildcraft reload" which reloads all buildcraft data registries. (AlexIIL)
   * In 1.13 this will be merged into the vanilla minecraft "/reload" command.
   * This currently doesn't reload client-side registries, although you can still reload the guide page registry by using F3+T while in the guide GUI.
+* Added an advancement for the guide book recipe. 
 
 Improvements:
 

@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "buildcraftlib:guide_book"
+    ]
+  },
+  "criteria": {
+    "has_paper": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:paper"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_paper"
+    ]
+  ]
+}
