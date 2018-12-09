@@ -23,6 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import buildcraft.lib.misc.data.FaceDistance;
+
 public class PositionUtil {
     /** @return The exact direction from the first position to the second. Returns null if more than one axis value is
      *         different, or they are the same position. */
@@ -52,6 +54,19 @@ public class PositionUtil {
         if (x) return diff.getX();
         if (y) return diff.getY();
         if (z) return diff.getZ();
+        return null;
+    }
+
+    @Nullable
+    public static FaceDistance getDirectOffset(BlockPos from, BlockPos to) {
+        BlockPos diff = to.subtract(from);
+        boolean x = diff.getX() != 0;
+        boolean y = diff.getY() != 0;
+        boolean z = diff.getZ() != 0;
+        if (x && y || x && z || y && z) return null;
+        if (x) return new FaceDistance(Axis.X, diff.getX());
+        if (y) return new FaceDistance(Axis.Y, diff.getY());
+        if (z) return new FaceDistance(Axis.Z, diff.getZ());
         return null;
     }
 

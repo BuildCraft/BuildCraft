@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -265,6 +267,12 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     protected abstract IMjConnector createConnector();
 
     @Override
+    public void onNeighbourBlockChanged(Block block, BlockPos nehighbour) {
+        super.onNeighbourBlockChanged(block, nehighbour);
+        isRedstonePowered = world.isBlockIndirectlyGettingPowered(getPos()) > 0;
+    }
+
+    @Override
     public void update() {
         deltaManager.tick();
         if (cannotUpdate()) return;
@@ -288,7 +296,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
 
         lastPower = 0;
-        isRedstonePowered = world.isBlockIndirectlyGettingPowered(getPos()) > 0;
 
         if (!isRedstonePowered) {
             if (power > MjAPI.MJ) {

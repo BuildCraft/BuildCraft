@@ -53,6 +53,11 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IPlayerOwned;
 
+import buildcraft.lib.cache.CachedChunk;
+import buildcraft.lib.cache.IChunkCache;
+import buildcraft.lib.cache.ITileCache;
+import buildcraft.lib.cache.TileCacheRet;
+import buildcraft.lib.cache.TileCacheType;
 import buildcraft.lib.cap.CapabilityHelper;
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.BCAdvDebugging;
@@ -114,6 +119,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
     private GameProfile owner;
+
+    private final IChunkCache chunkCache = new CachedChunk(this);
+    private final ITileCache tileCache = TileCacheType.NEIGHBOUR_CACHE.create(this);
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int id;
@@ -179,9 +187,15 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public final TileEntity getNeighbourTile(EnumFacing offset) {
-        // In the future it is plausible that we might cache tile entities here.
-        // However, until that is implemented, just call the world directly.
-        return getOffsetTile(offset.getDirectionVec());
+        TileCacheRet cached = tileCache.getTile(offset);
+        if (cached != null) {
+            return cached.tile;
+        }
+        if (DEBUG && !world.isBlockLoaded(pos)) {
+            BCLog.logger.warn("[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from "
+                + StringUtilBC.blockPosToString(getPos()) + ")");
+        }
+        return BlockUtil.getTileEntity(getWorld(), getPos().offset(offset), true);
     }
 
     /** @param offset The position of the {@link TileEntity} to retrieve, <i>relative</i> to this
@@ -192,11 +206,27 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param pos The <i>absolute</i> position of the {@link TileEntity} . */
     public final TileEntity getLocalTile(BlockPos pos) {
+        TileCacheRet cached = tileCache.getTile(pos);
+        if (cached != null) {
+            return cached.tile;
+        }
         if (DEBUG && !world.isBlockLoaded(pos)) {
             BCLog.logger.warn("[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from "
                 + StringUtilBC.blockPosToString(getPos()) + ")");
         }
         return BlockUtil.getTileEntity(world, pos, true);
+    }
+
+    public final Chunk getContainingChunk() {
+        return chunkCache.getChunk(getPos());
+    }
+
+    public final Chunk getChunk(BlockPos pos) {
+        Chunk chunk = chunkCache.getChunk(pos);
+        if (chunk == null) {
+            return ChunkUtil.getChunk(getWorld(), pos, true);
+        }
+        return chunk;
     }
 
     // ##################
@@ -234,6 +264,13 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         NonNullList<ItemStack> toDrop = NonNullList.create();
         addDrops(toDrop, 0);
         InventoryUtil.dropAll(world, pos, toDrop);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        chunkCache.invalidate();
+        tileCache.invalidate();
     }
 
     /** Called whenever {@link Block#getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}, or
@@ -311,7 +348,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
      * the current chunk is saved after the last tick. */
     public void markChunkDirty() {
         if (world != null) {
-            Chunk chunk = ChunkUtil.getChunk(getWorld(), getPos(), false);
+            Chunk chunk = getContainingChunk();
             if (chunk != null) {
                 chunk.markDirty();
             }
