@@ -1,4 +1,8 @@
 
+Improvements:
+
+* Fix a few performance issues with all ticking buildcraft tiles and a few more engine specific issues.
+
 Bug fixes:
 
 * Fix a crash with little tiles because AlexILL didn't implement a reflection getter correctly.
