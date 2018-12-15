@@ -23,7 +23,6 @@ import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
-import buildcraft.transport.plug.PluggableRegistry;
 import buildcraft.transport.stripes.PipeExtensionManager;
 import buildcraft.transport.stripes.StripesHandlerDispenser;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
@@ -39,7 +38,6 @@ public class BCTransportRegistries {
 
     public static void preInit() {
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
-        PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;
         PipeApi.extensionManager = PipeExtensionManager.INSTANCE;
         MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);

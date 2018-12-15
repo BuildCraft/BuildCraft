@@ -11,6 +11,7 @@ import buildcraft.api.crops.CropManager;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.registry.BuildCraftRegistryManager;
+import buildcraft.api.transport.pipe.PipeApi;
 
 import buildcraft.lib.crops.CropHandlerPlantable;
 import buildcraft.lib.crops.CropHandlerReeds;
@@ -20,6 +21,7 @@ import buildcraft.lib.guide.GuideBookRegistry;
 import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.recipe.RefineryRecipeRegistry;
+import buildcraft.lib.registry.PluggableRegistry;
 import buildcraft.lib.script.ReloadableRegistryManager;
 
 public class BCLibRegistries {
@@ -29,6 +31,7 @@ public class BCLibRegistries {
         BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
         BuildCraftAPI.fakePlayerProvider = FakePlayerProvider.INSTANCE;
+        PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
 
         ReloadableRegistryManager dataManager = ReloadableRegistryManager.DATA_PACKS;
         BuildCraftRegistryManager.managerDataPacks = dataManager;

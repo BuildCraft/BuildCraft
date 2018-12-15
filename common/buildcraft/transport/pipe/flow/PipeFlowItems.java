@@ -117,6 +117,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     void sendItemDataToClient(TravellingItem item) {
+        // TODO: Move this into a message queue system that packs all item stack send events into a single big packet!
+        // (it's really expensive to write+flush each time this is called)
         final int stackId = BuildCraftObjectCaches.storeItemStack(item.stack);
         sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
             PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);

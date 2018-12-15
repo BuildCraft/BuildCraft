@@ -1,0 +1,5 @@
+
+Bug fixes:
+
+* Fix a crash with little tiles because AlexILL didn't implement a reflection getter correctly.
+* Fix silicon having an accidental dependency on transport. 

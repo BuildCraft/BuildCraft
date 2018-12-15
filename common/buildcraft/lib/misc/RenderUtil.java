@@ -10,7 +10,10 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -37,23 +40,25 @@ public class RenderUtil {
 
     static {
         threadLocalTessellators = ThreadLocal.withInitial(TessellatorQueue::new);
-        HANDLE_FORGE_TESSELLATOR = createGetter(TileEntityRendererDispatcher.class, Tessellator.class, 0, 1);
-        HANDLE_IS_BUFFER_DRAWING = createGetter(BufferBuilder.class, boolean.class, 1, 2);
+        HANDLE_FORGE_TESSELLATOR = createGetter(TileEntityRendererDispatcher.class, Tessellator.class, "batchBuffer");
+        HANDLE_IS_BUFFER_DRAWING = createGetter(BufferBuilder.class, boolean.class, "isDrawing", "field_179010_r");
     }
 
-    private static MethodHandle createGetter(Class<?> owner, Class<?> type, int index, int count) {
+    private static MethodHandle createGetter(Class<?> owner, Class<?> type, String... names) {
         try {
+            Set<String> nameSet = new HashSet<>();
+            Collections.addAll(nameSet, names);
             List<Field> validFields = new ArrayList<>();
             for (Field field : owner.getDeclaredFields()) {
-                if (field.getType() == type) {
+                if (field.getType() == type && nameSet.contains(field.getName())) {
                     validFields.add(field);
                 }
             }
 
-            if (validFields.size() != count) {
-                throw new Error("Incorrect number of fields! (Expected " + count + ", but got " + validFields + ")");
+            if (validFields.size() != 1) {
+                throw new Error("Incorrect number of fields! (Expected 1, but got " + validFields + ")");
             }
-            Field fld = validFields.get(index);
+            Field fld = validFields.get(0);
             fld.setAccessible(true);
             return MethodHandles.publicLookup().unreflectGetter(fld);
         } catch (ReflectiveOperationException roe) {

@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
-package buildcraft.transport.plug;
+package buildcraft.lib.registry;
 
 import java.util.HashMap;
 import java.util.Map;
