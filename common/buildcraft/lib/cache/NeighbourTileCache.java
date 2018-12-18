@@ -70,8 +70,8 @@ public class NeighbourTileCache implements ITileCache {
         WeakReference<TileEntity> ref = cachedTiles.get(offset);
         if (ref != null) {
             TileEntity oTile = ref.get();
-            if (oTile.isInvalid()) {
-                cachedTiles.put(offset, null);
+            if (oTile == null || oTile.isInvalid()) {
+                cachedTiles.remove(offset);
             } else {
                 return new TileCacheRet(oTile);
             }
