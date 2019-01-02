@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 
 public class CompatManager {
-    public static ISoftBlockAccessor blockAccessor = DefaultBlockAccessor.VIA_CHUNK;
+    public static final ISoftBlockAccessor blockAccessor;
 
     public static TileEntity getTile(World world, BlockPos pos, boolean force) {
         return blockAccessor.getTile(world, pos, force);
@@ -24,6 +24,8 @@ public class CompatManager {
             // Our chunk-caching optimisation is basically useless with cubic chunks -
             // we should really replace this with one in the real compat module, later.
             blockAccessor = DefaultBlockAccessor.DIRECT;
+        } else {
+            blockAccessor = DefaultBlockAccessor.VIA_CHUNK;
         }
     }
 }

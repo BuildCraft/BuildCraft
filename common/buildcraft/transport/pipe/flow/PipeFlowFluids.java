@@ -82,10 +82,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     private final FluidTransferInfo fluidTransferInfo = PipeApi.getFluidTransferInfo(pipe.getDefinition());
 
-    /*
-     * Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
-     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it
-     */
+    /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
+     * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
     public final int capacity = Math.max(Fluid.BUCKET_VOLUME, fluidTransferInfo.transferPerTick * (10));// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
@@ -519,6 +517,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.FACES) {
             Section section = sections.get(part);
             if (section.getCurrentDirection().canOutput()) {
+                int maxDrain = section.drainInternal(fluidTransferInfo.transferPerTick, false);
+                if (maxDrain <= 0) {
+                    continue;
+                }
                 PipeEventFluid.SideCheck sideCheck = new PipeEventFluid.SideCheck(pipe.getHolder(), this, currentFluid);
                 sideCheck.disallowAllExcept(part.face);
                 pipe.getHolder().fireEvent(sideCheck);
@@ -526,8 +528,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     IFluidHandler fluidHandler = pipe.getHolder().getCapabilityFromPipe(part.face, CapUtil.CAP_FLUIDS);
                     if (fluidHandler == null) continue;
 
-                    FluidStack fluidToPush =
-                        new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
+                    FluidStack fluidToPush = new FluidStack(currentFluid, maxDrain);
 
                     if (fluidToPush.amount > 0) {
                         int filled = fluidHandler.fill(fluidToPush, true);
@@ -603,6 +604,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int transferInCount = 0;
         Section center = sections.get(EnumPipePart.CENTER);
         int spaceAvailable = capacity - center.amount;
+        if (spaceAvailable <= 0 || center.getMaxFilled() <= 0) {
+            return;
+        }
         int flowRate = fluidTransferInfo.transferPerTick;
 
         List<EnumPipePart> faces = new ArrayList<>();
@@ -756,6 +760,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         /** Map of [time] -> [amount inserted]. Used to implement the delayed fluid travelling. */
         int[] incoming = new int[1];
 
+        int incomingTotalCache = 0;
+
         /** If 0 then fluids can move from this in either direction. If less than 0 then fluids can only move into this
          * section from other tiles, and outputs to other sections. If greater than 0 then fluids can only move out of
          * this section into other tiles. */
@@ -777,6 +783,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         void writeToNbt(NBTTagCompound nbt) {
             nbt.setShort("capacity", (short) amount);
+            nbt.setShort("lastSentAmount", (short) lastSentAmount);
+            nbt.setShort("ticksInDirection", (short) ticksInDirection);
+            nbt.setByte("lastSentDirection", lastSentDirection.nbtValue);
 
             for (int i = 0; i < incoming.length; ++i) {
                 nbt.setShort("in[" + i + "]", (short) incoming[i]);
@@ -785,9 +794,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         void readFromNbt(NBTTagCompound nbt) {
             this.amount = nbt.getShort("capacity");
+            this.lastSentAmount = nbt.getShort("lastSentAmount");
+            this.ticksInDirection = nbt.getShort("ticksInDirection");
+            this.lastSentDirection = Dir.get(nbt.getByte("lastSentDirection"));
 
+            incomingTotalCache = 0;
             for (int i = 0; i < incoming.length; ++i) {
-                incoming[i] = nbt.getShort("in[" + i + "]");
+                incomingTotalCache += incoming[i] = nbt.getShort("in[" + i + "]");
             }
         }
 
@@ -800,11 +813,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         /** @return The maximum amount of fluid that can be extracted out of this pipe this tick. */
         int getMaxDrained() {
-            int max = amount;
-            for (int i : incoming) {
-                max -= i;
-            }
-            return Math.min(max, fluidTransferInfo.transferPerTick);
+            return Math.min(amount - incomingTotalCache, fluidTransferInfo.transferPerTick);
         }
 
         /** @return The fluid filled */
@@ -815,6 +824,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             }
             if (doFill) {
                 incoming[currentTime] += amountToFill;
+                incomingTotalCache += amountToFill;
                 amount += amountToFill;
             }
             return amountToFill;
@@ -827,6 +837,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             }
             if (doFill) {
                 incoming[currentTime] += amountToFill;
+                incomingTotalCache += amountToFill;
                 amount += amountToFill;
             }
             return amountToFill;
@@ -848,6 +859,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
 
         void advanceForMovement() {
+            incomingTotalCache -= incoming[currentTime];
             incoming[currentTime] = 0;
         }
 
@@ -963,9 +975,15 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     /** Enum used for the current direction that a fluid is flowing. */
     enum Dir {
-        IN,
-        NONE,
-        OUT;
+        IN(-1),
+        NONE(0),
+        OUT(1);
+
+        final byte nbtValue;
+
+        private Dir(int nbtValue) {
+            this.nbtValue = (byte) nbtValue;
+        }
 
         public boolean isInput() {
             return this == IN;

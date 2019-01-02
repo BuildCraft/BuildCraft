@@ -2,6 +2,7 @@
 Improvements:
 
 * Fix a few performance issues with all ticking buildcraft tiles and a few more engine specific issues.
+* Fix a few performance issues with the fluid pipes.
 * Add an advancement to unlock the list recipe when you have 7 or more items in a single diamond pipe filter.
 
 Bug fixes:
