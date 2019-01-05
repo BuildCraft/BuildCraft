@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeEnd;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 
@@ -47,10 +48,11 @@ public enum OilGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
         IChunkProvider provider) {
 
-        if (
-                world.getWorldType() == WorldType.FLAT ||
-                BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension())
-        ) {
+        if (world.getWorldType() == WorldType.FLAT) {
+            return;
+        }
+        boolean isExcludedDimension = BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension());
+        if (isExcludedDimension == BCEnergyConfig.excludedDimensionsIsBlackList) {
             return;
         }
 
@@ -96,8 +98,13 @@ public enum OilGenerator implements IWorldGenerator {
 
         Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
-        // Do not generate oil in the End or Nether
-        if (BCEnergyConfig.excludedBiomes.contains(biome.getRegistryName())) {
+        // Do not generate oil in excluded biomes
+        boolean isExcludedBiome = BCEnergyConfig.excludedBiomes.contains(biome.getRegistryName());
+        if (isExcludedBiome == BCEnergyConfig.excludedBiomesIsBlackList) {
+            return ImmutableList.of();
+        }
+
+        if (biome instanceof BiomeEnd && (Math.abs(x) < 1200 || Math.abs(z) < 1200)) {
             return ImmutableList.of();
         }
 
@@ -196,9 +203,7 @@ public enum OilGenerator implements IWorldGenerator {
         BlockPos max = VecUtil.replaceValue(center.add(radius, radius, radius), axis, valForAxis + length);
         double radiusSq = radius * radius;
         int toReplace = valForAxis;
-        Predicate<BlockPos> tester = p -> VecUtil
-                .replaceValue(p, axis, toReplace)
-                .distanceSq(center) <= radiusSq;
+        Predicate<BlockPos> tester = p -> VecUtil.replaceValue(p, axis, toReplace).distanceSq(center) <= radiusSq;
         return new GenByPredicate(new Box(min, max), ReplaceType.ALWAYS, tester);
     }
 

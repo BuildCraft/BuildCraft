@@ -25,6 +25,7 @@ import buildcraft.api.transport.pipe.PipeEventPriority;
 
 public class PipeEventBus {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.pipe.event_bus");
+    // TODO: Investigate using a flag long to check if any handlers are registered for a PipeEvent class!
 
     private static final Map<Class<?>, List<Handler>> allHandlers = new HashMap<>();
 

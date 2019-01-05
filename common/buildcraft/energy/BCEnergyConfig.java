@@ -44,9 +44,13 @@ public class BCEnergyConfig {
     public static double largeOilGenProb;
 
     public static final TIntSet excludedDimensions = new TIntHashSet();
+    /** If false then {@link #excludedDimensions} should be treated as a whitelist rather than a blacklist. */
+    public static boolean excludedDimensionsIsBlackList;
     public static final Set<ResourceLocation> excessiveBiomes = new HashSet<>();
     public static final Set<ResourceLocation> surfaceDepositBiomes = new HashSet<>();
     public static final Set<ResourceLocation> excludedBiomes = new HashSet<>();
+    /** If false then {@link #excludedBiomes} should be treated as a whitelist rather than a blacklist. */
+    public static boolean excludedBiomesIsBlackList;
     public static SpecialEventType christmasEventStatus = SpecialEventType.DAY_ONLY;
 
     private static Property propEnableOilGeneration;
@@ -66,62 +70,41 @@ public class BCEnergyConfig {
     private static Property propExcessiveBiomes;
     private static Property propSurfaceDepositBiomes;
     private static Property propExcludedBiomes;
+    private static Property propExcludedBiomesIsBlacklist;
     private static Property propExcludedDimensions;
+    private static Property propExcludedDimensionsIsBlacklist;
     private static Property propChristmasEventType;
 
     public static void preInit() {
         EnumRestartRequirement world = EnumRestartRequirement.WORLD;
         EnumRestartRequirement game = EnumRestartRequirement.GAME;
 
-        propEnableOilGeneration = BCCoreConfig.config.get(
-                "worldgen.oil", "enable", true,
-                "Should any oil sprouts or lakes be generated at all?"
-        );
-        propEnableOilBurn = BCCoreConfig.config.get(
-                "worldgen.oil", "can_burn", true,
-                "Can oil blocks burn?"
-        );
+        propEnableOilGeneration = BCCoreConfig.config.get("worldgen.oil", "enable", true,
+            "Should any oil sprouts or lakes be generated at all?");
+        propEnableOilBurn = BCCoreConfig.config.get("worldgen.oil", "can_burn", true, "Can oil blocks burn?");
 
-        propOilWellGenerationRate = BCCoreConfig.config.get(
-            "worldgen.oil", "generationRate", 1.0,
-            "The rate of occurrence of oil wells."
-        );
+        propOilWellGenerationRate =
+            BCCoreConfig.config.get("worldgen.oil", "generationRate", 1.0, "The rate of occurrence of oil wells.");
 
-        propSmallOilGenProb = BCCoreConfig.config.get(
-            "worldgen.oil.spawn_probability", "small", 2.0,
-            "The percentage probability of a small oil spawn"
-        );
-        propMediumOilGenProb = BCCoreConfig.config.get(
-            "worldgen.oil.spawn_probability", "medium", 0.1,
-            "The percentage probability of a medium oil spawn"
-        );
-        propLargeOilGenProb = BCCoreConfig.config.get(
-            "worldgen.oil.spawn_probability", "large", 0.04,
-            "The percentage probability of a large oil spawn"
-        );
+        propSmallOilGenProb = BCCoreConfig.config.get("worldgen.oil.spawn_probability", "small", 2.0,
+            "The percentage probability of a small oil spawn");
+        propMediumOilGenProb = BCCoreConfig.config.get("worldgen.oil.spawn_probability", "medium", 0.1,
+            "The percentage probability of a medium oil spawn");
+        propLargeOilGenProb = BCCoreConfig.config.get("worldgen.oil.spawn_probability", "large", 0.04,
+            "The percentage probability of a large oil spawn");
 
-        propEnableOilSpouts = BCCoreConfig.config.get(
-            "worldgen.oil.spouts", "enable", true,
-            "Whether oil spouts are generated or not. The oil spring at the bottom of large lakes will still exist."
-        );
+        propEnableOilSpouts = BCCoreConfig.config.get("worldgen.oil.spouts", "enable", true,
+            "Whether oil spouts are generated or not. The oil spring at the bottom of large lakes will still exist.");
 
-        propSmallSpoutMinHeight = BCCoreConfig.config.get(
-            "worldgen.oil.spouts", "small_min_height", 6,
-            "The minimum height for small oil spouts"
-        );
-        propSmallSpoutMaxHeight = BCCoreConfig.config.get(
-            "worldgen.oil.spouts", "small_max_height", 12,
-            "The maximum height for small oil spouts"
-        );
+        propSmallSpoutMinHeight = BCCoreConfig.config.get("worldgen.oil.spouts", "small_min_height", 6,
+            "The minimum height for small oil spouts");
+        propSmallSpoutMaxHeight = BCCoreConfig.config.get("worldgen.oil.spouts", "small_max_height", 12,
+            "The maximum height for small oil spouts");
 
-        propLargeSpoutMinHeight = BCCoreConfig.config.get(
-            "worldgen.oil.spouts", "large_min_height", 10,
-            "The minimum height for large oil spouts"
-        );
-        propLargeSpoutMaxHeight = BCCoreConfig.config.get(
-            "worldgen.oil.spouts", "large_max_height", 20,
-            "The maximum height for large oil spouts"
-        );
+        propLargeSpoutMinHeight = BCCoreConfig.config.get("worldgen.oil.spouts", "large_min_height", 10,
+            "The minimum height for large oil spouts");
+        propLargeSpoutMaxHeight = BCCoreConfig.config.get("worldgen.oil.spouts", "large_max_height", 20,
+            "The maximum height for large oil spouts");
 
         game.setTo(propEnableOilGeneration);
         game.setTo(propOilWellGenerationRate);
@@ -139,38 +122,35 @@ public class BCEnergyConfig {
             BCEnergy.MODID + ":oil_desert", //
             BCEnergy.MODID + ":oil_ocean", //
         };
-        propExcessiveBiomes = BCCoreConfig.config.get(
-            "worldgen.oil", "excessiveBiomes", _excessive,
-            "Biome registry names (e.g. 'minecraft:ocean','minecraft:plains')" +
-                " of biomes that should have GREATLY increased oil generation rates."
-        );
+        propExcessiveBiomes = BCCoreConfig.config.get("worldgen.oil", "excessiveBiomes", _excessive,
+            "Biome registry names (e.g. 'minecraft:ocean','minecraft:plains')"
+                + " of biomes that should have GREATLY increased oil generation rates.");
 
         String[] _surface = {};
-        propSurfaceDepositBiomes = BCCoreConfig.config.get(
-            "worldgen.oil", "surfaceDepositBiomes", _surface,
-            "Biome registry names (e.g. 'minecraft:ocean','minecraft:hills')" +
-               " of biomes that should have slightly increased oil generation rates."
-        );
+        propSurfaceDepositBiomes = BCCoreConfig.config.get("worldgen.oil", "surfaceDepositBiomes", _surface,
+            "Biome registry names (e.g. 'minecraft:ocean','minecraft:hills')"
+                + " of biomes that should have slightly increased oil generation rates.");
 
-        String[] _excluded = {
-            "minecraft:hell",
-            "minecraft:sky",
-        };
-        propExcludedBiomes = BCCoreConfig.config.get(
-            "worldgen.oil", "excludedBiomes", _excluded,
-            "Biome registry names (e.g. 'minecraft:hell','minecraft:jungle') of biomes that should never generate oil."
-        );
+        String[] _excluded = { "minecraft:hell", "minecraft:sky", };
+        propExcludedBiomes = BCCoreConfig.config.get("worldgen.oil", "excludedBiomes", _excluded,
+            "Biome registry names (e.g. 'minecraft:hell','minecraft:jungle') of biomes that should never generate oil.");
+
+        propExcludedBiomesIsBlacklist = BCCoreConfig.config.get("worldgen.oil", "excludedBiomesIsBlacklist", true,
+            "If true then the excluded biomes list will be treated as a blacklist, otherwise it will be treated as a whitelist.");
 
         int[] _dims = { -1, 1 };
-        propExcludedDimensions = BCCoreConfig.config.get(
-            "worldgen.oil", "excludedDimensions", _dims,
-            "Dimension ID's (e.g. '-1' for the nether,'1' for the end) of dimensions that should never generate oil."
-        );
+        propExcludedDimensions = BCCoreConfig.config.get("worldgen.oil", "excludedDimensions", _dims,
+            "Dimension ID's (e.g. '-1' for the nether,'1' for the end) of dimensions that should never generate oil.");
+
+        propExcludedDimensionsIsBlacklist = BCCoreConfig.config.get("worldgen.oil", "excludedDimensionsIsBlacklist", true,
+            "If true then the excluded biomes list will be treated as a blacklist, otherwise it will be treated as a whitelist.");
 
         world.setTo(propExcessiveBiomes);
         world.setTo(propSurfaceDepositBiomes);
         world.setTo(propExcludedBiomes);
+        world.setTo(propExcludedBiomesIsBlacklist);
         world.setTo(propExcludedDimensions);
+        world.setTo(propExcludedDimensionsIsBlacklist);
 
         propChristmasEventType =
             BCCoreConfig.config.get("events", "christmas_chocolate", SpecialEventType.DAY_ONLY.lowerCaseName);
@@ -219,6 +199,8 @@ public class BCEnergyConfig {
             addBiomeNames(propSurfaceDepositBiomes, surfaceDepositBiomes);
             excludedDimensions.clear();
             excludedDimensions.addAll(propExcludedDimensions.getIntList());
+            excludedBiomesIsBlackList = propExcludedBiomesIsBlacklist.getBoolean();
+            excludedDimensionsIsBlackList = propExcludedDimensionsIsBlacklist.getBoolean();
 
             if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
