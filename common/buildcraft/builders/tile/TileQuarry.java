@@ -103,13 +103,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private final LinkedList<BlockPos> toCheck = new LinkedList<>();
     private final Set<BlockPos> firstCheckedPoses = new HashSet<>();
     private boolean firstChecked = false;
-    private final Set<BlockPos> frameBreakBlockPoses = new TreeSet<>(
-        BlockUtil.uniqueBlockPosComparator(
-            Comparator.comparingDouble(p ->
-                getPos().distanceSq(p)
-            )
-        )
-    );
+    private final Set<BlockPos> frameBreakBlockPoses =
+        new TreeSet<>(BlockUtil.uniqueBlockPosComparator(Comparator.comparingDouble(p -> getPos().distanceSq(p))));
     private final Set<BlockPos> framePlaceFramePoses = new HashSet<>();
     public Task currentTask = null;
     public Vec3d drillPos;
@@ -119,8 +114,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
-        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
-                                      int flags) {
+        public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState,
+            @Nonnull IBlockState newState, int flags) {
             if (frameBox.isInitialized() && miningBox.isInitialized()) {
                 if (frameBox.contains(pos)) {
                     check(pos);
@@ -155,16 +150,14 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         return new BoxIterator(miningBox, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
     }
 
-    /**
-     * Gets the current positions where frame blocks should be placed, in order.
+    /** Gets the current positions where frame blocks should be placed, in order.
      * <p>
      * Assumes that {@link #frameBox} is correct for the current position. Does not take into account the current facing
      * of the quarry, as that is assumed to be involved in the {@link #frameBox} itself.
      *
      * @return An ordered list of the positions that the frame should be placed in. The list is in placement order.
      * @throws IllegalStateException if something went wrong during iteration, or the current {@link #frameBox} was
-     *                               incorrect compared to {@link #getPos()}
-     */
+     *             incorrect compared to {@link #getPos()} */
     private List<BlockPos> getFramePositions() {
         // visitedSet and framePositions are considered the same
         // - both should contain the same elements
@@ -225,10 +218,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 msg += "\n  Position = " + pos;
                 msg += "\n  Frame Box = " + frameBox;
                 msg += "\n  Iteration Count = " + iterationCount;
-                msg += "\n  OpenSet = " +
-                    openSet.stream()
-                        .map(Object::toString)
-                        .collect(Collectors.joining("\n  ", "[", "]"));
+                msg += "\n  OpenSet = "
+                    + openSet.stream().map(Object::toString).collect(Collectors.joining("\n  ", "[", "]"));
                 throw new IllegalStateException(msg);
             }
 
@@ -240,10 +231,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 msg += "\n  Position = " + pos;
                 msg += "\n  Frame Box = " + frameBox;
                 msg += "\n  Iteration Count = " + iterationCount;
-                msg += "\n  OpenSet = " +
-                    openSet.stream()
-                        .map(Object::toString)
-                        .collect(Collectors.joining("\n  ", "[", "]"));
+                msg += "\n  OpenSet = "
+                    + openSet.stream().map(Object::toString).collect(Collectors.joining("\n  ", "[", "]"));
                 throw new IllegalStateException(msg);
             }
         } while (!openSet.isEmpty());
@@ -355,6 +344,11 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
         if (max.getY() - min.getY() < BCBuildersConfig.quarryFrameMinHeight) {
             max = new BlockPos(max.getX(), min.getY() + BCBuildersConfig.quarryFrameMinHeight, max.getZ());
+        }
+        if (world.isOutsideBuildHeight(max)) {
+            int dist = max.getY() - min.getY();
+            min = min.down(dist);
+            max = max.down(dist);
         }
         frameBox.reset();
         frameBox.setMin(min);
@@ -497,22 +491,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             Vec3d max = VecUtil.convertCenter(frameBox.max());
             Vec3d min = VecUtil.replaceValue(VecUtil.convertCenter(frameBox.min()), Axis.Y, max.y);
             collisionBoxes = ImmutableList.of(
-                BoundingBoxUtil.makeFrom(
-                    VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5),
-                    VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5),
-                    0.25
-                ),
-                BoundingBoxUtil.makeFrom(
-                    VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5),
-                    VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5),
-                    0.25
-                ),
-                BoundingBoxUtil.makeFrom(
-                    drillPos.addVector(0.5, 0, 0.5),
-                    VecUtil.replaceValue(drillPos, Axis.Y, max.y).addVector(0.5, 0, 0.5),
-                    0.25
-                )
-            );
+                BoundingBoxUtil.makeFrom(VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5),
+                    VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5), 0.25),
+                BoundingBoxUtil.makeFrom(VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5),
+                    VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5), 0.25),
+                BoundingBoxUtil.makeFrom(drillPos.addVector(0.5, 0, 0.5),
+                    VecUtil.replaceValue(drillPos, Axis.Y, max.y).addVector(0.5, 0, 0.5), 0.25));
         } else {
             collisionBoxes = ImmutableList.of();
         }
@@ -539,13 +523,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         }
 
         if (currentTask != null) {
-            long max = Math.min(
-                MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() * 2),
-                Math.min(
-                    currentTask.getTarget() - currentTask.power,
-                    MAX_POWER_PER_TICK
-                )
-            );
+            long max =
+                Math.min(MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() * 2),
+                    Math.min(currentTask.getTarget() - currentTask.power, MAX_POWER_PER_TICK));
             debugPowerRate = max;
             long power = battery.extractPower(0, max);
             if (currentTask.addPower(power)) {
@@ -814,16 +794,12 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         public abstract long getTarget();
 
-        /**
-         * @return {@code true} if this task has been completed, or cancelled.
-         */
+        /** @return {@code true} if this task has been completed, or cancelled. */
         protected abstract boolean onReceivePower();
 
         protected abstract boolean finish();
 
-        /**
-         * @return {@code true} if this task has been completed, or cancelled.
-         */
+        /** @return {@code true} if this task has been completed, or cancelled. */
         final boolean addPower(long microJoules) {
             power += microJoules;
             if (power >= getTarget()) {
@@ -840,8 +816,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public class TaskBreakBlock extends Task {
         public BlockPos breakPos = BlockPos.ORIGIN;
 
-        TaskBreakBlock() {
-        }
+        TaskBreakBlock() {}
 
         TaskBreakBlock(BlockPos pos) {
             this.breakPos = pos;
@@ -897,12 +872,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
                 return true;
             }
             world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
-            Optional<List<ItemStack>> stacks = BlockUtil.breakBlockAndGetDrops(
-                (WorldServer) world,
-                breakPos,
-                new ItemStack(Items.DIAMOND_PICKAXE),
-                getOwner()
-            );
+            Optional<List<ItemStack>> stacks = BlockUtil.breakBlockAndGetDrops((WorldServer) world, breakPos,
+                new ItemStack(Items.DIAMOND_PICKAXE), getOwner());
             if (stacks.isPresent()) {
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents
@@ -916,17 +887,15 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         public boolean equals(Object o) {
-            return this == o ||
-                !(o == null || getClass() != o.getClass()) &&
-                    breakPos.equals(((TaskBreakBlock) o).breakPos);
+            return this == o
+                || !(o == null || getClass() != o.getClass()) && breakPos.equals(((TaskBreakBlock) o).breakPos);
         }
     }
 
     public class TaskAddFrame extends Task {
         public BlockPos framePos = BlockPos.ORIGIN;
 
-        TaskAddFrame() {
-        }
+        TaskAddFrame() {}
 
         TaskAddFrame(BlockPos framePos) {
             this.framePos = framePos;
@@ -982,9 +951,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         public boolean equals(Object o) {
-            return this == o ||
-                !(o == null || getClass() != o.getClass()) &&
-                    framePos.equals(((TaskAddFrame) o).framePos);
+            return this == o
+                || !(o == null || getClass() != o.getClass()) && framePos.equals(((TaskAddFrame) o).framePos);
 
         }
     }
@@ -993,8 +961,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         public Vec3d from = Vec3d.ZERO;
         public Vec3d to = Vec3d.ZERO;
 
-        TaskMoveDrill() {
-        }
+        TaskMoveDrill() {}
 
         TaskMoveDrill(Vec3d from, Vec3d to) {
             this.from = from;
@@ -1057,10 +1024,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         @Override
         public boolean equals(Object o) {
-            return this == o ||
-                !(o == null || getClass() != o.getClass()) &&
-                    from.equals(((TaskMoveDrill) o).from) &&
-                    to.equals(((TaskMoveDrill) o).to);
+            return this == o || !(o == null || getClass() != o.getClass()) && from.equals(((TaskMoveDrill) o).from)
+                && to.equals(((TaskMoveDrill) o).to);
 
         }
     }

@@ -9,6 +9,7 @@ Improvements:
 
 Bug fixes:
 
+* [#4297] Fixed the quarry ignoring the maximum build height when it is placed too high up.
 * [#4317] Fix a crash with little tiles because AlexILL didn't implement a reflection getter correctly.
 * Fix silicon having an accidental dependency on transport. 
 * Fix fluid pipes not saving the current flow direction.
