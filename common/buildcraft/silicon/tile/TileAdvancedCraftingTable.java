@@ -46,6 +46,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
         @Nonnull ItemStack after) {
+        super.onSlotChange(handler, slot, before, after);
         if (!ItemStack.areItemStacksEqual(before, after)) {
             crafting.onInventoryChange(handler);
         }
