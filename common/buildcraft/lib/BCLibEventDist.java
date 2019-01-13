@@ -33,6 +33,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -220,7 +221,12 @@ public enum BCLibEventDist {
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPre(map);
         ModelHolderRegistry.onTextureStitchPre(map);
-        FluidRenderer.onTextureStitchPre(map);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SideOnly(Side.CLIENT)
+    public static void textureStitchPreLow(TextureStitchEvent.Pre event) {
+        FluidRenderer.onTextureStitchPre(event.getMap());
     }
 
     @SubscribeEvent
