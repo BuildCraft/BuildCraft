@@ -64,7 +64,7 @@ public class BCTransportConfig {
         propBaseFlowRate = config.get("general", "pipes.baseFluidRate", baseFlowRate).setMinValue(1).setMaxValue(40);
         EnumRestartRequirement.WORLD.setTo(propBaseFlowRate);
 
-        propFluidPipeColourBorder = config.get("display", "pipes.fluidColourIsBorder", false);
+        propFluidPipeColourBorder = config.get("display", "pipes.fluidColourIsBorder", true);
         EnumRestartRequirement.WORLD.setTo(propFluidPipeColourBorder);
 
         propLossMode = config.get("experimental", "kinesisLossMode", "lossless");

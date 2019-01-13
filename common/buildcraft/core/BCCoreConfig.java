@@ -133,22 +133,22 @@ public class BCCoreConfig {
         propHideFluid.setComment("Should all fluid values (Buckets, mB, mB/t) be hidden?");
         none.setTo(propHideFluid);
 
-        propUseBucketsStatic = config.get(display, "useBucketsStatic", false);
+        propUseBucketsStatic = config.get(display, "useBucketsStatic", true);
         propUseBucketsStatic.setComment(
             "Should static fluid values be displayed in terms of buckets rather than thousandths of a bucket? (B vs mB)");
         none.setTo(propUseBucketsStatic);
 
-        propUseBucketsFlow = config.get(display, "useBucketsFlow", false);
+        propUseBucketsFlow = config.get(display, "useBucketsFlow", true);
         propUseBucketsFlow.setComment(
             "Should flowing fluid values be displayed in terms of buckets per second rather than thousandths of a bucket per tick? (B/s vs mB/t)");
         none.setTo(propUseBucketsFlow);
 
-        propUseLongLocalizedName = config.get(display, "useLongLocalizedName", false);
+        propUseLongLocalizedName = config.get(display, "useLongLocalizedName", true);
         propUseLongLocalizedName.setComment(
             "Should localised strings be displayed in long or short form (10 mB / t vs 10 milli buckets per tick");
         none.setTo(propUseLongLocalizedName);
 
-        propDisplayTimeGap = config.get(display, "timeGap", TimeGap.TICKS.name().toLowerCase(Locale.ROOT));
+        propDisplayTimeGap = config.get(display, "timeGap", TimeGap.SECONDS.name().toLowerCase(Locale.ROOT));
         propDisplayTimeGap
             .setComment("Should localised strings be displayed in terms of seconds (1 MJ/s) or ticks (20 MJ/t)");
         ConfigUtil.setEnumProperty(propDisplayTimeGap, TimeGap.values());

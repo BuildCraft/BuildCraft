@@ -84,6 +84,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         if (currentDirection == null) {
             currentDirection = EnumFacing.UP;
         }
+        isRedstonePowered = nbt.getBoolean("isRedstonePowered");
         heat = nbt.getDouble("heat");
         power = nbt.getLong("power");
         progress = nbt.getFloat("progress");
@@ -94,6 +95,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("currentDirection", NBTUtilBC.writeEnum(currentDirection));
+        nbt.setBoolean("isRedstonePowered", isRedstonePowered);
         nbt.setDouble("heat", heat);
         nbt.setLong("power", power);
         nbt.setFloat("progress", progress);
