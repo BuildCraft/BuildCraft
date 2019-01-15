@@ -873,7 +873,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             }
             world.sendBlockBreakProgress(breakPos.hashCode(), breakPos, -1);
             Optional<List<ItemStack>> stacks = BlockUtil.breakBlockAndGetDrops((WorldServer) world, breakPos,
-                new ItemStack(Items.DIAMOND_PICKAXE), getOwner());
+                new ItemStack(Items.DIAMOND_PICKAXE), getOwner(), true);
             if (stacks.isPresent()) {
                 // The drill pos will be null if we are making the frame: this is when we want to destroy the block, not
                 // drop its contents

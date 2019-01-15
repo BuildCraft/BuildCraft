@@ -56,11 +56,9 @@ public abstract class BCCoreProxy implements IGuiHandler {
         MessageManager.registerMessageClass(BCModules.CORE, MessageVolumeBoxes.class, Side.CLIENT);
     }
 
-    public void fmlInit() {
-    }
+    public void fmlInit() {}
 
-    public void fmlPostInit() {
-    }
+    public void fmlPostInit() {}
 
     public List<VolumeBox> getVolumeBoxes(World world) {
         return WorldSavedDataVolumeBoxes.get(world).volumeBoxes;
@@ -93,6 +91,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
 
         @Override
         public void fmlInit() {
+            super.fmlInit();
             BCCoreModels.fmlInit();
             MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
         }

@@ -83,13 +83,10 @@ public class FluidRenderer {
                 }
                 fluidSprites.get(FluidSpriteType.FROZEN).put(fluid.getName(), spriteFrozen);
             }
+            // Note: this must be called with EventPriority.LOW so that we don't overwrite other custom sprites.
             fluidSprites.get(FluidSpriteType.STILL).put(fluid.getName(), map.registerSprite(fluid.getStill()));
             fluidSprites.get(FluidSpriteType.FLOWING).put(fluid.getName(), map.registerSprite(fluid.getFlowing()));
         }
-    }
-
-    public static void onTextureStitchPost(TextureMap map) {
-        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {}
     }
 
     /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
@@ -102,7 +99,6 @@ public class FluidRenderer {
      * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns.
-     * 
      * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, BufferBuilder, boolean[]) */
     public static void renderFluid(FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, BufferBuilder bbIn,
         boolean[] sideRender) {
@@ -121,7 +117,7 @@ public class FluidRenderer {
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
     public static void renderFluid(FluidSpriteType type, FluidStack fluid, int cap, Vec3d min, Vec3d max,
-                                   BufferBuilder bbIn, boolean[] sideRender) {
+        BufferBuilder bbIn, boolean[] sideRender) {
         renderFluid(type, fluid, fluid == null ? 0 : fluid.amount, cap, min, max, bbIn, sideRender);
     }
 
@@ -428,8 +424,8 @@ public class FluidRenderer {
 
         private static Vec3d rotateY(Vec3d vec) {
             return new Vec3d(//
-                1 - vec.z,//
-                vec.y,//
+                1 - vec.z, //
+                vec.y, //
                 vec.x//
             );
         }

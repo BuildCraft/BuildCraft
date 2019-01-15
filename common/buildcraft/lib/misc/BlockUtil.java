@@ -8,8 +8,10 @@ package buildcraft.lib.misc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,6 +21,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
@@ -201,8 +204,21 @@ public final class BlockUtil {
 
     public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos,
         @Nonnull ItemStack tool, GameProfile owner) {
+        return breakBlockAndGetDrops(world, pos, tool, owner, false);
+    }
+
+    /** @param grabAll If true then this will pickup every item in range of the position, false to only get the items
+     *            that the dropped while breaking the block. */
+    public static Optional<List<ItemStack>> breakBlockAndGetDrops(WorldServer world, BlockPos pos,
+        @Nonnull ItemStack tool, GameProfile owner, boolean grabAll) {
         AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(1);
-        Set<Entity> entities = new HashSet<>(world.getEntitiesWithinAABB(EntityItem.class, aabb));
+        Set<Entity> entities;
+        if (grabAll) {
+            entities = Collections.emptySet();
+        } else {
+            entities = Sets.newIdentityHashSet();
+            entities.addAll(world.getEntitiesWithinAABB(EntityItem.class, aabb));
+        }
         if (!harvestBlock(world, pos, tool, owner)) {
             if (!destroyBlock(world, pos, tool, owner)) {
                 return Optional.empty();

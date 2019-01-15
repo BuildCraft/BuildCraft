@@ -44,6 +44,11 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
     }
 
     @Override
+    protected boolean isValid(ItemStackValueFilter typed) {
+        return !typed.stack.baseStack.isEmpty();
+    }
+
+    @Override
     public void iterateAllDefault(IEntryLinkConsumer consumer) {
         for (Item item : ForgeRegistries.ITEMS) {
             if (!GuideManager.INSTANCE.objectsAdded.add(item)) {

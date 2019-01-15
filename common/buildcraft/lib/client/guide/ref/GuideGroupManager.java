@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
 import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.client.guide.entry.ItemStackValueFilter;
@@ -23,11 +24,6 @@ import buildcraft.lib.client.guide.entry.PageEntryItemStack;
 import buildcraft.lib.client.guide.entry.PageEntryStatement;
 import buildcraft.lib.client.guide.entry.PageValue;
 import buildcraft.lib.client.guide.entry.PageValueType;
-
-import buildcraft.core.BCCoreBlocks;
-import buildcraft.core.BCCoreItems;
-import buildcraft.silicon.BCSiliconItems;
-import buildcraft.transport.BCTransportItems;
 
 public class GuideGroupManager {
     public static final List<PageValueType<?>> knownTypes = new ArrayList<>();
@@ -47,19 +43,20 @@ public class GuideGroupManager {
     }
 
     private static void temp() {
-        addEntries("buildcraft", "pipe_power_providers", BCSiliconItems.plugPulsar, BCTransportItems.plugPowerAdaptor,
-            new ItemStack(BCCoreBlocks.engine), new ItemStack(BCCoreBlocks.engine, 1, 1),
-            new ItemStack(BCCoreBlocks.engine, 1, 2))//
-                .addKeyArray(BCTransportItems.pipeItemWood, BCTransportItems.pipeItemDiaWood,
-                    BCTransportItems.pipeItemEmzuli, BCTransportItems.pipeFluidWood, BCTransportItems.pipeFluidDiaWood);
-        addEntries("buildcraft", "full_power_providers", new ItemStack(BCCoreBlocks.engine, 1, 1),
-            new ItemStack(BCCoreBlocks.engine, 1, 2)).addKeyArray(BCBlocks.Builders.BUILDER, BCBlocks.Builders.FILLER,
+        addEntries("buildcraft", "pipe_power_providers", BCItems.Silicon.PLUG_PULSAR,
+            BCItems.Transport.PLUG_POWER_ADAPTOR, new ItemStack(BCBlocks.Core.ENGINE),
+            new ItemStack(BCBlocks.Core.ENGINE, 1, 1), new ItemStack(BCBlocks.Core.ENGINE, 1, 2))//
+                .addKeyArray(BCItems.Transport.PIPE_WOOD_ITEM, BCItems.Transport.PIPE_DIAMOND_WOOD_ITEM,
+                    BCItems.Transport.PIPE_EMZULI_ITEM, BCItems.Transport.PIPE_WOOD_FLUID,
+                    BCItems.Transport.PIPE_DIAMOND_WOOD_FLUID);
+        addEntries("buildcraft", "full_power_providers", new ItemStack(BCBlocks.Core.ENGINE, 1, 1),
+            new ItemStack(BCBlocks.Core.ENGINE, 1, 2)).addKeyArray(BCBlocks.Builders.BUILDER, BCBlocks.Builders.FILLER,
                 BCBlocks.Builders.QUARRY, BCBlocks.Factory.DISTILLER, BCBlocks.Factory.MINING_WELL,
                 BCBlocks.Factory.PUMP, BCBlocks.Silicon.LASER);
         addEntries("buildcraft", "laser_power_providers", BCBlocks.Silicon.LASER).addKeyArray(
             BCBlocks.Silicon.ADVANCED_CRAFTING_TABLE, BCBlocks.Silicon.ASSEMBLY_TABLE,
             BCBlocks.Silicon.INTEGRATION_TABLE);
-        addEntries("buildcraft", "area_markers", BCCoreBlocks.markerVolume, BCCoreItems.volumeBox)
+        addEntries("buildcraft", "area_markers", BCBlocks.Core.MARKER_VOLUME, BCItems.Core.VOLUME_BOX)
             .addKeyArray(BCBlocks.Builders.QUARRY, BCBlocks.Builders.ARCHITECT, BCBlocks.Builders.FILLER);
     }
 

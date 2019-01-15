@@ -49,9 +49,18 @@ public abstract class PageValueType<T> {
 
     public abstract void iterateAllDefault(IEntryLinkConsumer consumer);
 
+    @Nullable
     public final PageValue<T> wrap(Object value) {
         T typed = getEntryClass().cast(value);
-        return new PageValue<>(this, typed);
+        if (isValid(typed)) {
+            return new PageValue<>(this, typed);
+        } else {
+            return null;
+        }
+    }
+
+    protected boolean isValid(T typed) {
+        return true;
     }
 
     public void addPageEntries(T value, GuiGuide gui, List<GuidePart> parts) {

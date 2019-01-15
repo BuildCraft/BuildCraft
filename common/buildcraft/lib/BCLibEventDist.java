@@ -234,7 +234,6 @@ public enum BCLibEventDist {
     public static void textureStitchPost(TextureStitchEvent.Post event) {
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPost();
-        FluidRenderer.onTextureStitchPost(map);
     }
 
     @SubscribeEvent
