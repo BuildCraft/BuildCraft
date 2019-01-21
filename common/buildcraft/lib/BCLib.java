@@ -129,10 +129,7 @@ public class BCLib {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-        ReloadableRegistryManager.DATA_PACKS.reloadAll();
-        if (BuildCraftRegistryManager.managerResourcePacks != null) {
-            ReloadableRegistryManager.RESOURCE_PACKS.reloadAll();
-        }
+        ReloadableRegistryManager.loadAll();
         BCLibProxy.getProxy().fmlPostInit();
         BuildCraftObjectCaches.fmlPostInit();
         VanillaListHandlers.fmlPostInit();

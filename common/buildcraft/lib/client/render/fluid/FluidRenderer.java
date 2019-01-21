@@ -37,12 +37,14 @@ import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.VecUtil;
 
 /** Can render 3D fluid cuboid's, up to 1x1x1 in size. Note that they *must* be contained within the 1x1x1 block space -
  * you can't use this to render off large multiblocks. Not thread safe -- this uses static variables so you should only
  * call this from the main client thread. */
 // TODO: thread safety (per thread context?)
+// Perhaps move this into IModelRenderer? And that way we get the buffer, force shaders to cope with fluids (?!), etc
 @SideOnly(Side.CLIENT)
 public class FluidRenderer {
 
@@ -160,10 +162,7 @@ public class FluidRenderer {
         if (type == null) {
             type = FluidSpriteType.STILL;
         }
-        sprite = fluidSprites.get(type).get(fluid.getFluid().getName());
-        if (sprite == null) {
-            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
-        }
+        sprite = getFluidSprite(type, fluid);
 
         final double xs = realMin.x;
         final double ys = realMin.y;
@@ -255,6 +254,18 @@ public class FluidRenderer {
         texmap = null;
         bb = null;
         prof.endSection();
+    }
+
+    public static TextureAtlasSprite getFluidSprite(FluidSpriteType type, FluidStack fluid) {
+        return getFluidSprite(type, fluid.getFluid());
+    }
+
+    public static TextureAtlasSprite getFluidSprite(FluidSpriteType type, Fluid fluid) {
+        if (fluid == null) {
+            return SpriteUtil.missingSprite();
+        }
+        TextureAtlasSprite s = fluidSprites.get(type).get(fluid.getName());
+        return s != null ? s : SpriteUtil.missingSprite();
     }
 
     /** Helper function to add a vertex. */

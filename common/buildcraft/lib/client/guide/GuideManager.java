@@ -97,6 +97,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
             // I feel like we shouldn't allow reloading everything by default?
             return;
         }
+        if (event.manager.isLoadingAll()) {
+            return;
+        }
         if (event.reloadingRegistries.contains(GuideBookRegistry.INSTANCE)) {
             reload();
         }

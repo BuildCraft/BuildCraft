@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 
 import net.minecraftforge.common.MinecraftForge;
 
+import buildcraft.api.registry.BuildCraftRegistryManager;
 import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.api.registry.IReloadableRegistry;
 import buildcraft.api.registry.IReloadableRegistry.PackType;
@@ -25,6 +26,8 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
     DATA_PACKS(PackType.DATA_PACK),
     RESOURCE_PACKS(PackType.RESOURCE_PACK);
 
+    private static boolean isLoadingAll;
+
     private final PackType sourceType;
     private final BiMap<String, IReloadableRegistry<?>> registries = HashBiMap.create();
     private boolean isReloading;
@@ -34,9 +37,28 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
         this.sourceType = sourceType;
     }
 
+    public static void loadAll() {
+        try {
+            isLoadingAll = true;
+
+            DATA_PACKS.reloadAll();
+            if (BuildCraftRegistryManager.managerResourcePacks != null) {
+                RESOURCE_PACKS.reloadAll();
+            }
+
+        } finally {
+            isLoadingAll = false;
+        }
+    }
+
     @Override
     public PackType getType() {
         return sourceType;
+    }
+
+    @Override
+    public boolean isLoadingAll() {
+        return isLoadingAll;
     }
 
     /** Reloads every registry. Generally calling this is a very bad idea if you don't also call other reload events. */
