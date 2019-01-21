@@ -81,6 +81,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     /** Internal use only! Use {@link #addChild(ResourceLocation, JsonTypeTags, PageLink)} instead! */
     public SuffixArray<PageLink> quickSearcher;
+    /** Every {@link PageLink} that has been added to {@link #quickSearcher}. */
+    private final Set<PageLink> pageLinksAdded = new HashSet<>();
     private final Map<GuideBook, Map<TypeOrder, ContentsNode>> contents = new HashMap<>();
 
     /** Every object added to the guide. Generally this means {@link Item}'s and {@link IStatement}'s. */
@@ -262,6 +264,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
             genTypeMap(book);
         }
         quickSearcher = new SuffixArray<>();
+        pageLinksAdded.clear();
         prof.endStartSection("add_pages");
 
         for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
@@ -316,6 +319,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void addChild(ResourceLocation bookType, JsonTypeTags tags, PageLink page) {
+        if (pageLinksAdded.add(page)) {
+            quickSearcher.add(page, page.getSearchName());
+        }
         for (Entry<GuideBook, Map<TypeOrder, ContentsNode>> bookEntry : contents.entrySet()) {
 
             @Nullable
@@ -348,7 +354,6 @@ public enum GuideManager implements IResourceManagerReloadListener {
                     }
                 }
                 node.addChild(page);
-                quickSearcher.add(page, page.getSearchName());
             }
         }
 
