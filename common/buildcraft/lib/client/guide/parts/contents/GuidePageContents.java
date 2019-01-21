@@ -91,7 +91,7 @@ public class GuidePageContents extends GuidePageBase {
         super.updateScreen();
         searchText.updateCursorCounter();
         if (lastSearchText.equals(searchText.getText())) {
-            if (numPages > 3 && getPage() > numPages) {
+            if (numPages >= 3 && getPage() >= numPages) {
                 goToPage(numPages);
             } else if (getPage() < 2) {
                 searchText.setFocused(false);

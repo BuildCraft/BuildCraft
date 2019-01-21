@@ -444,9 +444,10 @@ public class GuiGuide extends GuiScreen {
 
         currentPage.renderFirstPage(minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y,
             (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
-        currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x, minY + (int) PAGE_RIGHT_TEXT.y,
-            (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
-
+        if (!isHalfPageShown) {
+            currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x,
+                minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
+        }
         int chapterIndex = 0;
         for (GuideChapter chapter : chapters) {
             chapter.draw(chapterIndex, partialTicks);

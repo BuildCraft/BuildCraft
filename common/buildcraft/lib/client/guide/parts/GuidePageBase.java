@@ -43,14 +43,14 @@ public abstract class GuidePageBase extends GuidePart {
     }
 
     protected final void goToPage(int page) {
+        if (numPages > 0 && page >= numPages) {
+            page = numPages - 1;
+        }
         // Make it a multiple of 2
         index = page / 2;
         index *= 2;
         if (index < 0) {
             index = 0;
-        }
-        if (numPages >= 0 && index >= numPages) {
-            index = numPages - 1;
         }
     }
 

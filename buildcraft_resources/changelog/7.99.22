@@ -1,5 +1,6 @@
 Bug fixes:
 
 * [#4320] Fixed the quarry not picking up all surrounding items.
-* [#4372] Fix lib depending on core, silicon, and transport.
+* [#4325] Fixed the guide book's contents page not going back to the previous page when searching over the page count.
 * [#4328] Fix the guide always reloading all data twice, rather than once.
+* [#4372] Fix lib depending on core, silicon, and transport.
