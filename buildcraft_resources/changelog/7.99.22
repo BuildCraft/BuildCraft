@@ -2,3 +2,4 @@ Bug fixes:
 
 * [#4320] Fixed the quarry not picking up all surrounding items.
 * [#4372] Fix lib depending on core, silicon, and transport.
+* [#4328] Fix the guide always reloading all data twice, rather than once.

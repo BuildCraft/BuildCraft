@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.text.NumberFormat;
 import java.util.List;
 
 import net.minecraft.profiler.Profiler;
+
+import buildcraft.api.core.BCLog;
 
 /** Provides a few methods for writing the results from a vanilla {@link Profiler} to a file or something else. */
 public class ProfilerUtil {
@@ -16,7 +19,34 @@ public class ProfilerUtil {
     /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link System#out} as the
      * {@link ILogAcceptor}. */
     public static void printProfilerResults(Profiler profiler, String rootName) {
-        writeProfilerResults(profiler, rootName, System.out::println);
+        printProfilerResults(profiler, rootName, -1);
+    }
+
+    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link System#out} as the
+     * {@link ILogAcceptor}. */
+    public static void printProfilerResults(Profiler profiler, String rootName, long totalNanoseconds) {
+        writeProfilerResults(profiler, rootName, totalNanoseconds, System.out::println);
+    }
+
+    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link BCLog#logger
+     * BCLog.logger}::{@link org.apache.logging.log4j.Logger#info(CharSequence) info} as the {@link ILogAcceptor}. */
+    public static void logProfilerResults(Profiler profiler, String rootName) {
+        logProfilerResults(profiler, rootName, -1);
+    }
+
+    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link BCLog#logger
+     * BCLog.logger}::{@link org.apache.logging.log4j.Logger#info(CharSequence) info} as the {@link ILogAcceptor}. */
+    public static void logProfilerResults(Profiler profiler, String rootName, long totalNanoseconds) {
+        writeProfilerResults(profiler, rootName, totalNanoseconds, BCLog.logger::info);
+    }
+
+    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} but saves the output to a file.
+     * 
+     * @throws IOException if the file exists but is a directory rather than a regular file, does not exist but cannot
+     *             be created, or cannot be opened for any other reason, or if an I/O exception occurred while writing
+     *             the profiler results. */
+    public static void saveProfilerResults(Profiler profiler, String rootName, Path dest) throws IOException {
+        saveProfilerResults(profiler, rootName, -1, dest);
     }
 
     /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} but saves the output to a file.
@@ -27,15 +57,18 @@ public class ProfilerUtil {
     public static void saveProfilerResults(Profiler profiler, String rootName, File dest) throws IOException {
         dest = dest.getAbsoluteFile();
         dest.getParentFile().mkdirs();
-        saveProfilerResults(profiler, rootName, dest.toPath());
+        saveProfilerResults(profiler, rootName, -1, dest.toPath());
     }
 
     /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} but saves the output to a file.
      * 
+     * @param totalNanoseconds The total amount of time that the profiler's root section took, or -1 if this isn't
+     *            known.
      * @throws IOException if the file exists but is a directory rather than a regular file, does not exist but cannot
      *             be created, or cannot be opened for any other reason, or if an I/O exception occurred while writing
      *             the profiler results. */
-    public static void saveProfilerResults(Profiler profiler, String rootName, Path dest) throws IOException {
+    public static void saveProfilerResults(Profiler profiler, String rootName, long totalNanoseconds, Path dest)
+        throws IOException {
         try (BufferedWriter br = Files.newBufferedWriter(dest, StandardOpenOption.WRITE,
             StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
             writeProfilerResults(profiler, rootName, str -> {
@@ -46,23 +79,32 @@ public class ProfilerUtil {
         }
     }
 
-    /** @param profiler
-     * @param rootName The base name to use. Most of the time you just want to use "root".
+    /** @param rootName The base name to use. Most of the time you just want to use "root".
      * @param dest The method to call with the finished lines.
      * @throws E if {@link ILogAcceptor#write(String)} throws an exception. */
     public static <E extends Throwable> void writeProfilerResults(Profiler profiler, String rootName,
         ILogAcceptor<E> dest) throws E {
-        writeProfilerResults_Internal(profiler, rootName, 0, dest);
+        writeProfilerResults(profiler, rootName, -1, dest);
+    }
+
+    /** @param rootName The base name to use. Most of the time you just want to use "root".
+     * @param totalNanoseconds The total amount of time that the profiler's root section took, or -1 if this isn't
+     *            known.
+     * @param dest The method to call with the finished lines.
+     * @throws E if {@link ILogAcceptor#write(String)} throws an exception. */
+    public static <E extends Throwable> void writeProfilerResults(Profiler profiler, String rootName,
+        long totalNanoseconds, ILogAcceptor<E> dest) throws E {
+        writeProfilerResults_Internal(profiler, rootName, totalNanoseconds, 0, dest);
     }
 
     private static <E extends Throwable> void writeProfilerResults_Internal(Profiler profiler, String sectionName,
-        int indent, ILogAcceptor<E> dest) throws E {
+        long totalNanoseconds, int indent, ILogAcceptor<E> dest) throws E {
 
         List<Profiler.Result> list = profiler.getProfilingData(sectionName);
 
         if (list != null && list.size() >= 3) {
             for (int i = 1; i < list.size(); ++i) {
-                Profiler.Result profiler$result = list.get(i);
+                Profiler.Result result = list.get(i);
                 StringBuilder builder = new StringBuilder();
                 builder.append(String.format("[%02d] ", indent));
 
@@ -70,20 +112,38 @@ public class ProfilerUtil {
                     builder.append("|   ");
                 }
 
-                builder.append(profiler$result.profilerName);
+                builder.append(result.profilerName);
                 builder.append(" - ");
-                builder.append(String.format("%.2f", profiler$result.usePercentage));
+                builder.append(String.format("%.2f", result.usePercentage));
                 builder.append("%/");
-                builder.append(String.format("%.2f", profiler$result.totalUsePercentage));
+                builder.append(String.format("%.2f", result.totalUsePercentage));
+                if (totalNanoseconds > 0) {
+                    builder.append(" (");
+                    long nano = (long) (result.totalUsePercentage * totalNanoseconds / 100);
+                    if (nano < 99_999) {
+                        builder.append(NumberFormat.getInstance().format(nano));
+                        builder.append("ns");
+                    } else if (nano < 99_999_999) {
+                        builder.append(NumberFormat.getInstance().format(nano / 1000));
+                        builder.append("µs");
+                    } else if (nano < 99_999_999_999L) {
+                        builder.append(NumberFormat.getInstance().format(nano / 1_000_000));
+                        builder.append("ms");
+                    } else {
+                        builder.append(NumberFormat.getInstance().format(nano / 1_000_000_000));
+                        builder.append("s");
+                    }
+                    builder.append(")");
+                }
                 dest.write(builder.toString());
 
-                if (!"unspecified".equals(profiler$result.profilerName)) {
+                if (!"unspecified".equals(result.profilerName)) {
                     if (indent > 20) {
                         // Something probably went wrong
                         dest.write("[[ Too deep! ]]");
                         continue;
                     }
-                    writeProfilerResults_Internal(profiler, sectionName + "." + profiler$result.profilerName,
+                    writeProfilerResults_Internal(profiler, sectionName + "." + result.profilerName, totalNanoseconds,
                         indent + 1, dest);
                 }
             }

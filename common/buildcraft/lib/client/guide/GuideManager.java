@@ -31,6 +31,7 @@ import net.minecraft.client.resources.Language;
 import net.minecraft.client.util.SuffixArray;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCDebugging;
@@ -60,6 +61,7 @@ import buildcraft.lib.guide.GuideBookRegistry;
 import buildcraft.lib.guide.GuideContentsData;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.ProfilerUtil;
 
 public enum GuideManager implements IResourceManagerReloadListener {
     INSTANCE;
@@ -127,10 +129,18 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void reload0(IResourceManager resourceManager) {
+        Profiler prof = new Profiler();
+        prof.profilingEnabled = true;
+        prof.startSection("root");
+        prof.startSection("reload");
         GuideGroupManager.get("lols", "hi");
         Stopwatch watch = Stopwatch.createStarted();
+
+        prof.startSection("book_registry");
         GuideBookRegistry.INSTANCE.reload();
+        prof.endStartSection("page_registry");
         GuidePageRegistry.INSTANCE.reload();
+        prof.endStartSection("setup");
         entries.clear();
         // Don't add permanent as we need the resource domain
         GuidePageRegistry manager = GuidePageRegistry.INSTANCE;
@@ -139,6 +149,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
         for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
             domains.put(book, new HashSet<>());
         }
+
+        prof.endStartSection("add_pages");
 
         for (PageEntry<?> entry : manager.getAllEntries()) {
             domains.get(null).add(entry.typeTags.domain);
@@ -149,6 +161,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
             }
             entries.add(entry);
         }
+
+        prof.endStartSection("generate_books");
         BOOK_ALL_DATA.generate(domains.get(null));
         for (Entry<GuideBook, Set<String>> entry : domains.entrySet()) {
             if (entry.getKey() == null) {
@@ -158,6 +172,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
         pages.clear();
 
+        prof.endStartSection("load_default_lang");
         Language currentLanguage = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
         String langCode;
         if (currentLanguage == null) {
@@ -171,19 +186,28 @@ public enum GuideManager implements IResourceManagerReloadListener {
         loadLangInternal(resourceManager, DEFAULT_LANG);
         // replace any existing with the new ones.
 
+        prof.endStartSection("load_real_lang");
+
         if (!DEFAULT_LANG.equals(langCode)) {
             loadLangInternal(resourceManager, langCode);
         }
 
-        generateContentsPage();
+        prof.endStartSection("contents_page");
+        generateContentsPage(prof);
+        prof.endSection();
 
         watch.stop();
-        long time = watch.elapsed(TimeUnit.MILLISECONDS);
+        long time = watch.elapsed(TimeUnit.MICROSECONDS);
         int p = entries.size();
         int a = pages.size();
         int e = p - a;
+        prof.endSection();
+        prof.endSection();
         BCLog.logger.info("[lib.guide] Loaded " + p + " possible and " + a + " actual guide pages (" + e
-            + " not found) in " + time + "ms.");
+            + " not found) in " + time / 1000 + "ms.");
+        BCLog.logger.info("[lib.guide] Performance information for guide loading:");
+        ProfilerUtil.logProfilerResults(prof, "root", time * 1000);
+        BCLog.logger.info("[lib.guide] End of guide loading performance information.");
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang) {
@@ -228,14 +252,17 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
     }
 
-    private void generateContentsPage() {
+    private void generateContentsPage(Profiler prof) {
+        prof.startSection("clear");
         objectsAdded.clear();
         contents.clear();
+        prof.endStartSection("setup");
         genTypeMap(null);
         for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
             genTypeMap(book);
         }
         quickSearcher = new SuffixArray<>();
+        prof.endStartSection("add_pages");
 
         for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
             .entrySet()) {
@@ -250,21 +277,34 @@ public enum GuideManager implements IResourceManagerReloadListener {
             if (entryFactory != null) {
                 objectsAdded.add(entry.getBasicValue());
                 PageLinkNormal pageLink = new PageLinkNormal(line, true, entry.getTooltip(), entryFactory);
+                prof.startSection("add_child");
                 addChild(entry.book, entry.typeTags, pageLink);
+                prof.endSection();
             }
         }
 
-        final IEntryLinkConsumer adder = (tags, page) -> addChild(null, tags, page);
+        prof.endStartSection("add_default");
+        final IEntryLinkConsumer adder = (tags, page) -> {
+            prof.startSection("add_child");
+            addChild(null, tags, page);
+            prof.endSection();
+        };
+        prof.endStartSection("add_default");
         for (PageValueType<?> type : GuidePageRegistry.INSTANCE.types) {
+            prof.startSection(type.getClass().getName().replace('.', '/'));
             type.iterateAllDefault(adder);
+            prof.endSection();
         }
 
+        prof.endStartSection("generate_quick_search");
         quickSearcher.generate();
+        prof.endStartSection("sort");
         for (Map<TypeOrder, ContentsNode> map : contents.values()) {
             for (ContentsNode node : map.values()) {
                 node.sort();
             }
         }
+        prof.endSection();
     }
 
     private void genTypeMap(GuideBook book) {
@@ -280,6 +320,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
             @Nullable
             GuideBook book = bookEntry.getKey();
+
             if (bookType == null) {
                 if (book != null && !book.appendAllEntries) {
                     continue;
