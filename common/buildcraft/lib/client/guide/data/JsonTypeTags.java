@@ -33,7 +33,7 @@ public class JsonTypeTags {
     public String[] getOrdered(TypeOrder typeOrder) {
         if (domain == null && subType == null) {
             // Built-in type for "others"
-            return new String[] { "buildcraft.guide.contents.all_group", type };
+            return new String[] { type };
         }
 
         String[] strings = new String[typeOrder.tags.size()];

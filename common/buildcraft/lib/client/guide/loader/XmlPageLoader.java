@@ -10,11 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -22,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -55,6 +58,8 @@ import buildcraft.lib.expression.Tokenizer.ResultConsume;
 import buildcraft.lib.expression.Tokenizer.TokenResult;
 import buildcraft.lib.expression.TokenizerDefaults;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.data.ProfilerBC;
+import buildcraft.lib.misc.data.ProfilerBC.IProfilerSection;
 
 // This isn't a proper XML loader - there isn't a root tag.
 // Instead it just assumes everything is a paragraph, unless more specific tags are given
@@ -186,8 +191,15 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry)
+    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry, Profiler prof)
         throws IOException {
+        try (IProfilerSection p = new ProfilerBC(prof).start("xml")) {
+            return loadPage0(reader, name, entry, prof);
+        }
+    }
+
+    private static GuidePageFactory loadPage0(BufferedReader reader, ResourceLocation name, PageEntry<?> entry,
+        Profiler prof) throws IOException, InvalidInputDataException {
         // Needs to support:
         // - start/end tags (such as <lore></lore>)
         // - nested tags (such as <lore>Spooky<bold> Skeletons</bold></lore>)
@@ -226,12 +238,16 @@ public enum XmlPageLoader implements IPageLoaderText {
             if (line.startsWith("\\/\\/")) {
                 line = "//" + line.substring(4);
             }
+            prof.startSection("parse_tag");
             XmlTag tag = parseTag(line);
+            prof.endSection();
             if (tag != null) {
                 if (tag.state == XmlTagState.COMPLETE) {
                     SpecialParser parser = TAG_FACTORIES.get(tag.name);
                     if (parser != null) {
+                        prof.startSection("use_" + tag.name);
                         List<GuidePartFactory> factories = parser.parse(tag);
+                        prof.endSection();
                         if (factories != null) {
                             nestedParts.peek().addAll(factories);
                             line = line.substring(tag.originalString.length());
@@ -262,7 +278,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                                 "Tried to close " + tag.name + " before instead of " + nameTag.name + "!");
                         }
                         List<GuidePartFactory> subParts = nestedParts.pop();
+                        prof.startSection("join_" + tag.name);
                         GuidePartFactory joined = joiner.join(nameTag, subParts);
+                        prof.endSection();
                         if (joined == null) {
                             nestedParts.peek().addAll(subParts);
                             int len = tag.originalString.length();
@@ -281,6 +299,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             if (line.length() == 0) {
                 line = " ";
             }
+            prof.startSection("text_format");
             Set<TextFormatting> formattingElements = EnumSet.noneOf(TextFormatting.class);
             Deque<TextFormatting> formatColours = new ArrayDeque<>();
             String completeLine = "";
@@ -328,6 +347,7 @@ public enum XmlPageLoader implements IPageLoaderText {
 
             final String modLine = completeLine;
             nestedParts.peek().add(new GuideTextFactory(modLine));
+            prof.endSection();
         }
         List<GuidePartFactory> factories = nestedParts.pop();
         if (nestedParts.size() != 0) {
@@ -531,6 +551,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack) {
+        Stopwatch watch = Stopwatch.createStarted();
         List<GuidePartFactory> list = new ArrayList<>();
         List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack);
         if (recipeParts.size() > 0) {
@@ -556,6 +577,8 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             list.addAll(usageParts);
         }
+        BCLog.logger.info("[lib.guide] Took " + watch.elapsed(TimeUnit.MICROSECONDS) + "µs to load " + list.size()
+            + " crafting recipes for " + stack);
         return list;
     }
 

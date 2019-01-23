@@ -25,6 +25,7 @@ public class ContentsNode implements IContentsNode {
     private final Map<String, IContentsNode> nodes = new HashMap<>();
     private IContentsNode[] sortedNodes = new IContentsNode[0];
     IContentsNode[] visibleNodes = new IContentsNode[0];
+    private boolean needsSorting = false;
 
     public ContentsNode(String title, int indent) {
         this.title = title;
@@ -53,6 +54,7 @@ public class ContentsNode implements IContentsNode {
     @Override
     public void addChild(IContentsNode node) {
         nodes.put(node.getSearchName(), node);
+        needsSorting = true;
     }
 
     @Override
@@ -67,6 +69,10 @@ public class ContentsNode implements IContentsNode {
 
     @Override
     public void sort() {
+        if (!needsSorting) {
+            return;
+        }
+        needsSorting = false;
         sortedNodes = nodes.values().toArray(new IContentsNode[0]);
         Arrays.sort(sortedNodes, StringUtilBC.compareBasicReadable(IContentsNode::getSearchName));
         for (IContentsNode node : sortedNodes) {

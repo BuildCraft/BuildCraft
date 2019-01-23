@@ -28,7 +28,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.Language;
-import net.minecraft.client.util.SuffixArray;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
@@ -62,6 +61,10 @@ import buildcraft.lib.guide.GuideContentsData;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.ProfilerUtil;
+import buildcraft.lib.misc.data.ProfilerBC;
+import buildcraft.lib.misc.data.ProfilerBC.IProfilerSection;
+import buildcraft.lib.misc.search.ISuffixArray;
+import buildcraft.lib.misc.search.VanillaSuffixArray;
 
 public enum GuideManager implements IResourceManagerReloadListener {
     INSTANCE;
@@ -80,7 +83,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
 
     /** Internal use only! Use {@link #addChild(ResourceLocation, JsonTypeTags, PageLink)} instead! */
-    public SuffixArray<PageLink> quickSearcher;
+    public ISuffixArray<PageLink> quickSearcher;
     /** Every {@link PageLink} that has been added to {@link #quickSearcher}. */
     private final Set<PageLink> pageLinksAdded = new HashSet<>();
     private final Map<GuideBook, Map<TypeOrder, ContentsNode>> contents = new HashMap<>();
@@ -135,9 +138,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
         prof.profilingEnabled = true;
         prof.startSection("root");
         prof.startSection("reload");
-        GuideGroupManager.get("lols", "hi");
         Stopwatch watch = Stopwatch.createStarted();
 
+        GuideGroupManager.get("lols", "hi");
         prof.startSection("book_registry");
         GuideBookRegistry.INSTANCE.reload();
         prof.endStartSection("page_registry");
@@ -185,13 +188,13 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
 
         // load the default ones
-        loadLangInternal(resourceManager, DEFAULT_LANG);
+        loadLangInternal(resourceManager, DEFAULT_LANG, prof);
         // replace any existing with the new ones.
 
         prof.endStartSection("load_real_lang");
 
         if (!DEFAULT_LANG.equals(langCode)) {
-            loadLangInternal(resourceManager, langCode);
+            loadLangInternal(resourceManager, langCode, prof);
         }
 
         prof.endStartSection("contents_page");
@@ -205,6 +208,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         int e = p - a;
         prof.endSection();
         prof.endSection();
+        BCLog.logger.info("[lib.guide] " + pageLinksAdded.size() + " search terms");
         BCLog.logger.info("[lib.guide] Loaded " + p + " possible and " + a + " actual guide pages (" + e
             + " not found) in " + time / 1000 + "ms.");
         BCLog.logger.info("[lib.guide] Performance information for guide loading:");
@@ -212,7 +216,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
         BCLog.logger.info("[lib.guide] End of guide loading performance information.");
     }
 
-    private void loadLangInternal(IResourceManager resourceManager, String lang) {
+    private void loadLangInternal(IResourceManager resourceManager, String lang, Profiler prof) {
+        ProfilerBC p = new ProfilerBC(prof);
         main_iteration: for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE
             .getReloadableEntryMap().entrySet()) {
             ResourceLocation entryKey = mapEntry.getKey();
@@ -222,8 +227,10 @@ public enum GuideManager implements IResourceManagerReloadListener {
             for (Entry<String, IPageLoader> entry : PAGE_LOADERS.entrySet()) {
                 ResourceLocation fLoc = new ResourceLocation(domain, path + "." + entry.getKey());
 
-                try (InputStream stream = resourceManager.getResource(fLoc).getInputStream()) {
-                    GuidePageFactory factory = entry.getValue().loadPage(stream, entryKey, mapEntry.getValue());
+                try (IProfilerSection s = p.start("get_resource");
+                    InputStream stream = resourceManager.getResource(fLoc).getInputStream();
+                    IProfilerSection l = p.start("load")) {
+                    GuidePageFactory factory = entry.getValue().loadPage(stream, entryKey, mapEntry.getValue(), prof);
                     // put the original page in so that the different lang variants override it
                     pages.put(entryKey, factory);
                     if (GuideManager.DEBUG) {
@@ -263,7 +270,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
             genTypeMap(book);
         }
-        quickSearcher = new SuffixArray<>();
+        quickSearcher = new VanillaSuffixArray<>();
         pageLinksAdded.clear();
         prof.endStartSection("add_pages");
 
@@ -287,12 +294,37 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
 
         prof.endStartSection("add_default");
+        ContentsNode othersRoot = new ContentsNode(LocaleUtil.localize("buildcraft.guide.contents.all_group"), 0);
+        for (Entry<GuideBook, Map<TypeOrder, ContentsNode>> bookEntry : contents.entrySet()) {
+            @Nullable
+            GuideBook book = bookEntry.getKey();
+            if (book != null && !book.appendAllEntries) {
+                continue;
+            }
+            for (ContentsNode root : bookEntry.getValue().values()) {
+                root.addChild(othersRoot);
+            }
+        }
         final IEntryLinkConsumer adder = (tags, page) -> {
+            assert tags.domain == null;
+            assert tags.subType == null;
             prof.startSection("add_child");
-            addChild(null, tags, page);
+            if (pageLinksAdded.add(page)) {
+                quickSearcher.add(page, page.getSearchName());
+            }
+            String title = LocaleUtil.localize(tags.type);
+            IContentsNode subNode = othersRoot.getChild(title);
+            if (subNode instanceof ContentsNode) {
+                subNode.addChild(page);
+            } else if (subNode == null) {
+                ContentsNode subContents = new ContentsNode(title, 1);
+                othersRoot.addChild(subContents);
+                subContents.addChild(page);
+            } else {
+                throw new IllegalStateException("Unknown node type " + subNode.getClass());
+            }
             prof.endSection();
         };
-        prof.endStartSection("add_default");
         for (PageValueType<?> type : GuidePageRegistry.INSTANCE.types) {
             prof.startSection(type.getClass().getName().replace('.', '/'));
             type.iterateAllDefault(adder);
@@ -301,6 +333,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
         prof.endStartSection("generate_quick_search");
         quickSearcher.generate();
+
         prof.endStartSection("sort");
         for (Map<TypeOrder, ContentsNode> map : contents.values()) {
             for (ContentsNode node : map.values()) {
@@ -322,41 +355,38 @@ public enum GuideManager implements IResourceManagerReloadListener {
         if (pageLinksAdded.add(page)) {
             quickSearcher.add(page, page.getSearchName());
         }
-        for (Entry<GuideBook, Map<TypeOrder, ContentsNode>> bookEntry : contents.entrySet()) {
 
+        for (Entry<GuideBook, Map<TypeOrder, ContentsNode>> bookEntry : contents.entrySet()) {
             @Nullable
             GuideBook book = bookEntry.getKey();
 
-            if (bookType == null) {
-                if (book != null && !book.appendAllEntries) {
-                    continue;
-                }
-            } else if (book != null && !book.name.equals(bookType)) {
+            if (book != null && !book.name.equals(bookType)) {
                 continue;
             }
             Map<TypeOrder, ContentsNode> map = bookEntry.getValue();
             for (Entry<TypeOrder, ContentsNode> entry : map.entrySet()) {
                 TypeOrder order = entry.getKey();
-                ContentsNode node = entry.getValue();
-
                 String[] ordered = tags.getOrdered(order);
+                ContentsNode[] nodePath = new ContentsNode[ordered.length];
+                ContentsNode node = entry.getValue();
                 for (int i = 0; i < ordered.length; i++) {
                     String title = LocaleUtil.localize(ordered[i]);
                     IContentsNode subNode = node.getChild(title);
                     if (subNode instanceof ContentsNode) {
                         node = (ContentsNode) subNode;
+                        nodePath[i] = node;
                     } else if (subNode == null) {
                         ContentsNode subContents = new ContentsNode(title, i);
                         node.addChild(subContents);
                         node = subContents;
+                        nodePath[i] = node;
                     } else {
                         throw new IllegalStateException("Unknown node type " + subNode.getClass());
                     }
                 }
-                node.addChild(page);
+                nodePath[nodePath.length - 1].addChild(page);
             }
         }
-
     }
 
     @Nullable

@@ -33,6 +33,7 @@ import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.WrappedTextData;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
+import buildcraft.lib.misc.search.ISuffixArray.SearchResult;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
@@ -43,6 +44,7 @@ public class GuidePageContents extends GuidePageBase {
     private ContentsNodeGui contents;
     private final GuiTextField searchText;
     private String lastSearchText = "";
+    /** -1 if all of the results can be displayed or the actual number of results if it's too many. */
     private int realResultCount = -1;
 
     public GuidePageContents(GuiGuide gui) {
@@ -100,18 +102,15 @@ public class GuidePageContents extends GuidePageBase {
             lastSearchText = searchText.getText();
             numPages = -1;
             if (lastSearchText.isEmpty()) {
+                realResultCount = -1;
                 contents.node.resetVisibility();
                 contents.invalidate();
             } else {
                 String text = lastSearchText.toLowerCase(Locale.ROOT);
-                List<PageLink> ret = GuideManager.INSTANCE.quickSearcher.search(text);
-                if (ret.size() > BCLibConfig.maxGuideSearchCount) {
-                    realResultCount = ret.size();
-                    ret.subList(BCLibConfig.maxGuideSearchCount, ret.size()).clear();
-                } else {
-                    realResultCount = -1;
-                }
-                Set<PageLink> matches = new HashSet<>(ret);
+                SearchResult<PageLink> ret =
+                    GuideManager.INSTANCE.quickSearcher.search(text, BCLibConfig.maxGuideSearchCount);
+                realResultCount = ret.hasAllResults() ? -1 : ret.realResultCount;
+                Set<PageLink> matches = new HashSet<>(ret.results);
                 contents.node.setVisible(matches);
                 contents.invalidate();
 
