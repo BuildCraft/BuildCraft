@@ -13,6 +13,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.fluid.BCFluid;
 
 import buildcraft.energy.client.sprite.AtlasSpriteFluid;
@@ -26,6 +27,16 @@ public class BCEnergySprites {
     public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
 
+        if (!BCLibConfig.useSwappableSprites) {
+            for (BCFluid f : BCEnergyFluids.allFluids) {
+                // So this doesn't work properly as we don't have the sprites.
+                // but that's ok as we said that these don't work if disabled ~anyway~
+                map.registerSprite(f.getStill());
+                map.registerSprite(f.getFlowing());
+            }
+            return;
+        }
+
         ResourceLocation[][] fromSprites = new ResourceLocation[3][2];
         for (int h = 0; h < 3; h++) {
             fromSprites[h][0] = new ResourceLocation("buildcraftenergy:blocks/fluids/heat_" + h + "_still");
@@ -33,10 +44,9 @@ public class BCEnergySprites {
         }
 
         for (BCFluid f : BCEnergyFluids.allFluids) {
-            AtlasSpriteFluid spriteStill = new AtlasSpriteFluid(f.getStill().toString(), fromSprites[f.getHeatValue()][0], f);
-            AtlasSpriteFluid spriteFlow = new AtlasSpriteFluid(f.getFlowing().toString(), fromSprites[f.getHeatValue()][1], f);
-            map.setTextureEntry(spriteStill);
-            map.setTextureEntry(spriteFlow);
+            ResourceLocation[] sprites = fromSprites[f.getHeatValue()];
+            map.setTextureEntry(new AtlasSpriteFluid(f.getStill().toString(), sprites[0], f));
+            map.setTextureEntry(new AtlasSpriteFluid(f.getFlowing().toString(), sprites[1], f));
         }
     }
 }

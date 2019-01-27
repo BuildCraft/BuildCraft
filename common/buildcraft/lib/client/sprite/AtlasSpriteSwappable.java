@@ -30,6 +30,12 @@ public abstract class AtlasSpriteSwappable extends TextureAtlasSprite {
 
     public AtlasSpriteSwappable(String baseName) {
         super(baseName);
+        if (!BCLibConfig.useSwappableSprites) {
+            throw new IllegalStateException(
+                "The user has disabled swappable sprites but some code still called it's constructor anyway!\n"
+                    + "(Note that this is a *mod* bug, not a user configuration issue - there are legitimate reasons\n"
+                    + "to disabled swappable sprites normally, like for optifine compat)");
+        }
     }
 
     @Override
