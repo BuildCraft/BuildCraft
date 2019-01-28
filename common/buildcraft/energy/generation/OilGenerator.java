@@ -171,8 +171,17 @@ public enum OilGenerator implements IWorldGenerator {
                     maxHeight = BCEnergyConfig.smallSpoutMaxHeight;
                     radius = 0;
                 }
-
-                int height = minHeight + rand.nextInt(maxHeight - minHeight);
+                final int height;
+                if (maxHeight == minHeight) {
+                    height = maxHeight;
+                } else {
+                    if (maxHeight < minHeight) {
+                        int t = maxHeight;
+                        maxHeight = minHeight;
+                        minHeight = t;
+                    }
+                    height = minHeight + rand.nextInt(maxHeight - minHeight);
+                }
                 structures.add(createSpout(new BlockPos(x, wellY, z), height, radius));
             }
 
