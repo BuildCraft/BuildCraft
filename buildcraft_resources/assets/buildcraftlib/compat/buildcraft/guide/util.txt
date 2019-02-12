@@ -35,6 +35,7 @@ alias action 3 `statement "action" "%0" "%1" "%2"`
 
 alias item_tool 2 `item "tool" "%0" "%1"`
 alias item_gear 2 `item "gear" "%0" "%1"`
+alias item_plug 2 `item "pipe_plug" "%0" "%1"`
 alias pipe_item 2 `pipe "pipe_item" "%0" "%1"`
 alias pipe_fluid 2 `pipe "pipe_fluid" "%0" "%1"`
 // no "pipe_power" - no point writing the pages as they will be gone soonish :)
@@ -47,6 +48,7 @@ alias block_engine 2 `block_full "engine" "%0" "%1"`
 
 alias tool 1 `item_tool "%0" "${domain}:%0"`
 alias gear 1 `item_gear "%0" "${domain}:%0"`
+alias plug 1 `item_plug "%0" "${domain}:%0"`
 
 alias block_refining 1 `block "refining" "%0"`
 alias block_fluid 1 `block "fluid" "%0"`

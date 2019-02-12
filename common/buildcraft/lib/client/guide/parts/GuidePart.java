@@ -87,11 +87,7 @@ public abstract class GuidePart {
         GlStateManager.color(1, 1, 1);
     }
 
-    /** @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param current The current position to render from
+    /** @param current The current position to render from
      * @param index The current page index to render on
      * @return The new position for the next part to render from */
     public abstract PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index);

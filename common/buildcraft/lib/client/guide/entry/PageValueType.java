@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
@@ -47,7 +48,7 @@ public abstract class PageValueType<T> {
 
     public abstract List<String> getTooltip(T value);
 
-    public abstract void iterateAllDefault(IEntryLinkConsumer consumer);
+    public abstract void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof);
 
     @Nullable
     public final PageValue<T> wrap(Object value) {

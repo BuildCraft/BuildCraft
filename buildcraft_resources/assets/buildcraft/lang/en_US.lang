@@ -720,6 +720,9 @@ buildcraft.guide_book.reloaded=Guide Book Reloaded
 buildcraft.guide.too_many_results=Too many results to display: %s
 buildcraft.guide.contents.loaded_modules=Loaded modules:
 buildcraft.guide.contents.missing_modules=Missing modules:
+buildcraft.guide.order.type_subtype=Sort By Type
+buildcraft.guide.order.mod_type=Sort By Mod
+buildcraft.guide.order.alphabetical=Sort Alphabetically
 
 buildcraft.guide.recipe.create=Recipe
 buildcraft.guide.recipe.create.plural=Recipes

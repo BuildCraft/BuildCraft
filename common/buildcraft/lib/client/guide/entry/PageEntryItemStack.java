@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -49,7 +50,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
     }
 
     @Override
-    public void iterateAllDefault(IEntryLinkConsumer consumer) {
+    public void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof) {
         for (Item item : ForgeRegistries.ITEMS) {
             if (!GuideManager.INSTANCE.objectsAdded.add(item)) {
                 continue;
@@ -60,7 +61,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 ItemStack stack = stacks.get(i);
 
                 try {
-                    consumer.addChild(TAGS, new PageLinkItemStack(false, stack));
+                    consumer.addChild(TAGS, PageLinkItemStack.create(false, stack, prof));
                 } catch (RuntimeException e) {
                     throw new Error("Failed to create a page link for " + item.getRegistryName() + " " + item.getClass()
                         + " (" + stack.serializeNBT() + ")", e);
@@ -68,7 +69,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 if (i > 50) {
                     // Woah there, lets not fill up entire pages with what is
                     // most likely the same item
-                    break;
+                    // break;
                 }
             }
         }
@@ -173,6 +174,6 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
 
     @Override
     public void addPageEntries(ItemStackValueFilter value, GuiGuide gui, List<GuidePart> parts) {
-        XmlPageLoader.appendAllCrafting(value.stack.baseStack, parts, gui);
+        XmlPageLoader.appendAllCrafting(value.stack.baseStack, parts, gui, new Profiler());
     }
 }

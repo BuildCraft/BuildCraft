@@ -75,6 +75,11 @@ public class FluidRenderer {
         Map<ResourceLocation, SpriteFluidFrozen> spritesStitched = new HashMap<>();
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
             ResourceLocation still = fluid.getStill();
+            ResourceLocation flowing = fluid.getFlowing();
+            if (still == null || flowing == null) {
+                throw new IllegalStateException("Encountered a fluid with a null still sprite! (" + fluid.getName()
+                    + " - " + FluidRegistry.getDefaultFluidName(fluid) + ")");
+            }
             if (spritesStitched.containsKey(still)) {
                 fluidSprites.get(FluidSpriteType.FROZEN).put(fluid.getName(), spritesStitched.get(still));
             } else {
@@ -86,12 +91,12 @@ public class FluidRenderer {
                 fluidSprites.get(FluidSpriteType.FROZEN).put(fluid.getName(), spriteFrozen);
             }
             // Note: this must be called with EventPriority.LOW so that we don't overwrite other custom sprites.
-            fluidSprites.get(FluidSpriteType.STILL).put(fluid.getName(), map.registerSprite(fluid.getStill()));
-            fluidSprites.get(FluidSpriteType.FLOWING).put(fluid.getName(), map.registerSprite(fluid.getFlowing()));
+            fluidSprites.get(FluidSpriteType.STILL).put(fluid.getName(), map.registerSprite(still));
+            fluidSprites.get(FluidSpriteType.FLOWING).put(fluid.getName(), map.registerSprite(flowing));
         }
     }
 
-    /** Render's a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
+    /** Renders a fluid cuboid to the given vertex buffer. The cube shouldn't cross over any {@literal 0->1} boundary
      * (so the cube must be contained within a block).
      * 
      * @param type The type of sprite to use. See {@link FluidSpriteType} for more details.

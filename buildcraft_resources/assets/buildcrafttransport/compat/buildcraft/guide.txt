@@ -6,3 +6,4 @@ alias pipei 1 `pipe_item "%0" "buildcrafttransport:pipe_%0"`
 alias pipef 1 `pipe_fluid "%0" "buildcrafttransport:pipe_%0"`
 
 pipei "wood_item"
+plug "plug_power_adaptor"

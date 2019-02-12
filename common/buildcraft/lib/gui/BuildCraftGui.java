@@ -98,9 +98,7 @@ public class BuildCraftGui {
     }
 
     /** Creates a new {@link BuildCraftGui} that uses the entire screen for display. Ledgers are displayed on the
-     * opposite side (so that they expand properly).
-     * 
-     * @param gui */
+     * opposite side (so that they expand properly). */
     public BuildCraftGui(GuiScreen gui) {
         this.gui = gui;
         this.screenElement = GuiUtil.AREA_WHOLE_SCREEN;

@@ -55,6 +55,8 @@ public abstract class GuideChapter extends GuidePart {
             GuiGuide.BOX_SELECTED_CHAPTER.drawAt(x, y);
             RenderUtil.setGLColorFromInt(-1);
         };
+        icon = null;
+        selected = null;
         this.chapter = new PageLine(icon, selected, indent, text, false);
     }
 
@@ -65,6 +67,21 @@ public abstract class GuideChapter extends GuidePart {
     @Override
     public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
         current = current.guaranteeSpace(getFontRenderer().getMaxFontHeight() * 4, height);
+
+        int colour = getColour();
+
+        if (current.page == index) {
+            RenderUtil.setGLColorFromInt(colour);
+            int _x = x + 12;
+            int _y = y + current.pixel;
+            int _width = width - 24;
+            GuiGuide.CHAPTER_MARKER_LEFT.drawAt(_x - 5, _y - 4);
+            float oX = _x - 5 + GuiGuide.CHAPTER_MARKER_LEFT.width;
+            GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(oX, _y - 4, _width + 4, 16);
+            GuiGuide.CHAPTER_MARKER_RIGHT.drawAt(_x + _width + 4, _y - 4);
+            RenderUtil.setGLColorFromInt(-1);
+        }
+
         PagePosition n = renderLine(current, chapter, x, y, width, height, index);
         index /= 2;
         if (n.page / 2 < index) {

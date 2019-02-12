@@ -20,7 +20,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.sprite.SpriteRaw;
+import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 @SideOnly(Side.CLIENT)
 public class GuiIcon implements ISimpleDrawable {
@@ -48,6 +50,10 @@ public class GuiIcon implements ISimpleDrawable {
         double uMin = raw.uMin + u / textureSize;
         double vMin = raw.vMin + v / textureSize;
         return new GuiIcon(new SpriteRaw(raw.location, uMin, vMin, raw.width, raw.height), textureSize);
+    }
+
+    public boolean containsGuiPos(double x, double y, IGuiPosition pos) {
+        return new GuiRectangle(x, y, width, height).contains(pos);
     }
 
     public DynamicTexture createDynamicTexture(int scale) {
@@ -89,7 +95,8 @@ public class GuiIcon implements ISimpleDrawable {
         GL11.glEnd();
     }
 
-    private static double[] calcQ(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+    private static double[] calcQ(double x1, double y1, double x2, double y2, double x3, double y3, double x4,
+        double y4) {
         // Method contents taken from http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0
         // (or github https://github.com/bitlush/android-arbitrary-quadrilaterals-in-opengl-es-2-0 if the site is down)
         // this code is by Keith Wood

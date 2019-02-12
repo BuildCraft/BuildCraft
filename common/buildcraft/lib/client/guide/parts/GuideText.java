@@ -28,8 +28,8 @@ public class GuideText extends GuidePart {
         PagePosition newPos = renderLine(current, text, x, y, width, height, index);
         if (wasHovered && didRender) {
             List<String> tooltip = text.getTooltip();
-            if (tooltip != null) {
-                gui.tooltip.addAll(tooltip);
+            if (tooltip != null && !tooltip.isEmpty()) {
+                gui.tooltips.add(tooltip);
             }
         }
         return newPos;

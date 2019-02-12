@@ -9,9 +9,11 @@ package buildcraft.lib.client.guide;
 import com.google.common.collect.ImmutableList;
 
 public class TypeOrder {
+    public final String localeKey;
     public final ImmutableList<ETypeTag> tags;
 
-    public TypeOrder(ETypeTag... tags) {
+    public TypeOrder(String localeKey, ETypeTag... tags) {
+        this.localeKey = localeKey;
         this.tags = ImmutableList.copyOf(tags);
     }
 

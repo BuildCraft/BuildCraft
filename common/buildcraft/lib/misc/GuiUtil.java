@@ -428,8 +428,7 @@ public class GuiUtil {
     }
 
     public static List<String> getFormattedTooltip(ItemStack stack) {
-        Minecraft mc = Minecraft.getMinecraft();
-        List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
+        List<String> list = getUnFormattedTooltip(stack);
 
         if (!list.isEmpty()) {
             list.set(0, stack.getRarity().rarityColor + list.get(0));
@@ -440,6 +439,11 @@ public class GuiUtil {
         }
 
         return list;
+    }
+
+    public static List<String> getUnFormattedTooltip(ItemStack stack) {
+        Minecraft mc = Minecraft.getMinecraft();
+        return stack.getTooltip(mc.player, getTooltipFlags());
     }
 
     private static ITooltipFlag getTooltipFlags() {

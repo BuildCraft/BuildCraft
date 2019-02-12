@@ -7,6 +7,7 @@
 package buildcraft.lib.recipe;
 
 import java.util.Arrays;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
@@ -36,6 +37,10 @@ public class ChangingObject<T> {
         long now = (System.currentTimeMillis() / timeGap) % options.length;
         int i = (int) now + indexOffset;
         return options[i % options.length];
+    }
+
+    public List<T> getOptions() {
+        return Arrays.asList(options);
     }
 
     /** Sets the time gap between different stacks showing, in milliseconds. Defaults to 1000 (1 second) */

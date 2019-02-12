@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
@@ -46,7 +47,7 @@ public class PageEntryExternal extends PageValueType<String> {
     }
 
     @Override
-    public void iterateAllDefault(IEntryLinkConsumer consumer) {
+    public void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof) {
         // NO-OP: everything is provided as-is.
     }
 }

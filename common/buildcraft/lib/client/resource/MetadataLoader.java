@@ -25,8 +25,7 @@ public class MetadataLoader {
         }
     }
 
-    /** @param samePack If true, then only the data
-     * @return */
+    /** @param samePack If true, then only the data in the same resource pack will be returned. */
     @Nullable
     public static DataMetadataSection getData(ResourceLocation location, boolean samePack) {
         IResourceManager resManager = Minecraft.getMinecraft().getResourceManager();

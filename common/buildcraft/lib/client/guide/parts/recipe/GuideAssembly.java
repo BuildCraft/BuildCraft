@@ -7,6 +7,7 @@
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -85,7 +86,7 @@ public class GuideAssembly extends GuidePartItem {
             drawItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
 
             if (MJ_POSITION.offset(x, y).contains(gui.mouse)) {
-                gui.tooltip.add(LocaleUtil.localizeMj(mjCost.get()));
+                gui.tooltips.add(Collections.singletonList(LocaleUtil.localizeMj(mjCost.get())));
             }
 
             RenderHelper.disableStandardItemLighting();

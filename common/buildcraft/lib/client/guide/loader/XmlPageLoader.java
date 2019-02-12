@@ -10,13 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -89,24 +87,24 @@ public enum XmlPageLoader implements IPageLoaderText {
 
     @FunctionalInterface
     public interface SpecialParser {
-        List<GuidePartFactory> parse(XmlTag tag);
+        List<GuidePartFactory> parse(XmlTag tag, Profiler prof);
     }
 
     @FunctionalInterface
     public interface SpecialParserSingle extends SpecialParser {
         @Override
-        default List<GuidePartFactory> parse(XmlTag tag) {
-            GuidePartFactory single = parseSingle(tag);
+        default List<GuidePartFactory> parse(XmlTag tag, Profiler prof) {
+            GuidePartFactory single = parseSingle(tag, prof);
             if (single == null) return null;
             return ImmutableList.of(single);
         }
 
-        GuidePartFactory parseSingle(XmlTag tag);
+        GuidePartFactory parseSingle(XmlTag tag, Profiler prof);
     }
 
     @FunctionalInterface
     public interface MultiPartJoiner {
-        GuidePartFactory join(XmlTag tag, List<GuidePartFactory> factories);
+        GuidePartFactory join(XmlTag tag, List<GuidePartFactory> factories, Profiler prof);
     }
 
     static {
@@ -116,7 +114,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         putDuelMultiPartType("detail", () -> SHOW_DETAIL);
         putDuelMultiPartType("hint", () -> SHOW_HINTS);
         putMultiPartType("note", XmlPageLoader::loadNote);
-        putSingle("new_page", attr -> GuidePartNewPage::new);
+        putSingle("new_page", (attr, prof) -> GuidePartNewPage::new);
         putSingle("chapter", XmlPageLoader::loadChapter);
         putSingle("recipe", XmlPageLoader::loadRecipe);
         putSingle("group", XmlPageLoader::loadGroup);
@@ -134,7 +132,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     public static void putSimpleMultiPartType(String name, BooleanSupplier isVisible) {
-        putMultiPartType(name, (tag, factories) -> (gui) -> {
+        putMultiPartType(name, (tag, factories, prof) -> (gui) -> {
             List<GuidePart> subParts = new ArrayList<>(factories.size());
             for (GuidePartFactory factory : factories) {
                 subParts.add(factory.createNew(gui));
@@ -144,7 +142,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     public static void putCode(String name) {
-        putMultiPartType(name, (tag, factories) -> {
+        putMultiPartType(name, (tag, factories, prof) -> {
             List<String> lines = new ArrayList<>();
             for (GuidePartFactory factory : factories) {
                 if (factory instanceof GuideTextFactory) {
@@ -246,7 +244,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                     SpecialParser parser = TAG_FACTORIES.get(tag.name);
                     if (parser != null) {
                         prof.startSection("use_" + tag.name);
-                        List<GuidePartFactory> factories = parser.parse(tag);
+                        List<GuidePartFactory> factories = parser.parse(tag, prof);
                         prof.endSection();
                         if (factories != null) {
                             nestedParts.peek().addAll(factories);
@@ -279,7 +277,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                         }
                         List<GuidePartFactory> subParts = nestedParts.pop();
                         prof.startSection("join_" + tag.name);
-                        GuidePartFactory joined = joiner.join(nameTag, subParts);
+                        GuidePartFactory joined = joiner.join(nameTag, subParts, prof);
                         prof.endSection();
                         if (joined == null) {
                             nestedParts.peek().addAll(subParts);
@@ -466,7 +464,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         }
     }
 
-    private static GuidePartFactory loadChapter(XmlTag tag) {
+    private static GuidePartFactory loadChapter(XmlTag tag, Profiler prof) {
         String name = tag.get("name");
         if (name == null) {
             BCLog.logger.warn("[lib.guide.loader.xml] Found a chapter tag without a name!" + tag);
@@ -475,7 +473,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         return chapter(name);
     }
 
-    private static GuidePartFactory loadImage(XmlTag tag) {
+    private static GuidePartFactory loadImage(XmlTag tag, Profiler prof) {
         String src = tag.get("src");
         if (src == null) {
             BCLog.logger.warn("[lib.guide.loader.xml] Found an image tag without an src!" + tag);
@@ -500,7 +498,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         }
     }
 
-    private static GuidePartFactory loadRecipe(XmlTag tag) {
+    private static GuidePartFactory loadRecipe(XmlTag tag, Profiler prof) {
         ItemStack stack = loadItemStack(tag);
         if (stack == null) {
             return null;
@@ -518,7 +516,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                 }
             }
         }
-        List<GuidePartFactory> list = RecipeLookupHelper.getAllRecipes(stack);
+        List<GuidePartFactory> list = RecipeLookupHelper.getAllRecipes(stack, prof);
         if (list.isEmpty()) {
             return null;
         } else {
@@ -526,34 +524,34 @@ public enum XmlPageLoader implements IPageLoaderText {
         }
     }
 
-    private static List<GuidePartFactory> loadAllRecipes(XmlTag tag) {
+    private static List<GuidePartFactory> loadAllRecipes(XmlTag tag, Profiler prof) {
         ItemStack stack = loadItemStack(tag);
         if (stack == null) {
             return null;
         }
-        return RecipeLookupHelper.getAllRecipes(stack);
+        return RecipeLookupHelper.getAllRecipes(stack, prof);
     }
 
-    private static List<GuidePartFactory> loadAllUsages(XmlTag tag) {
+    private static List<GuidePartFactory> loadAllUsages(XmlTag tag, Profiler prof) {
         ItemStack stack = loadItemStack(tag);
         if (stack == null) {
             return null;
         }
-        return RecipeLookupHelper.getAllUsages(stack);
+        return RecipeLookupHelper.getAllUsages(stack, prof);
     }
 
-    private static List<GuidePartFactory> loadAllRecipesAndUsages(XmlTag tag) {
+    private static List<GuidePartFactory> loadAllRecipesAndUsages(XmlTag tag, Profiler prof) {
         ItemStack stack = loadItemStack(tag);
         if (stack == null) {
             return null;
         }
-        return loadAllCrafting(stack);
+        return loadAllCrafting(stack, prof);
     }
 
-    public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack) {
-        Stopwatch watch = Stopwatch.createStarted();
+    public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack, Profiler prof) {
+        prof.startSection("recipes");
         List<GuidePartFactory> list = new ArrayList<>();
-        List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack);
+        List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack, prof);
         if (recipeParts.size() > 0) {
             list.add(GuidePartNewPage::new);
             if (recipeParts.size() == 1) {
@@ -563,7 +561,8 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             list.addAll(recipeParts);
         }
-        List<GuidePartFactory> usageParts = RecipeLookupHelper.getAllUsages(stack);
+        prof.endStartSection("uses");
+        List<GuidePartFactory> usageParts = RecipeLookupHelper.getAllUsages(stack, prof);
         // Ensure we don't have any duplicate recipes
         usageParts.removeAll(recipeParts);
         if (usageParts.size() > 0) {
@@ -577,13 +576,12 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             list.addAll(usageParts);
         }
-        BCLog.logger.info("[lib.guide] Took " + watch.elapsed(TimeUnit.MICROSECONDS) + "µs to load " + list.size()
-            + " crafting recipes for " + stack);
+        prof.endSection();
         return list;
     }
 
-    public static void appendAllCrafting(ItemStack stack, List<GuidePart> parts, GuiGuide gui) {
-        List<GuidePartFactory> recipeFactories = RecipeLookupHelper.getAllRecipes(stack);
+    public static void appendAllCrafting(ItemStack stack, List<GuidePart> parts, GuiGuide gui, Profiler prof) {
+        List<GuidePartFactory> recipeFactories = RecipeLookupHelper.getAllRecipes(stack, prof);
         List<GuidePart> recipeParts = new ArrayList<>();
         for (GuidePartFactory factory : recipeFactories) {
             recipeParts.add(factory.createNew(gui));
@@ -598,7 +596,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             parts.addAll(recipeParts);
         }
-        List<GuidePartFactory> usageFactories = RecipeLookupHelper.getAllUsages(stack);
+        List<GuidePartFactory> usageFactories = RecipeLookupHelper.getAllUsages(stack, prof);
         List<GuidePart> usageParts = new ArrayList<>();
         for (GuidePartFactory factory : usageFactories) {
             usageParts.add(factory.createNew(gui));
@@ -625,7 +623,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         return gui -> new GuideText(gui, new PageLine(0, LocaleUtil.localize(text), false));
     }
 
-    public static GuidePartFactory loadGroup(XmlTag tag) {
+    public static GuidePartFactory loadGroup(XmlTag tag, Profiler prof) {
         String domain = tag.get("domain");
         String group = tag.get("group");
         if (domain == null) {
@@ -696,7 +694,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         return stack;
     }
 
-    public static GuidePartFactory loadNote(XmlTag tag, List<GuidePartFactory> factories) {
+    public static GuidePartFactory loadNote(XmlTag tag, List<GuidePartFactory> factories, Profiler prof) {
         String id = tag.get("id");
         if (id == null) {
             BCLog.logger.warn("[lib.guide.loader.xml] Found a note tag without an 'id' attribute!");

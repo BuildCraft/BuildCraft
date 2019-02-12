@@ -116,9 +116,9 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon BORDER_BOTTOM_LEFT = new GuiIcon(ICONS_2, 0, 209, 13, 13);
     public static final GuiIcon BORDER_BOTTOM_RIGHT = new GuiIcon(ICONS_2, 13, 209, 13, 13);
 
-    public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS_2, 14, 100, 14, 14);
-    public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS_2, 42, 100, 14, 14);
-    public static final GuiIcon ORDER_MOD = new GuiIcon(ICONS_2, 56, 100, 14, 14);
+    public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS_2, 0, 0, 14, 14);
+    public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS_2, 14, 0, 14, 14);
+    public static final GuiIcon ORDER_ALPHABETICAL = new GuiIcon(ICONS_2, 28, 0, 14, 14);
 
     public static final GuiIcon CHAPTER_MARKER_LEFT = new GuiIcon(ICONS_2, 0, 223, 5, 16);
     public static final GuiIcon CHAPTER_MARKER_SPACE = new GuiIcon(ICONS_2, 6, 223, 19, 16);
@@ -132,31 +132,17 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon SEARCH_TAB_CLOSED = new GuiIcon(ICONS_2, 58, 196, 14, 6);
     public static final GuiIcon SEARCH_TAB_OPEN = new GuiIcon(ICONS_2, 40, 209, 106, 14);
 
-    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_MOD };
+    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_ALPHABETICAL };
 
     public static final GuiRectangle BACK_POSITION =
         new GuiRectangle(PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
 
     public static final TypeOrder[] SORTING_TYPES = { //
-        new TypeOrder(ETypeTag.TYPE, ETypeTag.SUB_TYPE), //
-        new TypeOrder(ETypeTag.MOD, ETypeTag.TYPE), //
-        new TypeOrder(ETypeTag.MOD, ETypeTag.SUB_MOD),//
+        new TypeOrder("buildcraft.guide.order.type_subtype", ETypeTag.TYPE, ETypeTag.SUB_TYPE), //
+        new TypeOrder("buildcraft.guide.order.mod_type", ETypeTag.MOD, ETypeTag.TYPE), //
+        new TypeOrder("buildcraft.guide.order.alphabetical")//
     };
 
-    // REMOVE FROM HERE...
-    private static final int PEN_HIDDEN_Y = 0, PEN_HIDDEN_X = 4, PEN_HIDDEN_WIDTH = 10;
-    private static final int PEN_HIDDEN_HEIGHT_MIN = 5, PEN_HIDDEN_HEIGHT_MAX = 15;
-    // TO HERE
-
-    public static final GuiRectangle PEN_HIDDEN_AREA = new GuiRectangle(PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2,
-        -PEN_HIDDEN_HEIGHT_MAX, PEN_HIDDEN_WIDTH, PEN_HIDDEN_HEIGHT_MAX);
-
-    // private static final int PEN_HIDDEN_BOX_X_MIN = PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2;
-    // private static final int PEN_HIDDEN_BOX_Y_MIN = -PEN_HIDDEN_HEIGHT_MAX;
-    // private static final int PEN_HIDDEN_BOX_X_MAX = PAGE_LEFT.width + PEN_HIDDEN_WIDTH / 2;
-    // private static final int PEN_HIDDEN_BOX_Y_MAX = 0;
-
-    private static final float PEN_HOVER_TIME = 9f;
     private static final float BOOK_OPEN_TIME = 10f; // 20
 
     public final MousePosition mouse = new MousePosition();
@@ -171,13 +157,9 @@ public class GuiGuide extends GuiScreen {
     /** Float between -90 and 90} */
     private float openingAngleLast = -90, openingAngleNext = -90;
 
-    /** Float between {@link #PEN_HIDDEN_HEIGHT_MIN} and {@link #PEN_HIDDEN_HEIGHT_MAX} */
-    private float hoverStageLast = 0, hoverStageNext = 0;
-    private boolean isOverHover = false;
-
     public int minX, minY;
     public ItemStack tooltipStack = null;
-    public final List<String> tooltip = new ArrayList<>();
+    public final List<List<String>> tooltips = new ArrayList<>();
 
     private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
     private final List<GuideChapter> chapters = new ArrayList<>();
@@ -249,24 +231,6 @@ public class GuiGuide extends GuiScreen {
     public void updateScreen() {
         super.updateScreen();
         if (isOpen) {
-            // Calculate pen hover position
-            float hoverDiff = (PEN_HIDDEN_HEIGHT_MAX - PEN_HIDDEN_HEIGHT_MIN) / PEN_HOVER_TIME;
-            hoverStageLast = hoverStageNext;
-            if (hoverStageNext > PEN_HIDDEN_HEIGHT_MAX) {
-                hoverStageNext -= hoverDiff * 5;
-            } else if (isOverHover) {
-                hoverStageNext += hoverDiff;
-                if (hoverStageNext > PEN_HIDDEN_HEIGHT_MAX) {
-                    hoverStageNext = PEN_HIDDEN_HEIGHT_MAX;
-                }
-            } else {
-                if (hoverStageNext > PEN_HIDDEN_HEIGHT_MIN) {
-                    hoverStageNext -= hoverDiff;
-                }
-                if (hoverStageNext < PEN_HIDDEN_HEIGHT_MIN) {
-                    hoverStageNext = PEN_HIDDEN_HEIGHT_MIN;
-                }
-            }
             currentPage.updateScreen();
             for (GuideChapter chapter : chapters) {
                 chapter.updateScreen();
@@ -370,7 +334,6 @@ public class GuiGuide extends GuiScreen {
             int pageWidth = (int) (sin * PAGE_LEFT.width);
             int bindingWidth = (int) ((1 - sin) * BOOK_BINDING.width);
 
-            int penHeight = (int) (sin * PEN_HIDDEN_HEIGHT_MIN);
             float offset = (1 - sin) * 50;
 
             minX = (width - PAGE_LEFT.width - pageWidth) / 2;
@@ -396,8 +359,6 @@ public class GuiGuide extends GuiScreen {
                 (int) (BOOK_BINDING.height + offset * 2));
 
             mc.renderEngine.bindTexture(ICONS_2);
-            drawTexturedModalRect(minX + pageWidth + bindingWidth - (PEN_HIDDEN_WIDTH / 2), minY - penHeight,
-                PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, penHeight);
         }
     }
 
@@ -420,8 +381,6 @@ public class GuiGuide extends GuiScreen {
             lastPageIcon.drawAt(minX + PAGE_LEFT.width, minY);
         }
 
-        isOverHover = PEN_HIDDEN_AREA.offset(minX, minY).contains(mouse);
-
         // Now draw the actual contents of the book
         String title = currentPage.getTitle();
         if (title != null) {
@@ -436,7 +395,7 @@ public class GuiGuide extends GuiScreen {
         }
 
         tooltipStack = null;
-        tooltip.clear();
+        tooltips.clear();
         setupFontRenderer();
         for (GuideChapter chapter : chapters) {
             chapter.reset();
@@ -464,32 +423,15 @@ public class GuiGuide extends GuiScreen {
             icon.drawAt(position);
         }
 
-        // Reset the colour for the pen
+        // Reset the colour
         GlStateManager.color(1, 1, 1);
-
-        // Draw the pen
-        if (isEditing) {
-            mc.renderEngine.bindTexture(ICONS_2);
-
-            double _x = minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2;
-            double _y = (this.height - PAGE_LEFT.height - 20) / 2;
-            if (isOverHover) {
-                PEN_UP.drawAt(_x, _y - PEN_UP.height);
-            } else {
-                PEN_ANGLED.drawAt(_x, _y - PEN_ANGLED.height - 2);
-            }
-        } else {
-            int h = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);
-
-            // Draw pen
-            mc.renderEngine.bindTexture(ICONS_2);
-            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - h, PEN_HIDDEN_X, PEN_HIDDEN_Y,
-                PEN_HIDDEN_WIDTH, h);
-
-            if (tooltipStack != null) {
-                renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
-            } else if (!tooltip.isEmpty()) {
-                drawHoveringText(tooltip, (int) mouse.getX(), (int) mouse.getY());
+        if (tooltipStack != null) {
+            renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
+        } else if (!tooltips.isEmpty()) {
+            int y = (int) mouse.getY();
+            for (List<String> tooltip : tooltips) {
+                drawHoveringText(tooltip, (int) mouse.getX(), y);
+                y += tooltip.size() * fontRenderer.FONT_HEIGHT + 10;
             }
         }
     }
@@ -529,12 +471,6 @@ public class GuiGuide extends GuiScreen {
                     closePage();
                 }
 
-                if (isOverHover) {
-                    isEditing = !isEditing;
-                    if (!isEditing) {
-                        hoverStageNext = PEN_UP.height;
-                    }
-                }
             } else {
                 if (mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width
                     && mouseY <= minY + BOOK_COVER.height) {

@@ -39,8 +39,8 @@ public abstract class PageLink implements IContentsLeaf {
 
     public void appendTooltip(GuiGuide gui) {
         List<String> tooltip = getTooltip();
-        if (tooltip != null) {
-            gui.tooltip.addAll(tooltip);
+        if (tooltip != null && !tooltip.isEmpty()) {
+            gui.tooltips.add(tooltip);
         }
     }
 

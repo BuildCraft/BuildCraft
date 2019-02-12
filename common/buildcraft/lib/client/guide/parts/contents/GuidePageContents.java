@@ -7,6 +7,7 @@
 package buildcraft.lib.client.guide.parts.contents;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +15,6 @@ import java.util.Set;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.BCLib;
@@ -95,8 +95,6 @@ public class GuidePageContents extends GuidePageBase {
         if (lastSearchText.equals(searchText.getText())) {
             if (numPages >= 3 && getPage() >= numPages) {
                 goToPage(numPages);
-            } else if (getPage() < 2) {
-                searchText.setFocused(false);
             }
         } else {
             lastSearchText = searchText.getText();
@@ -118,6 +116,9 @@ public class GuidePageContents extends GuidePageBase {
                     searchText.setTextColor(0xFF_00_00_00);
                 } else {
                     searchText.setTextColor(0xFF_FF_00_00);
+                }
+                if (getPage() < 2) {
+                    goToPage(2);
                 }
             }
             gui.refreshChapters();
@@ -169,7 +170,8 @@ public class GuidePageContents extends GuidePageBase {
                     _y += perLineHeight;
                 }
             }
-        } else if (index % 2 == 0) {
+        }
+        if (index % 2 == 0) {
             searchText.x = x + 23;
             searchText.y = y - 23;
             if (!searchText.isFocused() && searchText.getText().isEmpty()) {
@@ -197,15 +199,18 @@ public class GuidePageContents extends GuidePageBase {
         if (index % 2 == 0) {
             int oX = x + ORDER_OFFSET_X;
             int oY = y + ORDER_OFFSET_Y;
-            int i = 0;
             for (int j = 0; j < GuiGuide.ORDERS.length; j++) {
                 GuiIcon icon = GuiGuide.ORDERS[j];
-                if (gui.sortingOrder == GuiGuide.SORTING_TYPES[j]) {
+                TypeOrder typeOrder = GuiGuide.SORTING_TYPES[j];
+                if (gui.sortingOrder == typeOrder) {
                     icon = icon.offset(0, 14);
+                }
+                if (icon.containsGuiPos(oX, oY, gui.mouse)) {
+                    icon = icon.offset(0, 28);
+                    gui.tooltips.add(Collections.singletonList(LocaleUtil.localize(typeOrder.localeKey)));
                 }
                 icon.drawAt(oX, oY);
                 oY += 14;
-                i++;
             }
         }
     }
@@ -214,19 +219,6 @@ public class GuidePageContents extends GuidePageBase {
         IFontRenderer f = getFontRenderer();
         int fWidth = f.getStringWidth(text);
         f.drawString(text, (x + (width - fWidth) / 2), y, 0);
-    }
-
-    private void drawScaledCenteredText(float scale, String text, int x, int y, int width) {
-        IFontRenderer f = getFontRenderer();
-        int fWidth = (int) (f.getStringWidth(text) * scale);
-        if (scale != 1) {
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(scale, scale, 1);
-        }
-        f.drawString(text, (int) ((x + (width - fWidth) / 2) / scale), (int) (y / scale), 0);
-        if (scale != 1) {
-            GlStateManager.popMatrix();
-        }
     }
 
     @Override
@@ -241,6 +233,7 @@ public class GuidePageContents extends GuidePageBase {
                 if (rect.contains(gui.mouse)) {
                     gui.sortingOrder = order;
                     loadMainGui();
+                    lastSearchText = "@@@@INVALID@@@";
                     gui.refreshChapters();
                     contents.setFontRenderer(getFontRenderer());
                     return;

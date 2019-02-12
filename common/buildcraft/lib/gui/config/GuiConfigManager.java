@@ -120,6 +120,9 @@ public class GuiConfigManager {
     }
 
     private static void readFromJson(JsonObject json) {
+        if (json == null) {
+            throw new JsonSyntaxException("No json element!");
+        }
         for (Entry<String, JsonElement> entry : json.entrySet()) {
             ResourceLocation location = new ResourceLocation(entry.getKey());
             GuiConfigSet set = properties.get(location);
