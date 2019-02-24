@@ -1,0 +1,3 @@
+Bug fixes:
+
+* [#4359] Fixed a cache issue which caused items to disappear from transport pipes.

@@ -7,6 +7,7 @@ import java.util.Map;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
@@ -47,13 +48,18 @@ public class NeighbourTileCache implements ITileCache {
     }
 
     private boolean canUseCache() {
-        if (tile.isInvalid()) {
+        World w = tile.getWorld();
+        if (tile.isInvalid() || w == null) {
             return false;
         }
         BlockPos tPos = tile.getPos();
         if (!tPos.equals(lastSeenTilePos)) {
             lastSeenTilePos = tPos.toImmutable();
             cachedTiles.clear();
+        }
+        if (!w.isBlockLoaded(lastSeenTilePos)) {
+            cachedTiles.clear();
+            return false;
         }
         return true;
     }
@@ -73,7 +79,13 @@ public class NeighbourTileCache implements ITileCache {
             if (oTile == null || oTile.isInvalid()) {
                 cachedTiles.remove(offset);
             } else {
-                return new TileCacheRet(oTile);
+                World w = tile.getWorld();
+                // Unfortunately tile.isInvalid is false even when it is unloaded
+                if (w == null || !w.isBlockLoaded(lastSeenTilePos.offset(offset))) {
+                    cachedTiles.remove(offset);
+                } else {
+                    return new TileCacheRet(oTile);
+                }
             }
         }
         Chunk chunk;

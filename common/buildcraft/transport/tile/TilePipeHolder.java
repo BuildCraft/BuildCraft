@@ -7,7 +7,6 @@
 package buildcraft.transport.tile;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -107,7 +106,6 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     private boolean scheduleRenderUpdate = true;
     private final Set<PipeMessageReceiver> networkUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
     private final Set<PipeMessageReceiver> networkGuiUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
-    private final Map<EnumFacing, WeakReference<TileEntity>> neighbourTiles = new EnumMap<>(EnumFacing.class);
     private NBTTagCompound unknownData;
 
     public TilePipeHolder() {
@@ -225,26 +223,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
-    public void onNeighbourBlockChanged(Block block, BlockPos nehighbour) {
-        super.onNeighbourBlockChanged(block, nehighbour);
+    public void onNeighbourBlockChanged(Block block, BlockPos neighbour) {
+        super.onNeighbourBlockChanged(block, neighbour);
         if (world.isRemote) {
             return;
-        }
-
-        for (EnumFacing face : EnumFacing.VALUES) {
-            WeakReference<TileEntity> current = neighbourTiles.get(face);
-            if (current != null) {
-                TileEntity tile = current.get();
-                if (tile == null || tile.isInvalid()) {
-                    neighbourTiles.remove(face);
-                } else {
-                    continue;
-                }
-            }
-            TileEntity tile = world.getTileEntity(getPos().offset(face));
-            if (tile != null) {
-                neighbourTiles.put(face, new WeakReference<>(tile));
-            }
         }
         if (pipe != null) {
             pipe.markForUpdate();
