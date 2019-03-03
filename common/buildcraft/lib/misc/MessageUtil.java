@@ -284,7 +284,7 @@ public class MessageUtil {
     }
 
     /** Checks to make sure that this buffer has been *completely* read (so that there are no readable bytes left
-     * over */
+     * over) */
     public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
         int readableBytes = buf.readableBytes();
         int rb = readableBytes;
@@ -339,5 +339,7 @@ public class MessageUtil {
             }
             buf.clear();
         }
+
+        buf.release(); //Finished with the buffer so it can now be deallocated
     }
 }
