@@ -1,4 +1,3 @@
-<chapter name="tile.engineIron.name"/>
 <lore>
 While furnace fuels are nice. With the discovery of combustible fluids, a more powerful engine is in demand to harness their power.
 </lore>

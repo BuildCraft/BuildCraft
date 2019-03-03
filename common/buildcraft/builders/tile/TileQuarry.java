@@ -90,7 +90,7 @@ import buildcraft.core.marker.VolumeSubCache;
 import buildcraft.core.tile.TileMarkerVolume;
 
 public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable, IChunkLoadingTile {
-    private static final long MAX_POWER_PER_TICK = 64 * MjAPI.MJ;
+    private static final long MAX_POWER_PER_TICK = 256 * MjAPI.MJ;
     private static final ResourceLocation ADVANCEMENT_COMPLETE =
         new ResourceLocation("buildcraftbuilders:diggy_diggy_hole");
 
@@ -522,90 +522,106 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             }
         }
 
-        if (currentTask != null) {
-            long max =
-                Math.min(MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() * 2),
-                    Math.min(currentTask.getTarget() - currentTask.power, MAX_POWER_PER_TICK));
-            debugPowerRate = max;
-            long power = battery.extractPower(0, max);
-            if (currentTask.addPower(power)) {
-                currentTask = null;
-            } else {
-                sendNetworkUpdate(NET_RENDER_DATA);
-                return;
-            }
-        }
-
         if (!firstChecked) {
             return;
         }
 
-        if (!frameBreakBlockPoses.isEmpty()) {
-            BlockPos blockPos = frameBreakBlockPoses.iterator().next();
-            if (canMine(blockPos)) {
-                drillPos = null;
-                currentTask = new TaskBreakBlock(blockPos);
-                sendNetworkUpdate(NET_RENDER_DATA);
-            }
-            check(blockPos);
-            return;
-        }
+        long max =
+            Math.min(MAX_POWER_PER_TICK * (battery.getStored() + MAX_POWER_PER_TICK) / (battery.getCapacity() / 2),
+                MAX_POWER_PER_TICK);
+        debugPowerRate = max;
 
-        if (!framePlaceFramePoses.isEmpty()) {
-            for (BlockPos blockPos : framePoses) {
-                if (!framePlaceFramePoses.contains(blockPos)) {
-                    continue;
+        int maxTasks = Math.max(1, (int) (max * 4 / MAX_POWER_PER_TICK));
+        boolean sendUpdate = false;
+        power_loop: for (int i = 0; i < maxTasks; i++) {
+
+            if (currentTask != null) {
+
+                long needed = currentTask.getTarget() - currentTask.power;
+
+                needed = (2 + i) * needed / 2;
+
+                long power = battery.extractPower(0, Math.min(max, needed));
+                if (currentTask.addPower(power * 2 / (2 + i))) {
+                    currentTask = null;
+                    max -= power;
+                } else {
+                    sendUpdate = true;
+                    break;
+                }
+            }
+
+            if (!frameBreakBlockPoses.isEmpty()) {
+                BlockPos blockPos = frameBreakBlockPoses.iterator().next();
+                if (canMine(blockPos)) {
+                    drillPos = null;
+                    currentTask = new TaskBreakBlock(blockPos);
+                    sendUpdate = true;
                 }
                 check(blockPos);
-                if (!framePlaceFramePoses.contains(blockPos)) {
-                    continue;
-                }
-                drillPos = null;
-                currentTask = new TaskAddFrame(blockPos);
-                sendNetworkUpdate(NET_RENDER_DATA);
-                return;
+                continue power_loop;
             }
-        }
 
-        if (boxIterator == null || drillPos == null) {
-            boxIterator = createBoxIterator();
-            while (canMoveThrough(boxIterator.getCurrent()) || !canMine(boxIterator.getCurrent())
-                || !canMoveTo(boxIterator.getCurrent())) {
-                if (boxIterator.advance() == null) {
-                    break;
-                }
-            }
-            drillPos = new Vec3d(miningBox.closestInsideTo(pos));
-        }
-
-        if (boxIterator != null && boxIterator.hasNext()) {
-            while (canMoveThrough(boxIterator.getCurrent()) || !canMine(boxIterator.getCurrent())
-                || !canMoveTo(boxIterator.getCurrent())) {
-                if (boxIterator.advance() == null) {
-                    break;
+            if (!framePlaceFramePoses.isEmpty()) {
+                for (BlockPos blockPos : framePoses) {
+                    if (!framePlaceFramePoses.contains(blockPos)) {
+                        continue;
+                    }
+                    check(blockPos);
+                    if (!framePlaceFramePoses.contains(blockPos)) {
+                        continue;
+                    }
+                    drillPos = null;
+                    currentTask = new TaskAddFrame(blockPos);
+                    sendUpdate = true;
+                    continue power_loop;
                 }
             }
 
-            if (boxIterator.hasNext()) {
-                boolean found = false;
+            if (boxIterator == null || drillPos == null) {
+                boxIterator = createBoxIterator();
+                while (canMoveThrough(boxIterator.getCurrent()) || !canMine(boxIterator.getCurrent())
+                    || !canMoveTo(boxIterator.getCurrent())) {
+                    if (boxIterator.advance() == null) {
+                        break;
+                    }
+                }
+                drillPos = new Vec3d(miningBox.closestInsideTo(pos));
+            }
 
-                if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) >= 1) {
-                    currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.getCurrent()));
-                    found = true;
-                } else if (canMine(boxIterator.getCurrent())) {
-                    currentTask = new TaskBreakBlock(boxIterator.getCurrent());
-                    found = true;
+            if (boxIterator != null && boxIterator.hasNext()) {
+                while (canMoveThrough(boxIterator.getCurrent()) || !canMine(boxIterator.getCurrent())
+                    || !canMoveTo(boxIterator.getCurrent())) {
+                    if (boxIterator.advance() == null) {
+                        break;
+                    }
                 }
 
-                if (found) {
-                    sendNetworkUpdate(NET_RENDER_DATA);
-                } else {
-                    AxisAlignedBB box = miningBox.getBoundingBox();
-                    if (box.maxX - box.minX == 63 && box.maxZ - box.minZ == 63) {
-                        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_COMPLETE);
+                if (boxIterator.hasNext()) {
+                    boolean found = false;
+
+                    if (drillPos.squareDistanceTo(new Vec3d(boxIterator.getCurrent())) >= 1) {
+                        currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.getCurrent()));
+                        found = true;
+                    } else if (canMine(boxIterator.getCurrent())) {
+                        currentTask = new TaskBreakBlock(boxIterator.getCurrent());
+                        found = true;
+                    }
+
+                    if (found) {
+                        sendUpdate = true;
+                    } else {
+                        AxisAlignedBB box = miningBox.getBoundingBox();
+                        if (box.maxX - box.minX == 63 && box.maxZ - box.minZ == 63) {
+                            AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_COMPLETE);
+                        }
                     }
                 }
             }
+        }
+        debugPowerRate -= max;
+        if (sendUpdate) {
+            sendNetworkUpdate(NET_RENDER_DATA);
         }
     }
 

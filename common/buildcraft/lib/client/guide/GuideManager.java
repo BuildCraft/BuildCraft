@@ -74,6 +74,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     public static final String DEFAULT_LANG = "en_us";
     public static final Map<String, IPageLoader> PAGE_LOADERS = new HashMap<>();
     public static final GuideContentsData BOOK_ALL_DATA = new GuideContentsData(null);
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
 
     private final List<PageEntry<?>> entries = new ArrayList<>();
 
@@ -82,7 +83,6 @@ public enum GuideManager implements IResourceManagerReloadListener {
      * For example a partial path might be "buildcraftcore:wrench.md" and the */
     private final Map<ResourceLocation, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
-    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.guide.loader");
 
     /** Internal use only! Use {@link #addChild(ResourceLocation, JsonTypeTags, PageLink)} instead! */
     public ISuffixArray<PageLink> quickSearcher;
@@ -215,7 +215,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
             + " not found) in " + time / 1000 + "ms.");
         BCLog.logger.info("[lib.guide] Performance information for guide loading:");
         ProfilerUtil.logProfilerResults(prof, "root", time * 1000);
-        BCLog.logger.info("[lib.guide] End of guide loading performance information.");
+        BCLog.logger.info("[lib.guide] End of guide loading performance information. (" + time / 1000 + "ms)");
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang, Profiler prof) {
@@ -455,6 +455,6 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
         node.resetVisibility();
 
-        return new ContentsNodeGui(gui, guidePageContents, node);
+        return new ContentsNodeGui(gui, node);
     }
 }

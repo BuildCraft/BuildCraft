@@ -18,7 +18,6 @@ import buildcraft.lib.misc.ArrayUtil;
 
 public class ContentsNodeGui {
     public final GuiGuide gui;
-    public final GuidePageContents contents;
     public final ContentsNode node;
 
     private IFontRenderer fontRenderer;
@@ -26,9 +25,8 @@ public class ContentsNodeGui {
     private GuidePart[] parts;
     private PageLink[] links;
 
-    public ContentsNodeGui(GuiGuide gui, GuidePageContents contents, ContentsNode node) {
+    public ContentsNodeGui(GuiGuide gui, ContentsNode node) {
         this.gui = gui;
-        this.contents = contents;
         this.node = node;
     }
 

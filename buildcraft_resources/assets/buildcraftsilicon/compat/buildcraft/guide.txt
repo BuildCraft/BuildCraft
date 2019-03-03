@@ -2,4 +2,4 @@
 
 import "buildcraftlib:util" "buildcraftcore:main"
 
-plug "facade"
+plug "plug_facade"

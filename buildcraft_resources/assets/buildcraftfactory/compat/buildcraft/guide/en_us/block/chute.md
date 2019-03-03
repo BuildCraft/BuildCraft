@@ -1,4 +1,3 @@
-<chapter name="tile.chuteBlock.name"/>
 <lore>
 While a basic hopper is nice, it isn't very functional or original.
 </lore>

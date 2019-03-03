@@ -234,7 +234,9 @@ public class TilePump extends TileMiner {
 
         super.update();
 
-        FluidUtilBC.pushFluidAround(world, pos, tank);
+        if (!world.isRemote) {
+            FluidUtilBC.pushFluidAround(world, pos, tank);
+        }
     }
 
     @Override

@@ -1,4 +1,3 @@
-<chapter name="tile.engineStone.name"/>
 <lore>
 After experimenting with what can be done with a basic redstone engine, you discover a way to burn furnace fuels to to actually produce a decent amount of power at a rate of 1MJ/t.
 </lore>

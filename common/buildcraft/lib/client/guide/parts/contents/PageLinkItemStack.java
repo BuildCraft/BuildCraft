@@ -1,5 +1,6 @@
 package buildcraft.lib.client.guide.parts.contents;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +21,8 @@ import buildcraft.lib.misc.GuiUtil;
 
 public final class PageLinkItemStack extends PageLink {
 
+    private static final boolean FULL_TOOLITP = true;
+
     public final ItemStack stack;
     public final List<String> tooltip;
     public final String searchText;
@@ -27,22 +30,15 @@ public final class PageLinkItemStack extends PageLink {
     public static PageLinkItemStack create(boolean startVisible, ItemStack stack, Profiler prof) {
         prof.startSection("create_page_link");
         prof.startSection("get_tooltip");
-        List<String> tooltip = GuiUtil.getUnFormattedTooltip(stack);
-        prof.endStartSection("join_tooltip");
-        StringBuilder joiner = new StringBuilder();
-        for (int i = 0; i < tooltip.size(); i++) {
-            String s = tooltip.get(i);
-            s = TextFormatting.getTextWithoutFormattingCodes(s);
-            if (s == null) {
-                continue;
-            }
-            tooltip.set(i, s);
-            if (i > 0) {
-                joiner.append('\n');
-            }
-            joiner.append(s.toLowerCase(Locale.ROOT));
+        final List<String> tooltip;
+        if (FULL_TOOLITP) {
+            tooltip = GuiUtil.getUnFormattedTooltip(stack);
+        } else {
+            tooltip = new ArrayList<>(1);
+            tooltip.add(stack.getItem().getItemStackDisplayName(stack));
         }
-        String searchText = joiner.toString();
+        prof.endStartSection("join_tooltip");
+        String searchText = joinTooltip(tooltip);
         prof.endStartSection("create_line");
         ISimpleDrawable icon = new GuiStack(stack);
         PageLine text = new PageLine(icon, icon, 2, tooltip.get(0), true);
@@ -50,6 +46,36 @@ public final class PageLinkItemStack extends PageLink {
         PageLinkItemStack page = new PageLinkItemStack(text, startVisible, stack, tooltip, searchText);
         prof.endSection();
         return page;
+    }
+
+    private static String joinTooltip(final List<String> tooltip) {
+        StringBuilder joiner = new StringBuilder();
+        joinTooltipLine(tooltip, joiner, 0);
+        for (int i = 1; i < tooltip.size(); i++) {
+            joiner.append('\n');
+            joinTooltipLine(tooltip, joiner, i);
+        }
+        return joiner.toString();
+    }
+
+    private static void joinTooltipLine(final List<String> tooltip, StringBuilder joiner, int i) {
+        String line = removeFormatting(tooltip.get(i));
+        tooltip.set(i, line);
+        joiner.append(line.toLowerCase(Locale.ROOT));
+    }
+
+    private static String removeFormatting(String s) {
+        char[] to = new char[s.length()];
+        int len = 0;
+        for (int ci = 0; ci < s.length(); ci++) {
+            char c = s.charAt(ci);
+            if (c == '§') {
+                ci++;
+                continue;
+            }
+            to[len++] = c;
+        }
+        return new String(to, 0, len);
     }
 
     private PageLinkItemStack(PageLine text, boolean startVisible, ItemStack stack, List<String> tooltip,

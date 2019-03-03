@@ -1,6 +1,8 @@
 package buildcraft.lib.client.guide.entry;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -19,14 +21,18 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.guide.GuidePageRegistry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.contents.PageLinkItemPermutations;
 import buildcraft.lib.client.guide.parts.contents.PageLinkItemStack;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -51,12 +57,45 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
 
     @Override
     public void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof) {
+
+        // For now, we can always re-enable this as a last resort fix.
+        boolean limitDomains = false;// ForgeRegistries.ITEMS.getKeys().size() > 10_000;
+
+        Set<String> domains = new HashSet<>();
+        // Always show all of minecraft's items
+        domains.add("minecraft");
+        // And all of BuildCraft's items as we haven't created guide entries for them yet
+        for (BCModules mod : BCModules.values()) {
+            domains.add(mod.getModId());
+        }
+        domains.addAll(GuidePageRegistry.INSTANCE.getSourceDomains());
+
+        if (limitDomains) {
+            BCLog.logger.info("[lib.guide] Limiting the domians of items to only: " + domains);
+        }
+
         for (Item item : ForgeRegistries.ITEMS) {
+            ResourceLocation regName = item.getRegistryName();
+            if (regName == null || (limitDomains && !domains.contains(regName.getResourceDomain()))) {
+                continue;
+            }
             if (!GuideManager.INSTANCE.objectsAdded.add(item)) {
                 continue;
             }
             NonNullList<ItemStack> stacks = NonNullList.create();
+            prof.startSection("search");
             item.getSubItems(CreativeTabs.SEARCH, stacks);
+            prof.endStartSection("itr_search");
+            if (stacks.size() > 200) {
+                // Likely a "super-item" which is constructed from a different registry
+                // and so it has thousands of useless permutations
+                // Instead lets replace it with a custom tooltip
+                consumer.addChild(TAGS, PageLinkItemPermutations.create(false, stacks, prof));
+                prof.endSection();
+                BCLog.logger.info("[lib.guide] Squished " + regName + " and all of it's " + stacks.size()
+                    + " variants down into one page entry.");
+                continue;
+            }
             for (int i = 0; i < stacks.size(); i++) {
                 ItemStack stack = stacks.get(i);
 
@@ -66,12 +105,8 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                     throw new Error("Failed to create a page link for " + item.getRegistryName() + " " + item.getClass()
                         + " (" + stack.serializeNBT() + ")", e);
                 }
-                if (i > 50) {
-                    // Woah there, lets not fill up entire pages with what is
-                    // most likely the same item
-                    // break;
-                }
             }
+            prof.endSection();
         }
     }
 

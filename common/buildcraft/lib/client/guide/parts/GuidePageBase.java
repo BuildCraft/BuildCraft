@@ -125,7 +125,7 @@ public abstract class GuidePageBase extends GuidePart {
             // Page index
             String text = (index + 1) + " / " + numPages;
             double textX = x + GuiGuide.PAGE_LEFT_TEXT.width / 2 - getFontRenderer().getStringWidth(text) / 2;
-            getFontRenderer().drawString(text, (int) textX, (int) (y + height) + 6, 0);
+            getFontRenderer().drawString(text, (int) textX, (int) (y + height) + 6, 0x90816a);
         } else {
             // Odd => second page, draw forward button and second page index
             // Back page button
@@ -142,7 +142,7 @@ public abstract class GuidePageBase extends GuidePart {
             if (index + 1 <= numPages) {
                 String text = (index + 1) + " / " + numPages;
                 double textX = x + (GuiGuide.PAGE_RIGHT_TEXT.width - getFontRenderer().getStringWidth(text)) / 2;
-                getFontRenderer().drawString(text, (int) textX, (int) (y + height) + 6, 0);
+                getFontRenderer().drawString(text, (int) textX, (int) (y + height) + 6, 0x90816a);
             }
         }
     }

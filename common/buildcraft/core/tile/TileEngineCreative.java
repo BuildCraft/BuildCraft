@@ -101,7 +101,7 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
 
     @Override
     public long maxPowerExtracted() {
-        return 500 * MjAPI.MJ;
+        return 20 * getCurrentOutput();
     }
 
     @Override

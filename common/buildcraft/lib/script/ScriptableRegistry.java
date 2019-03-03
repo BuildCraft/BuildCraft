@@ -9,11 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -48,6 +51,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
     private final String entryPath;
     private final Map<String, Class<? extends E>> types = new HashMap<>();
     private final Map<String, IEntryDeserializer<? extends E>> deserializers = new HashMap<>();
+    private final Set<String> sourceDomains = new HashSet<>();
 
     public ScriptableRegistry(IReloadableRegistryManager manager, String entryPath) {
         super(manager);
@@ -74,6 +78,11 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
         return deserializers;
     }
 
+    @Override
+    public Set<String> getSourceDomains() {
+        return Collections.unmodifiableSet(sourceDomains);
+    }
+
     void loadScripts(Gson gson) {
         try (AutoCloseable fle = SimpleScript.createLogFile(entryPath)) {
             long start = System.currentTimeMillis();
@@ -95,6 +104,8 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
         SimpleScript.logForAll("# Loading");
         SimpleScript.logForAll("#");
         SimpleScript.logForAll("#############");
+
+        sourceDomains.clear();
 
         List<ScriptAction> actions = new ArrayList<>();
 
@@ -211,7 +222,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
                         SimpleScript.logForAll(root.relativize(scriptFile) + " was empty!");
                         continue;
                     }
-                    if (!"~{buildcraft/json/insn}".equals(contents.remove(0))) {
+                    if (!"~{buildcraft/json/insn}".equals(contents.set(0, "// Valid file declaration was here"))) {
                         SimpleScript.logForAll(
                             root.relativize(scriptFile) + " didn't start with '~{buildcraft/json/insn}', ignoring.");
                         continue;
@@ -219,6 +230,9 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
                     SimpleScript script =
                         new SimpleScript(this, root, scriptDomain, scriptDir, scriptFile, jarRoots, contents);
                     actions.addAll(script.actions);
+                    if (!script.actions.isEmpty()) {
+                        sourceDomains.add(scriptDomain);
+                    }
                 }
             }
         } catch (IOException io) {

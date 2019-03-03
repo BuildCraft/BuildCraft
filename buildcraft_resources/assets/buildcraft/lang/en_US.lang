@@ -515,6 +515,7 @@ item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
 item.buildcraft.guide.name=BuildCraft Guide Book
+item.buildcraft.guide_note.name=BuildCraft Guide Book Note
 item.buildcraft.robot_goggles.name=Robot Goggles
 item.buildcraft.filler_planner.name=Filler Planner
 

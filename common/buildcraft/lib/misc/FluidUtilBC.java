@@ -51,7 +51,7 @@ public class FluidUtilBC {
             }
             IFluidHandler handler = target.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
             if (handler != null) {
-                int used = handler.fill(potential, true);
+                int used = handler.fill(potential.copy(), true);
 
                 if (used > 0) {
                     drained += used;

@@ -950,6 +950,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (!getCurrentDirection().canInput() || !pipe.isConnected(part.face) || resource == null) {
                 return 0;
             }
+            resource = resource.copy();
             PipeEventFluid.TryInsert tryInsert =
                 new PipeEventFluid.TryInsert(pipe.getHolder(), PipeFlowFluids.this, part.face, resource);
             pipe.getHolder().fireEvent(tryInsert);
@@ -960,7 +961,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (currentFluid == null || currentFluid.isFluidEqual(resource)) {
                 if (doFill) {
                     if (currentFluid == null) {
-                        setFluid(resource);
+                        setFluid(resource.copy());
                     }
                 }
                 int filled = fill(resource.amount, doFill);

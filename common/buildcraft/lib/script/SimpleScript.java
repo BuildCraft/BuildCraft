@@ -376,8 +376,9 @@ public class SimpleScript {
         }
         String libDomain = from.substring(0, colonIndex);
         String path = from.substring(colonIndex + 1);
+        String fullPath = libDomain + "/compat/" + registry.getEntryType() + "/" + path + ".txt";
         path_loop: for (Path root : roots) {
-            Path full = root.resolve(libDomain + "/compat/" + registry.getEntryType() + "/" + path + ".txt");
+            Path full = root.resolve(fullPath);
             if (!Files.exists(full)) {
                 continue;
             }
@@ -448,6 +449,7 @@ public class SimpleScript {
                 log("" + e.getMessage());
             }
         }
+        log("Couldn't find the library file " + fullPath + " in any of the known locations!");
         return null;
     }
 
