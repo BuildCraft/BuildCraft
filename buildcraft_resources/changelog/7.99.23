@@ -7,3 +7,4 @@ Improvements:
 Bug fixes:
 
 * [#4359] Fixed a cache issue which caused items to disappear from transport pipes.
+* Made the pump a bit less likely to dupe fluids when sending them out to neighbouring blocks.
