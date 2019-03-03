@@ -448,6 +448,7 @@ public class SimpleScript {
                 log("" + e.getMessage());
             }
         }
+        log("Unable to find " + libDomain + "/compat/" + registry.getEntryType() + "/" + path + ".txt from " + roots);
         return null;
     }
 
