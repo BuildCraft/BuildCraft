@@ -3,6 +3,7 @@ Improvements:
 * Raised the maximum power rate for the quarry from around 30 MJ/second to about 100 MJ/second.
 * Changed the page number colour of guide book pages to the same as the header to make it easier to focus on the main content.
 * Improved the guide book performance by collapsing highly varied items (like facades and covers) into a single page entry for searching.
+* Re-added JEI integration for the assembly table.
 
 Bug fixes:
 
