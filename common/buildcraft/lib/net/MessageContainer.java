@@ -27,8 +27,7 @@ public class MessageContainer implements IMessage {
     private PacketBufferBC payload;
 
     @SuppressWarnings("unused")
-    public MessageContainer() {
-    }
+    public MessageContainer() {}
 
     public MessageContainer(int windowId, int msgId, PacketBufferBC payload) {
         this.windowId = windowId;
@@ -63,9 +62,8 @@ public class MessageContainer implements IMessage {
         try {
             int id = message.windowId;
             EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player != null &&
-                    player.openContainer instanceof ContainerBC_Neptune &&
-                    player.openContainer.windowId == id) {
+            if (player != null && player.openContainer instanceof ContainerBC_Neptune
+                && player.openContainer.windowId == id) {
                 ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
@@ -76,6 +74,8 @@ public class MessageContainer implements IMessage {
             return null;
         } catch (IOException e) {
             throw new Error(e);
+        } finally {
+            message.payload.release();
         }
     };
 }
