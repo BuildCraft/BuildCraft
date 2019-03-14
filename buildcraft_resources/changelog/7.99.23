@@ -7,6 +7,7 @@ Improvements:
 
 Bug fixes:
 
+* [#4345] Fixed a cache issue which caused pipes with wires on to disconnect randomly.
 * [#4359] Fixed a cache issue which caused items to disappear from transport pipes.
 * Made the pump a bit less likely to dupe fluids when sending them out to neighbouring blocks.
 * Fixed gui container and tile update packets not releasing some byte buffers properly

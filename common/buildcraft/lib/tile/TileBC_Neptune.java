@@ -273,6 +273,27 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         tileCache.invalidate();
     }
 
+    @Override
+    public void validate() {
+        super.validate();
+        chunkCache.invalidate();
+        tileCache.invalidate();
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        chunkCache.invalidate();
+        tileCache.invalidate();
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        chunkCache.invalidate();
+        tileCache.invalidate();
+    }
+
     /** Called whenever {@link Block#getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}, or
      * {@link #onRemove()} is called (by default). */
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
@@ -315,7 +336,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public void onNeighbourBlockChanged(Block block, BlockPos nehighbour) {
-
+        tileCache.invalidate();
     }
 
     @Override
