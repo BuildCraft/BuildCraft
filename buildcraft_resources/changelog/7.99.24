@@ -1,0 +1,8 @@
+Ported Content:
+
+* Ported the items traversing trigger.
+* Ported the fluids traversing trigger.
+
+Improvements:
+
+* Log all of the possible config options when an invalid one is given for enum-based configs (like the chunkloading level).

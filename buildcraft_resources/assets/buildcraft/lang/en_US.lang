@@ -232,7 +232,7 @@ buildcraft.param.axis.y=Y Axis
 buildcraft.param.axis.z=Z Axis
 
 fluid.oil=Oil
-fluid.fuel=Fuel
+fluid.fuel=Light Fuel
 fluid.oil_distilled=Distilled Oil
 fluid.oil_heavy=Heavy Oil
 fluid.oil_dense=Dense Oil
@@ -242,7 +242,7 @@ fluid.fuel_mixed=Mixed Fuels
 fluid.fuel_mixed_heavy=Mixed Heavy Fuels
 fluid.fuel_mixed_light=Mixed Light Fuels
 fluid.fuel_dense=Dense Fuel
-fluid.fuel_light=Fuel
+fluid.fuel_light=Light Fuel
 fluid.fuel_gaseous=Gaseous Fuel
 
 buildcraft.fluid.heat_0=%s (§bCool§r)
@@ -466,7 +466,7 @@ item.PipeItemsIron.name=Iron Transport Pipe
 item.PipeItemsGold.name=Golden Transport Pipe
 item.PipeItemsDiamond.name=Diamond Transport Pipe
 item.PipeItemsObsidian.name=Obsidian Transport Pipe
-item.PipeItemsEmerald.name=Wooden Diamond Transport Pipe
+item.PipeItemsWoodenDiamond.name=Wooden Diamond Transport Pipe
 item.PipeItemsLapis.name=Lazuli Transport Pipe
 item.PipeItemsDaizuli.name=Daizuli Transport Pipe
 item.PipeItemsEmzuli.name=Emzuli Transport Pipe
@@ -480,7 +480,7 @@ item.PipeFluidsGranite.name=Granite Fluid Pipe
 item.PipeFluidsIron.name=Iron Fluid Pipe
 item.PipeFluidsQuartz.name=Quartz Fluid Pipe
 item.PipeFluidsGold.name=Golden Fluid Pipe
-item.PipeFluidsEmerald.name=Wooden Diamond Fluid Pipe
+item.PipeFluidsWoodenDiamond.name=Wooden Diamond Fluid Pipe
 item.PipeFluidsDiamond.name=Diamond Fluid Pipe
 item.PipeFluidsClay.name=Clay Fluid Pipe
 item.PipePowerWood.name=Wooden Kinesis Pipe
@@ -816,7 +816,7 @@ command.buildcraft.buildcraft.deop.help=Ungives OP rights to the BC FakePlayer (
 command.buildcraft.buildcraft.deop.format=Format: /%s
 
 #advancements
-advancements.buildcraftcore.root.title=Buildcraft
+advancements.buildcraftcore.root.title=BuildCraft
 advancements.buildcraftcore.root.description=For all your engineering needs
 
 advancements.buildcraftcore.guide.title=How does this work again?

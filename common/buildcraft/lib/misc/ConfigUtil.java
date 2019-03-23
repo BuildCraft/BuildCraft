@@ -66,17 +66,21 @@ public class ConfigUtil {
                 }
             }
             if (match.size() == 1) {
-                return getAssumingEqual(prop, match.peek());
+                return getAssumingEqual(prop, match.peek(), possible);
             }
         }
-        return getAssumingEqual(prop, defaultOption);
+        return getAssumingEqual(prop, defaultOption, possible);
     }
 
-    private static <E extends Enum<E>> E getAssumingEqual(Property prop, E mode) {
+    private static <E extends Enum<E>> E getAssumingEqual(Property prop, E mode, E[] possible) {
         String value = prop.getString();
         if (!mode.name().equalsIgnoreCase(value)) {
             BCLog.logger.warn("[lib.config] Unknown " + mode.getClass().getSimpleName() + " for " + prop.getName()
                 + " '" + value + "', assuming " + mode.name());
+            BCLog.logger.warn("[lib.config] Possible values:");
+            for (E e : possible) {
+                BCLog.logger.info("[lib.config]  - '" + e.name().toLowerCase(Locale.ROOT));
+            }
         }
         return mode;
     }

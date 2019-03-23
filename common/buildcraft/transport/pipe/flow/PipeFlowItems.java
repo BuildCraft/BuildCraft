@@ -42,7 +42,9 @@ import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
+import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.api.transport.pipe.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
@@ -54,6 +56,7 @@ import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
+import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
 
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
@@ -569,6 +572,19 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
         items.add(item.timeToDest, item);
         sendItemDataToClient(item);
+    }
+
+    @PipeEventHandler
+    public static void addTriggers(PipeEventStatement.AddTriggerInternal event) {
+        event.triggers.add(BCTransportStatements.TRIGGER_ITEMS_TRAVERSING);
+    }
+
+    public boolean doesContainItems() {
+        // Note that this counts all items
+        // (including phantom items, which is fine)
+        // This only works because this list is only expanded to add elements
+        // and elements are only removed in advance()
+        return items.getMaxDelay() > 0;
     }
 
     @Nullable

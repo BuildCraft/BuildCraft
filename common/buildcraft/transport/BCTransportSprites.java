@@ -33,7 +33,9 @@ public class BCTransportSprites {
     public static final SpriteHolder PIPE_COLOUR_BORDER_OUTER;
     public static final SpriteHolder PIPE_COLOUR_BORDER_INNER;
 
-    public static final SpriteHolder POWER_REQUESTED;
+    public static final SpriteHolder TRIGGER_POWER_REQUESTED;
+    public static final SpriteHolder TRIGGER_ITEMS_TRAVERSING;
+    public static final SpriteHolder TRIGGER_FLUIDS_TRAVERSING;
 
     public static final SpriteHolder[] ACTION_PIPE_COLOUR;
     public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
@@ -78,7 +80,9 @@ public class BCTransportSprites {
 
         POWER_FLOW = getHolder("core", "blocks/misc/texture_cyan");
 
-        POWER_REQUESTED = getHolder("transport", "triggers/trigger_pipecontents_requestsenergy");
+        TRIGGER_POWER_REQUESTED = getHolder("transport", "triggers/trigger_pipecontents_requestsenergy");
+        TRIGGER_ITEMS_TRAVERSING = getHolder("transport", "triggers/trigger_pipecontents_containsitems");
+        TRIGGER_FLUIDS_TRAVERSING = getHolder("transport", "triggers/trigger_pipecontents_containsfluids");
     }
 
     private static SpriteHolder getHolder(String loc) {

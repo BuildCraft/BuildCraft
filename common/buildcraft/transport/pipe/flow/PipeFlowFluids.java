@@ -52,6 +52,8 @@ import buildcraft.api.transport.pipe.PipeApi.FluidTransferInfo;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventFluid.OnMoveToCentre;
 import buildcraft.api.transport.pipe.PipeEventFluid.PreMoveToCentre;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.api.transport.pipe.PipeFlow;
 
 import buildcraft.lib.misc.CapUtil;
@@ -65,6 +67,7 @@ import buildcraft.lib.net.cache.NetworkedObjectCache;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.BCCoreItems;
+import buildcraft.transport.BCTransportStatements;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
@@ -182,6 +185,20 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 BCCoreItems.fragileFluidShard.addFluidDrops(toDrop, new FluidStack(currentFluid, totalAmount));
             }
         }
+    }
+
+    public boolean doesContainFluid() {
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            if (sections.get(part).amount > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @PipeEventHandler
+    public static void addTriggers(PipeEventStatement.AddTriggerInternal event) {
+        event.triggers.add(BCTransportStatements.TRIGGER_FLUIDS_TRAVERSING);
     }
 
     // IFlowFluid

@@ -43,7 +43,7 @@ public class TriggerPowerRequested extends BCStatement implements ITriggerIntern
     @Nullable
     @Override
     public ISprite getSprite() {
-        return BCTransportSprites.POWER_REQUESTED;
+        return BCTransportSprites.TRIGGER_POWER_REQUESTED;
     }
 
 }
