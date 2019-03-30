@@ -13,10 +13,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEnd;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
 
-import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.lib.misc.RandUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -26,8 +25,8 @@ import buildcraft.energy.BCEnergyConfig;
 import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
 import buildcraft.energy.generation.OilGenStructure.ReplaceType;
 
-public enum OilGenerator implements IWorldGenerator {
-    INSTANCE;
+public class OilGenerator {
+    private OilGenerator() {}
 
     /** Random number, used to differentiate generators */
     private static final long MAGIC_GEN_NUMBER = 0xD0_46_B4_E4_0C_7D_07_CFL;
@@ -44,9 +43,11 @@ public enum OilGenerator implements IWorldGenerator {
         NONE
     }
 
-    @Override
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator gen,
-        IChunkProvider provider) {
+    @SubscribeEvent
+    public static void onPopulatePre(PopulateChunkEvent.Pre event) {
+        World world = event.getWorld();
+        int chunkX = event.getChunkX();
+        int chunkZ = event.getChunkZ();
 
         if (world.getWorldType() == WorldType.FLAT) {
             return;

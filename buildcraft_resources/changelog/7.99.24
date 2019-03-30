@@ -6,3 +6,7 @@ Ported Content:
 Improvements:
 
 * Log all of the possible config options when an invalid one is given for enum-based configs (like the chunkloading level).
+
+Bug fixes:
+
+* [#4002] Mostly fixed oil generating on trees (but it still happens a *tiny* bit)

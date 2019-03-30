@@ -7,7 +7,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.energy.generation.BiomeInitializer;
@@ -29,7 +28,7 @@ public class BCEnergyWorldGen {
             BiomeDictionary.Type.SANDY
         );
         if (BCCoreConfig.worldGen && BCEnergyConfig.enableOilGeneration) {
-            GameRegistry.registerWorldGenerator(OilGenerator.INSTANCE, 0);
+            MinecraftForge.EVENT_BUS.register(OilGenerator.class);
             MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
         }
     }
