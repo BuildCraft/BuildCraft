@@ -12,11 +12,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -30,6 +26,7 @@ import buildcraft.lib.net.PacketBufferBC;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 /** Provides a way of defining a cache of *some object* that will be sent from server to every client (when they are
  * needed). Each object has a specific integer ID.
@@ -44,17 +41,16 @@ public abstract class NetworkedObjectCache<T> {
     static final boolean DEBUG_LOG = BCDebugging.shouldDebugLog("lib.net.cache");
     static final boolean DEBUG_CPLX = BCDebugging.shouldDebugComplex("lib.net.cache");
 
-    /* Implementation notes -- this currently is a simple, never expiring object<->id cache.
-     * 
-     * Because it doesn't ever clear objects out of the cache we can guarantee that the index of an object is unique,
-     * just by incrementing a single variable. */
+    /* Implementation notes -- this currently is a simple, never expiring object<->id cache. Because it doesn't ever
+     * clear objects out of the cache we can guarantee that the index of an object is unique, just by incrementing a
+     * single variable. */
 
     /** The default object -- used at the client in case the object hasn't been sent to the client yet. */
     protected final T defaultObject;
 
-    private final BiMap<Integer, T> serverIdToObject = HashBiMap.create();
+    private final Int2ObjectMap<T> serverIdToObject = new Int2ObjectOpenHashMap<>();
     /** Server side map of the object to its integer ID. Inverse of {@link #serverIdToObject} */
-    private final BiMap<T, Integer> serverObjectToId = serverIdToObject.inverse();
+    private final Object2IntMap<T> serverObjectToId = createObject2IntMap();
 
     /** The ID for the next stored object. */
     private int serverCurrentId = 0;
@@ -70,7 +66,10 @@ public abstract class NetworkedObjectCache<T> {
 
     public NetworkedObjectCache(T defaultObject) {
         this.defaultObject = defaultObject;
+        serverObjectToId.defaultReturnValue(-1);
     }
+
+    protected abstract Object2IntMap<T> createObject2IntMap();
 
     // Public API
 
@@ -157,21 +156,13 @@ public abstract class NetworkedObjectCache<T> {
 
     // Abstract overridable methods
 
-    /** Takes a specific object and turns it into its most basic form. For example for {@link ItemStack}'s this will
-     * should set the stack size to 1, and remove all non-rendered NBT tag components.
-     * 
-     * @param obj The object to canonicalized.
-     * @return A canonical version of the input */
-    protected abstract T getCanonical(T obj);
-
     /** Writes the specified object out to the buffer.
      * 
-     * @param obj The object to write. It will have already been passed through {@link #getCanonical(Object)}
+     * @param obj The object to write.
      * @param buffer The buffer to write into. */
     protected abstract void writeObject(T obj, PacketBufferBC buffer);
 
-    /** Reads the specified object from the buffer. Note that the returned object should be identity equal to itself
-     * passed into {@link #getCanonical(Object)} (so {@code  value.equals(getCanonical(value)) } should return true.)
+    /** Reads the specified object from the buffer.
      * 
      * @param buffer The buffer to read from
      * @return */
@@ -189,19 +180,20 @@ public abstract class NetworkedObjectCache<T> {
      * @param object
      * @return */
     private int serverStore(T object) {
-        T canonical = getCanonical(object);
-        Integer current = serverObjectToId.get(canonical);
+        Integer current = serverObjectToId.get(object);
         if (current == null) {
             // new entry
             int id = serverCurrentId++;
-            serverObjectToId.put(canonical, id);
+            T copy = copyOf(object);
+            serverObjectToId.put(copy, id);
+            serverIdToObject.put(id, copy);
             if (DEBUG_CPLX) {
                 String toString;
-                if (canonical instanceof FluidStack) {
-                    FluidStack fluid = (FluidStack) canonical;
+                if (copy instanceof FluidStack) {
+                    FluidStack fluid = (FluidStack) copy;
                     toString = fluid.getUnlocalizedName();
                 } else {
-                    toString = canonical.toString();
+                    toString = copy.toString();
                 }
                 BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " stored #" + id + " as " + toString);
             }
@@ -212,6 +204,8 @@ public abstract class NetworkedObjectCache<T> {
         }
     }
 
+    protected abstract T copyOf(T object);
+
     /** Gets the ID for the given object, or -1 if this was not stored in the cache. SERVER SIDE.
      * {@link #serverStore(Object)} if preferred to this, as most uses (such as network sending) want the value to be
      * stored and get a valid ID.
@@ -219,14 +213,7 @@ public abstract class NetworkedObjectCache<T> {
      * @param object
      * @return */
     private int serverGetId(T object) {
-        T canonical = getCanonical(object);
-        Integer current = serverObjectToId.get(canonical);
-        if (current == null) {
-            // Unknown entry
-            return -1;
-        } else {
-            return current;
-        }
+        return serverObjectToId.getInt(object);
     }
 
     /** Retrieves a link to the specified ID. CLIENT SIDE.
@@ -237,7 +224,8 @@ public abstract class NetworkedObjectCache<T> {
         Link current = clientObjects.get(id);
         if (current == null) {
             if (DEBUG_CPLX) {
-                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " tried to retrieve #" + id + " for the first time");
+                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " tried to retrieve #" + id
+                    + " for the first time");
             }
             current = new Link(id);
             clientUnknowns.add(current);
@@ -269,7 +257,8 @@ public abstract class NetworkedObjectCache<T> {
             } else {
                 toString = read.toString();
             }
-            BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " just received #" + id + " as " + toString);
+            BCLog.logger
+                .info("[lib.net.cache] The cache " + getNameAndId() + " just received #" + id + " as " + toString);
         }
     }
 
@@ -284,7 +273,8 @@ public abstract class NetworkedObjectCache<T> {
         }
         if (ids.length > 0) {
             if (DEBUG_CPLX) {
-                BCLog.logger.info("[lib.net.cache] The cache " + getNameAndId() + " requests ID's " + Arrays.toString(ids));
+                BCLog.logger
+                    .info("[lib.net.cache] The cache " + getNameAndId() + " requests ID's " + Arrays.toString(ids));
             }
             MessageManager.sendToServer(new MessageObjectCacheRequest(this, ids));
         }

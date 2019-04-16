@@ -7,12 +7,17 @@
 package buildcraft.lib.net.cache;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.lib.net.PacketBufferBC;
+
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 
 public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
     private static final int FLUID_AMOUNT = 1;
@@ -23,10 +28,30 @@ public class NetworkedFluidStackCache extends NetworkedObjectCache<FluidStack> {
     }
 
     @Override
-    protected FluidStack getCanonical(FluidStack obj) {
-        obj = obj.copy();
-        obj.amount = FLUID_AMOUNT;
-        return obj;
+    protected Object2IntMap<FluidStack> createObject2IntMap() {
+        return new Object2IntOpenCustomHashMap<>(new Hash.Strategy<FluidStack>() {
+            @Override
+            public int hashCode(FluidStack o) {
+                if (o == null) {
+                    return 0;
+                }
+                return Objects.hash(o.getFluid(), o.tag);
+            }
+
+            @Override
+            public boolean equals(FluidStack a, FluidStack b) {
+                if (a == null || b == null) {
+                    return a == b;
+                }
+                return a.getFluid() == b.getFluid() //
+                    && Objects.equals(a.tag, b.tag);
+            }
+        });
+    }
+
+    @Override
+    protected FluidStack copyOf(FluidStack object) {
+        return object.copy();
     }
 
     @Override

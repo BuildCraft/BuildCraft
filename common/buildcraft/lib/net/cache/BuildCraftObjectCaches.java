@@ -28,9 +28,7 @@ import buildcraft.lib.misc.ItemStackKey;
 /** Stores default caches for {@link ItemStack} and {@link FluidStack}. Note that because {@link ItemStack} doesn't
  * override {@link #hashCode()} or {@link #equals(Object)} {@link ItemStackKey} is used as the key type instead, so you
  * probably want to use {@link #storeItemStack(ItemStack)}, {@link #getItemStackId(ItemStack)} and
- * {@link #retrieveItemStack(int)} instead of {@link #CACHE_ITEMS} directly.
- * 
- * This also stores the */
+ * {@link #retrieveItemStack(int)} instead of {@link #CACHE_ITEMS} directly. This also stores the */
 public class BuildCraftObjectCaches {
     public static final NetworkedItemStackCache CACHE_ITEMS = new NetworkedItemStackCache();
     public static final NetworkedFluidStackCache CACHE_FLUIDS = new NetworkedFluidStackCache();
@@ -46,18 +44,17 @@ public class BuildCraftObjectCaches {
 
     /** @see NetworkedObjectCache.ServerView#store(Object) */
     public static int storeItemStack(@Nonnull ItemStack stack) {
-        return CACHE_ITEMS.server().store(new ItemStackKey(stack));
+        return CACHE_ITEMS.server().store(stack);
     }
 
     /** @see NetworkedObjectCache.ServerView#getId(Object) */
     public static int getItemStackId(@Nonnull ItemStack stack) {
-        return CACHE_ITEMS.server().getId(new ItemStackKey(stack));
+        return CACHE_ITEMS.server().getId(stack);
     }
 
     /** @see NetworkedObjectCache.ClientView#retrieve(int) */
     public static Supplier<ItemStack> retrieveItemStack(int id) {
-        NetworkedObjectCache<ItemStackKey>.Link link = CACHE_ITEMS.client().retrieve(id);
-        return () -> link.get().baseStack;
+        return CACHE_ITEMS.client().retrieve(id);
     }
 
     /** Called by BuildCraftLib in the {@link FMLPreInitializationEvent} */
