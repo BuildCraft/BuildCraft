@@ -5,6 +5,8 @@ Ported Content:
 
 Improvements:
 
+* [#4393] Optimised item pipe networking *quite a lot*.
+* Optimised quarry collision box code a bit.
 * Log all of the possible config options when an invalid one is given for enum-based configs (like the chunkloading level).
 
 Bug fixes:
