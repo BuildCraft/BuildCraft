@@ -12,3 +12,5 @@ Improvements:
 Bug fixes:
 
 * [#4002] Mostly fixed oil generating on trees (but it still happens a *tiny* bit)
+* The assembly table's crafttweaker support didn't handle stacks sizes correctly.
+* JEI support for the assembly table didn't load recipes which required less than 50 MJ.
