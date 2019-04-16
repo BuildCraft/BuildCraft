@@ -81,7 +81,7 @@ public enum BCBuildersEventDist {
                 iter.remove();
                 continue;
             }
-            for (AxisAlignedBB aabb : quarry.collisionBoxes) {
+            for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
                 if (event.getAabb().intersects(aabb)) {
                     event.getCollisionBoxesList().add(aabb);
                 }

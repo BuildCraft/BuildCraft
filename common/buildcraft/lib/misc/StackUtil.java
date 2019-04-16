@@ -8,6 +8,7 @@ package buildcraft.lib.misc;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -396,6 +397,9 @@ public class StackUtil {
     public static int hash(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
             return 0;
+        }
+        if (!stack.hasTagCompound()) {
+            return Objects.hash(stack.getItem(), stack.getMetadata());
         }
         return stack.serializeNBT().hashCode();
     }

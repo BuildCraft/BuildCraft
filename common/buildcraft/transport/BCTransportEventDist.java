@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.transport.client.render.PipeWireRenderer;
+import buildcraft.transport.net.PipeItemMessageQueue;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public enum BCTransportEventDist {
@@ -25,6 +26,11 @@ public enum BCTransportEventDist {
         if (!event.world.isRemote && event.world.getMinecraftServer() != null) {
             WorldSavedDataWireSystems.get(event.world).tick();
         }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        PipeItemMessageQueue.serverTick();
     }
 
     @SubscribeEvent
@@ -40,11 +46,11 @@ public enum BCTransportEventDist {
 
     @SubscribeEvent
     public void onBlockPlace(BlockEvent.PlaceEvent event) {
-        //event.setCanceled(true);
+        // event.setCanceled(true);
     }
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        //event.setCanceled(true);
+        // event.setCanceled(true);
     }
 }

@@ -57,6 +57,8 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.net.MessageMultiPipeItem.TravellingItemData;
+import buildcraft.transport.net.PipeItemMessageQueue;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
 
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
@@ -119,19 +121,40 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
     }
 
+    public void handleClientReceviedItems(List<TravellingItemData> list) {
+        for (TravellingItemData data : list) {
+            handleClientReceviedItem(data);
+        }
+    }
+
+    public void handleClientReceviedItem(TravellingItemData data) {
+        int stackId = data.stackId;
+        Supplier<ItemStack> link = BuildCraftObjectCaches.retrieveItemStack(stackId);
+        int count = data.stackCount;
+        TravellingItem item = new TravellingItem(link, count);
+        item.toCenter = data.toCenter;
+        item.side = data.side;
+        item.colour = data.colour;
+        item.timeToDest = data.timeToDest;
+        item.tickStarted = pipe.getHolder().getPipeWorld().getTotalWorldTime() + 1;
+        item.tickFinished = item.tickStarted + item.timeToDest;
+        items.add(item.timeToDest + 1, item);
+    }
+
     void sendItemDataToClient(TravellingItem item) {
-        // TODO: Move this into a message queue system that packs all item stack send events into a single big packet!
-        // (it's really expensive to write+flush each time this is called)
         final int stackId = BuildCraftObjectCaches.storeItemStack(item.stack);
-        sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
-            PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-            buf.writeInt(stackId);
-            buf.writeShort(item.stack.getCount());
-            buf.writeBoolean(item.toCenter);
-            buf.writeEnumValue(item.side);
-            MessageUtil.writeEnumOrNull(buf, item.colour);
-            buf.writeShort(item.timeToDest > Short.MAX_VALUE ? Short.MAX_VALUE : item.timeToDest);
-        });
+        // sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {
+        // PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
+        // buf.writeInt(stackId);
+        // buf.writeShort(item.stack.getCount());
+        // buf.writeBoolean(item.toCenter);
+        // buf.writeEnumValue(item.side);
+        // MessageUtil.writeEnumOrNull(buf, item.colour);
+        // buf.writeShort(item.timeToDest > Short.MAX_VALUE ? Short.MAX_VALUE : item.timeToDest);
+        // });
+        PipeItemMessageQueue.appendTravellingItem(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(),
+            stackId, (byte) item.stack.getCount(), item.toCenter, item.side, item.colour,
+            item.timeToDest > Byte.MAX_VALUE ? Byte.MAX_VALUE : (byte) item.timeToDest);
     }
 
     @Override

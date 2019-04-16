@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
@@ -33,6 +34,7 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.core.BCCore;
 import buildcraft.silicon.plug.FacadeStateManager;
+import buildcraft.transport.net.PipeItemMessageQueue;
 import buildcraft.transport.pipe.SchematicBlockPipe;
 
 //@formatter:off

@@ -111,7 +111,10 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     public Vec3d clientDrillPos;
     public Vec3d prevClientDrillPos;
     private long debugPowerRate = 0;
-    public List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
+
+    private List<AxisAlignedBB> collisionBoxes = ImmutableList.of();
+    private Vec3d collisionDrillPos;
+
     private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
         @Override
         public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState oldState,
@@ -487,18 +490,9 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public void update() {
-        if (drillPos != null) {
-            Vec3d max = VecUtil.convertCenter(frameBox.max());
-            Vec3d min = VecUtil.replaceValue(VecUtil.convertCenter(frameBox.min()), Axis.Y, max.y);
-            collisionBoxes = ImmutableList.of(
-                BoundingBoxUtil.makeFrom(VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5),
-                    VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5), 0.25),
-                BoundingBoxUtil.makeFrom(VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5),
-                    VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5), 0.25),
-                BoundingBoxUtil.makeFrom(drillPos.addVector(0.5, 0, 0.5),
-                    VecUtil.replaceValue(drillPos, Axis.Y, max.y).addVector(0.5, 0, 0.5), 0.25));
-        } else {
+        if (drillPos == null) {
             collisionBoxes = ImmutableList.of();
+            collisionDrillPos = null;
         }
 
         if (world.isRemote) {
@@ -623,6 +617,22 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         if (sendUpdate) {
             sendNetworkUpdate(NET_RENDER_DATA);
         }
+    }
+
+    public List<AxisAlignedBB> getCollisionBoxes() {
+        if (drillPos != null && drillPos != collisionDrillPos) {
+            Vec3d max = VecUtil.convertCenter(frameBox.max());
+            Vec3d min = VecUtil.replaceValue(VecUtil.convertCenter(frameBox.min()), Axis.Y, max.y);
+            collisionBoxes = ImmutableList.of(
+                BoundingBoxUtil.makeFrom(VecUtil.replaceValue(min, Axis.X, drillPos.x + 0.5),
+                    VecUtil.replaceValue(max, Axis.X, drillPos.x + 0.5), 0.25),
+                BoundingBoxUtil.makeFrom(VecUtil.replaceValue(min, Axis.Z, drillPos.z + 0.5),
+                    VecUtil.replaceValue(max, Axis.Z, drillPos.z + 0.5), 0.25),
+                BoundingBoxUtil.makeFrom(drillPos.addVector(0.5, 0, 0.5),
+                    VecUtil.replaceValue(drillPos, Axis.Y, max.y).addVector(0.5, 0, 0.5), 0.25));
+            collisionDrillPos = drillPos;
+        }
+        return collisionBoxes;
     }
 
     @Override
