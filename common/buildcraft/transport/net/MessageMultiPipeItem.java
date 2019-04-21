@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -24,6 +23,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeFlow;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -132,7 +132,7 @@ public class MessageMultiPipeItem implements IMessage {
 
             @Override
             public IMessage onMessage(MessageMultiPipeItem message, MessageContext ctx) {
-                World world = Minecraft.getMinecraft().world;
+                World world = BCLibProxy.getProxy().getClientWorld();
                 if (world == null) {
                     return null;
                 }
@@ -140,9 +140,9 @@ public class MessageMultiPipeItem implements IMessage {
                     BlockPos pos = entry.getKey();
                     TileEntity tile = world.getTileEntity(pos);
                     if (tile instanceof IPipeHolder) {
-                        PipeFlow flow = ((IPipeHolder)tile).getPipe().getFlow();
+                        PipeFlow flow = ((IPipeHolder) tile).getPipe().getFlow();
                         if (flow instanceof PipeFlowItems) {
-                            ((PipeFlowItems)flow).handleClientReceviedItems(entry.getValue());
+                            ((PipeFlowItems) flow).handleClientReceviedItems(entry.getValue());
                         }
                     }
                 }
