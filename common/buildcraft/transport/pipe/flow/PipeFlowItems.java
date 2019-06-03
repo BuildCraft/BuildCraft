@@ -152,9 +152,11 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         // MessageUtil.writeEnumOrNull(buf, item.colour);
         // buf.writeShort(item.timeToDest > Short.MAX_VALUE ? Short.MAX_VALUE : item.timeToDest);
         // });
-        PipeItemMessageQueue.appendTravellingItem(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(),
-            stackId, (byte) item.stack.getCount(), item.toCenter, item.side, item.colour,
-            item.timeToDest > Byte.MAX_VALUE ? Byte.MAX_VALUE : (byte) item.timeToDest);
+        PipeItemMessageQueue.appendTravellingItem(
+            pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(), stackId, (byte) item.stack.getCount(),
+            item.toCenter, item.side, item.colour, item.timeToDest > Byte.MAX_VALUE ? Byte.MAX_VALUE
+                : (byte) item.timeToDest
+        );
     }
 
     @Override
@@ -206,7 +208,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         if (stack.isEmpty()) {
             throw new IllegalStateException(
-                "The transactor " + trans + " returned an empty itemstack from a known good request!");
+                "The transactor " + trans + " returned an empty itemstack from a known good request!"
+            );
         }
 
         if (!simulate) {
@@ -267,7 +270,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     @Override
     public boolean canConnect(EnumFacing face, PipeFlow other) {
-        return other instanceof PipeFlowItems;
+        return other instanceof IFlowItems;
     }
 
     @Override
@@ -305,15 +308,17 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     private void onItemReachCenter(TravellingItem item) {
         IPipeHolder holder = pipe.getHolder();
-        PipeEventItem.ReachCenter reachCenter =
-            new PipeEventItem.ReachCenter(holder, this, item.colour, item.stack, item.side);
+        PipeEventItem.ReachCenter reachCenter = new PipeEventItem.ReachCenter(
+            holder, this, item.colour, item.stack, item.side
+        );
         holder.fireEvent(reachCenter);
         if (reachCenter.getStack().isEmpty()) {
             return;
         }
 
-        PipeEventItem.SideCheck sideCheck =
-            new PipeEventItem.SideCheck(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
+        PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(
+            holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
+        );
         sideCheck.disallow(reachCenter.from);
         for (EnumFacing face : EnumFacing.VALUES) {
             if (item.tried.contains(face) || !pipe.isConnected(face)) {
@@ -324,8 +329,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         List<EnumSet<EnumFacing>> order = sideCheck.getOrder();
         if (order.isEmpty()) {
-            PipeEventItem.TryBounce tryBounce =
-                new PipeEventItem.TryBounce(holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack());
+            PipeEventItem.TryBounce tryBounce = new PipeEventItem.TryBounce(
+                holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
+            );
             holder.fireEvent(tryBounce);
             if (tryBounce.canBounce) {
                 order = ImmutableList.of(EnumSet.of(reachCenter.from));
@@ -335,8 +341,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             }
         }
 
-        PipeEventItem.ItemEntry entry =
-            new PipeEventItem.ItemEntry(reachCenter.colour, reachCenter.getStack(), reachCenter.from);
+        PipeEventItem.ItemEntry entry = new PipeEventItem.ItemEntry(
+            reachCenter.colour, reachCenter.getStack(), reachCenter.from
+        );
         PipeEventItem.Split split = new PipeEventItem.Split(holder, this, order, entry);
         holder.fireEvent(split);
         ImmutableList<PipeEventItem.ItemEntry> entries = ImmutableList.copyOf(split.items);

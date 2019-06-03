@@ -300,7 +300,8 @@ public final class Pipe implements IPipe, IDebuggable {
             float ext = DEFAULT_CONNECTION_DISTANCE
                 + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
 
-            if (behaviour.canConnect(facing, oTile) && flow.canConnect(facing, oTile)) {
+            if (behaviour.shouldForceConnection(facing, oTile) || flow.shouldForceConnection(facing, oTile)
+                || (behaviour.canConnect(facing, oTile) && flow.canConnect(facing, oTile))) {
                 connected.put(facing, ext);
                 types.put(facing, ConnectedType.TILE);
             }
@@ -332,8 +333,8 @@ public final class Pipe implements IPipe, IDebuggable {
 
     public static boolean canPipesConnect(EnumFacing to, IPipe one, IPipe two) {
         return canColoursConnect(one.getColour(), two.getColour())//
-            && canBehavioursConnect(to, one.getBehaviour(), two.getBehaviour())//
-            && canFlowsConnect(to, one.getFlow(), two.getFlow());
+        && canBehavioursConnect(to, one.getBehaviour(), two.getBehaviour())//
+        && canFlowsConnect(to, one.getFlow(), two.getFlow());
     }
 
     public static boolean canColoursConnect(EnumDyeColor one, EnumDyeColor two) {

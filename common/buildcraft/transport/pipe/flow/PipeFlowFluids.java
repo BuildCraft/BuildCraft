@@ -157,7 +157,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public boolean canConnect(EnumFacing face, PipeFlow other) {
-        return other instanceof PipeFlowFluids;
+        return other instanceof IFlowFluid;
     }
 
     @Override
@@ -284,8 +284,11 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             section.ticksInDirection = COOLDOWN_INPUT;
         }
         if (reallyFilled != millibuckets) {
-            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
-                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
+            BCLog.logger.warn(
+                "[tryExtractFluidAdv] Filled "
+                + reallyFilled + " != extracted " + millibuckets //
+                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos()
+            );
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, toAdd);
     }
@@ -383,8 +386,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             int amount = isRemote ? section.target : section.amount;
             line.append(amount > 0 ? TextFormatting.GREEN : "");
             line.append(amount).append("").append(TextFormatting.RESET).append("mB");
-            line.append(" ").append(section.getCurrentDirection()).append(" (").append(section.ticksInDirection)
-                .append(")");
+            line.append(" ").append(section.getCurrentDirection()).append(" (").append(section.ticksInDirection).append(
+                ")"
+            );
 
             line.append(" [");
             int last = -1;
@@ -576,8 +580,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             if (!section.getCurrentDirection().canOutput()) {
                 continue;
             }
-            if (section.getMaxFilled() > 0
-                && pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null) {
+            if (
+                section.getMaxFilled() > 0
+                && pipe.getHolder().getCapabilityFromPipe(direction, CapUtil.CAP_FLUIDS) != null
+            ) {
                 realDirections.add(direction);
             }
         }
@@ -592,8 +598,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             List<EnumFacing> random = new ArrayList<>(set);
             Collections.shuffle(random);
 
-            float min =
-                Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
+            float min = Math.min(flowRate * realDirections.size(), totalAvailable)
+            / (float) flowRate / realDirections.size();
 
             for (EnumFacing direction : random) {
                 Section section = sections.get(EnumPipePart.fromFacing(direction));
@@ -643,8 +649,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
 
         int[] totalOffered = Arrays.copyOf(inputPerTick, 6);
-        PreMoveToCentre preMove = new PreMoveToCentre(pipe.getHolder(), this, currentFluid,
-            Math.min(flowRate, spaceAvailable), totalOffered, inputPerTick);
+        PreMoveToCentre preMove = new PreMoveToCentre(
+            pipe.getHolder(), this, currentFluid, Math.min(flowRate, spaceAvailable), totalOffered, inputPerTick
+        );
         // Event handlers edit the array in-place
         pipe.getHolder().fireEvent(preMove);
 
@@ -674,8 +681,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
 
         int[] fluidEnteringCentre = Arrays.copyOf(fluidLeavingSide, 6);
-        OnMoveToCentre move =
-            new OnMoveToCentre(pipe.getHolder(), this, currentFluid, fluidLeavingSide, fluidEnteringCentre);
+        OnMoveToCentre move = new OnMoveToCentre(
+            pipe.getHolder(), this, currentFluid, fluidLeavingSide, fluidEnteringCentre
+        );
         pipe.getHolder().fireEvent(move);
 
         for (EnumPipePart part : EnumPipePart.FACES) {
@@ -686,7 +694,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 int actuallyDrained = section.drainInternal(leaving, true);
                 if (actuallyDrained != leaving) {
                     throw new IllegalStateException(
-                        "Couldn't drain " + leaving + " from " + part + ", only drained " + actuallyDrained);
+                        "Couldn't drain " + leaving + " from " + part + ", only drained " + actuallyDrained
+                    );
                 }
                 if (actuallyDrained > 0) {
                     section.ticksInDirection = COOLDOWN_INPUT;
@@ -696,7 +705,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     int actuallyFilled = center.fill(entering, true);
                     if (actuallyFilled != entering) {
                         throw new IllegalStateException(
-                            "Couldn't fill " + entering + " from " + part + ", only filled " + actuallyFilled);
+                            "Couldn't fill " + entering + " from " + part + ", only filled " + actuallyFilled
+                        );
                     }
                 }
             }
@@ -968,8 +978,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 return 0;
             }
             resource = resource.copy();
-            PipeEventFluid.TryInsert tryInsert =
-                new PipeEventFluid.TryInsert(pipe.getHolder(), PipeFlowFluids.this, part.face, resource);
+            PipeEventFluid.TryInsert tryInsert = new PipeEventFluid.TryInsert(
+                pipe.getHolder(), PipeFlowFluids.this, part.face, resource
+            );
             pipe.getHolder().fireEvent(tryInsert);
             if (tryInsert.isCanceled()) {
                 return 0;
