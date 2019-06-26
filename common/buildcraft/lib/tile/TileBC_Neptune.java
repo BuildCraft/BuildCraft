@@ -180,8 +180,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** @param pos The <i>absolute</i> position of the {@link IBlockState} . */
     public final IBlockState getLocalState(BlockPos pos) {
         if (DEBUG && !world.isBlockLoaded(pos)) {
-            BCLog.logger.warn("[lib.tile] Ghost-loading block at " + StringUtilBC.blockPosToString(pos) + " (from "
-                + StringUtilBC.blockPosToString(getPos()) + ")");
+            BCLog.logger.warn(
+                "[lib.tile] Ghost-loading block at " + StringUtilBC.blockPosToString(pos) + " (from " + StringUtilBC
+                    .blockPosToString(getPos()) + ")"
+            );
         }
         return BlockUtil.getBlockState(world, pos, true);
     }
@@ -192,8 +194,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             return cached.tile;
         }
         if (DEBUG && !world.isBlockLoaded(pos)) {
-            BCLog.logger.warn("[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from "
-                + StringUtilBC.blockPosToString(getPos()) + ")");
+            BCLog.logger.warn(
+                "[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from " + StringUtilBC
+                    .blockPosToString(getPos()) + ")"
+            );
         }
         return BlockUtil.getTileEntity(getWorld(), getPos().offset(offset), true);
     }
@@ -211,8 +215,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             return cached.tile;
         }
         if (DEBUG && !world.isBlockLoaded(pos)) {
-            BCLog.logger.warn("[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from "
-                + StringUtilBC.blockPosToString(getPos()) + ")");
+            BCLog.logger.warn(
+                "[lib.tile] Ghost-loading tile at " + StringUtilBC.blockPosToString(pos) + " (from " + StringUtilBC
+                    .blockPosToString(getPos()) + ")"
+            );
         }
         return BlockUtil.getTileEntity(world, pos, true);
     }
@@ -397,8 +403,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public boolean canEditOther(BlockPos other) {
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(),
-            PermissionUtil.createFrom(world, other));
+        return PermissionUtil.hasPermission(
+            PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(world, other)
+        );
     }
 
     public boolean canPlayerEdit(EntityPlayer player) {
@@ -555,8 +562,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+        super.handleUpdateTag(tag);
+        if (!tag.hasKey("d", Constants.NBT.TAG_BYTE_ARRAY)) {
+            // A bit odd, but ok - this was probably sent by something else
+            return;
+        }
         byte[] bytes = tag.getByteArray("d");
+        if (bytes.length < 2) {
+            // less than 2 bytes won't even be enough to read the ID, so we'll treat it as no data.
+            BCLog.logger.warn("[lib.tile] Received an update tag that didn't have any data!\n\t(" + tag + ")");
+            return;
+        }
         ByteBuf buf = Unpooled.copiedBuffer(bytes);
 
         try {
@@ -567,7 +583,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             MessageUtil.ensureEmpty(buffer, world.isRemote, getClass() + ", id = " + getIdAllocator().getNameFor(id));
             spawnReceiveParticles(id);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Received an update tag that failed to read correctly!", e);
         }
     }
 
@@ -640,12 +656,15 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
-            else if (id == NET_REN_DELTA_SINGLE)
-                deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_GUI_DELTA_SINGLE)
-                deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
-            else if (id == NET_REN_DELTA_CLEAR)
-                deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(
+                false, EnumDeltaMessage.ADD_SINGLE, buffer
+            );
+            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(
+                true, EnumDeltaMessage.ADD_SINGLE, buffer
+            );
+            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(
+                false, EnumDeltaMessage.SET_VALUE, buffer
+            );
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_REDRAW) redrawBlock();
             else if (id == NET_ADV_DEBUG) {

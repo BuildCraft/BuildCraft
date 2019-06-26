@@ -56,21 +56,30 @@ public class SpriteUtil {
             CACHED.remove(profile);
         }
 
-        if (!CACHED.containsKey(profile)) {
-            CACHED.put(profile, TileEntitySkull.updateGameprofile(profile));
-        }
-        GameProfile p2 = CACHED.get(profile);
-        if (p2 == null) {
+        try {
+            if (!CACHED.containsKey(profile)) {
+                CACHED.put(profile, TileEntitySkull.updateGameprofile(profile));
+            }
+            GameProfile p2 = CACHED.get(profile);
+            if (p2 == null) {
+                return BCLibSprites.LOCK;
+            }
+            profile = p2;
+            Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().loadSkinFromCache(profile);
+            MinecraftProfileTexture tex = map.get(Type.SKIN);
+            if (tex != null) {
+                ResourceLocation loc = mc.getSkinManager().loadSkin(tex, Type.SKIN);
+                return new SpriteRaw(loc, 8, 8, 8, 8, 64);
+            }
+            return BCLibSprites.LOADING;
+        } catch (NullPointerException npe) {
+            // Fix for https://github.com/BuildCraft/BuildCraft/issues/4419
+            // I'm not quite sure why this throws an NPE but this should at
+            // least stop it from crashing
+            npe.printStackTrace();
+            CACHED.put(profile, profile);
             return BCLibSprites.LOCK;
         }
-        profile = p2;
-        Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().loadSkinFromCache(profile);
-        MinecraftProfileTexture tex = map.get(Type.SKIN);
-        if (tex != null) {
-            ResourceLocation loc = mc.getSkinManager().loadSkin(tex, Type.SKIN);
-            return new SpriteRaw(loc, 8, 8, 8, 8, 64);
-        }
-        return BCLibSprites.LOADING;
     }
 
     public static TextureAtlasSprite missingSprite() {
