@@ -19,7 +19,10 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleDigging;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,15 +61,20 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.transport.BCTransportItems;
+import buildcraft.transport.client.model.PipeModelCacheBase;
+import buildcraft.transport.client.model.PipeModelCachePluggable;
+import buildcraft.transport.client.render.PipeWireRenderer;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
@@ -681,16 +689,169 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return super.addLandingEffects(state, worldObj, blockPosition, iblockstate, entity, numberOfParticles);
     }
 
+    private static HitSpriteInfo getHitSpriteInfo(RayTraceResult target, TilePipeHolder pipeHolder) {
+        int p = target.subHit;
+        AxisAlignedBB aabb = null;
+        TextureAtlasSprite sprite = SpriteUtil.missingSprite();
+        if (0 <= p && p <= 6) {
+            aabb = p == 0 ? BOX_CENTER : BOX_FACES[p - 1];
+            PipeDefinition def = pipeHolder.getPipe().definition;
+            TextureAtlasSprite[] sprites = PipeModelCacheBase.generator.getItemSprites(def);
+            sprite = sprites.length == 0 ? SpriteUtil.missingSprite() : sprites[0];
+        } else if (6 + 1 <= p && p < 6 + 6 + 1) {
+            PipePluggable plug = pipeHolder.getPluggable(EnumFacing.values()[p - 6 - 1]);
+            if (plug == null) {
+                return null;
+            }
+            aabb = plug.getBoundingBox();
+            PluggableModelKey keyC = plug.getModelRenderKey(BlockRenderLayer.CUTOUT);
+            PluggableModelKey keyT = plug.getModelRenderKey(BlockRenderLayer.TRANSLUCENT);
+            if (keyC == null && keyT == null) {
+                return null;
+            }
+            List<BakedQuad> quads = null;
+            if (keyC != null) quads = PipeModelCachePluggable.cacheCutoutSingle.bake(keyC);
+            if (quads == null || quads.isEmpty()) {
+                if (keyT == null) {
+                    return null;
+                }
+                quads = PipeModelCachePluggable.cacheTranslucentSingle.bake(keyT);
+                if (quads == null || quads.isEmpty()) {
+                    return null;
+                }
+            }
+            sprite = quads.get(0).getSprite();
+        } else if (6 + 6 + 1 <= p && p < 1 + 6 + 6 + 8) {
+            EnumWirePart wirePart = EnumWirePart.values()[p - 6 - 6 - 1];
+            aabb = wirePart.boundingBox;
+            EnumDyeColor colour = pipeHolder.getWireManager().getColorOfPart(wirePart);
+            if (colour == null) {
+                return null;
+            }
+            sprite = PipeWireRenderer.getWireSprite(colour).getSprite();
+        } else if (6 + 6 + 1 + 8 < p && p <= 6 + 6 + 1 + 8 + 36) {
+            EnumWireBetween wireBetween = EnumWireBetween.values()[p - 6 - 6 - 1 - 8];
+            aabb = wireBetween.boundingBox;
+            EnumDyeColor colour = pipeHolder.getWireManager().betweens.get(wireBetween);
+            if (colour == null) {
+                return null;
+            }
+            sprite = PipeWireRenderer.getWireSprite(colour).getSprite();
+        }
+        return new HitSpriteInfo(aabb, sprite);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager) {
-        return super.addHitEffects(state, worldObj, target, manager);
+    public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager) {
+
+        TileEntity te = world.getTileEntity(target.getBlockPos());
+        if (te instanceof TilePipeHolder) {
+            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
+            HitSpriteInfo info = getHitSpriteInfo(target, pipeHolder);
+
+            if (info == null) {
+                return false;
+            }
+
+            double x = Math.random() * (info.aabb.maxX - info.aabb.minX) + info.aabb.minX;
+            double y = Math.random() * (info.aabb.maxY - info.aabb.minY) + info.aabb.minY;
+            double z = Math.random() * (info.aabb.maxZ - info.aabb.minZ) + info.aabb.minZ;
+
+            switch (target.sideHit) {
+                case DOWN:
+                    y = info.aabb.minY - 0.1;
+                    break;
+                case UP:
+                    y = info.aabb.maxY + 0.1;
+                    break;
+                case NORTH:
+                    z = info.aabb.minZ - 0.1;
+                    break;
+                case SOUTH:
+                    z = info.aabb.maxZ + 0.1;
+                    break;
+                case WEST:
+                    x = info.aabb.minX - 0.1;
+                    break;
+                default:
+                    x = info.aabb.maxX + 0.1;
+                    break;
+            }
+
+            x += target.getBlockPos().getX();
+            y += target.getBlockPos().getY();
+            z += target.getBlockPos().getZ();
+
+            ParticleDigging particle = new ParticleDigging(world, x, y, z, 0, 0, 0, state) {
+                // Just to make the constructor public
+            };
+            particle.setBlockPos(target.getBlockPos());
+            particle.setParticleTexture(info.sprite);
+            particle.multiplyVelocity(0.2F);
+            particle.multipleParticleScaleBy(0.6F);
+            manager.addEffect(particle);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
-        return super.addDestroyEffects(world, pos, manager);
+        RayTraceResult hitResult = Minecraft.getMinecraft().objectMouseOver;
+        if (hitResult == null || !pos.equals(hitResult.getBlockPos())) {
+            return false;
+        }
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TilePipeHolder) {
+            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
+            HitSpriteInfo info = getHitSpriteInfo(hitResult, pipeHolder);
+            if (info == null) {
+                return false;
+            }
+
+            double sizeX = info.aabb.maxX - info.aabb.minX;
+            double sizeY = info.aabb.maxY - info.aabb.minY;
+            double sizeZ = info.aabb.maxZ - info.aabb.minZ;
+
+            int countX = (int) Math.max(2, 4 * sizeX);
+            int countY = (int) Math.max(2, 4 * sizeY);
+            int countZ = (int) Math.max(2, 4 * sizeZ);
+
+            IBlockState state = world.getBlockState(pos);
+            for (int x = 0; x < countX; x++) {
+                for (int y = 0; y < countY; y++) {
+                    for (int z = 0; z < countZ; z++) {
+
+                        double _x = pos.getX() + info.aabb.minX + (x + 0.5) * sizeX / countX;
+                        double _y = pos.getY() + info.aabb.minY + (y + 0.5) * sizeY / countY;
+                        double _z = pos.getZ() + info.aabb.minZ + (z + 0.5) * sizeZ / countZ;
+
+                        ParticleDigging particle = new ParticleDigging(world, _x, _y, _z, 0, 0, 0, state) {
+                            // Just to make the constructor public
+                        };
+                        particle.setBlockPos(pos);
+                        particle.setParticleTexture(info.sprite);
+                        manager.addEffect(particle);
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static final class HitSpriteInfo {
+        final AxisAlignedBB aabb;
+        final TextureAtlasSprite sprite;
+
+        HitSpriteInfo(AxisAlignedBB aabb, TextureAtlasSprite sprite) {
+            this.aabb = aabb;
+            this.sprite = sprite;
+        }
     }
 
     // paint

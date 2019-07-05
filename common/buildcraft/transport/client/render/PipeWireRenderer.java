@@ -77,6 +77,10 @@ public class PipeWireRenderer {
         Arrays.fill(wireRenderingCache, -1);
     }
 
+    public static SpriteHolderRegistry.SpriteHolder getWireSprite(EnumDyeColor colour) {
+        return wireSprites.get(colour);
+    }
+
     private static MutableQuad[] getQuads(EnumWirePart part) {
         MutableQuad[] quads = new MutableQuad[6];
 
