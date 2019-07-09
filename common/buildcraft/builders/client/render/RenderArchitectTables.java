@@ -32,6 +32,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.render.DetachedRenderer;
 
+import buildcraft.builders.BCBuildersConfig;
 import buildcraft.builders.client.ClientArchitectTables;
 
 @SideOnly(Side.CLIENT)
@@ -52,7 +53,11 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
                 new Vec3d(pos).distanceTo(player.getPositionVector())
             ).reversed()
         );
+
+        final boolean __STENCIL = BCBuildersConfig.enableStencil && Minecraft.getMinecraft().getFramebuffer().isStencilEnabled();
+
         for (AxisAlignedBB bb : boxes) {
+            if (__STENCIL) {
             GL11.glStencilMask(0xff);
             GL11.glClearStencil(1);
             GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
@@ -63,7 +68,9 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             GL11.glStencilMask(0xFF);
             GL11.glDepthMask(false);
             GL11.glColorMask(false, false, false, false);
+            }
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            if (__STENCIL) {
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
             bb = bb.grow(0.01);
             buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
@@ -94,9 +101,11 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             GL11.glStencilMask(0x00);
             GL11.glDepthMask(true);
             GL11.glColorMask(true, true, true, true);
-
+            }
             GlStateManager.disableDepth();
+            if (__STENCIL) {
             GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+            }
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             Minecraft.getMinecraft().renderEngine.bindTexture(
@@ -132,8 +141,9 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             Tessellator.getInstance().draw();
             GlStateManager.disableBlend();
             GlStateManager.enableDepth();
-
+            if (__STENCIL) {
             GL11.glDisable(GL11.GL_STENCIL_TEST);
+            }
         }
     }
 }

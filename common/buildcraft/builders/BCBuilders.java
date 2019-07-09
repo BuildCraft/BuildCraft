@@ -43,6 +43,7 @@ public class BCBuilders {
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
+        BCBuildersConfig.preInit();
         BCBuildersRegistries.preInit();
         BCBuildersItems.fmlPreInit();
         BCBuildersBlocks.fmlPreInit();

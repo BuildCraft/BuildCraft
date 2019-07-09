@@ -5,6 +5,7 @@
 package buildcraft.builders;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -17,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.net.MessageManager;
@@ -46,6 +48,7 @@ import buildcraft.builders.tile.TileElectronicLibrary;
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.builders.tile.TileReplacer;
+import buildcraft.core.BCCoreConfig;
 
 public abstract class BCBuildersProxy implements IGuiHandler {
     @SidedProxy
@@ -160,8 +163,19 @@ public abstract class BCBuildersProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             super.fmlPreInit();
-            if (!Minecraft.getMinecraft().getFramebuffer().isStencilEnabled()) {
-                Minecraft.getMinecraft().getFramebuffer().enableStencil();
+            if (BCBuildersConfig.enableStencil) {
+                if (BCBuildersConfig.internalStencilCrashTest.getBoolean()) {
+                    BCLog.logger.warn("[builders.architect] Not enabling stencils because they have been force-disabled!");
+                } else {
+                    BCBuildersConfig.internalStencilCrashTest.set(true);
+                    BCCoreConfig.saveConfigs();
+                    Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
+                    if (!framebuffer.isStencilEnabled()) {
+                        framebuffer.enableStencil();
+                    }
+                    BCBuildersConfig.internalStencilCrashTest.set(false);
+                    BCCoreConfig.saveConfigs();
+                }
             }
             BCBuildersSprites.fmlPreInit();
             RenderQuarry.init();

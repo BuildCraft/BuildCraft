@@ -23,9 +23,15 @@ public class BCBuildersConfig {
      * drill. */
     public static boolean quarryFrameMoveBoth;
 
+    /** Client-side config to enable stencils-based drawing for the architect table. */
+    public static boolean enableStencil = true;
+
     private static Property propBptStoreExternalThreshold;
     private static Property propQuarryFrameMinHeight;
     private static Property propQuarryFrameMoveBoth;
+    private static Property propEnableStencil;
+
+    static Property internalStencilCrashTest;
 
     public static void preInit() {
         EnumRestartRequirement none = EnumRestartRequirement.NONE;
@@ -43,6 +49,16 @@ public class BCBuildersConfig {
         propQuarryFrameMoveBoth.setComment("If true then the quarry frame will move with both of its axis rather than just one.");
         none.setTo(propQuarryFrameMoveBoth);
 
+        propEnableStencil = BCCoreConfig.config.get("display", "enableStencil", true);
+        propEnableStencil.setComment("If true then the architect table will correctly hide it's translucent parts behind surrounding terrain. (This looks better)");
+        none.setTo(propEnableStencil);
+
+        internalStencilCrashTest = BCCoreConfig.config.get("internal", "force_disable_stencil", false);
+        internalStencilCrashTest.setComment("Use display.enableStencil instead of this!");
+        none.setTo(internalStencilCrashTest);
+        BCCoreConfig.config.getCategory("internal").setShowInGui(false);
+        BCCoreConfig.saveConfigs();
+
         reloadConfig(EnumRestartRequirement.GAME);
         BCCoreConfig.addReloadListener(BCBuildersConfig::reloadConfig);
     }
@@ -51,5 +67,6 @@ public class BCBuildersConfig {
         bptStoreExternalThreshold = propBptStoreExternalThreshold.getInt();
         quarryFrameMinHeight = propQuarryFrameMinHeight.getInt();
         quarryFrameMoveBoth = propQuarryFrameMoveBoth.getBoolean();
+        enableStencil = propEnableStencil.getBoolean();
     }
 }
