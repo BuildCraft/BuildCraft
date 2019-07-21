@@ -1,4 +1,3 @@
-<chapter name="tile.distiller.name"/>
 <lore>
 On a quest to make better use out of the recently discovered combustible fluids, you discover The Distiller which is used to many distillable fluids into a different liquid and gas fluid.
 </lore>

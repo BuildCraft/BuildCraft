@@ -7,6 +7,7 @@
 package buildcraft.lib.client.guide.parts;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -23,6 +24,48 @@ public abstract class GuidePageBase extends GuidePart {
 
     public GuidePageBase(GuiGuide gui) {
         super(gui);
+    }
+
+    protected void setupChapters() {
+        List<GuideChapter> lastChapterAtLevel = new ArrayList<>();
+        List<GuideChapter> chapters = getChapters();
+        for (GuideChapter chapter : chapters) {
+            chapter.parent = null;
+            chapter.children.clear();
+        }
+        for (GuideChapter chapter : chapters) {
+            int gap = chapter.level - lastChapterAtLevel.size();
+
+            if (gap < 0) {
+                // There's some previous children that we need to clean up
+                lastChapterAtLevel.subList(chapter.level, lastChapterAtLevel.size()).clear();
+            }
+
+            for (int g = Math.min(chapter.level, lastChapterAtLevel.size()) - 1; g >= 0; g--) {
+                GuideChapter parent = lastChapterAtLevel.get(g);
+                if (parent != null) {
+                    parent.children.add(chapter);
+                    chapter.parent = parent;
+                    break;
+                }
+            }
+
+            for (int g = 1; g < gap; g++) {
+                lastChapterAtLevel.add(null);
+            }
+            lastChapterAtLevel.add(chapter);
+        }
+
+        int idx = 0;
+        for (GuideChapter c : chapters) {
+            if (c.hasParent()) {
+                continue;
+            }
+            c.colourIndex = idx++ % GuideChapter.COLOURS.length;
+            if (c.hasChildren()) {
+                c.assignChildIndices();
+            }
+        }
     }
 
     protected final int getIndex() {
@@ -131,8 +174,9 @@ public abstract class GuidePageBase extends GuidePart {
             // Back page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
-                GuiRectangle turnBox =
-                    new GuiRectangle(x + width - icon.width, y + height, icon.width + 30, icon.height + 30);
+                GuiRectangle turnBox = new GuiRectangle(
+                    x + width - icon.width, y + height, icon.width + 30, icon.height + 30
+                );
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_FORWARDS_HOVERED;
                 }
@@ -169,8 +213,9 @@ public abstract class GuidePageBase extends GuidePart {
             // Odd => second page, test forward page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
-                GuiRectangle turnBox =
-                    new GuiRectangle(x + width - icon.width, y + height, icon.width + 30, icon.height + 30);
+                GuiRectangle turnBox = new GuiRectangle(
+                    x + width - icon.width, y + height, icon.width + 30, icon.height + 30
+                );
                 if (turnBox.contains(gui.mouse)) {
                     nextPage();
                 }

@@ -80,6 +80,8 @@ public class BCLibConfig {
 
     public static ChunkLoaderLevel chunkLoadingLevel = ChunkLoaderLevel.SELF_TILES;
 
+    public static boolean guideShowDetail = false;
+
     public static final List<Runnable> configChangeListeners = new ArrayList<>();
 
     /** Resets cached values across various BCLib classes that rely on these config options. */

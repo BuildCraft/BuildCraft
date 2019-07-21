@@ -24,24 +24,35 @@ import buildcraft.lib.gui.pos.IGuiArea;
 public class SpriteNineSliced {
     public final ISprite sprite;
     public final double xMin, yMin, xMax, yMax;
-    public final double scale;
+    public final double xScale, yScale;
 
     public SpriteNineSliced(ISprite sprite, int xMin, int yMin, int xMax, int yMax, int textureSize) {
+        this(sprite, xMin, yMin, xMax, yMax, textureSize, textureSize);
+    }
+
+    public SpriteNineSliced(ISprite sprite, int xMin, int yMin, int xMax, int yMax, int xScale, int yScale) {
         this.sprite = sprite;
-        this.xMin = xMin / (double) textureSize;
-        this.yMin = yMin / (double) textureSize;
-        this.xMax = xMax / (double) textureSize;
-        this.yMax = yMax / (double) textureSize;
-        this.scale = textureSize;
+        this.xMin = xMin / (double) xScale;
+        this.yMin = yMin / (double) yScale;
+        this.xMax = xMax / (double) xScale;
+        this.yMax = yMax / (double) yScale;
+        this.xScale = xScale;
+        this.yScale = yScale;
     }
 
     public SpriteNineSliced(ISprite sprite, double xMin, double yMin, double xMax, double yMax, double scale) {
+        this(sprite, xMin, yMin, xMax, yMax, scale, scale);
+    }
+
+    public SpriteNineSliced(ISprite sprite, double xMin, double yMin, double xMax, double yMax, double xScale,
+        double yScale) {
         this.sprite = sprite;
         this.xMin = xMin;
         this.yMin = yMin;
         this.xMax = xMax;
         this.yMax = yMax;
-        this.scale = scale;
+        this.xScale = xScale;
+        this.yScale = yScale;
     }
 
     public void draw(IGuiArea element) {
@@ -55,9 +66,10 @@ public class SpriteNineSliced {
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         vb.setTranslation(x, y, 0);
 
-        double sm = scale;
-        double[] xa = { 0, xMin * sm, width + (xMax - 1) * sm, width };
-        double[] ya = { 0, yMin * sm, height + (yMax - 1) * sm, height };
+        double sx = xScale;
+        double sy = yScale;
+        double[] xa = { 0, xMin * sx, width + (xMax - 1) * sx, width };
+        double[] ya = { 0, yMin * sy, height + (yMax - 1) * sy, height };
 
         double[] ua = { 0, xMin, xMax, 1 };
         double[] va = { 0, yMin, yMax, 1 };

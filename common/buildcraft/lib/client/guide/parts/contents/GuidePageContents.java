@@ -38,8 +38,8 @@ import buildcraft.lib.misc.search.ISuffixArray.SearchResult;
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
 public class GuidePageContents extends GuidePageBase {
-    private static final int ORDER_OFFSET_X = -50;
-    private static final int ORDER_OFFSET_Y = 14;
+    private static final int ORDER_OFFSET_X = -10;
+    private static final int ORDER_OFFSET_Y = -10;
 
     private ContentsNodeGui contents;
     private final GuiTextField searchText;
@@ -54,6 +54,7 @@ public class GuidePageContents extends GuidePageBase {
         searchText = new GuiTextField(0, fr, 0, 0, 80, fr.FONT_HEIGHT + 5);
         searchText.setEnableBackgroundDrawing(false);
         searchText.setTextColor(0xFF_00_00_00);
+        setupChapters();
     }
 
     @Override
@@ -103,10 +104,12 @@ public class GuidePageContents extends GuidePageBase {
                 realResultCount = -1;
                 contents.node.resetVisibility();
                 contents.invalidate();
+                setupChapters();
             } else {
                 String text = lastSearchText.toLowerCase(Locale.ROOT);
-                SearchResult<PageLink> ret =
-                    GuideManager.INSTANCE.quickSearcher.search(text, BCLibConfig.maxGuideSearchCount);
+                SearchResult<PageLink> ret = GuideManager.INSTANCE.quickSearcher.search(
+                    text, BCLibConfig.maxGuideSearchCount
+                );
                 realResultCount = ret.hasAllResults() ? -1 : ret.realResultCount;
                 Set<PageLink> matches = new HashSet<>(ret.results);
                 contents.node.setVisible(matches);
@@ -120,6 +123,7 @@ public class GuidePageContents extends GuidePageBase {
                 if (getPage() < 2) {
                     goToPage(2);
                 }
+                setupChapters();
             }
             gui.refreshChapters();
         }
@@ -173,13 +177,13 @@ public class GuidePageContents extends GuidePageBase {
         }
         if (index % 2 == 0) {
             searchText.x = x + 23;
-            searchText.y = y - 23;
+            searchText.y = y - 16;
             if (!searchText.isFocused() && searchText.getText().isEmpty()) {
                 GuiGuide.SEARCH_TAB_CLOSED.drawAt(x + 8, y - 20);
                 GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 19);
             } else {
-                GuiGuide.SEARCH_TAB_OPEN.drawAt(x - 2, y - 29);
-                GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 25);
+                GuiGuide.SEARCH_TAB_OPEN.drawAt(x - 2, y - 22);
+                GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 18);
             }
             searchText.drawTextBox();
             if (realResultCount >= 0) {
@@ -196,7 +200,7 @@ public class GuidePageContents extends GuidePageBase {
             numPages = pos.page + 1;
         }
         super.renderPage(x, y, width, height, index);
-        if (index % 2 == 0) {
+        if (index != 0 && index % 2 == 0) {
             int oX = x + ORDER_OFFSET_X;
             int oY = y + ORDER_OFFSET_Y;
             for (int j = 0; j < GuiGuide.ORDERS.length; j++) {

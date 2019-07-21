@@ -6,9 +6,15 @@
 
 package buildcraft.lib.client.guide.parts;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.RenderUtil;
@@ -19,9 +25,21 @@ public abstract class GuideChapter extends GuidePart {
     public static final int MAX_HOWEVER_PROGRESS = 5;
     public static final int MAX_HOVER_DISTANCE = 20;
 
+    private static final boolean FOLLOW_SIDE = false;
+
     public final PageLine chapter;
+
+    /** 0 is the minimum value, and corresponds to the top-level of chapter. */
+    public final int level;
     private int hoverProgress = 0, hoverProgressLast = 0;
     protected EnumGuiSide lastDrawn = null;
+
+    private boolean expanded = false;
+
+    @Nullable
+    protected GuideChapter parent;
+    protected final List<GuideChapter> children = new ArrayList<>();
+    protected int colourIndex = -1;
 
     public enum EnumGuiSide {
         LEFT,
@@ -32,16 +50,7 @@ public abstract class GuideChapter extends GuidePart {
         this(gui, 0, chapter);
     }
 
-    private int getColour() {
-        int index = gui.getChapterIndex(this);
-        if (index < 0) {
-            index = chapter.text.hashCode();
-            return index;
-        }
-        return COLOURS[index % COLOURS.length];
-    }
-
-    public GuideChapter(GuiGuide gui, int indent, String text) {
+    public GuideChapter(GuiGuide gui, int level, String text) {
         super(gui);
         ISimpleDrawable icon = (x, y) -> {
             GuiGuide.BOX_EMPTY.drawAt(x, y);
@@ -55,13 +64,42 @@ public abstract class GuideChapter extends GuidePart {
             GuiGuide.BOX_SELECTED_CHAPTER.drawAt(x, y);
             RenderUtil.setGLColorFromInt(-1);
         };
+        this.level = Math.max(0, level);
         icon = null;
         selected = null;
-        this.chapter = new PageLine(icon, selected, indent, text, false);
+        this.chapter = new PageLine(icon, selected, this.level + 1, text, false);
+    }
+
+    private int getColour() {
+        if (colourIndex < 0) {
+            return chapter.text.hashCode();
+        }
+        return COLOURS[colourIndex % COLOURS.length];
     }
 
     public void reset() {
-        lastDrawn = EnumGuiSide.RIGHT;
+        lastDrawn = FOLLOW_SIDE ? EnumGuiSide.RIGHT : EnumGuiSide.LEFT;
+    }
+
+    public boolean hasParent() {
+        return parent != null;
+    }
+
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+
+    void assignChildIndices() {
+        int cIdx = 0;
+        for (GuideChapter child : children) {
+            if (cIdx % COLOURS.length == colourIndex) {
+                cIdx++;
+            }
+            child.colourIndex = cIdx++ % COLOURS.length;
+            if (child.hasChildren()) {
+                child.assignChildIndices();
+            }
+        }
     }
 
     @Override
@@ -74,11 +112,9 @@ public abstract class GuideChapter extends GuidePart {
             RenderUtil.setGLColorFromInt(colour);
             int _x = x + 12;
             int _y = y + current.pixel;
-            int _width = width - 24;
-            GuiGuide.CHAPTER_MARKER_LEFT.drawAt(_x - 5, _y - 4);
-            float oX = _x - 5 + GuiGuide.CHAPTER_MARKER_LEFT.width;
-            GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(oX, _y - 4, _width + 4, 16);
-            GuiGuide.CHAPTER_MARKER_RIGHT.drawAt(_x + _width + 4, _y - 4);
+            PagePosition n2 = renderLine(current, chapter, x, y, width, height, -1);
+            int _height = n2.pixel - current.pixel;
+            GuiGuide.CHAPTER_MARKER_9.draw(_x - 5, _y - 4, width - 24, _height);
             RenderUtil.setGLColorFromInt(-1);
         }
 
@@ -87,7 +123,16 @@ public abstract class GuideChapter extends GuidePart {
         if (n.page / 2 < index) {
             lastDrawn = EnumGuiSide.LEFT;
         } else if (index == current.page / 2 || index == current.page / 2) {
-            lastDrawn = null;
+            lastDrawn = FOLLOW_SIDE ? null : EnumGuiSide.LEFT;
+        }
+        if (lastDrawn != null && parent != null) {
+            GuideChapter p = parent;
+            while (p != null) {
+                if (p.lastDrawn == null) {
+                    p.lastDrawn = lastDrawn;
+                }
+                p = p.parent;
+            }
         }
         return n;
     }
@@ -99,60 +144,189 @@ public abstract class GuideChapter extends GuidePart {
         return renderLine(current, chapter, x, y, width, height, -1);
     }
 
-    public EnumGuiSide draw(int index, float partialTicks) {
+    /** @param drawCentral TODO
+     * @return The additional number of chapter segments drawn. */
+    public int draw(int yIndex, float partialTicks, boolean drawCentral) {
+
+        int drawnCount = 1;
+
         IFontRenderer font = gui.getCurrentFont();
         String text = chapter.text;
         float hoverWidth = getHoverWidth(partialTicks);
         float width = font.getStringWidth(text) + hoverWidth;
-        int colour = COLOURS[index % COLOURS.length];
+        int colour = getColour();
 
-        int y = gui.minY + 20 * (index + 1);
-        if (lastDrawn == EnumGuiSide.LEFT) {
-            float x = gui.minX - width - 4 + 11;
+        int baseY = drawCentral ? ((int) GuiGuide.FLOATING_CHAPTER_MENU.getY() + 6) : gui.minY;
+        int y = baseY + (font.getMaxFontHeight() + 8) * (yIndex + 1);
+        boolean hasChildren = !children.isEmpty();
+        float _width = font.getStringWidth(text) + 12 + hoverWidth + (hasChildren ? 16 : 0);
+        int fullHeight = font.getFontHeight(text) + 6;
+        int childHeight = 0;
+
+        if (hasChildren && expanded) {
+            childHeight = fullHeight + getChildrenFullHeight();
+            // _width = Math.max(_width, getChildrenMaxWidth());
+        }
+
+        if (drawCentral || lastDrawn == EnumGuiSide.RIGHT) {
+            float x;
+            if (drawCentral) {
+                x = (float) GuiGuide.FLOATING_CHAPTER_MENU.getX() + 4 + hoverWidth;
+                _width -= hoverWidth;
+                hoverWidth = 0;
+            } else {
+                x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
+            }
+            x += level * 14;
+            GuideChapter p = parent;
+            while (p != null) {
+                x += p.getHoverWidth(partialTicks);
+                p = p.parent;
+            }
 
             RenderUtil.setGLColorFromInt(colour);
-            GuiGuide.CHAPTER_MARKER_LEFT.drawAt(x - 5, y - 4);
-            float oX = x - 5 + GuiGuide.CHAPTER_MARKER_LEFT.width;
-            GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(oX, y - 4, width + 4, 16);
+            SpriteNineSliced icon = drawCentral ? GuiGuide.CHAPTER_MARKER_9 : GuiGuide.CHAPTER_MARKER_9_RIGHT;
+            if (childHeight > 0) {
+                icon.draw(x + 10, y + fullHeight - 12, _width - 16, childHeight);
+            }
+            icon.draw(x, y - 4, _width, fullHeight);
+            if (hasChildren) {
+                (expanded ? GuiGuide.EXPANDED_ARROW : GuiGuide.CLOSED_ARROW).drawAt(x + hoverWidth, y - 4);
+                x += 16;
+
+                if (expanded) {
+                    for (GuideChapter child : children) {
+                        EnumGuiSide old = child.lastDrawn;
+                        child.lastDrawn = lastDrawn;
+                        drawnCount += child.draw(yIndex + drawnCount, partialTicks, drawCentral);
+                        child.lastDrawn = old;
+                    }
+                }
+            }
+
+            RenderUtil.setGLColorFromInt(-1);
+
+            font.drawString(text, (int) (x + 6 + hoverWidth), y, 0);
+        } else if (lastDrawn == EnumGuiSide.LEFT) {
+            float x = gui.minX - width + 5;
+            if (hasChildren) {
+                x -= 16;
+            }
+
+            RenderUtil.setGLColorFromInt(colour);
+            if (childHeight > 0) {
+                GuiGuide.CHAPTER_MARKER_9_LEFT.draw(x + 10, y + fullHeight - 12, _width - 16, childHeight);
+            }
+            GuiGuide.CHAPTER_MARKER_9_LEFT.draw(x - 6, y - 4, _width, fullHeight);
+
+            if (hasChildren) {
+                (expanded ? GuiGuide.EXPANDED_ARROW : GuiGuide.CLOSED_ARROW).drawAt(x - 6, y - 4);
+                x += 16;
+
+                if (expanded) {
+                    for (GuideChapter child : children) {
+                        EnumGuiSide old = child.lastDrawn;
+                        child.lastDrawn = lastDrawn;
+                        drawnCount += child.draw(yIndex + drawnCount, partialTicks, drawCentral);
+                        child.lastDrawn = old;
+                    }
+                }
+            }
+
             RenderUtil.setGLColorFromInt(-1);
 
             font.drawString(text, (int) x, y, 0);
-        } else if (lastDrawn == EnumGuiSide.RIGHT) {
-            int x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
-
-            RenderUtil.setGLColorFromInt(colour);
-            GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(x, y - 4, width + 4, 16);
-            GuiGuide.CHAPTER_MARKER_RIGHT.drawAt(x + width + 4, y - 4);
-            RenderUtil.setGLColorFromInt(-1);
-
-            font.drawString(text, (int) (x + 4 + hoverWidth), y, 0);
         }
-        return lastDrawn;
+        return drawnCount;
     }
 
-    protected boolean isMouseInside() {
+    private int getChildrenFullHeight() {
+        if (!expanded) {
+            return 0;
+        }
+        int fullHeight = 0;
+        IFontRenderer font = gui.getCurrentFont();
+        for (GuideChapter c : children) {
+            fullHeight += font.getFontHeight(c.chapter.text) + 6;
+            fullHeight += c.getChildrenFullHeight();
+            fullHeight += 2;
+        }
+        return fullHeight;
+    }
+
+    /** @return 0 for not hovered, 1 for the main chapter, or 2 for the arrow (if present). */
+    protected int getMousePart() {
         IFontRenderer font = gui.getCurrentFont();
         String text = chapter.text;
-        int width = (int) (font.getStringWidth(text) + getHoverWidth(0));
+        float hoverWidth = getHoverWidth(0);
+        final float realHoverWidth = hoverWidth;
+        int width = (int) (font.getStringWidth(text) + hoverWidth) + (children.isEmpty() ? 0 : 16);
 
-        int y = gui.minY + 20 * (gui.getChapterIndex(this) + 1);
+        int chapterIndex = 0;
 
-        if (lastDrawn == EnumGuiSide.LEFT) {
-            int x = gui.minX - width - 4 + 11;
-
-            GuiRectangle drawRect = new GuiRectangle(x, y - 4, width + GuiGuide.CHAPTER_MARKER_LEFT.width, 16);
-            if (drawRect.contains(gui.mouse)) {
-                return true;
+        GuideChapter p = parent;
+        while (p != null) {
+            if (!p.expanded) {
+                return 0;
             }
-        } else if (lastDrawn == EnumGuiSide.RIGHT) {
-            int x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
+            p = p.parent;
+        }
 
-            GuiRectangle drawRect = new GuiRectangle(x, y - 4, width + GuiGuide.CHAPTER_MARKER_RIGHT.width, 16);
-            if (drawRect.contains(gui.mouse)) {
-                return true;
+        for (GuideChapter c : gui.getChapters()) {
+            chapterIndex++;
+            if (c == this) {
+                break;
+            }
+            p = c.parent;
+            while (p != null) {
+                if (!p.expanded) {
+                    chapterIndex--;
+                    break;
+                }
+                p = p.parent;
             }
         }
-        return false;
+
+        boolean isCentral = gui.isSmallScreen();
+        int baseY = isCentral ? ((int) GuiGuide.FLOATING_CHAPTER_MENU.getY() + 6) : gui.minY;
+        int y = baseY + (font.getMaxFontHeight() + 8) * chapterIndex;
+
+        if (isCentral || lastDrawn == EnumGuiSide.RIGHT) {
+            int x;
+            if (isCentral) {
+                x = (int) GuiGuide.FLOATING_CHAPTER_MENU.getX() + 4 + (int) hoverWidth;
+                width -= hoverWidth;
+                hoverWidth = 0;
+            } else {
+                x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
+            }
+            x += level * 14;
+            p = parent;
+            while (p != null) {
+                x += p.getHoverWidth(0);
+                p = p.parent;
+            }
+
+            GuiRectangle drawRect = new GuiRectangle(x - realHoverWidth, y - 4, width + 16, 16);
+            if (drawRect.contains(gui.mouse)) {
+                GuiRectangle arrowRect = new GuiRectangle(x - realHoverWidth, y - 4, 24 + realHoverWidth, 16);
+                if (hasChildren() && arrowRect.contains(gui.mouse)) {
+                    return 2;
+                }
+                return 1;
+            }
+        } else if (lastDrawn == EnumGuiSide.LEFT) {
+            int x = gui.minX - width - 5;
+
+            GuiRectangle drawRect = new GuiRectangle(x, y - 4, width + 16, 16);
+            if (drawRect.contains(gui.mouse)) {
+                if (hasChildren() && new GuiRectangle(x, y - 4, 24, 16).contains(gui.mouse)) {
+                    return 2;
+                }
+                return 1;
+            }
+        }
+        return 0;
     }
 
     private float getHoverWidth(float partialTicks) {
@@ -160,11 +334,15 @@ public abstract class GuideChapter extends GuidePart {
         return (prog * MAX_HOVER_DISTANCE) / MAX_HOWEVER_PROGRESS;
     }
 
-    public boolean handleClick() {
-        if (isMouseInside()) {
-            return onClick();
+    public int handleClick() {
+        int part = getMousePart();
+        if (part == 1) {
+            return onClick() ? 1 : 0;
+        } else if (part == 2) {
+            expanded = !expanded;
+            return 2;
         }
-        return false;
+        return 0;
     }
 
     protected abstract boolean onClick();
@@ -172,8 +350,8 @@ public abstract class GuideChapter extends GuidePart {
     @Override
     public void updateScreen() {
         hoverProgressLast = hoverProgress;
-        if (isMouseInside()) {
-            hoverProgress++;
+        if (getMousePart() != 0) {
+            hoverProgress += 2;
             if (hoverProgress > MAX_HOWEVER_PROGRESS) {
                 hoverProgress = MAX_HOWEVER_PROGRESS;
             }

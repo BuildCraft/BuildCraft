@@ -75,6 +75,7 @@ public class GuidePage extends GuidePageBase {
         addTypeSpecific(gui, parts, entry);
 
         this.parts = ImmutableList.copyOf(parts);
+        setupChapters();
     }
 
     private static <T> void addTypeSpecific(GuiGuide gui, List<GuidePart> parts, PageValue<T> entry) {

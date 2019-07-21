@@ -20,6 +20,7 @@ import org.lwjgl.input.Keyboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -43,6 +44,9 @@ import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.guide.GuideBook;
 import buildcraft.lib.guide.GuideBookRegistry;
 import buildcraft.lib.guide.GuideContentsData;
+import buildcraft.lib.misc.GuiUtil;
+import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
+import buildcraft.lib.misc.LocaleUtil;
 
 public class GuiGuide extends GuiScreen {
     public static final ResourceLocation ICONS_1 = Gui.ICONS;
@@ -120,9 +124,16 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS_2, 14, 0, 14, 14);
     public static final GuiIcon ORDER_ALPHABETICAL = new GuiIcon(ICONS_2, 28, 0, 14, 14);
 
-    public static final GuiIcon CHAPTER_MARKER_LEFT = new GuiIcon(ICONS_2, 0, 223, 5, 16);
-    public static final GuiIcon CHAPTER_MARKER_SPACE = new GuiIcon(ICONS_2, 6, 223, 19, 16);
-    public static final GuiIcon CHAPTER_MARKER_RIGHT = new GuiIcon(ICONS_2, 27, 223, 5, 16);
+    public static final GuiIcon EXPANDED_ARROW = new GuiIcon(ICONS_2, 96, 164, 16, 16);
+    public static final GuiIcon CLOSED_ARROW = new GuiIcon(ICONS_2, 96, 180, 16, 16);
+
+    public static final GuiIcon CHAPTER_MARKER = new GuiIcon(ICONS_2, 0, 56, 32, 32);
+    public static final GuiIcon CHAPTER_MARKER_LEFT = new GuiIcon(ICONS_2, 0, 56, 24, 32);
+    public static final GuiIcon CHAPTER_MARKER_RIGHT = new GuiIcon(ICONS_2, 8, 56, 24, 32);
+
+    public static final SpriteNineSliced CHAPTER_MARKER_9;
+    public static final SpriteNineSliced CHAPTER_MARKER_9_LEFT;
+    public static final SpriteNineSliced CHAPTER_MARKER_9_RIGHT;
 
     public static final GuiIcon NOTE_PAGE = new GuiIcon(NOTE, 0, 0, 131, 164);
     public static final GuiIcon NOTE_UNDERLAY = new GuiIcon(ICONS_2, 0, 1, 3, 4);
@@ -134,8 +145,9 @@ public class GuiGuide extends GuiScreen {
 
     public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_ALPHABETICAL };
 
-    public static final GuiRectangle BACK_POSITION =
-        new GuiRectangle(PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
+    public static final GuiRectangle BACK_POSITION = new GuiRectangle(
+        PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height
+    );
 
     public static final TypeOrder[] SORTING_TYPES = { //
         new TypeOrder("buildcraft.guide.order.type_subtype", ETypeTag.TYPE, ETypeTag.SUB_TYPE), //
@@ -143,7 +155,19 @@ public class GuiGuide extends GuiScreen {
         new TypeOrder("buildcraft.guide.order.alphabetical")//
     };
 
+    public static final IGuiArea FLOATING_CHAPTER_MENU;
+
     private static final float BOOK_OPEN_TIME = 10f; // 20
+
+    static {
+        CHAPTER_MARKER_9 = new SpriteNineSliced(CHAPTER_MARKER.sprite, 8, 8, 24, 24, 32);
+        CHAPTER_MARKER_9_LEFT = new SpriteNineSliced(CHAPTER_MARKER_LEFT.sprite, 8, 8, 24, 24, 24, 32);
+        CHAPTER_MARKER_9_RIGHT = new SpriteNineSliced(CHAPTER_MARKER_RIGHT.sprite, 0, 8, 16, 24, 24, 32);
+
+        FLOATING_CHAPTER_MENU = GuiUtil.moveRectangleToCentre(
+            new GuiRectangle((PAGE_LEFT_TEXT.width + PAGE_RIGHT_TEXT.width) / 2, PAGE_LEFT.height - 20)
+        );
+    }
 
     public final MousePosition mouse = new MousePosition();
 
@@ -153,6 +177,7 @@ public class GuiGuide extends GuiScreen {
     public TypeOrder sortingOrder = SORTING_TYPES[0];
     private boolean isOpen = false, isEditing = false;
     private boolean isOpening = false;
+    private boolean showingContentsMenu = false;
 
     /** Float between -90 and 90} */
     private float openingAngleLast = -90, openingAngleNext = -90;
@@ -218,8 +243,8 @@ public class GuiGuide extends GuiScreen {
         return this.currentFont;
     }
 
-    public int getChapterIndex(GuideChapter chapter) {
-        return chapters.indexOf(chapter);
+    public List<GuideChapter> getChapters() {
+        return chapters;
     }
 
     public void refreshChapters() {
@@ -243,6 +268,10 @@ public class GuiGuide extends GuiScreen {
             setupFontRenderer();
             currentPage.tick();
         }
+    }
+
+    public boolean isSmallScreen() {
+        return new ScaledResolution(mc).getScaledWidth() < 590;
     }
 
     @Override
@@ -315,11 +344,15 @@ public class GuiGuide extends GuiScreen {
             // minX + coverWidth, minY,
             // minX, minY
             // ); // like drawScaledInside, but using drawCustomQuad
-            BOOK_COVER.drawCustomQuad(minX, minY + BOOK_COVER.height, minX + coverWidth,
-                minY + BOOK_COVER.height + offset, minX + coverWidth, minY - offset, minX, minY);
+            BOOK_COVER.drawCustomQuad(
+                minX, minY + BOOK_COVER.height, minX + coverWidth, minY + BOOK_COVER.height + offset, minX + coverWidth,
+                minY - offset, minX, minY
+            );
 
-            BOOK_BINDING.drawScaledInside((int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset),
-                bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
+            BOOK_BINDING.drawScaledInside(
+                (int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset), bindingWidth,
+                (int) (BOOK_BINDING.height + offset * 2)
+            );
 
         } else if (openingAngle == 0) {
             minX = (width - BOOK_COVER.width) / 2;
@@ -349,14 +382,17 @@ public class GuiGuide extends GuiScreen {
             // minX + bindingWidth + pageWidth, minY,
             // minX + bindingWidth, minY - offset
             // );
-            PAGE_LEFT.drawCustomQuad(minX + bindingWidth, minY + PAGE_LEFT.height + offset,
-                minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY,
-                minX + bindingWidth, minY - offset);
+            PAGE_LEFT.drawCustomQuad(
+                minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY
+                    + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX + bindingWidth, minY - offset
+            );
             // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
             mc.renderEngine.bindTexture(COVER);
-            BOOK_BINDING.drawScaledInside((int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth,
-                (int) (BOOK_BINDING.height + offset * 2));
+            BOOK_BINDING.drawScaledInside(
+                (int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height
+                    + offset * 2)
+            );
 
             mc.renderEngine.bindTexture(ICONS_2);
         }
@@ -401,16 +437,49 @@ public class GuiGuide extends GuiScreen {
             chapter.reset();
         }
 
-        currentPage.renderFirstPage(minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y,
-            (int) PAGE_LEFT_TEXT.width, (int) PAGE_LEFT_TEXT.height);
+        currentPage.renderFirstPage(
+            minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y, (int) PAGE_LEFT_TEXT.width,
+            (int) PAGE_LEFT_TEXT.height
+        );
+        int secondPageX = minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x;
         if (!isHalfPageShown) {
-            currentPage.renderSecondPage(minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x,
-                minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height);
+            currentPage.renderSecondPage(
+                secondPageX, minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height
+            );
         }
-        int chapterIndex = 0;
-        for (GuideChapter chapter : chapters) {
-            chapter.draw(chapterIndex, partialTicks);
-            chapterIndex++;
+
+        boolean drawContents = true;
+        boolean smallScreen = isSmallScreen();
+        if (smallScreen) {
+            drawContents = showingContentsMenu;
+
+            String str = LocaleUtil.localize("buildcraft.guide.chapter_list");
+            if (showingContentsMenu) {
+                CHAPTER_MARKER_9.draw(FLOATING_CHAPTER_MENU);
+                currentFont.drawString(
+                    str, (int) FLOATING_CHAPTER_MENU.getX() + 7, (int) FLOATING_CHAPTER_MENU.getY() + 7, 0
+                );
+            } else {
+                boolean isHovered = new GuiRectangle(secondPageX, minY, 80, 10).contains(mouse);
+                int hoverOffset = isHovered ? -5 : 0;
+                int y = minY + hoverOffset;
+
+                int strWidth = currentFont.getStringWidth(str);
+                try (AutoGlScissor scissor = GuiUtil.scissor(secondPageX, 0, strWidth + 20, minY + 10)) {
+                    CHAPTER_MARKER_9.draw(secondPageX, y, strWidth + 20, 100);
+                    currentFont.drawString(str, secondPageX + 10, y + 3, 0);
+                }
+            }
+        }
+
+        if (drawContents) {
+            int chapterIndex = 0;
+            for (GuideChapter chapter : chapters) {
+                if (chapter.hasParent()) {
+                    continue;
+                }
+                chapterIndex += chapter.draw(chapterIndex, partialTicks, smallScreen);
+            }
         }
 
         // Draw the back button if there are any pages on the stack
@@ -457,23 +526,52 @@ public class GuiGuide extends GuiScreen {
                 current.setFontRenderer(currentFont);
 
                 for (GuideChapter chapter : chapters) {
-                    if (chapter.handleClick()) {
+                    int clickResult = chapter.handleClick();
+                    if (clickResult > 0) {
+                        if (showingContentsMenu && clickResult == 1) {
+                            showingContentsMenu = false;
+                        }
                         return;
                     }
                 }
 
-                current.handleMouseClick(page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX,
-                    mouseY, mouseButton, currentPage.getPage(), isEditing);
-                current.handleMouseClick(page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX,
-                    mouseY, mouseButton, currentPage.getPage() + 1, isEditing);
+                if (isSmallScreen()) {
+                    if (showingContentsMenu) {
+                        double menuWidth = (PAGE_LEFT_TEXT.width + PAGE_RIGHT_TEXT.width) / 2;
+                        double menuHeight = PAGE_LEFT.height - 20;
+                        IGuiArea menuRect = GuiUtil.moveRectangleToCentre(new GuiRectangle(menuWidth, menuHeight));
+                        if (!menuRect.contains(mouse)) {
+                            showingContentsMenu = false;
+                            return;
+                        }
+                        return;
+                    } else {
+                        int secondPageX = minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x;
+                        if (new GuiRectangle(secondPageX, minY, 80, 10).contains(mouse)) {
+                            showingContentsMenu = true;
+                            return;
+                        }
+                    }
+                }
+
+                current.handleMouseClick(
+                    page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton,
+                    currentPage.getPage(), isEditing
+                );
+                current.handleMouseClick(
+                    page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton,
+                    currentPage.getPage() + 1, isEditing
+                );
 
                 if ((!pages.isEmpty()) && BACK_POSITION.offset(minX, minY).contains(mouse)) {
                     closePage();
                 }
 
             } else {
-                if (mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width
-                    && mouseY <= minY + BOOK_COVER.height) {
+                if (
+                    mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width && mouseY <= minY
+                        + BOOK_COVER.height
+                ) {
                     if (isOpening) {// So you can double-click to open it instantly
                         isOpen = true;
                     }

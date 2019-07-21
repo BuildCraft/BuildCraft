@@ -1,4 +1,3 @@
-<chapter name="item.volume_box.name"/>
 <lore>
 Land Marks can be awkward at times: they require a lot of break breaking and replacing in order to change the size. The Volume Marker provides a simpler solution: each corner of the box can be moved easily.
 </lore>

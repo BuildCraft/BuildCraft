@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.entry.PageEntry;
@@ -44,7 +46,6 @@ import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.client.guide.parts.GuidePartGroup;
 import buildcraft.lib.client.guide.parts.GuidePartMulti;
 import buildcraft.lib.client.guide.parts.GuidePartNewPage;
-import buildcraft.lib.client.guide.parts.GuidePartNote;
 import buildcraft.lib.client.guide.parts.GuideText;
 import buildcraft.lib.client.guide.parts.recipe.IStackRecipes;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
@@ -67,10 +68,26 @@ public enum XmlPageLoader implements IPageLoaderText {
     public static final Map<String, SpecialParser> TAG_FACTORIES = new HashMap<>();
     public static final Map<String, MultiPartJoiner> GUIDE_PART_MULTIS = new HashMap<>();
 
+    /** Used to show "in-game" guide information, narrated from the perspective of the player. (As if they were actively
+     * researching how everything worked). The inverse is for a more formal, wikipedia-like tone used to convey the
+     * information, pure and simple.
+     * <p>
+     * This is enabled by default in-game, and always disabled in exports. */
     public static boolean SHOW_LORE = true;
+
+    /** Used to show extra "hints" that the described thing can be used for, or different ways of using it in
+     * combinations with other blocks/items. Essentially this is for "recommended usages" of different things. (As
+     * working this out is part of the fun it is not required. As such this is disabled by default, but toggle-able
+     * in-game and planned to be toggle-able when exported. */
     public static boolean SHOW_HINTS = false;
-    public static boolean SHOW_DETAIL = false;
-    public static boolean SHOW_DESCRIPTION = true;
+
+    /** Used to show all of the numbers used when calculating various things, like pipe flow rate, extraction rate,
+     * pulse rate, etc.
+     * <p>
+     * Disabled by default, but toggle-able in-game and planned to be toggle-able when exported. */
+    public static boolean SHOW_DETAIL() {
+        return BCLibConfig.guideShowDetail;
+    }
 
     private static final class GuideTextFactory implements GuidePartFactory {
         public final String text;
@@ -110,10 +127,8 @@ public enum XmlPageLoader implements IPageLoaderText {
     static {
         // Note that text is done separately, so its not registered here
         putDuelMultiPartType("lore", () -> SHOW_LORE);
-        putDuelMultiPartType("description", () -> SHOW_DESCRIPTION);
-        putDuelMultiPartType("detail", () -> SHOW_DETAIL);
+        putDuelMultiPartType("detail", () -> SHOW_DETAIL());
         putDuelMultiPartType("hint", () -> SHOW_HINTS);
-        putMultiPartType("note", XmlPageLoader::loadNote);
         putSingle("new_page", (attr, prof) -> GuidePartNewPage::new);
         putSingle("chapter", XmlPageLoader::loadChapter);
         putSingle("recipe", XmlPageLoader::loadRecipe);
@@ -153,8 +168,10 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             for (int i = 0; i < lines.size(); i++) {
                 String str = lines.get(i);
-                if (str.startsWith("~{") && str.endsWith("}") && str.indexOf('{', 2) == -1
-                    && str.indexOf('}') == str.length() - 1) {
+                if (
+                    str.startsWith("~{") && str.endsWith("}") && str.indexOf('{', 2) == -1 && str.indexOf('}') == str
+                        .length() - 1
+                ) {
                     lines.set(i, TextFormatting.DARK_PURPLE + str);
                     continue;
                 }
@@ -273,7 +290,8 @@ public enum XmlPageLoader implements IPageLoaderText {
                         XmlTag nameTag = nestedTags.pop();
                         if (!tag.name.equals(nameTag.name)) {
                             throw new InvalidInputDataException(
-                                "Tried to close " + tag.name + " before instead of " + nameTag.name + "!");
+                                "Tried to close " + tag.name + " before instead of " + nameTag.name + "!"
+                            );
                         }
                         List<GuidePartFactory> subParts = nestedParts.pop();
                         prof.startSection("join_" + tag.name);
@@ -466,11 +484,22 @@ public enum XmlPageLoader implements IPageLoaderText {
 
     private static GuidePartFactory loadChapter(XmlTag tag, Profiler prof) {
         String name = tag.get("name");
+        String level = tag.get("level");
         if (name == null) {
             BCLog.logger.warn("[lib.guide.loader.xml] Found a chapter tag without a name!" + tag);
             return null;
         }
-        return chapter(name);
+        if (level == null) {
+            level = "0";
+        }
+        try {
+            int intLevel = Integer.parseInt(level);
+            return chapter(name, intLevel);
+        } catch (NumberFormatException nfe) {
+            String str = "§4" + tag.originalString + "§r";
+            str = str.replace(level, "§c" + level + "§4");
+            return new GuideTextFactory(str);
+        }
     }
 
     private static GuidePartFactory loadImage(XmlTag tag, Profiler prof) {
@@ -492,8 +521,9 @@ public enum XmlPageLoader implements IPageLoaderText {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[lib.guide.loader.xml] Found an invalid number for image tag (" + name + ") " + tag
-                + nfe.getMessage());
+            BCLog.logger.warn(
+                "[lib.guide.loader.xml] Found an invalid number for image tag (" + name + ") " + tag + nfe.getMessage()
+            );
             return _default;
         }
     }
@@ -507,8 +537,10 @@ public enum XmlPageLoader implements IPageLoaderText {
         if (type == null) {
             IStackRecipes recipes = RecipeLookupHelper.handlerTypes.get(type);
             if (recipes == null) {
-                BCLog.logger.warn("[lib.guide.loader.xml] Unknown recipe type " + type + " - must be one of "
-                    + RecipeLookupHelper.handlerTypes.keySet());
+                BCLog.logger.warn(
+                    "[lib.guide.loader.xml] Unknown recipe type " + type + " - must be one of "
+                        + RecipeLookupHelper.handlerTypes.keySet()
+                );
             } else {
                 List<GuidePartFactory> list = recipes.getRecipes(stack);
                 if (list.size() > 0) {
@@ -545,19 +577,30 @@ public enum XmlPageLoader implements IPageLoaderText {
         if (stack == null) {
             return null;
         }
-        return loadAllCrafting(stack, prof);
+        String chapterLevelStr = tag.get("chapter_level");
+        int chapterLevel = 0;
+        if (chapterLevelStr != null) {
+            try {
+                chapterLevel = Integer.parseInt(chapterLevelStr);
+            } catch (NumberFormatException nfe) {
+                String str = "§4" + tag.originalString + "§r";
+                str = str.replace(chapterLevelStr, "§c" + chapterLevelStr + "§4");
+                return Collections.singletonList(new GuideTextFactory(str));
+            }
+        }
+        return loadAllCrafting(stack, prof, chapterLevel);
     }
 
-    public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack, Profiler prof) {
+    public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack, Profiler prof, int chapterLevel) {
         prof.startSection("recipes");
         List<GuidePartFactory> list = new ArrayList<>();
         List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack, prof);
         if (recipeParts.size() > 0) {
             list.add(GuidePartNewPage::new);
             if (recipeParts.size() == 1) {
-                list.add(chapter("buildcraft.guide.recipe.create"));
+                list.add(chapter("buildcraft.guide.recipe.create", chapterLevel));
             } else {
-                list.add(chapter("buildcraft.guide.recipe.create.plural"));
+                list.add(chapter("buildcraft.guide.recipe.create.plural", chapterLevel));
             }
             list.addAll(recipeParts);
         }
@@ -570,9 +613,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                 list.add(GuidePartNewPage::new);
             }
             if (usageParts.size() == 1) {
-                list.add(chapter("buildcraft.guide.recipe.use"));
+                list.add(chapter("buildcraft.guide.recipe.use", chapterLevel));
             } else {
-                list.add(chapter("buildcraft.guide.recipe.use.plural"));
+                list.add(chapter("buildcraft.guide.recipe.use.plural", chapterLevel));
             }
             list.addAll(usageParts);
         }
@@ -590,9 +633,9 @@ public enum XmlPageLoader implements IPageLoaderText {
         if (recipeParts.size() > 0) {
             parts.add(new GuidePartNewPage(gui));
             if (recipeParts.size() == 1) {
-                parts.add(chapter("buildcraft.guide.recipe.create").createNew(gui));
+                parts.add(chapter("buildcraft.guide.recipe.create", 0).createNew(gui));
             } else {
-                parts.add(chapter("buildcraft.guide.recipe.create.plural").createNew(gui));
+                parts.add(chapter("buildcraft.guide.recipe.create.plural", 0).createNew(gui));
             }
             parts.addAll(recipeParts);
         }
@@ -607,16 +650,20 @@ public enum XmlPageLoader implements IPageLoaderText {
                 parts.add(new GuidePartNewPage(gui));
             }
             if (usageParts.size() == 1) {
-                parts.add(chapter("buildcraft.guide.recipe.use").createNew(gui));
+                parts.add(chapter("buildcraft.guide.recipe.use", 0).createNew(gui));
             } else {
-                parts.add(chapter("buildcraft.guide.recipe.use.plural").createNew(gui));
+                parts.add(chapter("buildcraft.guide.recipe.use.plural", 0).createNew(gui));
             }
             parts.addAll(usageParts);
         }
     }
 
     public static GuidePartFactory chapter(String after) {
-        return (gui) -> new GuideChapterWithin(gui, LocaleUtil.localize(after));
+        return chapter(after, 0);
+    }
+
+    public static GuidePartFactory chapter(String after, int level) {
+        return (gui) -> new GuideChapterWithin(gui, level, LocaleUtil.localize(after));
     }
 
     public static GuidePartFactory translate(String text) {
@@ -692,20 +739,5 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
         }
         return stack;
-    }
-
-    public static GuidePartFactory loadNote(XmlTag tag, List<GuidePartFactory> factories, Profiler prof) {
-        String id = tag.get("id");
-        if (id == null) {
-            BCLog.logger.warn("[lib.guide.loader.xml] Found a note tag without an 'id' attribute!");
-            return null;
-        }
-        return (gui) -> {
-            List<GuidePart> parts = new ArrayList<>();
-            for (GuidePartFactory factory : factories) {
-                parts.add(factory.createNew(gui));
-            }
-            return new GuidePartNote(gui, id, parts);
-        };
     }
 }

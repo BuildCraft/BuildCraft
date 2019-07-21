@@ -60,6 +60,7 @@ public class BCCoreConfig {
     private static Property propUseHighContrastColouredLabels;
     private static Property propHidePower;
     private static Property propHideFluid;
+    private static Property propGuideBookEnableDetail;
     private static Property propUseBucketsStatic;
     private static Property propUseBucketsFlow;
     private static Property propUseLongLocalizedName;
@@ -132,6 +133,9 @@ public class BCCoreConfig {
         propHideFluid = config.get(display, "hideFluidValues", false);
         propHideFluid.setComment("Should all fluid values (Buckets, mB, mB/t) be hidden?");
         none.setTo(propHideFluid);
+
+        propGuideBookEnableDetail = config.get(display, "guideBookEnableDetail", false);
+        none.setTo(propGuideBookEnableDetail);
 
         propUseBucketsStatic = config.get(display, "useBucketsStatic", true);
         propUseBucketsStatic.setComment(
@@ -265,6 +269,7 @@ public class BCCoreConfig {
         BCLibConfig.useHighContrastLabelColours = propUseHighContrastColouredLabels.getBoolean();
         hidePower = propHidePower.getBoolean();
         hideFluid = propHideFluid.getBoolean();
+        BCLibConfig.guideShowDetail = propGuideBookEnableDetail.getBoolean();
         BCLibConfig.useBucketsStatic = propUseBucketsStatic.getBoolean();
         BCLibConfig.useBucketsFlow = propUseBucketsFlow.getBoolean();
         BCLibConfig.useLongLocalizedName = propUseLongLocalizedName.getBoolean();

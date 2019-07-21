@@ -11,12 +11,12 @@ import buildcraft.lib.client.guide.GuiGuide;
 public class GuideChapterWithin extends GuideChapter {
     private int lastPage = -1;
 
-    public GuideChapterWithin(GuiGuide gui, int indent, String text) {
-        super(gui, indent, text);
+    public GuideChapterWithin(GuiGuide gui, int level, String text) {
+        super(gui, level, text);
     }
 
     public GuideChapterWithin(GuiGuide gui, String chapter) {
-        super(gui, 1, chapter);
+        this(gui, 0, chapter);
     }
 
     @Override

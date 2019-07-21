@@ -1,4 +1,3 @@
-<chapter name="tile.miningWellBlock.name"/>
 <lore>
 On a quest to dig deeper, you start to research into some new machines and begin to assemble a machine that can automatically dig for you.
 It has one caveat, It can only dig straight down and does not dig bedrock.

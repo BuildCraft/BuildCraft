@@ -727,6 +727,7 @@ buildcraft.item.nonclean.usage=Shift-right click to clean
 buildcraft.guide.book.meta.name=BuildCraft Configuration Guide
 buildcraft.guide_book.reloaded=Guide Book Reloaded
 buildcraft.guide.too_many_results=Too many results to display: %s
+buildcraft.guide.chapter_list=Chapters
 buildcraft.guide.contents.loaded_modules=Loaded modules:
 buildcraft.guide.contents.missing_modules=Missing modules:
 buildcraft.guide.order.type_subtype=Sort By Type

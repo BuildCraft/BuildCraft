@@ -146,11 +146,17 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                 default:
             }
         } else if (line.startsWith("#")) {
+            int level = -1;
             while (line.startsWith("#")) {
                 line = line.substring(1);
+                level++;
             }
             line = line.trim();
-            return "<chapter name=\"" + line + "\"/>";
+            if (level == 0) {
+                return "<chapter name=\"" + line + "\"/>";
+            } else {
+                return "<chapter name=\"" + line + "\" level=\"" + level + "\"/>";
+            }
         }
         return line;
     }
