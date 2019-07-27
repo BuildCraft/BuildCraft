@@ -747,50 +747,9 @@ buildcraft.guide.contents.triggers=Triggers
 buildcraft.guide.contents.actions=Actions
 
 buildcraft.guide.chapter.type.unknown=Unknown Type!
-buildcraft.guide.chapter.type.block=Blocks
-buildcraft.guide.chapter.type.item=Items
-buildcraft.guide.chapter.type.pipe=Pipes
-buildcraft.guide.chapter.type.trigger=Triggers
-buildcraft.guide.chapter.type.action=Actions
-buildcraft.guide.chapter.type.config=Configuration
-
 buildcraft.guide.chapter.subtype.unknown=Unknown Subtype!
-buildcraft.guide.chapter.subtype.gear=Gears
-buildcraft.guide.chapter.subtype.tool=Tools
-buildcraft.guide.chapter.subtype.fluid=Fluid
-buildcraft.guide.chapter.subtype.mining=Mining
-buildcraft.guide.chapter.subtype.engine=Engines
-buildcraft.guide.chapter.subtype.automation=Automation
-buildcraft.guide.chapter.subtype.pipe_item=Item Transport
-buildcraft.guide.chapter.subtype.pipe_fluid=Fluid Transport
-buildcraft.guide.chapter.subtype.pipe_plug=Pluggables
-buildcraft.guide.chapter.subtype.refining=Refining
-buildcraft.guide.chapter.subtype.laser=Laser Power
-buildcraft.guide.chapter.subtype.basic=Basic
-buildcraft.guide.chapter.subtype.resourcepack=Resource Pack
-
-buildcraft.guide.chapter.stage.unknown=Unknown Era!
-buildcraft.guide.chapter.stage.base=Basic Resources
-buildcraft.guide.chapter.stage.common=Common Materials
-buildcraft.guide.chapter.stage.rare=Rare Elements
-buildcraft.guide.chapter.stage.nether=Nether
-buildcraft.guide.chapter.stage.end=Ender
-
 buildcraft.guide.chapter.mod.unknown=Unknown Mod!
-buildcraft.guide.chapter.mod.buildcraft=BuildCraft
-
 buildcraft.guide.chapter.submod.unknown=Unknown SubMod!
-buildcraft.guide.chapter.submod.lib=Lib
-buildcraft.guide.chapter.submod.core=Core
-buildcraft.guide.chapter.submod.factory=Factory
-buildcraft.guide.chapter.submod.energy=Energy
-buildcraft.guide.chapter.submod.transport=Transport
-
-buildcraft.guide.chapter.title.gate_base=Gates
-
-buildcraft.guide.page.guide_page_format=Guide Page File Format
-buildcraft.guide.page.json_insn_format=Json Instruction File Format
-buildcraft.guide.page.registry_overview=Json Registry Overview
 
 buildcraft.guide.meta.group.linking_to=Linked To
 buildcraft.guide.meta.group.linked_from=Linked From

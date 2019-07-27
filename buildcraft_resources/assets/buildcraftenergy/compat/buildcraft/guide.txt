@@ -1,6 +1,0 @@
-~{buildcraft/json/insn}
-
-import "buildcraftlib:util" "buildcraftcore:main"
-
-block_engine "engine_stone" "{buildcraftcore:engine, 1, 1}"
-block_engine "engine_iron" "{buildcraftcore:engine, 1, 2}"

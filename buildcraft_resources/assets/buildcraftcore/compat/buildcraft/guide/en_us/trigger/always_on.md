@@ -1,1 +1,0 @@
-This simple trigger is always on.

@@ -1,5 +1,0 @@
-~{buildcraft/json/insn}
-
-import "buildcraftlib:util" "buildcraftcore:main"
-
-plug "plug_facade"

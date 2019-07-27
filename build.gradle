@@ -150,6 +150,9 @@ sourceSets {
             srcDir "buildcraft_resources"
             srcDir "BuildCraft-Localization"
             exclude "**/.md" // exclude readme from localization repo
+            srcDir "BuildCraftGuide/guide_resources"
+            exclude "pack.png" // exclude from the guide repo
+            exclude "pack.mcmeta" // exclude from the guide repo
         }
     }
     api {
