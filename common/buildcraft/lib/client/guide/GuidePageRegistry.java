@@ -1,7 +1,7 @@
 package buildcraft.lib.client.guide;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import buildcraft.lib.client.guide.entry.PageEntry;
 import buildcraft.lib.client.guide.entry.PageEntryExternal;
@@ -14,7 +14,7 @@ public class GuidePageRegistry extends ScriptableRegistry<PageEntry<?>> {
 
     public static final GuidePageRegistry INSTANCE = new GuidePageRegistry();
 
-    public final Set<PageValueType<?>> types = new HashSet<>();
+    public final Map<String, PageValueType<?>> types = new HashMap<>();
 
     private GuidePageRegistry() {
         super(PackType.RESOURCE_PACK, "buildcraft/guide");
@@ -24,7 +24,7 @@ public class GuidePageRegistry extends ScriptableRegistry<PageEntry<?>> {
     }
 
     public <T> void addType(String name, PageValueType<T> type) {
-        types.add(type);
+        types.put(name, type);
         addCustomType(name, (id, json, ctx) -> {
             OptionallyDisabled<PageEntry<T>> o1 = type.deserialize(id, json, ctx);
             // While we can cast PageEntry<T> to PageEntry<?>

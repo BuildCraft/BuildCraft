@@ -31,11 +31,15 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.guide.GuidePageRegistry;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.entry.PageEntry;
+import buildcraft.lib.client.guide.entry.PageValueType;
 import buildcraft.lib.client.guide.parts.GuideChapterWithin;
 import buildcraft.lib.client.guide.parts.GuideImageFactory;
 import buildcraft.lib.client.guide.parts.GuidePageEntry;
@@ -44,9 +48,12 @@ import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePartCodeBlock;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.client.guide.parts.GuidePartGroup;
+import buildcraft.lib.client.guide.parts.GuidePartLink;
 import buildcraft.lib.client.guide.parts.GuidePartMulti;
 import buildcraft.lib.client.guide.parts.GuidePartNewPage;
 import buildcraft.lib.client.guide.parts.GuideText;
+import buildcraft.lib.client.guide.parts.contents.PageLink;
+import buildcraft.lib.client.guide.parts.contents.PageLinkNormal;
 import buildcraft.lib.client.guide.parts.recipe.IStackRecipes;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
 import buildcraft.lib.client.guide.ref.GuideGroupManager;
@@ -56,6 +63,7 @@ import buildcraft.lib.expression.Tokenizer.ITokenizingContext;
 import buildcraft.lib.expression.Tokenizer.ResultConsume;
 import buildcraft.lib.expression.Tokenizer.TokenResult;
 import buildcraft.lib.expression.TokenizerDefaults;
+import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.ProfilerBC;
 import buildcraft.lib.misc.data.ProfilerBC.IProfilerSection;
@@ -133,6 +141,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         putSingle("chapter", XmlPageLoader::loadChapter);
         putSingle("recipe", XmlPageLoader::loadRecipe);
         putSingle("group", XmlPageLoader::loadGroup);
+        putSingle("link", XmlPageLoader::loadLink);
         putMulti("recipes", XmlPageLoader::loadAllRecipes);
         putMulti("usages", XmlPageLoader::loadAllUsages);
         putMulti("recipes_usages", XmlPageLoader::loadAllRecipesAndUsages);
@@ -500,6 +509,53 @@ public enum XmlPageLoader implements IPageLoaderText {
             str = str.replace(level, "§c" + level + "§4");
             return new GuideTextFactory(str);
         }
+    }
+
+    private static GuidePartFactory loadLink(XmlTag tag, Profiler prof) {
+        String to = tag.get("to");
+        String type = tag.get("type");
+        if (to == null) {
+            BCLog.logger.warn("[lib.guide.loader.xml] Found a link tag without a 'to' tag! " + tag);
+            return null;
+        }
+        final PageLink link;
+        if (type == null) {
+            ResourceLocation location = new ResourceLocation(to);
+            PageEntry<?> entry = GuidePageRegistry.INSTANCE.getReloadableEntryMap().get(location);
+            if (entry == null) {
+                BCLog.logger.warn("[lib.guide.loader.xml] Found a link tag to an unknown page! " + tag);
+                return null;
+            }
+            String translatedTitle = entry.title;
+            ISimpleDrawable icon = entry.createDrawable();
+            PageLine line = new PageLine(icon, icon, 2, translatedTitle, true);
+
+            link = new PageLinkNormal(line, true, entry.getTooltip(), gui -> {
+                GuidePageFactory factory = GuideManager.INSTANCE.getFactoryFor(location);
+                return factory == null ? null : factory.createNew(gui);
+            });
+        } else {
+            PageValueType<?> valueType = GuidePageRegistry.INSTANCE.types.get(type);
+            if (valueType != null) {
+                OptionallyDisabled<PageLink> linkq = valueType.createLink(to, prof);
+                if (linkq.isPresent()) {
+                    link = linkq.get();
+                } else {
+                    BCLog.logger.warn(
+                        "[lib.guide.loader.xml] Found a link tag that didn't link to anything valid: " + linkq
+                            .getDisabledReason() + " " + tag
+                    );
+                    return null;
+                }
+            } else {
+                BCLog.logger.warn(
+                    "[lib.guide.loader.xml] Found a link tag with an unknown 'type'! (valid ones are "
+                        + GuidePageRegistry.INSTANCE.types.keySet() + ") " + tag
+                );
+                return null;
+            }
+        }
+        return gui -> new GuidePartLink(gui, link);
     }
 
     private static GuidePartFactory loadImage(XmlTag tag, Profiler prof) {

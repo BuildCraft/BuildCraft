@@ -22,6 +22,7 @@ import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.contents.PageLink;
 import buildcraft.lib.gui.ISimpleDrawable;
 
 public abstract class PageValueType<T> {
@@ -49,6 +50,12 @@ public abstract class PageValueType<T> {
     public abstract List<String> getTooltip(T value);
 
     public abstract void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof);
+
+    /** @param to Something that identifies what this should link to.
+     * @return Either the {@link PageLink}, or the error for why the given "to" doesn't result in a valid link. */
+    public OptionallyDisabled<PageLink> createLink(String to, Profiler prof) {
+        return new OptionallyDisabled<>(getClass().getSimpleName() + " doesn't support links");
+    }
 
     @Nullable
     public final PageValue<T> wrap(Object value) {

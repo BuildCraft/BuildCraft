@@ -32,6 +32,7 @@ import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.contents.PageLink;
 import buildcraft.lib.client.guide.parts.contents.PageLinkItemPermutations;
 import buildcraft.lib.client.guide.parts.contents.PageLinkItemStack;
 import buildcraft.lib.gui.GuiStack;
@@ -107,6 +108,16 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 }
             }
             prof.endSection();
+        }
+    }
+
+    @Override
+    public OptionallyDisabled<PageLink> createLink(String to, Profiler prof) {
+        OptionallyDisabled<ItemStack> stackq = MarkdownPageLoader.parseItemStack(to);
+        if (stackq.isPresent()) {
+            return new OptionallyDisabled<>(PageLinkItemStack.create(true, stackq.get(), prof));
+        } else {
+            return new OptionallyDisabled<>(stackq.getDisabledReason());
         }
     }
 

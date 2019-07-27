@@ -327,7 +327,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
             }
             prof.endSection();
         };
-        for (PageValueType<?> type : GuidePageRegistry.INSTANCE.types) {
+        for (PageValueType<?> type : GuidePageRegistry.INSTANCE.types.values()) {
             prof.startSection(type.getClass().getName().replace('.', '/'));
             type.iterateAllDefault(adder, prof);
             prof.endSection();
