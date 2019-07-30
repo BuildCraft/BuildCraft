@@ -4,12 +4,12 @@ import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
 import buildcraft.lib.misc.ChunkUtil;
 import buildcraft.lib.misc.PositionUtil;
@@ -88,14 +88,22 @@ public class NeighbourTileCache implements ITileCache {
                 }
             }
         }
-        Chunk chunk;
         BlockPos offsetPos = lastSeenTilePos.offset(offset);
+
+        Chunk chunk;
         if (tile instanceof TileBC_Neptune) {
             chunk = ((TileBC_Neptune) tile).getChunk(offsetPos);
         } else {
             chunk = ChunkUtil.getChunk(tile.getWorld(), offsetPos, true);
         }
-        TileEntity offsetTile = chunk.getTileEntity(offsetPos, EnumCreateEntityType.IMMEDIATE);
+        IBlockState state = chunk.getBlockState(offsetPos);
+        if (!state.getBlock().hasTileEntity(state)) {
+            // Optimisation: world.getTileEntity can be slow (as it potentially iterates through a long list)
+            // so just check to make sure the target block might actually have a tile entity
+            return new TileCacheRet(null);
+        }
+
+        TileEntity offsetTile = tile.getWorld().getTileEntity(offsetPos);
         if (offsetTile != null) {
             cachedTiles.put(offset, new WeakReference<>(offsetTile));
         }
