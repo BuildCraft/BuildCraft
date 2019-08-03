@@ -140,8 +140,7 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
 
     @Override
     public void setPattern(IFillerPattern pattern, IStatementParameter[] params) {
-        patternStatement.set(pattern);
-        IntStream.range(0, patternStatement.maxParams).forEach(i -> patternStatement.set(i, params[i]));
+        patternStatement.set(pattern, params);
         updateBuildingInfo();
     }
 }
