@@ -42,16 +42,16 @@ PR implementing new features or changing large portions of code are helpful. But
 
 ### Compiling and packaging BuildCraft
 1. Ensure that `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)), `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
- * Optional: Install `Gradle` (found [here](http://www.gradle.org/downloads))
-1. Create a base directory for the build
-1. Clone the BuildCraft repository into 'baseDir/BuildCraft/'
-1. Clone (and update) the submodules into 'baseDir/BuildCraft with 'git submodule init' and 'git submodule update'
-1. Navigate to basedir/BuildCraft in a shell and run one of two commands:
- * `gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
- * `gradlew setupDecompWorkspace` to setup a complete development environment.
- * With `Gradle` installed: use `gradle` instead of `gradlew`
- * On Windows: use `gradlew.bat` instead of `gradlew`
-1. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/build/libs/&lt;build number&gt;/modules'
+ * Optional: Install `Gradle` (found [here](http://www.gradle.org/downloads)). You probably want to install version 4.3.1.
+2. Create a base directory for the build
+3. Clone the BuildCraft repository into 'baseDir/BuildCraft/'
+4. Clone (and update) the submodules into 'baseDir/BuildCraft with 'git submodule init' and 'git submodule update'
+5. Navigate to basedir/BuildCraft in a shell and run one of two commands:
+    * `./gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
+    * `./gradlew setupDecompWorkspace` to setup a complete development environment.
+    * With `Gradle` installed: use `gradle` instead of `./gradlew`
+    * On Windows: use `gradlew.bat` instead of `./gradlew`
+6. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/build/libs/&lt;build number&gt;/modules'
 
 Your directory structure should look like this before running gradle:
 ***
