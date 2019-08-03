@@ -81,13 +81,9 @@ public class RegistryConfig {
         return hasObjectBeenDisabled("blocks", loc);
     }
 
-    /** @return True if
-     *         <ol>
-     *         <li>The given location has been passed in non-null instance to {@link #isEnabled(Block)},
-     *         {@link #isEnabled(Item)}, or {@link #isEnabled(String, String, String)}.</li> and
-     *         <li>That method returned false.</li>
-     *         </ol>
-     */
+    /** @return True if the given location has been passed to {@link #isEnabled(Block)}, {@link #isEnabled(Item)}, or
+     *         {@link #isEnabled(String, String, String)}, and it returned false (because it has been disabled in the
+     *         appropriate mod's config) */
     public static boolean hasObjectBeenDisabled(String category, ResourceLocation loc) {
         Set<String> locations = disabled.get(category);
         return locations != null && locations.contains(loc.getResourcePath());
