@@ -210,11 +210,20 @@ public enum FacadeStateManager implements IFacadeRegistry {
         }
 
         for (Block block : ForgeRegistries.BLOCKS) {
+            scanBlock(block);
+        }
+
+        previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
+        FacadeSwapRecipe.genRecipes();
+    }
+
+    private static void scanBlock(Block block) {
+        try {
             if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getResourceDomain())) {
                 if (BCLib.VERSION.startsWith("7.99")) {
                     BCLog.logger.warn(
                         "[silicon.facade] Skipping " + block + " as it has been added to the list of broken mods!");
-                    continue;
+                    return;
                 }
             }
 
@@ -226,7 +235,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                 allPropertiesOk &= doesPropertyConform(property);
             }
             if (!allPropertiesOk) {
-                continue;
+                return;
             }
 
             ActionResult<String> result = isValidFacadeBlock(block);
@@ -236,7 +245,7 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     BCLog.logger.info("[silicon.facade] Disallowed block " + block.getRegistryName() + " because "
                         + result.getResult());
                 }
-                continue;
+                return;
             } else if (DEBUG) {
                 if (result.getType() == EnumActionResult.SUCCESS) {
                     BCLog.logger.info("[silicon.facade] Allowed block " + block.getRegistryName());
@@ -263,9 +272,18 @@ public enum FacadeStateManager implements IFacadeRegistry {
                         continue;
                     }
                 }
-                ItemStack stack = getRequiredStack(state);
-                usedStates.put(state, stack);
-                ItemStackKey stackKey = new ItemStackKey(stack);
+                final ItemStack requiredStack;
+                try {
+                    requiredStack = getRequiredStack(state);
+                } catch (RuntimeException e) {
+                    BCLog.logger.warn(
+                        "[silicon.facade] Disallowed state " + state
+                            + " after getRequiredStack(state) threw an exception!", e
+                    );
+                    continue;
+                }
+                usedStates.put(state, requiredStack);
+                ItemStackKey stackKey = new ItemStackKey(requiredStack);
                 Map<IProperty<?>, Comparable<?>> vars = varyingProperties.get(stackKey);
                 if (vars == null) {
                     vars = new HashMap<>(state.getProperties());
@@ -336,9 +354,13 @@ public enum FacadeStateManager implements IFacadeRegistry {
                     throw new IllegalStateException(msg.replace("\t", "    "), t);
                 }
             }
+        } catch (RuntimeException e) {
+            if (e instanceof IllegalStateException) {
+                // This one needs to exit properly
+                throw e;
+            }
+            BCLog.logger.warn("[silicon.facade] Skipping " + block + " as something about it threw an exception! ", e);
         }
-        previewState = validFacadeStates.get(Blocks.BRICK_BLOCK.getDefaultState());
-        FacadeSwapRecipe.genRecipes();
     }
 
     private static <V extends Comparable<V>> boolean doesPropertyConform(IProperty<V> property) {
