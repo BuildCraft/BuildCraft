@@ -93,7 +93,7 @@ public enum XmlPageLoader implements IPageLoaderText {
      * pulse rate, etc.
      * <p>
      * Disabled by default, but toggle-able in-game and planned to be toggle-able when exported. */
-    public static boolean SHOW_DETAIL() {
+    public static boolean shouldShowDetail() {
         return BCLibConfig.guideShowDetail;
     }
 
@@ -135,7 +135,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     static {
         // Note that text is done separately, so its not registered here
         putDuelMultiPartType("lore", () -> SHOW_LORE);
-        putDuelMultiPartType("detail", () -> SHOW_DETAIL());
+        putDuelMultiPartType("detail", () -> shouldShowDetail());
         putDuelMultiPartType("hint", () -> SHOW_HINTS);
         putSingle("new_page", (attr, prof) -> GuidePartNewPage::new);
         putSingle("chapter", XmlPageLoader::loadChapter);
