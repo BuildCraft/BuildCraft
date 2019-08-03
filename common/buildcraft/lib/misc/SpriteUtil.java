@@ -72,11 +72,11 @@ public class SpriteUtil {
                 return new SpriteRaw(loc, 8, 8, 8, 8, 64);
             }
             return BCLibSprites.LOADING;
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException | ClassCastException e) {
             // Fix for https://github.com/BuildCraft/BuildCraft/issues/4419
             // I'm not quite sure why this throws an NPE but this should at
             // least stop it from crashing
-            npe.printStackTrace();
+            e.printStackTrace();
             CACHED.put(profile, profile);
             return BCLibSprites.LOCK;
         }
