@@ -84,8 +84,8 @@ public class RegistryConfig {
     /** @return True if
      *         <ol>
      *         <li>The given location has been passed in non-null instance to {@link #isEnabled(Block)},
-     *         {@link #isEnabled(Item)}, or {@link #isEnabled(String, String, String)}.</li> and
-     *         <li>That method returned false.</li>
+     *         {@link #isEnabled(Item)}, or {@link #isEnabled(String, String, String)}.</li>
+     *         <li>and That method returned false.</li>
      *         </ol>
      */
     public static boolean hasObjectBeenDisabled(String category, ResourceLocation loc) {
