@@ -38,6 +38,10 @@ public class LedgerOwnership extends Ledger_Neptune {
     protected void drawIcon(double x, double y) {
         ISprite sprite = SpriteUtil.getFaceSprite(tile.getOwner());
         GuiIcon.draw(sprite, x, y, x + 16, y + 16);
+        sprite = SpriteUtil.getFaceOverlaySprite(tile.getOwner());
+        if (sprite != null) {
+            GuiIcon.draw(sprite, x - 0.5, y - 0.5, x + 17, y + 17);
+        }
     }
 
     private String getOwnerName() {
