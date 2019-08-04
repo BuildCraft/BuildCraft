@@ -44,6 +44,7 @@ public class BCTransportSprites {
     private static final EnumMap<EnumFacing, SpriteHolder> ACTION_PIPE_DIRECTION;
 
     public static final SpriteHolder POWER_FLOW;
+    public static final SpriteHolder POWER_FLOW_OVERLOAD;
 
     static {
         EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
@@ -78,7 +79,8 @@ public class BCTransportSprites {
                 getHolder("core", "triggers/trigger_dir_" + face.getName().toLowerCase(Locale.ROOT)));
         }
 
-        POWER_FLOW = getHolder("core", "blocks/misc/texture_cyan");
+        POWER_FLOW = getHolder("pipes/power_flow");
+        POWER_FLOW_OVERLOAD = getHolder("pipes/power_flow_overload");
 
         TRIGGER_POWER_REQUESTED = getHolder("transport", "triggers/trigger_pipecontents_requestsenergy");
         TRIGGER_ITEMS_TRAVERSING = getHolder("transport", "triggers/trigger_pipecontents_containsitems");

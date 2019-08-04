@@ -14,6 +14,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BoundingBox;
+import net.minecraft.util.math.Direction;
+
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 
 /** Provides various utilities for creating {@link MutableQuad} out of various position information, such as a single
  * face of a cuboid. */
@@ -115,6 +120,57 @@ public class ModelUtil {
     public static MutableQuad[] createDoubleFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
         MutableQuad norm = createFace(face, center, radius, uvs);
         return new MutableQuad[] { norm, norm.copyAndInvertNormal() };
+    }
+
+    public static void mapBoxToUvs(AxisAlignedBB box, EnumFacing side, UvFaceData uvs) {
+        // TODO: Fix these!
+        switch (side) {
+            case WEST: /* -X */ {
+                uvs.minU = (float) box.minZ;
+                uvs.maxU = (float) box.maxZ;
+                uvs.minV = 1 - (float) box.maxY;
+                uvs.maxV = 1 - (float) box.minY;
+                return;
+            }
+            case EAST: /* +X */ {
+                uvs.minU = 1 - (float) box.minZ;
+                uvs.maxU = 1 - (float) box.maxZ;
+                uvs.minV = 1 - (float) box.maxY;
+                uvs.maxV = 1 - (float) box.minY;
+                return;
+            }
+            case DOWN: /* -Y */ {
+                uvs.minU = (float) box.minX;
+                uvs.maxU = (float) box.maxX;
+                uvs.minV = 1 - (float) box.maxZ;
+                uvs.maxV = 1 - (float) box.minZ;
+                return;
+            }
+            case UP: /* +Y */ {
+                uvs.minU = (float) box.minX;
+                uvs.maxU = (float) box.maxX;
+                uvs.minV = (float) box.maxZ;
+                uvs.maxV = (float) box.minZ;
+                return;
+            }
+            case NORTH: /* -Z */ {
+                uvs.minU = 1 - (float) box.minX;
+                uvs.maxU = 1 - (float) box.maxX;
+                uvs.minV = 1 - (float) box.maxY;
+                uvs.maxV = 1 - (float) box.minY;
+                return;
+            }
+            case SOUTH: /* +Z */ {
+                uvs.minU = (float) box.minX;
+                uvs.maxU = (float) box.maxX;
+                uvs.minV = 1 - (float) box.maxY;
+                uvs.maxV = 1 - (float) box.minY;
+                return;
+            }
+            default: {
+                throw new IllegalStateException("Unknown Direction " + side);
+            }
+        }
     }
 
     public static Point3f[] getPointsForFace(EnumFacing face, Tuple3f center, Tuple3f radius) {

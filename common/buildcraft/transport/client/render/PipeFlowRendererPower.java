@@ -6,26 +6,29 @@
 
 package buildcraft.transport.client.render;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.vecmath.Point3f;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
 
 import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.VecUtil;
 
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
+import buildcraft.transport.pipe.flow.PipeFlowPower.Section;
 
 @SideOnly(Side.CLIENT)
 public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
@@ -33,102 +36,103 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
 
     @Override
     public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
-        double transfer = flow.getMaxTransferForRender(partialTicks);
-        if (transfer <= 0) {
-            return;
+        double centrePower = 0;
+        double[] power = new double[6];
+        for (EnumFacing side : EnumFacing.values()) {
+            Section s = flow.getSection(side);
+            int i = side.ordinal();
+            power[i] = s.displayPower / (double) MjAPI.MJ;
+            centrePower = Math.max(centrePower, power[i]);
         }
-        float r = (float) (transfer / 4.1f);
-        List<Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f>> facesSidesCentersRadiuses = new ArrayList<>();
-        for (EnumFacing face : EnumFacing.VALUES) {
-            facesSidesCentersRadiuses.add(
-                Triple.of(
-                    Pair.of(face, null),
-                    new Point3f(0.5F, 0.5F, 0.5F),
-                    new Point3f(r, r, r)
-                )
-            );
-            for (EnumFacing side : EnumFacing.VALUES) {
+
+        bb.setTranslation(x, y, z);
+
+        if (centrePower > 0) {
+            for (EnumFacing side : EnumFacing.values()) {
                 if (!flow.pipe.isConnected(side)) {
                     continue;
                 }
-                facesSidesCentersRadiuses.add(
-                    Triple.of(
-                        Pair.of(face, side),
-                        new Point3f(
-                            0.5F + side.getFrontOffsetX() * (0.25F + r / 2),
-                            0.5F + side.getFrontOffsetY() * (0.25F + r / 2),
-                            0.5F + side.getFrontOffsetZ() * (0.25F + r / 2)
-                        ),
-                        new Point3f(
-                            side.getAxis() == EnumFacing.Axis.X ? 0.25F - r / 2 : r,
-                            side.getAxis() == EnumFacing.Axis.Y ? 0.25F - r / 2 : r,
-                            side.getAxis() == EnumFacing.Axis.Z ? 0.25F - r / 2 : r
-                        )
-                    )
-                );
+                int i = side.ordinal();
+                Section s = flow.getSection(side);
+                double offset = MathUtil.interp(partialTicks, s.clientDisplayFlowLast, s.clientDisplayFlow);
+                renderSidePower(side, power[i], centrePower, offset, bb);
             }
+
+            renderCentrePower(centrePower, flow.clientDisplayFlowCentre, bb);
         }
-        bb.setTranslation(x, y, z);
-        for (Triple<Pair<EnumFacing, EnumFacing>, Point3f, Point3f> faceSideCenterRadius : facesSidesCentersRadiuses) {
-            EnumFacing face = faceSideCenterRadius.getLeft().getLeft();
-            EnumFacing side = faceSideCenterRadius.getLeft().getRight();
-            Point3f center = faceSideCenterRadius.getMiddle();
-            Point3f radius = faceSideCenterRadius.getRight();
-            ModelUtil.UvFaceData uvs = null;
-            switch (face.getAxis()) {
-                case X:
-                    uvs = new ModelUtil.UvFaceData(
-                        center.getZ() - radius.getZ(),
-                        center.getY() - radius.getY(),
-                        center.getZ() + radius.getZ(),
-                        center.getY() + radius.getY()
-                    );
-                    break;
-                case Y:
-                    uvs = new ModelUtil.UvFaceData(
-                        center.getX() - radius.getX(),
-                        center.getZ() - radius.getZ(),
-                        center.getX() + radius.getX(),
-                        center.getZ() + radius.getZ()
-                    );
-                    break;
-                case Z:
-                    uvs = new ModelUtil.UvFaceData(
-                        center.getX() - radius.getX(),
-                        center.getY() - radius.getY(),
-                        center.getX() + radius.getX(),
-                        center.getY() + radius.getY()
-                    );
-                    break;
-            }
-            boolean invert = false;
-            if (side != null && face.getAxis() == EnumFacing.Axis.X && side.getAxis() == EnumFacing.Axis.Y) {
-                invert = true;
-            }
-            if (side != null && face.getAxis() == EnumFacing.Axis.Y && side.getAxis() == EnumFacing.Axis.Z) {
-                invert = true;
-            }
-            if (side != null && face.getAxis() == EnumFacing.Axis.Z && side.getAxis() == EnumFacing.Axis.Y) {
-                invert = true;
-            }
-            if (invert) {
-                uvs = new ModelUtil.UvFaceData(
-                    1 - uvs.maxU,
-                    1 - uvs.maxV,
-                    1 - uvs.minU,
-                    1 - uvs.minV
-                );
-            }
-            uvs = new ModelUtil.UvFaceData(
-                BCTransportSprites.POWER_FLOW.getInterpU(uvs.minU),
-                BCTransportSprites.POWER_FLOW.getInterpV(uvs.minV),
-                BCTransportSprites.POWER_FLOW.getInterpU(uvs.maxU),
-                BCTransportSprites.POWER_FLOW.getInterpV(uvs.maxV)
-            );
-            ModelUtil.createFace(face, center, radius, uvs)
-                .lighti(15, 15)
-                .render(bb);
-        }
+
         bb.setTranslation(0, 0, 0);
+    }
+
+    private static void renderSidePower(EnumFacing side, double power, double centrePower, double offset,
+        BufferBuilder bb) {
+        if (power < 0) {
+            return;
+        }
+        boolean overload = false;
+        double radius = 0.248 * power;
+        if (radius >= 0.248) {
+            // overload = true;
+            radius = 0.248;
+        }
+
+        TextureAtlasSprite sprite = (overload ? BCTransportSprites.POWER_FLOW_OVERLOAD : BCTransportSprites.POWER_FLOW)
+            .getSprite();
+
+        double centreRadius = 0.252 - (0.248 * centrePower);
+
+        Vec3d centre = VecUtil.offset(VecUtil.VEC_HALF, side, 0.25 + 0.125 - centreRadius / 2);
+        Vec3d radiusV = new Vec3d(radius, radius, radius);
+        radiusV = VecUtil.replaceValue(radiusV, side.getAxis(), 0.125 + centreRadius / 2);
+
+        Point3f centreF = new Point3f((float) centre.x, (float) centre.y, (float) centre.z);
+        Point3f radiusF = new Point3f((float) radiusV.x, (float) radiusV.y, (float) radiusV.z);
+
+        UvFaceData uvs = new UvFaceData();
+        for (EnumFacing face : EnumFacing.values()) {
+            if (face == side.getOpposite()) {
+                continue;
+            }
+
+            AxisAlignedBB box = new AxisAlignedBB(centre.subtract(radiusV).scale(0.5), centre.add(radiusV).scale(0.5));
+            box = box.offset(VecUtil.offset(Vec3d.ZERO, side, offset * side.getAxisDirection().getOffset() / 32));
+            ModelUtil.mapBoxToUvs(box, face, uvs);
+
+            MutableQuad quad = ModelUtil.createFace(face, centreF, radiusF, uvs);
+            quad.texFromSprite(sprite);
+            quad.lighti(15, 15);
+            quad.render(bb);
+        }
+    }
+
+    private static void renderCentrePower(double power, Vec3d offset, BufferBuilder bb) {
+        boolean overload = false;
+        float radius = 0.248f * (float) power;
+        if (radius > 0.248f) {
+            // overload = true;
+            radius = 0.248f;
+        }
+        TextureAtlasSprite sprite = (overload ? BCTransportSprites.POWER_FLOW_OVERLOAD : BCTransportSprites.POWER_FLOW)
+            .getSprite();
+
+        Point3f centre = new Point3f(0.5f, 0.5f, 0.5f);
+        Point3f radiusP = new Point3f(radius, radius, radius);
+
+        UvFaceData uvs = new UvFaceData();
+
+        for (EnumFacing face : EnumFacing.values()) {
+
+            AxisAlignedBB box = new AxisAlignedBB(
+                new Vec3d(0.5 - radius, 0.5 - radius, 0.5 - radius).scale(0.5), //
+                new Vec3d(0.5 + radius, 0.5 + radius, 0.5 + radius).scale(0.5)//
+            );
+            box = box.offset(offset.scale(1 / 32.0));
+            ModelUtil.mapBoxToUvs(box, face, uvs);
+
+            MutableQuad quad = ModelUtil.createFace(face, centre, radiusP, uvs);
+            quad.texFromSprite(sprite);
+            quad.lighti(15, 15);
+            quad.render(bb);
+        }
     }
 }
