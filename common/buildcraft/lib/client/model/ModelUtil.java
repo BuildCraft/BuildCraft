@@ -15,10 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BoundingBox;
-import net.minecraft.util.math.Direction;
-
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 
 /** Provides various utilities for creating {@link MutableQuad} out of various position information, such as a single
  * face of a cuboid. */
@@ -110,7 +106,9 @@ public class ModelUtil {
 
     public static MutableQuad createFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
         Point3f[] points = getPointsForFace(face, center, radius);
-        return createFace(face, points, uvs).normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+        return createFace(face, points, uvs).normalf(
+            face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ()
+        );
     }
 
     public static MutableQuad createInverseFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
@@ -175,7 +173,9 @@ public class ModelUtil {
 
     public static Point3f[] getPointsForFace(EnumFacing face, Tuple3f center, Tuple3f radius) {
         Point3f centerOfFace = new Point3f(center);
-        Point3f faceAdd = new Point3f(face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z);
+        Point3f faceAdd = new Point3f(
+            face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z
+        );
         centerOfFace.add(faceAdd);
         Vector3f faceRadius = new Vector3f(radius);
         if (face.getAxisDirection() == AxisDirection.POSITIVE) {
@@ -187,7 +187,9 @@ public class ModelUtil {
     }
 
     public static Point3f[] getPoints(Point3f centerFace, Tuple3f faceRadius) {
-        Point3f[] array = { new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace) };
+        Point3f[] array = { new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace), new Point3f(
+            centerFace
+        ) };
         array[0].add(addOrNegate(faceRadius, false, false));
         array[1].add(addOrNegate(faceRadius, false, true));
         array[2].add(addOrNegate(faceRadius, true, true));
