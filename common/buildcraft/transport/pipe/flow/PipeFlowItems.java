@@ -558,13 +558,31 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
         long now = world.getTotalWorldTime();
         TravellingItem item = new TravellingItem(stack);
-        item.side = from;
+        if (from == null) {
+            // Find a reasonable alternative (as it's not allowed to be null)
+            for (EnumFacing f : EnumFacing.values()) {
+                if (!pipe.isConnected(f)) {
+                    item.side = f;
+                    break;
+                }
+            }
+            if (item.side == null) {
+                item.side = EnumFacing.UP;
+            }
+        } else {
+            item.side = from;
+        }
         item.toCenter = true;
         item.speed = speed;
         item.colour = colour;
         item.genTimings(now, 0);
-        item.tried.add(from);
-        addItemTryMerge(item);
+        if (from != null) {
+            item.tried.add(from);
+        }
+        // Explicitly don't send this item to the client:
+        // There's little point in trying to render it
+        // seeing as it needs to travel 0 distance.
+        items.add(item.timeToDest, item);
     }
 
     /** Used internally to split up manual insertions from controlled extractions. */

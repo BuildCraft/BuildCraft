@@ -12,8 +12,9 @@ Bug fixes:
 
 * [#3762] Fixed pipe breaking particles using the missing texture and spawning in the wrong place.
 * [#4407] Fix a crash when a gate tried to set a filler's pattern (128-bit-guy).
-* [#4433] Crash when something sends an invalid tile update message that doesn't include the byte[] of message data.
+* [#4422] Fixed PipeFlowItems.insertItemsForce crashing if the "from" parameter was null.
 * [#4432] Added a config option to enable/disble the usage of stencils for the architect table. Should help prevent the builders module never loading on some computers.
+* [#4433] Crash when something sends an invalid tile update message that doesn't include the byte[] of message data.
 * [#4443] Added a much better workaround for the facade crash with tofucraft.
 * [#4450] Fixed a critical bug where pipe's caching logic could sometimes mean that minecraft blocks (like the furnace) had their inventories completely reset.
 * Fixed the builders config not loading at all.
