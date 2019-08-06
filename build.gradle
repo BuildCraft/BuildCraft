@@ -113,7 +113,7 @@ minecraft {
         replace "\${git_branch}", repo.branch.current().getName()
         if (addVersionDetails) {
             // Always use the compat commit for the version.
-            project.version += "-" + grgit.open().head().id.toString().substring(0, 12)
+            project.version += "-" + grgit.open(dir: project.rootDir).head().id.toString().substring(0, 12)
         }
     } else {
         if (addVersionDetails) {
@@ -216,6 +216,8 @@ processResources
     // copy everything else, that's not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+        exclude 'pack.mcmeta'
+        exclude 'pack.png'
     }
 }
 
