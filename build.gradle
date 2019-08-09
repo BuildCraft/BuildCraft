@@ -233,6 +233,7 @@ javadoc {
     options.setUse(true)
     options.addStringsOption("Xmaxerrs").setValue(["2"])
     options.addStringsOption("Xmaxwarns").setValue(["2"])
+    options.setEncoding("UTF-8")
 }
 
 // --------------------
