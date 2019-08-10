@@ -636,17 +636,17 @@ public class SimpleScript {
     public enum TokenType {
         /** "string" */
         QUOTED_STRING(true),
-        /** `a<br/>
-         * multi<br/>
-         * line<br/>
+        /** `a<br>
+         * multi<br>
+         * line<br>
          * string` */
         BACKTICK_STRING(true),
         /** functionName */
         SEPARATE(false),
         /** // Comment */
         COMMENT(false),
-        /** {@literal /}** Comment<br/>
-         * * % argument comment<br/>
+        /** {@literal /}** Comment<br>
+         * * % argument comment<br>
          * *{@literal /} */
         FUNC_DOCS(false);
 
