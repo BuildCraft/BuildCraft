@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Something doesn't work as you expect it to?
 title: ''
 labels: ''
 assignees: ''
@@ -13,8 +13,10 @@ Please fill in all relevant information below.
 Please do not put the entire log here, upload it on pastebin (https://pastebin.com/) or gist (https://gist.github.com/) and paste here the link.
 -->
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Please complete the following information:**
+ - Forge Version:
+ - BuildCraft Version (Add Hash if from github):
+ - Any additonal mods:
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -23,17 +25,3 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Please complete the following information:**
- - Forge Version: 
- - BuildCraft Version(Add Hash if from github): 
- - Singleplayer or Multiplayer: 
- - Link to Crash Report or Log: 
-
-**Additional context**
-Add any other context about the problem here.
