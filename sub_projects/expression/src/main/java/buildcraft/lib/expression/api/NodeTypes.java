@@ -272,10 +272,10 @@ public class NodeTypes {
 
         /** Relational operators:
          * <ul>
-         * <li>LT: "<", less than</li>
-         * <li>GT: ">", greater than</li>
-         * <li>LE: "<=", less than or equals</li>
-         * <li>GE: ">=", greater than or equals</li>
+         * <li>LT: "&lt;", less than</li>
+         * <li>GT: "&gt;", greater than</li>
+         * <li>LE: "&lt;=", less than or equals</li>
+         * <li>GE: "&gt;=", greater than or equals</li>
          * <li>EQ: "==", equals</li>
          * <li>NE: "!=", not equal</li>
          * </ul>
@@ -324,10 +324,10 @@ public class NodeTypes {
 
         /** Relational operators:
          * <ul>
-         * <li>LT: "<", less than</li>
-         * <li>GT: ">", greater than</li>
-         * <li>LE: "<=", less than or equals</li>
-         * <li>GE: ">=", greater than or equals</li>
+         * <li>LT: "&lt;", less than</li>
+         * <li>GT: "&gt;", greater than</li>
+         * <li>LE: "&lt;=", less than or equals</li>
+         * <li>GE: "&gt;=", greater than or equals</li>
          * <li>EQ: "==", equals</li>
          * <li>NE: "!=", not equal</li>
          * </ul>
