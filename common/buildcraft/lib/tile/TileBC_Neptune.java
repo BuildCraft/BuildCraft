@@ -562,7 +562,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
-        super.handleUpdateTag(tag);
+        // Explicitly don't read the (server) data from NBT
+        super.readFromNBT(tag);
         if (!tag.hasKey("d", Constants.NBT.TAG_BYTE_ARRAY)) {
             // A bit odd, but ok - this was probably sent by something else
             return;
