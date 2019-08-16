@@ -631,7 +631,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     }
 
     public List<AxisAlignedBB> getCollisionBoxes() {
-        if (drillPos != null && drillPos != collisionDrillPos) {
+        if (drillPos != null && drillPos != collisionDrillPos && frameBox.isInitialized()) {
             Vec3d max = VecUtil.convertCenter(frameBox.max());
             Vec3d min = VecUtil.replaceValue(VecUtil.convertCenter(frameBox.min()), Axis.Y, max.y);
             collisionBoxes = ImmutableList.of(
@@ -694,6 +694,55 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         drillPos = NBTUtilBC.readVec3d(nbt.getTag("drillPos"));
         firstChecked = nbt.getBoolean("firstChecked");
         if (drillPos != null && drillPos.squareDistanceTo(new Vec3d(getPos())) > 1024 * 1024) {
+            drillPos = null;
+        }
+
+        // Validation
+        boolean isValid = false;
+        if (frameBox.isInitialized() && miningBox.isInitialized()) {
+            isValid = true;
+            EnumFacing validFace = null;
+            for (EnumFacing face : EnumFacing.values()) {
+                if (face.getAxis() == Axis.Y) continue;
+                // We can't read the blockstate yet so instead we'll have to try all possible faces
+                if (frameBox.isOnEdge(getPos().offset(face))) {
+                    validFace = face;
+                    break;
+                }
+            }
+            if (validFace == null) {
+                isValid = false;
+            } else {
+
+                int fx0 = frameBox.min().getX();
+                int fy0 = frameBox.min().getY();
+                int fz0 = frameBox.min().getZ();
+
+                int fx1 = frameBox.max().getX();
+                int fy1 = frameBox.max().getY();
+                int fz1 = frameBox.max().getZ();
+
+                int mx0 = miningBox.min().getX();
+                int my0 = miningBox.min().getY();
+                int mz0 = miningBox.min().getZ();
+
+                int mx1 = miningBox.max().getX();
+                int my1 = miningBox.max().getY();
+                int mz1 = miningBox.max().getZ();
+
+                isValid = true //
+                    && fx0 + 1 == mx0//
+                    && fx1 - 1 == mx1//
+                    && fz0 + 1 == mz0//
+                    && fz1 - 1 == mz1//
+                    && fy0 >= my0//
+                    && fy1 - 1 == my1//
+                ;
+            }
+        }
+        if (!isValid) {
+            frameBox.reset();
+            miningBox.reset();
             drillPos = null;
         }
     }
