@@ -704,6 +704,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 return null;
             }
             aabb = plug.getBoundingBox();
+            if (aabb == null) {
+                return null;
+            }
             PluggableModelKey keyC = plug.getModelRenderKey(BlockRenderLayer.CUTOUT);
             PluggableModelKey keyT = plug.getModelRenderKey(BlockRenderLayer.TRANSLUCENT);
             if (keyC == null && keyT == null) {
@@ -737,6 +740,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 return null;
             }
             sprite = PipeWireRenderer.getWireSprite(colour).getSprite();
+        } else {
+            return null;
+        }
+        if (aabb == null) {
+            throw new IllegalStateException("Null aabb for index " + p + " (and sprite " + sprite + ")");
         }
         return new HitSpriteInfo(aabb, sprite);
     }
