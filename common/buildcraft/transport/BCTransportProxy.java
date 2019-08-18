@@ -34,6 +34,7 @@ import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiEmzuliPipe_BC8;
 import buildcraft.transport.gui.GuiFilteredBuffer;
+import buildcraft.transport.net.MessageMultiPipeFluid;
 import buildcraft.transport.net.MessageMultiPipeItem;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
@@ -116,6 +117,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
         MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystems.class, Side.CLIENT);
         MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageWireSystemsPowered.class, Side.CLIENT);
         MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageMultiPipeItem.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.TRANSPORT, MessageMultiPipeFluid.class, Side.CLIENT);
     }
 
     public void fmlInit() {}
@@ -140,6 +142,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
             MessageManager.setHandler(MessageWireSystems.class, MessageWireSystems.HANDLER, Side.CLIENT);
             MessageManager.setHandler(MessageWireSystemsPowered.class, MessageWireSystemsPowered.HANDLER, Side.CLIENT);
             MessageManager.setHandler(MessageMultiPipeItem.class, MessageMultiPipeItem.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageMultiPipeFluid.class, MessageMultiPipeFluid.HANDLER, Side.CLIENT);
         }
 
         @Override

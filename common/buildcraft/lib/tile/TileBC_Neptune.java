@@ -121,7 +121,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     private GameProfile owner;
 
     private final IChunkCache chunkCache = new CachedChunk(this);
-    private final ITileCache tileCache = TileCacheType.NEIGHBOUR_CACHE.create(this);
+    private final ITileCache tileCache = TileCacheType.NO_CACHE.create(this);
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int id;
@@ -191,7 +191,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final TileEntity getNeighbourTile(EnumFacing offset) {
         TileCacheRet cached = tileCache.getTile(offset);
         if (cached != null) {
-            return cached.tile;
+            return cached.get();
         }
         if (DEBUG && !world.isBlockLoaded(pos)) {
             BCLog.logger.warn(
@@ -212,7 +212,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final TileEntity getLocalTile(BlockPos pos) {
         TileCacheRet cached = tileCache.getTile(pos);
         if (cached != null) {
-            return cached.tile;
+            return cached.get();
         }
         if (DEBUG && !world.isBlockLoaded(pos)) {
             BCLog.logger.warn(

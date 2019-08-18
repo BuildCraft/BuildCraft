@@ -113,7 +113,9 @@ public class PipeEventBus {
                     + "(error = " + error + ")");
             }
         }
-        for (LocalHandler handler : currentHandlers) {
+        int size = currentHandlers.size();
+        for (int i = 0; i < size; i++) {
+            LocalHandler handler = currentHandlers.get(i);
             handled |= handler.handleEvent(event);
             if (DEBUG) {
                 String error = event.checkStateForErrors();

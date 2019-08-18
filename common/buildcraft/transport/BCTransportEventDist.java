@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.transport.client.render.PipeWireRenderer;
-import buildcraft.transport.net.PipeItemMessageQueue;
+import buildcraft.transport.net.PipeMessageQueue;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
 
 public enum BCTransportEventDist {
@@ -30,7 +30,7 @@ public enum BCTransportEventDist {
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        PipeItemMessageQueue.serverTick();
+        PipeMessageQueue.serverTick();
     }
 
     @SubscribeEvent

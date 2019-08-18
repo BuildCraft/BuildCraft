@@ -34,7 +34,7 @@ import buildcraft.lib.registry.TagManager.TagEntry;
 
 import buildcraft.core.BCCore;
 import buildcraft.silicon.plug.FacadeStateManager;
-import buildcraft.transport.net.PipeItemMessageQueue;
+import buildcraft.transport.net.PipeMessageQueue;
 import buildcraft.transport.pipe.SchematicBlockPipe;
 
 //@formatter:off

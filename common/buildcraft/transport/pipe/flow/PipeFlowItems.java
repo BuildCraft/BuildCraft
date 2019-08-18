@@ -58,7 +58,7 @@ import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.net.MessageMultiPipeItem.TravellingItemData;
-import buildcraft.transport.net.PipeItemMessageQueue;
+import buildcraft.transport.net.PipeMessageQueue;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
 
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
@@ -152,7 +152,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         // MessageUtil.writeEnumOrNull(buf, item.colour);
         // buf.writeShort(item.timeToDest > Short.MAX_VALUE ? Short.MAX_VALUE : item.timeToDest);
         // });
-        PipeItemMessageQueue.appendTravellingItem(
+        PipeMessageQueue.appendTravellingItem(
             pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(), stackId, (byte) item.stack.getCount(),
             item.toCenter, item.side, item.colour, item.timeToDest > Byte.MAX_VALUE ? Byte.MAX_VALUE
                 : (byte) item.timeToDest

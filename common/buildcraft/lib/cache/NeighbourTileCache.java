@@ -1,6 +1,5 @@
 package buildcraft.lib.cache;
 
-import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -24,7 +23,8 @@ public class NeighbourTileCache implements ITileCache {
 
     private final TileEntity tile;
     private BlockPos lastSeenTilePos;
-    private final Map<EnumFacing, WeakReference<TileEntity>> cachedTiles = new EnumMap<>(EnumFacing.class);
+    private final BlockPos[] offsetPositions = new BlockPos[6];
+    private final Map<EnumFacing, TileCacheRet> cachedTiles = new EnumMap<>(EnumFacing.class);
 
     public NeighbourTileCache(TileEntity tile) {
         this.tile = tile;
@@ -56,6 +56,9 @@ public class NeighbourTileCache implements ITileCache {
         if (!tPos.equals(lastSeenTilePos)) {
             lastSeenTilePos = tPos.toImmutable();
             cachedTiles.clear();
+            for (EnumFacing face : EnumFacing.values()) {
+                offsetPositions[face.ordinal()] = lastSeenTilePos.offset(face);
+            }
         }
         if (!w.isBlockLoaded(lastSeenTilePos)) {
             cachedTiles.clear();
@@ -73,23 +76,38 @@ public class NeighbourTileCache implements ITileCache {
     }
 
     private TileCacheRet getTile0(EnumFacing offset) {
-        WeakReference<TileEntity> ref = cachedTiles.get(offset);
+        TileCacheRet ret = getTile0a(offset);
+        if (ret != null) {
+            return ret;
+        }
+        BlockPos offsetPos = offsetPositions[offset.ordinal()];
+        IBlockState state = getTile0b(offsetPos);
+        return getTile0c(offset, offsetPos, state);
+    }
+
+    private TileCacheRet getTile0a(EnumFacing offset) {
+        TileCacheRet ref = cachedTiles.get(offset);
         if (ref != null) {
+            if (ref.ref == null) {
+                return ref;
+            }
             TileEntity oTile = ref.get();
             if (oTile == null || oTile.isInvalid()) {
                 cachedTiles.remove(offset);
             } else {
                 World w = tile.getWorld();
                 // Unfortunately tile.isInvalid is false even when it is unloaded
-                if (w == null || !w.isBlockLoaded(lastSeenTilePos.offset(offset))) {
+                if (w == null || !w.isBlockLoaded(offsetPositions[offset.ordinal()])) {
                     cachedTiles.remove(offset);
                 } else {
-                    return new TileCacheRet(oTile);
+                    return ref;
                 }
             }
         }
-        BlockPos offsetPos = lastSeenTilePos.offset(offset);
+        return null;
+    }
 
+    private IBlockState getTile0b(BlockPos offsetPos) {
         Chunk chunk;
         if (tile instanceof TileBC_Neptune) {
             chunk = ((TileBC_Neptune) tile).getChunk(offsetPos);
@@ -97,16 +115,21 @@ public class NeighbourTileCache implements ITileCache {
             chunk = ChunkUtil.getChunk(tile.getWorld(), offsetPos, true);
         }
         IBlockState state = chunk.getBlockState(offsetPos);
-        if (!state.getBlock().hasTileEntity(state)) {
-            // Optimisation: world.getTileEntity can be slow (as it potentially iterates through a long list)
-            // so just check to make sure the target block might actually have a tile entity
-            return new TileCacheRet(null);
-        }
-
-        TileEntity offsetTile = tile.getWorld().getTileEntity(offsetPos);
-        if (offsetTile != null) {
-            cachedTiles.put(offset, new WeakReference<>(offsetTile));
-        }
-        return new TileCacheRet(offsetTile);
+        return state;
     }
+
+    private TileCacheRet getTile0c(EnumFacing offset, BlockPos offsetPos, IBlockState state) {
+        // Optimisation: world.getTileEntity can be slow (as it potentially iterates through a long list)
+        // so just check to make sure the target block might actually have a tile entity
+        final TileEntity offsetTile;
+        if (state.getBlock().hasTileEntity(state)) {
+            offsetTile = tile.getWorld().getTileEntity(offsetPos);
+        } else {
+            offsetTile = null;
+        }
+        TileCacheRet ref = new TileCacheRet(offsetTile);
+        cachedTiles.put(offset, ref);
+        return ref;
+    }
+
 }
