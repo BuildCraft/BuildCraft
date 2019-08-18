@@ -312,8 +312,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             if (placer instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) placer;
                 owner = player.getGameProfile();
-                if (!owner.isComplete()) {
-                    throw new IllegalArgumentException("Incomplete owner! ( " + placer + " -> " + owner + " )");
+                if (owner.getId() == null) {
+                    // Basically everything relies on the UUID
+                    throw new IllegalArgumentException("No UUID for owner! ( " + placer.getClass() + " " + placer + " -> " + owner + " )");
                 }
             } else {
                 throw new IllegalArgumentException("Not an EntityPlayer! (placer = " + placer + ")");
