@@ -21,6 +21,7 @@ import buildcraft.lib.misc.RandUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
+import buildcraft.core.BCCoreBlocks;
 import buildcraft.energy.BCEnergyConfig;
 import buildcraft.energy.generation.OilGenStructure.GenByPredicate;
 import buildcraft.energy.generation.OilGenStructure.ReplaceType;
@@ -189,7 +190,9 @@ public class OilGenerator {
             // Generate a spring at the very bottom
             if (type == GenType.LARGE) {
                 structures.add(createTube(new BlockPos(x, 1, z), wellY, radius, Axis.Y));
-                structures.add(createSpring(new BlockPos(x, 0, z)));
+                if (BCCoreBlocks.spring!= null) {
+                    structures.add(createSpring(new BlockPos(x, 0, z)));
+                }
             }
         }
         return structures;
