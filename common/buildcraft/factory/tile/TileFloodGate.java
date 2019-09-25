@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
@@ -42,6 +43,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -61,6 +63,10 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         EnumFacing.UP, EnumFacing.NORTH, EnumFacing.SOUTH, //
         EnumFacing.WEST, EnumFacing.EAST //
     };
+
+    private static final ResourceLocation ADVANCEMENT_FLOOD_SINGLE = new ResourceLocation(
+        "buildcraftfactory:flooding_the_world"
+    );
 
     private static final int[] REBUILD_DELAYS = { 16, 32, 64, 128, 256 };
 
@@ -193,6 +199,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                         FakePlayer fakePlayer =
                             BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, getOwner(), currentPos);
                         if (FluidUtil.tryPlaceFluid(fakePlayer, world, currentPos, tank, fluid)) {
+                            AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_FLOOD_SINGLE);
                             for (EnumFacing side : EnumFacing.VALUES) {
                                 world.notifyNeighborsOfStateChange(currentPos.offset(side), BCFactoryBlocks.floodGate,
                                     false);

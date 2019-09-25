@@ -19,6 +19,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -28,11 +29,14 @@ import net.minecraft.world.World;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
 import buildcraft.lib.misc.VecUtil;
 
+import buildcraft.core.marker.PathSubCache;
+import buildcraft.core.marker.VolumeSubCache;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
@@ -40,6 +44,10 @@ import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
+
+    private static final ResourceLocation ADVANCEMENT_VOLUME_MARKER = new ResourceLocation("buildcraftcore:markers");
+    private static final ResourceLocation ADVANCEMENT_PATH_MARKER = new ResourceLocation("buildcraftcore:path_markers");
+
     public ItemMarkerConnector(String id) {
         super(id);
     }
@@ -71,8 +79,18 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 }
             }
         }
-        return best != null &&
-            (cache.tryConnect(best.marker1, best.marker2) || cache.tryConnect(best.marker2, best.marker1));
+        if (best == null) {
+            return false;
+        }
+        if (cache.tryConnect(best.marker1, best.marker2) || cache.tryConnect(best.marker2, best.marker1)) {
+            if (cache instanceof VolumeSubCache) {
+                AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_VOLUME_MARKER);
+            } else if (cache instanceof PathSubCache) {
+                AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_PATH_MARKER);
+            }
+            return true;
+        }
+        return false;
     }
 
     public static boolean doesInteract(BlockPos a, BlockPos b, EntityPlayer player) {

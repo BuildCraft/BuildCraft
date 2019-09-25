@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -43,6 +44,7 @@ import buildcraft.lib.expression.info.VariableInfo.VariableInfoBoolean.BooleanPo
 import buildcraft.lib.expression.info.VariableInfo.VariableInfoObject;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
@@ -67,6 +69,14 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
     public static final ContextInfo MODEL_VAR_INFO;
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+
+    private static final ResourceLocation ADVANCEMENT_PLACE_GATE = new ResourceLocation(
+        "buildcrafttransport:pipe_logic"
+    );
+
+    private static final ResourceLocation ADVANCEMENT_PLACE_ADV_GATE = new ResourceLocation(
+        "buildcrafttransport:extended_logic"
+    );
 
     public final GateLogic logic;
 
@@ -101,20 +111,23 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
         VariableInfoObject<String> infoMaterial = MODEL_VAR_INFO.createInfoObject(MODEL_MATERIAL);
         infoMaterial.cacheType = CacheType.ALWAYS;
         infoMaterial.setIsComplete = true;
-        infoMaterial.possibleValues
-            .addAll(Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList()));
+        infoMaterial.possibleValues.addAll(
+            Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList())
+        );
 
         VariableInfoObject<String> infoModifier = MODEL_VAR_INFO.createInfoObject(MODEL_MODIFIER);
         infoModifier.cacheType = CacheType.ALWAYS;
         infoModifier.setIsComplete = true;
-        infoModifier.possibleValues
-            .addAll(Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList()));
+        infoModifier.possibleValues.addAll(
+            Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList())
+        );
 
         VariableInfoObject<String> infoLogic = MODEL_VAR_INFO.createInfoObject(MODEL_LOGIC);
         infoLogic.cacheType = CacheType.ALWAYS;
         infoLogic.setIsComplete = true;
-        infoLogic.possibleValues
-            .addAll(Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList()));
+        infoLogic.possibleValues.addAll(
+            Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList())
+        );
 
         VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
@@ -213,6 +226,17 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
             return new KeyPlugGate(side, logic.variant);
         }
         return null;
+    }
+
+    @Override
+    public void onPlacedBy(EntityPlayer player) {
+        super.onPlacedBy(player);
+        if (!holder.getPipeWorld().isRemote) {
+            AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_PLACE_GATE);
+            if (logic.variant.numActionArgs >= 1) {
+                AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_PLACE_ADV_GATE);
+            }
+        }
     }
 
     @Override

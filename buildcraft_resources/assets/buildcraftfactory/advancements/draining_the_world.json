@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "buildcraftfactory:flood_gate"
+      "item": "buildcraftfactory:pump"
     },
     "title": {
       "translate": "advancements.buildcraftfactory.draining_the_world.title"

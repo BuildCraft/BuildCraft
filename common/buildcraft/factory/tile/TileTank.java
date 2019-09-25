@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.Fluid;
@@ -39,6 +40,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
 import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -48,6 +50,10 @@ import buildcraft.lib.tile.TileBC_Neptune;
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IFluidHandlerAdv {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
     public static final int NET_FLUID_DELTA = IDS.allocId("FLUID_DELTA");
+
+    private static final ResourceLocation ADVANCEMENT_STORE_FLUIDS = new ResourceLocation(
+        "buildcraftfactory:fluid_storage"
+    );
 
     private static boolean isPlayerInteracting = false;
 
@@ -144,9 +150,13 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     @Override
     public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
+        int amountBefore = tank.getFluidAmount();
         isPlayerInteracting = true;
         boolean didChange = FluidUtilBC.onTankActivated(player, pos, hand, this);
         isPlayerInteracting = false;
+        if (didChange && !player.world.isRemote && amountBefore < tank.getFluidAmount()) {
+            AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_STORE_FLUIDS);
+        }
         return didChange;
     }
 
@@ -264,7 +274,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         TileTank bottom = tanks.get(0);
         TileTank top = tanks.get(tanks.size() - 1);
         FluidStack total = bottom.tank.getFluid();
-        if(total == null) {
+        if (total == null) {
             total = top.tank.getFluid();
         }
         int capacity = 0;

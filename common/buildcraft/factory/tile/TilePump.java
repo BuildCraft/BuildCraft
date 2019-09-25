@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.Fluid;
@@ -41,6 +42,7 @@ import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 
 import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.FluidUtilBC;
@@ -65,6 +67,14 @@ public class TilePump extends TileMiner {
         EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, //
         EnumFacing.WEST, EnumFacing.EAST //
     };
+
+    private static final ResourceLocation ADVANCEMENT_DRAIN_ANY = new ResourceLocation(
+        "buildcraftfactory:draining_the_world"
+    );
+
+    private static final ResourceLocation ADVANCEMENT_DRAIN_OIL = new ResourceLocation(
+        "buildcraftfactory:oil_platform"
+    );
 
     private final Tank tank = new Tank("tank", 16 * Fluid.BUCKET_VOLUME, this);
     private boolean queueBuilt = false;
@@ -263,9 +273,11 @@ public class TilePump extends TileMiner {
                                 isInfiniteWaterSource = false;
                             }
                         }
+                        AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_DRAIN_ANY);
                         if (!isInfiniteWaterSource) {
                             BlockUtil.drainBlock(world, currentPos, true);
                             if (isOil(drain.getFluid())) {
+                                AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_DRAIN_OIL);
                                 if (oilSpringPos != null) {
                                     TileEntity tile = world.getTileEntity(oilSpringPos);
                                     if (tile instanceof ITileOilSpring) {

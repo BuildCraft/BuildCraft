@@ -6,9 +6,11 @@
 
 package buildcraft.transport.plug;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import buildcraft.api.transport.pipe.IPipeHolder;
@@ -16,11 +18,17 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
+import buildcraft.lib.misc.AdvancementUtil;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 
 public class PluggableBlocker extends PipePluggable {
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+
+    private static final ResourceLocation ADVANCEMENT_PLACE_PLUG = new ResourceLocation(
+        "buildcrafttransport:plugging_the_gap"
+    );
 
     static {
         double ll = 2 / 16.0;
@@ -56,6 +64,14 @@ public class PluggableBlocker extends PipePluggable {
     @Override
     public ItemStack getPickStack() {
         return new ItemStack(BCTransportItems.plugBlocker);
+    }
+
+    @Override
+    public void onPlacedBy(EntityPlayer player) {
+        super.onPlacedBy(player);
+        if (!holder.getPipeWorld().isRemote && holder.getPipe().isConnected(side)) {
+            AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_PLACE_PLUG);
+        }
     }
 
     @Override

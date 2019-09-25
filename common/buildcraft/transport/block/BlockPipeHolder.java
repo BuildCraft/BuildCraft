@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import io.netty.handler.codec.http2.Http2FrameLogger.Direction;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockFaceShape;
@@ -37,6 +39,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -64,6 +67,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SpriteUtil;
@@ -92,6 +96,10 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     private static final AxisAlignedBB BOX_WEST = new AxisAlignedBB(0, 0.25, 0.25, 0.25, 0.75, 0.75);
     private static final AxisAlignedBB BOX_EAST = new AxisAlignedBB(0.75, 0.25, 0.25, 1, 0.75, 0.75);
     private static final AxisAlignedBB[] BOX_FACES = { BOX_DOWN, BOX_UP, BOX_NORTH, BOX_SOUTH, BOX_WEST, BOX_EAST };
+
+    private static final ResourceLocation ADVANCEMENT_LOGIC_TRANSPORTATION = new ResourceLocation(
+        "buildcrafttransport:logic_transportation"
+    );
 
     public BlockPipeHolder(Material material, String id) {
         super(material, id);
@@ -450,6 +458,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 return false;
             } else {
                 tile.replacePluggable(realSide, plug);
+                plug.onPlacedBy(player);
                 if (!player.capabilities.isCreativeMode) {
                     held.shrink(1);
                 }
@@ -472,11 +481,38 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     (trace.hitVec.z % 1 + 1) % 1 > 0.5);
             }
             if (wirePart != null && attachTile != null) {
+                EnumDyeColor colour = EnumDyeColor.byMetadata(held.getMetadata());
                 boolean attached =
-                    attachTile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
+                    attachTile.getWireManager().addPart(wirePart, colour);
                 attachTile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
-                if (attached && !player.capabilities.isCreativeMode) {
-                    held.shrink(1);
+                if (attached) {
+                    WireNode from = new WireNode(attachTile.getPipePos(), wirePart);
+
+                    boolean isNowConnected = false;
+                    for (EnumFacing dir : EnumFacing.values()) {
+                        WireNode to = from.offset(dir);
+                        if (to.pos == attachTile.getPipePos()) {
+                            if (attachTile.getWireManager().getColorOfPart(to.part) == colour) {
+                                isNowConnected = true;
+                                break;
+                            }
+                        } else {
+                            TileEntity localTile = attachTile.getLocalTile(to.pos);
+                            if (localTile instanceof TilePipeHolder) {
+                                if (((TilePipeHolder) localTile).getWireManager().getColorOfPart(to.part) == colour) {
+                                    isNowConnected = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (isNowConnected) {
+                        AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_LOGIC_TRANSPORTATION);
+                    }
+
+                    if (!player.capabilities.isCreativeMode) {
+                        held.shrink(1);
+                    }
                 }
                 if (attached) {
                     return true;

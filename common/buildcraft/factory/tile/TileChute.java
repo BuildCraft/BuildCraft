@@ -24,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -40,6 +41,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.inventory.TransactorEntityItem;
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -49,6 +51,8 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.factory.block.BlockChute;
 
 public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
+    private static final ResourceLocation ADVANCEMENT_DID_INSERT = new ResourceLocation("buildcraftfactory:retired_hopper");
+
     private static final int PICKUP_MAX = 3;
 
     public final ItemHandlerSimple inv = itemManager.addInvHandler(
@@ -83,6 +87,7 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     private void putInNearInventories(EnumFacing currentSide) {
+        boolean[] didWork = { false };
         List<EnumFacing> sides = new ArrayList<>(Arrays.asList(EnumFacing.VALUES));
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
@@ -99,8 +104,13 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
             .map(sideProvider -> ItemTransactorHelper.getTransactor(sideProvider.getRight(), sideProvider.getLeft().getOpposite()))
             .filter(Predicate.isEqual(NoSpaceTransactor.INSTANCE).negate())
             .forEach(transactor -> {
-                ItemTransactorHelper.move(inv, transactor, 1);
+                if (ItemTransactorHelper.move(inv, transactor, 1) > 0) {
+                    didWork[0] = true;
+                }
             });
+        if (didWork[0]) {
+            AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_DID_INSERT);
+        }
     }
 
     // ITickable

@@ -390,6 +390,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     //
     // ##################
 
+    protected boolean hasOwner() {
+        return owner != null;
+    }
+
     @Override
     public GameProfile getOwner() {
         if (owner == null) {

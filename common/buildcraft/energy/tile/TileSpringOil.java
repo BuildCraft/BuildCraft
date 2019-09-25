@@ -11,17 +11,23 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.tiles.IDebuggable;
+
+import buildcraft.lib.misc.AdvancementUtil;
 
 import buildcraft.core.tile.ITileOilSpring;
 
 // We don't extend TileBC here because we have no need of any of its functions.
 public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSpring {
+
+    private static final ResourceLocation ADVANCEMENT_PUMP_LARGE_OIL_WELL = new ResourceLocation(
+        "buildcraftfactory:black_gold"
+    );
 
     private final Map<GameProfile, PlayerPumpInfo> pumpProgress = new ConcurrentHashMap<>();
 
@@ -41,13 +47,12 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
         info.lastPumpTick = world.getTotalWorldTime();
         info.sourcesPumped++;
 
-        String name = profile.getName();
         // BCLog.logger.info("Pumped " + info.sourcesPumped + " / " + totalSources + " at " + oilPos + " (for " +
         // System.identityHashCode(this) + ", "+getPos()+")");
         if (info.sourcesPumped >= totalSources * 7 / 8) {
             // BCLog.logger.info("Pumped nearly all oil blocks!");
             if (oilPos.equals(getPos().up())) {
-                BCLog.logger.info("Awarding advancement to " + name + "! Or we would do, if this was 1.12...");
+                AdvancementUtil.unlockAdvancement(profile.getId(), ADVANCEMENT_PUMP_LARGE_OIL_WELL);
             }
         }
     }

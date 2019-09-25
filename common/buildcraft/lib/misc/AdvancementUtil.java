@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
+import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,7 +30,11 @@ public class AdvancementUtil {
             Advancement advancement = advancementManager.getAdvancement(advancementName);
             if (advancement != null) {
                 // never assume the advancement exists, we create them but they are removable by datapacks
-                playerMP.getAdvancements().grantCriterion(advancement, "code_trigger");
+                PlayerAdvancements tracker = playerMP.getAdvancements();
+                // When the fake player gets constructed it will set itself to the main player advancement tracker
+                // (So this just harmlessly removes it)
+                tracker.setPlayer(playerMP);
+                tracker.grantCriterion(advancement, "code_trigger");
             } else if (UNKNOWN_ADVANCEMENTS.add(advancementName)) {
                 BCLog.logger.warn("[lib.advancement] Attempted to trigger undefined advancement: " + advancementName);
             }

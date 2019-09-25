@@ -15,6 +15,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,6 +29,7 @@ import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.TilesAPI;
 
+import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -49,6 +51,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
     private static final long POWER_REQUIRED = POWER_GEN_PASSIVE * 20 * 10;
 
     private static final long POWER_LOST = POWER_GEN_PASSIVE * 10;
+
+    private static final ResourceLocation ADVANCEMENT_AUTOCRAFT = new ResourceLocation("buildcraftfactory:lazy_crafting");
 
     // TODO: Store output in the next slot!
     // (Can be used to differentiate between different recipes)
@@ -99,6 +103,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
                     // This is used for #hasWork(), to ensure that it doesn't return
                     // false for the one tick in between crafts.
                     powerStored = crafting.canCraft() ? 1 : 0;
+                    AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_AUTOCRAFT);
                 }
             } else {
                 powerStored += POWER_GEN_PASSIVE;
