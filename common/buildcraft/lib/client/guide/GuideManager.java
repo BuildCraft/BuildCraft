@@ -137,7 +137,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     private void reload0(IResourceManager resourceManager) {
         Profiler prof = new Profiler();
-        prof.profilingEnabled = true;
+        prof.profilingEnabled = DEBUG;
         prof.startSection("root");
         prof.startSection("reload");
         Stopwatch watch = Stopwatch.createStarted();
@@ -210,12 +210,16 @@ public enum GuideManager implements IResourceManagerReloadListener {
         int e = p - a;
         prof.endSection();
         prof.endSection();
-        BCLog.logger.info("[lib.guide] " + pageLinksAdded.size() + " search terms");
-        BCLog.logger.info("[lib.guide] Loaded " + p + " possible and " + a + " actual guide pages (" + e
-            + " not found) in " + time / 1000 + "ms.");
-        BCLog.logger.info("[lib.guide] Performance information for guide loading:");
-        ProfilerUtil.logProfilerResults(prof, "root", time * 1000);
-        BCLog.logger.info("[lib.guide] End of guide loading performance information. (" + time / 1000 + "ms)");
+        if (prof.profilingEnabled) {
+            BCLog.logger.info("[lib.guide] " + pageLinksAdded.size() + " search terms");
+            BCLog.logger.info(
+                "[lib.guide] Loaded " + p + " possible and " + a + " actual guide pages (" + e + " not found) in "
+                    + time / 1000 + "ms."
+            );
+            BCLog.logger.info("[lib.guide] Performance information for guide loading:");
+            ProfilerUtil.logProfilerResults(prof, "root", time * 1000);
+            BCLog.logger.info("[lib.guide] End of guide loading performance information. (" + time / 1000 + "ms)");
+        }
     }
 
     private void loadLangInternal(IResourceManager resourceManager, String lang, Profiler prof) {
@@ -229,9 +233,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
             for (Entry<String, IPageLoader> entry : PAGE_LOADERS.entrySet()) {
                 ResourceLocation fLoc = new ResourceLocation(domain, path + "." + entry.getKey());
 
-                try (IProfilerSection s = p.start("get_resource");
-                    InputStream stream = resourceManager.getResource(fLoc).getInputStream();
-                    IProfilerSection l = p.start("load")) {
+                try (IProfilerSection s = p.start("get_resource"); InputStream stream = resourceManager.getResource(
+                    fLoc
+                ).getInputStream(); IProfilerSection l = p.start("load")) {
                     GuidePageFactory factory = entry.getValue().loadPage(stream, entryKey, mapEntry.getValue(), prof);
                     // put the original page in so that the different lang variants override it
                     pages.put(entryKey, factory);
@@ -259,7 +263,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
             }
             BCLog.logger.warn(
                 "[lib.guide.loader] Unable to load guide page '" + entryKey + "' (full path = '" + domain + ":" + path
-                    + "." + endings + "') because we couldn't find any of the valid paths in any resource pack!");
+                    + "." + endings + "') because we couldn't find any of the valid paths in any resource pack!"
+            );
         }
     }
 

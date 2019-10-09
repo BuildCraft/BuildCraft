@@ -29,6 +29,7 @@ import buildcraft.lib.BCLibConfig.TimeGap;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.misc.ConfigUtil;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.registry.RegistryConfig;
 
 public class BCCoreConfig {
@@ -61,6 +62,7 @@ public class BCCoreConfig {
     private static Property propHidePower;
     private static Property propHideFluid;
     private static Property propGuideBookEnableDetail;
+    private static Property propGuideItemSearchLimit;
     private static Property propUseBucketsStatic;
     private static Property propUseBucketsFlow;
     private static Property propUseLongLocalizedName;
@@ -136,6 +138,12 @@ public class BCCoreConfig {
 
         propGuideBookEnableDetail = config.get(display, "guideBookEnableDetail", false);
         none.setTo(propGuideBookEnableDetail);
+
+        propGuideItemSearchLimit = config.get(performance, "guideItemSearchLimit", 10_000);
+        propGuideItemSearchLimit.setComment("The maximum number of items that the guide book will index.");
+        propGuideItemSearchLimit.setMinValue(5000);
+        propGuideItemSearchLimit.setMaxValue(5_000_000);
+        none.setTo(propGuideItemSearchLimit);
 
         propUseBucketsStatic = config.get(display, "useBucketsStatic", true);
         propUseBucketsStatic.setComment(
@@ -270,6 +278,7 @@ public class BCCoreConfig {
         hidePower = propHidePower.getBoolean();
         hideFluid = propHideFluid.getBoolean();
         BCLibConfig.guideShowDetail = propGuideBookEnableDetail.getBoolean();
+        BCLibConfig.guideItemSearchLimit = MathUtil.clamp(propGuideItemSearchLimit.getInt(), 5_000, 5_000_000);
         BCLibConfig.useBucketsStatic = propUseBucketsStatic.getBoolean();
         BCLibConfig.useBucketsFlow = propUseBucketsFlow.getBoolean();
         BCLibConfig.useLongLocalizedName = propUseLongLocalizedName.getBoolean();

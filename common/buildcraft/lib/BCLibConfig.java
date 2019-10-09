@@ -82,6 +82,9 @@ public class BCLibConfig {
 
     public static boolean guideShowDetail = false;
 
+    /** The maximum number of items that the guide book will index. */
+    public static int guideItemSearchLimit = 10_000;
+
     public static final List<Runnable> configChangeListeners = new ArrayList<>();
 
     /** Resets cached values across various BCLib classes that rely on these config options. */

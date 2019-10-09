@@ -25,6 +25,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.GuidePageRegistry;
@@ -60,7 +61,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
     public void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof) {
 
         // For now, we can always re-enable this as a last resort fix.
-        boolean limitDomains = false;// ForgeRegistries.ITEMS.getKeys().size() > 10_000;
+        boolean limitDomains = ForgeRegistries.ITEMS.getKeys().size() > BCLibConfig.guideItemSearchLimit;
 
         Set<String> domains = new HashSet<>();
         // Always show all of minecraft's items
@@ -72,7 +73,10 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
         domains.addAll(GuidePageRegistry.INSTANCE.getSourceDomains());
 
         if (limitDomains) {
-            BCLog.logger.info("[lib.guide] Limiting the domians of items to only: " + domains);
+            BCLog.logger.warn(
+                "[lib.guide] Limiting the domians of items to only: " + domains + " because there are "
+                    + ForgeRegistries.ITEMS.getKeys().size() + " items!"
+            );
         }
 
         for (Item item : ForgeRegistries.ITEMS) {
@@ -93,8 +97,10 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 // Instead lets replace it with a custom tooltip
                 consumer.addChild(TAGS, PageLinkItemPermutations.create(false, stacks, prof));
                 prof.endSection();
-                BCLog.logger.info("[lib.guide] Squished " + regName + " and all of it's " + stacks.size()
-                    + " variants down into one page entry.");
+                BCLog.logger.info(
+                    "[lib.guide] Squished " + regName + " and all of it's " + stacks.size()
+                        + " variants down into one page entry."
+                );
                 continue;
             }
             for (int i = 0; i < stacks.size(); i++) {
@@ -103,8 +109,10 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 try {
                     consumer.addChild(TAGS, PageLinkItemStack.create(false, stack, prof));
                 } catch (RuntimeException e) {
-                    throw new Error("Failed to create a page link for " + item.getRegistryName() + " " + item.getClass()
-                        + " (" + stack.serializeNBT() + ")", e);
+                    throw new Error(
+                        "Failed to create a page link for " + item.getRegistryName() + " " + item.getClass() + " ("
+                            + stack.serializeNBT() + ")", e
+                    );
                 }
             }
             prof.endSection();
@@ -127,7 +135,8 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
         JsonElement jStack = json.get("stack");
         if (jStack == null) {
             throw new JsonSyntaxException(
-                "Expected either a string or an object for 'stack', but got nothing for " + json);
+                "Expected either a string or an object for 'stack', but got nothing for " + json
+            );
         }
         final ItemStack stack;
         final boolean matchMeta, matchNbt;
