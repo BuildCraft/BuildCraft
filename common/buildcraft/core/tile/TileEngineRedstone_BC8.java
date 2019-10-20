@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
@@ -35,11 +36,18 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     @Override
     protected void engineUpdate() {
         super.engineUpdate();
-        if (world.getTotalWorldTime() % 16 == 0) {
-            this.addPower(MjAPI.MJ);
-            if (isPumping && !givenAdvancement) {
-                givenAdvancement = AdvancementUtil.unlockAdvancement(this.getOwner().getId(), ADVANCEMENT);
+        if (isRedstonePowered) {
+            power = getMaxPower();
+            if (world.getTotalWorldTime() % 16 == 0) {
+                if (getHeatLevel() < 0.8) {
+                    heat += 4;
+                }
+                if (isPumping && !givenAdvancement) {
+                    givenAdvancement = AdvancementUtil.unlockAdvancement(this.getOwner().getId(), ADVANCEMENT);
+                }
             }
+        } else {
+            power = 0;
         }
     }
 
@@ -49,8 +57,18 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
+    public void updateHeatLevel() {
+        if (heat > MIN_HEAT) {
+            heat -= 0.2f;
+            if (heat < MIN_HEAT) {
+                heat = MIN_HEAT;
+            }
+        }
+    }
+
+    @Override
     public long getMaxPower() {
-        return MjAPI.MJ * 100;
+        return MjAPI.MJ * 1;
     }
 
     @Override

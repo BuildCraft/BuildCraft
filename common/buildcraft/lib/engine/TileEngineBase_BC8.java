@@ -247,10 +247,6 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     public double getPistonSpeed() {
-        if (!world.isRemote) {
-            return Math.max(0.16 * getHeatLevel(), 0.01);
-        }
-
         switch (getPowerStage()) {
             case BLUE:
                 return 0.02;
@@ -259,7 +255,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             case YELLOW:
                 return 0.08;
             case RED:
-                return 0.16;
+                return 0.12;
             default:
                 return 0;
         }
