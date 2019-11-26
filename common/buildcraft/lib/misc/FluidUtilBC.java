@@ -118,14 +118,24 @@ public class FluidUtilBC {
         } else {
             toDrainPotential = from.drain(max, false);
         }
+        if (toDrainPotential == null) {
+            return null;
+        }
         int accepted = to.fill(toDrainPotential, false);
         if (accepted <= 0) {
             return null;
         }
         FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
+        if (accepted < toDrainPotential.amount) {
+            toDrainPotential = from.drain(toDrain, false);
+            if (toDrainPotential == null || toDrainPotential.amount < accepted) {
+                return null;
+            }
+        }
         FluidStack drained = from.drain(toDrain, true);
-        if (!toDrain.isFluidEqual(drained) || toDrain.amount != drained.amount) {
+        if (drained == null || toDrain.amount != drained.amount || !toDrain.isFluidEqual(drained)) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
+            detail += ",\npotential drain = " + StringUtilBC.fluidToString(toDrainPotential) + ")";
             detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
             detail += ",\nIFluidHandler (from) = " + from.getClass() + "(" + from + ")";
             detail += ",\nIFluidHandler (to) = " + to.getClass() + "(" + to + ")";
