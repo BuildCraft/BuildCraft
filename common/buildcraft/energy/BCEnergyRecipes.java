@@ -49,18 +49,18 @@ public class BCEnergyRecipes {
         final int _light_dense_residue = 3;
         final int _gas_light_dense = 8;
 
-        addFuel(BCEnergyFluids.fuelGaseous, _gas, 8);
-        addFuel(BCEnergyFluids.fuelLight, _light, 6);
-        addFuel(BCEnergyFluids.fuelDense, _dense, 4);
+        addFuel(BCEnergyFluids.fuelGaseous, _gas, 8, 4);
+        addFuel(BCEnergyFluids.fuelLight, _light, 6, 6);
+        addFuel(BCEnergyFluids.fuelDense, _dense, 4, 12);
 
-        addFuel(BCEnergyFluids.fuelMixedLight, _gas_light, 3);
-        addFuel(BCEnergyFluids.fuelMixedHeavy, _light_dense, 5);
-        addDirtyFuel(BCEnergyFluids.oilDense, _dense_residue, 4);
+        addFuel(BCEnergyFluids.fuelMixedLight, _gas_light, 3, 5);
+        addFuel(BCEnergyFluids.fuelMixedHeavy, _light_dense, 5, 8);
+        addDirtyFuel(BCEnergyFluids.oilDense, _dense_residue, 4, 4);
 
-        addFuel(BCEnergyFluids.oilDistilled, _gas_light_dense, 1);
-        addDirtyFuel(BCEnergyFluids.oilHeavy, _light_dense_residue, 2);
+        addFuel(BCEnergyFluids.oilDistilled, _gas_light_dense, 1, 5);
+        addDirtyFuel(BCEnergyFluids.oilHeavy, _light_dense_residue, 2, 4);
 
-        addDirtyFuel(BCEnergyFluids.crudeOil, _oil, 3);
+        addDirtyFuel(BCEnergyFluids.crudeOil, _oil, 3, 4);
 
         if (BCModules.FACTORY.isLoaded()) {
             FluidStack[] gas_light_dense_residue = createFluidStack(BCEnergyFluids.crudeOil, _oil);
@@ -126,23 +126,23 @@ public class BCEnergyRecipes {
 
     private static final int TIME_BASE = 240_000; // 240_000 - multiple of 3, 5, 16, 1000
 
-    private static void addFuel(Fluid[] in, int amountDiff, int multiplier) {
+    private static void addFuel(Fluid[] in, int amountDiff, int multiplier, int boostOver4) {
         Fluid fuel = getFirstOrNull(in);
         if (fuel == null) {// It may have been disabled
             return;
         }
         long powerPerCycle = multiplier * MjAPI.MJ;
-        int totalTime = TIME_BASE / multiplier / amountDiff;
+        int totalTime = TIME_BASE * boostOver4 / 4 / multiplier / amountDiff;
         BuildcraftFuelRegistry.fuel.addFuel(fuel, powerPerCycle, totalTime);
     }
 
-    private static void addDirtyFuel(Fluid[] in, int amountDiff, int multiplier) {
+    private static void addDirtyFuel(Fluid[] in, int amountDiff, int multiplier, int boostOver4) {
         Fluid fuel = getFirstOrNull(in);
         if (fuel == null) {// It may have been disabled
             return;
         }
-        long powerPerCycle = multiplier * MjAPI.MJ;
-        int totalTime = TIME_BASE / multiplier / amountDiff;
+        long powerPerCycle = multiplier * MjAPI.MJ / 4;
+        int totalTime = TIME_BASE * boostOver4 / 4 / multiplier / amountDiff;
         Fluid residue = getFirstOrNull(BCEnergyFluids.oilResidue);
         if (residue == null) {// residue might have been disabled
             BuildcraftFuelRegistry.fuel.addFuel(fuel, powerPerCycle, totalTime);
