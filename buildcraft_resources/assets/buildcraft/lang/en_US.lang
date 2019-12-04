@@ -818,7 +818,7 @@ advancements.buildcraftenergy.poweringUp.title=Powering Up!
 advancements.buildcraftenergy.poweringUp.description=Activate a Stirling/Combustion engine with a redstone signal
 
 advancements.buildcraftenergy.lava_power.title=Lava Power
-advancements.buildcraftenergy.lava_power.description=Power a strling engine with a lava bucket
+advancements.buildcraftenergy.lava_power.description=Power a stirling engine with a lava bucket
 
 advancements.buildcraftenergy.to_much_power.title=To much power!
 advancements.buildcraftenergy.to_much_power.description=Make an engine overheat and wackit it with a wrench
