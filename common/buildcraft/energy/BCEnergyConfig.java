@@ -29,6 +29,9 @@ import buildcraft.core.BCCoreConfig;
 
 public class BCEnergyConfig {
 
+    public static boolean enableOilOceanBiome;
+    public static boolean enableOilDesertBiome;
+
     public static boolean enableOilGeneration;
     public static double oilWellGenerationRate;
     public static boolean enableOilSpouts;
@@ -52,6 +55,9 @@ public class BCEnergyConfig {
     /** If false then {@link #excludedBiomes} should be treated as a whitelist rather than a blacklist. */
     public static boolean excludedBiomesIsBlackList;
     public static SpecialEventType christmasEventStatus = SpecialEventType.DAY_ONLY;
+
+    private static Property propEnableOilOceanBiome;
+    private static Property propEnableOilDesertBiome;
 
     private static Property propEnableOilGeneration;
     private static Property propOilWellGenerationRate;
@@ -78,6 +84,11 @@ public class BCEnergyConfig {
     public static void preInit() {
         EnumRestartRequirement world = EnumRestartRequirement.WORLD;
         EnumRestartRequirement game = EnumRestartRequirement.GAME;
+
+        propEnableOilOceanBiome = BCCoreConfig.config.get("worldgen.oil", "oil_ocean_biome", true,
+            "Should Oil Ocean biomes generate at all?");
+        propEnableOilDesertBiome = BCCoreConfig.config.get("worldgen.oil", "oil_desert_biome", true,
+            "Should Oil Desert biomes generate at all?");
 
         propEnableOilGeneration = BCCoreConfig.config.get("worldgen.oil", "enable", true,
             "Should any oil sprouts or lakes be generated at all?");
@@ -106,6 +117,8 @@ public class BCEnergyConfig {
         propLargeSpoutMaxHeight = BCCoreConfig.config.get("worldgen.oil.spouts", "large_max_height", 20,
             "The maximum height for large oil spouts");
 
+        game.setTo(propEnableOilOceanBiome);
+        game.setTo(propEnableOilDesertBiome);
         game.setTo(propEnableOilGeneration);
         game.setTo(propOilWellGenerationRate);
         game.setTo(propEnableOilBurn);
@@ -203,6 +216,9 @@ public class BCEnergyConfig {
             excludedDimensionsIsBlackList = propExcludedDimensionsIsBlacklist.getBoolean();
 
             if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
+                enableOilOceanBiome = propEnableOilOceanBiome.getBoolean();
+                enableOilDesertBiome = propEnableOilDesertBiome.getBoolean();
+
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
                 oilWellGenerationRate = propOilWellGenerationRate.getDouble();
                 enableOilSpouts = propEnableOilSpouts.getBoolean();

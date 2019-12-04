@@ -141,7 +141,7 @@ public class BCCoreConfig {
 
         propGuideItemSearchLimit = config.get(performance, "guideItemSearchLimit", 10_000);
         propGuideItemSearchLimit.setComment("The maximum number of items that the guide book will index.");
-        propGuideItemSearchLimit.setMinValue(5000);
+        propGuideItemSearchLimit.setMinValue(1_500);
         propGuideItemSearchLimit.setMaxValue(5_000_000);
         none.setTo(propGuideItemSearchLimit);
 
@@ -278,7 +278,7 @@ public class BCCoreConfig {
         hidePower = propHidePower.getBoolean();
         hideFluid = propHideFluid.getBoolean();
         BCLibConfig.guideShowDetail = propGuideBookEnableDetail.getBoolean();
-        BCLibConfig.guideItemSearchLimit = MathUtil.clamp(propGuideItemSearchLimit.getInt(), 5_000, 5_000_000);
+        BCLibConfig.guideItemSearchLimit = MathUtil.clamp(propGuideItemSearchLimit.getInt(), 1_500, 5_000_000);
         BCLibConfig.useBucketsStatic = propUseBucketsStatic.getBoolean();
         BCLibConfig.useBucketsFlow = propUseBucketsFlow.getBoolean();
         BCLibConfig.useLongLocalizedName = propUseLongLocalizedName.getBoolean();

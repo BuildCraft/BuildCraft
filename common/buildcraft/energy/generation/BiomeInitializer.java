@@ -11,12 +11,14 @@ import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.energy.BCEnergyConfig;
+
 public class BiomeInitializer {
     @SubscribeEvent
     public void initBiomeGens(WorldTypeEvent.InitBiomeGens event) {
 
-        boolean oilOcean = GenLayerAddOilOcean.getOilBiomeId() >= 0;
-        boolean oilDesert = GenLayerAddOilDesert.getOilBiomeId() >= 0;
+        boolean oilOcean = BCEnergyConfig.enableOilOceanBiome && GenLayerAddOilOcean.getOilBiomeId() >= 0;
+        boolean oilDesert = BCEnergyConfig.enableOilDesertBiome &&GenLayerAddOilDesert.getOilBiomeId() >= 0;
 
         if (!oilOcean && !oilDesert) {
             // The biomes aren't registered, so don't bother creating a new array.

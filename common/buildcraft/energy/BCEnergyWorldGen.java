@@ -17,19 +17,27 @@ import buildcraft.energy.generation.OilGenerator;
 @Mod.EventBusSubscriber(modid = BCEnergy.MODID)
 public class BCEnergyWorldGen {
     public static void init() {
-        BiomeDictionary.addTypes(
-            BiomeOilOcean.INSTANCE,
-            BiomeDictionary.Type.OCEAN
-        );
-        BiomeDictionary.addTypes(
-            BiomeOilDesert.INSTANCE,
-            BiomeDictionary.Type.HOT,
-            BiomeDictionary.Type.DRY,
-            BiomeDictionary.Type.SANDY
-        );
-        if (BCCoreConfig.worldGen && BCEnergyConfig.enableOilGeneration) {
-            MinecraftForge.EVENT_BUS.register(OilGenerator.class);
-            MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
+        if (BCEnergyConfig.enableOilOceanBiome) {
+            BiomeDictionary.addTypes(
+                BiomeOilOcean.INSTANCE,
+                BiomeDictionary.Type.OCEAN
+            );
+        }
+        if (BCEnergyConfig.enableOilDesertBiome) {
+            BiomeDictionary.addTypes(
+                BiomeOilDesert.INSTANCE,
+                BiomeDictionary.Type.HOT,
+                BiomeDictionary.Type.DRY,
+                BiomeDictionary.Type.SANDY
+            );
+        }
+        if (BCCoreConfig.worldGen) {
+            if (BCEnergyConfig.enableOilGeneration) {
+                MinecraftForge.EVENT_BUS.register(OilGenerator.class);
+            }
+            if (BCEnergyConfig.enableOilOceanBiome || BCEnergyConfig.enableOilDesertBiome) {
+                MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
+            }
         }
     }
 
