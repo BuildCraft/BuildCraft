@@ -156,7 +156,7 @@ public class BCEnergyConfig {
             "Dimension ID's (e.g. '-1' for the nether,'1' for the end) of dimensions that should never generate oil.");
 
         propExcludedDimensionsIsBlacklist = BCCoreConfig.config.get("worldgen.oil", "excludedDimensionsIsBlacklist", true,
-            "If true then the excluded biomes list will be treated as a blacklist, otherwise it will be treated as a whitelist.");
+            "If true then the excluded dimenstions list will be treated as a blacklist, otherwise it will be treated as a whitelist.");
 
         world.setTo(propExcessiveBiomes);
         world.setTo(propSurfaceDepositBiomes);
