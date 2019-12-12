@@ -43,9 +43,11 @@ public class BCEnergyWorldGen {
 
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
-        event.getRegistry().registerAll(
-            new BiomeOilOcean(),
-            new BiomeOilDesert()
-        );
+        if (BCEnergyConfig.enableOilDesertBiome) {
+            event.getRegistry().register(new BiomeOilOcean());
+        }
+        if (BCEnergyConfig.enableOilDesertBiome) {
+            event.getRegistry().register(new BiomeOilDesert());
+        }
     }
 }

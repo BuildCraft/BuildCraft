@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.registry.BuildCraftRegistryManager;
 
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
@@ -69,7 +68,14 @@ public class BCLib {
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
         MOD_CONTAINER = Loader.instance().activeModContainer();
-        BCLog.logger.info("");
+        try {
+            BCLog.logger.info("");
+        } catch (NoSuchFieldError e) {
+            Class<BCLog> cls = BCLog.class;
+            throw new Error(
+                "Bad " + cls + " loaded from " + cls.getClassLoader() + " domain: " + cls.getProtectionDomain(), e
+            );
+        }
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2018");
         BCLog.logger.info("https://www.mod-buildcraft.com");

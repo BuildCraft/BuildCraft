@@ -167,9 +167,11 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlPostInit() {
             super.fmlPostInit();
-            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-            IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
-            reloadable.registerReloadListener(GuideManager.INSTANCE);
+            if (BCLibItems.isGuideEnabled()) {
+                IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+                IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
+                reloadable.registerReloadListener(GuideManager.INSTANCE);
+            }
             GuiConfigManager.loadFromConfigFile();
         }
 
