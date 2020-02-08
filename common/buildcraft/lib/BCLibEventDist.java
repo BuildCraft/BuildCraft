@@ -138,7 +138,6 @@ public enum BCLibEventDist {
     public static void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
-            MessageUtil.postTick();
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayerSP player = mc.player;
             if (player != null && ItemDebugger.isShowDebugInfo(player)) {

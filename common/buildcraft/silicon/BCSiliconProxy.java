@@ -20,6 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
+import buildcraft.lib.misc.MessageUtil;
+
 import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.container.ContainerAssemblyTable;
 import buildcraft.silicon.container.ContainerGate;
@@ -70,7 +72,11 @@ public abstract class BCSiliconProxy implements IGuiHandler {
                 IPipeHolder holder = (IPipeHolder) tile;
                 PipePluggable plug = holder.getPluggable(gateSide);
                 if (plug instanceof PluggableGate) {
-                    return new ContainerGate(player, ((PluggableGate) plug).logic);
+                    ContainerGate container = new ContainerGate(player, ((PluggableGate) plug).logic);
+                    MessageUtil.doDelayed(() -> {
+                        container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
+                    });
+                    return container;
                 }
             }
         }
