@@ -18,6 +18,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
@@ -109,15 +110,21 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    public void burn() {
+    protected void engineUpdate() {
+        super.engineUpdate();
         if (burnTime > 0) {
             burnTime--;
-            // this seems wrong...
-            long output = getCurrentOutput();
-            currentOutput = output; // Comment out for constant power
-            addPower(output);
+            if (getPowerStage() != EnumPowerStage.OVERHEAT) {
+                // this seems wrong...
+                long output = getCurrentOutput();
+                currentOutput = output; // Comment out for constant power
+                addPower(output);
+            }
         }
+    }
 
+    @Override
+    public void burn() {
         if (burnTime == 0 && isRedstonePowered) {
             burnTime = totalBurnTime = getItemBurnTime(invFuel.getStackInSlot(0));
 

@@ -87,7 +87,7 @@ public abstract class PatternShape2d extends Pattern implements IFillerPatternSh
 
                 if (dir.rotationCount % 2 == 1) {
                     int fillT = fillA;
-                    fillA = fillB;
+                    fillA = maxB - fillB;
                     fillB = fillT;
                 }
                 if (dir.rotationCount > 1) {

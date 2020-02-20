@@ -74,6 +74,44 @@ public class VecUtil {
         return axis == Axis.X ? from.getX() : axis == Axis.Y ? from.getY() : from.getZ();
     }
 
+    public static double getValue(Vec3d negative, Vec3d positive, EnumFacing face) {
+        switch (face) {
+            case DOWN:
+                return negative.y;
+            case UP:
+                return positive.y;
+            case NORTH:
+                return negative.z;
+            case SOUTH:
+                return positive.z;
+            case WEST:
+                return negative.x;
+            case EAST:
+                return positive.x;
+            default:
+                throw new IllegalArgumentException("Unknwon EnumFacing " + face);
+        }
+    }
+
+    public static int getValue(Vec3i negative, Vec3i positive, EnumFacing face) {
+        switch (face) {
+            case DOWN:
+                return negative.getY();
+            case UP:
+                return positive.getY();
+            case NORTH:
+                return negative.getZ();
+            case SOUTH:
+                return positive.getZ();
+            case WEST:
+                return negative.getX();
+            case EAST:
+                return positive.getX();
+            default:
+                throw new IllegalArgumentException("Unknwon EnumFacing " + face);
+        }
+    }
+
     public static Vec3d convertCenter(Vec3i pos) {
         return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }

@@ -155,4 +155,85 @@ public class ProfilerUtil {
     public interface ILogAcceptor<E extends Throwable> {
         void write(String line) throws E;
     }
+
+    public interface ProfilerEntry {
+        void startSection(String name);
+
+        void endSection();
+
+        default void endStartSection(String name) {
+            endSection();
+            startSection(name);
+        }
+    }
+
+    public static ProfilerEntry createEntry(Profiler p1, Profiler p2) {
+        if (p1.profilingEnabled) {
+            if (p2.profilingEnabled) {
+                return new ProfilerEntry2(p1, p2);
+            } else {
+                return new ProfilerEntry1(p1);
+            }
+        } else {
+            if (p2.profilingEnabled) {
+                return new ProfilerEntry1(p2);
+            } else {
+                return ProfilerEntry0.INSTANCE;
+            }
+        }
+    }
+
+    static enum ProfilerEntry0 implements ProfilerEntry {
+        INSTANCE;
+
+        @Override
+        public void startSection(String name) {
+            // NO-OP
+        }
+
+        @Override
+        public void endSection() {
+            // NO-OP
+        }
+    }
+
+    static final class ProfilerEntry1 implements ProfilerEntry {
+        final Profiler p;
+
+        ProfilerEntry1(Profiler p) {
+            this.p = p;
+        }
+
+        @Override
+        public void startSection(String name) {
+            p.startSection(name);
+        }
+
+        @Override
+        public void endSection() {
+            p.endSection();
+        }
+    }
+
+    static final class ProfilerEntry2 implements ProfilerEntry {
+        final Profiler p1, p2;
+
+        ProfilerEntry2(Profiler p1, Profiler p2) {
+            this.p1 = p1;
+            this.p2 = p2;
+        }
+
+        @Override
+        public void startSection(String name) {
+            p1.startSection(name);
+            p2.startSection(name);
+        }
+
+        @Override
+        public void endSection() {
+            p1.endSection();
+            p2.endSection();
+        }
+    }
+
 }

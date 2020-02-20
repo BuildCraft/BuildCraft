@@ -79,10 +79,16 @@ public final class StringUtilBC {
     }
 
     public static String blockPosToString(BlockPos pos) {
+        if (pos == null) {
+            return "null";
+        }
         return pos.getX() + ", " + pos.getY() + ", " + pos.getZ();
     }
 
     public static String blockPosAsSizeToString(BlockPos pos) {
+        if (pos == null) {
+            return "null";
+        }
         return pos.getX() + "x" + pos.getY() + "x" + pos.getZ();
     }
 

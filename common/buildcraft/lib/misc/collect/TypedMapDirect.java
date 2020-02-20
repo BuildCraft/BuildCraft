@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-/** An {@link TypedMap} instance that only maps classes directly to the classes - that is {@link #get(Class)} will
- * return either null, or an object whose {@link #getClass()} equals the argument class. */
+/** A {@link TypedMap} instance that only maps classes directly to the classes - that is {@link #get(Class)} will return
+ * either null, or an object whose {@link #getClass()} equals the argument class. */
 public class TypedMapDirect<V> implements TypedMap<V> {
 
     private final Map<Class<?>, V> internalMap = new HashMap<>();

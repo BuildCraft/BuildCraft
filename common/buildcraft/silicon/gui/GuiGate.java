@@ -7,7 +7,6 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.collect.TypedKeyMap;
 
 import buildcraft.silicon.container.ContainerGate;
@@ -25,10 +24,6 @@ public class GuiGate extends GuiBC8<ContainerGate> {
         jsonGui.load();
         xSize = jsonGui.getSizeX();
         ySize = jsonGui.getSizeY();
-
-        MessageUtil.doDelayed(() -> {
-            container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
-        });
     }
 
     protected void preLoad(BuildCraftJsonGui json) {

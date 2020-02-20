@@ -8,6 +8,7 @@ package buildcraft.lib.misc;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -24,6 +25,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
@@ -31,6 +33,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.client.guide.font.IFontRenderer;
@@ -443,7 +446,24 @@ public class GuiUtil {
 
     public static List<String> getUnFormattedTooltip(ItemStack stack) {
         Minecraft mc = Minecraft.getMinecraft();
-        return stack.getTooltip(mc.player, getTooltipFlags());
+        List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
+        if (list.isEmpty()) {
+            return Collections.singletonList(getStackDisplayName(stack));
+        }
+        return list;
+    }
+
+    public static String getStackDisplayName(ItemStack stack) {
+        String name = stack.getDisplayName();
+        if (name == null) {
+            // Temp workaround for headcrumbs
+            // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
+            Item item = stack.getItem();
+            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
+            BCLog.logger.warn("[lib.guide] Found null display name! " + info);
+            name = "!!NULL stack.getDisplayName(): " + info;
+        }
+        return name;
     }
 
     private static ITooltipFlag getTooltipFlags() {

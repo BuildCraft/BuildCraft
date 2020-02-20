@@ -7,6 +7,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
 
+import buildcraft.lib.BCLib;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -68,6 +69,11 @@ public class ExpressionCompat {
             ENUM_POWER_STAGE.putConstant("" + stage, stage);
         }
 
+        try {
+            IControllable.Mode.ON.name();
+        } catch (NoSuchFieldError e) {
+            throw BCLib.throwBadClass(e, IControllable.Mode.class);
+        }
         ENUM_CONTROL_MODE = new NodeType<>("Controllable Mode", IControllable.Mode.class, IControllable.Mode.ON);
         NodeTypes.addType("ControlMode", ENUM_CONTROL_MODE);
         ENUM_CONTROL_MODE.put_t_o("(string)", String.class, e -> e.lowerCaseName);

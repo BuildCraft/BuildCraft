@@ -19,6 +19,7 @@ import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.plug.PlugBakerSimple;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
@@ -48,7 +49,6 @@ import buildcraft.silicon.plug.PluggableGate;
 import buildcraft.silicon.plug.PluggablePulsar;
 import buildcraft.silicon.tile.TileLaser;
 import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
-import buildcraft.transport.client.model.plug.PlugBakerSimple;
 
 public class BCSiliconModels {
     public static final ModelHolderStatic LIGHT_SENSOR;

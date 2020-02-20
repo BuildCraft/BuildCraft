@@ -23,12 +23,21 @@ public class BCBuildersConfig {
      * drill. */
     public static boolean quarryFrameMoveBoth;
 
+    public static int quarryMaxTasksPerTick = 4;
+    public static int quarryTaskPowerDivisor = 2;
+    public static double quarryMaxFrameMoveSpeed = 0;
+    public static double quarryMaxBlockMineRate = 0;
+
     /** Client-side config to enable stencils-based drawing for the architect table. */
     public static boolean enableStencil = true;
 
     private static Property propBptStoreExternalThreshold;
     private static Property propQuarryFrameMinHeight;
     private static Property propQuarryFrameMoveBoth;
+    private static Property propQuarryMaxTasksPerTick;
+    private static Property propQuarryPowerDivisor;
+    private static Property propQuarryMaxFrameSpeed;
+    private static Property propQuarryMaxBlockMineRate;
     private static Property propEnableStencil;
 
     static Property internalStencilCrashTest;
@@ -48,6 +57,30 @@ public class BCBuildersConfig {
         propQuarryFrameMoveBoth = BCCoreConfig.config.get("display", "quarryFrameMoveBoth", false);
         propQuarryFrameMoveBoth.setComment("If true then the quarry frame will move with both of its axis rather than just one.");
         none.setTo(propQuarryFrameMoveBoth);
+
+        propQuarryMaxTasksPerTick = BCCoreConfig.config.get("general", "quarryMaxTasksPerTick", 4);
+        propQuarryMaxTasksPerTick.setComment("The maximum number of tasks that the quarry will do per tick."
+            + "\n(Where a task is either breaking a block, or moving the frame)");
+        propQuarryMaxTasksPerTick.setMinValue(1).setMaxValue(20);
+        none.setTo(propQuarryMaxTasksPerTick);
+
+        propQuarryPowerDivisor = BCCoreConfig.config.get("general", "quarryPowerDivisor", 2);
+        propQuarryPowerDivisor.setComment("1 divided by this value is added to the power cost for each additional task done per tick."
+            + "\nA value of 0 disables this behaviour.");
+        propQuarryPowerDivisor.setMinValue(0).setMaxValue(100);
+        none.setTo(propQuarryPowerDivisor);
+
+        propQuarryMaxFrameSpeed = BCCoreConfig.config.get("general", "quarryMaxFrameSpeed", 0.0);
+        propQuarryMaxFrameSpeed.setComment("The maximum number of blocks that a quarry is allowed to move, per second."
+            + "\nA value of 0 means no limit.");
+        propQuarryMaxFrameSpeed.setMinValue(0.0).setMaxValue(5120.0);
+        none.setTo(propQuarryMaxFrameSpeed);
+
+        propQuarryMaxBlockMineRate = BCCoreConfig.config.get("general", "quarryMaxBlockMineRate", 0.0);
+        propQuarryMaxBlockMineRate.setComment("The maximum number of blocks that the quarry is allowed to mine each second."
+            + "\nA value of 0 means no limit, and a value of 0.5 will mine up to half a block per second.");
+        propQuarryMaxBlockMineRate.setMinValue(0.0).setMaxValue(1000.0);
+        none.setTo(propQuarryMaxBlockMineRate);
 
         propEnableStencil = BCCoreConfig.config.get("display", "enableStencil", true);
         propEnableStencil.setComment("If true then the architect table will correctly hide it's translucent parts behind surrounding terrain. (This looks better)");

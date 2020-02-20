@@ -172,7 +172,7 @@ public class PluggableFacade extends PipePluggable implements IFacade {
             }
             return new KeyPlugFacade(layer, side, blockState, isHollow());
         } else if (layer == BlockRenderLayer.CUTOUT && BCModules.TRANSPORT.isLoaded()) {
-            return new KeyPlugBlocker(side);
+            return KeyPlugBlocker.create(side);
         }
         return null;
     }

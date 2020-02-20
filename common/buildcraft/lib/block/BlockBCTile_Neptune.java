@@ -80,17 +80,6 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
-        int fortune) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileBC_Neptune) {
-            TileBC_Neptune tileBC = (TileBC_Neptune) tile;
-            tileBC.addDrops(drops, fortune);
-        }
-        super.getDrops(drops, world, pos, state, fortune);
-    }
-
-    @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
         TileEntity tile = world.getTileEntity(pos);

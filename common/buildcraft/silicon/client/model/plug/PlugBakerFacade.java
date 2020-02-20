@@ -297,8 +297,14 @@ public enum PlugBakerFacade implements IPluggableStaticBaker<KeyPlugFacade> {
             baked.add(quad.toBakedItem());
         }
         if (BCModules.TRANSPORT.isLoaded() && key.state.isFullBlock() && !key.isHollow) {
-            baked.addAll(BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(key.side)));
+            baked.addAll(TransportCompat.bakeBlocker(key.side));
         }
         return baked;
+    }
+
+    static final class TransportCompat {
+        static List<BakedQuad> bakeBlocker(EnumFacing side) {
+            return BCTransportModels.BAKER_PLUG_BLOCKER.bake(new KeyPlugBlocker(side));
+        }
     }
 }

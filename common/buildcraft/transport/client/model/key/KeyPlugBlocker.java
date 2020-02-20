@@ -15,4 +15,9 @@ public final class KeyPlugBlocker extends PluggableModelKey {
     public KeyPlugBlocker(EnumFacing side) {
         super(BlockRenderLayer.CUTOUT, side);
     }
+
+    /** Factory for {@link #KeyPlugBlocker(EnumFacing)} that avoids class verification errors. */
+    public static PluggableModelKey create(EnumFacing side) {
+        return new KeyPlugBlocker(side);
+    }
 }

@@ -300,8 +300,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         tileCache.invalidate();
     }
 
-    /** Called whenever {@link Block#getDrops(NonNullList, IBlockAccess, BlockPos, IBlockState, int)}, or
-     * {@link #onRemove()} is called (by default). */
+    /** Called whenever {@link #onRemove()} is called (by default). */
     public void addDrops(NonNullList<ItemStack> toDrop, int fortune) {
         itemManager.addDrops(toDrop);
         tankManager.addDrops(toDrop);

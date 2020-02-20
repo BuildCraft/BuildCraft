@@ -135,7 +135,7 @@ public class TagManager {
         }
 
         public TagEntry addMultiTag(EnumTagTypeMulti type, String... tags) {
-            if (!this.tags.containsKey(type)) {
+            if (!this.multiTags.containsKey(type)) {
                 this.multiTags.put(type, new LinkedList<>());
             }
             for (String tag : tags) {

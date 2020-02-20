@@ -71,10 +71,7 @@ public class BCLib {
         try {
             BCLog.logger.info("");
         } catch (NoSuchFieldError e) {
-            Class<BCLog> cls = BCLog.class;
-            throw new Error(
-                "Bad " + cls + " loaded from " + cls.getClassLoader() + " domain: " + cls.getProtectionDomain(), e
-            );
+            throw throwBadClass(e, BCLog.class);
         }
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2018");
@@ -119,6 +116,12 @@ public class BCLib {
         ForgeChunkManager.getConfig().get(MODID, "maximumChunksPerTicket", 26);
         ForgeChunkManager.syncConfigDefaults();
         ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
+    }
+
+    public static Error throwBadClass(Error e, Class<?> cls) throws Error {
+        throw new Error(
+            "Bad " + cls + " loaded from " + cls.getClassLoader() + " domain: " + cls.getProtectionDomain(), e
+        );
     }
 
     @Mod.EventHandler

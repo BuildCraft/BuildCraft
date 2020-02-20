@@ -1,15 +1,11 @@
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.util.text.TextFormatting;
-
-import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
@@ -30,13 +26,7 @@ public final class PageLinkItemStack extends PageLink {
     public static PageLinkItemStack create(boolean startVisible, ItemStack stack, Profiler prof) {
         prof.startSection("create_page_link");
         prof.startSection("get_tooltip");
-        final List<String> tooltip;
-        if (FULL_TOOLITP) {
-            tooltip = GuiUtil.getUnFormattedTooltip(stack);
-        } else {
-            tooltip = new ArrayList<>(1);
-            tooltip.add(stack.getItem().getItemStackDisplayName(stack));
-        }
+        List<String> tooltip = getTooltip(stack);
         prof.endStartSection("join_tooltip");
         String searchText = joinTooltip(tooltip);
         prof.endStartSection("create_line");
@@ -46,6 +36,13 @@ public final class PageLinkItemStack extends PageLink {
         PageLinkItemStack page = new PageLinkItemStack(text, startVisible, stack, tooltip, searchText);
         prof.endSection();
         return page;
+    }
+
+    private static List<String> getTooltip(ItemStack stack) {
+        if (FULL_TOOLITP) {
+            return GuiUtil.getUnFormattedTooltip(stack);
+        }
+        return Collections.singletonList(GuiUtil.getStackDisplayName(stack));
     }
 
     private static String joinTooltip(final List<String> tooltip) {
@@ -59,9 +56,7 @@ public final class PageLinkItemStack extends PageLink {
     }
 
     private static void joinTooltipLine(final List<String> tooltip, StringBuilder joiner, int i) {
-        String line = removeFormatting(tooltip.get(i));
-        tooltip.set(i, line);
-        joiner.append(line.toLowerCase(Locale.ROOT));
+        joiner.append(removeFormatting(tooltip.get(i)).toLowerCase(Locale.ROOT));
     }
 
     private static String removeFormatting(String s) {
@@ -78,8 +73,9 @@ public final class PageLinkItemStack extends PageLink {
         return new String(to, 0, len);
     }
 
-    private PageLinkItemStack(PageLine text, boolean startVisible, ItemStack stack, List<String> tooltip,
-        String searchText) {
+    private PageLinkItemStack(
+        PageLine text, boolean startVisible, ItemStack stack, List<String> tooltip, String searchText
+    ) {
         super(text, startVisible);
         this.stack = stack;
         this.tooltip = tooltip;
@@ -90,18 +86,9 @@ public final class PageLinkItemStack extends PageLink {
         super(createPageLine(stack, prof), startVisible);
         this.stack = stack;
         prof.startSection("get_tooltip");
-        tooltip = GuiUtil.getUnFormattedTooltip(stack);
+        tooltip = getTooltip(stack);
         prof.endStartSection("join_tooltip");
-        StringBuilder joiner = new StringBuilder();
-        for (String s : tooltip) {
-            s = TextFormatting.getTextWithoutFormattingCodes(s);
-            if (s == null) {
-                continue;
-            }
-            joiner.append(s.toLowerCase(Locale.ROOT));
-            joiner.append('\n');
-        }
-        searchText = joiner.toString();
+        searchText = joinTooltip(tooltip);
         prof.endSection();
     }
 
@@ -109,16 +96,8 @@ public final class PageLinkItemStack extends PageLink {
         prof.startSection("create_line");
         ISimpleDrawable icon = new GuiStack(stack);
         prof.startSection("get_display_name");
-        String title = stack.getDisplayName();
+        String title = GuiUtil.getStackDisplayName(stack);
         prof.endSection();
-        if (title == null) {
-            // Temp workaround for headcrumbs
-            // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
-            Item item = stack.getItem();
-            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
-            BCLog.logger.warn("[lib.guide] Found null display name! " + info);
-            title = "!!NULL stack.getDisplayName(): " + info;
-        }
         PageLine line = new PageLine(icon, icon, 2, title, true);
         prof.endSection();
         return line;

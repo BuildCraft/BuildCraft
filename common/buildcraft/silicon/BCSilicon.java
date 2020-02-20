@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import buildcraft.api.BCModules;
 import buildcraft.api.facades.FacadeAPI;
 
 import buildcraft.lib.BCLib;
@@ -47,12 +48,14 @@ public class BCSilicon {
     @Mod.Instance(MODID)
     public static BCSilicon INSTANCE = null;
 
+    private static CreativeTabBC tabPlugs;
     private static CreativeTabBC tabFacades;
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent evt) {
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
+        tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
         tabFacades = CreativeTabManager.createTab("buildcraft.facades");
         FacadeAPI.registry = FacadeStateManager.INSTANCE;
 
@@ -80,6 +83,10 @@ public class BCSilicon {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FacadeInstance inst = FacadeInstance.createSingle(state, false);
             tabFacades.setItem(BCSiliconItems.plugFacade.createItemStack(inst));
+        }
+
+        if (!BCModules.TRANSPORT.isLoaded()) {
+            tabPlugs.setItem(BCSiliconItems.plugGate);
         }
     }
 
