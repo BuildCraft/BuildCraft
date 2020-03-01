@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeFlow;
 
@@ -140,7 +141,11 @@ public class MessageMultiPipeItem implements IMessage {
                     BlockPos pos = entry.getKey();
                     TileEntity tile = world.getTileEntity(pos);
                     if (tile instanceof IPipeHolder) {
-                        PipeFlow flow = ((IPipeHolder) tile).getPipe().getFlow();
+                        IPipe pipe = ((IPipeHolder) tile).getPipe();
+                        if (pipe == null) {
+                            return null;
+                        }
+                        PipeFlow flow = pipe.getFlow();
                         if (flow instanceof PipeFlowItems) {
                             ((PipeFlowItems) flow).handleClientReceviedItems(entry.getValue());
                         }
