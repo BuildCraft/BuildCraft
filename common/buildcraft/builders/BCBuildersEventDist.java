@@ -44,13 +44,13 @@ public enum BCBuildersEventDist {
     private static final UUID UUID_SINGLE_SCHEMATIC = new UUID(0xfd3b8c59b0a8b191L, 0x772ec006c1b0ffaaL);
     private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
 
-    public void validateQuarry(TileQuarry quarry) {
+    public synchronized void validateQuarry(TileQuarry quarry) {
         Deque<WeakReference<TileQuarry>> quarries =
             allQuarries.computeIfAbsent(quarry.getWorld(), k -> new LinkedList<>());
         quarries.add(new WeakReference<>(quarry));
     }
 
-    public void invalidateQuarry(TileQuarry quarry) {
+    public synchronized void invalidateQuarry(TileQuarry quarry) {
         Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(quarry.getWorld());
         if (quarries == null) {
             // Odd.
@@ -67,7 +67,7 @@ public enum BCBuildersEventDist {
     }
 
     @SubscribeEvent
-    public void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
+    public synchronized void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
         Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(event.getWorld());
         if (quarries == null) {
             // No quarries in the target world
