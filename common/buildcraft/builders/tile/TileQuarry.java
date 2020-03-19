@@ -7,6 +7,7 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -531,10 +532,20 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             return;
         }
 
-        long max = MathUtil.clamp(
-            MAX_POWER_PER_TICK * (battery.getStored() + MjAPI.MJ / 2) / (battery.getCapacity() / 2), 0,
-            MAX_POWER_PER_TICK
-        );
+        long max;
+        if (battery.getStored() > battery.getCapacity() / 2) {
+            max = MAX_POWER_PER_TICK;
+        } else {
+            long roundedUp = battery.getStored() + MjAPI.MJ / 2;
+            if (roundedUp > Long.MAX_VALUE / MAX_POWER_PER_TICK) {
+                // The multiplication would overflow, so we'll have to use BigInteger for this bit
+                max = BigInteger.valueOf(roundedUp).multiply(BigInteger.valueOf(MAX_POWER_PER_TICK))
+                    .divide(BigInteger.valueOf(battery.getCapacity() / 2)).longValue();
+            } else {
+                max = MAX_POWER_PER_TICK * roundedUp / (battery.getCapacity() / 2);
+            }
+            max = MathUtil.clamp(max, 0, MAX_POWER_PER_TICK);
+        }
         debugPowerRate = max;
         blockPercentSoFar = 0;
         moveDistanceSoFar = 0;
@@ -832,6 +843,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
         left.add("firstCheckedPoses = " + firstCheckedPoses.size());
         left.add("frameBoxPosesCount = " + frameBoxPosesCount);
+        left.add("firstChecked = " + firstChecked);
 
         BoxIterator iter = boxIterator;
         left.add("current = " + (iter == null ? "null" : iter.getCurrent()));

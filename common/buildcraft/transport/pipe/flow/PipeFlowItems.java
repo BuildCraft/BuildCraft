@@ -635,6 +635,20 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return items.getMaxDelay() > 0;
     }
 
+    public boolean containsItemMatching(ItemStack filter) {
+        if (filter.isEmpty()) {
+            return doesContainItems();
+        }
+        for (List<TravellingItem> list : items.getAllElements()) {
+            for (TravellingItem item : list) {
+                if (StackUtil.matchesStackOrList(filter, item.stack)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Nullable
     private static EnumSet<EnumFacing> getFirstNonEmptySet(List<EnumSet<EnumFacing>> possible) {
         for (EnumSet<EnumFacing> set : possible) {
