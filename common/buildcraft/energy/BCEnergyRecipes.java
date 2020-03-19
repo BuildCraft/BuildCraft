@@ -141,7 +141,7 @@ public class BCEnergyRecipes {
         if (fuel == null) {// It may have been disabled
             return;
         }
-        long powerPerCycle = multiplier * MjAPI.MJ / 4;
+        long powerPerCycle = multiplier * MjAPI.MJ;
         int totalTime = TIME_BASE * boostOver4 / 4 / multiplier / amountDiff;
         Fluid residue = getFirstOrNull(BCEnergyFluids.oilResidue);
         if (residue == null) {// residue might have been disabled
