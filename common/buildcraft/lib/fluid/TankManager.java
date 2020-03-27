@@ -98,6 +98,7 @@ public class TankManager extends ForwardingList<Tank> implements IFluidHandlerAd
         for (Tank tank : getFillOrderTanks()) {
             int used = tank.fill(resource, doFill);
             if (used > 0) {
+                resource = resource.copy();
                 resource.amount -= used;
                 filled += used;
                 if (resource.amount <= 0) {

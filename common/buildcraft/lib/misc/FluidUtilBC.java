@@ -121,7 +121,7 @@ public class FluidUtilBC {
         if (toDrainPotential == null) {
             return null;
         }
-        int accepted = to.fill(toDrainPotential, false);
+        int accepted = to.fill(toDrainPotential.copy(), false);
         if (accepted <= 0) {
             return null;
         }
@@ -132,7 +132,7 @@ public class FluidUtilBC {
                 return null;
             }
         }
-        FluidStack drained = from.drain(toDrain, true);
+        FluidStack drained = from.drain(toDrain.copy(), true);
         if (drained == null || toDrain.amount != drained.amount || !toDrain.isFluidEqual(drained)) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
             detail += ",\npotential drain = " + StringUtilBC.fluidToString(toDrainPotential) + ")";
