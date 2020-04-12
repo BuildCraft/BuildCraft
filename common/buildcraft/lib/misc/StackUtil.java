@@ -6,8 +6,12 @@
 
 package buildcraft.lib.misc;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -17,6 +21,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
@@ -35,6 +40,11 @@ public class StackUtil {
     // Actually the entire MC
     @Nonnull
     public static final ItemStack EMPTY;
+
+    /**
+     * Registry of additional rules for {@link #isMatchingItem}.
+     */
+    private static final Map<Item, List<StackMatchingPredicate>> matchingPredicates = new HashMap<>();
 
     static {
         ItemStack stack = ItemStack.EMPTY;
@@ -310,8 +320,27 @@ public class StackUtil {
             if (baseTag != null && !baseTag.equals(comparison.getTagCompound())) {
                 return false;
             }
+        } else {
+            List<StackMatchingPredicate> predicates = matchingPredicates.getOrDefault(base.getItem(), Collections.emptyList());
+            for (StackMatchingPredicate predicate : predicates) {
+                if (!predicate.isMatching(base, comparison)) {
+                    return false;
+                }
+            }
         }
         return true;
+    }
+
+    /**
+     * Registers a predicate, that will be used in {@link #isMatchingItem} as an additional comparison rule.
+     * If any of registered predicates will return false, then the function will also return false.
+     * It can be helpful, if item stacks are clearly not the same, but have common {@link Item} instance.
+     * @param forItem {@link Item} instance for which to register the rule.
+     * @param predicate predicate to register.
+     */
+    public static void registerMatchingPredicate(@Nonnull Item forItem, @Nonnull StackMatchingPredicate predicate) {
+        List<StackMatchingPredicate> predicates = matchingPredicates.computeIfAbsent(forItem, (item) -> new ArrayList<>());
+        predicates.add(predicate);
     }
 
     /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
