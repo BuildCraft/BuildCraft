@@ -656,7 +656,6 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 return;
             }
             if (c_recipe.heatFrom() <= h_recipe.heatFrom()) {
-                BCLog.logger.warn("Invalid heat values!");
                 progressState = EnumProgressState.STOPPING;
                 return;
             }

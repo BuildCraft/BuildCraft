@@ -29,12 +29,16 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -125,6 +129,23 @@ public class ItemRenderUtil {
         if (stack.isEmpty()) {
             return;
         }
+        try {
+            renderItemStackInternal(x, y, z, stack, stackCount, lightc, dir, bb);
+        } catch (Throwable exception) {
+            CrashReport report = CrashReport.makeCrashReport(exception, "Rendering Item Stack");
+            CrashReportCategory category = report.makeCategory("Item being rendered");
+            category.addCrashSection("Stack Count", stackCount);
+            category.addDetail("Item Class", () -> "" + stack.getItem().getClass());
+            category.addDetail("Item ID", () -> "" + ForgeRegistries.ITEMS.getKey(stack.getItem()));
+            category.addDetail("Item Meta", () -> "" + stack.getMetadata());
+            category.addDetail("Item NBT", () -> "" + stack.getTagCompound());
+            throw new ReportedException(report);
+        }
+    }
+
+    private static void renderItemStackInternal(
+        double x, double y, double z, ItemStack stack, int stackCount, int lightc, EnumFacing dir, BufferBuilder bb
+    ) {
         if (dir == null) {
             dir = EnumFacing.EAST;
         }
