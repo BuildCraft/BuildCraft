@@ -45,7 +45,7 @@ public interface IContainerFilling {
 
     default void init() {
         if (!getPlayer().world.isRemote) {
-            MessageUtil.doDelayed(this::sendData);
+            MessageUtil.doDelayedServer(this::sendData);
         }
     }
 
