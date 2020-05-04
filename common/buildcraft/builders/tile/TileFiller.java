@@ -13,7 +13,9 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.mj.RFStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -25,6 +27,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -98,6 +102,7 @@ public class TileFiller extends TileBC_Neptune
             EnumPipePart.VALUES
         );
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
+    public RFStorage storage = new RFStorage(battery);
     private boolean canExcavate = true;
     public boolean inverted = false;
     private boolean finished = false;
@@ -514,4 +519,29 @@ public class TileFiller extends TileBC_Neptune
         }
         this.mode = mode;
     }
+
+
+
+    //MODIFICATION START
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else {
+            return super.getCapability(capability, side);
+        }
+    }
+
+    //MODIFICATION END
 }

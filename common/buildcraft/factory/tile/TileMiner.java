@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.mj.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
@@ -18,15 +20,13 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.TilesAPI;
 
@@ -54,6 +54,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
 
     protected boolean isComplete = false;
     protected final MjBattery battery = new MjBattery(getBatteryCapacity());
+    public RFStorage storage = new RFStorage(battery);
 
     public TileMiner() {
         caps.addProvider(new MjCapabilityHelper(createMjReceiver()));
@@ -261,4 +262,28 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IDe
     protected long getBatteryCapacity() {
         return 500 * MjAPI.MJ;
     }
+
+
+    //MODIFICATION START
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else {
+            return super.getCapability(capability, side);
+        }
+    }
+
+    //MODIFICATION END
 }

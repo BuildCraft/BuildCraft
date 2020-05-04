@@ -14,7 +14,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.mj.RFStorage;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +32,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -93,6 +97,7 @@ public class TileBuilder extends TileBC_Neptune
         itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
 
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
+    public RFStorage storage = new RFStorage(battery);
     private boolean canExcavate = true;
 
     /** Stores the real path - just a few block positions. */
@@ -472,4 +477,28 @@ public class TileBuilder extends TileBC_Neptune
     public TankManager getTankManager() {
         return tankManager;
     }
+
+
+    //MODIFICATION START
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else {
+            return super.getCapability(capability, side);
+        }
+    }
+
+    //MODIFICATION END
 }

@@ -37,7 +37,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -346,10 +345,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         tileCache.invalidate();
     }
 
+    //MODIFICATION START
+    @Override
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        return getCapability(capability, facing) != null;
+    }
+
+    /*
     @Override
     public final boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
+    */
+
+    //MODIFICATION END
+
+
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {

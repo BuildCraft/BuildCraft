@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.mj.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -23,16 +25,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.enums.EnumPowerStage;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.IMjRedstoneReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
@@ -55,6 +53,8 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     @Nonnull
     public final IMjConnector mjConnector = createConnector();
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(mjConnector);
+
+    private RFStorageFromCap storage = new RFStorageFromCap(MjUtils.convertMjToRF(getMaxPower()));
 
     protected double heat = MIN_HEAT;// TODO: sync gui data
     protected long power = 0;// TODO: sync gui data
@@ -272,6 +272,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Override
     public void update() {
+
+        if (storage.getEnergyStored() > 0)
+            this.power = MjUtils.convertRFToMj(this.storage.getEnergyStored());
         deltaManager.tick();
         if (cannotUpdate()) return;
 
@@ -297,9 +300,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
         if (!isRedstonePowered) {
             if (power > MjAPI.MJ) {
-                power -= MjAPI.MJ;
+                storage.extractEnergy(10, false);
             } else if (power > 0) {
-                power = 0;
+                storage.setEnergyStored(0);
             }
         }
 
@@ -397,9 +400,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     protected void engineUpdate() {
         if (!isRedstonePowered) {
             if (power >= 1) {
-                power -= 1;
+                storage.extractEnergy(10, false);
             } else if (power < 1) {
-                power = 0;
+                storage.setEnergyStored(0);
             }
         }
     }
@@ -462,8 +465,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     // }
 
     public void addPower(long microJoules) {
-        power += microJoules;
-        lastPower += microJoules;
+        long temp = power;
+        long temp2 = lastPower;
+        temp += microJoules;
+        temp2 += microJoules;
 
         if (getPowerStage() == EnumPowerStage.OVERHEAT) {
             // TODO: turn engine off
@@ -471,9 +476,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             // worldObj.setBlockToAir(xCoord, yCoord, zCoord);
         }
 
-        if (power > getMaxPower()) {
-            power = getMaxPower();
+        if (temp > getMaxPower()) {
+            temp = getMaxPower();
         }
+        storage.setEnergyStored(MjUtils.convertMjToRF(temp));
+        lastPower = temp2;
     }
 
     public long extractPower(long min, long max, boolean doExtract) {
@@ -499,12 +506,13 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             extracted = actualMax;
 
             if (doExtract) {
-                power -= actualMax;
+                storage.extractEnergy(MjUtils.convertMjToRF(actualMax), false);
             }
         } else {
             extracted = power;
 
             if (doExtract) {
+                storage.setEnergyStored(0);
                 power = 0;
             }
         }
@@ -534,12 +542,25 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (facing == currentDirection) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else if (facing == currentDirection) {
             return mjCaps.getCapability(capability, facing);
         } else {
             return super.getCapability(capability, facing);
         }
     }
+
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
 
     public abstract long getMaxPower();
 
