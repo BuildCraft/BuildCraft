@@ -50,9 +50,18 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
                 src.load(manager, location, textureGetter);
             } else {
                 try {
-                    PngSizeInfo pngsizeinfo = PngSizeInfo.makeFromResource(manager.getResource(location));
+                    PngSizeInfo size = PngSizeInfo.makeFromResource(manager.getResource(location));
                     try (IResource resource = manager.getResource(location)) {
-                        src.loadSprite(pngsizeinfo, resource.getMetadata("animation") != null);
+                        boolean hasAnimation = resource.getMetadata("animation") != null;
+                        if (!hasAnimation && size.pngHeight != size.pngWidth) {
+                            BCLog.logger.warn(
+                                "[lib.fluid] Failed to create a frozen sprite of " + srcLocation.toString()
+                                    + " as the source sprite wasnn't an animation and had a different width ("
+                                    + size.pngWidth + ") from height (" + size.pngWidth + ")!"
+                            );
+                            return true;
+                        }
+                        src.loadSprite(size, hasAnimation);
                         src.loadSpriteFrames(resource, Minecraft.getMinecraft().gameSettings.mipmapLevels + 1);
                     }
                 } catch (IOException io) {
