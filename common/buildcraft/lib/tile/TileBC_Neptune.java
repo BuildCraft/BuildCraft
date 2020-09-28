@@ -37,7 +37,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -322,7 +321,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     public void onPlayerOpen(EntityPlayer player) {
-        if (owner == null) {
+        if (owner == null || owner == FakePlayerProvider.NULL_PROFILE) {
             owner = player.getGameProfile();
             if (owner.getId() == null) {
                 // Basically everything relies on the UUID
@@ -398,7 +397,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (owner == null) {
             String msg = "[lib.tile] Unknown owner for " + getClass() + " at ";
             BCLog.logger.warn(msg + StringUtilBC.blockPosToString(getPos()));
-            return FakePlayerProvider.NULL_PROFILE;
+            owner = FakePlayerProvider.NULL_PROFILE;
         }
         return owner;
     }
@@ -692,13 +691,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
         if (nbt.hasKey("owner")) {
             owner = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("owner"));
-            if (owner == null || !owner.isComplete()) {
-                String msg = "[lib.tile] Unknown owner (" + owner + ") for " + getClass() + " at ";
-                BCLog.logger.warn(msg + getPos() + " when reading from NBT");
-            }
-        } else {
-            String msg = "[lib.tile] Unknown owner (null) for " + getClass() + " at ";
-            BCLog.logger.warn(msg + getPos() + " when reading from NBT");
         }
         if (nbt.hasKey("items", Constants.NBT.TAG_COMPOUND)) {
             itemManager.deserializeNBT(nbt.getCompoundTag("items"));
@@ -724,7 +716,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         super.writeToNBT(nbt);
         nbt.setInteger("data-version", BCVersion.CURRENT.dataVersion);
         nbt.setTag("deltas", deltaManager.writeToNBT());
-        if (owner != null && owner.isComplete()) {
+        if (owner != null && owner.isComplete() && owner != FakePlayerProvider.NULL_PROFILE) {
             nbt.setTag("owner", NBTUtil.writeGameProfile(new NBTTagCompound(), owner));
         }
         NBTTagCompound items = itemManager.serializeNBT();
