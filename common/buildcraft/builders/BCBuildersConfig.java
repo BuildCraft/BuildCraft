@@ -9,6 +9,7 @@ package buildcraft.builders;
 import net.minecraftforge.common.config.Property;
 
 import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.misc.MathUtil;
 
 import buildcraft.core.BCCoreConfig;
 
@@ -101,5 +102,9 @@ public class BCBuildersConfig {
         quarryFrameMinHeight = propQuarryFrameMinHeight.getInt();
         quarryFrameMoveBoth = propQuarryFrameMoveBoth.getBoolean();
         enableStencil = propEnableStencil.getBoolean();
+        quarryMaxTasksPerTick = MathUtil.clamp(propQuarryMaxTasksPerTick.getInt(), 0, 20);
+        quarryTaskPowerDivisor = MathUtil.clamp(propQuarryPowerDivisor.getDouble(), 0, 100);
+        quarryMaxFrameMoveSpeed = MathUtil.clamp(propQuarryMaxFrameSpeed.getDouble(), 0, 5120.0);
+        quarryMaxBlockMineRate = MathUtil.clamp(propQuarryMaxBlockMineRate.getDouble(), 0, 1000.0);
     }
 }
