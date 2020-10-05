@@ -73,7 +73,7 @@ public abstract class BCSiliconProxy implements IGuiHandler {
                 PipePluggable plug = holder.getPluggable(gateSide);
                 if (plug instanceof PluggableGate) {
                     ContainerGate container = new ContainerGate(player, ((PluggableGate) plug).logic);
-                    MessageUtil.doDelayed(() -> {
+                    MessageUtil.doDelayedServer(() -> {
                         container.sendMessage(ContainerGate.ID_VALID_STATEMENTS);
                     });
                     return container;

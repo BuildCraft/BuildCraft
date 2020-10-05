@@ -42,18 +42,33 @@ import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
 
 public class MessageUtil {
-    private static final DelayedList<Runnable> DELAYED_TASKS = DelayedList.createConcurrent();
+    private static final DelayedList<Runnable> DELAYED_SERVER_TASKS = DelayedList.createConcurrent();
+    private static final DelayedList<Runnable> DELAYED_CLIENT_TASKS = DelayedList.createConcurrent();
 
-    public static void doDelayed(Runnable task) {
-        doDelayed(1, task);
+    public static void doDelayedServer(Runnable task) {
+        doDelayedServer(1, task);
     }
 
-    public static void doDelayed(int delay, Runnable task) {
-        DELAYED_TASKS.add(delay, task);
+    public static void doDelayedServer(int delay, Runnable task) {
+        DELAYED_SERVER_TASKS.add(delay, task);
     }
 
-    public static void postTick() {
-        for (Runnable runnable : DELAYED_TASKS.advance()) {
+    public static void doDelayedClient(Runnable task) {
+        doDelayedClient(1, task);
+    }
+
+    public static void doDelayedClient(int delay, Runnable task) {
+        DELAYED_CLIENT_TASKS.add(delay, task);
+    }
+
+    public static void postServerTick() {
+        for (Runnable runnable : DELAYED_SERVER_TASKS.advance()) {
+            runnable.run();
+        }
+    }
+
+    public static void postClientTick() {
+        for (Runnable runnable : DELAYED_CLIENT_TASKS.advance()) {
             runnable.run();
         }
     }

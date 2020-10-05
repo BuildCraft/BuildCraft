@@ -242,9 +242,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 if (buffer.readBoolean()) {
                     boolean start = buffer.readBoolean();
                     if (start) {
-                        section = new ExchangeSectionStart(this);
+                        section = section instanceof ExchangeSectionStart ? section : new ExchangeSectionStart(this);
                     } else {
-                        section = new ExchangeSectionEnd(this);
+                        section = section instanceof ExchangeSectionEnd ? section : new ExchangeSectionEnd(this);
                     }
                     section.readPayload(NET_ID_CHANGE_SECTION, buffer, side, ctx);
                 } else {
@@ -295,8 +295,9 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
     }
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
+    public boolean onActivated(
+        EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ
+    ) {
         if (section != null) {
             return section.tankManager.onActivated(player, pos, hand);
         }
@@ -349,8 +350,12 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
         Deque<TileHeatExchange> exchangers = findAdjacentExchangers();
         if (exchangers.size() == 1) {
             // Just this one tile, so rotate this by 90 degrees
-            world.setBlockState(getPos(), getCurrentState().withProperty(BlockHeatExchange.PROP_FACING,
-                VanillaRotationHandlers.ROTATE_HORIZONTAL.next(thisFacing)));
+            world.setBlockState(
+                getPos(),
+                getCurrentState().withProperty(
+                    BlockHeatExchange.PROP_FACING, VanillaRotationHandlers.ROTATE_HORIZONTAL.next(thisFacing)
+                )
+            );
         } else {
             // Rotate every heat exchanger 180 degrees
             ExchangeSectionStart start = null;
@@ -362,8 +367,10 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                     end = (ExchangeSectionEnd) exchange.section;
                 }
                 exchange.section = null;
-                world.setBlockState(exchange.getPos(),
-                    exchange.getCurrentState().withProperty(BlockHeatExchange.PROP_FACING, thisFacing.getOpposite()));
+                world.setBlockState(
+                    exchange.getPos(),
+                    exchange.getCurrentState().withProperty(BlockHeatExchange.PROP_FACING, thisFacing.getOpposite())
+                );
                 exchange.checkNeighbours = true;
                 exchange.markChunkDirty();
             }
@@ -656,7 +663,6 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
                 return;
             }
             if (c_recipe.heatFrom() <= h_recipe.heatFrom()) {
-                BCLog.logger.warn("Invalid heat values!");
                 progressState = EnumProgressState.STOPPING;
                 return;
             }
@@ -681,8 +687,8 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             int c_in_amount = drainableAmount(c_in, c_in_f);
             int h_in_amount = drainableAmount(h_in, h_in_f);
 
-            final int min_common_multiplier =
-                Math.min(Math.min(Math.min(c_out_amount, h_out_amount), c_in_amount), h_in_amount);
+            final int min_common_multiplier
+                = Math.min(Math.min(Math.min(c_out_amount, h_out_amount), c_in_amount), h_in_amount);
 
             if (min_common_multiplier > 0) {
                 c_in_f = setAmount(c_recipe.in(), min_common_multiplier);

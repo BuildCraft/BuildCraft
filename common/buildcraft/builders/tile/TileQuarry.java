@@ -1033,6 +1033,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             if (rate < 0.1) {
                 return req;
             }
+            rate /= 20; // seconds -> ticks
             rate -= blockPercentSoFar;
             if (rate <= 0) {
                 return 0;

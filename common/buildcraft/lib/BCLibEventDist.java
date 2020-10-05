@@ -58,7 +58,7 @@ public enum BCLibEventDist {
         if (entity instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) entity;
             // Delay sending join messages to player as it makes it work when in single-player
-            MessageUtil.doDelayed(() -> MarkerCache.onPlayerJoinWorld(playerMP));
+            MessageUtil.doDelayedServer(() -> MarkerCache.onPlayerJoinWorld(playerMP));
         }
     }
 
@@ -129,7 +129,7 @@ public enum BCLibEventDist {
     public static void serverTick(ServerTickEvent event) {
         if (event.phase == Phase.END) {
             BCAdvDebugging.INSTANCE.onServerPostTick();
-            MessageUtil.postTick();
+            MessageUtil.postServerTick();
         }
     }
 
@@ -138,6 +138,7 @@ public enum BCLibEventDist {
     public static void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
+            MessageUtil.postClientTick();
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayerSP player = mc.player;
             if (player != null && ItemDebugger.isShowDebugInfo(player)) {

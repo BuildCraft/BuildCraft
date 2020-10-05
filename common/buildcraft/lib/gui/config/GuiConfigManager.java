@@ -57,7 +57,10 @@ public class GuiConfigManager {
     public static void markDirty() {
         if (!isDirty && BCLibConfig.guiConfigFile != null) {
             // Minimise successive file writes -- add a little bit of a delay
-            MessageUtil.doDelayed(10, () -> {
+            MessageUtil.doDelayedClient(10, () -> {
+                if (!isDirty) {
+                    return;
+                }
                 try (FileWriter fw = new FileWriter(BCLibConfig.guiConfigFile)) {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     try (BufferedWriter bw = new BufferedWriter(fw)) {
