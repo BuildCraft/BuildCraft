@@ -8,11 +8,14 @@ package buildcraft.factory.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.api.mj.RFStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -51,6 +54,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.core.BCCoreConfig;
 import buildcraft.factory.BCFactoryBlocks;
 
+import javax.annotation.Nullable;
+
 public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final FunctionContext MODEL_FUNC_CTX;
     private static final NodeVariableObject<EnumFacing> MODEL_FACING;
@@ -78,6 +83,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
     private final Tank tankLiquidOut = new Tank("liquidOut", 4 * Fluid.BUCKET_VOLUME, this);
 
     private final MjBattery mjBattery = new MjBattery(1024 * MjAPI.MJ);
+    public RFStorage storage = new RFStorage(mjBattery);
 
     public final FluidSmoother smoothedTankIn;
     public final FluidSmoother smoothedTankGasOut;
@@ -311,4 +317,29 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements ITickable, IDeb
         clientModelData.refresh();
         clientModelData.addDebugInfo(left);
     }
+
+
+
+    //MODIFICATION START
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else {
+            return super.getCapability(capability, side);
+        }
+    }
+
+    //MODIFICATION END
 }

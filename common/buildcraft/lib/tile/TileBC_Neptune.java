@@ -345,10 +345,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         tileCache.invalidate();
     }
 
+    //MODIFICATION START
+    @Override
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+        return getCapability(capability, facing) != null;
+    }
+
+    /*
     @Override
     public final boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
+    */
+
+    //MODIFICATION END
+
+
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {

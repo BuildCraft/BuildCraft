@@ -11,21 +11,19 @@ import java.util.Arrays;
 
 import javax.annotation.Nonnull;
 
+import buildcraft.api.mj.*;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjRedstoneReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.TilesAPI;
 
@@ -69,6 +67,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
 
     public ItemStack resultClient = ItemStack.EMPTY;
 
+    public EnergyStorage storage;
+
     public TileAutoWorkbenchBase(int width, int height) {
         int slots = width * height;
         invBlueprint = itemManager.addInvHandler("blueprint", slots, EnumAccess.PHANTOM);
@@ -80,6 +80,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
         crafting = new WorkbenchCrafting(width, height, this, invBlueprint, invMaterials, invResult);
         caps.addCapabilityInstance(TilesAPI.CAP_HAS_WORK, this, EnumPipePart.VALUES);
         caps.addProvider(new MjCapabilityHelper(this));
+        storage = new EnergyStorage(1000);
     }
 
     @Override
@@ -116,6 +117,12 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
         if (didChange) {
             createFilters();
             sendNetworkGuiUpdate(NET_GUI_DATA);
+        }
+
+        if (MjUtils.convertMjToRF(getPowerRequested()) > 1 && 1 < storage.getEnergyStored()) {
+            long toTransfer = Math.min(getPowerRequested(), MjUtils.convertRFToMj(storage.getEnergyStored()));
+            long mjTransferred = toTransfer - this.receivePower(toTransfer, false);
+            this.storage.extractEnergy(MjUtils.convertMjToRF(mjTransferred), false);
         }
     }
 

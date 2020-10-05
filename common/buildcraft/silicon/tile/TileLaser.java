@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import buildcraft.api.mj.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -23,16 +25,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.mj.ILaserTarget;
-import buildcraft.api.mj.ILaserTargetBlock;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
@@ -53,6 +52,12 @@ import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
+
+    //MODIFICATION START
+    RFStorage storage;
+    //MODIFICATION END
+
+
     private static final int TARGETING_RANGE = 6;
 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
@@ -71,7 +76,33 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         super();
         battery = new MjBattery(1024 * MjAPI.MJ);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
+        //MODIFICATION START
+        storage = new RFStorage(battery);
+        //MODIFICATION END
     }
+
+    //MODIFICATION START
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else {
+            return super.getCapability(capability, side);
+        }
+    }
+
+    //MODIFICATION END
 
     @Override
     public int getUpdateRange() {

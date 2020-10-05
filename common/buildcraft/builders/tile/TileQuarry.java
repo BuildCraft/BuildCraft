@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import buildcraft.api.mj.RFStorage;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
@@ -45,6 +47,8 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -98,7 +102,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
     private static final ResourceLocation ADVANCEMENT_COMPLETE
         = new ResourceLocation("buildcraftbuilders:diggy_diggy_hole");
 
-    private final MjBattery battery = new MjBattery(24000 * MjAPI.MJ);
+    private MjBattery battery = new MjBattery(24000 * MjAPI.MJ);
+    public RFStorage storage = new RFStorage(battery);
     public final Box frameBox = new Box();
     private final Box miningBox = new Box();
     private BoxIterator boxIterator;
@@ -142,6 +147,31 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
             w.profiler.endSection();
         }
     };
+
+
+    //MODIFICATION START
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(storage);
+        } else {
+            return super.getCapability(capability, side);
+        }
+    }
+
+    //MODIFICATION END
+
 
     public TileQuarry() {
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
@@ -502,6 +532,7 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
 
     @Override
     public void update() {
+        System.out.println(battery.getCapacity()+" "+battery.getStored()+" "+String.valueOf(battery.getCapacity()-battery.getStored())+" "+storage.getDifference()+" "+storage.canReceive());
         if (drillPos == null) {
             collisionBoxes = ImmutableList.of();
             collisionDrillPos = null;

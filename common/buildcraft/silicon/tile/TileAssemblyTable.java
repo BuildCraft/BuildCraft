@@ -283,7 +283,6 @@ public class TileAssemblyTable extends TileLaserTableBase {
         AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.get(new ResourceLocation(name));
         return recipe != null ? new AssemblyInstruction(recipe, output) : null;
     }
-
     public class AssemblyInstruction implements Comparable<AssemblyInstruction> {
         public final AssemblyRecipe recipe;
         public final ItemStack output;
