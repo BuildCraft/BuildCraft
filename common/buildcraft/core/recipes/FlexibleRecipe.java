@@ -158,7 +158,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 					skip = true;
 					List<ItemStack> items = new ArrayList<ItemStack>();
 					for (ItemStack stack : OreDictionary.getOres((String) i)) {
-						stack.stackSize = (Integer) input[index];
+						stack.stackSize = (Integer) input[index + 1];
 						items.add(stack);
 					}
 					inputItemsWithAlternatives.add(items);
