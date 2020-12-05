@@ -186,7 +186,8 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         if (drainFilter == null) {
             return null;
         }
-        if (drainFilter.matches(getFluid())) {
+        FluidStack currentFluid = getFluid();
+        if (currentFluid != null && drainFilter.matches(currentFluid)) {
             return drain(maxDrain, doDrain);
         }
         return null;
