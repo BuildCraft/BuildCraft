@@ -2,6 +2,7 @@ package buildcraft.energy.generation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -10,12 +11,16 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEnd;
 
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.RandUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -37,6 +42,9 @@ public class OilGenerator {
      * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
 
+    private static final boolean DEBUG_OILGEN_BASIC = BCDebugging.shouldDebugLog("energy.oilgen");
+    private static final boolean DEBUG_OILGEN_ALL = BCDebugging.shouldDebugComplex("energy.oilgen");
+
     private enum GenType {
         LARGE,
         MEDIUM,
@@ -51,10 +59,22 @@ public class OilGenerator {
         int chunkZ = event.getChunkZ();
 
         if (world.getWorldType() == WorldType.FLAT) {
+            if (DEBUG_OILGEN_BASIC) {
+                BCLog.logger.info(
+                    "[energy.oilgen] Not generating oil in " + world + " chunk " + chunkX + ", " + chunkZ
+                        + " because it's WorldType is FLAT."
+                );
+            }
             return;
         }
         boolean isExcludedDimension = BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension());
         if (isExcludedDimension == BCEnergyConfig.excludedDimensionsIsBlackList) {
+            if (DEBUG_OILGEN_BASIC) {
+                BCLog.logger.info(
+                    "[energy.oilgen] Not generating oil in " + world + " chunk " + chunkX + ", " + chunkZ
+                        + " because it's dimension is disabled."
+                );
+            }
             return;
         }
 
@@ -69,7 +89,7 @@ public class OilGenerator {
                 int cx = chunkX + cdx;
                 int cz = chunkZ + cdz;
                 world.profiler.startSection("scan");
-                List<OilGenStructure> structures = getStructures(world, cx, cz);
+                List<OilGenStructure> structures = getStructures(world, cx, cz, cdx == 0 && cdz == 0);
                 OilGenStructure.Spring spring = null;
                 world.profiler.endStartSection("gen");
                 for (OilGenStructure struct : structures) {
@@ -92,6 +112,10 @@ public class OilGenerator {
     }
 
     public static List<OilGenStructure> getStructures(World world, int cx, int cz) {
+        return getStructures(world, cx, cz, false);
+    }
+
+    private static List<OilGenStructure> getStructures(World world, int cx, int cz, boolean log) {
         Random rand = RandUtil.createRandomForChunk(world, cx, cz, MAGIC_GEN_NUMBER);
 
         // shift to world coordinates
@@ -103,10 +127,22 @@ public class OilGenerator {
         // Do not generate oil in excluded biomes
         boolean isExcludedBiome = BCEnergyConfig.excludedBiomes.contains(biome.getRegistryName());
         if (isExcludedBiome == BCEnergyConfig.excludedBiomesIsBlackList) {
+            if (DEBUG_OILGEN_BASIC & log) {
+                BCLog.logger.info(
+                    "[energy.oilgen] Not generating oil in " + toStr(world) + " chunk " + cx + ", " + cz
+                        + " because the biome we found (" + biome.getRegistryName() + ") is disabled!"
+                );
+            }
             return ImmutableList.of();
         }
 
         if (biome instanceof BiomeEnd && (Math.abs(x) < 1200 || Math.abs(z) < 1200)) {
+            if (DEBUG_OILGEN_BASIC & log) {
+                BCLog.logger.info(
+                    "[energy.oilgen] Not generating oil in " + toStr(world) + " chunk " + cx + ", " + cz
+                        + " because it's the end biome and we're within 1200 blocks of the ender dragon fight"
+                );
+            }
             return ImmutableList.of();
         }
 
@@ -129,7 +165,19 @@ public class OilGenerator {
             // 2%
             type = GenType.LAKE;
         } else {
+            if (DEBUG_OILGEN_ALL & log) {
+                BCLog.logger.info(
+                    "[energy.oilgen] Not generating oil in " + toStr(world) + " chunk " + cx + ", " + cz
+                        + " because none of the random numbers were above the thresholds for generation"
+                );
+            }
             return ImmutableList.of();
+        }
+        if (DEBUG_OILGEN_BASIC & log) {
+            BCLog.logger.info(
+                "[energy.oilgen] Generating an oil well (" + type.name().toLowerCase(Locale.ROOT)
+                    + ") in " + toStr(world) + " chunk " + cx + ", " + cz + " at " + x + ", " + z
+            );
         }
 
         List<OilGenStructure> structures = new ArrayList<>();
@@ -196,6 +244,14 @@ public class OilGenerator {
             }
         }
         return structures;
+    }
+
+    private static String toStr(World world) {
+        if (world instanceof WorldServer) {
+            WorldServer ws = (WorldServer) world;
+            return ws.getChunkSaveLocation().getName();
+        }
+        return world.toString();
     }
 
     private static OilGenStructure createSpout(BlockPos start, int height, int radius) {
