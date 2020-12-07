@@ -42,8 +42,8 @@ public class OilGenerator {
      * is too big then oil generation will be slightly slower */
     private static final int MAX_CHUNK_RADIUS = 5;
 
-    private static final boolean DEBUG_OILGEN_BASIC = BCDebugging.shouldDebugLog("energy.oilgen");
-    private static final boolean DEBUG_OILGEN_ALL = BCDebugging.shouldDebugComplex("energy.oilgen");
+    public static final boolean DEBUG_OILGEN_BASIC = BCDebugging.shouldDebugLog("energy.oilgen");
+    public static final boolean DEBUG_OILGEN_ALL = BCDebugging.shouldDebugComplex("energy.oilgen");
 
     private enum GenType {
         LARGE,
