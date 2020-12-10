@@ -87,7 +87,7 @@ public class TileMiningWell extends TileMiner {
     }
 
     private boolean canBreak() {
-        if (world.isAirBlock(currentPos) || BlockUtil.isUnbreakableBlock(world, currentPos, getOwner())) {
+        if (world.getBlockState(currentPos).getBlockHardness(world, currentPos) < 0) {
             return false;
         }
 
