@@ -124,8 +124,9 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 		energyCost = iEnergyCost;
 		craftingTime = iCraftingTime;
 
-		for (Object ii : input) {
+		for (int index = 0; index < input.length; index++) {
 			Object i = null;
+			Object ii = input[index];
 			if (ii == null) {
 				throw new IllegalArgumentException("An input of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
 			} else if (ii instanceof IFlexibleRecipeIngredient) {
@@ -145,7 +146,19 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			} else if (i instanceof List) {
 				inputItemsWithAlternatives.add((List) i);
 			} else if (i instanceof String) {
-				inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
+				if (index + 1 >= input.length) {
+					inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
+				} else if (input[index + 1] instanceof Integer) {
+					index++;
+					List<ItemStack> items = new ArrayList<ItemStack>();
+					for (ItemStack stack : OreDictionary.getOres((String) i)) {
+						stack.stackSize = (Integer) input[index];
+						items.add(stack);
+					}
+					inputItemsWithAlternatives.add(items);
+				} else {
+					inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
+				}
 			} else {
 				throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as input! (" + i.getClass() + ")");
 			}
