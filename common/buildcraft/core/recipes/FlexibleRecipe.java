@@ -124,13 +124,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 		energyCost = iEnergyCost;
 		craftingTime = iCraftingTime;
 
-		boolean skip = false;
 		for (int index = 0; index < input.length; index++) {
-			if (skip) {
-				skip = false;
-				continue;
-			}
-			
 			Object i = null;
 			Object ii = input[index];
 			if (ii == null) {
@@ -155,10 +149,10 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 				if (index + 1 >= input.length) {
 					inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
 				} else if (input[index + 1] instanceof Integer) {
-					skip = true;
+					index++;
 					List<ItemStack> items = new ArrayList<ItemStack>();
 					for (ItemStack stack : OreDictionary.getOres((String) i)) {
-						stack.stackSize = (Integer) input[index + 1];
+						stack.stackSize = (Integer) input[index];
 						items.add(stack);
 					}
 					inputItemsWithAlternatives.add(items);
