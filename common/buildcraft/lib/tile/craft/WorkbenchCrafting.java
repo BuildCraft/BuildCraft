@@ -248,10 +248,9 @@ public class WorkbenchCrafting extends InventoryCrafting {
         // Step 4
         // Some ingredients really need to be removed (like empty buckets)
         for (int s = 0; s < getSizeInventory(); s++) {
-            ItemStack inSlot = super.getStackInSlot(s);
+            ItemStack inSlot = super.removeStackFromSlot(s);
             if (!inSlot.isEmpty()) {
                 leftover = invMaterials.insert(inSlot, false, false);
-                decrStackSize(s, inSlot.getCount() - (leftover.isEmpty() ? 0 : leftover.getCount()));
                 if (!leftover.isEmpty()) {
                     InventoryUtil.addToBestAcceptor(tile.getWorld(), tile.getPos(), null, leftover);
                 }
