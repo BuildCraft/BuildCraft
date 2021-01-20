@@ -231,6 +231,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public void onTick() {
+        if (maxPower == -1) {
+            reconfigure();
+        }
         if (pipe.getHolder().getPipeWorld().isRemote) {
             clientDisplayFlowCentreLast = clientDisplayFlowCentre;
             for (EnumFacing face : EnumFacing.VALUES) {
@@ -246,9 +249,6 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                 clientDisplayFlowCentre = VecUtil.replaceValue(clientDisplayFlowCentre, face.getAxis(), cVal);
             }
             return;
-        }
-        if (maxPower == -1) {
-            reconfigure();
         }
 
         EnumFlow[] lastFlows = new EnumFlow[6];
