@@ -168,11 +168,16 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     private boolean isFacingReceiver(EnumFacing dir) {
-        TileEntity neighbour = world.getTileEntity(getPos().offset(dir));
-        if (neighbour == null) return false;
-        IMjConnector other = neighbour.getCapability(MjAPI.CAP_CONNECTOR, dir.getOpposite());
-        if (other == null) return false;
-        return mjConnector.canConnect(other) && other.canConnect(mjConnector);
+        return getReceiverToPower(dir) != null;
+    }
+
+    protected final boolean canChain() {
+        return getMaxChainLength() > 0;
+    }
+
+    /** @return The number of additional engines that this engine can send power through. */
+    protected int getMaxChainLength() {
+        return 3;
     }
 
     public void rotateIfInvalid() {
@@ -341,16 +346,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     private long getPowerToExtract(boolean doExtract) {
-        TileEntity tile = getTileBuffer(currentDirection).getTile();
-
-        if (tile == null) return 0;
-
-        if (tile.getClass() == getClass()) {
-            TileEngineBase_BC8 other = (TileEngineBase_BC8) tile;
-            return other.getMaxPower() - power;
-        }
-
-        IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
+        IMjReceiver receiver = getReceiverToPower(currentDirection);
         if (receiver == null) {
             return 0;
         }
@@ -365,18 +361,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     private void sendPower() {
-        TileEntity tile = getTileBuffer(currentDirection).getTile();
-        if (tile == null) {
-            return;
-        }
-        if (getClass() == tile.getClass()) {
-            TileEngineBase_BC8 other = (TileEngineBase_BC8) tile;
-            if (currentDirection == other.currentDirection) {
-                other.power += extractPower(0, power, true);
-            }
-            return;
-        }
-        IMjReceiver receiver = getReceiverToPower(tile, currentDirection);
+        IMjReceiver receiver = getReceiverToPower(currentDirection);
         if (receiver != null) {
             long extracted = getPowerToExtract(true);
             if (extracted > 0) {
@@ -521,12 +506,52 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return getReceiverToPower(tile, side) != null;
     }
 
-    /** Redstone engines override this to get an {@link IMjRedstoneReceiver} instance */
+    /** @deprecated Replaced with {@link #getReceiverToPower(EnumFacing)}. */
+    @Deprecated
     public IMjReceiver getReceiverToPower(TileEntity tile, EnumFacing side) {
         if (tile == null) return null;
         IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite());
         if (rec != null && rec.canConnect(mjConnector) && mjConnector.canConnect(rec)) {
             return rec;
+        } else {
+            return null;
+        }
+    }
+
+    public IMjReceiver getReceiverToPower(EnumFacing side) {
+        TileEngineBase_BC8 engine = this;
+        TileEntity next = null;
+
+        for (int len = 0; len <= getMaxChainLength(); len++) {
+            next = engine.getTileBuffer(side).getTile();
+
+            if (next == null) {
+                return null;
+            }
+
+            if (next.getClass() == getClass()) {
+                if (side != ((TileEngineBase_BC8) next).currentDirection) {
+                    return null;
+                }
+            }
+
+            if (next instanceof TileEngineBase_BC8) {
+                if (next.getClass() != getClass()) {
+                    return null;
+                }
+                engine = (TileEngineBase_BC8) next;
+            } else {
+                break;
+            }
+        }
+
+        if (next == null || next instanceof TileEngineBase_BC8) {
+            return null;
+        }
+
+        IMjReceiver recv = next.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite());
+        if (recv != null && recv.canConnect(mjConnector) && mjConnector.canConnect(recv)) {
+            return recv;
         } else {
             return null;
         }

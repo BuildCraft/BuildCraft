@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 
@@ -64,6 +63,11 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
                 heat = MIN_HEAT;
             }
         }
+    }
+
+    @Override
+    protected int getMaxChainLength() {
+        return 0;
     }
 
     @Override
