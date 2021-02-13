@@ -11,6 +11,7 @@ import buildcraft.api.facades.FacadeAPI;
 import buildcraft.lib.item.ItemPluggableSimple;
 import buildcraft.lib.registry.RegistrationHelper;
 
+import buildcraft.silicon.item.ItemGateCopier;
 import buildcraft.silicon.item.ItemPluggableFacade;
 import buildcraft.silicon.item.ItemPluggableGate;
 import buildcraft.silicon.item.ItemPluggableLens;
@@ -21,6 +22,7 @@ public class BCSiliconItems {
     private static final RegistrationHelper HELPER = new RegistrationHelper();
 
     public static ItemRedstoneChipset redstoneChipset;
+    public static ItemGateCopier gateCopier;
 
     public static ItemPluggableGate plugGate;
     public static ItemPluggableLens plugLens;
@@ -30,6 +32,7 @@ public class BCSiliconItems {
 
     public static void preInit() {
         redstoneChipset = HELPER.addItem(new ItemRedstoneChipset("item.redstone_chipset"));
+        gateCopier = HELPER.addItem(new ItemGateCopier("item.gate_copier"));
 
         plugGate = HELPER.addItem(new ItemPluggableGate("item.plug.gate"));
         plugLens = HELPER.addItem(new ItemPluggableLens("item.plug.lens"));

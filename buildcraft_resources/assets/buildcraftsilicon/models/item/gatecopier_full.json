@@ -1,6 +1,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "buildcrafttransport:items/gatecopier/full"
+        "layer0": "buildcraftsilicon:items/gatecopier/full"
     }
 }

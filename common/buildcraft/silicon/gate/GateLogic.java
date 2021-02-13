@@ -121,6 +121,12 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     public GateLogic(PluggableGate pluggable, NBTTagCompound nbt) {
         this(pluggable, new GateVariant(nbt.getCompoundTag("variant")));
 
+        readConfigData(nbt);
+
+        wireBroadcasts.addAll(NBTUtilBC.readEnumSet(nbt.getTag("wireBroadcasts"), EnumDyeColor.class));
+    }
+
+    public void readConfigData(NBTTagCompound nbt) {
         short c = nbt.getShort("connections");
         for (int i = 0; i < connections.length; i++) {
             connections[i] = ((c >>> i) & 1) == 1;
@@ -147,8 +153,6 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             statements[i].trigger.readFromNbt(nbt.getCompoundTag(tName));
             statements[i].action.readFromNbt(nbt.getCompoundTag(aName));
         }
-
-        wireBroadcasts.addAll(NBTUtilBC.readEnumSet(nbt.getTag("wireBroadcasts"), EnumDyeColor.class));
     }
 
     public NBTTagCompound writeToNbt() {
@@ -164,8 +168,12 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         nbt.setShort("connections", c);
 
         for (int s = 0; s < statements.length; s++) {
-            nbt.setTag("trigger[" + s + "]", statements[s].trigger.writeToNbt());
-            nbt.setTag("action[" + s + "]", statements[s].action.writeToNbt());
+            if (statements[s].trigger.get() != null) {
+                nbt.setTag("trigger[" + s + "]", statements[s].trigger.writeToNbt());
+            }
+            if (statements[s].action.get() != null) {
+                nbt.setTag("action[" + s + "]", statements[s].action.writeToNbt());
+            }
         }
         nbt.setTag("wireBroadcasts", NBTUtilBC.writeEnumSet(wireBroadcasts, EnumDyeColor.class));
         return nbt;

@@ -60,6 +60,7 @@ import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreConfig;
+import buildcraft.core.BCCoreItems;
 import buildcraft.silicon.gate.EnumGateLogic;
 import buildcraft.silicon.gate.EnumGateMaterial;
 import buildcraft.silicon.gate.EnumGateModifier;
@@ -230,6 +231,30 @@ public class BCSiliconRecipes {
             output = EnumRedstoneChipset.DIAMOND.getStack(1);
             AssemblyRecipeRegistry
                 .register(new AssemblyRecipeBasic("diamond_chipset", 80000 * MjAPI.MJ, input, output));
+        }
+
+        if (BCSiliconItems.gateCopier != null) {
+            ImmutableSet.Builder<IngredientStack> input = ImmutableSet.builder();
+            if (BCCoreItems.wrench != null) {
+                input.add(IngredientStack.of(BCCoreItems.wrench));
+            } else {
+                input.add(IngredientStack.of(Items.STICK));
+                input.add(IngredientStack.of(Items.IRON_INGOT));
+            }
+
+            if (BCSiliconItems.redstoneChipset != null) {
+                input.add(IngredientStack.of(EnumRedstoneChipset.IRON.getStack(1)));
+            } else {
+                input.add(IngredientStack.of("dustRedstone"));
+                input.add(IngredientStack.of("dustRedstone"));
+                input.add(IngredientStack.of("ingotGold"));
+            }
+
+            AssemblyRecipeRegistry.register(
+                new AssemblyRecipeBasic(
+                    "gate_copier", 500 * MjAPI.MJ, input.build(), new ItemStack(BCSiliconItems.gateCopier)
+                )
+            );
         }
 
         scanForJsonRecipes();

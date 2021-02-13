@@ -24,6 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,6 +58,7 @@ import buildcraft.silicon.gate.EnumGateMaterial;
 import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateLogic;
 import buildcraft.silicon.gate.GateVariant;
+import buildcraft.silicon.item.ItemGateCopier;
 import buildcraft.transport.pipe.PluggableHolder;
 
 public class PluggableGate extends PipePluggable implements IWireEmitter {
@@ -70,13 +72,11 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
 
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
-    private static final ResourceLocation ADVANCEMENT_PLACE_GATE = new ResourceLocation(
-        "buildcrafttransport:pipe_logic"
-    );
+    private static final ResourceLocation ADVANCEMENT_PLACE_GATE
+        = new ResourceLocation("buildcrafttransport:pipe_logic");
 
-    private static final ResourceLocation ADVANCEMENT_PLACE_ADV_GATE = new ResourceLocation(
-        "buildcrafttransport:extended_logic"
-    );
+    private static final ResourceLocation ADVANCEMENT_PLACE_ADV_GATE
+        = new ResourceLocation("buildcrafttransport:extended_logic");
 
     public final GateLogic logic;
 
@@ -111,23 +111,20 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
         VariableInfoObject<String> infoMaterial = MODEL_VAR_INFO.createInfoObject(MODEL_MATERIAL);
         infoMaterial.cacheType = CacheType.ALWAYS;
         infoMaterial.setIsComplete = true;
-        infoMaterial.possibleValues.addAll(
-            Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList())
-        );
+        infoMaterial.possibleValues
+            .addAll(Arrays.stream(EnumGateMaterial.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
         VariableInfoObject<String> infoModifier = MODEL_VAR_INFO.createInfoObject(MODEL_MODIFIER);
         infoModifier.cacheType = CacheType.ALWAYS;
         infoModifier.setIsComplete = true;
-        infoModifier.possibleValues.addAll(
-            Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList())
-        );
+        infoModifier.possibleValues
+            .addAll(Arrays.stream(EnumGateModifier.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
         VariableInfoObject<String> infoLogic = MODEL_VAR_INFO.createInfoObject(MODEL_LOGIC);
         infoLogic.cacheType = CacheType.ALWAYS;
         infoLogic.setIsComplete = true;
-        infoLogic.possibleValues.addAll(
-            Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList())
-        );
+        infoLogic.possibleValues
+            .addAll(Arrays.stream(EnumGateLogic.VALUES).map(m -> m.tag).collect(Collectors.toList()));
 
         VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
@@ -242,9 +239,45 @@ public class PluggableGate extends PipePluggable implements IWireEmitter {
     @Override
     public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
         if (!player.world.isRemote) {
+            if (interactWithCopier(player, player.getHeldItemMainhand())) {
+                return true;
+            }
+            if (interactWithCopier(player, player.getHeldItemOffhand())) {
+                return true;
+            }
+
             BlockPos pos = holder.getPipePos();
             BCSiliconGuis.GATE.openGui(player, pos, side.ordinal());
         }
+        return true;
+    }
+
+    private boolean interactWithCopier(EntityPlayer player, ItemStack stack) {
+        if (!(stack.getItem() instanceof ItemGateCopier)) {
+            return false;
+        }
+
+        NBTTagCompound stored = ItemGateCopier.getCopiedGateData(stack);
+
+        if (stored != null) {
+
+            logic.readConfigData(stored);
+
+            player.sendStatusMessage(new TextComponentTranslation("chat.gateCopier.gatePasted"), true);
+
+        } else {
+            stored = logic.writeToNbt();
+            stored.removeTag("wireBroadcasts");
+
+            if (stored.getSize() == 1) {
+                player.sendStatusMessage(new TextComponentTranslation("chat.gateCopier.noInformation"), true);
+                return false;
+            }
+
+            ItemGateCopier.setCopiedGateData(stack, stored);
+            player.sendStatusMessage(new TextComponentTranslation("chat.gateCopier.gateCopied"), true);
+        }
+
         return true;
     }
 

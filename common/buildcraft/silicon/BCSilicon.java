@@ -102,6 +102,8 @@ public class BCSilicon {
         // Items
         registerTag("item.redstone_chipset").reg("redstone_chipset").locale("redstone_chipset")
             .model("redstone_chipset/");
+        registerTag("item.gate_copier").reg("gate_copier").locale("gateCopier")
+            .model("gatecopier_");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.plugs")
             .oldReg("plug_gate");
         registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs")
