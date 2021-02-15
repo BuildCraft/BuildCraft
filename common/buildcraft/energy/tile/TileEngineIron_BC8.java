@@ -325,7 +325,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     protected int getMaxChainLength() {
-        return 5;
+        return 4;
     }
 
     @Override

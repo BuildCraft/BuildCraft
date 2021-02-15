@@ -30,7 +30,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
@@ -177,7 +176,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     /** @return The number of additional engines that this engine can send power through. */
     protected int getMaxChainLength() {
-        return 3;
+        return 2;
     }
 
     public void rotateIfInvalid() {

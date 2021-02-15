@@ -181,7 +181,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
             return Files.exists(root) ? root : null;
         }
         try {
-            FileSystem fileSystem = FileSystems.newFileSystem(scriptDirRoot, null);
+            FileSystem fileSystem = FileSystems.newFileSystem(scriptDirRoot, /* since java 13 */ (ClassLoader) null);
             Path root = fileSystem.getPath("/" + sourceType.prefix);
             if (!Files.exists(root)) {
                 return null;
