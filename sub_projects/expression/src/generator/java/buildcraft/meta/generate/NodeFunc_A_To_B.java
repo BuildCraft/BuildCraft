@@ -1,20 +1,44 @@
 package buildcraft.meta.generate;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
+
+import buildcraft.meta.generate.NodeFunc_A_To_B.NodeTypeStr;
 
 public class NodeFunc_A_To_B extends AutoGenerateFile {
 
     private static final String TAB_3 = "\t\t\t".replace("\t", "    ");
     static final String[] ARG_COUNT = { "$$NOPE$$", "Bi", "Tri", "Quad", "Penta", "Hex" };
+    public static final Set<List<NodeTypeStr>> generatedTypes = new TreeSet<>((a, b) -> {
+        if (a.size() != b.size()) {
+            return Integer.compare(a.size(), b.size());
+        }
+        for (int i = 0; i < a.size(); i++) {
+            NodeTypeStr nA = a.get(i);
+            NodeTypeStr nB = b.get(i);
+            if (nA != nB) {
+                return nA.compareTo(nB);
+            }
+        }
+        return 0;
+    });
 
     public enum NodeTypeStr {
         LONG,
         DOUBLE,
         BOOLEAN,
         OBJECT;
+
+        public static NodeTypeStr[] baseTypes() {
+            return new NodeTypeStr[] { LONG, DOUBLE, BOOLEAN, OBJECT };
+        }
 
         final String prop_return;
         final String prop_Capitalised;
@@ -100,58 +124,32 @@ public class NodeFunc_A_To_B extends AutoGenerateFile {
 
     @Override
     protected void callFileGen() {
-        // Type Order: (EMPTY), L, D, B, O
-        NodeTypeStr _long = NodeTypeStr.LONG;
-        NodeTypeStr _double = NodeTypeStr.DOUBLE;
-        NodeTypeStr _bool = NodeTypeStr.BOOLEAN;
         NodeTypeStr _obj = NodeTypeStr.OBJECT;
 
-        generateType(_long, _long);
-        generateType(_long, _long, _long);
-        generateType(_long, _long, _long, _long);
-        generateType(_long, _double);
-        generateType(_long, _bool);
-        generateType(_long, _obj);
-        generateType(_long, _obj, _long);
-        generateType(_long, _obj, _long, _long);
-        generateType(_long, _obj, _obj);
-
-        generateType(_double, _long);
-        generateType(_double, _double);
-        generateType(_double, _double, _double);
-        generateType(_double, _double, _double, _double);
-        generateType(_double, _obj);
-        generateType(_double, _obj, _obj);
-
-        generateType(_bool, _long);
-        generateType(_bool, _long, _long);
-        generateType(_bool, _double, _double);
-        generateType(_bool, _bool);
-        generateType(_bool, _bool, _bool);
-        generateType(_bool, _obj);
-        generateType(_bool, _obj, _obj);
-
-        generateType(_obj, _long);
-        generateType(_obj, _long, _long);
-        generateType(_obj, _long, _long, _long);
-        generateType(_obj, _long, _long, _long, _long);
-        generateType(_obj, _double);
-        generateType(_obj, _double, _double);
-        generateType(_obj, _double, _double, _double);
-        generateType(_obj, _double, _double, _double, _double);
-        generateType(_obj, _bool);
-        generateType(_obj, _obj);
-        generateType(_obj, _obj, _long);
-        generateType(_obj, _obj, _long, _long);
-        generateType(_obj, _obj, _bool);
-        generateType(_obj, _obj, _obj);
-        generateType(_obj, _obj, _obj, _obj);
-        generateType(_obj, _obj, _obj, _obj, _obj);
+        for (NodeTypeStr a : NodeTypeStr.baseTypes()) {
+            for (NodeTypeStr b : NodeTypeStr.baseTypes()) {
+                generateType(a, b);
+                generateType(a, b, b);
+                generateType(a, b, b, b);
+                generateType(a, b, b, b, b);
+                generateType(a, _obj, b);
+                generateType(_obj, _obj, a, b);
+                generateType(a, _obj, b, b);
+            }
+        }
+        System.out.println("Generated " + generatedTypes.size() + " files.");
     }
 
     private void generateType(NodeTypeStr ret, NodeTypeStr... args) {
         if (args.length == 0) {
             throw new IllegalArgumentException("No-arg ones don't need to be generated!");
+        }
+
+        List<NodeTypeStr> idList = new ArrayList<>();
+        idList.add(ret);
+        Collections.addAll(idList, args);
+        if (!generatedTypes.add(idList)) {
+            return;
         }
 
         Map<String, String> map = new LinkedHashMap<>();
