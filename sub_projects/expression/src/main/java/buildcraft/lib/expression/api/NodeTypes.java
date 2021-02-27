@@ -21,6 +21,7 @@ import buildcraft.lib.expression.node.cast.NodeCasting;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleDoubleToDouble;
 import buildcraft.lib.expression.node.func.NodeFuncDoubleToDouble;
+import buildcraft.lib.expression.node.func.NodeFuncDoubleToObject;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToBoolean;
 import buildcraft.lib.expression.node.func.NodeFuncLongLongToLong;
 import buildcraft.lib.expression.node.func.NodeFuncLongToDouble;
@@ -64,8 +65,11 @@ public class NodeTypes {
         NODE_BOOLEAN = new NodeType<>("Boolean Node", INodeBoolean.class, NodeConstantBoolean.FALSE);
 
         typesByName.put("long", long.class);
+        typesByName.put("int", long.class);
         typesByName.put("double", double.class);
+        typesByName.put("float", double.class);
         typesByName.put("boolean", boolean.class);
+        typesByName.put("bool", boolean.class);
         namesByType.put(long.class, "long");
         namesByType.put(double.class, "double");
         namesByType.put(boolean.class, "boolean");
@@ -334,7 +338,7 @@ public class NodeTypes {
          */
         public static NodeFuncDoubleDoubleToBoolean LT, GT, LE, GE, EQ, NE;
 
-        public static NodeFuncLongToObject<String> CVT_STRING;
+        public static NodeFuncDoubleToObject<String> CVT_STRING;
 
         static {
             DOUBLE = new FunctionContext("Type: Double");
@@ -351,7 +355,7 @@ public class NodeTypes {
             GE = DOUBLE.put_dd_b(">=", (a, b) -> a >= b, (a, b) -> "(" + a + " >= " + b + ")");
             EQ = DOUBLE.put_dd_b("==", (a, b) -> a == b, (a, b) -> "(" + a + " == " + b + ")");
             NE = DOUBLE.put_dd_b("!=", (a, b) -> a != b, (a, b) -> "(" + a + " != " + b + ")");
-            CVT_STRING = DOUBLE.put_l_o("(string)", String.class, a -> "" + a, (a) -> "((string) " + a + ")");
+            CVT_STRING = DOUBLE.put_d_o("(string)", String.class, a -> "" + a, (a) -> "((string) " + a + ")");
         }
     }
 }

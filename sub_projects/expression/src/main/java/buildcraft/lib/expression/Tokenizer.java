@@ -9,6 +9,7 @@ package buildcraft.lib.expression;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import buildcraft.lib.expression.api.InvalidExpressionException;
 
@@ -26,7 +27,17 @@ public class Tokenizer {
     }
 
     public String[] tokenize(String src) throws InvalidExpressionException {
-        List<String> tokens = new ArrayList<>();
+        return tokenizeInternal(src, (str, g) -> str, new String[0]);
+    }
+
+    public Token[] tokenizeWithInfo(String src) throws InvalidExpressionException {
+        return tokenizeInternal(src, Token::new, new Token[0]);
+    }
+
+    private <T> T[] tokenizeInternal(String src, BiFunction<String, ITokenizerGobbler, T> fn, T[] array)
+        throws InvalidExpressionException {
+
+        List<T> tokens = new ArrayList<>();
 
         int index = 0;
         while (index < src.length()) {
@@ -41,7 +52,8 @@ public class Tokenizer {
                 }
                 if (res instanceof ResultInvalid) {
                     throw new InvalidExpressionException(
-                        "Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\"");
+                        "Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\""
+                    );
                 }
                 if (res instanceof ResultDiscard) {
                     int discardLength = ((ResultDiscard) res).length;
@@ -52,7 +64,7 @@ public class Tokenizer {
                 if (res instanceof ResultConsume) {
                     int consumedLength = ((ResultConsume) res).length;
                     String at = ctx.get(consumedLength);
-                    tokens.add(at);
+                    tokens.add(fn.apply(at, token));
                     index += consumedLength;
                     consumed = true;
                     break;
@@ -62,7 +74,7 @@ public class Tokenizer {
                 throw new InvalidExpressionException("Did not consume:" + ctx.get(50));
             }
         }
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(array);
     }
 
     @FunctionalInterface
@@ -135,6 +147,16 @@ public class Tokenizer {
 
         public ResultDiscard(int length) {
             this.length = length;
+        }
+    }
+
+    public static final class Token {
+        public final String text;
+        public final ITokenizerGobbler gobbler;
+
+        public Token(String text, ITokenizerGobbler gobbler) {
+            this.text = text;
+            this.gobbler = gobbler;
         }
     }
 }

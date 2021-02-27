@@ -6,6 +6,9 @@
 
 package buildcraft.lib.expression.node.func;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.api.IDependancyVisitor;
 import buildcraft.lib.expression.api.IDependantNode;
@@ -15,6 +18,7 @@ import buildcraft.lib.expression.api.INodeStack;
 import buildcraft.lib.expression.api.IVariableNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.api.NodeTypes;
+import buildcraft.lib.expression.info.DependencyVisitorCollector;
 
 public abstract class NodeFuncGeneric implements INodeFunc {
 
@@ -34,7 +38,8 @@ public abstract class NodeFuncGeneric implements INodeFunc {
             Class<?> givenType = types[i];
             if (NodeTypes.getType(nodes[i]) != givenType) {
                 throw new IllegalArgumentException(
-                    "Types did not match! (given " + givenType + ", node is " + nodes[i].getClass() + ")");
+                    "Types did not match! (given " + givenType + ", node is " + nodes[i].getClass() + ")"
+                );
             }
         }
     }
@@ -67,6 +72,23 @@ public abstract class NodeFuncGeneric implements INodeFunc {
 
         protected InlineType setupInline(IExpressionNode[] nodes) {
             InlineType type = InlineType.FULL;
+
+            if (node instanceof IDependantNode) {
+                DependencyVisitorCollector c = DependencyVisitorCollector.createFullSearch();
+                ((IDependantNode) node).visitDependants(c);
+                if (c.needsUnkown()) {
+                    type = InlineType.PARTIAL;
+                } else {
+                    Set<IExpressionNode> set = new HashSet<>(c.getMutableNodes());
+                    for (IExpressionNode n : realArgs) {
+                        set.remove(n);
+                    }
+                    if (!set.isEmpty()) {
+                        type = InlineType.PARTIAL;
+                    }
+                }
+            }
+
             for (int i = 0; i < realArgs.length; i++) {
                 IExpressionNode bef = realArgs[i];
                 IExpressionNode aft = bef.inline();
