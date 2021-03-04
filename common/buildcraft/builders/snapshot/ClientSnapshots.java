@@ -25,6 +25,9 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -167,6 +170,16 @@ public enum ClientSnapshots {
         }
         // noinspection Guava
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {
+        	// Don't render filled maps, because they cause the client to crash, render an empty item frame instead
+        	if (entity instanceof EntityItemFrame) {
+				ItemStack i = ((EntityItemFrame) entity).getDisplayedItem();
+				        		
+	    		if (i.getItem().getRegistryName().toString().equals("minecraft:filled_map")) {
+	    			((EntityItemFrame) entity).setDisplayedItem(new ItemStack(Item.getByNameOrId("minecraft:air")));
+	    		}
+        	}
+        	
+        	// Render entities
             Vec3d pos = entity.getPositionVector();
             GlStateManager.pushAttrib();
             Minecraft.getMinecraft().getRenderManager().renderEntity(
