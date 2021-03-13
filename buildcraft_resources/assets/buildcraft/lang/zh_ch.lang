@@ -1,0 +1,917 @@
+# Master language file
+buildcraft.boardRobotClean =清洁
+buildcraft.boardRobotPicker =选择器
+buildcraft.boardRobotLumberjack =伐木工人
+buildcraft.boardRobotPlanter =种植者
+buildcraft.boardRobotLeaveCutter =切叶机
+buildcraft.boardRobotCarrier =载体
+buildcraft.boardRobotFluidCarrier =坦克
+buildcraft.boardRobotBomber =轰炸机
+buildcraft.boardRobotKnight =骑士
+buildcraft.boardRobotMiner =矿工
+buildcraft.boardRobotFarmer =农民
+buildcraft.boardRobotHarvester =收割机
+buildcraft.boardRobotShovelman = Shovelman
+buildcraft.boardRobotButcher =屠夫
+buildcraft.boardRobotBuilder =构建器
+buildcraft.boardRobotCrafter = Crafter
+buildcraft.boardRobotDelivery =交付
+buildcraft.boardRobotPump =泵
+buildcraft.boardRobotStripes =条纹
+buildcraft.boardRobotBreaker =破碎机
+
+buildcraft.boardRobotPicker.desc =拾取物品
+buildcraft.boardRobotLumberjack.desc =破纪录
+buildcraft.boardRobotPlanter.desc =种植农作物
+buildcraft.boardRobotLeaveCutter.desc =切割叶子
+buildcraft.boardRobotCarrier.desc =在库存之间移动物品
+buildcraft.boardRobotFluidCarrier.desc =在油箱之间移动液体
+buildcraft.boardRobotBomber.desc =炸弹位置
+buildcraft.boardRobotKnight.desc =战斗小怪
+buildcraft.boardRobotMiner.desc =开采矿石
+buildcraft.boardRobotFarmer.desc = Ho污
+buildcraft.boardRobotHarvester.desc =收获成熟作物
+buildcraft.boardRobotShovelman.desc =铁锹区域
+buildcraft.boardRobotButcher.desc =与动物战斗
+buildcraft.boardRobotBuilder.desc =构建结构
+buildcraft.boardRobotCrafter.desc =制作物品
+buildcraft.boardRobotDelivery.desc =根据要求交付物品
+buildcraft.boardRobotPump.desc =泵出液体
+buildcraft.boardRobotStripes.desc =呃...条纹！
+buildcraft.boardRobotBreaker.desc =地雷石
+
+chat.gateCopier.clear =门信息已清除。
+chat.gateCopier.gateCopied =已将门信息复制到复印机。
+chat.gateCopier.gatePasted =将复制的数据粘贴到gate。
+chat.gateCopier.noGate =此侧未找到门！
+chat.gateCopier.noInformation =未存储任何登机口信息！
+chat.gateCopier.warning.actionParameters =§6警告：目标的动作参数更少！
+chat.gateCopier.warning.logic =§6警告：目标具有不同的逻辑类型！
+chat.gateCopier.warning.load =§6警告：闸门触发器/动作可能丢失！
+chat.gateCopier.warning.slots =§6警告：目标的插槽更少！
+chat.gateCopier.warning.triggerParameters =§6警告：目标的触发参数更少！
+chat.pipe.power.iron.mode =切换到％d MJ / t限制
+chat.pipe.power.iron.mode.numberless =切换到％s限制
+chat.pipe.power.iron.level.20 =非常低
+chat.pipe.power.iron.level.40 =低
+chat.pipe.power.iron.level.80 =中低
+chat.pipe.power.iron.level.160 =中
+chat.pipe.power.iron.level.320 =中高
+chat.pipe.power.iron.level.640 =高
+chat.pipe.power.iron.level.1280 =非常高
+chat.pipe.power.iron.level.2560 =全部容量
+color.clear =清除
+
+color.black =黑色
+color.blue =蓝色
+color.brown =棕色
+color.cyan =青色
+color.gray =灰色
+color.green =绿色
+color.light.blue =浅蓝色
+color.light.gray =浅灰色
+color.lime =石灰
+color.magenta =洋红色
+color.orange =橙色
+color.pink =粉红色
+color.purple =紫色
+color.red =红色
+color.white =白色
+color.yellow =黄色
+
+config.general =常规
+config.general.pipes =管道
+config.blueprints =蓝图
+config.builders =建造者
+config.power =电源使用
+config.experimental =实验
+config.display =显示
+config.performance =性能
+config.worldgen =世界一代
+config.network =网络
+config.buildcraft = BuildCraft配置
+
+config.blueprints.clientDatabaseDirectory =客户端目录
+config.blueprints.excludedMods =已排除的模组
+config.blueprints.excludedBlocks =已排除的块
+
+config.builders.dropBrokenBlocks =丢掉碎块
+
+config.display.colorBlindMode =色盲模式
+config.display.hideFluidValues =隐藏流体编号
+config.display.hidePowerValues =隐藏电源号码
+
+config.experimental.kinesisPowerLossOnTravel = Kinesis管道的功率消耗
+
+config.general.boards.blacklist =机器人黑名单
+config.general.pumpsConsumeWater =泵消耗水
+config.general.updateCheck =检查更新
+config.general.fuel.fuel.combustion =内燃机燃料倍增器
+config.general.fuel.oil.combustion =内燃机油倍增器
+config.general.fuel.fuel.combustion.energyOutput =内燃机的燃料输出
+config.general.fuel.oil.combustion.energyOutput =内燃机油输出
+config.general.itemLifespan =商品寿命（秒）
+config.general.canEnginesExplode =引擎爆炸
+config.general.oilCanBurn =燃烧油
+config.general.oilIsDense =浓油
+config.general.pipes.baseFluidRate =基本流速
+config.general.pipes.facadeBlacklist =门面黑名单
+config.general.pipes.facadeBlacklistAsWhitelist =反转立面黑名单
+config.general.pipes.facadeNoLaserRecipe =不使用激光添加外墙配方
+config.general.pipes.hardness =硬度
+config.general.pipes.slimeballWaterproofRecipe =添加粘液密封胶配方
+config.general.pumpsNeedRealPower =泵需要有功功率
+config.general.quarry =采石场选项
+config.general.quarry.oneTimeUse =一次性使用
+config.general.quarry.doChunkLoading =自动加载块
+config.general.markerRange =标记范围
+config.general.miningDepth =最大相对挖掘深度
+config.general.pumpDimensionControl =泵尺寸控制
+
+config.network.longUpdateFactor =客户端同步因子（滴答）
+config.network.updateFactor =数据包发送因子（滴答声）
+
+config.power.miningUsageMultiplier =挖掘使用倍数
+config.power.chipsetCostMultiplier =芯片组成本乘数
+config.power.gateCostMultiplier =门成本乘数
+
+config.worldgen.enable =启用
+config.worldgen.generateWaterSprings =产生的水泉
+config.worldgen.oilWellGenerationRate =油井产生率
+config.worldgen.spawnOilSprings =产生油弹簧
+config.worldgen.biomes.biomeOilDesert =石油沙漠生物群系编号
+config.worldgen.biomes.biomeOilOcean =石油海洋生物群系ID
+config.worldgen.biomes.excessiveOilIDs =生油过多的生物群落
+config.worldgen.biomes.excludeOilIDs =不含油的生物群落
+config.worldgen.biomes.increasedOilIDs =含油量增加的生物群落
+
+direction.north =北
+direction.west =西
+direction.east =东
+direction.south =南方
+direction.up =顶部
+direction.down =底部
+direction.center =中心
+
+direction.center.0 =西北
+direction.center.1 =北
+direction.center.2 =东北
+direction.center.3 =西
+direction.center.4 =中心
+direction.center.5 =东
+direction.center.6 =西南
+direction.center.7 =南
+direction.center.8 =东南
+
+buildcraft.fluid.empty =空
+buildcraft.fluid.static.milli.short =％s mB
+buildcraft.fluid.static.bucket.short =％s B
+buildcraft.fluid.static.milli.long =％s毫桶
+buildcraft.fluid.static.bucket.long =％s个水桶
+
+buildcraft.fluid.empty.milli.short = 0 /％s MB
+buildcraft.fluid.empty.bucket.short = 0 /％s B
+buildcraft.fluid.empty.milli.long =空％s毫桶水箱
+buildcraft.fluid.empty.bucket.long =空％s桶式坦克
+
+buildcraft.fluid.full.milli.short =％1 $ s /％1 $ s mB
+buildcraft.fluid.full.bucket.short =％1 $ s /％1 $ s B
+buildcraft.fluid.full.milli.long =完整的％s毫桶式水箱
+buildcraft.fluid.full.bucket.long =完整的％s桶罐
+
+buildcraft.fluid.static.cap.milli.short =％s /％s mB
+buildcraft.fluid.static.cap.bucket.short =％s /％s B
+buildcraft.fluid.static.cap.milli.long =％s毫桶桶中的％s毫桶
+buildcraft.fluid.static.cap.bucket.long =％s个桶中的％s个桶
+
+buildcraft.fluid.flow.milli.short =％s mB / t
+buildcraft.fluid.flow.bucket.short =％s B / s
+buildcraft.fluid.flow.milli.long =％s每刻度米桶
+buildcraft.fluid.flow.bucket.long =每秒％s个存储桶
+
+buildcraft.mj.static.long =％s我的世界焦耳
+buildcraft.mj.static.short =％s MJ
+buildcraft.mj.flow.long =％s每分钟Minecraft焦耳
+buildcraft.mj.flow.short =％s MJ / t
+buildcraft.mj.flow.seconds.long =％s Minecraft每秒焦耳
+buildcraft.mj.flow.seconds.short =％s MJ /秒
+
+fillerpattern.clear =清除
+fillerpattern.fill =填充
+fillerpattern.flatten =平展
+fillerpattern.horizo​​n =地平线
+fillerpattern.pyramid =金字塔
+fillerpattern.stairs =楼梯
+fillerpattern.box =盒子
+fillerpattern.frame =框架
+fillerpattern.none =无
+fillerpattern.sphere_eighth =第八球
+fillerpattern.sphere_quarter =四分球
+fillerpattern.sphere_half =半球
+fillerpattern.sphere =球体
+fillerpattern.2d_arc =弧
+fillerpattern.2d_semi_circle =半圆
+fillerpattern.2d_circle =圆
+fillerpattern.2d_triangle =三角形
+fillerpattern.2d_square =平方
+fillerpattern.2d_pentagon =五角大楼
+fillerpattern.2d_hexagon =六角形
+fillerpattern.2d_octagon =八角形
+fillerpattern.parameter.hollow =空心
+fillerpattern.parameter.filled =已填写
+fillerpattern.parameter.filled_outer =环绕
+
+buildcraft.param.rotation.0 =不旋转
+buildcraft.param.rotation.1 = 90度旋转
+buildcraft.param.rotation.2 = 180度旋转
+buildcraft.param.rotation.3 = 270度旋转
+
+buildcraft.param.axis.x = X轴
+buildcraft.param.axis.y = Y轴
+buildcraft.param.axis.z = Z轴
+
+fluid.oil =油
+fluid.fuel =轻油
+fluid.oil_distilled =蒸馏油
+fluid.oil_heavy =重油
+fluid.oil_dense =稠油
+fluid.oil_residue =残留
+fluid.tar =焦油
+fluid.fuel_mixed =混合燃料
+fluid.fuel_mixed_heavy =混合重油
+fluid.fuel_mixed_light =混合轻质燃料
+fluid.fuel_dense =浓燃料
+fluid.fuel_light =轻油
+fluid.fuel_gaseous =气态燃料
+
+buildcraft.fluid.heat_0 =％s（§bCool§r）
+buildcraft.fluid.heat_1 =％s（§6Hot§r）
+buildcraft.fluid.heat_2 =％s（§cSearing§r）
+
+buildcraft.christmas.fluid.oil =未加工的巧克力混合物
+buildcraft.christmas.fluid.fuel =牛奶巧克力
+buildcraft.christmas.fluid.oil_distilled =混合巧克力
+buildcraft.christmas.fluid.oil_heavy =生巧克力
+buildcraft.christmas.fluid.oil_dense =未加工的重巧克力
+buildcraft.christmas.fluid.oil_residue =焦糖过量
+buildcraft.christmas.fluid.fuel_mixed_heavy =深色巧克力混合物
+buildcraft.christmas.fluid.fuel_mixed_light =较轻的巧克力混合
+buildcraft.christmas.fluid.fuel_dense =黑巧克力
+buildcraft.christmas.fluid.fuel_light =牛奶巧克力
+buildcraft.christmas.fluid.fuel_gaseous =白巧克力
+
+buildcraft.christmas.buildcraft.fluid.heat_0 =§bMe％s
+buildcraft.christmas.buildcraft.fluid.heat_1 =§6冒泡§r％s
+buildcraft.christmas.buildcraft.fluid.heat_2 =§cSearing§r％s
+
+buildcraft.christmas.tile.engineIron.name =巧克力引擎
+
+gate.action.extraction =％s提取预设
+gate.action.pipe.item.color =绘画项目％s
+gate.action.machine.on =开启
+gate.action.machine.off =关闭
+gate.action.machine.loop =循环
+gate.action.pulsar.constant =动力脉冲星
+gate.action.pulsar.single =单个功率脉冲
+gate.action.pipe.wire =％s管道信号
+gate.action.redstone.signal =红石信号
+gate.action.robot.goto_station =去站
+gate.action.pipe.valve.open =打开
+gate.action.pipe.valve.input_only =仅输入
+gate.action.pipe.valve.output_only =仅输出
+gate.action.pipe.valve.closed =关闭
+gate.action.station.provide_items =提供物品
+gate.action.station.accept_items =接受物品
+gate.action.station.request_items =请求物品
+gate.action.station.drop_items_in_pipe =删除管道中的项目
+gate.action.station.allow_craft =允许飞行
+gate.action.station.provide_machine_request =请求所需的物品
+gate.action.station.accept_fluids =接受流体
+gate.action.station.povide_fluids =提供流体
+gate.action.robot.work_in_area =在区域工作
+gate.action.robot.load_unload_area =在区域中加载/卸载
+gate.action.robot.wakeup =唤醒
+gate.action.station.forbid_robot =禁止机器人
+gate.action.station.force_robot =强制机器人
+gate.action.robot.filter =过滤器
+gate.action.robot.filter_tool =过滤工具
+gate.action.pipe.direction =面对％s一侧
+
+gate.logic.and = AND
+gate.logic.or =或
+
+gate.material.iron =铁
+gate.material.nether_brick =虚空砖
+gate.material.gold =黄金
+
+gate.slots =％s插槽
+gate.params =％s插槽参数
+gate.params.trigger =％s触发参数
+gate.params.action =％s操作参数
+
+gate.side =§7在％s§7一侧
+
+gate.name =％s％s门
+gate.name.basic =基本门
+
+gate.parameter.redstone.gateSideOnly =仅门侧
+
+gate.trigger.true =始终开启
+gate.trigger.engine.blue =引擎蓝色
+gate.trigger.engine.green =引擎绿色
+gate.trigger.engine.yellow =引擎黄色
+gate.trigger.engine.red =引擎红色
+gate.trigger.engine.overheat =发动机过热
+gate.trigger.fluid.empty =坦克空
+gate.trigger.fluid.contains =坦克中的液体
+gate.trigger.fluid.space =流体空间
+gate.trigger.fluid.full =坦克满
+gate.trigger.fluidlevel.below =包含<％d %%
+gate.trigger.inventory.empty =库存为空
+gate.trigger.inventory.contains =库存物品
+gate.trigger.inventory.space =库存空间
+gate.trigger.inventory.full =库存已满
+gate.trigger.inventorylevel.below =包含<％d %%
+gate.trigger.machine.done =完成工作
+gate.trigger.machine.scheduled =有工作
+gate.trigger.redstone.input.active =红石信号开启
+gate.trigger.redstone.input.equal =红石信号相等
+gate.trigger.redstone.input.inactive =红石信号关闭
+gate.trigger.redstone.input.greater =红石信号大于
+gate.trigger.redstone.input.less =红石信号小于
+gate.trigger.redstone.input.level =红石等级％d
+gate.trigger.pipe.empty =管道空
+gate.trigger.pipe.containsItems =项目遍历
+gate.trigger.pipe.containsFluids =流体穿越
+gate.trigger.pipe.containsEnergy =功率穿越
+gate.trigger.pipe.requestsEnergy =要求的功率
+gate.trigger.pipe.tooMuchEnergy =电源过载
+gate.trigger.pipe.wire.active =％s管道信号打开
+gate.trigger.pipe.wire.inactive =％s管道信号关闭
+gate.trigger.timer =％s秒计时器
+gate.trigger.robot.sleep =睡眠
+gate.trigger.robot.in.station =机器人进站
+gate.trigger.robot.linked =工作站已链接
+gate.trigger.robot.reserved =工作站已保留
+gate.trigger.machine.energyStored.high =高功率存储
+gate.trigger.machine.energyStored.low =电量不足
+gate.trigger.machine.energyStored.below25 =功率<25％
+gate.trigger.machine.energyStored.below50 =功率<50％
+gate.trigger.machine.energyStored.below75 =功率<75％
+gate.trigger.light.bright =亮
+gate.trigger.light.dark =暗
+gate.trigger.time.0 =夜晚
+gate.trigger.time.6 =早晨
+gate.trigger.time.12 =下午
+gate.trigger.time.18 =晚上
+gate.trigger.fuelLevelBelow =燃油水平低于％d %%
+gate.trigger.coolantLevelBelow =冷却液水平低于％d %%
+
+gui.fluidtank.empty =空
+
+gui.building.resources =建筑资源
+gui.building.fluids =液体坦克
+gui.del = Del
+gui.filling.resources =填充资源
+gui.inventory =库存
+gui.lock =锁定
+gui.needed =需要
+gui.unlock =解锁
+gui.power =电源
+gui.currentOutput =当前输出
+gui.stored =已存储
+gui.heat =热
+gui.assemblyRate =费率
+gui.assemblyCurrentRequired =必需
+gui.clickcraft =-点击以制作-
+gui.list.nbt =需要完全匹配\n§7（附件，名称和存储的数据必须完全匹配）
+gui.list.metadata =接受版本\n§7（相同类型）
+gui.list.oredict =接受等效项\n§7（相同的材料）
+gui.pipes.emerald.title =过滤器
+gui.pipes.emerald.blocking =阻止
+gui.pipes.emerald.blocking.tip =如果缺少过滤器中的一个元素，提取将被阻止
+gui.pipes.emerald.nonblocking =非阻止
+gui.pipes.emerald.nonblocking.tip =如果缺少一个元素，提取将继续过滤器中的下一个元素G
+gui.pipes.emzuli.title =提取预设
+gui.pipes.emzuli.paint =绘画项目％s
+gui.pipes.emzuli.nopaint =不要画东西
+gui.ledger.ownership =所有者
+gui.ledger.help =帮助
+gui.progress =进度
+gui.leftToBreak =打破
+gui.leftToPlace =放置
+
+item.bucketFuel.name =燃油桶
+item.bucketOil.name =油桶
+item.diamondShard.name =钻石碎片
+item.woodenGearItem.name =木齿轮
+item.stoneGearItem.name =石器
+item.ironGearItem.name =铁齿轮
+item.goldGearItem.name =金齿轮
+item.diamondGearItem.name =钻石齿轮
+item.templateItem.name =模板
+item.wrenchItem.name =扳手
+item.paintbrush.name =油漆刷
+item.pipeWaterproof.name =管道密封剂
+item.pipeWire.name =管道
+item.redstoneCrystal.name =红石水晶
+item.redstone_red_chipset.name =红石芯片组
+item.redstone_iron_chipset.name =铁芯片组
+item.redstone_gold_chipset.name =金色芯片组
+item.redstone_diamond_chipset.name =钻石芯片组
+item.redstone_emerald_chipset.name =翡翠芯片组
+item.redstone_pulsating_chipset.name =脉动芯片组
+item.redstone_quartz_chipset.name =石英芯片组
+item.redstone_comp_chipset.name = Redstone Comp芯片组
+item.redstone_board.name =红石板
+item.robot.name =机器人
+item.tablet.name =平板电脑
+item.blueprintItem.name =蓝图
+item.schematicSingle.name =单块原理图
+item.list.name =列表
+item.blueprint.unnamed = <未命名>
+item.blueprint.author =作者
+item.blueprint.blank =空白
+item.blueprint.creative_only =仅创意
+item.blueprint.no_build =没有建筑物
+item.blueprint.incomplete =不完整
+item.mapLocation.name =地图位置
+item.gateCopier.name =门复印机
+item.plasticSheet.name =塑料板
+item.markerConnector.name =标记连接器
+item.pulsar.name =管道脉冲星
+item.fragile_fluid_shard.name =易碎的％s碎片
+item.waterGel.name =水凝胶剂
+item.gel.name =果冻水
+
+item.buildcraft_pipe_wood_item.name =木制运输管
+item.buildcraft_pipe_cobblestone_item.name =鹅卵石运输管
+item.buildcraft_pipe_stone_item.name =石头运输管道
+item.buildcraft_pipe_andersite_item.name =安德斯特运输管道
+item.buildcraft_pipe_andersite_polished_item.name =抛光的Andersite运输管道
+item.buildcraft_pipe_diorite_item.name = Diorite输送管
+item.buildcraft_pipe_diorite_polished_item.name =抛光的迪奥里特石输送管
+item.buildcraft_pipe_granite_item.name =花岗岩运输管
+item.buildcraft_pipe_granite_polished_item.name =抛光的花岗岩运输管
+
+item.PipeItemsWood.name =木制运输管
+item.PipeItemsCobblestone.name =鹅卵石运输管道
+item.PipeItemsStone.name =石头运输管道
+item.PipeItemsAndesite.name =安山岩运输管道
+item.PipeItemsDiorite.name = Diorite输送管
+item.PipeItemsGranite.name =花岗岩运输管道
+item.PipeItemsQuartz.name =石英输送管
+item.PipeItemsIron.name =输铁管
+item.PipeItemsGold.name =黄金运输管道
+item.PipeItemsDiamond.name =钻石运输管
+item.PipeItemsObsidian.name =黑曜石运输管
+item.PipeItemsWoodenDiamond.name =木制钻石运输管
+item.PipeItemsLapis.name =拉祖利运输管道
+item.PipeItemsDaizuli.name =大足里运输管道
+item.PipeItemsEmzuli.name = Emzuli输送管
+item.PipeItemsClay.name =粘土运输管道
+item.PipeFluidsWood.name =木质流体管道
+item.PipeFluidsCobblestone.name =鹅卵石流体管道
+item.PipeFluidsStone.name =石液管
+item.PipeFluidsAndesite.name =安山岩流体管道
+item.PipeFluidsDiorite.name =迪奥利特流体管道
+item.PipeFluidsGranite.name =花岗岩流体管道
+item.PipeFluidsIron.name =铁液管道
+item.PipeFluidsQuartz.name =石英流体管
+item.PipeFluidsGold.name =金色流体管
+item.PipeFluidsWoodenDiamond.name =木金刚石流体管
+item.PipeFluidsDiamond.name =金刚石流体管
+item.PipeFluidsClay.name =粘土流体管道
+item.PipePowerWood.name =木制运动管道
+item.PipePowerCobblestone.name =鹅卵石运动管
+item.PipePowerStone.name =石运动管道
+item.PipePowerQuartz.name =石英运动管
+item.PipePowerIron.name =运动铁管
+item.PipePowerGold.name =金色运动管
+item.PipePowerDiamond.name =钻石运动管道
+item.PipePowerEmerald.name =翡翠运动管
+item.PipeItemsStripes.name =条纹运输管道
+item.PipeStructureCobblestone.name =鹅卵石结构管道
+item.PipeItemsVoid.name =无效的输送管
+item.PipeFluidsVoid.name =空流体管道
+item.PipeItemsSandstone.name =砂岩运输管
+item.PipeFluidsSandstone.name =砂岩流体管道
+item.PipePowerSandstone.name =砂岩运动管
+
+item.PipeRobotStation.name =停靠站
+item.Facade.name =外观
+item.Facade.state_hollow =空心
+item.FacadePhased.name =分阶段的外观
+item.FacadePhased.state =％s：％s
+item.FacadePhased.state_default =默认值：％s
+item.FacadePhased.state_transparent =透明
+item.PipePlug.name =管道塞
+item.light_sensor.name =光传感器
+item.Lens.name =镜头
+item.Filter.name =过滤器
+item.PipePowerAdapter.name =电源适配器
+item.debugger.name =调试器
+item.debugger.warning =仅用于测试！泄露秘密。
+item.package.name =包装
+item.buildcraft.guide.name = BuildCraft指导书
+item.buildcraft.guide_note.name = BuildCraft指南书注
+item.buildcraft.robot_goggles.name =机器人护目镜
+item.buildcraft.filler_planner.name =填充计划者
+
+itemGroup.buildcraft.boards = BuildCraft机器人
+itemGroup.buildcraft.main = BuildCraft
+itemGroup.buildcraft.pipes =建立工艺管道
+itemGroup.buildcraft.facades = BuildCraft外墙
+itemGroup.buildcraft.plugs = BuildCraft可插拔
+
+tile.architectBlock.name =建筑师表
+tile.architectBlock.tip =无法在生存中使用
+tile.assemblyTableBlock.name =组装表
+tile.assemblyWorkbenchBlock.name =高级制作表
+tile.autoWorkbenchBlock.name =自动工作台
+tile.blockFuel.name =燃料
+tile.chuteBlock.name =滑道
+tile.blockOil.name =油
+tile.builderBlock.name =生成器
+tile.builderBlock.tip =无法在生存中使用
+tile.chargingTableBlock.name =充电表
+tile.chargingTableBlock.tip =不能收取任何费用！
+tile.constructionMarkerBlock.name =施工标记
+tile.engineCreative.name =广告引擎
+tile.engineIron.name =燃烧引擎
+tile.engineStone.name =斯特林发动机
+tile.engineWood.name =红石引擎
+tile.fillerBlock.name =填充器
+tile.fillerBlock.tip =在生存中不可用。
+tile.filteredBufferBlock.name =过滤后的缓冲区
+tile.floodGateBlock.name =水闸
+tile.frameBlock.name =框架
+tile.integrationTableBlock.name =整合表
+tile.integrationTableBlock.tip =没有食谱可以使用！
+tile.laserBlock.name =激光
+tile.libraryBlock.name =电子图书馆
+tile.libraryBlock.tip =无法在生存中使用
+tile.quarryBlock.name =采石场
+tile.markerBlock.name =地标
+tile.miningWellBlock.name =采矿井
+tile.packagerBlock.name =配方打包器
+tile.pathMarkerBlock.name =路径标记
+tile.plainPipeBlock.name =矿用管道
+tile.programmingTableBlock.name =编程表
+tile.programmingTableBlock.tip =机器人还没到1.12.2，所以这个表是没用的:(
+tile.pumpBlock.name =泵
+tile.refineryBlock.name =炼油厂
+tile.requester.name =请求者
+tile.spring.oil.name =油弹簧
+tile.spring.water.name =水泉
+tile.stampingTableBlock.name =邮票表
+tile.tankBlock.name =坦克
+tile.zonePlannerBlock.name =区域规划器
+tile.zonePlannerBlock.tip =机器人还没到1.12.2，所以这没用:(
+tile.distiller.name =蒸馏器
+tile.heat_exchange.name =换热器
+tile.decorated.blueprint.name =蓝图（装饰）
+tile.decorated.template.name =模板（装饰）
+tile.decorated.laser_back.name =激光（装饰）
+
+tile.architect.rotate =旋转：开
+tile.architect.norotate =旋转：关闭
+tile.architect.allowCreative =模式：创意
+tile.architect.noallowCreative =模式：生存
+tile.architect.tooltip.allowCreative.1 =广告素材允许所有块-仅广告素材模式！
+tile.architect.tooltip.allowCreative.2 =生存会忽略所有不受支持的块
+tile.architect.excavate =挖掘：开
+tile.architect.noexcavate =挖掘：关闭
+
+tip.gate.wires =§9§o兼容电线：
+tip.gate.wires.redstone =红色
+tip.gate.wires.iron =红色，蓝色
+tip.gate.wires.gold =红色，蓝色，绿色
+tip.gate.wires.quartz =红色，蓝色，绿色
+tip.gate.wires.diamond =红色，蓝色，绿色，黄色
+tip.gate.wires.emerald =红色，蓝色，绿色，黄色
+tip.gate.expansions =§9§o已安装的扩展：
+
+tip.PipeFluidsClay =插入管道
+tip.PipeFluidsDiamond =排序流体
+tip.PipeFluidsEmerald =提取管
+tip.PipeFluidsIron =阀门管
+tip.PipeFluidsSandstone =仅连接到其他管道
+tip.PipeFluidsVoid =消灭液体
+tip.PipeFluidsWood =提取管
+tip.PipeItemsClay =插入管道
+tip.PipeItemsDaizuli =传送涂漆的物品
+tip.PipeItemsDiamond =排序项目
+tip.PipeItemsEmerald =罗宾提取管
+tip.PipeItemsEmzuli =门控抽气管
+tip.PipeItemsGold =加快项目速度
+tip.PipeItemsIron =路线项目
+tip.PipeItemsLapis =绘制项目
+tip.PipeItemsObsidian =吸起物品
+tip.PipeItemsSandstone =仅连接到其他管道
+tip.PipeItemsVoid =销毁物品
+tip.PipeItemsWood =提取管
+tip.PipePowerEmerald =电源输入管道
+tip.PipePowerDiamond =可选的限制器管道
+tip.PipePowerSandstone =仅连接到其他管道
+tip.PipePowerWood =电源输入管道
+tip.PipeStructureCobblestone =支撑管
+tip.deprecated =已弃用
+
+tip.gate.charged =已充电
+tip.gate.fullcharge =充满电
+tip.gate.nocharge =不收费
+
+tip.filler.excavate.on =挖掘
+tip.filler.excavate.off =不进行挖掘
+
+tip.filler.invert.on =反转
+tip.filler.invert.off =不反转
+
+tip.list.matches =比赛
+
+tip.shift.PipeFluidsDiamond = GUI接受任何液体容器
+tip.shift.PipeFluidsEmerald = GUI接受任何流体容器
+tip.shift.PipeItemsClay =优先处理机器和箱子\相邻的管道。
+tip.shift.PipeItemsDaizuli =潜行以更改颜色
+tip.shift.PipeItemsEmzuli =在GUI中设置提取预设过滤器\ n一个预设可以绘制提取的项目\ n通过门切换提取预设
+tip.shift.PipeItemsLapis =单击以更改颜色
+tip.shift.PipeItemsObsidian =引擎的动力\ n更大的动力-更大的距离
+tip.shift.PipePowerDiamond =使用扳手或闸门更改限制tip.PipeItemsEmerald.whitelist =白名单
+tip.PipeItemsEmerald.blacklist =黑名单
+tip.PipeItemsEmerald.roundrobin =罗宾（按顺序）
+
+tip.tool.add =添加
+tip.tool.fullscreen =全屏
+tip.tool.remove =移除
+
+Achievement.woodenGearAchievement =边缘有些粗糙
+Achievement.woodenGearAchievement.desc =制作木器
+Achievement.stoneGearAchievement =坚如磐石
+Achievement.stoneGearAchievement.desc =将木制齿轮升级为石头齿轮
+Achievement.ironGearAchievement =不锈钢吗？
+Achievement.ironGearAchievement.desc =将石制齿轮升级为铁制齿轮
+Achievement.goldGearAchievement =不，它不是由蜂蜜制成
+Achievement.goldGearAchievement.desc =将铁齿轮升级为金齿轮
+Achievement.diamondGearAchievement =发光！
+Achievement.diamondGearAchievement.desc =将金装升级为钻石装
+Achievement.wrenchAchievement =刚刚成功！
+Achievement.wrenchAchievement.desc =用扳手
+Achievement.engineAchievement1 =大事情的开始
+Achievement.engineAchievement1.desc =制作红石引擎
+Achievement.engineAchievement2 =高效率
+Achievement.engineAchievement2.desc =制作一个斯特林引擎
+Achievement.engineAchievement3 =动力站
+Achievement.engineAchievement3.desc =制造一台内燃机
+Achievement.aLotOfCraftingAchievement =很多技巧
+Achievement.aLotOfCraftingAchievement.desc =制作自动工作台
+Achievement.straightDownAchievement =直下
+Achievement.straightDownAchievement.desc =挖井
+Achievement.chunkDestroyerAchievement =大块驱逐舰
+Achievement.chunkDestroyerAchievement.desc =制作采石场
+Achievement.fasterFillingAchievement =更快的填充
+Achievement.fasterFillingAchievement.desc =进行填充
+Achievement.timeForSomeLogicAchievement =某些逻辑的时间
+Achievement.timeForSomeLogicAchievement.desc =制作组装表
+Achievement.refineAndRedefineAchievement =重新定义并重新定义
+Achievement.refineAndRedefineAchievement.desc =炼油厂
+Achievement.tinglyLaserAchievement = Tingly激光
+Achievement.tinglyLaserAchievement.desc =制作激光
+Achievement.architectAchievement =建筑
+Achievement.architectAchievement.desc =制作建筑师表格
+Achievement.builderAchievement =我还有更好的事情要做
+Achievement.builderAchievement.desc =制作建造者
+Achievement.blueprintAchievement =建筑参考
+Achievement.blueprintAchievement.desc =制作蓝图
+Achievement.templateAchievement =基础
+Achievement.templateAchievement.desc =制作模板
+Achievement.blueprintLibraryAchievement =想法持续存在
+Achievement.blueprintLibraryAchievement.desc =制作电子图书馆
+
+bc_update.new_version =§c新版本的BuildCraft：Minecraft％s的％s
+bc_update.download =§c从http://www.mod-buildcraft.com/download下载
+bc_update.once =该消息仅显示一次
+bc_update.again =如果要再次查看，请输入“ / buildcraft版本”
+bc_update.changelog =键入'/ buildcraft changelog'来查看更改日志
+
+chat.buildcraft.quarry.tooSmall = [BuildCraft]采石场大小超出了块加载范围或太小％d％d（％d）
+chat.buildcraft.quarry.chunkloadInfo = [BuildCraft]％d％d％d处的采石场将保持％d个块加载
+
+command.buildcraft.version = Minecraft％s的BuildCraft％s（最新版本：％s）。
+command.buildcraft.changelog_header = BuildCraft％s的更改日志：
+command.buildcraft.version.fail =版本检查失败！检查日志文件以获取详细信息。
+command.buildcraft.version.prerelease =您正在使用预发行版本
+
+command.buildcraft.aliases =别名：％s
+command.buildcraft.help =输入'％s'寻求帮助。
+command.buildcraft.list =可用命令：
+command.buildcraft.permlevel =权限级别：％s
+command.buildcraft.noperms =您无权使用此命令。
+
+command.buildcraft.buildcraft.help =与BuildCraft相关的各种命令
+command.buildcraft.buildcraft.format =格式：/％s <子命令>
+
+command.buildcraft.buildcraft.version.desc =-％s：版本信息
+command.buildcraft.buildcraft.version.help =显示当前和最新的BC版本。
+command.buildcraft.buildcraft.version.format =格式：/％s
+
+command.buildcraft.buildcraft.changelog.desc =-％s：更新日志
+command.buildcraft.buildcraft.changelog.help =显示最新的BC更改日志。
+command.buildcraft.buildcraft.changelog.format =格式：/％s
+
+buildcraft.item.nonclean.usage =右移单击以进行清洁
+
+buildcraft.guide.book.meta.name = BuildCraft配置指南
+buildcraft.guide_book.reloaded =已重新加载指南书
+buildcraft.guide.too_many_results =要显示的结果太多：％s
+buildcraft.guide.chapter_list =章节
+buildcraft.guide.contents.loaded_modules =已加载的模块：
+buildcraft.guide.contents.missing_modules =缺少模​​块：
+buildcraft.guide.order.type_subtype =按类型排序
+buildcraft.guide.order.mod_type =按Mod排序
+buildcraft.guide.order.alphabetical =按字母顺序排序
+
+buildcraft.guide.recipe.create =配方
+buildcraft.guide.recipe.create.plural =配方
+buildcraft.guide.recipe.use =使用
+buildcraft.guide.recipe.use.plural =使用
+
+buildcraft.guide.chapter.contents =目录
+
+buildcraft.guide.contents.all_group =其他
+buildcraft.guide.contents.item_stacks =物品和积木
+buildcraft.guide.contents.triggers =触发
+buildcraft.guide.contents.actions =动作
+
+buildcraft.guide.chapter.type.unknown =未知类型！
+buildcraft.guide.chapter.subtype.unknown =未知子类型！
+buildcraft.guide.chapter.mod.unknown =未知模组！
+buildcraft.guide.chapter.submod.unknown =未知的SubMod！
+
+buildcraft.guide.meta.group.linking_to =链接到
+buildcraft.guide.meta.group.linked_from =链接自
+buildcraft.guide.group.to.buildcraft.pipe_power_providers =管道电源供应器
+buildcraft.guide.group.from.buildcraft.pipe_power_providers =管道电源接收器
+buildcraft.guide.group.to.buildcraft.full_power_providers =完整电源提供商
+buildcraft.guide.group.from.buildcraft.full_power_providers =全功率接收器
+buildcraft.guide.group.to.buildcraft.laser_power_providers =激光电源提供商
+buildcraft.guide.group.from.buildcraft.laser_power_providers =激光功率接收器
+buildcraft.guide.group.to.buildcraft.area_markers =区域标记
+buildcraft.guide.group.from.buildcraft.area_markers =取决于区域的块
+
+buildcraft.help.tank.generic =用一个空的桶单击它会\将此桶清空到桶中，或者\使用一个已满的桶将从桶中填充该桶\ n。
+buildcraft.help.tank.title.tankFuel =油箱
+buildcraft.help.tank.title.tankCoolant =冷却水箱
+buildcraft.help.tank.title.tankResidue =残留物坦克
+buildcraft.help.tank.fuel =这个坦克可以接受任何种类的燃料。
+buildcraft.help.tank.coolant =该水箱可以容纳任何种类的液体\冷却液或冰块。
+buildcraft.help.tank.residue =如果未处理\ n燃料（例如机油），此油箱将输出残留物。
+
+buildcraft.help.stone_engine.flame.title =燃料耗尽
+buildcraft.help.stone_engine.fuel.title =燃料输入
+buildcraft.help.stone_engine.flame =此烧伤和此帮助尚未完成。
+buildcraft.help.stone_engine.fuel =接受炉子所产生的任何燃料。
+
+command.buildcraft.buildcraft.op.desc =-％s：操作FakePlayer
+command.buildcraft.buildcraft.op.help =向BC FakePlayer授予OP权限（以采石场，机器人等的名义运行）
+command.buildcraft.buildcraft.op.format =格式：/％s
+
+command.buildcraft.buildcraft.deop.desc =-％s：Deop FakePlayer
+command.buildcraft.buildcraft.deop.help =放弃对BC FakePlayer的OP权限（以采石场，机器人等为名）
+command.buildcraft.buildcraft.deop.format =格式：/％s
+
+#advancements
+advancements.buildcraftcore.root.title =建造工艺
+advancements.buildcraftcore.root.description =满足您的所有工程需求
+
+advancements.buildcraftcore.guide.title =这又如何工作？
+advancements.buildcraftcore.guide.description =查看指南
+
+advancements.buildcraftcore.gears.title =学习
+advancements.buildcraftcore.gears.description =获取每个装备之一
+
+advancements.buildcraftcore.wrenched.title =很烂！
+advancements.buildcraftcore.wrenched.description =使用扳手
+
+advancements.buildcraftcore.freePowar.title =自由力量！
+advancements.buildcraftcore.freePowar.description =产生自由力量
+
+advancements.buildcraftcore.list.title =排序所有内容
+advancements.buildcraftcore.list.description =发现列表的高级功能
+
+advancements.buildcraftcore.engine.title =我的第一个引擎
+advancements.buildcraftcore.engine.description =获取第一个引擎
+
+advancements.buildcraftcore.markers.title =标记您的领地
+advancements.buildcraftcore.markers.description =使用体积标记来标记区域
+
+advancements.buildcraftcore.path_markers.title =定义路径
+advancements.buildcraftcore.path_markers.description =定义路径
+
+advancements.buildcraftcore.paper.title =纸张收集器
+advancements.buildcraftcore.paper.description =使用每一张纸
+
+advancements.buildcraftenergy.poweringUp.title =加电！
+advancements.buildcraftenergy.poweringUp.description =使用红石信号激活斯特林/燃烧发动机
+
+advancements.buildcraftenergy.lava_power.title =熔岩能量
+advancements.buildcraftenergy.lava_power.description =用熔岩桶为斯特林发动机供电
+
+advancements.buildcraftenergy.to_much_power.title =力量很大！
+advancements.buildcraftenergy.to_much_power.description =使发动机过热并用扳手将其损坏
+
+advancements.buildcraftenergy.ice_cool.title =冰爽
+advancements.buildcraftenergy.ice_cool.description =用其他东西然后用水（如果可用）冷却内燃机。
+
+advancements.buildcraftenergy.sticky_dipping.title =粘浸
+advancements.buildcraftenergy.sticky_dipping.description =发现油的粘性
+
+advancements.buildcraftenergy.fine_riches.title =精美的钱
+advancements.buildcraftenergy.fine_riches.description =找到石油生物群系
+
+advancements.buildcraftenergy.refine_and_redefine.title =细化并重新定义
+advancements.buildcraftenergy.refine_and_redefine.description =生产一个装有每种单一类型的油和燃料的油箱
+
+progress.buildcraftfactory.fluid_storage.title =流体储存
+advancements.buildcraftfactory.fluid_storage.description =将液体储存在储罐中
+
+advancements.buildcraftfactory.lazy_crafting.title =懒惰的手艺
+advancements.buildcraftfactory.lazy_crafting.description =使自动工作台为您工作
+
+advancements.buildcraftfactory.retired_hopper.title =退料斗
+advancements.buildcraftfactory.retired_hopper.description =将滑道放回原位
+
+advancements.buildcraftfactory.flooding_the_world.title =泛滥世界
+advancements.buildcraftfactory.flooding_the_world.description =用闸门淹没该区域
+
+advancements.buildcraftfactory.draining_the_world.title =排水世界
+advancements.buildcraftfactory.draining_the_world.description =使用泵从世界排放流体
+
+advancements.buildcraftfactory.oil_platform.title =石油平台
+advancements.buildcraftfactory.oil_platform.description =开始抽油嘴
+
+advancements.buildcraftfactory.heating_and_distilling.title =加热和蒸馏
+advancements.buildcraftfactory.heating_and_distilling.description =使用蒸馏器和热交换器创建完整的炼油装置
+
+advancements.buildcraftfactory.black_gold.title =黑金
+advancements.buildcraftfactory.black_gold.description =完全抽出一个大喷油嘴
+
+advancements.buildcraftsilicon.laser_power.title =激光功率
+advancements.buildcraftsilicon.laser_power.description =制造激光
+
+advancements.buildcraftsilicon.precision_crafting.title =精密工艺
+advancements.buildcraftsilicon.precision_crafting.description =开始使用装配表进行制作
+
+advancements.buildcrafttransport.pipe_dream.title =管道梦
+advancements.buildcrafttransport.pipe_dream.description =放置管道
+
+advancements.buildcrafttransport.pipe_diversification.title =管道多样化
+advancements.buildcrafttransport.pipe_diversification.description =放置物品，流体，运动和结构管道
+
+advancements.buildcrafttransport.plugging_the_gap.title =填补差距
+advancements.buildcrafttransport.plugging_the_gap.description =插入管道
+
+advancements.buildcrafttransport.logic_transportation.title =逻辑传输
+advancements.buildcrafttransport.logic_transportation.description =连接管道线
+
+advancements.buildcrafttransport.extended_logic.title =扩展逻辑
+advancements.buildcrafttransport.extended_logic.description =使用带有额外插槽的门
+
+advancements.buildcrafttransport.sealing_fluids.title =密封液
+advancements.buildcrafttransport.sealing_fluids.description =融化仙人掌，染料被染成管道密封剂
+
+advancements.buildcrafttransport.pipe_logic.title =管道逻辑
+advancements.buildcrafttransport.pipe_logic.description =在管道上放置一个闸门
+
+advancements.buildcrafttransport.all_plugged_up.title =全部插入
+advancements.buildcrafttransport.all_plugged_up.description =将每个唯一可插入管道的管道连接到管道
+
+advancements.buildcrafttransport.pipe_fanatic.title =管道狂热
+advancements.buildcrafttransport.pipe_fanatic.description =放置每种管道中的一种
+
+advancements.buildcrafttransport.categorizing_with_colors.title =按颜色分类
+advancements.buildcrafttransport.categorizing_with_colors.description =使用着色功能设置排序设置
+
+advancements.buildcrafttransport.colorful_electrician.title =多彩的电工
+advancements.buildcrafttransport.colorful_electrician.description =使用每种颜色的管线中的16种来使您的管道系统更坚固
+
+advancements.buildcraftbuilders.shaping_the_world.title =塑造世界
+advancements.buildcraftbuilders.shaping_the_world.description =制作并放置采石场
+
+advancements.buildcraftbuilders.architect.title =建筑师
+advancements.buildcraftbuilders.architect.description =使用建筑师表扫描区域并将其记录在蓝图/模板中
+
+advancements.buildcraftbuilders.paving_the_way.title =铺平道路
+advancements.buildcraftbuilders.paving_the_way.description =使用带有路径标记的生成器来创建路径
+
+advancements.buildcraftbuilders.diggy.title = Diggy diggy洞
+advancements.buildcraftbuilders.diggy.description =已完成64x64的采石场
+
+advancements.buildcraftbuilders.start_of_something_big.title =大事情的开始
+advancements.buildcraftbuilders.start_of_something_big.description =使用构建器构建超大结构
+
+advancements.buildcraftbuilders.building_for_the_future.title =为未来建造
+advancements.buildcraftbuilders.building_for_the_future.description =在循环中设置填充符以实现长期自动化
+
+advancements.buildcraftbuilders.destroying_the_world.title =叙述世界
+advancements.buildcraftbuilders.destroying_the_world.description =让两个或多个64 x 64大小的采石场全速运行
