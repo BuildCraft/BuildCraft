@@ -57,7 +57,7 @@ public class TileMiningWell extends TileMiner {
 
     @Override
     protected void mine() {
-        if (currentPos != null && canBreak()) {
+        if (currentPos != null && canBreak(currentPos)) {
             shouldCheck = true;
             long target = BlockUtil.computeBlockBreakPower(world, currentPos);
             progress += battery.extractPower(0, target - progress);
@@ -86,33 +86,64 @@ public class TileMiningWell extends TileMiner {
         }
     }
 
-    private boolean canBreak() {
-        if (world.isAirBlock(currentPos) || BlockUtil.isUnbreakableBlock(world, currentPos, getOwner())) {
+    /**
+     * Examines a block to determine if the mining well can break
+     * it or not.
+     * 
+     * @param p Position of block to examine.
+     * @return
+     */
+    private boolean canBreak(BlockPos p) {
+    	if (world.getBlockState(p).getBlockHardness(world, p) < 0) {
             return false;
         }
 
-        Fluid fluid = BlockUtil.getFluidWithFlowing(world, currentPos);
+        Fluid fluid = BlockUtil.getFluidWithFlowing(world, p);
         return fluid == null || fluid.getViscosity() <= 1000;
     }
-
+    
+    /**
+     * Examines a block to determine if the mining well drilling tip
+     * can traverse it or not.
+     * 
+     * @param p Position of block to examine.
+     * @return
+     */
+    private boolean canMoveThrough(BlockPos p) {
+    	if (world.isAirBlock(p)) {
+    		return true;
+    	}
+    	
+    	Fluid f = BlockUtil.getFluidWithFlowing(world, p);
+    	if (f == null) {
+    		return false;
+    	}
+    	else {
+    		return (f.getDensity() <= 1000);
+    	}
+    }
+    
+    /**
+     * Finds the next block under the mining well which can be targeted for mining and
+     * adjusts drilling pipes length accordingly.
+     */
     private void nextPos() {
-        currentPos = pos;
-        while (true) {
-            currentPos = currentPos.down();
-            if (world.isOutsideBuildHeight(currentPos)) {
-                break;
-            }
-            if (pos.getY() - currentPos.getY() > BCCoreConfig.miningMaxDepth) {
-                break;
-            }
-            if (canBreak()) {
-                updateLength();
-                return;
-            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube) {
-                break;
-            }
-        }
         currentPos = null;
+        if (!world.isOutsideBuildHeight(pos)) {
+	        for (int y = pos.getY() - 1; y > pos.getY() - BCCoreConfig.miningMaxDepth; y--) {
+	        	BlockPos p = new BlockPos(pos.getX(), y, pos.getZ());
+	        	if (canMoveThrough(p)) {
+	        		continue;
+	        	}
+	        	if (canBreak(p)) {
+	        		currentPos = p;
+	        		break;
+	        	}
+	        	else {
+	        		break;
+	        	}
+	        }
+        }
         updateLength();
     }
 
