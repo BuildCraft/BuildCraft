@@ -99,7 +99,7 @@ public class BCEnergyFluids {
         final int baseQuanta = data[3];
         final int texLight = data[4];
         final int texDark = data[5];
-        final boolean sticky = data[6] == 1;
+        final boolean sticky = BCEnergyConfig.oilIsSticky && data[6] == 1;
         final boolean flammable = BCEnergyConfig.enableOilBurn ? data[7] == 1 : false;
 
         String fullName = name + (heat == 0 ? "" : "_heat_" + heat);

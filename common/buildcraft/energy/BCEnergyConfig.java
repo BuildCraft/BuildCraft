@@ -36,6 +36,7 @@ public class BCEnergyConfig {
     public static double oilWellGenerationRate;
     public static boolean enableOilSpouts;
     public static boolean enableOilBurn;
+    public static boolean oilIsSticky;
 
     public static int smallSpoutMinHeight;
     public static int smallSpoutMaxHeight;
@@ -63,6 +64,7 @@ public class BCEnergyConfig {
     private static Property propOilWellGenerationRate;
     private static Property propEnableOilSpouts;
     private static Property propEnableOilBurn;
+    private static Property propOilIsSticky;
 
     private static Property propSmallSpoutMinHeight;
     private static Property propSmallSpoutMaxHeight;
@@ -93,6 +95,7 @@ public class BCEnergyConfig {
         propEnableOilGeneration = BCCoreConfig.config.get("worldgen.oil", "enable", true,
             "Should any oil sprouts or lakes be generated at all?");
         propEnableOilBurn = BCCoreConfig.config.get("worldgen.oil", "can_burn", true, "Can oil blocks burn?");
+        propOilIsSticky = BCCoreConfig.config.get("general","oilIsDense", false, "Should oil be dense and drag entities down?");
 
         propOilWellGenerationRate =
             BCCoreConfig.config.get("worldgen.oil", "generationRate", 1.0, "The rate of occurrence of oil wells.");
@@ -223,6 +226,7 @@ public class BCEnergyConfig {
                 oilWellGenerationRate = propOilWellGenerationRate.getDouble();
                 enableOilSpouts = propEnableOilSpouts.getBoolean();
                 enableOilBurn = propEnableOilBurn.getBoolean();
+                oilIsSticky = propOilIsSticky.getBoolean();
 
                 smallSpoutMinHeight = propSmallSpoutMinHeight.getInt();
                 smallSpoutMaxHeight = propSmallSpoutMaxHeight.getInt();
