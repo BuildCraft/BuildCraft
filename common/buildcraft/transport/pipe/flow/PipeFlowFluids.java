@@ -776,13 +776,16 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     class Section implements IFluidHandler {
         final EnumPipePart part;
 
-        int amount;
+        int amount = 0;
 
-        int lastSentAmount;
+        int lastSentAmount = 0;
 
-        Dir lastSentDirection;
+        /* Accesing lastSentDirection.nbtValue throws a NullPointerException when placing
+            a wooden fluid pipe next to a Magneticraft Infinite Water block and then breaking
+            wooden fluid pipe and I doubt this will fix the problem but its worth a try */
+        Dir lastSentDirection = Dir.NONE;
 
-        int currentTime;
+        int currentTime = 0;
 
         /** Map of [time] -> [amount inserted]. Used to implement the delayed fluid travelling. */
         int[] incoming = new int[1];
@@ -800,7 +803,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int clientAmountThis, clientAmountLast;
 
         /** Holds the amount of fluid was last sent to us from the sever */
-        int target;
+        int target = 0;
 
         Vec3d offsetLast, offsetThis;
 
@@ -812,8 +815,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             nbt.setShort("capacity", (short) amount);
             nbt.setShort("lastSentAmount", (short) lastSentAmount);
             nbt.setShort("ticksInDirection", (short) ticksInDirection);
-            nbt.setByte("lastSentDirection", lastSentDirection.nbtValue);
-
+            /* Accesing lastSentDirection.nbtValue throws a NullPointerException when placing
+                a wooden fluid pipe next to a Magneticraft Infinite Water block and then breaking
+                wooden fluid pipe and to the best of my Java ability I couldn't figure out why */
+            try {
+                nbt.setByte("lastSentDirection", lastSentDirection.nbtValue);
+            } catch (NullPointerException e) {}
+            
             for (int i = 0; i < incoming.length; ++i) {
                 nbt.setShort("in[" + i + "]", (short) incoming[i]);
             }
