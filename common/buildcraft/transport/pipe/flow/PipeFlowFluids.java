@@ -780,9 +780,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         int lastSentAmount = 0;
 
-        /* Accesing lastSentDirection.nbtValue throws a NullPointerException when placing
-            a wooden fluid pipe next to a Magneticraft Infinite Water block and then breaking
-            wooden fluid pipe and I doubt this will fix the problem but its worth a try */
         Dir lastSentDirection = Dir.NONE;
 
         int currentTime = 0;
@@ -815,12 +812,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             nbt.setShort("capacity", (short) amount);
             nbt.setShort("lastSentAmount", (short) lastSentAmount);
             nbt.setShort("ticksInDirection", (short) ticksInDirection);
-            /* Accesing lastSentDirection.nbtValue throws a NullPointerException when placing
-                a wooden fluid pipe next to a Magneticraft Infinite Water block and then breaking
-                wooden fluid pipe and to the best of my Java ability I couldn't figure out why */
-            try {
-                nbt.setByte("lastSentDirection", lastSentDirection.nbtValue);
-            } catch (NullPointerException e) {}
             
             for (int i = 0; i < incoming.length; ++i) {
                 nbt.setShort("in[" + i + "]", (short) incoming[i]);
@@ -831,7 +822,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             this.amount = nbt.getShort("capacity");
             this.lastSentAmount = nbt.getShort("lastSentAmount");
             this.ticksInDirection = nbt.getShort("ticksInDirection");
-            this.lastSentDirection = Dir.get(nbt.getByte("lastSentDirection"));
 
             incomingTotalCache = 0;
             for (int i = 0; i < incoming.length; ++i) {
