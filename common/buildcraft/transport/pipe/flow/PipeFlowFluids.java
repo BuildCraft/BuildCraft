@@ -776,13 +776,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     class Section implements IFluidHandler {
         final EnumPipePart part;
 
-        int amount;
+        int amount = 0;
 
-        int lastSentAmount;
+        int lastSentAmount = 0;
 
-        Dir lastSentDirection;
+        Dir lastSentDirection = Dir.NONE;
 
-        int currentTime;
+        int currentTime = 0;
 
         /** Map of [time] -> [amount inserted]. Used to implement the delayed fluid travelling. */
         int[] incoming = new int[1];
@@ -800,7 +800,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int clientAmountThis, clientAmountLast;
 
         /** Holds the amount of fluid was last sent to us from the sever */
-        int target;
+        int target = 0;
 
         Vec3d offsetLast, offsetThis;
 
@@ -812,8 +812,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             nbt.setShort("capacity", (short) amount);
             nbt.setShort("lastSentAmount", (short) lastSentAmount);
             nbt.setShort("ticksInDirection", (short) ticksInDirection);
-            nbt.setByte("lastSentDirection", lastSentDirection.nbtValue);
-
+            
             for (int i = 0; i < incoming.length; ++i) {
                 nbt.setShort("in[" + i + "]", (short) incoming[i]);
             }
@@ -823,7 +822,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             this.amount = nbt.getShort("capacity");
             this.lastSentAmount = nbt.getShort("lastSentAmount");
             this.ticksInDirection = nbt.getShort("ticksInDirection");
-            this.lastSentDirection = Dir.get(nbt.getByte("lastSentDirection"));
 
             incomingTotalCache = 0;
             for (int i = 0; i < incoming.length; ++i) {
