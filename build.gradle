@@ -252,4 +252,4 @@ checkstyle {
 checkstyleApi.exclude 'cofh/**'
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, deobfJar, apiJar
+build.dependsOn sourceJar, deobfJar, apiJar, coreJar, buildersJar, energyJar, factoryJar, siliconJar, roboticsJar, transportJar
