@@ -9,12 +9,22 @@ buildscript {
             url = "http://files.minecraftforge.net/maven"
         }
         maven {
+            name = "a Russian forum post told me to use this to find the missing files"
+            url = "https://repo.spongepowered.org/repository/forge-proxy/"
+        }
+        maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url = "https://jitpack.io"
+        }
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'com.github.CDAGaming:ForgeGradle:1c670759c5'
     }
 }
 
@@ -123,15 +133,15 @@ task sourceJar(type: Jar) {
 }
 
 // add api classes to javadoc
-javadoc {
-    source += sourceSets.api.allSource
-}
+// javadoc {
+//     source += sourceSets.api.allSource
+// }
 
 // add a javadoc jar
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from 'build/docs/javadoc'
-}
+// task javadocJar(type: Jar, dependsOn: javadoc) {
+//     classifier = 'javadoc'
+//     from 'build/docs/javadoc'
+// }
 
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {
@@ -249,160 +259,4 @@ checkstyle {
 checkstyleApi.exclude 'cofh/**'
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
-
-// --------------------
-// maven section
-// -------------------
-
-// create the deployerJars dependency configuration
-configurations {
-    deployerJars
-    sshAntTask
-}
-
-dependencies {
-    // dependency in deployerJars, for maven deployment. see definition in mavenDeployer{} below
-    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
-    sshAntTask 'org.apache.ant:ant-jsch:1.9.6', 'com.jcraft:jsch:0.1.53'
-}
-
-clean{
-    delete "modules"
-}
-
-// specify artifacts to be uploaded
-artifacts {
-    // the default jar is already here by default
-    archives sourceJar
-    archives javadocJar
-    archives deobfJar
-    archives apiJar
-
-    // Modules
-    archives coreJar
-    archives buildersJar
-    archives energyJar
-    archives factoryJar
-    archives siliconJar
-    archives transportJar
-    archives roboticsJar
-}
-
-def sftp(String subPath, Closure antFileset = {}) {
-    ant {
-        taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
-                classpath: configurations.sshAntTask.asPath)
-        Map sftpArgs = [
-                               verbose : 'yes',
-                               todir : priv.username + "@" + priv.host + ":" + priv.remotedir + version + "/" + subPath,
-                               port: priv.port,
-                               password: priv.password,
-                               sftp: true,
-                               trust: 'yes'
-        ]
-        delegate.scp(sftpArgs) {
-            antFileset.delegate = delegate
-            antFileset()
-        }
-    }
-}
-
-task upload(dependsOn: build) {
-    description = 'Update files on remote server.'
-    doFirst {
-        sftp("") {
-            fileset(dir: libsDir)
-        }
-        sftp("modules") {
-            fileset(dir: 'modules')
-        }
-    }
-}
-
-
-if (ext.priv == null)
-    upload.enabled = false;
-
-uploadArchives {
-    // make sure this happens after reobfuscation
-    dependsOn 'reobf'
-
-    repositories {
-        if (project.hasProperty("filesmaven")) { // if this is the Forge server, and this stuff is defined...
-            logger.info('Publishing to files server')
-
-            mavenDeployer {
-                // specify the jars that maven needs to deploy here
-                configuration = configurations.deployerJars
-
-                // authentication, again, specially set in the forge server environment
-                repository(url: project.filesmaven.url) {
-                    authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
-                }
-
-                // here you specify all your metadata
-                // this is the definition of the maven pom.xml. This is simply a DSL to define the XML. Not actual fields or things to set.
-                pom {
-                    groupId = project.group
-                    version = project.version
-                    artifactId = project.archivesBaseName
-                    project {
-                        name project.archivesBaseName
-                        packaging 'jar'
-                        description 'A Minecraft mod adding all sorts of machinery'
-                        url 'http://www.mod-buildcraft.com/'
-
-                        scm {
-                            url 'https://github.com/BuildCraft/BuildCraft'
-                            connection 'scm:git:git://github.com/BuildCraft/BuildCraft.git'
-                            developerConnection 'scm:git:git@github.com:BuildCraft/BuildCraft.git'
-                        }
-
-                        issueManagement {
-                            system 'github'
-                            url 'https://github.com/BuildCraft/BuildCraft/issues'
-                        }
-
-                        licenses {
-                            license {
-                                name 'Minecraft Mod Public License'
-                                url 'http://www.mod-buildcraft.com/MMPL-1.0.txt'
-                                distribution 'repo'
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id 'SpaceToad'
-                                name 'SpaceToad'
-                                roles { role 'developer' }
-                            }
-                            developer {
-                                id 'CovertJaguar'
-                                name 'CovertJaguar'
-                                roles { role 'developer' }
-                            }
-                            developer {
-                                id 'SirSngir'
-                                name 'SirSengir'
-                                roles { role 'developer' }
-                            }   
-                            developer {
-                                id 'Krapht'
-                                name 'Krapht'
-                                roles { role 'developer' }
-                            }   
-
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            // otherwise publishing to the local repo in ~/.m2 is fine...
-            add project.repositories.mavenLocal()
-        }
-    }
-}
+build.dependsOn sourceJar, deobfJar, apiJar
