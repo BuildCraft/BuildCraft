@@ -1,7 +1,10 @@
 package buildcraft.core.crops;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockDoublePlant;
@@ -25,6 +28,12 @@ import buildcraft.core.lib.utils.BlockUtils;
 
 public class CropHandlerPlantable implements ICropHandler {
 
+	private static final Set<Block> FORBIDDEN_BLOCKS = new HashSet<Block>();
+
+	public static void forbidBlock(Block b) {
+		FORBIDDEN_BLOCKS.add(b);
+	}
+
 	@Override
 	public boolean isSeed(ItemStack stack) {
 		if (stack.getItem() instanceof IPlantable) {
@@ -33,7 +42,7 @@ public class CropHandlerPlantable implements ICropHandler {
 
 		if (stack.getItem() instanceof ItemBlock) {
 			Block block = ((ItemBlock) stack.getItem()).field_150939_a;
-			if (block instanceof IPlantable && block != Blocks.reeds) {
+			if (block instanceof IPlantable && !FORBIDDEN_BLOCKS.contains(block)) {
 				return true;
 			}
 		}
@@ -63,7 +72,7 @@ public class CropHandlerPlantable implements ICropHandler {
 
 	@Override
 	public boolean isMature(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		if (block == null) {
+		if (block == null || FORBIDDEN_BLOCKS.contains(block)) {
 			return false;
 		} else if (block instanceof BlockTallGrass
 				|| block instanceof BlockMelon

@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import buildcraft.core.crops.CropHandlerPlantable;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -48,11 +50,23 @@ public final class InterModComms {
 				processAssemblyRecipeRemoveIMC(event, m);
 			} else if (m.key.equals("remove-refinery-recipe")) {
 				processRefineryRecipeRemoveIMC(event, m);
+			} else if (m.key.equals("remove-plantable-block")) {
+				processPlantableBlockRemoveIMC(event, m);
 			} else {
 				for (IMCHandler h : handlers) {
 					h.processIMCEvent(event, m);
 				}
 			}
+		}
+	}
+
+	public static void processPlantableBlockRemoveIMC(IMCEvent event, IMCMessage msg) {
+		if (msg.isStringMessage()) {
+			Object blockObj = Block.blockRegistry.getObject(msg.getStringValue());
+			if (blockObj instanceof Block) {
+				CropHandlerPlantable.forbidBlock((Block) blockObj);
+			}
+			BCLog.logger.info(String.format("Received a plantable block '%s' removal request from mod %s", msg.getStringValue(), msg.getSender()));
 		}
 	}
 

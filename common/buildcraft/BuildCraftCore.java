@@ -517,6 +517,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		CropManager.setDefaultHandler(new CropHandlerPlantable());
 		CropManager.registerHandler(new CropHandlerReeds());
 
+		CropHandlerPlantable.forbidBlock(Blocks.reeds);
+
 		BuildCraftAPI.registerWorldProperty("replaceable", new WorldPropertyIsReplaceable());
 		BuildCraftAPI.registerWorldProperty("soft", new WorldPropertyIsSoft());
 		BuildCraftAPI.registerWorldProperty("wood", new WorldPropertyIsWood());
