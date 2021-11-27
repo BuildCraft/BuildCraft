@@ -152,16 +152,18 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	public boolean areChunksLoaded() {
-		if (BuildCraftBuilders.quarryLoadsChunks) {
-			// Small optimization
-			return true;
+		if (!BuildCraftBuilders.quarryLoadsChunks) {
+			// Each chunk covers the full height, so we only check one of them per height.
+			for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX++) {
+				for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ++) {
+					if (!worldObj.blockExists(chunkX << 4, box.yMax, chunkZ << 4)) {
+						return false;
+					}
+				}
+			}
 		}
 
-		// Each chunk covers the full height, so we only check one of them per height.
-		return worldObj.blockExists(box.xMin, box.yMax, box.zMin)
-				&& worldObj.blockExists(box.xMax, box.yMax, box.zMin)
-				&& worldObj.blockExists(box.xMin, box.yMax, box.zMax)
-				&& worldObj.blockExists(box.xMax, box.yMax, box.zMax);
+		return true;
 	}
 
 	@Override
