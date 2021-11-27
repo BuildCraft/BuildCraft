@@ -1,0 +1,9 @@
+Additions:
+
+* IMC call to forbid blocks from being harvestable and plantable in the default crop handler.
+* Updated CoFH energy API.
+
+Bugs fixed:
+
+* [#4618] Allow oredicted ItemStacks with stack sizes greater than 1 in recipe API (glowredman)
+* Fix quarry ghost chunkloading when only the edges of a quarry are loaded.
