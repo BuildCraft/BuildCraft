@@ -10,12 +10,12 @@
 -->
 <module name="Checker"> 
   <property name="severity" value="warning"/>
+  <module name="SuppressionCommentFilter">
+    <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+    <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+    <property name="checkFormat" value="$1"/>
+  </module>
   <module name="TreeWalker">
-    <module name="SuppressionCommentFilter">
-      <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
-      <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
-      <property name="checkFormat" value="$1"/>
-    </module>
     <module name="MissingOverride"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>

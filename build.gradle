@@ -1,20 +1,13 @@
-// DON'T TOUCH THE BUILDSCRIPT[] BLOCK
-// its special, and it is only there to make ForgeGradle work correctly.
-
 buildscript {
     repositories {
         mavenCentral()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
-            name = "a Russian forum post told me to use this to find the missing files"
-            url = "https://repo.spongepowered.org/repository/forge-proxy/"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            name = "gt"
+            url = "https://gregtech.overminddl1.com/"
         }
         maven {
             url = "https://jitpack.io"
@@ -24,7 +17,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.CDAGaming:ForgeGradle:1c670759c5'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
