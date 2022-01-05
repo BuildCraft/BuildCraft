@@ -558,3 +558,11 @@ uploadArchives {
     }
 }
 
+
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.fork = true
+        options.incremental = true
+    }
+
+}
