@@ -53,7 +53,7 @@ repositories {
 sourceSets {
 	main {
 		java.srcDirs = ["build/filteredSrc"]
-		resources.srcDirs = ["buildcraft_resources"]
+		resources.srcDirs = ["buildcraft_resources", "buildcraft_localization"]
 	}
 }
 
@@ -82,6 +82,8 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 	inputs.property 'buildNumber', buildNumber
+
+	exclude 'README.md'
 
 	filesMatching("mcmod.info") {
 		expand "version": project.version+"."+buildNumber
