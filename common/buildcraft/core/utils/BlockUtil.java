@@ -84,6 +84,6 @@ public class BlockUtil {
 
 		int blockId = world.getBlockId(x, y, z);
 
-		return BuildCraftAPI.softBlocks[blockId] || Block.blocksList[blockId] == null;
+		return BuildCraftAPI.softBlocks[blockId] || Block.blocksList[blockId] == null || Block.blocksList[blockId].getBlockHardness(world, x, y, z) == 0;
 	}
 }
