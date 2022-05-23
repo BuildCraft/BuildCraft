@@ -41,7 +41,7 @@ if (!file(mcpForged).exists()) {
 
 archivesBaseName = "buildcraft-A-1.4.7"
 def buildNumber = '18'
-version = "3.4.4"
+version = "3.4.5"
 group = "com.mod-buildcraft"
 
 repositories {

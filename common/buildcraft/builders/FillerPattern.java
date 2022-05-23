@@ -58,8 +58,6 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {
-					if (!BlockUtil.canChangeBlock(world, x, y, z))
-						return false;
 					if (BlockUtil.isSoftBlock(world, x, y, z)) {
 						xSlot = x;
 						ySlot = y;
@@ -72,6 +70,7 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 
 		if (found && stackToPlace != null) {
+			world.setBlockWithNotify(xSlot, ySlot, zSlot, 0);
 			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(world), world, xSlot, ySlot - 1, zSlot, 1, 0.0f, 0.0f, 0.0f);
 		}
 
