@@ -18,8 +18,8 @@ public class Version implements Runnable {
 		CURRENT, OUTDATED, CONNECTION_ERROR
 	}
 
-	public static final String VERSION = "@VERSION@";
-	public static final String BUILD_NUMBER = "@BUILD_NUMBER@";
+	public static final String VERSION = "${VERSION}";
+	public static final String BUILD_NUMBER = "${BUILD_NUMBER}";
 	private static final String REMOTE_VERSION_FILE = "http://mod-buildcraft.com/version/versions.txt";
 
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
