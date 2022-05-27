@@ -58,6 +58,9 @@ public abstract class FillerPattern implements IFillerPattern {
 		for (int y = yMin; y <= yMax && !found; ++y) {
 			for (int x = xMin; x <= xMax && !found; ++x) {
 				for (int z = zMin; z <= zMax && !found; ++z) {
+					if (!BlockUtil.canChangeBlock(world, x, y, z)) {
+						continue;
+					}
 					if (BlockUtil.isSoftBlock(world, x, y, z)) {
 						xSlot = x;
 						ySlot = y;

@@ -64,7 +64,7 @@ task remapSrc(type: Copy) {
 	from "common"
 
 	filesMatching('buildcraft/core/Version.java') {
-		expand 'VERSION': project.version+"."+buildNumber, 'BUILD_NUMBER': buildNumber
+		expand 'VERSION': project.version, 'BUILD_NUMBER': buildNumber
 	}
 
 	into "build/filteredSrc"
