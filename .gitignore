@@ -1,3 +1,11 @@
 /bin
 /build
+/.gradle
+/.classpath
+/.project
+/.settings
+/.metadata
 /download
+/mcp726a.zip
+/mcp726a-forged.zip
+/forge1.4.7-6.6.2.534.zip

@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
  * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -44,6 +44,7 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.SurroundingInventory;
 import buildcraft.core.utils.Utils;
 
 public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IPowerReceptor, IMachine {
@@ -286,8 +287,7 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 
 		iterateBpt();
 
-		/* Temp fix to make Builders impotent as the World Destroyers they are
-		if (bluePrintBuilder != null && !bluePrintBuilder.done) {
+		if (BuildCraftBuilders.builderEnable && bluePrintBuilder != null && !bluePrintBuilder.done) {
 			if (!box.isInitialized()) {
 				box.initialize(bluePrintBuilder);
 			}
@@ -302,7 +302,6 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 			builderRobot.scheduleContruction(bluePrintBuilder.getNextBlock(worldObj, new SurroundingInventory(worldObj, xCoord, yCoord, zCoord)),
 					bluePrintBuilder.getContext());
 		}
-		*/
 	}
 
 	public void iterateBpt() {
@@ -346,10 +345,10 @@ public class TileBuilder extends TileBuildCraft implements IBuilderInventory, IP
 				if (bluePrintBuilder != null) {
 					box.deleteLasers();
 					box.reset();
-					/*
-					box.initialize(bluePrintBuilder);
-					box.createLasers(worldObj, LaserKind.Stripes);
-					*/
+					if (BuildCraftBuilders.builderEnable) {
+						box.initialize(bluePrintBuilder);
+						box.createLasers(worldObj, LaserKind.Stripes);
+					}
 				}
 
 				if (builderRobot != null) {

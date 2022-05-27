@@ -1,8 +1,8 @@
-/** 
+/**
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
  * 
- * BuildCraft is distributed under the terms of the Minecraft Mod Public 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -197,12 +197,14 @@ public class BptBlock {
 			sig.blockClassName = block.getClass().getSimpleName();
 
 			if (block instanceof BlockContainer) {
-				// TODO: Try to see if we can get a world instance to call with instead of null
-				TileEntity tile = ((BlockContainer) block).createNewTileEntity(null);
-
-				if (tile != null) {
-					sig.tileClassName = tile.getClass().getSimpleName();
-				}
+				try {
+					// TODO: Try to see if we can get a world instance to call with instead of null
+					TileEntity tile = ((BlockContainer) block).createNewTileEntity(null, 0);
+	
+					if (tile != null) {
+						sig.tileClassName = tile.getClass().getSimpleName();
+					}
+				} catch (Throwable t) {}
 			}
 		}
 

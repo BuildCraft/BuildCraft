@@ -114,6 +114,7 @@ public class DefaultProps {
 	public static boolean PIPES_ALWAYS_CONNECT = false;
 	public static double PIPES_DURABILITY = 0.25D;
 	public static boolean FILLER_DESTROY = false;
+	public static boolean BUILDER_ENABLE = false;
 	public static boolean USE_PIPELOSS = true;
 
 	public static int TRIGGER_REDSTONE_ACTIVE = 1;

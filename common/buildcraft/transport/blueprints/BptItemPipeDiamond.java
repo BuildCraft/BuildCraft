@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.blueprints.BptBlockUtils;
 import buildcraft.api.blueprints.BptSlotInfo;
@@ -53,14 +54,18 @@ public class BptItemPipeDiamond extends BptItem {
 
 	@Override
 	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
+		TileEntity te = context.world().getBlockTileEntity(x, y, z);
+		if (!(te instanceof IInventory)) return;
+		IInventory inventory = (IInventory) te;
 
 		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
 	}
 
 	@Override
 	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+		TileEntity te = context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+		if (!(te instanceof IInventory)) return;
+		IInventory inventory = (IInventory) te;
 
 		BptBlockUtils.buildInventoryContents(slot, context, inventory);
 	}

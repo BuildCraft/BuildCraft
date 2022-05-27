@@ -100,6 +100,7 @@ public class BuildCraftBuilders {
 	public static ItemBptTemplate templateItem;
 	public static ItemBptBluePrint blueprintItem;
 	public static boolean fillerDestroy;
+	public static boolean builderEnable;
 
 	private static BptRootIndex rootBptIndex;
 
@@ -158,8 +159,7 @@ public class BuildCraftBuilders {
 
 		new BptBlockCustomStack(Block.stone.blockID, new ItemStack(Block.stone));
 		new BptBlockCustomStack(Block.redstoneWire.blockID, new ItemStack(Item.redstone));
-		// FIXME: Not sure what this has become
-		// new BptBlockCustomStack(Block.stairDouble.blockID, new ItemStack(Block.stairSingle, 2));
+		new BptBlockCustomStack(Block.stoneDoubleSlab.blockID, new ItemStack(Block.stoneSingleSlab, 2));
 		new BptBlockCustomStack(Block.cake.blockID, new ItemStack(Item.cake));
 		new BptBlockCustomStack(Block.crops.blockID, new ItemStack(Item.seeds));
 		new BptBlockCustomStack(Block.pumpkinStem.blockID, new ItemStack(Item.pumpkinSeeds));
@@ -229,6 +229,10 @@ public class BuildCraftBuilders {
 		Property fillerDestroyProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "filler.destroy", DefaultProps.FILLER_DESTROY);
 		fillerDestroyProp.comment = "If true, Filler will destroy blocks instead of breaking them.";
 		fillerDestroy = fillerDestroyProp.getBoolean(DefaultProps.FILLER_DESTROY);
+
+		Property builderEnableProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "builder.enable", DefaultProps.BUILDER_ENABLE);
+		builderEnableProp.comment = "If true, the Builder will be re-enabled. 3.4.5 has some fixes for the Builder, but it is still unstable, buggy, and a source of duplication exploits. Enable with care and trusted players.";
+		builderEnable = builderEnableProp.getBoolean(DefaultProps.BUILDER_ENABLE);
 
 		templateItem = new ItemBptTemplate(Integer.parseInt(templateItemId.value));
 		templateItem.setItemName("templateItem");
