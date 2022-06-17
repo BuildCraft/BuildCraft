@@ -8,6 +8,7 @@
  */
 package buildcraft.silicon.render;
 
+import buildcraft.core.render.BCSimpleBlockRenderingHandler;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -21,7 +22,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.silicon.SiliconProxy;
 
-public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
+public class RenderLaserBlock extends BCSimpleBlockRenderingHandler {
 	@Override
 	public int getRenderId() {
 		return SiliconProxy.laserBlockModel;

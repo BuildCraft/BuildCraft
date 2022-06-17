@@ -1,5 +1,6 @@
 package buildcraft.silicon.render;
 
+import buildcraft.core.render.BCSimpleBlockRenderingHandler;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -16,13 +17,7 @@ import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.render.SubIcon;
 import buildcraft.silicon.SiliconProxy;
 
-public class RenderLaserTable implements ISimpleBlockRenderingHandler {
-	private void workaround17(int x, int y, int z) {
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-	}
+public class RenderLaserTable extends BCSimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
@@ -74,6 +69,9 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			case 5:
 				renderStampingTable(renderer, false, x, y, z, bcBlock);
 				break;
+			default:
+				fixEmptyAlphaPass(x, y, z);
+				break;
 		}
 		return true;
 	}
@@ -107,7 +105,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 	private void renderAssemblyTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
 		if (!isInv && block.getCurrentRenderPass() != 0) {
-			workaround17(x, y, z);
+			fixEmptyAlphaPass(x, y, z);
 			return;
 		}
 		IIcon base = block.getIcon(0, 0);
@@ -118,7 +116,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 	private void renderChargingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
 		if (!isInv && block.getCurrentRenderPass() != 0) {
-			workaround17(x, y, z);
+			fixEmptyAlphaPass(x, y, z);
 			return;
 		}
 		IIcon base = block.getIcon(0, 3);
@@ -163,7 +161,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 	private void renderIntegrationTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
 		IIcon base = block.getIcon(0, 2);
 		if (!isInv && block.getCurrentRenderPass() != 0) {
-			workaround17(x, y, z);
+			fixEmptyAlphaPass(x, y, z);
 			return;
 		}
 		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 16, 1, 16, 16, 21, base, 0x3f); // black bottom
@@ -186,7 +184,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 	private void renderAdvancedCraftingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
 		if (!isInv && block.getCurrentRenderPass() != 0) {
-			workaround17(x, y, z);
+			fixEmptyAlphaPass(x, y, z);
 			return;
 		}
 		IIcon base = block.getIcon(0, 1);
@@ -203,7 +201,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 	private void renderStampingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
 		if (!isInv && block.getCurrentRenderPass() != 0) {
-			workaround17(x, y, z);
+			fixEmptyAlphaPass(x, y, z);
 			return;
 		}
 		IIcon base = block.getIcon(0, 5);

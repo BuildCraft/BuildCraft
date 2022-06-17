@@ -1,5 +1,6 @@
 package buildcraft.builders.render;
 
+import buildcraft.core.render.BCSimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -14,7 +15,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.render.RenderUtils;
 
-public class RenderFrame implements ISimpleBlockRenderingHandler {
+public class RenderFrame extends BCSimpleBlockRenderingHandler {
 	private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
 

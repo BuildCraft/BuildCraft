@@ -9,6 +9,7 @@
 package buildcraft.transport.render;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.render.BCSimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.client.Minecraft;
@@ -33,7 +34,7 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 
-public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
+public class PipeRendererWorld extends BCSimpleBlockRenderingHandler {
 
 	public static int renderPass = -1;
 	public static float zFightOffset = 1F / 4096F;
@@ -238,14 +239,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			rendered = renderPipe(renderer, world, pipeTile, x, y, z);
 		}
 
-		if (!rendered && BuildCraftCore.alphaPassBugPresent) {
-			// Here to prevent Minecraft from crashing when nothing renders on a render pass
-			// (rarely in pass 0, often in pass 1)
-			// This is a 1.7 bug.
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+		if (!rendered) {
+			fixEmptyAlphaPass(x, y, z);
 		}
 
 		return true;

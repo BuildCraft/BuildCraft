@@ -19,7 +19,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.render.IInventoryRenderer;
 
-public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
+public class RenderingEntityBlocks extends BCSimpleBlockRenderingHandler {
 
 	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 

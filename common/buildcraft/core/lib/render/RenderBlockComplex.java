@@ -1,5 +1,6 @@
 package buildcraft.core.lib.render;
 
+import buildcraft.core.render.BCSimpleBlockRenderingHandler;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -12,7 +13,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
+public class RenderBlockComplex extends BCSimpleBlockRenderingHandler {
 	private static final int[] Y_ROTATE = {3, 0, 1, 2};
 
 	@Override

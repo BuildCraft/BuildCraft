@@ -18,7 +18,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.BuildCraftCore;
 
-public class RenderingMarkers implements ISimpleBlockRenderingHandler {
+public class RenderingMarkers extends BCSimpleBlockRenderingHandler {
 
 	/* PATH MARKER RENDERING */
 	public static final double[][][] frontX = new double[6][3][4];
