@@ -8,6 +8,7 @@
  */
 package buildcraft.transport.render;
 
+import buildcraft.BuildCraftCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.client.Minecraft;
@@ -36,16 +37,22 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	public static int renderPass = -1;
 	public static float zFightOffset = 1F / 4096F;
+	private static final double[] CHEST_BB = new double[]{
+			0, 0.0625F, 0.0625F,
+			0.875F, 0.9375F, 0.9375F
+	};
 
-	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
+	public boolean renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
 		FakeBlock fakeBlock = FakeBlock.INSTANCE;
 		int glassColor = tile.getPipeColor();
 
 		if (icons == null) {
-			return;
+			return false;
 		}
+
+		boolean rendered = false; // Set to true if you're *certain* the pass rendered something.
 
 		if (renderPass == 0 || glassColor >= 0) {
 			// Pass 0 handles the pipe texture, pass 1 handles the transparent stained glass
@@ -76,6 +83,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				fixForRenderPass(dim);
 
 				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, connectivity ^ 0x3f);
+				rendered = true;
 			}
 
 			// render the connecting pipe faces
@@ -106,8 +114,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				}
 
 				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, renderMask);
+				rendered = true;
 
-				// Render connecting block
+				// Render connection to block
 				if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
 					ForgeDirection side = ForgeDirection.getOrientation(dir);
 					int px = x + side.offsetX;
@@ -119,10 +128,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 						double[] blockBB;
 						if (block instanceof BlockChest) {
 							// work around what seems to be a vanilla bug?
-							blockBB = new double[]{
-									0, 0.0625F, 0.0625F,
-									0.875F, 0.9375F, 0.9375F
-							};
+							blockBB = CHEST_BB;
 						} else {
 							block.setBlockBoundsBasedOnState(iblockaccess, px, py, pz);
 
@@ -171,6 +177,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				}
 			}
 		}
+
+		return rendered;
 	}
 
 	private void fixForRenderPass(float[] dim) {
@@ -222,19 +230,22 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+		boolean rendered = false;
 		TileEntity tile = world.getTileEntity(x, y, z);
-
-		// Here to prevent Minecraft from crashing when nothing renders on a render pass
-		// (rarely in pass 0, often in pass 1)
-		// This is a 1.7 bug.
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
-			renderPipe(renderer, world, pipeTile, x, y, z);
+			rendered = renderPipe(renderer, world, pipeTile, x, y, z);
+		}
+
+		if (!rendered && BuildCraftCore.alphaPassBugPresent) {
+			// Here to prevent Minecraft from crashing when nothing renders on a render pass
+			// (rarely in pass 0, often in pass 1)
+			// This is a 1.7 bug.
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
 		}
 
 		return true;

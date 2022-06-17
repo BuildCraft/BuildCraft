@@ -195,6 +195,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean hideFluidNumbers = false;
 	public static boolean canEnginesExplode = false;
 	public static boolean useServerDataOnClient = true;
+	public static boolean alphaPassBugPresent = true;
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
 	public static int builderMaxPerItemFactor = 1024;
@@ -492,6 +493,10 @@ public class BuildCraftCore extends BuildCraftMod {
 		ListRegistry.registerHandler(new ListMatchHandlerTools());
 		ListRegistry.registerHandler(new ListMatchHandlerArmor());
 		ListRegistry.itemClassAsType.add(ItemFood.class);
+
+		if (Loader.isModLoaded("foamfix")) {
+			alphaPassBugPresent = false;
+		}
 	}
 
 	@Mod.EventHandler
