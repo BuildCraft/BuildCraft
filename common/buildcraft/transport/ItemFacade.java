@@ -154,7 +154,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	private static int RANDOM_FACADE_ID = -1;
 
 	public ItemFacade() {
-		super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
+		super(BCCreativeTab.isPresent("facades") ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
 
 		setHasSubtypes(true);
 		setMaxDamage(0);

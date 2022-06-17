@@ -84,10 +84,12 @@ public final class Utils {
 	    if (stack == null) {
 	        return false;
 	    }
-	    Block block = Block.getBlockFromItem(stack.getItem());
-	    if (block instanceof BlockEngineBase) {
-	        return isRegistered(block) && ((BlockEngineBase) block).hasEngine(stack.getItemDamage());
-	    }
+		if (stack.getItem() != null) {
+			Block block = Block.getBlockFromItem(stack.getItem());
+			if (block instanceof BlockEngineBase) {
+				return isRegistered(block) && ((BlockEngineBase) block).hasEngine(stack.getItemDamage());
+			}
+		}
 	    return isRegistered(stack.getItem());
 	}
 

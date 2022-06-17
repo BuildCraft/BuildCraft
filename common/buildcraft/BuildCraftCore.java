@@ -278,8 +278,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2017");
 		BCLog.logger.info("http://www.mod-buildcraft.com");
 
-		new BCCreativeTab("main");
-
 		commandBuildcraft.addAlias("bc");
 		commandBuildcraft.addChildCommand(new SubCommandVersion());
 		commandBuildcraft.addChildCommand(new SubCommandChangelog());
@@ -445,7 +443,9 @@ public class BuildCraftCore extends BuildCraftMod {
 			loadRecipes();
 		}
 
-		BCCreativeTab.get("main").setIcon(new ItemStack(BuildCraftCore.wrenchItem, 1));
+		if (BCCreativeTab.isPresent("main")) {
+			BCCreativeTab.get("main").setIcon(new ItemStack(BuildCraftCore.wrenchItem, 1));
+		}
 
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");

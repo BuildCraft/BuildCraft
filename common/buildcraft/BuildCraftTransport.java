@@ -292,11 +292,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		new BCCreativeTab("pipes");
-		if (Loader.isModLoaded("BuildCraft|Silicon")) {
-			new BCCreativeTab("gates");
-		}
-
 		try {
 			BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false, "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
 
@@ -387,6 +382,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			pipeGate = new ItemGate();
 			pipeGate.setUnlocalizedName("pipeGate");
+			if (Loader.isModLoaded("BuildCraft|Silicon") && BCRegistry.INSTANCE.isItemEnabled(pipeGate)) {
+				new BCCreativeTab("gates");
+			}
 			BCRegistry.INSTANCE.registerItem(pipeGate, false);
 
 			facadeItem = new ItemFacade();
@@ -492,11 +490,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		PipeEventBus.registerGlobalHandler(new LensFilterHandler());
 
-		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
-		if (showAllFacadesCreative) {
+		if (BCCreativeTab.isPresent("pipes")) {
+			BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
+		}
+		if (BCCreativeTab.isPresent("facades")) {
 			BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
 		}
-		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+		if (BCCreativeTab.isPresent("gates")) {
 			BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
 		}
 

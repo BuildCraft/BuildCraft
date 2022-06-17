@@ -32,18 +32,36 @@ public final class BCRegistry {
 		return registerBlock(block, ItemBlockBuildCraft.class, forced);
 	}
 
+	public boolean isBlockEnabled(String name) {
+		return regCfg.get("blocks", name, true).getBoolean();
+	}
+
+	public boolean isBlockEnabled(Block block) {
+		String name = block.getUnlocalizedName().replace("tile.", "");
+		return isBlockEnabled(name);
+	}
+
 	public boolean registerBlock(Block block, Class<? extends ItemBlock> item, boolean forced) {
 		String name = block.getUnlocalizedName().replace("tile.", "");
-		if (forced || regCfg.get("blocks", name, true).getBoolean()) {
+		if (forced || isBlockEnabled(name)) {
 			GameRegistry.registerBlock(block, item, name);
 			return true;
 		}
 		return false;
 	}
 
+	public boolean isItemEnabled(String name) {
+		return regCfg.get("items", name, true).getBoolean();
+	}
+
+	public boolean isItemEnabled(Item item) {
+		String name = item.getUnlocalizedName().replace("item.", "");
+		return isItemEnabled(name);
+	}
+
 	public boolean registerItem(Item item, boolean forced) {
 		String name = item.getUnlocalizedName().replace("item.", "");
-		if (forced || regCfg.get("items", name, true).getBoolean()) {
+		if (forced || isItemEnabled(name)) {
 			GameRegistry.registerItem(item, name);
 			return true;
 		}

@@ -191,8 +191,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		new BCCreativeTab("boards");
-
 		BuildCraftCore.mainConfigManager.register("general", "boards.blacklist", new String[]{}, "Blacklisted robots boards", ConfigManager.RestartRequirement.GAME);
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
@@ -265,7 +263,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 			loadRecipes();
 		}
 
-		BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
+		if (BCCreativeTab.isPresent("boards")) {
+			BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
+		}
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(requesterBlock, SchematicTile.class);
 

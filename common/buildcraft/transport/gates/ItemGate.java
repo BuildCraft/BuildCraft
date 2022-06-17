@@ -56,7 +56,7 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 		setHasSubtypes(false);
 		setMaxDamage(0);
 		setPassSneakClick(true);
-		setCreativeTab(BCCreativeTab.get("gates"));
+		setCreativeTab(BCCreativeTab.getIfPresent("gates"));
 	}
 
 	private static NBTTagCompound getNBT(ItemStack stack) {
