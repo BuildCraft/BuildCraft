@@ -1,5 +1,6 @@
 package buildcraft.silicon.render;
 
+import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,7 @@ public class PackageFontRenderer extends FontRenderer {
 
 	@Override
 	public int drawString(String s, int x, int y, int color, boolean shadow) {
+		s = EnumChatFormatting.getTextWithoutFormattingCodes(s);
 		if (!s.contains("SPECIAL:")) {
 			return realRenderer.drawString(s, x, y, color, shadow);
 		}
