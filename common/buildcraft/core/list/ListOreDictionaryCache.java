@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.oredict.OreDictionary;
 
 public final class ListOreDictionaryCache {
@@ -42,6 +43,7 @@ public final class ListOreDictionaryCache {
 	public static String getType(String name) {
 		// Rules for finding type:
 		// - Split just before the last uppercase character found.
+		name = EnumChatFormatting.getTextWithoutFormattingCodes(name);
 		int splitLocation = name.length() - 1;
 		while (splitLocation >= 0) {
 			if (Character.isUpperCase(name.codePointAt(splitLocation))) {

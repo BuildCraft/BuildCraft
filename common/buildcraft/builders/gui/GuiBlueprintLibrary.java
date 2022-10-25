@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.gui;
 
+import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
@@ -62,7 +63,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				break;
 			}
 			LibraryId bpt = library.entries.get(i);
-			String name = bpt.name;
+			String name = EnumChatFormatting.getTextWithoutFormattingCodes(bpt.name);
 
 			if (name.length() > DefaultProps.MAX_NAME_SIZE) {
 				name = name.substring(0, DefaultProps.MAX_NAME_SIZE);
