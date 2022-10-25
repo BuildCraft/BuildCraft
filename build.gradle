@@ -6,18 +6,21 @@ buildscript {
             url = "https://maven.minecraftforge.net/"
         }
         maven {
-            name = "gt"
-            url = "https://gregtech.overminddl1.com/"
+            // GTNH ForgeGradle Fork
+            name = "GTNH Maven"
+            url = "http://jenkins.usrv.eu:8081/nexus/content/groups/public/"
         }
         maven {
-            url = "https://jitpack.io"
+            name 'sonatype'
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
         }
         maven {
-            url = "https://plugins.gradle.org/m2/"
+            name 'Scala CI dependencies'
+            url 'https://repo1.maven.org/maven2/'
         }
     }
     dependencies {
-        classpath 'com.github.GTNewHorizons:ForgeGradle:1.2.7'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2.9'
     }
 }
 
