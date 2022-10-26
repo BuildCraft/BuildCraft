@@ -1,5 +1,6 @@
 package buildcraft.silicon.render;
 
+import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -11,11 +12,15 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.utils.NBTUtils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class PackageFontRenderer extends FontRenderer {
 	private static final RenderItem itemRender = new RenderItem();
 	private static final Minecraft mc = Minecraft.getMinecraft();
 	private static final FontRenderer realRenderer = mc.fontRenderer;
 	private final NBTTagCompound pkgTag;
+	private final Pattern stringPattern = Pattern.compile("^\\{\\{BC_PACKAGE_SPECIAL:([0-2])}}$");
 
 	public PackageFontRenderer(ItemStack packageStack) {
 		super(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.getTextureManager(), mc.fontRenderer.getUnicodeFlag());
@@ -24,7 +29,8 @@ public class PackageFontRenderer extends FontRenderer {
 
 	@Override
 	public int getStringWidth(String s) {
-		if (!s.contains("SPECIAL:")) {
+		Matcher m = stringPattern.matcher(EnumChatFormatting.getTextWithoutFormattingCodes(s));
+		if (!m.find()) {
 			return realRenderer.getStringWidth(s);
 		}
 
@@ -33,11 +39,12 @@ public class PackageFontRenderer extends FontRenderer {
 
 	@Override
 	public int drawString(String s, int x, int y, int color, boolean shadow) {
-		if (!s.contains("SPECIAL:")) {
+		Matcher m = stringPattern.matcher(EnumChatFormatting.getTextWithoutFormattingCodes(s));
+		if (!m.find()) {
 			return realRenderer.drawString(s, x, y, color, shadow);
 		}
 
-		int begin = Integer.parseInt(s.substring(s.length() - 1)) * 3;
+		int begin = Integer.parseInt(m.group(1)) * 3;
 		int rx = x;
 
 		for (int slotPos = begin; slotPos < begin + 3; slotPos++) {

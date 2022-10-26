@@ -91,9 +91,9 @@ public class ItemPackage extends ItemBuildCraft {
 	public void addInformation(ItemStack stack, EntityPlayer player, List strings, boolean adv) {
 		NBTTagCompound tag = NBTUtils.getItemData(stack);
 		if (!tag.hasNoTags()) {
-			strings.add("SPECIAL:0");
-			strings.add("SPECIAL:1");
-			strings.add("SPECIAL:2");
+			strings.add("{{BC_PACKAGE_SPECIAL:0}}");
+			strings.add("{{BC_PACKAGE_SPECIAL:1}}");
+			strings.add("{{BC_PACKAGE_SPECIAL:2}}");
 		}
 	}
 }
