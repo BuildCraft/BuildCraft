@@ -1,0 +1,8 @@
+Additions:
+
+* Minor optimizations to pipe rendering.
+
+Bugs fixed:
+
+* [#4640] Creative Tab crash with some combinations of disabled items/blocks.
+* [#4688] Fix crash with GT:NH's NEI Unofficial 2.19+.
