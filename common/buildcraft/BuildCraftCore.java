@@ -154,7 +154,6 @@ public class BuildCraftCore {
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		Version.loadLocalVersionData();
-		Version.check();
 
 		bcLog.setParent(FMLLog.getLogger());
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
@@ -169,6 +168,13 @@ public class BuildCraftCore {
 			blueLaserTexture = 0 * 16 + 1;
 			stripesLaserTexture = 0 * 16 + 3;
 			transparentTexture = 0 * 16 + 0;
+
+			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check",
+					true);
+			updateCheck.comment = "should the BuildCraft version be checked on startup?";
+			if (updateCheck.getBoolean(false)) {
+				Version.check();
+			}
 
 			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
 					DefaultProps.CURRENT_CONTINUOUS);

@@ -22,7 +22,8 @@ public class Version implements Runnable {
 	public static final String VERSION_CONSTANT = "${VERSION}";
 	public static String VERSION = VERSION_CONSTANT;
 	public static String BUILD_NUMBER = "${BUILD_NUMBER}";
-	private static final String REMOTE_VERSION_FILE = "http://mod-buildcraft.com/version/versions.txt";
+	private static final String REMOTE_VERSION_FILE =
+			"https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/versions.txt";
 
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
 
@@ -73,6 +74,9 @@ public class Version implements Runnable {
 
 	public static void versionCheck() {
 		try {
+			if (VERSION_CONSTANT.equals(VERSION)) {
+				return;
+			}
 
 			String location = REMOTE_VERSION_FILE;
 			HttpURLConnection conn = null;
@@ -97,9 +101,11 @@ public class Version implements Runnable {
 
 			String line = null;
 			String mcVersion = CoreProxy.proxy.getMinecraftVersion();
+			boolean found = false;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith(mcVersion)) {
 					if (line.contains(DefaultProps.MOD)) {
+						found = true;
 
 						String[] tokens = line.split(":");
 						recommendedVersion = tokens[2];
@@ -107,6 +113,10 @@ public class Version implements Runnable {
 						if (line.endsWith(VERSION)) {
 						    BuildCraftCore.bcLog.finer("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
 							currentVersion = EnumUpdateState.CURRENT;
+
+							conn.disconnect();
+							reader.close();
+
 							return;
 						}
 					}
@@ -114,10 +124,13 @@ public class Version implements Runnable {
 			}
 
 			conn.disconnect();
+			reader.close();
 
-			BuildCraftCore.bcLog.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
-					+ ". Consider updating.");
-			currentVersion = EnumUpdateState.OUTDATED;
+			if (found) {
+				BuildCraftCore.bcLog.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
+						+ ". Consider updating.");
+				currentVersion = EnumUpdateState.OUTDATED;
+			}
 
 		} catch (Exception e) {
 			BuildCraftCore.bcLog.warning("Unable to read from remote version authority.");
