@@ -400,6 +400,11 @@ public class TileAssemblyAdvancedWorkbench extends TileEntity implements IInvent
 	}
 
 	@Override
+	public boolean isLaserInvalid() {
+		return isInvalid();
+	}
+
+	@Override
 	public int getXCoord() {
 		return xCoord;
 	}
