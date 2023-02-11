@@ -22,7 +22,8 @@ public class Version implements Runnable {
 	public static final String VERSION_CONSTANT = "${VERSION}";
 	public static String VERSION = VERSION_CONSTANT;
 	public static String BUILD_NUMBER = "${BUILD_NUMBER}";
-	private static final String REMOTE_VERSION_FILE = "http://mod-buildcraft.com/version/versions.txt";
+	private static final String REMOTE_VERSION_FILE =
+			"https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/versions.txt";
 	private static final String REMOTE_CHANGELOG_ROOT =
 			"https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/changelog/";
 
@@ -76,6 +77,9 @@ public class Version implements Runnable {
 
 	public static void versionCheck() {
 		try {
+			if (VERSION_CONSTANT.equals(VERSION)) {
+				return;
+			}
 
 			if ("0.0.0".equals(VERSION)) return;
 			
@@ -94,9 +98,11 @@ public class Version implements Runnable {
 
 			String line = null;
 			String mcVersion = CoreProxy.proxy.getMinecraftVersion();
+			boolean found = false;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith(mcVersion)) {
 					if (line.contains(DefaultProps.MOD)) {
+						found = true;
 
 						String[] tokens = line.split(":");
 						recommendedVersion = tokens[2];
@@ -104,15 +110,30 @@ public class Version implements Runnable {
 						if (line.endsWith(VERSION)) {
 						    BuildCraftCore.bcLog.finer("Using the latest version [" + getVersion() + "] for Minecraft " + mcVersion);
 							currentVersion = EnumUpdateState.CURRENT;
+
+							conn.disconnect();
+							reader.close();
+
 							return;
 						}
 					}
 				}
 			}
 
+<<<<<<< HEAD
 			BuildCraftCore.bcLog.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
 					+ ". Consider updating.");
 			currentVersion = EnumUpdateState.OUTDATED;
+=======
+			conn.disconnect();
+			reader.close();
+
+			if (found) {
+				BuildCraftCore.bcLog.warning("Using outdated version [" + VERSION + " (build:" + BUILD_NUMBER + ")] for Minecraft " + mcVersion
+						+ ". Consider updating.");
+				currentVersion = EnumUpdateState.OUTDATED;
+			}
+>>>>>>> 88162d61e (BuildCraft 3.4.5 for 1.4.7)
 
 		} catch (Exception e) {
 			BuildCraftCore.bcLog.warning("Unable to read from remote version authority.");
@@ -122,15 +143,16 @@ public class Version implements Runnable {
 	}
 
 	public static String[] getChangelog() {
-		if (cachedChangelog == null) {
+		/* if (cachedChangelog == null) {
 			cachedChangelog = grabChangelog(recommendedVersion);
 		}
 
-		return cachedChangelog;
+		return cachedChangelog; */
+		return new String[0];
 	}
 
 	public static String[] grabChangelog(String version) {
-
+/*
 		try {
 
 			String location = REMOTE_CHANGELOG_ROOT + version;
@@ -166,7 +188,7 @@ public class Version implements Runnable {
 			BuildCraftCore.bcLog.warning("Unable to read changelog from remote site.");
 		}
 
-		return new String[] { String.format("Unable to retrieve changelog for %s %s", DefaultProps.MOD, version) };
+		return new String[] { String.format("Unable to retrieve changelog for %s %s", DefaultProps.MOD, version) }; */
 	}
 
     @Override

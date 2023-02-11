@@ -171,7 +171,6 @@ public class BuildCraftCore {
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		Version.loadLocalVersionData();
-		Version.check();
 
 		bcLog.setParent(FMLLog.getLogger());
 		bcLog.info("Starting BuildCraft " + Version.getVersion());
@@ -181,6 +180,13 @@ public class BuildCraftCore {
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
+
+			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check",
+					true);
+			updateCheck.comment = "should the BuildCraft version be checked on startup?";
+			if (updateCheck.getBoolean(false)) {
+				Version.check();
+			}
 
 			Property continuousCurrent = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "current.continuous",
 					DefaultProps.CURRENT_CONTINUOUS);
