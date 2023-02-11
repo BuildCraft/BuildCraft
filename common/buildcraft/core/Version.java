@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import net.minecraftforge.common.Property;
 import buildcraft.BuildCraftCore;
@@ -18,8 +19,9 @@ public class Version implements Runnable {
 		CURRENT, OUTDATED, CONNECTION_ERROR
 	}
 
-	public static final String VERSION = "${VERSION}";
-	public static final String BUILD_NUMBER = "${BUILD_NUMBER}";
+	public static final String VERSION_CONSTANT = "${VERSION}";
+	public static String VERSION = VERSION_CONSTANT;
+	public static String BUILD_NUMBER = "${BUILD_NUMBER}";
 	private static final String REMOTE_VERSION_FILE = "http://mod-buildcraft.com/version/versions.txt";
 
 	public static EnumUpdateState currentVersion = EnumUpdateState.CURRENT;
@@ -29,6 +31,17 @@ public class Version implements Runnable {
 	public static final int FORGE_VERSION_PATCH = 0;
 
 	private static String recommendedVersion;
+
+	public static void loadLocalVersionData() {
+		try {
+			Properties p = new Properties();
+			p.load(Version.class.getClassLoader().getResourceAsStream("build.number"));
+			VERSION = p.getProperty("build.version", VERSION);
+			BUILD_NUMBER = p.getProperty("build.number", BUILD_NUMBER);
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to read local BuildCraft version information.", e);
+		}
+	}
 
 	public static String getVersion() {
 		return VERSION + " (:" + BUILD_NUMBER + ")";

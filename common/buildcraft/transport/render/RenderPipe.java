@@ -437,7 +437,7 @@ public class RenderPipe extends TileEntitySpecialRenderer {
 		GL11.glTranslatef((float) d, (float) d1, (float) d2);
         GL11.glTranslatef(0, 0.25F, 0);
         GL11.glScalef(renderScale, renderScale, renderScale);
-        dummyEntityItem.func_92058_a(itemstack);
+        dummyEntityItem.a(itemstack);
         customRenderItem.doRenderItem(dummyEntityItem, 0, 0, 0, 0, 0);
 		GL11.glPopMatrix();
 	}

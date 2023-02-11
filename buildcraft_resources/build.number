@@ -1,1 +1,2 @@
+build.version=${version}
 build.number=${buildNumber}

@@ -4,40 +4,25 @@ buildscript {
 		gradlePluginPortal()
 		maven { url 'https://maven.fabricmc.net' }
 		maven { url 'https://repo.sleeping.town' }
+		maven { url 'https://maven.minecraftforge.net/' }
 	}
 	dependencies {
-		classpath 'com.unascribed:voldeloom:1.0+1.4.7'
+		classpath 'agency.highlysuspect:voldeloom:2.0-SNAPSHOT'
+		classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+		classpath 'me.tatarka:gradle-retrolambda:3.7.1'
+	}
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 120, 'seconds'
 	}
 }
 
 apply plugin: 'java'
-apply plugin: 'com.unascribed.voldeloom'
+apply plugin: 'agency.highlysuspect.voldeloom'
 
 sourceCompatibility = 6
 targetCompatibility = 6
 
 def forgeVersion = '1.4.7-6.6.2.534'
-
-def mcp = "mcp726a.zip";
-def forgeZip = "forge${forgeVersion}.zip"
-def mcpForged = "mcp726a-forged.zip"
-
-if (!file(mcp).exists()) {
-	println "Downloading ${mcp} from archive.org..."
-	file(mcp).withOutputStream {
-		it << new URL("https://archive.org/download/minecraftcoderpack/minecraftcoderpack.zip/minecraftcoderpack%2F${project.minecraft_version}%2F${mcp}").openStream()
-	}
-}
-if (!file(forgeZip).exists()) {
-	println "Downloading Forge ${forgeVersion} source..."
-	file(forgeZip).withOutputStream {
-		it << new URL("https://maven.minecraftforge.net/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-src.zip").openStream()
-	}
-}
-if (!file(mcpForged).exists()) {
-	println "Merging Forge config into MCP..."
-	'./merge-forge.sh'.execute()
-}
 
 archivesBaseName = "buildcraft-A-1.4.7"
 def buildNumber = '18'
@@ -46,37 +31,23 @@ group = "com.mod-buildcraft"
 
 repositories {
 	maven { url 'https://maven.fabricmc.net/' }
-	maven { url 'https://maven.minecraftforge.net/' }
+	maven { url 'https://repo.sleeping.town' } 
 	maven { url 'https://repo.spongepowered.org/maven' }
 }
 
 sourceSets {
 	main {
-		java.srcDirs = ["build/filteredSrc"]
+		java.srcDirs = ["common"]
 		resources.srcDirs = ["buildcraft_resources", "buildcraft_localization"]
 	}
 }
 
-task remapSrc(type: Copy) {
-	inputs.property 'version', project.version
-	inputs.property 'buildNumber', buildNumber
-
-	from "common"
-
-	filesMatching('buildcraft/core/Version.java') {
-		expand 'VERSION': project.version, 'BUILD_NUMBER': buildNumber
-	}
-
-	into "build/filteredSrc"
-}
-
-compileJava.dependsOn remapSrc
-
 dependencies {
 	minecraft "com.mojang:minecraft:1.4.7"
 	forge "net.minecraftforge:forge:${forgeVersion}:universal@zip"
+	mappings "net.minecraftforge:forge:1.4.7-6.6.2.534:src@zip"
+
 	implementation "com.google.guava:guava:12.0.1"
-	mappings files(mcpForged)
 }
 
 processResources {
@@ -90,7 +61,7 @@ processResources {
 	}
 
 	filesMatching("build.number") {
-		expand "buildNumber": buildNumber
+		expand "version": project.version, "buildNumber": buildNumber
 	}
 }
 
