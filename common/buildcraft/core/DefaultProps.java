@@ -93,6 +93,8 @@ public class DefaultProps {
 	public static int PIPE_ITEMS_SANDSTONE_ID = 19222;
 	public static int PIPE_LIQUIDS_SANDSTONE_ID = 19223;
 	public static int PIPE_STRUCTURE_COBBLESTONE_ID = 19224;
+	public static int PIPE_ITEMS_CLAY_ID = 19225;
+	public static int PIPE_LIQUIDS_CLAY_ID = 19226;
 
 	public static int MINING_WELL_ID = 1500;
 	public static int DRILL_ID = 1501;

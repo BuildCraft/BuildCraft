@@ -49,8 +49,10 @@ public class PipeIconProvider implements IIconProvider {
 	public static final int PipePowerDiamond	 			= 35;
 	public static final int PipePowerQuartz	 			    = 36;
 	public static final int PipeItemsQuartz	 			    = 37;
+	public static final int PipeItemsClay	 			    = 38;
+	public static final int PipeLiquidsClay	 			    = 39;
 	
-	public static final int MAX								= 38;	
+	public static final int MAX								= 40;
 	
 		
 	@SideOnly(Side.CLIENT)
@@ -96,6 +98,7 @@ public class PipeIconProvider implements IIconProvider {
 		_icons[PipeIconProvider.PipeItemsStone] = iconRegister.registerIcon("buildcraft:pipeItemsStone");
 		_icons[PipeIconProvider.PipeItemsQuartz] = iconRegister.registerIcon("buildcraft:pipeItemsQuartz");
 		_icons[PipeIconProvider.PipeItemsVoid] = iconRegister.registerIcon("buildcraft:pipeItemsVoid");
+		_icons[PipeIconProvider.PipeItemsClay] = iconRegister.registerIcon("buildcraft:pipeItemsClay");
 		
 		_icons[PipeIconProvider.PipeLiquidsCobblestone] = iconRegister.registerIcon("buildcraft:pipeLiquidsCobblestone");
 		_icons[PipeIconProvider.PipeLiquidsWood_Standard] = iconRegister.registerIcon("buildcraft:pipeLiquidsWood_standard");
@@ -105,6 +108,7 @@ public class PipeIconProvider implements IIconProvider {
 		_icons[PipeIconProvider.PipeLiquidsSandstone] = iconRegister.registerIcon("buildcraft:pipeLiquidsSandstone");
 		_icons[PipeIconProvider.PipeLiquidsStone] = iconRegister.registerIcon("buildcraft:pipeLiquidsStone");
 		_icons[PipeIconProvider.PipeLiquidsVoid] = iconRegister.registerIcon("buildcraft:pipeLiquidsVoid");
+		_icons[PipeIconProvider.PipeLiquidsClay] = iconRegister.registerIcon("buildcraft:pipeLiquidsClay");
 		
 		_icons[PipeIconProvider.PipePowerDiamond] = iconRegister.registerIcon("buildcraft:pipePowerDiamond");
 		_icons[PipeIconProvider.PipePowerGold] = iconRegister.registerIcon("buildcraft:pipePowerGold");

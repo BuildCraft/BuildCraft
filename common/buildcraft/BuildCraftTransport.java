@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import buildcraft.transport.pipes.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -49,32 +50,6 @@ import buildcraft.transport.blueprints.BptItemPipeEmerald;
 import buildcraft.transport.blueprints.BptItemPipeIron;
 import buildcraft.transport.blueprints.BptItemPipeWooden;
 import buildcraft.transport.network.PacketHandlerTransport;
-import buildcraft.transport.pipes.PipeItemsCobblestone;
-import buildcraft.transport.pipes.PipeItemsDiamond;
-import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeItemsGold;
-import buildcraft.transport.pipes.PipeItemsIron;
-import buildcraft.transport.pipes.PipeItemsObsidian;
-import buildcraft.transport.pipes.PipeItemsQuartz;
-import buildcraft.transport.pipes.PipeItemsSandstone;
-import buildcraft.transport.pipes.PipeItemsStone;
-import buildcraft.transport.pipes.PipeItemsVoid;
-import buildcraft.transport.pipes.PipeItemsWood;
-import buildcraft.transport.pipes.PipeLiquidsCobblestone;
-import buildcraft.transport.pipes.PipeLiquidsEmerald;
-import buildcraft.transport.pipes.PipeLiquidsGold;
-import buildcraft.transport.pipes.PipeLiquidsIron;
-import buildcraft.transport.pipes.PipeLiquidsSandstone;
-import buildcraft.transport.pipes.PipeLiquidsStone;
-import buildcraft.transport.pipes.PipeLiquidsVoid;
-import buildcraft.transport.pipes.PipeLiquidsWood;
-import buildcraft.transport.pipes.PipePowerCobblestone;
-import buildcraft.transport.pipes.PipePowerDiamond;
-import buildcraft.transport.pipes.PipePowerGold;
-import buildcraft.transport.pipes.PipePowerQuartz;
-import buildcraft.transport.pipes.PipePowerStone;
-import buildcraft.transport.pipes.PipePowerWood;
-import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.triggers.ActionEnergyPulser;
 import buildcraft.transport.triggers.ActionSignalOutput;
 import buildcraft.transport.triggers.ActionSingleEnergyPulse;
@@ -128,6 +103,8 @@ public class BuildCraftTransport {
 	public static Item pipeItemsObsidian;
 	public static Item pipeItemsVoid;
 	public static Item pipeItemsSandstone;
+	public static Item pipeItemsClay;
+
 	public static Item pipeLiquidsWood;
 	public static Item pipeLiquidsCobblestone;
 	public static Item pipeLiquidsStone;
@@ -136,6 +113,8 @@ public class BuildCraftTransport {
 	public static Item pipeLiquidsVoid;
 	public static Item pipeLiquidsSandstone;
 	public static Item pipeLiquidsEmerald;
+	public static Item pipeLiquidsClay;
+
 	public static Item pipePowerWood;
 	public static Item pipePowerCobblestone;
 	public static Item pipePowerStone;
@@ -145,7 +124,7 @@ public class BuildCraftTransport {
 	public static ItemFacade facadeItem;
 	public static Item plugItem;
 	public static BlockFilteredBuffer filteredBufferBlock;
-	// public static Item pipeItemsStipes;
+	// public static Item pipeItemsStripes;
 	public static Item pipeStructureCobblestone;
 	public static int groupItemsTrigger;
 	public static BCTrigger triggerPipeEmpty = new TriggerPipeContents(DefaultProps.TRIGGER_PIPE_EMPTY, Kind.Empty);
@@ -288,6 +267,7 @@ public class BuildCraftTransport {
 			pipeItemsObsidian = buildPipe(DefaultProps.PIPE_ITEMS_OBSIDIAN_ID, PipeItemsObsidian.class, "Obsidian Transport Pipe", Block.obsidian, Block.glass, Block.obsidian);
 			pipeItemsSandstone = buildPipe(DefaultProps.PIPE_ITEMS_SANDSTONE_ID, PipeItemsSandstone.class, "Sandstone Transport Pipe", Block.sandStone, Block.glass, Block.sandStone);
 			pipeItemsVoid = buildPipe(DefaultProps.PIPE_ITEMS_VOID_ID, PipeItemsVoid.class, "Void Transport Pipe", "dyeBlack", Block.glass, Item.redstone);
+			pipeItemsClay = buildPipe(DefaultProps.PIPE_ITEMS_CLAY_ID, PipeItemsClay.class, "Clay Transport Pipe", Item.clay, Block.glass, Item.clay);
 
 			pipeLiquidsWood = buildPipe(DefaultProps.PIPE_LIQUIDS_WOOD_ID, PipeLiquidsWood.class, "Wooden Waterproof Pipe", pipeWaterproof, pipeItemsWood);
 			pipeLiquidsCobblestone = buildPipe(DefaultProps.PIPE_LIQUIDS_COBBLESTONE_ID, PipeLiquidsCobblestone.class, "Cobblestone Waterproof Pipe", pipeWaterproof, pipeItemsCobblestone);
@@ -297,6 +277,7 @@ public class BuildCraftTransport {
 			pipeLiquidsEmerald = buildPipe(DefaultProps.PIPE_LIQUIDS_EMERALD_ID, PipeLiquidsEmerald.class, "Emerald Waterproof Pipe", pipeWaterproof, pipeItemsEmerald);
 			pipeLiquidsSandstone = buildPipe(DefaultProps.PIPE_LIQUIDS_SANDSTONE_ID, PipeLiquidsSandstone.class, "Sandstone Waterproof Pipe", pipeWaterproof, pipeItemsSandstone);
 			pipeLiquidsVoid = buildPipe(DefaultProps.PIPE_LIQUIDS_VOID_ID, PipeLiquidsVoid.class, "Void Waterproof Pipe", pipeWaterproof, pipeItemsVoid);
+			pipeLiquidsClay = buildPipe(DefaultProps.PIPE_LIQUIDS_CLAY_ID, PipeLiquidsClay.class, "Void Waterproof Pipe", pipeWaterproof, pipeItemsClay);
 
 			pipePowerWood = buildPipe(DefaultProps.PIPE_POWER_WOOD_ID, PipePowerWood.class, "Wooden Conductive Pipe", Item.redstone, pipeItemsWood);
 			pipePowerCobblestone = buildPipe(DefaultProps.PIPE_POWER_COBBLESTONE_ID, PipePowerCobblestone.class, "Cobblestone Conductive Pipe", Item.redstone, pipeItemsCobblestone);
