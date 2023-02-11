@@ -1,3 +1,2 @@
-#Build Number for ANT. Do not edit!
-#Wed Jul 10 20:46:39 CEST 2013
-build.number=36
+build.version=${version}
+build.number=${buildNumber}

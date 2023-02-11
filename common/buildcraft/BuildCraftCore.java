@@ -82,7 +82,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[7.7.2.682,)")
+@Mod(name = "BuildCraft", version = Version.VERSION_CONSTANT, useMetadata = false, modid = "BuildCraft|Core", dependencies = "required-after:Forge@[7.7.2.682,)")
 @NetworkMod(channels = { DefaultProps.NET_CHANNEL_NAME }, packetHandler = PacketHandler.class, clientSideRequired = true, serverSideRequired = true)
 public class BuildCraftCore {
 	public static enum RenderMode {
@@ -170,7 +170,7 @@ public class BuildCraftCore {
 
 	@PreInit
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-
+		Version.loadLocalVersionData();
 		Version.check();
 
 		bcLog.setParent(FMLLog.getLogger());
