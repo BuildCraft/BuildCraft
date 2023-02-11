@@ -9,8 +9,11 @@
 
 package buildcraft.transport;
 
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
 
+import buildcraft.api.core.Position;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -373,11 +376,19 @@ public class PipeTransportLiquids extends PipeTransport implements ITankContaine
 		int totalAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getAvailable();
 		if (totalAvailable < 1)
 			return;
+
 		if (pushStack != null) {
 			LiquidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
 			// Move liquid from the center to the output sides
-			for (ForgeDirection direction : directions) {
+			List<ForgeDirection> realDirections = Arrays.asList(directions);
+			if (container.pipe instanceof IPipeTransportLiquidsFilterDirectionsHook) {
+				Position pos = new Position(xCoord, yCoord, zCoord);
+				realDirections = ((IPipeTransportLiquidsFilterDirectionsHook) container.pipe).filterPossibleMovements(
+						realDirections, pos, testStack
+				);
+			}
+			for (ForgeDirection direction : realDirections) {
 				if (transferState[direction.ordinal()] == TransferState.Output) {
 					int available = internalTanks[direction.ordinal()].fill(testStack, false);
 					int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
