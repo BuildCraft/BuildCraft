@@ -95,7 +95,9 @@ public class BlockUtil {
 	public static boolean isSoftBlock(int blockID, World world, int x, int y, int z) {
 		Block block = Block.blocksList[blockID];
 
-		return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
+		return blockID == 0 || block == null
+				|| BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z)
+				|| block.getBlockHardness(world, x, y, z) == 0;
 	}
 	
 	/**
