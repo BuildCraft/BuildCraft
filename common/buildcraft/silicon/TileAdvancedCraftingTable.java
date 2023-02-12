@@ -422,6 +422,11 @@ public class TileAdvancedCraftingTable extends TileEntity implements IInventory,
 	}
 
 	@Override
+	public boolean isLaserInvalid() {
+		return isInvalid();
+	}
+
+	@Override
 	public int getXCoord() {
 		return xCoord;
 	}

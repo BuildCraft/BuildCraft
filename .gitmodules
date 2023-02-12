@@ -1,0 +1,3 @@
+[submodule "buildcraft_localization"]
+	path = buildcraft_localization
+	url = https://github.com/BuildCraft/BuildCraft-Localization

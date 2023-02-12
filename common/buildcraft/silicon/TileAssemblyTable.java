@@ -77,6 +77,11 @@ public class TileAssemblyTable extends TileEntity implements IMachine, IInventor
 	}
 
 	@Override
+	public boolean isLaserInvalid() {
+		return isInvalid();
+	}
+
+	@Override
 	public boolean canUpdate() {
 		return !FMLCommonHandler.instance().getEffectiveSide().isClient();
 	}

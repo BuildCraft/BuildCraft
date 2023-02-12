@@ -5,7 +5,7 @@ public interface ILaserTarget {
 
 	void receiveLaserEnergy(float energy);
 
-	boolean isInvalid();
+	boolean isLaserInvalid();
 
 	int getXCoord();
 

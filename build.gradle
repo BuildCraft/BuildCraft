@@ -1,0 +1,71 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+		maven { url 'https://maven.fabricmc.net' }
+		maven { url 'https://repo.sleeping.town' }
+		maven { url 'https://maven.minecraftforge.net/' }
+	}
+	dependencies {
+		classpath 'agency.highlysuspect:voldeloom:2.1-SNAPSHOT'
+		classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+		classpath 'me.tatarka:gradle-retrolambda:3.7.1'
+	}
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 120, 'seconds'
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'agency.highlysuspect.voldeloom'
+
+sourceCompatibility = 6
+targetCompatibility = 6
+
+def forgeVersion = '1.5.2-7.8.1.738'
+
+archivesBaseName = "buildcraft-A-1.5.2"
+def buildNumber = '1'
+version = "3.7.3"
+group = "com.mod-buildcraft"
+
+repositories {
+	maven { url 'https://maven.fabricmc.net/' }
+	maven { url 'https://repo.sleeping.town' } 
+	maven { url 'https://repo.spongepowered.org/maven' }
+}
+
+sourceSets {
+	main {
+		java.srcDirs = ["common"]
+		resources.srcDirs = ["buildcraft_resources", "buildcraft_localization"]
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:1.5.2"
+	forge "net.minecraftforge:forge:${forgeVersion}:universal@zip"
+	mappings "net.minecraftforge:forge:${forgeVersion}:src@zip"
+
+	implementation "com.google.guava:guava:12.0.1"
+}
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property 'buildNumber', buildNumber
+
+	exclude 'README.md'
+
+	filesMatching("mcmod.info") {
+		expand "version": project.version+"."+buildNumber
+	}
+
+	filesMatching("build.number") {
+		expand "version": project.version, "buildNumber": buildNumber
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+

@@ -113,7 +113,7 @@ public class TileLaser extends TileMachine implements IPowerReceptor, IActionRec
 
 	protected boolean isValidTable() {
 
-		if (laserTarget == null || laserTarget.isInvalid() || !laserTarget.hasCurrentWork())
+		if (laserTarget == null || laserTarget.isLaserInvalid() || !laserTarget.hasCurrentWork())
 			return false;
 
 		return true;
