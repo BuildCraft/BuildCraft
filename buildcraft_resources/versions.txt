@@ -1,3 +1,5 @@
+1.4.7:BuildCraft:3.4.5
+1.5.2:BuildCraft:3.7.3
 1.6.4:BuildCraft:4.2.2
 1.7.2:BuildCraft:6.0.16
 1.7.10:BuildCraft:7.1.25
