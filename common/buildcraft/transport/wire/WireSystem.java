@@ -51,6 +51,8 @@ public class WireSystem {
     public final List<WireElement> elements = new ArrayList<>();
     public EnumDyeColor color = null;
 
+    private transient long cachedHashCode = -1L;
+
     public boolean hasElement(WireElement element) {
         return elements.contains(element);
     }
@@ -149,6 +151,7 @@ public class WireSystem {
         while (!queue.isEmpty()) {
             build.accept(queue.remove());
         }
+        this.markDirty();
         return this;
     }
 
@@ -192,6 +195,7 @@ public class WireSystem {
         NBTTagList elementsList = nbt.getTagList("elements", Constants.NBT.TAG_COMPOUND);
         IntStream.range(0, elementsList.tagCount()).mapToObj(elementsList::getCompoundTagAt).map(WireElement::new).forEach(elements::add);
         color = EnumDyeColor.byMetadata(nbt.getInteger("color"));
+        this.markDirty();
         return this;
     }
 
@@ -214,9 +218,22 @@ public class WireSystem {
 
     @Override
     public int hashCode() {
+        if (this.cachedHashCode >= 0L) {
+            return (int) this.cachedHashCode;
+        }
+        return this.computeHashCode();
+    }
+
+    private int computeHashCode() {
         int result = elements.hashCode();
         result = 31 * result + (color != null ? color.hashCode() : 0);
+
+        this.cachedHashCode = Integer.toUnsignedLong(result);
         return result;
+    }
+
+    public void markDirty() {
+        this.cachedHashCode = -1L;
     }
 
     public static class WireElement {

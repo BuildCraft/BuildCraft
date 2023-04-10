@@ -176,8 +176,9 @@ public class WireManager implements IWireManager {
         if (holder.getPipeWorld().isRemote) {
             return poweredClient.contains(part);
         } else {
-            return getWireSystems().getWireSystemsWithElementAsReadOnlyStream(new WireSystem.WireElement(holder.getPipePos(), part))
-                .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).filter(Objects::nonNull)
+            WorldSavedDataWireSystems wireSystems = this.getWireSystems();
+            return wireSystems.getWireSystemsWithElementAsReadOnlyStream(new WireSystem.WireElement(holder.getPipePos(), part))
+                .map(wireSystems.wireSystems::get).filter(Objects::nonNull)
                 .reduce(Boolean::logicalOr).orElse(false);
         }
     }
