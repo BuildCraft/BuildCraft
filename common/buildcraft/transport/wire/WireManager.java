@@ -185,8 +185,7 @@ public class WireManager implements IWireManager {
 
     @Override
     public boolean isAnyPowered(EnumDyeColor color) {
-        return parts.entrySet().stream().filter(partColor -> partColor.getValue() == color)
-            .anyMatch(partColor -> isPowered(partColor.getKey()));
+        return parts.entrySet().stream().anyMatch(partColor -> partColor.getValue() == color && isPowered(partColor.getKey()));
     }
 
     public NBTTagCompound writeToNbt() {

@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Predicates;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -48,6 +49,8 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public final List<EntityPlayerMP> changedPlayers = new ArrayList<>();
     public final Map<WireSystem.WireElement, IWireEmitter> emittersCache = new HashMap<>();
 
+    private final Map<WireSystem.WireElement, List<WireSystem>> elementsToWireSystemsIndex = new HashMap<>();
+
     public WorldSavedDataWireSystems() {
         super(DATA_NAME);
     }
@@ -76,7 +79,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public void buildAndAddWireSystem(WireSystem.WireElement element) {
-        WireSystem wireSystem = new WireSystem().build(this, element);
+        WireSystem wireSystem = new WireSystem(this, element);
         if(!wireSystem.isEmpty()) {
             wireSystems.put(wireSystem, false);
             wireSystems.put(wireSystem, wireSystem.update(this));
@@ -182,7 +185,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         NBTTagList entriesList = nbt.getTagList("entries", Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < entriesList.tagCount(); i++) {
             NBTTagCompound entry = entriesList.getCompoundTagAt(i);
-            wireSystems.put(new WireSystem().readFromNBT(entry.getCompoundTag("wireSystem")), entry.getBoolean("powered"));
+            wireSystems.put(new WireSystem(entry.getCompoundTag("wireSystem")), entry.getBoolean("powered"));
         }
     }
 
