@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Predicates;
 
@@ -62,7 +63,11 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public List<WireSystem> getWireSystemsWithElement(WireSystem.WireElement element) {
-        return wireSystems.keySet().stream().filter(wireSystem -> wireSystem.hasElement(element)).collect(Collectors.toList());
+        return getWireSystemsWithElementAsReadOnlyStream(element).collect(Collectors.toList());
+    }
+
+    public Stream<WireSystem> getWireSystemsWithElementAsReadOnlyStream(WireSystem.WireElement element) {
+        return wireSystems.keySet().stream().filter(wireSystem -> wireSystem.hasElement(element));
     }
 
     public void removeWireSystem(WireSystem wireSystem) {
