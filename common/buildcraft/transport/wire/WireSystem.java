@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.google.common.base.Predicates;
 
@@ -53,6 +54,7 @@ public final class WireSystem {
     public final EnumDyeColor color;
 
     private transient final int cachedHashCode;
+    private transient final int cachedWiresHashCode;
 
     public boolean hasElement(WireElement element) {
         return elements.contains(element);
@@ -112,7 +114,9 @@ public final class WireSystem {
     public WireSystem(ImmutableList<WireElement> elements, EnumDyeColor color) {
         this.elements = Objects.requireNonNull(elements, "elements");
         this.color = color;
+
         this.cachedHashCode = this.computeHashCode();
+        this.cachedWiresHashCode = this.computeCachedWiresHashCode();
     }
 
     public WireSystem(WorldSavedDataWireSystems wireSystems, WireElement startElement) {
@@ -166,7 +170,9 @@ public final class WireSystem {
 
         this.elements = elements.build();
         this.color = color;
+
         this.cachedHashCode = this.computeHashCode();
+        this.cachedWiresHashCode = this.computeCachedWiresHashCode();
     }
 
     public boolean isEmpty() {
@@ -179,19 +185,27 @@ public final class WireSystem {
     }
 
     public List<ChunkPos> getChunkPoses() {
-        return elements.stream().map(element -> element.blockPos).map(ChunkPos::new).collect(Collectors.toList());
+        return this.getChunkPosesAsStream().collect(Collectors.toList());
+    }
+
+    public Stream<ChunkPos> getChunkPosesAsStream() {
+        return elements.stream().map(element -> new ChunkPos(element.blockPos));
     }
 
     public boolean isPlayerWatching(EntityPlayerMP player) {
         if (player.world instanceof WorldServer) {
             WorldServer world = (WorldServer) player.world;
-            return getChunkPoses().stream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.x, chunkPos.z)).filter(Objects::nonNull).anyMatch(
-                playerChunkMapEntry -> playerChunkMapEntry.hasPlayerMatching(Predicates.equalTo(player)));
+            return getChunkPosesAsStream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.x, chunkPos.z))
+                    .anyMatch(playerChunkMapEntry -> playerChunkMapEntry != null && playerChunkMapEntry.containsPlayer(player));
         }
         return false;
     }
 
     public int getWiresHashCode() {
+        return this.cachedWiresHashCode;
+    }
+
+    private int computeCachedWiresHashCode() {
         return elements.stream().filter(element -> element.type == WireElement.Type.WIRE_PART)
                 //the following is equivalent to .collect(Collectors.toList()).hashCode(), by the definition of List#hashCode():
                 .mapToInt(WireElement::hashCode).reduce(1, (hashCode, elementHashCode) -> hashCode * 31 + elementHashCode);
@@ -211,7 +225,9 @@ public final class WireSystem {
         //noinspection UnstableApiUsage
         elements = IntStream.range(0, elementsList.tagCount()).mapToObj(elementsList::getCompoundTagAt).map(WireElement::new).collect(ImmutableList.toImmutableList());
         color = EnumDyeColor.byMetadata(nbt.getInteger("color"));
+
         this.cachedHashCode = this.computeHashCode();
+        this.cachedWiresHashCode = this.computeCachedWiresHashCode();
     }
 
     @Override
