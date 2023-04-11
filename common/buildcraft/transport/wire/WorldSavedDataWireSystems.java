@@ -65,8 +65,8 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public List<WireSystem> getWireSystemsWithElement(WireSystem.WireElement element) {
-        List<WireSystem> wireSystems = this.elementsToWireSystemsIndex.get(element);
-        return wireSystems != null ? new ArrayList<>(wireSystems) : Collections.emptyList();
+        List<WireSystem> wireSystemsWithElement = this.elementsToWireSystemsIndex.get(element);
+        return wireSystemsWithElement != null ? new ArrayList<>(wireSystemsWithElement) : Collections.emptyList();
     }
 
     public List<WireSystem> getWireSystemsWithElementAsReadOnlyList(WireSystem.WireElement element) {
@@ -87,11 +87,11 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public void addWireSystem(WireSystem wireSystem, boolean powered) {
         if (this.wireSystems.put(wireSystem, powered) == null) {
             wireSystem.elements.forEach(systemElement -> {
-                List<WireSystem> wireSystems = this.elementsToWireSystemsIndex.computeIfAbsent(systemElement, unused -> new ArrayList<>());
-                if (wireSystems.contains(wireSystem)) {
+                List<WireSystem> wireSystemsWithElement = this.elementsToWireSystemsIndex.computeIfAbsent(systemElement, unused -> new ArrayList<>());
+                if (wireSystemsWithElement.contains(wireSystem)) {
                     throw new IllegalStateException();
                 }
-                wireSystems.add(wireSystem);
+                wireSystemsWithElement.add(wireSystem);
             });
         }
     }

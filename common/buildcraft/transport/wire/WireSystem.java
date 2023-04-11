@@ -127,8 +127,8 @@ public final class WireSystem {
         Queue<WireElement> queue = new ArrayDeque<>();
         queue.add(startElement);
 
-        EnumDyeColor color = null;
-        ImmutableList.Builder<WireElement> elements = ImmutableList.builder();
+        EnumDyeColor tempColor = null;
+        ImmutableList.Builder<WireElement> elementBuilder = ImmutableList.builder();
 
         while (!queue.isEmpty()) {
             WireElement element = queue.remove();
@@ -146,21 +146,21 @@ public final class WireSystem {
                 if (holder != null) {
                     if (element.type == WireElement.Type.WIRE_PART) {
                         EnumDyeColor colorOfPart = holder.getWireManager().getColorOfPart(element.wirePart);
-                        if (color == null) {
+                        if (tempColor == null) {
                             if (colorOfPart != null) {
-                                color = colorOfPart;
+                                tempColor = colorOfPart;
                             }
                         }
-                        if (color != null && colorOfPart == color) {
-                            EnumDyeColor colorButFinal = color; //damn you java
+                        if (tempColor != null && colorOfPart == tempColor) {
+                            EnumDyeColor colorButFinal = tempColor; //damn you java
                             wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == colorButFinal).forEach(wireSystems::removeWireSystem);
-                            elements.add(element);
+                            elementBuilder.add(element);
                             queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
                             Arrays.stream(EnumFacing.VALUES).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {
                         if (holder.getPluggable(element.emitterSide) instanceof IWireEmitter) {
-                            elements.add(new WireElement(element.blockPos, element.emitterSide));
+                            elementBuilder.add(new WireElement(element.blockPos, element.emitterSide));
                         }
                     }
                 }
@@ -168,8 +168,8 @@ public final class WireSystem {
             }
         }
 
-        this.elements = elements.build();
-        this.color = color;
+        this.elements = elementBuilder.build();
+        this.color = tempColor;
 
         this.cachedHashCode = this.computeHashCode();
         this.cachedWiresHashCode = this.computeCachedWiresHashCode();
