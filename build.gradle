@@ -29,6 +29,9 @@ version = "7.1.26"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
 ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/mcmod.info"))
 ext.priv = parseConfig(file('private.properties'))
 

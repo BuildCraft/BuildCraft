@@ -150,7 +150,7 @@ public final class ChannelHandler extends MessageToMessageCodec<FMLProxyPacket, 
 			logSuspiciousPacketWrongSide(player, data.getDiscriminator().getSimpleName());
 		} else {
 			Packet newMsg = data.getDiscriminator().newInstance();
-			ctx.attr(INBOUNDPACKETTRACKER).get().set(new WeakReference<>(msg));
+			ctx.attr(INBOUNDPACKETTRACKER).get().set(new WeakReference<FMLProxyPacket>(msg));
 			newMsg.readData(payload.slice());
 			out.add(newMsg);
 		}

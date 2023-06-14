@@ -120,7 +120,7 @@ public class BuildCraftMod {
 	}
 
 	static class PacketSender implements Runnable {
-		private BlockingQueue<SendRequest> packets = new LinkedBlockingQueue<>();
+		private BlockingQueue<SendRequest> packets = new LinkedBlockingQueue<SendRequest>();
 
 		@Override
 		public void run() {
