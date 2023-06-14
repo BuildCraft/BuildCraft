@@ -356,7 +356,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IHasW
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side == Side.SERVER && "setFilter".equals(command)) {
+		if (side.isServer() && "setFilter".equals(command)) {
 			setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
 		}
 	}

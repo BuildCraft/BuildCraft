@@ -1,0 +1,7 @@
+Additions:
+
+* Minor improvements to network sending logic. (eigenraven)
+
+Bugs fixed:
+
+* Many important issues related to network packet handling. (asie, Glease)
