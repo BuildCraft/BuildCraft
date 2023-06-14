@@ -19,12 +19,7 @@ public final class PacketIds {
 	public static final int PIPE_ITEMSTACK = 6;
 	public static final int ENTITY_UPDATE = 7;
 
-	public static final int DIAMOND_PIPE_SELECT = 31;
-	public static final int EMERALD_PIPE_SELECT = 32;
-
 	public static final int TABLET_MESSAGE = 40;
-
-	public static final int ADVANCED_WORKBENCH_SETSLOT = 70;
 
 	public static final int GUI_RETURN = 80;
 	public static final int GUI_WIDGET = 81;

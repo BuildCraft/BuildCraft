@@ -8,6 +8,7 @@
  */
 package buildcraft;
 
+import buildcraft.core.lib.network.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.init.Blocks;
@@ -58,7 +59,6 @@ import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.TilePackager;
 import buildcraft.silicon.TileProgrammingTable;
 import buildcraft.silicon.TileStampingTable;
-import buildcraft.silicon.network.PacketHandlerSilicon;
 import buildcraft.transport.stripes.StripesHandlerDispenser;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -122,7 +122,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE
 				.newChannel
-						(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
+						(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandler());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
 		BCRegistry.INSTANCE.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");

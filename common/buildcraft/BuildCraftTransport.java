@@ -11,6 +11,7 @@ package buildcraft;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 
+import buildcraft.core.lib.network.PacketSide;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -456,11 +457,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 		transportChannelHandler = new ChannelHandler();
 		MinecraftForge.EVENT_BUS.register(this);
 
-		transportChannelHandler.registerPacketType(PacketFluidUpdate.class);
-		transportChannelHandler.registerPacketType(PacketPipeTransportItemStack.class);
-		transportChannelHandler.registerPacketType(PacketPipeTransportItemStackRequest.class);
-		transportChannelHandler.registerPacketType(PacketPipeTransportTraveler.class);
-		transportChannelHandler.registerPacketType(PacketPowerUpdate.class);
+		transportChannelHandler.registerPacketType(PacketFluidUpdate.class, PacketSide.CLIENT_ONLY);
+		transportChannelHandler.registerPacketType(PacketPipeTransportItemStack.class, PacketSide.CLIENT_ONLY);
+		transportChannelHandler.registerPacketType(PacketPipeTransportItemStackRequest.class, PacketSide.SERVER_ONLY);
+		transportChannelHandler.registerPacketType(PacketPipeTransportTraveler.class, PacketSide.CLIENT_ONLY);
+		transportChannelHandler.registerPacketType(PacketPowerUpdate.class, PacketSide.CLIENT_ONLY);
 
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", transportChannelHandler, new PacketHandlerTransport());

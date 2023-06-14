@@ -31,7 +31,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -43,11 +42,9 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.CraftingFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
-import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory {
@@ -374,16 +371,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 					}
 				}
 			}
-		}
-	}
-
-	public void updateCraftingMatrix(int slot, ItemStack stack) {
-		craftingSlots.setInventorySlotContents(slot, stack);
-		updateRecipe();
-
-		if (worldObj.isRemote) {
-			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
-			BuildCraftSilicon.instance.sendToServer(packet);
 		}
 	}
 

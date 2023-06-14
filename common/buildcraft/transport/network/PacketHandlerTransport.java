@@ -21,7 +21,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketHandler;
-import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
@@ -67,16 +66,6 @@ public class PacketHandlerTransport extends PacketHandler {
 				/**
 				 * SERVER SIDE *
 				 */
-				case PacketIds.DIAMOND_PIPE_SELECT: {
-					onDiamondPipeSelect(player, (PacketSlotChange) packet);
-					break;
-				}
-
-				case PacketIds.EMERALD_PIPE_SELECT: {
-					onEmeraldPipeSelect(player, (PacketSlotChange) packet);
-					break;
-				}
-
 				case PacketIds.PIPE_ITEMSTACK_REQUEST: {
 					((PacketPipeTransportItemStackRequest) packet).sendDataToPlayer(player);
 					break;
@@ -144,64 +133,5 @@ public class PacketHandlerTransport extends PacketHandler {
 
 		((PipeTransportPower) ((Pipe) pipe.getPipe()).transport).handlePowerPacket(packetPower);
 
-	}
-
-	/**
-	 * Retrieves pipe at specified coordinates if any.
-	 *
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	private TileGenericPipe getPipe(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
-			return null;
-		}
-
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe)) {
-			return null;
-		}
-
-		return (TileGenericPipe) tile;
-	}
-
-	/**
-	 * Handles selection changes on diamond pipe guis.
-	 *
-	 * @param player
-	 * @param packet
-	 */
-	private void onDiamondPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (pipe == null) {
-			return;
-		}
-
-		if (!(pipe.pipe instanceof PipeItemsDiamond)) {
-			return;
-		}
-
-		((PipeItemsDiamond) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
-	}
-
-	/**
-	 * Handles selection changes on emerald pipe guis.
-	 *
-	 * @param player
-	 * @param packet
-	 */
-	private void onEmeraldPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
-		if (pipe == null) {
-			return;
-		}
-
-		if (!(pipe.pipe instanceof PipeItemsEmerald)) {
-			return;
-		}
-
-		((PipeItemsEmerald) pipe.pipe).getFilters().setInventorySlotContents(packet.slot, packet.stack);
 	}
 }

@@ -16,7 +16,6 @@ import buildcraft.core.tablet.PacketTabletMessage;
 import buildcraft.core.tablet.TabletBase;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
-import net.minecraft.network.NetHandlerPlayServer;
 
 public class PacketHandlerCore extends PacketHandler {
 	@Override
@@ -27,10 +26,10 @@ public class PacketHandlerCore extends PacketHandler {
 
 		switch (packet.getID()) {
 			case PacketIds.TABLET_MESSAGE: {
-				if (netHandler instanceof NetHandlerPlayServer) {
-					handleTabletServer(player, (PacketTabletMessage) packet);
-				} else {
+				if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 					handleTabletClient((PacketTabletMessage) packet);
+				} else {
+					handleTabletServer(player, (PacketTabletMessage) packet);
 				}
 			}
 			break;
