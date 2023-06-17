@@ -70,8 +70,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IDebuggable, IPipeConnection {
 
 	public boolean initialized = false;
-	public final PipeRenderState renderState = new PipeRenderState();
-	public final PipePluggableState pluggableState = new PipePluggableState();
+	public final PipeRenderState renderState = createRenderState();
+	public final PipePluggableState pluggableState = createPluggableState();
 	public final CoreState coreState = new CoreState();
 	public boolean[] pipeConnectionsBuffer = new boolean[6];
 
@@ -256,6 +256,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public TileGenericPipe() {
+	}
+
+	protected PipeRenderState createRenderState() {
+		return new PipeRenderState();
+	}
+
+	protected PipePluggableState createPluggableState() {
+		return new PipePluggableState();
 	}
 
 	@Override
