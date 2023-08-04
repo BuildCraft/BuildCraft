@@ -375,10 +375,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
      * the current chunk is saved after the last tick. */
     public void markChunkDirty() {
         if (world != null) {
-            Chunk chunk = getContainingChunk();
-            if (chunk != null) {
-                chunk.markDirty();
-            }
+            world.markChunkDirty(this.pos, this);
         }
     }
 

@@ -8,6 +8,7 @@ package buildcraft.transport.wire;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,8 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     public final List<EntityPlayerMP> changedPlayers = new ArrayList<>();
     public final Map<WireSystem.WireElement, IWireEmitter> emittersCache = new HashMap<>();
 
+    private final Map<WireSystem.WireElement, List<WireSystem>> elementsToWireSystemsIndex = new HashMap<>();
+
     public WorldSavedDataWireSystems() {
         super(DATA_NAME);
     }
@@ -62,18 +65,41 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public List<WireSystem> getWireSystemsWithElement(WireSystem.WireElement element) {
-        return wireSystems.keySet().stream().filter(wireSystem -> wireSystem.hasElement(element)).collect(Collectors.toList());
+        List<WireSystem> wireSystemsWithElement = this.elementsToWireSystemsIndex.get(element);
+        return wireSystemsWithElement != null ? new ArrayList<>(wireSystemsWithElement) : Collections.emptyList();
+    }
+
+    public List<WireSystem> getWireSystemsWithElementAsReadOnlyList(WireSystem.WireElement element) {
+        return this.elementsToWireSystemsIndex.getOrDefault(element, Collections.emptyList());
     }
 
     public void removeWireSystem(WireSystem wireSystem) {
         wireSystems.remove(wireSystem);
+        wireSystem.elements.forEach(elementIn -> {
+            elementsToWireSystemsIndex.computeIfPresent(elementIn, (element, wireSystems) -> {
+                wireSystems.remove(wireSystem);
+                return wireSystems.isEmpty() ? null : wireSystems;
+            });
+        });
         markStructureChanged();
     }
 
+    public void addWireSystem(WireSystem wireSystem, boolean powered) {
+        if (this.wireSystems.put(wireSystem, powered) == null) {
+            wireSystem.elements.forEach(systemElement -> {
+                List<WireSystem> wireSystemsWithElement = this.elementsToWireSystemsIndex.computeIfAbsent(systemElement, unused -> new ArrayList<>());
+                if (wireSystemsWithElement.contains(wireSystem)) {
+                    throw new IllegalStateException();
+                }
+                wireSystemsWithElement.add(wireSystem);
+            });
+        }
+    }
+
     public void buildAndAddWireSystem(WireSystem.WireElement element) {
-        WireSystem wireSystem = new WireSystem().build(this, element);
+        WireSystem wireSystem = new WireSystem(this, element);
         if(!wireSystem.isEmpty()) {
-            wireSystems.put(wireSystem, false);
+            this.addWireSystem(wireSystem, false);
             wireSystems.put(wireSystem, wireSystem.update(this));
         }
         markStructureChanged();
@@ -125,12 +151,13 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
 
     public void tick() {
         if(gatesChanged) {
-            wireSystems.keySet().stream()
-                    .filter(wireSystem -> {
-                        boolean newPowered = wireSystem.update(this);
-                        return wireSystems.put(wireSystem, newPowered) != newPowered;
-                    })
-                    .forEach(changedSystems::add);
+            wireSystems.replaceAll((wireSystem, oldPowered) -> {
+                boolean newPowered = wireSystem.update(this);
+                if (oldPowered != newPowered) {
+                    changedSystems.add(wireSystem);
+                }
+                return newPowered;
+            });
         }
         world.getPlayers(EntityPlayerMP.class, Predicates.alwaysTrue()).forEach(player -> {
             Map<Integer, WireSystem> changedWires = this.wireSystems.keySet().stream()
@@ -174,10 +201,12 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         wireSystems.clear();
+        this.elementsToWireSystemsIndex.clear();
+
         NBTTagList entriesList = nbt.getTagList("entries", Constants.NBT.TAG_COMPOUND);
         for(int i = 0; i < entriesList.tagCount(); i++) {
             NBTTagCompound entry = entriesList.getCompoundTagAt(i);
-            wireSystems.put(new WireSystem().readFromNBT(entry.getCompoundTag("wireSystem")), entry.getBoolean("powered"));
+            this.addWireSystem(new WireSystem(entry.getCompoundTag("wireSystem")), entry.getBoolean("powered"));
         }
     }
 

@@ -20,9 +20,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.google.common.base.Predicates;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,9 +49,12 @@ import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
-public class WireSystem {
-    public final List<WireElement> elements = new ArrayList<>();
-    public EnumDyeColor color = null;
+public final class WireSystem {
+    public final ImmutableList<WireElement> elements;
+    public final EnumDyeColor color;
+
+    private transient final int cachedHashCode;
+    private transient final int cachedWiresHashCode;
 
     public boolean hasElement(WireElement element) {
         return elements.contains(element);
@@ -106,12 +111,28 @@ public class WireSystem {
         return Collections.emptyList();
     }
 
-    public WireSystem build(WorldSavedDataWireSystems wireSystems, WireElement startElement) {
+    public WireSystem(ImmutableList<WireElement> elements, EnumDyeColor color) {
+        this.elements = Objects.requireNonNull(elements, "elements");
+        this.color = color;
+
+        this.cachedHashCode = this.computeHashCode();
+        this.cachedWiresHashCode = this.computeCachedWiresHashCode();
+    }
+
+    public WireSystem(WorldSavedDataWireSystems wireSystems, WireElement startElement) {
         long time = System.currentTimeMillis();
         Map<BlockPos, IPipeHolder> holdersCache = new HashMap<>();
         Set<WireElement> walked = new HashSet<>();
+
         Queue<WireElement> queue = new ArrayDeque<>();
-        Consumer<WireElement> build = element -> {
+        queue.add(startElement);
+
+        EnumDyeColor tempColor = null;
+        ImmutableList.Builder<WireElement> elementBuilder = ImmutableList.builder();
+
+        while (!queue.isEmpty()) {
+            WireElement element = queue.remove();
+
             if (!walked.contains(element)) {
                 if (!holdersCache.containsKey(element.blockPos)) {
                     TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
@@ -125,31 +146,33 @@ public class WireSystem {
                 if (holder != null) {
                     if (element.type == WireElement.Type.WIRE_PART) {
                         EnumDyeColor colorOfPart = holder.getWireManager().getColorOfPart(element.wirePart);
-                        if (color == null) {
+                        if (tempColor == null) {
                             if (colorOfPart != null) {
-                                color = colorOfPart;
+                                tempColor = colorOfPart;
                             }
                         }
-                        if (color != null && colorOfPart == color) {
-                            wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == this.color).forEach(wireSystems::removeWireSystem);
-                            elements.add(element);
+                        if (tempColor != null && colorOfPart == tempColor) {
+                            EnumDyeColor colorButFinal = tempColor; //damn you java
+                            wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == colorButFinal).forEach(wireSystems::removeWireSystem);
+                            elementBuilder.add(element);
                             queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
                             Arrays.stream(EnumFacing.VALUES).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {
                         if (holder.getPluggable(element.emitterSide) instanceof IWireEmitter) {
-                            elements.add(new WireElement(element.blockPos, element.emitterSide));
+                            elementBuilder.add(new WireElement(element.blockPos, element.emitterSide));
                         }
                     }
                 }
                 walked.add(element);
             }
-        };
-        queue.add(startElement);
-        while (!queue.isEmpty()) {
-            build.accept(queue.remove());
         }
-        return this;
+
+        this.elements = elementBuilder.build();
+        this.color = tempColor;
+
+        this.cachedHashCode = this.computeHashCode();
+        this.cachedWiresHashCode = this.computeCachedWiresHashCode();
     }
 
     public boolean isEmpty() {
@@ -162,20 +185,30 @@ public class WireSystem {
     }
 
     public List<ChunkPos> getChunkPoses() {
-        return elements.stream().map(element -> element.blockPos).map(ChunkPos::new).collect(Collectors.toList());
+        return this.getChunkPosesAsStream().collect(Collectors.toList());
+    }
+
+    public Stream<ChunkPos> getChunkPosesAsStream() {
+        return elements.stream().map(element -> new ChunkPos(element.blockPos));
     }
 
     public boolean isPlayerWatching(EntityPlayerMP player) {
         if (player.world instanceof WorldServer) {
             WorldServer world = (WorldServer) player.world;
-            return getChunkPoses().stream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.x, chunkPos.z)).filter(Objects::nonNull).anyMatch(
-                playerChunkMapEntry -> playerChunkMapEntry.hasPlayerMatching(Predicates.equalTo(player)));
+            return getChunkPosesAsStream().map(chunkPos -> world.getPlayerChunkMap().getEntry(chunkPos.x, chunkPos.z))
+                    .anyMatch(playerChunkMapEntry -> playerChunkMapEntry != null && playerChunkMapEntry.containsPlayer(player));
         }
         return false;
     }
 
     public int getWiresHashCode() {
-        return elements.stream().filter(element -> element.type == WireElement.Type.WIRE_PART).collect(Collectors.toList()).hashCode();
+        return this.cachedWiresHashCode;
+    }
+
+    private int computeCachedWiresHashCode() {
+        return elements.stream().filter(element -> element.type == WireElement.Type.WIRE_PART)
+                //the following is equivalent to .collect(Collectors.toList()).hashCode(), by the definition of List#hashCode():
+                .mapToInt(WireElement::hashCode).reduce(1, (hashCode, elementHashCode) -> hashCode * 31 + elementHashCode);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -187,12 +220,14 @@ public class WireSystem {
         return nbt;
     }
 
-    public WireSystem readFromNBT(NBTTagCompound nbt) {
-        elements.clear();
+    public WireSystem(NBTTagCompound nbt) {
         NBTTagList elementsList = nbt.getTagList("elements", Constants.NBT.TAG_COMPOUND);
-        IntStream.range(0, elementsList.tagCount()).mapToObj(elementsList::getCompoundTagAt).map(WireElement::new).forEach(elements::add);
+        //noinspection UnstableApiUsage
+        elements = IntStream.range(0, elementsList.tagCount()).mapToObj(elementsList::getCompoundTagAt).map(WireElement::new).collect(ImmutableList.toImmutableList());
         color = EnumDyeColor.byMetadata(nbt.getInteger("color"));
-        return this;
+
+        this.cachedHashCode = this.computeHashCode();
+        this.cachedWiresHashCode = this.computeCachedWiresHashCode();
     }
 
     @Override
@@ -206,6 +241,11 @@ public class WireSystem {
 
         WireSystem that = (WireSystem) o;
 
+        if (this.cachedHashCode != that.cachedHashCode) {
+            //both have a cached hashCode, and the hash codes don't match
+            return false;
+        }
+
         if (!elements.equals(that.elements)) {
             return false;
         }
@@ -214,6 +254,10 @@ public class WireSystem {
 
     @Override
     public int hashCode() {
+        return this.cachedHashCode;
+    }
+
+    private int computeHashCode() {
         int result = elements.hashCode();
         result = 31 * result + (color != null ? color.hashCode() : 0);
         return result;

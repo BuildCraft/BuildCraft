@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.network.PacketBuffer;
@@ -49,12 +50,15 @@ public class MessageWireSystems implements IMessage {
         wireSystems.clear();
         int count = pb.readInt();
         for (int i = 0; i < count; i++) {
-            WireSystem wireSystem = new WireSystem();
             int wiresHashCode = pb.readInt();
             int localCount = pb.readInt();
+
+            ImmutableList.Builder<WireSystem.WireElement> elements = ImmutableList.builder();
             for (int j = 0; j < localCount; j++) {
-                wireSystem.elements.add(new WireSystem.WireElement(pb));
+                elements.add(new WireSystem.WireElement(pb));
             }
+            WireSystem wireSystem = new WireSystem(elements.build(), null);
+
             wireSystems.put(wiresHashCode, wireSystem);
         }
     }

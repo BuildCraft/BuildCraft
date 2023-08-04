@@ -66,11 +66,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         IGate gate = (IGate) container;
         IWireManager wires = gate.getPipeHolder().getWireManager();
 
-        if (active) {
-            if (!wires.isAnyPowered(colour)) {
-                return false;
-            }
-        } else if (wires.isAnyPowered(colour)) {
+        if (this.active != wires.isAnyPowered(this.colour)) {
             return false;
         }
 
@@ -80,11 +76,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
                 if (signal.colour == null) {
                     continue;
                 }
-                if (signal.active) {
-                    if (!wires.isAnyPowered(signal.colour)) {
-                        return false;
-                    }
-                } else if (wires.isAnyPowered(signal.colour)) {
+                if (signal.active != wires.isAnyPowered(signal.colour)) {
                     return false;
                 }
             }

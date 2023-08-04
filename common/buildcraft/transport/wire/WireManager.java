@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -176,16 +177,30 @@ public class WireManager implements IWireManager {
         if (holder.getPipeWorld().isRemote) {
             return poweredClient.contains(part);
         } else {
-            return getWireSystems().getWireSystemsWithElement(new WireSystem.WireElement(holder.getPipePos(), part))
-                .stream().map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).filter(Objects::nonNull)
-                .reduce(Boolean::logicalOr).orElse(false);
+            WorldSavedDataWireSystems wireSystems = this.getWireSystems();
+            List<WireSystem> wireSystemsWithElement = wireSystems.getWireSystemsWithElementAsReadOnlyList(new WireSystem.WireElement(holder.getPipePos(), part));
+            if (!wireSystemsWithElement.isEmpty()) {
+                for (WireSystem wireSystem : wireSystemsWithElement) {
+                    Boolean powered = wireSystems.wireSystems.get(wireSystem);
+                    if (powered != null && powered) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
     @Override
     public boolean isAnyPowered(EnumDyeColor color) {
-        return parts.entrySet().stream().filter(partColor -> partColor.getValue() == color)
-            .anyMatch(partColor -> isPowered(partColor.getKey()));
+        if (!this.parts.isEmpty()) {
+            for (Map.Entry<EnumWirePart, EnumDyeColor> partColor : this.parts.entrySet()) {
+                if (partColor.getValue() == color && this.isPowered(partColor.getKey())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public NBTTagCompound writeToNbt() {
