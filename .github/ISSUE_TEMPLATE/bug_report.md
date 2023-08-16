@@ -10,7 +10,6 @@ assignees: ''
 <!--
 If your issue is more of a question (like how does a machine work or a suggestion), please use our Discord instead: https://discord.gg/BuildCraft
 Please fill in all relevant information below.
-Please do not put the entire log here, upload it on pastebin (https://pastebin.com/) or gist (https://gist.github.com/) and paste here the link.
 -->
 
 **Please complete the following information:**
