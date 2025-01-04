@@ -384,7 +384,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeGate = new ItemGate();
 			pipeGate.setUnlocalizedName("pipeGate");
 			if (Loader.isModLoaded("BuildCraft|Silicon") && BCRegistry.INSTANCE.isItemEnabled(pipeGate)) {
-				new BCCreativeTab("gates");
+				pipeGate.setCreativeTab(new BCCreativeTab("gates"));
 			}
 			BCRegistry.INSTANCE.registerItem(pipeGate, false);
 

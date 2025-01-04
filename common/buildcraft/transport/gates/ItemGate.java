@@ -35,7 +35,6 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
@@ -56,7 +55,6 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 		setHasSubtypes(false);
 		setMaxDamage(0);
 		setPassSneakClick(true);
-		setCreativeTab(BCCreativeTab.getIfPresent("gates"));
 	}
 
 	private static NBTTagCompound getNBT(ItemStack stack) {
