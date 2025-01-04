@@ -291,6 +291,10 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	}
 
 	public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
+		if (!hasComparatorInputOverride()) {
+			return 0;
+		}
+
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof IInventory) {
 			int count = 0;
