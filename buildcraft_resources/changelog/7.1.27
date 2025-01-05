@@ -1,0 +1,8 @@
+Additions:
+
+* API for setting pipe render state and pluggable state.
+
+Bugs fixed:
+
+* [#4712] Gate items not displaying in the relevant creative tab.
+* Potential crash with Remote IO.
