@@ -1,126 +1,134 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
 package buildcraft.core.block;
 
-import java.util.Random;
-import java.util.function.Supplier;
-
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import buildcraft.api.blocks.ISpring;
 import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftProperties;
-
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.data.XorShift128Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockSpring extends BlockBCBase_Neptune {
-    public static final IProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
+import java.util.function.BiFunction;
+
+public class BlockSpring extends BlockBCBase_Neptune implements EntityBlock, ISpring {
+    // public static final Property<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
+    public final EnumSpring springType;
 
     public static final XorShift128Random rand = new XorShift128Random();
 
-    public BlockSpring(String id) {
-        super(Material.ROCK, id);
-        setBlockUnbreakable();
-        setResistance(6000000.0F);
-        setSoundType(SoundType.STONE);
+    public BlockSpring(String idBC, BlockBehaviour.Properties properties, EnumSpring springType) {
+        super(idBC, properties);
+//        setBlockUnbreakable();
+//        setResistance(6000000.0F);
+//        setSoundType(SoundType.STONE);
 
-        disableStats();
-        setTickRandomly(true);
-        setDefaultState(getDefaultState().withProperty(SPRING_TYPE, EnumSpring.WATER));
+//        disableStats();
+//        setTickRandomly(true);
+//        setDefaultState(getDefaultState().withProperty(SPRING_TYPE, EnumSpring.WATER));
+        this.springType = springType;
     }
+
+    // 1.18.2: no meta
+
+//    @Override
+//     protected BlockStateContainer createBlockState() {
+//         return new BlockStateContainer(this, SPRING_TYPE);
+//     }
 
     // BlockState
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, SPRING_TYPE);
-    }
+//    @Override
+//    protected BlockStateContainer createBlockState() {
+//        return new BlockStateContainer(this, SPRING_TYPE);
+//    }
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(SPRING_TYPE).ordinal();
-    }
+//    @Override
+//    public int getMetaFromState(BlockState state) {
+//        return state.getValue(BuildCraftProperties.SPRING_TYPE).ordinal();
+//    }
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        if (meta == EnumSpring.OIL.ordinal()) {
-            return getDefaultState().withProperty(SPRING_TYPE, EnumSpring.OIL);
-        } else {
-            return getDefaultState().withProperty(SPRING_TYPE, EnumSpring.WATER);
-        }
-    }
+//    @Override
+//    public BlockState getStateFromMeta(int meta) {
+//        if (meta == EnumSpring.OIL.ordinal()) {
+//            return defaultBlockState().setValue(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
+//        } else {
+//            return defaultBlockState().setValue(BuildCraftProperties.SPRING_TYPE, EnumSpring.WATER);
+//        }
+//    }
 
     // Other
 
-    @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        for (EnumSpring type : EnumSpring.VALUES) {
-            list.add(new ItemStack(this, 1, type.ordinal()));
-        }
-    }
+//    @Override
+//    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+//        for (EnumSpring type : EnumSpring.VALUES) {
+//            list.add(new ItemStack(this, 1, type.ordinal()));
+//        }
+//    }
+
+    // Calen: use datagen LootTable
+//    @Override
+//    public int damageDropped(BlockState state) {
+//        return state.getValue(SPRING_TYPE).ordinal();
+//    }
 
     @Override
-    public int damageDropped(IBlockState state) {
-        return state.getValue(SPRING_TYPE).ordinal();
-    }
-
-    @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
+//    public void updateTick(World world, BlockPos pos, IBlockState state, Random random)
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         generateSpringBlock(world, pos, state);
     }
 
-    @Override
-    public boolean hasTileEntity(IBlockState state) {
-        return state.getValue(SPRING_TYPE).tileConstructor != null;
-    }
+//    @Override
+//    public boolean hasTileEntity(BlockState state) {
+//        return state.getValue(SPRING_TYPE).tileConstructor != null;
+//    }
 
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        Supplier<TileEntity> constructor = state.getValue(SPRING_TYPE).tileConstructor;
+//    public BlockEntity getBlockEntity(BlockGetter world, BlockPos pos)
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+//        Supplier<TileEntity> constructor = state.getValue(SPRING_TYPE).tileConstructor;
+        BiFunction<BlockPos, BlockState, BlockEntity> constructor = this.springType.tileConstructor;
         if (constructor != null) {
-            return constructor.get();
+            return constructor.apply(pos, state);
         }
         return null;
     }
-    
+
     // @Override
-    // public void onNeighborBlockChange(World world, int x, int y, int z, int blockid) {
+    // public void onNeighborBlockChange(Level world, int x, int y, int z, int blockid) {
     // assertSpring(world, x, y, z);
     // }
 
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        super.onBlockAdded(world, pos, state);
-        world.scheduleUpdate(pos, this, state.getValue(SPRING_TYPE).tickRate);
+//    public void onBlockAdded(Level world, BlockPos pos, BlockState state)
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity p_52509_, ItemStack p_52510_) {
+//        super.onBlockAdded(world, pos, state);
+        super.setPlacedBy(world, pos, state, p_52509_, p_52510_);
+//        world.scheduleUpdate(pos, this, state.getValue(SPRING_TYPE).tickRate);
+        world.scheduleTick(pos, this, this.springType.tickRate);
     }
 
-    private void generateSpringBlock(World world, BlockPos pos, IBlockState state) {
-        EnumSpring spring = state.getValue(SPRING_TYPE);
-        world.scheduleUpdate(pos, this, spring.tickRate);
+    private void generateSpringBlock(Level world, BlockPos pos, BlockState state) {
+//        EnumSpring spring = state.getValue(BuildCraftProperties.SPRING_TYPE);
+        EnumSpring spring = this.springType;
+        world.scheduleTick(pos, this, spring.tickRate);
         if (!spring.canGen || spring.liquidBlock == null) {
             return;
         }
-        if (!world.isAirBlock(pos.up())) {
+        if (!world.isEmptyBlock(pos.above())) {
             return;
         }
         if (spring.chance != -1 && rand.nextInt(spring.chance) != 0) {
             return;
         }
-        world.setBlockState(pos.up(), spring.liquidBlock);
+        world.setBlock(pos.above(), spring.liquidBlock, Block.UPDATE_ALL);
     }
 
     // Prevents updates on chunk generation
@@ -128,4 +136,11 @@ public class BlockSpring extends BlockBCBase_Neptune {
     // public boolean func_149698_L() {
     // return false;
     // }
+
+    // ISpring
+
+    @Override
+    public EnumSpring getType() {
+        return springType;
+    }
 }

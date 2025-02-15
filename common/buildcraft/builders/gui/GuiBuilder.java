@@ -6,13 +6,14 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.builders.container.ContainerBuilder;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
-
-import buildcraft.builders.container.ContainerBuilder;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 // TODO: Convert this gui into JSON!
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
@@ -31,10 +32,12 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     );
     private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BLUEPRINT, 0, 54, 16, 47);
 
-    public GuiBuilder(ContainerBuilder container) {
-        super(container);
-        xSize = SIZE_BLUEPRINT_X;
-        ySize = SIZE_Y;
+    public GuiBuilder(ContainerBuilder container, Inventory inventory, Component component) {
+        super(container, inventory, component);
+//        xSize = SIZE_BLUEPRINT_X;
+        imageWidth = SIZE_BLUEPRINT_X;
+//        ySize = SIZE_Y;
+        imageHeight = SIZE_Y;
     }
 
     @Override
@@ -44,10 +47,11 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         for (int i = 0; i < container.widgetTanks.size(); i++) {
             mainGui.shownElements.add(
                     container.widgetTanks
-                    .get(i).createGuiElement(mainGui, new GuiRectangle(179 + i * 18, 145, 16, 47).offset(mainGui.rootElement), ICON_TANK_OVERLAY)
+                            .get(i).createGuiElement(mainGui, new GuiRectangle(179 + i * 18, 145, 16, 47).offset(mainGui.rootElement), ICON_TANK_OVERLAY)
             );
         }
 
+        // here is comment in 1.12.2
 //        buttonList.add(
 //                new GuiButtonSmall(
 //                        this,
@@ -67,8 +71,8 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(mainGui.rootElement);
-        ICON_BLUEPRINT_GUI.drawAt(mainGui.rootElement.offset(SIZE_BLUEPRINT_X - BLUEPRINT_WIDTH, 0));
+    protected void drawBackgroundLayer(float partialTicks, GuiGraphics guiGraphics) {
+        ICON_GUI.drawAt(mainGui.rootElement, guiGraphics);
+        ICON_BLUEPRINT_GUI.drawAt(mainGui.rootElement.offset(SIZE_BLUEPRINT_X - BLUEPRINT_WIDTH, 0), guiGraphics);
     }
 }

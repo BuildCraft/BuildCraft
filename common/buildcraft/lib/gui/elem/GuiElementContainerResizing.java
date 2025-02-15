@@ -1,10 +1,12 @@
 package buildcraft.lib.gui.elem;
 
-import java.util.List;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.List;
 
 public class GuiElementContainerResizing extends GuiElementContainer2 {
 
@@ -65,16 +67,16 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, GuiGraphics guiGraphics) {
         for (IGuiElement elem : getChildElements()) {
-            elem.drawBackground(partialTicks);
+            elem.drawBackground(partialTicks, guiGraphics);
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(GuiGraphics guiGraphics, float partialTicks) {
         for (IGuiElement elem : getChildElements()) {
-            elem.drawForeground(partialTicks);
+            elem.drawForeground(guiGraphics, partialTicks);
         }
     }
 

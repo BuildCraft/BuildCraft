@@ -6,20 +6,15 @@
 
 package buildcraft.transport.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import buildcraft.api.transport.pipe.IPipeBehaviourBaker;
-import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
-import buildcraft.api.transport.pipe.IPipeFlowBaker;
-import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.PipeApiClient.IClientRegistry;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum PipeRegistryClient implements IClientRegistry {
     INSTANCE;
@@ -37,14 +32,12 @@ public enum PipeRegistryClient implements IClientRegistry {
     }
 
     @Override
-    public <B extends PipeBehaviour> void registerRenderer(Class<? extends B> behaviourClass,
-        IPipeBehaviourRenderer<B> renderer) {
+    public <B extends PipeBehaviour> void registerRenderer(Class<? extends B> behaviourClass, IPipeBehaviourRenderer<B> renderer) {
         behaviourRenderMap.put(behaviourClass, renderer);
     }
 
     @Override
-    public <P extends PipePluggable> void registerRenderer(Class<? extends P> plugClass,
-        IPlugDynamicRenderer<P> renderer) {
+    public <P extends PipePluggable> void registerRenderer(Class<? extends P> plugClass, IPlugDynamicRenderer<P> renderer) {
         plugRenderMap.put(plugClass, renderer);
     }
 
@@ -60,7 +53,7 @@ public enum PipeRegistryClient implements IClientRegistry {
 
     @Override
     public <P extends PluggableModelKey> void registerBaker(Class<? extends P> keyClass,
-        IPluggableStaticBaker<P> renderer) {
+                                                            IPluggableStaticBaker<P> renderer) {
         plugBakerMap.put(keyClass, renderer);
     }
 

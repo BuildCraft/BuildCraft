@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftsilicon",
+  "key": {
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "d": {
+      "tag": "forge:gems/diamond"
+    },
+    "g": {
+      "tag": "forge:gears/diamond"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "OdO",
+    "OrO",
+    "OgO"
+  ],
+  "result": {
+    "item": "buildcraftsilicon:assembly_table"
+  },
+  "show_notification": true
+}

@@ -6,6 +6,7 @@
 
 package buildcraft.lib.recipe;
 
+@Deprecated(forRemoval = true)
 public class OredictionaryNames {
     public static final String GEAR_WOOD = "gearWood";
     public static final String GEAR_STONE = "gearStone";

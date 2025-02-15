@@ -1,34 +1,20 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.tile;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.primitives.Bytes;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ITickable;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.data.NbtSquishConstants;
-
+import buildcraft.api.tiles.IBCTileMenuProvider;
+import buildcraft.api.tiles.ITickable;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.BCBuildersMenuTypes;
+import buildcraft.builders.container.ContainerElectronicLibrary;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
+import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.misc.StackUtil;
@@ -40,13 +26,28 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
+import com.google.common.primitives.Bytes;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.Snapshot;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 
-public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
+public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, IBCTileMenuProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("library");
     @SuppressWarnings("WeakerAccess")
     public static final int NET_DOWN = IDS.allocId("DOWN");
@@ -54,35 +55,35 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public static final int NET_UP = IDS.allocId("UP");
 
     public final ItemHandlerSimple invDownIn = itemManager.addInvHandler(
-        "downIn",
-        1,
-        (slot, stack) -> stack.getItem() instanceof ItemSnapshot &&
-            ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
-        StackInsertionFunction.getInsertionFunction(1),
-        EnumAccess.INSERT,
-        EnumPipePart.VALUES
+            "downIn",
+            1,
+            (slot, stack) -> stack.getItem() instanceof ItemSnapshot &&
+                    ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+            StackInsertionFunction.getInsertionFunction(1),
+            EnumAccess.INSERT,
+            EnumPipePart.VALUES
     );
     public final ItemHandlerSimple invDownOut = itemManager.addInvHandler(
-        "downOut",
-        1,
-        StackInsertionFunction.getInsertionFunction(1),
-        EnumAccess.EXTRACT,
-        EnumPipePart.VALUES
+            "downOut",
+            1,
+            StackInsertionFunction.getInsertionFunction(1),
+            EnumAccess.EXTRACT,
+            EnumPipePart.VALUES
     );
     public final ItemHandlerSimple invUpIn = itemManager.addInvHandler(
-        "upIn",
-        1,
-        (slot, stack) -> stack.getItem() instanceof ItemSnapshot,
-        StackInsertionFunction.getInsertionFunction(1),
-        EnumAccess.INSERT,
-        EnumPipePart.VALUES
+            "upIn",
+            1,
+            (slot, stack) -> stack.getItem() instanceof ItemSnapshot,
+            StackInsertionFunction.getInsertionFunction(1),
+            EnumAccess.INSERT,
+            EnumPipePart.VALUES
     );
     public final ItemHandlerSimple invUpOut = itemManager.addInvHandler(
-        "upOut",
-        1,
-        StackInsertionFunction.getInsertionFunction(1),
-        EnumAccess.EXTRACT,
-        EnumPipePart.VALUES
+            "upOut",
+            1,
+            StackInsertionFunction.getInsertionFunction(1),
+            EnumAccess.EXTRACT,
+            EnumPipePart.VALUES
     );
     public Snapshot.Key selected = null;
     private int progressDown = -1;
@@ -90,6 +91,10 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public final DeltaInt deltaProgressDown = deltaManager.addDelta("progressDown", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
     public final DeltaInt deltaProgressUp = deltaManager.addDelta("progressUp", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
     private final Map<Pair<UUID, Snapshot.Key>, List<byte[]>> upSnapshotsParts = new HashMap<>();
+
+    public TileElectronicLibrary(BlockPos pos, BlockState state) {
+        super(BCBuildersBlocks.libraryTile.get(), pos, state);
+    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
@@ -110,9 +115,10 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
 
     @Override
     public void update() {
+        ITickable.super.update();
         deltaManager.tick();
 
-        if (world.isRemote) {
+        if (level.isClientSide) {
             return;
         }
 
@@ -163,9 +169,9 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     // 3. server adds snapshot to its database
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Dist side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(selected != null);
                 if (selected != null) {
@@ -173,17 +179,18 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
             if (id == NET_DOWN) {
-                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(invDownIn.getStackInSlot(0));
+//                Snapshot.Header header = BCBuildersItems.snapshot.getHeader(invDownIn.getStackInSlot(0));
+                Snapshot.Header header = BCBuildersItems.snapshotBLUEPRINT.get().getHeader(invDownIn.getStackInSlot(0));
                 if (header != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(level).getSnapshot(header.key);
                     if (snapshot != null) {
                         snapshot = snapshot.copy();
                         snapshot.key = new Snapshot.Key(snapshot.key, header);
                         buffer.writeBoolean(true);
                         NbtSquisher.squish(
-                            Snapshot.writeToNBT(snapshot),
-                            NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
-                            buffer
+                                Snapshot.writeToNBT(snapshot),
+                                NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
+                                buffer
                         );
                     } else {
                         buffer.writeBoolean(false);
@@ -199,9 +206,10 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+//    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
                     selected = new Snapshot.Key(buffer);
@@ -213,12 +221,12 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 if (buffer.readBoolean()) {
                     Snapshot snapshot = Snapshot.readFromNBT(NbtSquisher.expand(buffer));
                     snapshot.computeKey();
-                    GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
+                    GlobalSavedDataSnapshots.get(level).addSnapshot(snapshot);
                 }
             }
             if (id == NET_UP) {
                 if (selected != null) {
-                    Snapshot snapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(selected);
+                    Snapshot snapshot = GlobalSavedDataSnapshots.get(level).getSnapshot(selected);
                     if (snapshot != null) {
                         try (OutputStream outputStream = new OutputStream() {
                             private byte[] buf = new byte[4 * 1024];
@@ -226,8 +234,10 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                             private boolean closed = false;
 
                             private void write(boolean last) throws IOException {
-                                MessageManager.sendToServer(createMessage(NET_UP, localBuffer -> {
-                                    localBuffer.writeUniqueId(ctx.getClientHandler().getGameProfile().getId());
+                                MessageManager.sendToServer(createMessage(NET_UP, localBuffer ->
+                                {
+//                                    localBuffer.writeUniqueId(ctx.getClientHandler().getGameProfile().getId());
+                                    localBuffer.writeUUID(((ClientPacketListener) ctx.getNetworkManager().getPacketListener()).getLocalGameProfile().getId());
                                     selected.writeToByteBuf(localBuffer);
                                     localBuffer.writeBoolean(last);
                                     localBuffer.writeByteArray(buf);
@@ -254,20 +264,22 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                                 pos = 0;
                                 write(true);
                             }
-                        }) {
+                        })
+                        {
                             NbtSquisher.squish(
-                                Snapshot.writeToNBT(snapshot),
-                                NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
-                                outputStream
+                                    Snapshot.writeToNBT(snapshot),
+                                    NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,
+                                    outputStream
                             );
                         }
                     }
                 }
             }
         }
-        if (side == Side.SERVER) {
+        if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == NET_UP) {
-                UUID playerId = buffer.readUniqueId();
+//                UUID playerId = buffer.readUniqueId();
+                UUID playerId = buffer.readUUID();
                 Snapshot.Key key = new Snapshot.Key(buffer);
                 Pair<UUID, Snapshot.Key> pair = Pair.of(playerId, key);
                 boolean last = buffer.readBoolean();
@@ -275,19 +287,20 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 if (last && upSnapshotsParts.containsKey(pair)) {
                     try {
                         Snapshot snapshot = Snapshot.readFromNBT(
-                            NbtSquisher.expand(
-                                Bytes.concat(
-                                    upSnapshotsParts.get(pair)
-                                        .toArray(new byte[0][])
+                                NbtSquisher.expand(
+                                        Bytes.concat(
+                                                upSnapshotsParts.get(pair)
+                                                        .toArray(new byte[0][])
+                                        )
                                 )
-                            )
                         );
                         Snapshot.Header header = snapshot.key.header;
                         snapshot = snapshot.copy();
                         snapshot.key = new Snapshot.Key(snapshot.key, (Snapshot.Header) null);
                         snapshot.computeKey();
-                        GlobalSavedDataSnapshots.get(world).addSnapshot(snapshot);
-                        invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), header));
+                        GlobalSavedDataSnapshots.get(level).addSnapshot(snapshot);
+//                        invUpOut.setStackInSlot(0, BCBuildersItems.snapshot.getUsed(snapshot.getType(), header));
+                        invUpOut.setStackInSlot(0, BCBuildersItems.snapshotBLUEPRINT.get().getUsed(snapshot.getType(), header));
                         invUpIn.setStackInSlot(0, StackUtil.EMPTY);
                     } finally {
                         upSnapshotsParts.remove(pair);
@@ -295,5 +308,18 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
         }
+    }
+
+    // MenuProvider
+
+    @Override
+    public Component getDisplayName() {
+        return this.getBlockState().getBlock().getName();
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new ContainerElectronicLibrary(BCBuildersMenuTypes.ELECTRONIC_LIBRARY, id, player, this);
     }
 }

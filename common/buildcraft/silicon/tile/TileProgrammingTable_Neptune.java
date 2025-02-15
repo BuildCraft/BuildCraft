@@ -6,14 +6,37 @@
 
 package buildcraft.silicon.tile;
 
+import buildcraft.robotics.BCRoboticsMenuTypes;
+import buildcraft.robotics.container.ContainerProgrammingTable_Neptune;
+import buildcraft.silicon.BCSiliconBlocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nullable;
+
 public class TileProgrammingTable_Neptune extends TileLaserTableBase {
+    public TileProgrammingTable_Neptune(BlockPos pos, BlockState blockState) {
+        super(BCSiliconBlocks.programmingTableTile.get(), pos, blockState);
+    }
+
     @Override
     public long getTarget() {
         return 0;
     }
 
+    // MenuProvider
+
+    @Nullable
     @Override
-    public boolean hasFastRenderer() {
-        return true;
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new ContainerProgrammingTable_Neptune(BCRoboticsMenuTypes.PROGRAMMING_TABLE, id, player, this);
     }
+
+//    @Override
+//    public boolean hasFastRenderer() {
+//        return true;
+//    }
 }

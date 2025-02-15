@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "buildcraftenergy",
+  "ingredients": [
+    {
+      "item": "buildcraftenergy:oil_residue_heat_0_bucket"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:waterproof"
+  }
+}

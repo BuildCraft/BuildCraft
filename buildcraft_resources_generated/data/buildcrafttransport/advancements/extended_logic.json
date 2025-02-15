@@ -1,0 +1,29 @@
+{
+  "parent": "buildcrafttransport:pipe_logic",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcrafttransport.extended_logic.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftsilicon:plug_gate_gold_or_diamond"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcrafttransport.extended_logic.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

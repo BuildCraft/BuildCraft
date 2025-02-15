@@ -1,0 +1,6 @@
+{
+  "type": "buildcraftenergy:oil_spout",
+  "biomes": "#buildcraftenergy:oil_gen",
+  "spawn_overrides": {},
+  "step": "fluid_springs"
+}

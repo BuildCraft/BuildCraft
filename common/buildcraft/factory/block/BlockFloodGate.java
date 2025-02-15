@@ -6,72 +6,91 @@
 
 package buildcraft.factory.block;
 
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.factory.tile.TileFloodGate;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithTickableTE;
+import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.tools.IToolWrench;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.tile.TileFloodGate;
-
-public class BlockFloodGate extends BlockBCTile_Neptune {
-    public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP;
+public class BlockFloodGate extends BlockBCTile_Neptune<TileFloodGate> implements IBlockWithTickableTE<TileFloodGate> {
+    public static final Map<Direction, Property<Boolean>> CONNECTED_MAP;
 
     static {
         CONNECTED_MAP = new HashMap<>(BuildCraftProperties.CONNECTED_MAP);
-        CONNECTED_MAP.remove(EnumFacing.UP);
+        CONNECTED_MAP.remove(Direction.UP);
     }
 
-    public BlockFloodGate(Material material, String id) {
-        super(material, id);
+    public BlockFloodGate(String idBC, BlockBehaviour.Properties props) {
+        super(idBC, props);
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(CONNECTED_MAP.values());
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        return new TileFloodGate();
+//    public TileBC_Neptune createTileEntity(World world, IBlockState state)
+    public TileBC_Neptune newBlockEntity(BlockPos pos, BlockState state) {
+        return new TileFloodGate(pos, state);
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFloodGate) {
-            for (EnumFacing side : CONNECTED_MAP.keySet()) {
-                state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
+    public BlockState getActualState(BlockState state, LevelAccessor world, BlockPos pos, BlockEntity tile) {
+        if (tile instanceof TileFloodGate floodGate) {
+            for (Direction side : CONNECTED_MAP.keySet()) {
+                state = state.setValue(CONNECTED_MAP.get(side), floodGate.openSides.contains(side));
             }
         }
         return state;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand);
+    public BlockState updateShape(BlockState thisState, Direction facing, BlockState otherState, LevelAccessor world, BlockPos thisPos, BlockPos otherPos) {
+        BlockEntity tile = world.getBlockEntity(thisPos);
+        thisState = super.updateShape(thisState, facing, otherState, world, thisPos, otherPos);
+        return getActualState(thisState, world, thisPos, tile);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
+        Level world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        return getActualState(state, world, pos, world.getBlockEntity(pos));
+    }
+
+    @Override
+//    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        Direction side = hitResult.getDirection();
+
+        ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.getItem() instanceof IToolWrench) {
-            if (!world.isRemote) {
-                if (side != EnumFacing.UP) {
-                    TileEntity tile = world.getTileEntity(pos);
+            if (!world.isClientSide) {
+                if (side != Direction.UP) {
+                    BlockEntity tile = world.getBlockEntity(pos);
                     if (tile instanceof TileFloodGate) {
                         if (CONNECTED_MAP.containsKey(side)) {
                             TileFloodGate floodGate = (TileFloodGate) tile;
@@ -80,13 +99,16 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
                             }
                             floodGate.queue.clear();
                             floodGate.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
-                            return true;
+//                            return true;
+                            return InteractionResult.SUCCESS;
                         }
                     }
                 }
             }
-            return false;
+//            return false;
+            return InteractionResult.FAIL;
         }
-        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+//        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+        return super.use(state, world, pos, player, hand, hitResult);
     }
 }

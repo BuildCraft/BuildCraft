@@ -1,0 +1,16 @@
+{
+  "type": "buildcraftfactory:distillation",
+  "in": {
+    "amount": 4,
+    "fluid": "buildcraftenergy:oil_heat_1"
+  },
+  "outGas": {
+    "amount": 5,
+    "fluid": "buildcraftenergy:fuel_mixed_light_heat_1"
+  },
+  "outLiquid": {
+    "amount": 1,
+    "fluid": "buildcraftenergy:oil_dense_heat_1"
+  },
+  "powerRequired": 8000000
+}

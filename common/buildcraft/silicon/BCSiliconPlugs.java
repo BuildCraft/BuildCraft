@@ -1,19 +1,13 @@
 package buildcraft.silicon;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.BCModules;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
-
-import buildcraft.silicon.plug.PluggableFacade;
-import buildcraft.silicon.plug.PluggableGate;
-import buildcraft.silicon.plug.PluggableLens;
-import buildcraft.silicon.plug.PluggableLightSensor;
-import buildcraft.silicon.plug.PluggablePulsar;
+import buildcraft.silicon.plug.*;
+import net.minecraft.resources.ResourceLocation;
 
 public class BCSiliconPlugs {
 
@@ -46,7 +40,7 @@ public class BCSiliconPlugs {
         // TODO: remove this in 7.99.19!
         // This handles the migration of most of the transport pluggables into silicon
         String modId = BCModules.TRANSPORT.getModId();
-        PipeApi.pluggableRegistry.register(new ResourceLocation(modId, def.identifier.getResourcePath()), def);
+        PipeApi.pluggableRegistry.register(new ResourceLocation(modId, def.identifier.getPath()), def);
         return def;
     }
 

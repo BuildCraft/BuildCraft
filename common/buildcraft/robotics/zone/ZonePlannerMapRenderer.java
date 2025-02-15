@@ -6,50 +6,52 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
-
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
-
-import org.lwjgl.opengl.GL11;
-
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import buildcraft.lib.client.model.MutableVertex;
-
-import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
-
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public enum ZonePlannerMapRenderer {
     INSTANCE;
 
-    private static final Cache<ZonePlannerMapChunkKey, Integer> CHUNK_GL_CACHE = CacheBuilder.newBuilder()
+    // private static final Cache<ZonePlannerMapChunkKey, Integer> CHUNK_GL_CACHE = CacheBuilder.newBuilder()
+    private static final Cache<ZonePlannerMapChunkKey, VertexBuffer> CHUNK_GL_CACHE = CacheBuilder.newBuilder()
             .expireAfterAccess(20, TimeUnit.SECONDS)
             .removalListener(ZonePlannerMapRenderer::onRemove)
             .build();
     private final MutableVertex vertex = new MutableVertex();
 
-    private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, Integer> notification) {
-        Integer glList = notification.getValue();
-        if (glList != null) {
-            GL11.glDeleteLists(glList, 1);
+    // private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, Integer> notification)
+    private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, VertexBuffer> notification) {
+//        Integer glList = notification.getValue();
+        VertexBuffer vertexBuffer = notification.getValue();
+//        if (glList != null)
+        if (vertexBuffer != null) {
+//            GL11.glDeleteLists(glList, 1);
+            vertexBuffer.close();
         }
     }
 
-    private void vertex(BufferBuilder builder, double x, double y, double z) {
+    private void vertex(VertexConsumer builder, double x, double y, double z) {
         vertex.positiond(x, y, z);
-        vertex.render(builder);
+//        vertex.render(builder);
+//        vertex.renderPositionColour(poseStack.last(), builder);
+        vertex.renderPositionColour(builder);
     }
 
-    public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z, double height, double radius) {
+    // Calen 1.20.1: changed the order of the vertexes
+    public void drawBlockCuboid(VertexConsumer builder, double x, double y, double z, double height, double radius) {
         @SuppressWarnings("UnnecessaryLocalVariable")
         double rX = radius;
         double rY = height * 0.5;
@@ -64,84 +66,115 @@ public enum ZonePlannerMapRenderer {
         vertex(builder, x + rX, y + rY, z - rZ);
         vertex(builder, x - rX, y + rY, z - rZ);
 
-        vertex.normalf(-1, 0, 0);
         vertex.multColourd(0.6);
-        vertex(builder, x - rX, y - rY, z + rZ);
+        vertex.normalf(-1, 0, 0);
         vertex(builder, x - rX, y + rY, z + rZ);
         vertex(builder, x - rX, y + rY, z - rZ);
         vertex(builder, x - rX, y - rY, z - rZ);
+        vertex(builder, x - rX, y - rY, z + rZ);
 
         vertex.normalf(1, 0, 0);
+        vertex(builder, x + rX, y - rY, z + rZ);
         vertex(builder, x + rX, y - rY, z - rZ);
         vertex(builder, x + rX, y + rY, z - rZ);
         vertex(builder, x + rX, y + rY, z + rZ);
-        vertex(builder, x + rX, y - rY, z + rZ);
         vertex.multColourd(1 / 0.6);
 
-        vertex.normalf(0, 0, -1);
         vertex.multColourd(0.8);
-        vertex(builder, x - rX, y - rY, z - rZ);
-        vertex(builder, x - rX, y + rY, z - rZ);
-        vertex(builder, x + rX, y + rY, z - rZ);
-        vertex(builder, x + rX, y - rY, z - rZ);
-
         vertex.normalf(0, 0, 1);
-        vertex(builder, x + rX, y - rY, z + rZ);
-        vertex(builder, x + rX, y + rY, z + rZ);
         vertex(builder, x - rX, y + rY, z + rZ);
         vertex(builder, x - rX, y - rY, z + rZ);
+        vertex(builder, x + rX, y - rY, z + rZ);
+        vertex(builder, x + rX, y + rY, z + rZ);
+
+        vertex.normalf(0, 0, -1);
+        vertex(builder, x + rX, y + rY, z - rZ);
+        vertex(builder, x + rX, y - rY, z - rZ);
+        vertex(builder, x - rX, y - rY, z - rZ);
+        vertex(builder, x - rX, y + rY, z - rZ);
         vertex.multColourd(1 / 0.8);
     }
 
-    public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z, double height) {
+    // public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z, double height)
+    public void drawBlockCuboid(VertexConsumer builder, double x, double y, double z, double height) {
+//        drawBlockCuboid(builder, x, y, z, height, 0.5);
         drawBlockCuboid(builder, x, y, z, height, 0.5);
     }
 
-    public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z) {
+    // public void drawBlockCuboid(BufferBuilder builder, double x, double y, double z)
+    public void drawBlockCuboid(VertexConsumer builder, double x, double y, double z) {
+//        drawBlockCuboid(builder, x, y, z, 1);
         drawBlockCuboid(builder, x, y, z, 1);
     }
 
-    public OptionalInt getChunkGlList(ZonePlannerMapChunkKey key) {
-        Integer glList = CHUNK_GL_CACHE.getIfPresent(key);
-        if (glList == null) {
+    // public OptionalInt getChunkGlList(ZonePlannerMapChunkKey key)
+    public Optional<VertexBuffer> getChunkGlList(ZonePlannerMapChunkKey key) {
+//        Integer glList = CHUNK_GL_CACHE.getIfPresent(key);
+        VertexBuffer vertexBuffer = CHUNK_GL_CACHE.getIfPresent(key);
+//        if (glList == null)
+        if (vertexBuffer == null) {
             genChunk(key);
-            glList = CHUNK_GL_CACHE.getIfPresent(key);
+//            genChunk(key);
+//            glList = CHUNK_GL_CACHE.getIfPresent(key);
+            vertexBuffer = CHUNK_GL_CACHE.getIfPresent(key);
         }
-        return glList != null
-                ? OptionalInt.of(glList)
-                : OptionalInt.empty();
+//        return glList != null
+//                ? OptionalInt.of(glList)
+//                : OptionalInt.empty();
+        return vertexBuffer != null
+                ? Optional.of(vertexBuffer)
+                : Optional.empty();
     }
 
-    public void setColor(int color) {
-        vertex.colouri(color >> 16, color >> 8, color, color >> 24);
+    // public void setColor(int color)
+    public void setColor(byte r, byte g, byte b, byte a) {
+//        vertex.colouri(color >> 16, color >> 8, color, color >> 24);
+        vertex.colouri(r, g, b, a);
+    }
+
+    public void setMapColorABGR(int mapColorABGR) {
+        vertex.colouri(mapColorABGR >> 0, mapColorABGR >> 8, mapColorABGR >> 16, mapColorABGR >> 24);
     }
 
     private void genChunk(ZonePlannerMapChunkKey key) {
-        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().world, key);
+//        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().world, key);
+        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getInstance().level, key);
         if (zonePlannerMapChunk == null) {
             return;
         }
-        BufferBuilder builder = Tessellator.getInstance().getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
+//        BufferBuilder builder = Tessellator.getInstance().getBuffer();
+        BufferBuilder builder = Tesselator.getInstance().getBuilder();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+//        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
+        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR); // TODO: normals
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 MapColourData data = zonePlannerMapChunk.getData(x, z);
                 if (data != null) {
-                    setColor(data.colour);
+                    setMapColorABGR(data.colour);
                     drawBlockCuboid(
                             builder,
-                            key.chunkPos.getXStart() + x,
+//                            poseStack,
+//                            key.chunkPos.getXStart() + x,
+                            key.chunkPos.getMinBlockX() + x,
                             data.posY,
-                            key.chunkPos.getZStart() + z,
+//                            key.chunkPos.getZStart() + z,
+                            key.chunkPos.getMinBlockZ() + z,
                             data.posY
                     );
                 }
             }
         }
-        int glList = GL11.glGenLists(1);
-        GL11.glNewList(glList, GL11.GL_COMPILE);
-        Tessellator.getInstance().draw();
-        GL11.glEndList();
-        CHUNK_GL_CACHE.put(key, glList);
+//        int glList = GL11.glGenLists(1);
+//        GL11.glNewList(glList, GL11.GL_COMPILE);
+//        Tessellator.getInstance().draw();
+        BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = builder.end();
+//        GL11.glEndList();
+        vertexBuffer.bind();
+        vertexBuffer.upload(bufferbuilder$renderedbuffer);
+        VertexBuffer.unbind();
+//        CHUNK_GL_CACHE.put(key, glList);
+        CHUNK_GL_CACHE.put(key, vertexBuffer);
     }
 }

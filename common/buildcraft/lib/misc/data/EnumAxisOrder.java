@@ -6,13 +6,11 @@
 
 package buildcraft.lib.misc.data;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
-
-import net.minecraft.util.EnumFacing.Axis;
-
 import buildcraft.lib.misc.data.AxisOrder.Inversion;
+import com.google.common.collect.ImmutableMap;
+import net.minecraft.core.Direction.Axis;
+
+import java.util.Map;
 
 public enum EnumAxisOrder {
     XYZ(Axis.X, Axis.Y, Axis.Z),

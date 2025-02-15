@@ -6,19 +6,8 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.List;
-
-import javax.vecmath.Vector3f;
-
-import com.google.gson.JsonObject;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -26,6 +15,13 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.RenderUtil;
+import com.google.gson.JsonObject;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
+import net.minecraft.util.LazyLoadedValue;
+import org.joml.Vector3f;
+
+import java.util.List;
 
 public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
     public final INodeDouble[] from;
@@ -45,26 +41,30 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
     }
 
     @Override
-    public void addQuads(List<MutableQuad> addTo, ITextureGetter spriteLookup) {
+    public void addQuads(List<MutableQuad> addTo, JsonVariableModel.ITextureGetter spriteLookup) {
         if (visible.evaluate()) {
             float[] f = bakePosition(from);
             float[] t = bakePosition(to);
             boolean s = shade.evaluate();
-            int l = (int) (light.evaluate() & 15);
+            byte l = (byte) (light.evaluate() & 15);
             int rgba = RenderUtil.swapARGBforABGR((int) colour.evaluate());
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 VariableFaceData data = getFaceData(face, spriteLookup);
                 if (data != null) {
                     Vector3f radius = new Vector3f(t[0] - f[0], t[1] - f[1], t[2] - f[2]);
-                    radius.scale(0.5f);
+//                    radius.scale(0.5f);
+                    radius.mul(0.5f);
                     Vector3f center = new Vector3f(f);
                     center.add(radius);
                     MutableQuad quad = ModelUtil.createFace(face, center, radius, data.uvs);
                     quad.rotateTextureUp(data.rotations);
-                    quad.lighti(l, 0);
+//                    quad.lighti(l, 0);
+                    quad.lightb(l, (byte) 0);
                     quad.colouri(rgba);
-                    quad.texFromSprite(data.sprite);
-                    quad.setSprite(data.sprite);
+//                    quad.texFromSprite(data.sprite);
+                    quad.texFromSprite(data.sprite.get());
+//                    quad.setSprite(data.sprite);
+                    quad.setSprite(data.sprite.get());
                     quad.setShade(s);
                     if (data.bothSides) {
                         addTo.add(quad.copyAndInvertNormal());
@@ -77,11 +77,12 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
         }
     }
 
-    protected abstract VariableFaceData getFaceData(EnumFacing side, ITextureGetter spriteLookup);
+    protected abstract VariableFaceData getFaceData(Direction side, JsonVariableModel.ITextureGetter spriteLookup);
 
     public static class VariableFaceData {
-        public UvFaceData uvs = new UvFaceData();
-        public TextureAtlasSprite sprite;
+        public ModelUtil.UvFaceData uvs = new ModelUtil.UvFaceData();
+        // public TextureAtlasSprite sprite;
+        public LazyLoadedValue<TextureAtlasSprite> sprite;
         public int rotations = 0;
         public boolean invertNormal = false;
         public boolean bothSides = false;

@@ -6,6 +6,13 @@
 
 package buildcraft.lib.client.model;
 
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -13,12 +20,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
 
 public class ResourceLoaderContext {
     private final Set<ResourceLocation> loaded = new HashSet<>();
@@ -29,8 +30,20 @@ public class ResourceLoaderContext {
             throw new JsonSyntaxException("Already loaded " + location + " from " + loadingStack.peek());
         }
         loadingStack.push(location);
-        IResource res = Minecraft.getMinecraft().getResourceManager().getResource(location);
-        return new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8);
+        Resource res = Minecraft.getInstance().getResourceManager().getResource(location).get();
+
+        return new InputStreamReader(res.open(), StandardCharsets.UTF_8);
+    }
+
+    // Calen 1.20.1
+    public InputStreamReader datagenStartLoading(ResourceLocation location, ExistingFileHelper fileHelper) throws IOException {
+        if (!loaded.add(location)) {
+            throw new JsonSyntaxException("Already loaded " + location + " from " + loadingStack.peek());
+        }
+        loadingStack.push(location);
+        Resource res = fileHelper.getResource(location, PackType.CLIENT_RESOURCES);
+
+        return new InputStreamReader(res.open(), StandardCharsets.UTF_8);
     }
 
     public void finishLoading() {

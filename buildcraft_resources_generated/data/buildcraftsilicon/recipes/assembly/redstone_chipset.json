@@ -1,0 +1,16 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:chipset_redstone"
+  },
+  "requiredMicroJoules": 10000000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "tag": "forge:dusts/redstone"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

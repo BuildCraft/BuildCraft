@@ -1,12 +1,10 @@
 package buildcraft.silicon;
 
-import net.minecraft.item.EnumDyeColor;
-
-import net.minecraftforge.common.MinecraftForge;
-
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
+import net.minecraft.world.item.DyeColor;
+import net.minecraftforge.common.MinecraftForge;
 
 public class BCSiliconSprites {
 
@@ -24,8 +22,8 @@ public class BCSiliconSprites {
         ACTION_PULSAR_CONSTANT = getHolder("triggers/action_pulsar_on");
         ACTION_PULSAR_SINGLE = getHolder("triggers/action_pulsar_single");
         ACTION_PIPE_COLOUR = new SpriteHolder[ColourUtil.COLOURS.length];
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
-            ACTION_PIPE_COLOUR[colour.ordinal()] = getHolder("core", "items/paintbrush/" + colour.getName());
+        for (DyeColor colour : ColourUtil.COLOURS) {
+            ACTION_PIPE_COLOUR[colour.ordinal()] = getHolder("core", "item/paintbrush/" + colour.getName());
         }
     }
 

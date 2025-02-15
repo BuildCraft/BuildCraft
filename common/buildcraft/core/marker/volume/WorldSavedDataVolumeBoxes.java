@@ -6,42 +6,45 @@
 
 package buildcraft.core.marker.volume;
 
+
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.MessageManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.phys.AABB;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
-
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.MessageManager;
-
-public class WorldSavedDataVolumeBoxes extends WorldSavedData {
+public class WorldSavedDataVolumeBoxes extends SavedData {
     private static final String DATA_NAME = "buildcraft_volume_boxes";
     /**
      * Used to assign {@link WorldSavedDataVolumeBoxes#world} to pass it to {@link VolumeBox},
-     * as we can't pass it other way ({@link MapStorage} can call only constructor with one {@link String} argument
+     * as we can't pass it other way ({@link DimensionDataStorage} can call only constructor with one {@link String} argument
      * and then it calls NBT deserialization method,
      * giving us no chance to set the {@link WorldSavedDataVolumeBoxes#world} field).
      */
-    private static World currentWorld;
-    public final World world = currentWorld;
+    private static Level currentWorld;
+    public final Level world = currentWorld;
     public final List<VolumeBox> volumeBoxes = new ArrayList<>();
 
     public WorldSavedDataVolumeBoxes() {
-        super(DATA_NAME);
+//        super(DATA_NAME);
+        super();
     }
 
     @SuppressWarnings("unused")
     public WorldSavedDataVolumeBoxes(String name) {
-        super(name);
+        super();
+//        super(name);
     }
 
     public VolumeBox getVolumeBoxAt(BlockPos pos) {
@@ -56,25 +59,26 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
         return volumeBoxes.stream().filter(volumeBox -> volumeBox.id.equals(id)).findFirst().orElse(null);
     }
 
-    public VolumeBox getCurrentEditing(EntityPlayer player) {
+    public VolumeBox getCurrentEditing(Player player) {
         return volumeBoxes.stream().filter(volumeBox -> volumeBox.isEditingBy(player)).findFirst().orElse(null);
     }
 
     public void tick() {
         AtomicBoolean dirty = new AtomicBoolean(false);
-        volumeBoxes.stream().filter(VolumeBox::isEditing).forEach(volumeBox -> {
-            EntityPlayer player = volumeBox.getPlayer(world);
+        volumeBoxes.stream().filter(VolumeBox::isEditing).forEach(volumeBox ->
+        {
+            Player player = volumeBox.getPlayer(world);
             if (player == null) {
                 volumeBox.pauseEditing();
                 dirty.set(true);
             } else {
-                AxisAlignedBB oldAabb = volumeBox.box.getBoundingBox();
+                AABB oldAabb = volumeBox.box.getBoundingBox();
                 volumeBox.box.reset();
                 volumeBox.box.extendToEncompass(volumeBox.getHeld());
-                BlockPos lookingAt = new BlockPos(
-                    player.getPositionVector()
-                        .addVector(0, player.getEyeHeight(), 0)
-                        .add(player.getLookVec().scale(volumeBox.getDist()))
+                BlockPos lookingAt = BlockPos.containing(
+                        player.position()
+                                .add(0, player.getEyeHeight(), 0)
+                                .add(player.getLookAngle().scale(volumeBox.getDist()))
                 );
                 volumeBox.box.extendToEncompass(lookingAt);
                 if (!volumeBox.box.getBoundingBox().equals(oldAabb)) {
@@ -84,51 +88,62 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
         });
         for (VolumeBox volumeBox : volumeBoxes) {
             List<Lock> locksToRemove = new ArrayList<>(volumeBox.locks).stream()
-                .filter(lock -> !lock.cause.stillWorks(world))
-                .collect(Collectors.toList());
+                    .filter(lock -> !lock.cause.stillWorks(world))
+                    .collect(Collectors.toList());
             if (!locksToRemove.isEmpty()) {
                 volumeBox.locks.removeAll(locksToRemove);
                 dirty.set(true);
             }
         }
         if (dirty.get()) {
-            markDirty();
+            setDirty();
         }
     }
 
     @Override
-    public void markDirty() {
-        super.markDirty();
-        MessageManager.sendToDimension(new MessageVolumeBoxes(volumeBoxes), world.provider.getDimension());
+//    public void markDirty()
+    public void setDirty() {
+//        super.markDirty();
+        super.setDirty();
+//        MessageManager.sendToDimension(new MessageVolumeBoxes(volumeBoxes), world.provider.getDimension());
+        MessageManager.sendToDimension(new MessageVolumeBoxes(volumeBoxes), world.dimension());
     }
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("volumeBoxes", NBTUtilBC.writeCompoundList(volumeBoxes.stream().map(VolumeBox::writeToNBT)));
+//    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    public CompoundTag save(CompoundTag nbt) {
+        nbt.put("volumeBoxes", NBTUtilBC.writeCompoundList(volumeBoxes.stream().map(VolumeBox::writeToNBT)));
         return nbt;
     }
 
     @SuppressWarnings("NullableProblems")
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    // Calen: not override, load by ourselves -> #get: ret.load(nbt)
+//    @Override
+    public void load(CompoundTag nbt) {
         volumeBoxes.clear();
-        NBTUtilBC.readCompoundList(nbt.getTag("volumeBoxes"))
-            .map(volumeBoxTag -> new VolumeBox(world, volumeBoxTag))
-            .forEach(volumeBoxes::add);
+        NBTUtilBC.readCompoundList(nbt.get("volumeBoxes"))
+                .map(volumeBoxTag -> new VolumeBox(world, volumeBoxTag))
+                .forEach(volumeBoxes::add);
     }
 
-    public static WorldSavedDataVolumeBoxes get(World world) {
-        if (world.isRemote) {
+    public static WorldSavedDataVolumeBoxes get(Level world) {
+        if (world.isClientSide || !(world instanceof ServerLevel)) {
             throw new IllegalArgumentException("Tried to create a world saved data instance on the client!");
         }
-        MapStorage storage = world.getPerWorldStorage();
+        DimensionDataStorage storage = ((ServerLevel) world).getDataStorage();
         currentWorld = world;
-        WorldSavedDataVolumeBoxes instance = (WorldSavedDataVolumeBoxes)
-            storage.getOrLoadData(WorldSavedDataVolumeBoxes.class, DATA_NAME);
+        WorldSavedDataVolumeBoxes instance =
+                storage.get((nbt) ->
+                {
+                    WorldSavedDataVolumeBoxes ret = new WorldSavedDataVolumeBoxes(DATA_NAME);
+                    ret.load(nbt);
+                    return ret;
+                }, DATA_NAME);
         if (instance == null) {
             instance = new WorldSavedDataVolumeBoxes();
-            storage.setData(DATA_NAME, instance);
+//            storage.setData(DATA_NAME, instance);
+            storage.set(DATA_NAME, instance);
         }
         currentWorld = null;
         return instance;

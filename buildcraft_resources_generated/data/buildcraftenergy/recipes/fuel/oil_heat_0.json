@@ -1,0 +1,14 @@
+{
+  "type": "buildcraftenergy:fuel",
+  "dirty": true,
+  "fluid": {
+    "amount": 1,
+    "fluid": "buildcraftenergy:oil_heat_0"
+  },
+  "powerPerCycle": 3000000,
+  "residue": {
+    "amount": 125,
+    "fluid": "buildcraftenergy:oil_residue_heat_0"
+  },
+  "totalBurningTime": 10000
+}

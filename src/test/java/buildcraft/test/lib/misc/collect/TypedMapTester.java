@@ -1,11 +1,10 @@
 package buildcraft.test.lib.misc.collect;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import buildcraft.lib.misc.collect.TypedMap;
 import buildcraft.lib.misc.collect.TypedMapDirect;
 import buildcraft.lib.misc.collect.TypedMapHierarchy;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TypedMapTester {
 
@@ -17,7 +16,8 @@ public class TypedMapTester {
         String getName();
     }
 
-    class Independant {}
+    class Independant {
+    }
 
     enum RandomE implements IRandomInterface {
         A,

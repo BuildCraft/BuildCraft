@@ -1,11 +1,11 @@
 package buildcraft.lib.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiPosition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface IContainingElement extends IInteractionElement {
     /** @return The backing list of the contained elements. Must be modifiable, and changes must be reflected by future
@@ -67,20 +67,37 @@ public interface IContainingElement extends IInteractionElement {
     }
 
     @Override
-    default void onMouseDragged(int button, long ticksSinceClick) {
+//    default void onMouseDragged(int button, long ticksSinceClick)
+    default void onMouseDragged(int button) {
         for (IGuiElement elem : getChildElements()) {
             if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+//                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+                ((IInteractionElement) elem).onMouseDragged(button);
             }
         }
     }
 
     @Override
-    default boolean onKeyPress(char typedChar, int keyCode) {
+//    default boolean onKeyPress(char typedChar, int keyCode)
+    default boolean onKeyPress(int typedChar, int keyCode, int modifiers) {
         boolean action = false;
         for (IGuiElement elem : getChildElements()) {
             if (elem instanceof IInteractionElement) {
-                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode);
+//                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode);
+                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode, modifiers);
+            }
+        }
+        return action;
+    }
+
+    @Override
+//    default boolean onKeyPress(char typedChar, int keyCode)
+    default boolean charTyped(char typedChar, int keyCode) {
+        boolean action = false;
+        for (IGuiElement elem : getChildElements()) {
+            if (elem instanceof IInteractionElement) {
+//                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode);
+                action |= ((IInteractionElement) elem).charTyped(typedChar, keyCode);
             }
         }
         return action;

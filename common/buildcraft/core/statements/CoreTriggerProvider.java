@@ -6,28 +6,18 @@
 
 package buildcraft.core.statements;
 
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.items.IItemHandler;
-
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.ITriggerInternalSided;
-import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.TilesAPI;
-
-import buildcraft.lib.misc.CapUtil;
-
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.misc.CapUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public enum CoreTriggerProvider implements ITriggerProvider {
     INSTANCE;
@@ -47,11 +37,11 @@ public enum CoreTriggerProvider implements ITriggerProvider {
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container,
-        @Nonnull EnumFacing side) {}
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, @Nonnull Direction side) {
+    }
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull Direction side, BlockEntity tile) {
 
         if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
@@ -67,7 +57,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockInventoryTriggers) {
-            IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+            IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
             if (itemHandler != null) {
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_EMPTY);
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_SPACE);
@@ -80,11 +70,12 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockFluidHandlerTriggers) {
-            IFluidHandler fluidHandler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
+            IFluidHandler fluidHandler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
             if (fluidHandler != null) {
-
-                IFluidTankProperties[] liquids = fluidHandler.getTankProperties();
-                if (liquids != null && liquids.length > 0) {
+//                IFluidTankProperties[] liquids = fluidHandler.getTankProperties();
+                int liquids = fluidHandler.getTanks();
+//                if (liquids != null && liquids.length > 0)
+                if (liquids > 0) {
                     res.add(BCCoreStatements.TRIGGER_FLUID_EMPTY);
                     res.add(BCCoreStatements.TRIGGER_FLUID_SPACE);
                     res.add(BCCoreStatements.TRIGGER_FLUID_CONTAINS);
@@ -96,7 +87,8 @@ public enum CoreTriggerProvider implements ITriggerProvider {
             }
         }
 
-        if (tile.hasCapability(TilesAPI.CAP_HAS_WORK, null)) {
+//        if (tile.hasCapability(TilesAPI.CAP_HAS_WORK, null))
+        if (tile.getCapability(TilesAPI.CAP_HAS_WORK, null).isPresent()) {
             res.add(BCCoreStatements.TRIGGER_MACHINE_ACTIVE);
             res.add(BCCoreStatements.TRIGGER_MACHINE_INACTIVE);
         }

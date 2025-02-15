@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_sandstone_colorless",
+    "buildcrafttransport:pipe_items_sandstone_green",
+    "buildcrafttransport:pipe_items_sandstone_brown",
+    "buildcrafttransport:pipe_items_sandstone_cyan",
+    "buildcrafttransport:pipe_items_sandstone_white",
+    "buildcrafttransport:pipe_items_sandstone_orange",
+    "buildcrafttransport:pipe_items_sandstone_gray",
+    "buildcrafttransport:pipe_items_sandstone_blue",
+    "buildcrafttransport:pipe_items_sandstone_black",
+    "buildcrafttransport:pipe_items_sandstone_red",
+    "buildcrafttransport:pipe_items_sandstone_yellow",
+    "buildcrafttransport:pipe_items_sandstone_magenta",
+    "buildcrafttransport:pipe_items_sandstone_purple",
+    "buildcrafttransport:pipe_items_sandstone_lime",
+    "buildcrafttransport:pipe_items_sandstone_pink",
+    "buildcrafttransport:pipe_items_sandstone_light_blue",
+    "buildcrafttransport:pipe_items_sandstone_light_gray"
+  ]
+}

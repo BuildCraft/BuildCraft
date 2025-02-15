@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftcore:markers",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftcore.path_markers.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftcore:marker_path"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftcore.path_markers.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

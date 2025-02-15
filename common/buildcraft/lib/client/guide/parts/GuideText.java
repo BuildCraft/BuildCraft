@@ -6,16 +6,20 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.util.List;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public class GuideText extends GuidePart {
     public final PageLine text;
 
-    public GuideText(GuiGuide gui, String text) {
-        this(gui, new PageLine(0, text, false));
+    // public GuideText(GuiGuide gui, String text)
+    public GuideText(GuiGuide gui, String textKey, Component text) {
+//        this(gui, new PageLine(0, text, false));
+        this(gui, new PageLine(0, textKey, text, false));
     }
 
     public GuideText(GuiGuide gui, PageLine text) {
@@ -24,10 +28,10 @@ public class GuideText extends GuidePart {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
-        PagePosition newPos = renderLine(current, text, x, y, width, height, index);
+    public PagePosition renderIntoArea(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index) {
+        PagePosition newPos = renderLine(guiGraphics, current, text, x, y, width, height, index);
         if (wasHovered && didRender) {
-            List<String> tooltip = text.getTooltip();
+            List<Component> tooltip = text.getTooltip();
             if (tooltip != null && !tooltip.isEmpty()) {
                 gui.tooltips.add(tooltip);
             }
@@ -36,9 +40,8 @@ public class GuideText extends GuidePart {
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
-        return renderLine(current, text, x, y, width, height, -1);
+    public PagePosition handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index, double mouseX, double mouseY) {
+        return renderLine(guiGraphics, current, text, x, y, width, height, -1);
     }
 
     @Override

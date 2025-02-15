@@ -6,23 +6,22 @@
 
 package buildcraft.robotics.zone;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import org.joml.Vector2i;
+
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
-
-import javax.vecmath.Point2i;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 
 public class ZoneChunk {
     public BitSet property;
     private boolean fullSet = false;
 
-    public ZoneChunk() {}
+    public ZoneChunk() {
+    }
 
     public ZoneChunk(ZoneChunk old) {
         if (old.property != null) {
@@ -64,30 +63,30 @@ public class ZoneChunk {
         }
     }
 
-    public List<Point2i> getAll() {
-        ImmutableList.Builder<Point2i> builder = ImmutableList.builder();
+    public List<Vector2i> getAll() {
+        ImmutableList.Builder<Vector2i> builder = ImmutableList.builder();
         for (int zChunk = 0; zChunk < 16; zChunk++) {
             for (int xChunk = 0; xChunk < 16; xChunk++) {
                 if (get(xChunk, zChunk)) {
-                    builder.add(new Point2i(xChunk, zChunk));
+                    builder.add(new Vector2i(xChunk, zChunk));
                 }
             }
         }
         return builder.build();
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setBoolean("fullSet", fullSet);
+    public void writeToNBT(CompoundTag nbt) {
+        nbt.putBoolean("fullSet", fullSet);
 
         if (property != null) {
-            nbt.setByteArray("bits", property.toByteArray());
+            nbt.putByteArray("bits", property.toByteArray());
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(CompoundTag nbt) {
         fullSet = nbt.getBoolean("fullSet");
 
-        if (nbt.hasKey("bits")) {
+        if (nbt.contains("bits")) {
             property = BitSet.valueOf(nbt.getByteArray("bits"));
         }
     }
@@ -120,7 +119,7 @@ public class ZoneChunk {
         return !fullSet && property.isEmpty();
     }
 
-    public ZoneChunk readFromByteBuf(PacketBuffer buf) {
+    public ZoneChunk readFromByteBuf(FriendlyByteBuf buf) {
         int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
             property = BitSet.valueOf(buf.readByteArray());
@@ -130,7 +129,7 @@ public class ZoneChunk {
         return this;
     }
 
-    public void writeToByteBuf(PacketBuffer buf) {
+    public void writeToByteBuf(FriendlyByteBuf buf) {
         int flags = (fullSet ? 2 : 0) | (property != null ? 1 : 0);
         buf.writeByte(flags);
         if (property != null) {

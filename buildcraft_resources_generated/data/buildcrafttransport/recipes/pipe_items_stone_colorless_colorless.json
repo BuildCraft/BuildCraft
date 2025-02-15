@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "key": {
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "l": {
+      "tag": "forge:stone"
+    },
+    "r": {
+      "tag": "forge:stone"
+    }
+  },
+  "pattern": [
+    "lgr"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:pipe_items_stone_colorless"
+  },
+  "show_notification": true
+}

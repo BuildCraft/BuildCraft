@@ -6,45 +6,46 @@
 
 package buildcraft.lib.marker;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.saveddata.SavedData;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.storage.WorldSavedData;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.NBTUtilBC;
-
-public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends MarkerConnection<C>> extends WorldSavedData {
+public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends MarkerConnection<C>> extends SavedData {
     protected static final boolean DEBUG_FULL = MarkerSubCache.DEBUG_FULL;
 
     protected final List<BlockPos> markerPositions = new ArrayList<>();
     protected final List<List<BlockPos>> markerConnections = new ArrayList<>();
     private S subCache;
 
+    private String mapName;
+
     public MarkerSavedData(String name) {
-        super(name);
+//        super(name);
+        this.mapName = name;
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    // @Override
+    public void readFromNBT(CompoundTag nbt) {
         markerPositions.clear();
         markerConnections.clear();
 
-        NBTTagList positionList = (NBTTagList) nbt.getTag("positions");
-        for (int i = 0; i < positionList.tagCount(); i++) {
+        ListTag positionList = (ListTag) nbt.get("positions");
+        for (int i = 0; i < positionList.size(); i++) {
             markerPositions.add(NBTUtilBC.readBlockPos(positionList.get(i)));
         }
 
-        NBTTagList connectionList = (NBTTagList) nbt.getTag("connections");
-        for (int i = 0; i < connectionList.tagCount(); i++) {
-            positionList = (NBTTagList) connectionList.get(i);
+        ListTag connectionList = (ListTag) nbt.get("connections");
+        for (int i = 0; i < connectionList.size(); i++) {
+            positionList = (ListTag) connectionList.get(i);
             List<BlockPos> inner = new ArrayList<>();
             markerConnections.add(inner);
-            for (int j = 0; j < positionList.tagCount(); j++) {
+            for (int j = 0; j < positionList.size(); j++) {
                 inner.add(NBTUtilBC.readBlockPos(positionList.get(j)));
             }
         }
@@ -66,7 +67,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public CompoundTag save(CompoundTag nbt) {
         markerPositions.clear();
         markerConnections.clear();
 
@@ -75,21 +76,21 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
             markerConnections.add(new ArrayList<>(connection.getMarkerPositions()));
         }
 
-        NBTTagList positionList = new NBTTagList();
+        ListTag positionList = new ListTag();
         for (BlockPos p : markerPositions) {
-            positionList.appendTag(NBTUtilBC.writeBlockPos(p));
+            positionList.add(NBTUtilBC.writeBlockPos(p));
         }
-        nbt.setTag("positions", positionList);
+        nbt.put("positions", positionList);
 
-        NBTTagList connectionList = new NBTTagList();
+        ListTag connectionList = new ListTag();
         for (List<BlockPos> connection : markerConnections) {
-            NBTTagList inner = new NBTTagList();
+            ListTag inner = new ListTag();
             for (BlockPos p : connection) {
-                inner.appendTag(NBTUtilBC.writeBlockPos(p));
+                inner.add(NBTUtilBC.writeBlockPos(p));
             }
-            connectionList.appendTag(inner);
+            connectionList.add(inner);
         }
-        nbt.setTag("connections", connectionList);
+        nbt.put("connections", connectionList);
 
         if (DEBUG_FULL) {
             BCLog.logger.info("[lib.marker.full] Writing to NBT (" + mapName + ")");

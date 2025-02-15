@@ -1,0 +1,75 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            13.0
+          ]
+        },
+        "east": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            13.0
+          ]
+        },
+        "west": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        3,
+        4,
+        -2
+      ],
+      "to": [
+        13,
+        6,
+        8
+      ]
+    }
+  ],
+  "textures": {
+    "slot": "buildcraftbuilders:block/builder/slot_blueprint"
+  }
+}

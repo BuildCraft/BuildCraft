@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftsilicon",
+  "key": {
+    "g": {
+      "item": "buildcraftsilicon:plug_gate_iron_and_no_modifier"
+    },
+    "m": {
+      "tag": "forge:gems/lapis"
+    }
+  },
+  "pattern": [
+    " m ",
+    "mgm",
+    " m "
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug_gate_iron_and_lapis"
+  },
+  "show_notification": true
+}

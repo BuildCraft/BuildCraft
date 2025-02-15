@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftcore:wrenched",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftfactory.retired_hopper.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftfactory:chute"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftfactory.retired_hopper.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

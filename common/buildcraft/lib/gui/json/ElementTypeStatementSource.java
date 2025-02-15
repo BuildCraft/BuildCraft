@@ -1,12 +1,11 @@
 package buildcraft.lib.gui.json;
 
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.statement.GuiElementStatementSource;
 import buildcraft.lib.statement.StatementContext;
+import com.google.gson.JsonSyntaxException;
 
 public class ElementTypeStatementSource extends ElementType {
     public static final String NAME = "buildcraftlib:statement/source";

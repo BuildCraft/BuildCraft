@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_iron_colorless",
+    "buildcrafttransport:pipe_items_iron_green",
+    "buildcrafttransport:pipe_items_iron_brown",
+    "buildcrafttransport:pipe_items_iron_cyan",
+    "buildcrafttransport:pipe_items_iron_white",
+    "buildcrafttransport:pipe_items_iron_orange",
+    "buildcrafttransport:pipe_items_iron_gray",
+    "buildcrafttransport:pipe_items_iron_blue",
+    "buildcrafttransport:pipe_items_iron_black",
+    "buildcrafttransport:pipe_items_iron_red",
+    "buildcrafttransport:pipe_items_iron_yellow",
+    "buildcrafttransport:pipe_items_iron_magenta",
+    "buildcrafttransport:pipe_items_iron_purple",
+    "buildcrafttransport:pipe_items_iron_lime",
+    "buildcrafttransport:pipe_items_iron_pink",
+    "buildcrafttransport:pipe_items_iron_light_blue",
+    "buildcrafttransport:pipe_items_iron_light_gray"
+  ]
+}

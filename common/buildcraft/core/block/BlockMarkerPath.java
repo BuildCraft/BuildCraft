@@ -1,38 +1,39 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.lib.block.BlockMarkerBase;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.core.tile.TileMarkerPath;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class BlockMarkerPath extends BlockMarkerBase {
-    public BlockMarkerPath(Material material, String id) {
-        super(material, id);
+    public BlockMarkerPath(String idBC, BlockBehaviour.Properties properties) {
+        super(idBC, properties);
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
-        return new TileMarkerPath();
+//    public TileBC_Neptune createTileEntity(Level worldIn, IBlockState state)
+    public TileBC_Neptune newBlockEntity(BlockPos pos, BlockState state) {
+        return new TileMarkerPath(pos, state);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
+//    public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!world.isClientSide) {
+            BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof TileMarkerPath) {
                 TileMarkerPath marker = (TileMarkerPath) tile;
                 if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, marker.getPermBlock())) {
@@ -40,6 +41,7 @@ public class BlockMarkerPath extends BlockMarkerBase {
                 }
             }
         }
-        return true;
+//        return true;
+        return InteractionResult.SUCCESS;
     }
 }

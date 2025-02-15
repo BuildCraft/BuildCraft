@@ -6,21 +6,20 @@
 
 package buildcraft.transport.pipe;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerBlock;
 import buildcraft.api.transport.IStripesHandlerItem;
 import buildcraft.api.transport.IStripesRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 public enum StripesRegistry implements IStripesRegistry {
     INSTANCE;
@@ -47,11 +46,11 @@ public enum StripesRegistry implements IStripesRegistry {
 
     /** @return True if a handler handled the itemstack, false otherwise (and so nothing has been done) */
     @Override
-    public boolean handleItem(World world,
+    public boolean handleItem(Level world,
                               BlockPos pos,
-                              EnumFacing direction,
+                              Direction direction,
                               ItemStack stack,
-                              EntityPlayer player,
+                              Player player,
                               IStripesActivator activator) {
         for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (IStripesHandlerItem handler : itemHandlers.get(priority)) {
@@ -65,10 +64,10 @@ public enum StripesRegistry implements IStripesRegistry {
 
     /** @return True if a handler broke a block, false otherwise (and so nothing has been done) */
     @Override
-    public boolean handleBlock(World world,
+    public boolean handleBlock(Level world,
                                BlockPos pos,
-                               EnumFacing direction,
-                               EntityPlayer player,
+                               Direction direction,
+                               Player player,
                                IStripesActivator activator) {
         for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (IStripesHandlerBlock handler : blockHandlers.get(priority)) {

@@ -6,16 +6,16 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GuidePageBase extends GuidePart {
     /** The current page that is being rendered */
@@ -105,22 +105,24 @@ public abstract class GuidePageBase extends GuidePart {
         return numPages;
     }
 
-    public void tick() {}
+    public void tick() {
+    }
 
     @Override
-    public final PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+    public final PagePosition renderIntoArea(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index) {
         // NO-OP
         return current;
     }
 
-    public abstract String getTitle();
+    // public abstract String getTitle();
+    public abstract Component getTitle();
 
     public boolean shouldPersistHistory() {
         return true;
     }
 
     /** Called when the {@link GuideManager} is reloaded.
-     * 
+     *
      * @return A page that can be shown and is valid after the reload, or null if this page cannot continue through a
      *         reload. */
     @Nullable
@@ -130,11 +132,10 @@ public abstract class GuidePageBase extends GuidePart {
 
     public abstract List<GuideChapter> getChapters();
 
-    protected GuidePart getClicked(Iterable<GuidePart> iterable, int x, int y, int width, int height, int mouseX,
-        int mouseY, int index) {
+    protected GuidePart getClicked(GuiGraphics guiGraphics, Iterable<GuidePart> iterable, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
         PagePosition pos = new PagePosition(0, 0);
         for (GuidePart part : iterable) {
-            pos = part.renderIntoArea(x, y, width, height, pos, -1);
+            pos = part.renderIntoArea(guiGraphics, x, y, width, height, pos, -1);
             if (pos.page == index && part.wasHovered) {
                 return part;
             }
@@ -145,15 +146,15 @@ public abstract class GuidePageBase extends GuidePart {
         return null;
     }
 
-    public void renderFirstPage(int x, int y, int width, int height) {
-        renderPage(x, y, width, height, index);
+    public void renderFirstPage(GuiGraphics guiGraphics, int x, int y, int width, int height) {
+        renderPage(guiGraphics, x, y, width, height, index);
     }
 
-    public void renderSecondPage(int x, int y, int width, int height) {
-        renderPage(x, y, width, height, index + 1);
+    public void renderSecondPage(GuiGraphics guiGraphics, int x, int y, int width, int height) {
+        renderPage(guiGraphics, x, y, width, height, index + 1);
     }
 
-    protected void renderPage(int x, int y, int width, int height, int index) {
+    protected void renderPage(GuiGraphics guiGraphics, int x, int y, int width, int height, int index) {
         // Even => first page, draw page back button and first page index
         if (index % 2 == 0) {
             // Back page button
@@ -163,43 +164,43 @@ public abstract class GuidePageBase extends GuidePart {
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_BACK_HOVERED;
                 }
-                icon.drawAt(turnBox.offset(30, 0));
+                icon.drawAt(turnBox.offset(30, 0), guiGraphics);
             }
             // Page index
             String text = (index + 1) + " / " + numPages;
             double textX = x + GuiGuide.PAGE_LEFT_TEXT.width / 2 - getFontRenderer().getStringWidth(text) / 2;
-            getFontRenderer().drawString(text, (int) textX, (int) (y + height) + 6, 0x90816a);
+            getFontRenderer().drawString(guiGraphics, text, (int) textX, (int) (y + height) + 6, 0x90816a);
         } else {
             // Odd => second page, draw forward button and second page index
             // Back page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
                 GuiRectangle turnBox = new GuiRectangle(
-                    x + width - icon.width, y + height, icon.width + 30, icon.height + 30
+                        x + width - icon.width, y + height, icon.width + 30, icon.height + 30
                 );
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_FORWARDS_HOVERED;
                 }
-                icon.drawAt(turnBox);
+                icon.drawAt(turnBox, guiGraphics);
             }
             // Page index
             if (index + 1 <= numPages) {
                 String text = (index + 1) + " / " + numPages;
                 double textX = x + (GuiGuide.PAGE_RIGHT_TEXT.width - getFontRenderer().getStringWidth(text)) / 2;
-                getFontRenderer().drawString(text, (int) textX, (int) (y + height) + 6, 0x90816a);
+                getFontRenderer().drawString(guiGraphics, text, (int) textX, (int) (y + height) + 6, 0x90816a);
             }
         }
     }
 
     @Override
-    public final PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
+    public final PagePosition handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index,
+                                               double mouseX, double mouseY) {
         // NO-OP, use the below!
         return current;
     }
 
-    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton,
-        int index, boolean isEditing) {
+    public void handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, double mouseX, double mouseY, int mouseButton,
+                                 int index, boolean isEditing) {
         // Even => first page, test page back button and first page text clicks
         if (index % 2 == 0) {
             if (index != 0) {
@@ -214,7 +215,7 @@ public abstract class GuidePageBase extends GuidePart {
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
                 GuiRectangle turnBox = new GuiRectangle(
-                    x + width - icon.width, y + height, icon.width + 30, icon.height + 30
+                        x + width - icon.width, y + height, icon.width + 30, icon.height + 30
                 );
                 if (turnBox.contains(gui.mouse)) {
                     nextPage();
@@ -233,7 +234,12 @@ public abstract class GuidePageBase extends GuidePart {
 
     }
 
-    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
+    // public boolean keyTyped(char typedChar, int keyCode) throws IOException
+    public boolean keyTyped(int typedChar, int keyCode, int modifiers) {
+        return false;
+    }
+
+    public boolean charTyped(char typedChar, int keyCode) {
         return false;
     }
 }

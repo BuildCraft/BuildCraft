@@ -1,7 +1,5 @@
 package buildcraft.lib.gui.json;
 
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
@@ -11,6 +9,7 @@ import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.LocaleUtil;
+import com.google.gson.JsonSyntaxException;
 
 public class ElementTypeText extends ElementType {
     public static final String NAME = "buildcraftlib:text";

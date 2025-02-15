@@ -1,0 +1,13 @@
+{
+  "type": "buildcraftfactory:heat_exchange/coolable",
+  "heatFrom": 4,
+  "heatTo": 2,
+  "in": {
+    "amount": 5,
+    "fluid": "minecraft:lava"
+  },
+  "out": {
+    "amount": 0,
+    "fluid": "minecraft:empty"
+  }
+}

@@ -6,96 +6,116 @@
 
 package buildcraft.silicon.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
 import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.mj.ILaserTargetBlock;
-
+import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithTickableTE;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.silicon.tile.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-import buildcraft.silicon.BCSiliconGuis;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.silicon.tile.TileChargingTable;
-import buildcraft.silicon.tile.TileIntegrationTable;
-import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
-
-public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTargetBlock {
+public class BlockLaserTable extends BlockBCTile_Neptune<TileLaserTableBase> implements ILaserTargetBlock, IBlockWithTickableTE<TileLaserTableBase> {
     private final EnumLaserTableType type;
 
-    public BlockLaserTable(EnumLaserTableType type, Material material, String id) {
-        super(material, id);
+    public BlockLaserTable(String idBC, BlockBehaviour.Properties props, EnumLaserTableType type) {
+        super(idBC, props);
         this.type = type;
     }
 
+//    @Override
+//    public boolean isOpaqueCube(IBlockState state) {
+//        return false;
+//    }
+
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
+    public boolean propagatesSkylightDown(BlockState p_49928_, BlockGetter p_49929_, BlockPos p_49930_) {
+        return true;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
+    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+        return 1.0F;
     }
 
-    @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
+//
+//    @Override
+//    public boolean isFullCube(BlockState state) {
+//        return false;
+//    }
+
+//    @Override
+//    public BlockRenderLayer getBlockLayer() {
+//        return BlockRenderLayer.CUTOUT;
+//    }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        switch(type) {
+//    public TileBC_Neptune createTileEntity(Level world, BlockState state)
+    public TileBC_Neptune newBlockEntity(BlockPos pos, BlockState state) {
+        switch (type) {
             case ASSEMBLY_TABLE:
-                return new TileAssemblyTable();
+                return new TileAssemblyTable(pos, state);
             case ADVANCED_CRAFTING_TABLE:
-                return new TileAdvancedCraftingTable();
+                return new TileAdvancedCraftingTable(pos, state);
             case INTEGRATION_TABLE:
-                return new TileIntegrationTable();
+                return new TileIntegrationTable(pos, state);
             case CHARGING_TABLE:
-                return new TileChargingTable();
+                return new TileChargingTable(pos, state);
             case PROGRAMMING_TABLE:
-                return new TileProgrammingTable_Neptune();
+                return new TileProgrammingTable_Neptune(pos, state);
         }
         return null;
     }
 
+    private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D);
+
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return new AxisAlignedBB(0 / 16D, 0 / 16D, 0 / 16D, 16 / 16D, 9 / 16D, 16 / 16D);
+//    public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos)
+    public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context) {
+        return SHAPE;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        switch(type) {
-            case ASSEMBLY_TABLE:
-                if (!world.isRemote) {
-                    BCSiliconGuis.ASSEMBLY_TABLE.openGUI(player, pos);
-                }
-                return true;
-            case ADVANCED_CRAFTING_TABLE:
-                if (!world.isRemote) {
-                    BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos);
-                }
-                return true;
-            case INTEGRATION_TABLE:
-                if (!world.isRemote) {
-                    BCSiliconGuis.INTEGRATION_TABLE.openGUI(player, pos);
-                }
-                return true;
-            case CHARGING_TABLE:
-            case PROGRAMMING_TABLE:
+//    public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+//        switch(type) {
+//            case ASSEMBLY_TABLE:
+//                if (!world.isRemote) {
+//                    BCSiliconGuis.ASSEMBLY_TABLE.openGUI(player, pos);
+//                }
+//                return true;
+//            case ADVANCED_CRAFTING_TABLE:
+//                if (!world.isRemote) {
+//                    BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos);
+//                }
+//                return true;
+//            case INTEGRATION_TABLE:
+//                if (!world.isRemote) {
+//                    BCSiliconGuis.INTEGRATION_TABLE.openGUI(player, pos);
+//                }
+//                return true;
+//            case CHARGING_TABLE:
+//            case PROGRAMMING_TABLE:
+//        }
+        if (!world.isClientSide) {
+            if (world.getBlockEntity(pos) instanceof IBCTileMenuProvider tile) {
+//                BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos, state);
+                MessageUtil.serverOpenTileGui(player, tile, pos);
+                return InteractionResult.SUCCESS;
+            }
         }
-        return false;
+        return InteractionResult.SUCCESS;
     }
 }

@@ -1,14 +1,10 @@
 package buildcraft.lib.client.guide;
 
+import buildcraft.lib.client.guide.entry.*;
+import buildcraft.lib.script.ScriptableRegistry;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import buildcraft.lib.client.guide.entry.PageEntry;
-import buildcraft.lib.client.guide.entry.PageEntryExternal;
-import buildcraft.lib.client.guide.entry.PageEntryItemStack;
-import buildcraft.lib.client.guide.entry.PageEntryStatement;
-import buildcraft.lib.client.guide.entry.PageValueType;
-import buildcraft.lib.script.ScriptableRegistry;
 
 public class GuidePageRegistry extends ScriptableRegistry<PageEntry<?>> {
 
@@ -25,7 +21,8 @@ public class GuidePageRegistry extends ScriptableRegistry<PageEntry<?>> {
 
     public <T> void addType(String name, PageValueType<T> type) {
         types.put(name, type);
-        addCustomType(name, (id, json, ctx) -> {
+        addCustomType(name, (id, json, ctx) ->
+        {
             OptionallyDisabled<PageEntry<T>> o1 = type.deserialize(id, json, ctx);
             // While we can cast PageEntry<T> to PageEntry<?>
             // we can't cast from OpDis<PageEntry<T>> to OpDis<PageEntry<?>>

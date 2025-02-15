@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "buildcraftenergy:oil_desert",
+      "required": false
+    },
+    {
+      "id": "buildcraftenergy:oil_ocean",
+      "required": false
+    }
+  ]
+}

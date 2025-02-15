@@ -6,21 +6,22 @@
 
 package buildcraft.robotics;
 
-import net.minecraft.block.material.Material;
-
+import buildcraft.lib.block.BlockPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.robotics.block.BlockZonePlanner;
 import buildcraft.robotics.tile.TileZonePlanner;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.registries.RegistryObject;
 
 public class BCRoboticsBlocks {
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
+    private static final RegistrationHelper HELPER = new RegistrationHelper(BCRobotics.MODID);
 
-    public static BlockZonePlanner zonePlanner;
+    public static RegistryObject<BlockZonePlanner> zonePlanner;
+    public static RegistryObject<BlockEntityType<TileZonePlanner>> zonePlannerTile;
 
     public static void preInit() {
-        zonePlanner = HELPER.addBlockAndItem(new BlockZonePlanner(Material.IRON, "block.zone_planner"));
+        zonePlanner = HELPER.addBlockAndItem("block.zone_planner", BlockPropertiesCreator.metal(), BlockZonePlanner::new);
 
-        HELPER.registerTile(TileZonePlanner.class, "tile.zone_planner");
+        zonePlannerTile = HELPER.registerTile("tile.zone_planner", TileZonePlanner::new, zonePlanner);
     }
 }

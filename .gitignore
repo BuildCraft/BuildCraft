@@ -1,4 +1,4 @@
-#eclipse
+# eclipse
 .project
 .classpath
 .settings/
@@ -6,15 +6,16 @@
 *.launch
 org.*
 bin
+eclipse
 
-#idea
-*.iml
+# idea
+out
 *.ipr
 *.iws
+*.iml
 .idea
-out
 
-#gradle
+# gradle
 build
 .gradle
 modules
@@ -39,3 +40,6 @@ license_checker/out/**
 
 # For some annoying reason the tests creates a log file in "/logs/latest.txt"
 logs
+
+# datagen cache
+buildcraft_resources_generated/.cache

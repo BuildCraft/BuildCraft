@@ -6,64 +6,59 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.builders.BCBuildersSprites;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import buildcraft.builders.BCBuildersSprites;
+import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.Map;
 
 public enum PatternParameterFacing implements IStatementParameter {
-    DOWN(EnumFacing.DOWN),
-    UP(EnumFacing.UP),
-    NORTH(EnumFacing.NORTH),
-    SOUTH(EnumFacing.SOUTH),
-    WEST(EnumFacing.WEST),
-    EAST(EnumFacing.EAST);
+    DOWN(Direction.DOWN),
+    UP(Direction.UP),
+    NORTH(Direction.NORTH),
+    SOUTH(Direction.SOUTH),
+    WEST(Direction.WEST),
+    EAST(Direction.EAST);
 
-    public final EnumFacing face;
+    public final Direction face;
 
-    private static final Map<EnumFacing, PatternParameterFacing> faceToParam;
+    private static final Map<Direction, PatternParameterFacing> faceToParam;
 
     static {
-        faceToParam = new EnumMap<>(EnumFacing.class);
+        faceToParam = new EnumMap<>(Direction.class);
         for (PatternParameterFacing param : values()) {
             faceToParam.put(param.face, param);
         }
     }
 
-    PatternParameterFacing(EnumFacing face) {
+    PatternParameterFacing(Direction face) {
         this.face = face;
     }
 
-    public static PatternParameterFacing readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterFacing readFromNbt(CompoundTag nbt) {
         return values()[MathUtil.clamp(nbt.getByte("v"), 0, 6)];
     }
 
-    public static PatternParameterFacing get(EnumFacing face) {
+    public static PatternParameterFacing get(Direction face) {
         return faceToParam.get(face);
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("v", (byte) ordinal());
+    public void writeToNbt(CompoundTag nbt) {
+        nbt.putByte("v", (byte) ordinal());
     }
 
     @Override
@@ -72,7 +67,7 @@ public enum PatternParameterFacing implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         return BCBuildersSprites.PARAM_FACE.get(face);
     }
@@ -84,13 +79,19 @@ public enum PatternParameterFacing implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("buildcraft.param.facing." + face.getName());
+    public Component getDescription() {
+//        return LocaleUtil.localize("buildcraft.param.facing." + face.getName());
+        return Component.translatable("buildcraft.param.facing." + face.getName());
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "buildcraft.param.facing." + face.getName();
     }
 
     @Override
     public PatternParameterFacing onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
-        StatementMouseClick mouse) {
+                                          StatementMouseClick mouse) {
         return null;
     }
 

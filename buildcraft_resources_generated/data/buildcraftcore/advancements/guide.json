@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftcore.guide.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftlib:guide"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftcore.guide.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

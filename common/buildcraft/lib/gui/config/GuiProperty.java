@@ -1,8 +1,7 @@
 package buildcraft.lib.gui.config;
 
-import com.google.gson.JsonElement;
-
 import buildcraft.lib.expression.api.IVariableNode;
+import com.google.gson.JsonElement;
 
 public abstract class GuiProperty implements IVariableNode {
     public final String name;

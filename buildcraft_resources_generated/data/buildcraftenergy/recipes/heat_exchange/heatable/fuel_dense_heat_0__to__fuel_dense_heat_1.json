@@ -1,0 +1,13 @@
+{
+  "type": "buildcraftfactory:heat_exchange/heatable",
+  "heatFrom": 0,
+  "heatTo": 1,
+  "in": {
+    "amount": 10,
+    "fluid": "buildcraftenergy:fuel_dense_heat_0"
+  },
+  "out": {
+    "amount": 10,
+    "fluid": "buildcraftenergy:fuel_dense_heat_1"
+  }
+}

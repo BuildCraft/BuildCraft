@@ -6,19 +6,16 @@
 
 package buildcraft.test.builders.snapshot;
 
-import java.util.List;
-
+import buildcraft.builders.snapshot.Snapshot;
 import com.google.common.collect.ImmutableList;
-
+import net.minecraft.core.BlockPos;
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import net.minecraft.util.math.BlockPos;
-
-import buildcraft.builders.snapshot.Snapshot;
+import java.util.List;
 
 @RunWith(Theories.class)
 public class PosIndexTester {
@@ -43,9 +40,9 @@ public class PosIndexTester {
     public void test(BlockPos pos) {
         System.out.println("Testing " + pos + " with size " + SIZE);
         Assert.assertEquals(
-            Integer.toString(Snapshot.posToIndex(SIZE, pos)),
-            pos,
-            Snapshot.indexToPos(SIZE, Snapshot.posToIndex(SIZE, pos))
+                Integer.toString(Snapshot.posToIndex(SIZE, pos)),
+                pos,
+                Snapshot.indexToPos(SIZE, Snapshot.posToIndex(SIZE, pos))
         );
     }
 }

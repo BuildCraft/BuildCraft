@@ -1,16 +1,14 @@
 package buildcraft.test.lib.misc.data;
 
-import java.util.Random;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.AxisOrder.Inversion;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
+import net.minecraft.core.BlockPos;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Random;
 
 public class BoxIteratorTester {
 
@@ -27,7 +25,8 @@ public class BoxIteratorTester {
 
     private static void testNormalMoving(int sx, int sy, int sz) {
         BoxIterator bi = new BoxIterator(
-            BlockPos.ORIGIN, new BlockPos(sx - 1, sy - 1, sz - 1), AxisOrder.getFor(EnumAxisOrder.XYZ, Inversion.PPP), false
+//            BlockPos.ORIGIN, new BlockPos(sx - 1, sy - 1, sz - 1), AxisOrder.getFor(EnumAxisOrder.XYZ, Inversion.PPP), false
+                BlockPos.ZERO, new BlockPos(sx - 1, sy - 1, sz - 1), AxisOrder.getFor(EnumAxisOrder.XYZ, Inversion.PPP), false
         );
 
         Random rand = new Random(42);

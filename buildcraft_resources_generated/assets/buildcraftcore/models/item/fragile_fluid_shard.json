@@ -1,0 +1,12 @@
+{
+  "parent": "forge:item/bucket",
+  "apply_fluid_luminosity": true,
+  "apply_tint": true,
+  "cover_is_mask": true,
+  "fluid": "minecraft:water",
+  "loader": "forge:fluid_container",
+  "textures": {
+    "base": "buildcraftcore:item/fragile_fluid_shard_base",
+    "fluid": "buildcraftcore:item/fragile_fluid_shard_fluid"
+  }
+}

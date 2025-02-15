@@ -1,0 +1,101 @@
+{
+  "parent": "minecraft:item/handheld",
+  "overrides": [
+    {
+      "model": "buildcrafttransport:item/wire/white",
+      "predicate": {
+        "buildcraft:colour": 0.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/orange",
+      "predicate": {
+        "buildcraft:colour": 1.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/magenta",
+      "predicate": {
+        "buildcraft:colour": 2.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/light_blue",
+      "predicate": {
+        "buildcraft:colour": 3.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/yellow",
+      "predicate": {
+        "buildcraft:colour": 4.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/lime",
+      "predicate": {
+        "buildcraft:colour": 5.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/pink",
+      "predicate": {
+        "buildcraft:colour": 6.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/gray",
+      "predicate": {
+        "buildcraft:colour": 7.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/light_gray",
+      "predicate": {
+        "buildcraft:colour": 8.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/cyan",
+      "predicate": {
+        "buildcraft:colour": 9.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/purple",
+      "predicate": {
+        "buildcraft:colour": 10.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/blue",
+      "predicate": {
+        "buildcraft:colour": 11.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/brown",
+      "predicate": {
+        "buildcraft:colour": 12.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/green",
+      "predicate": {
+        "buildcraft:colour": 13.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/red",
+      "predicate": {
+        "buildcraft:colour": 14.0
+      }
+    },
+    {
+      "model": "buildcrafttransport:item/wire/black",
+      "predicate": {
+        "buildcraft:colour": 15.0
+      }
+    }
+  ]
+}

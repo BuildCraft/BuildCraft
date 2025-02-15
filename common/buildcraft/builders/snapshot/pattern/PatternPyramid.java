@@ -4,18 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.snapshot.pattern;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterCenter;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class PatternPyramid extends Pattern implements IFillerPatternShape {
     private static final Map<PatternParameterCenter, PyramidDir> PYRAMID_DIRS = new EnumMap<>(PatternParameterCenter.class);
@@ -74,8 +72,8 @@ public class PatternPyramid extends Pattern implements IFillerPatternShape {
     public boolean fillTemplate(IFilledTemplate filledTemplate, IStatementParameter[] params) {
         // noinspection RedundantCast
         PyramidDir dir = params.length >= 2 && params[1] != null
-            ? PYRAMID_DIRS.get((PatternParameterCenter) params[1])
-            : PYRAMID_DIRS.get(PatternParameterCenter.CENTER);
+                ? PYRAMID_DIRS.get((PatternParameterCenter) params[1])
+                : PYRAMID_DIRS.get(PatternParameterCenter.CENTER);
         int stepY = params.length >= 1 && params[0] != null && !(((PatternParameterYDir) params[0]).up) ? -1 : 1;
 
         int y = stepY == 1 ? 0 : filledTemplate.getMax().getY();

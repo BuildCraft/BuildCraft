@@ -6,34 +6,31 @@
 
 package buildcraft.lib.client.guide.font;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.RenderUtil;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-
-import buildcraft.lib.client.sprite.DynamicTextureBC;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.RenderUtil;
-
 public class GuideFont implements IFontRenderer {
 
-    private final DynamicTextureBC tex = new DynamicTextureBC(512, 512);
+    private final DynamicTextureBC tex;
     private final BufferedImage img;
     private final Graphics2D g2d;
 
     private final Font font;
 
     public GuideFont(Font font) {
+        this.tex = new DynamicTextureBC(512, 512, font.getFontName());
         this.font = font;
         this.img = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
         this.g2d = img.createGraphics();
@@ -59,11 +56,13 @@ public class GuideFont implements IFontRenderer {
     }
 
     @Override
-    public int drawString(String text, int x, int y, int shade, boolean shadow, boolean centered, float scale) {
+    public int drawString(GuiGraphics guiGraphics, String text, int x, int y, int shade, boolean shadow, boolean centered, float scale) {
+        PoseStack poseStack = guiGraphics.pose();
         text = ColourUtil.stripAllFormatCodes(text);
-        Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution res = new ScaledResolution(mc);
-        double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+        Minecraft mc = Minecraft.getInstance();
+//        ScaledResolution res = new ScaledResolution(mc);
+//        double scaleFactor = mc.getWindow().getWidth() / res.getScaledWidth_double();
+        double scaleFactor = mc.getWindow().getGuiScale();
 
         g2d.setColor(new Color(0, 0, 0, 255));
         g2d.fillRect(0, 0, 512, 512);
@@ -75,7 +74,7 @@ public class GuideFont implements IFontRenderer {
         FontMetrics metrics = g2d.getFontMetrics(f2);
         g2d.setFont(f2);
         Rectangle2D rect = metrics.getStringBounds(text, g2d);
-        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); //BC原来就是注释掉的
         // int font_height = (int) (getFontHeight() * scaleFactor);
         int font_height = metrics.getMaxAscent() + metrics.getMaxDescent();
         g2d.drawString(text, 0, metrics.getMaxAscent());
@@ -87,12 +86,18 @@ public class GuideFont implements IFontRenderer {
                 tex.setColor(_x, _y, rgb);
             }
         }
-        GlStateManager.enableAlpha();
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(1 / scaleFactor, 1 / scaleFactor, 1);
+//        GlStateManager.enableAlpha();
+        RenderUtil.enableAlpha();
+//        GlStateManager.disableDepth();
+        RenderUtil.disableDepth();
+//        GlStateManager.enableBlend();
+        RenderUtil.enableBlend();
+//        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.pushMatrix();
+        poseStack.pushPose();
+//        GlStateManager.scale(1 / scaleFactor, 1 / scaleFactor, 1);
+        poseStack.scale((float) (1 / scaleFactor), (float) (1 / scaleFactor), 1);
         if ((shade & 0xFF_00_00_00) == 0) {
             shade |= 0xFF_00_00_00;
         }
@@ -101,11 +106,14 @@ public class GuideFont implements IFontRenderer {
             x -= rect.getWidth() / 2 / scaleFactor;
         }
         tex.draw((int) (x * scaleFactor), (int) (y * scaleFactor - metrics.getMaxDescent()), 0, 0, 0,
-            (int) (rect.getWidth()), (int) (rect.getHeight() + 1));
+                (int) (rect.getWidth()), (int) (rect.getHeight() + 1));
         // tex.draw(x, y, 0);
-        GlStateManager.popMatrix();
-        GlStateManager.color(1, 1, 1);
-        GlStateManager.enableDepth();
+//        GlStateManager.popMatrix();
+        poseStack.popPose();
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
+//        GlStateManager.enableDepth();
+        RenderSystem.enableDepthTest();
 
         return (int) rect.getWidth();
     }
@@ -133,9 +141,10 @@ public class GuideFont implements IFontRenderer {
 
         FontState(GuideFont font, float scale, boolean shadow) {
             this.defaultShadow = shadow;
-            Minecraft mc = Minecraft.getMinecraft();
-            ScaledResolution res = new ScaledResolution(mc);
-            double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+            Minecraft mc = Minecraft.getInstance();
+//            ScaledResolution res = new ScaledResolution(mc);
+//            double scaleFactor = mc.getWindow().getGuiScaledWidth() / res.getScaledWidth_double();
+            double scaleFactor = mc.getWindow().getGuiScale();
 
             Font f2 = font.font.deriveFont(font.font.getSize2D() * scale * (float) scaleFactor);
 

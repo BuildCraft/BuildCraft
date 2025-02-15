@@ -6,22 +6,18 @@
 
 package buildcraft.core.statements;
 
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
@@ -31,12 +27,21 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     }
 
     public ActionRedstoneOutput() {
-        super("buildcraft:redstone.output", "buildcraft.redstone.output");
+        super(
+                "buildcraft:redstone.output",
+                "buildcraft.redstone.output"
+        );
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.action.redstone.signal");
+    public Component getDescription() {
+//        return LocaleUtil.localize("gate.action.redstone.signal");
+        return Component.translatable("gate.action.redstone.signal");
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.action.redstone.signal";
     }
 
     @Override
@@ -56,7 +61,8 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     protected boolean isSideOnly(IStatementParameter[] parameters) {
         if (parameters != null && parameters.length >= (getRGSOSlot() + 1)
-            && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly) {
+                && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly)
+        {
             return ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isSpecific;
         }
 
@@ -66,7 +72,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     @Override
     public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
         if (source instanceof IRedstoneStatementContainer) {
-            EnumFacing side = null;
+            Direction side = null;
             if (source instanceof ISidedStatementContainer && isSideOnly(parameters)) {
                 side = ((ISidedStatementContainer) source).getSide();
             }
@@ -83,7 +89,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public SpriteHolder getSprite() {
         return BCCoreSprites.ACTION_REDSTONE;
     }

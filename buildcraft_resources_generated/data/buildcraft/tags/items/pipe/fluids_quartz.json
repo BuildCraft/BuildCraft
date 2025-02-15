@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_fluids_quartz_colorless",
+    "buildcrafttransport:pipe_fluids_quartz_green",
+    "buildcrafttransport:pipe_fluids_quartz_brown",
+    "buildcrafttransport:pipe_fluids_quartz_cyan",
+    "buildcrafttransport:pipe_fluids_quartz_white",
+    "buildcrafttransport:pipe_fluids_quartz_orange",
+    "buildcrafttransport:pipe_fluids_quartz_gray",
+    "buildcrafttransport:pipe_fluids_quartz_blue",
+    "buildcrafttransport:pipe_fluids_quartz_black",
+    "buildcrafttransport:pipe_fluids_quartz_red",
+    "buildcrafttransport:pipe_fluids_quartz_yellow",
+    "buildcrafttransport:pipe_fluids_quartz_magenta",
+    "buildcrafttransport:pipe_fluids_quartz_purple",
+    "buildcrafttransport:pipe_fluids_quartz_lime",
+    "buildcrafttransport:pipe_fluids_quartz_pink",
+    "buildcrafttransport:pipe_fluids_quartz_light_blue",
+    "buildcrafttransport:pipe_fluids_quartz_light_gray"
+  ]
+}

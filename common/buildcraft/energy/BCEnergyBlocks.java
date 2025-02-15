@@ -6,32 +6,39 @@
 
 package buildcraft.energy;
 
+
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumSpring;
-
-import buildcraft.lib.registry.RegistrationHelper;
-
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.energy.tile.TileSpringOil;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.registries.RegistryObject;
 
 public class BCEnergyBlocks {
+    public static RegistryObject<BlockEngine_BC8> engineStone;
+    public static RegistryObject<BlockEngine_BC8> engineIron;
 
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
+    public static RegistryObject<BlockEntityType<TileSpringOil>> springTile;
+    public static RegistryObject<BlockEntityType<TileEngineStone_BC8>> engineStoneTile;
+    public static RegistryObject<BlockEntityType<TileEngineIron_BC8>> engineIronTile;
 
     public static void preInit() {
-
-        if (BCCoreBlocks.engine != null) {
-            BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
-            BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+        if (BCCoreBlocks.engineWood != null) {
+            engineStone = BCCoreBlocks.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
+            engineIron = BCCoreBlocks.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+        } else {
+            engineStone = null;
+            engineIron = null;
         }
 
-        EnumSpring.OIL.liquidBlock = BCEnergyFluids.crudeOil[0].getBlock().getDefaultState();
+//        EnumSpring.OIL.liquidBlock = BCEnergyFluids.crudeOil[0].getBlock().getDefaultState(); // 1.18.2: moved to BCEnergy#postInit
         EnumSpring.OIL.tileConstructor = TileSpringOil::new;
 
-        HELPER.registerTile(TileSpringOil.class, "tile.spring.oil");
-        HELPER.registerTile(TileEngineStone_BC8.class, "tile.engine.stone");
-        HELPER.registerTile(TileEngineIron_BC8.class, "tile.engine.iron");
+        springTile = BCCoreBlocks.HELPER.registerTile("tile.spring.oil", TileSpringOil::new, BCCoreBlocks.springOil);
+        engineStoneTile = BCCoreBlocks.HELPER.registerTile("tile.engine.stone", TileEngineStone_BC8::new, BCEnergyBlocks.engineStone);
+        engineIronTile = BCCoreBlocks.HELPER.registerTile("tile.engine.iron", TileEngineIron_BC8::new, BCEnergyBlocks.engineIron);
     }
 }

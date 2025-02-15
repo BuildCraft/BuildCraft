@@ -6,26 +6,6 @@
 
 package buildcraft.lib.client.guide;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Queues;
-
-import org.lwjgl.input.Keyboard;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-
 import buildcraft.lib.BCLibItems;
 import buildcraft.lib.client.ToastInformation;
 import buildcraft.lib.client.guide.font.FontManager;
@@ -35,6 +15,7 @@ import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.contents.GuidePageContents;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SpriteRaw;
+import buildcraft.lib.container.ContainerGuide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiStack;
 import buildcraft.lib.gui.ISimpleDrawable;
@@ -47,23 +28,42 @@ import buildcraft.lib.guide.GuideContentsData;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.RenderUtil;
+import com.google.common.collect.Queues;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
-public class GuiGuide extends GuiScreen {
-    public static final ResourceLocation ICONS_1 = Gui.ICONS;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.Optional;
+
+//public class GuiGuide extends GuiScreen
+public class GuiGuide extends Screen implements MenuAccess<ContainerGuide> {
+    public static final ResourceLocation ICONS_1 = Gui.GUI_ICONS_LOCATION;
     public static final ResourceLocation ICONS_2 = new ResourceLocation("buildcraftlib:textures/gui/guide/icons.png");
     public static final ResourceLocation COVER = new ResourceLocation("buildcraftlib:textures/gui/guide/cover.png");
     public static final ResourceLocation LEFT_PAGE =
-        new ResourceLocation("buildcraftlib:textures/gui/guide/left_page.png");
+            new ResourceLocation("buildcraftlib:textures/gui/guide/left_page.png");
     public static final ResourceLocation RIGHT_PAGE =
-        new ResourceLocation("buildcraftlib:textures/gui/guide/right_page.png");
+            new ResourceLocation("buildcraftlib:textures/gui/guide/right_page.png");
     public static final ResourceLocation LEFT_PAGE_BACK =
-        new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
+            new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_back.png");
     public static final ResourceLocation RIGHT_PAGE_BACK =
-        new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
+            new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_back.png");
     public static final ResourceLocation LEFT_PAGE_FIRST =
-        new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_first.png");
+            new ResourceLocation("buildcraftlib:textures/gui/guide/left_page_first.png");
     public static final ResourceLocation RIGHT_PAGE_LAST =
-        new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_last.png");
+            new ResourceLocation("buildcraftlib:textures/gui/guide/right_page_last.png");
     public static final ResourceLocation NOTE = new ResourceLocation("buildcraftlib:textures/gui/guide/note.png");
 
     public static final GuiIcon BOOK_COVER = new GuiIcon(COVER, 0, 0, 202, 248);
@@ -143,16 +143,16 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon SEARCH_TAB_CLOSED = new GuiIcon(ICONS_2, 58, 196, 14, 6);
     public static final GuiIcon SEARCH_TAB_OPEN = new GuiIcon(ICONS_2, 40, 209, 106, 14);
 
-    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_ALPHABETICAL };
+    public static final GuiIcon[] ORDERS = {ORDER_TYPE, ORDER_MOD_TYPE, ORDER_ALPHABETICAL};
 
     public static final GuiRectangle BACK_POSITION = new GuiRectangle(
-        PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height
+            PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height
     );
 
     public static final TypeOrder[] SORTING_TYPES = { //
-        new TypeOrder("buildcraft.guide.order.type_subtype", ETypeTag.TYPE, ETypeTag.SUB_TYPE), //
-        new TypeOrder("buildcraft.guide.order.mod_type", ETypeTag.MOD, ETypeTag.TYPE), //
-        new TypeOrder("buildcraft.guide.order.alphabetical")//
+            new TypeOrder("buildcraft.guide.order.type_subtype", ETypeTag.TYPE, ETypeTag.SUB_TYPE), //
+            new TypeOrder("buildcraft.guide.order.mod_type", ETypeTag.MOD, ETypeTag.TYPE), //
+            new TypeOrder("buildcraft.guide.order.alphabetical")//
     };
 
     public static final IGuiArea FLOATING_CHAPTER_MENU;
@@ -165,7 +165,7 @@ public class GuiGuide extends GuiScreen {
         CHAPTER_MARKER_9_RIGHT = new SpriteNineSliced(CHAPTER_MARKER_RIGHT.sprite, 0, 8, 16, 24, 24, 32);
 
         FLOATING_CHAPTER_MENU = GuiUtil.moveRectangleToCentre(
-            new GuiRectangle((PAGE_LEFT_TEXT.width + PAGE_RIGHT_TEXT.width) / 2, PAGE_LEFT.height - 20)
+                new GuiRectangle((PAGE_LEFT_TEXT.width + PAGE_RIGHT_TEXT.width) / 2, PAGE_LEFT.height - 20)
         );
     }
 
@@ -184,7 +184,7 @@ public class GuiGuide extends GuiScreen {
 
     public int minX, minY;
     public ItemStack tooltipStack = null;
-    public final List<List<String>> tooltips = new ArrayList<>();
+    public final List<List<Component>> tooltips = new ArrayList<>();
 
     private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
     private final List<GuideChapter> chapters = new ArrayList<>();
@@ -192,18 +192,25 @@ public class GuiGuide extends GuiScreen {
     private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("SansSerif", 9);
     private float lastPartialTicks;
 
-    public GuiGuide() {
-        this((GuideBook) null);
+    // public GuiGuide()
+    public GuiGuide(ContainerGuide container, Component component) {
+        this(container, (GuideBook) null, component);
     }
 
-    public GuiGuide(String bookName) {
-        this(GuideBookRegistry.INSTANCE.getBook(bookName));
+    // public GuiGuide(String bookName)
+    public GuiGuide(ContainerGuide container, String bookName, Component component) {
+        this(container, GuideBookRegistry.INSTANCE.getBook(bookName), component);
     }
 
-    private GuiGuide(@Nullable GuideBook book) {
+    // private GuiGuide(@Nullable GuideBook book)
+    private GuiGuide(ContainerGuide container, @Nullable GuideBook book, Component component) {
+        super(component);
+        // Calen
+        this.menu = container;
+
         this.book = book;
         this.bookData = book != null ? book.data : GuideManager.BOOK_ALL_DATA;
-        mc = Minecraft.getMinecraft();
+//        mc = Minecraft.getMinecraft(); // Calen: in Screen#init()
         openPage(new GuidePageContents(this));
     }
 
@@ -216,7 +223,7 @@ public class GuiGuide extends GuiScreen {
 
     public void closePage() {
         if (pages.isEmpty()) {
-            mc.displayGuiScreen(null);
+            minecraft.setScreen(null);
         } else {
             setPageInternal(pages.pop());
         }
@@ -253,8 +260,16 @@ public class GuiGuide extends GuiScreen {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+//    public void updateScreen()
+    public void tick() {
+//        super.updateScreen();
+        super.tick();
+        // Calen: from AbstractContainerScreen
+        if (!(this.minecraft.player.isAlive()) || this.minecraft.player.isRemoved()) {
+            this.minecraft.player.closeContainer();
+            return;
+        }
+        // BC 1.12.2
         if (isOpen) {
             currentPage.updateScreen();
             for (GuideChapter chapter : chapters) {
@@ -271,22 +286,24 @@ public class GuiGuide extends GuiScreen {
     }
 
     public boolean isSmallScreen() {
-        return new ScaledResolution(mc).getScaledWidth() < 590;
+//        return new ScaledResolution(minecraft).getScaledWidth() < 590;
+        return minecraft.getWindow().getWidth() < 590;
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        lastPartialTicks = partialTicks = mc.getRenderPartialTicks();
-        minX = (width - PAGE_LEFT.width * 2) / 2;
-        minY = (height - BOOK_COVER.height) / 2;
+//    public void drawScreen(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        lastPartialTicks = partialTicks = minecraft.getFrameTime();
+        minX = (this.width - PAGE_LEFT.width * 2) / 2;
+        minY = (this.height - BOOK_COVER.height) / 2;
         mouse.setMousePosition(mouseX, mouseY);
         try {
             if (isOpen) {
-                drawOpen(partialTicks);
+                drawOpen(guiGraphics, partialTicks);
             } else if (isOpening) {
-                drawOpening(partialTicks);
+                drawOpening(partialTicks, guiGraphics);
             } else {
-                drawCover();
+                drawCover(guiGraphics);
             }
         } catch (Throwable t) {
             // Temporary fix for crash report classes crashing so we can see the ACTUAL error
@@ -299,24 +316,26 @@ public class GuiGuide extends GuiScreen {
         return this.lastPartialTicks;
     }
 
-    public void drawTooltip(ItemStack stack, int x, int y) {
-        renderToolTip(stack, x, y);
+    public void drawTooltip(GuiGraphics guiGraphics, ItemStack stack, int x, int y) {
+//        renderToolTip(stack, x, y);
+        guiGraphics.renderTooltip(font, stack, x, y);
     }
 
-    private void drawCover() {
+    private void drawCover(GuiGraphics guiGraphics) {
         minX = (width - BOOK_COVER.width) / 2;
         minY = (height - BOOK_COVER.height) / 2;
 
-        mc.renderEngine.bindTexture(COVER);
-        BOOK_COVER.drawAt(minX, minY);
+        minecraft.textureManager.bindForSetup(COVER);
+        BOOK_COVER.drawAt(guiGraphics, minX, minY);
     }
 
-    private void drawOpening(float partialTicks) {
+    private void drawOpening(float partialTicks, GuiGraphics guiGraphics) {
         minX = (width - BOOK_COVER.width) / 2;
         minY = (height - BOOK_COVER.height) / 2;
 
         float openingAngle = openingAngleLast * (1 - partialTicks) + openingAngleNext * partialTicks;
-        float sin = MathHelper.sin((float) (openingAngle * Math.PI / 180));
+//        float sin = MathHelper.sin((float) (openingAngle * Math.PI / 180));
+        float sin = Mth.sin((float) (openingAngle * Math.PI / 180));
         if (sin < 0) {
             sin *= -1;
         }
@@ -332,10 +351,10 @@ public class GuiGuide extends GuiScreen {
             float offset = sin * 50;
             int bindingWidth = (int) (sin * BOOK_BINDING.width);
 
-            mc.renderEngine.bindTexture(RIGHT_PAGE);
-            PAGE_RIGHT.drawAt(minX + BOOK_COVER.width - PAGE_RIGHT.width, minY);
+            minecraft.textureManager.bindForSetup(RIGHT_PAGE);
+            PAGE_RIGHT.drawAt(guiGraphics, minX + BOOK_COVER.width - PAGE_RIGHT.width, minY);
 
-            mc.renderEngine.bindTexture(COVER);
+            minecraft.textureManager.bindForSetup(COVER);
 
             // BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
             // BOOK_COVER.drawCustomQuad(
@@ -345,24 +364,26 @@ public class GuiGuide extends GuiScreen {
             // minX, minY
             // ); // like drawScaledInside, but using drawCustomQuad
             BOOK_COVER.drawCustomQuad(
-                minX, minY + BOOK_COVER.height, minX + coverWidth, minY + BOOK_COVER.height + offset, minX + coverWidth,
-                minY - offset, minX, minY
+                    guiGraphics,
+                    minX, minY + BOOK_COVER.height, minX + coverWidth, minY + BOOK_COVER.height + offset, minX + coverWidth,
+                    minY - offset, minX, minY
             );
 
             BOOK_BINDING.drawScaledInside(
-                (int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset), bindingWidth,
-                (int) (BOOK_BINDING.height + offset * 2)
+                    guiGraphics,
+                    (int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset), bindingWidth,
+                    (int) (BOOK_BINDING.height + offset * 2)
             );
 
         } else if (openingAngle == 0) {
             minX = (width - BOOK_COVER.width) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
-            mc.renderEngine.bindTexture(RIGHT_PAGE);
-            PAGE_RIGHT.drawAt(minX + BOOK_COVER.width - PAGE_LEFT.width, minY);
+            minecraft.textureManager.bindForSetup(RIGHT_PAGE);
+            PAGE_RIGHT.drawAt(guiGraphics, minX + BOOK_COVER.width - PAGE_LEFT.width, minY);
 
-            mc.renderEngine.bindTexture(COVER);
-            BOOK_COVER.drawAt(minX, minY);
+            minecraft.textureManager.bindForSetup(COVER);
+            BOOK_COVER.drawAt(guiGraphics, minX, minY);
         } else if (openingAngle > 0) {
             int pageWidth = (int) (sin * PAGE_LEFT.width);
             int bindingWidth = (int) ((1 - sin) * BOOK_BINDING.width);
@@ -372,10 +393,10 @@ public class GuiGuide extends GuiScreen {
             minX = (width - PAGE_LEFT.width - pageWidth) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
-            mc.renderEngine.bindTexture(RIGHT_PAGE);
-            PAGE_RIGHT.drawAt(minX + pageWidth + bindingWidth, minY);
+            minecraft.textureManager.bindForSetup(RIGHT_PAGE);
+            PAGE_RIGHT.drawAt(guiGraphics, minX + pageWidth + bindingWidth, minY);
 
-            mc.renderEngine.bindTexture(LEFT_PAGE);
+            minecraft.textureManager.bindForSetup(LEFT_PAGE);
             // PAGE_LEFT.drawCustomQuad(
             // minX + bindingWidth, minY + PAGE_LEFT.height + offset,
             // minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
@@ -383,28 +404,30 @@ public class GuiGuide extends GuiScreen {
             // minX + bindingWidth, minY - offset
             // );
             PAGE_LEFT.drawCustomQuad(
-                minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY
-                    + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX + bindingWidth, minY - offset
+                    guiGraphics,
+                    minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY
+                            + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX + bindingWidth, minY - offset
             );
             // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
-            mc.renderEngine.bindTexture(COVER);
+            minecraft.textureManager.bindForSetup(COVER);
             BOOK_BINDING.drawScaledInside(
-                (int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height
-                    + offset * 2)
+                    guiGraphics,
+                    (int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height
+                            + offset * 2)
             );
 
-            mc.renderEngine.bindTexture(ICONS_2);
+            minecraft.textureManager.bindForSetup(ICONS_2);
         }
     }
 
-    private void drawOpen(float partialTicks) {
+    private void drawOpen(GuiGraphics guiGraphics, float partialTicks) {
 
         int cp = currentPage.getPage();
         int pc = currentPage.getPageCount();
         boolean isHalfPageShown = cp + 1 == pc;
         {
-            (cp == 0 ? PAGE_LEFT_FIRST : PAGE_LEFT).drawAt(minX, minY);
+            (cp == 0 ? PAGE_LEFT_FIRST : PAGE_LEFT).drawAt(guiGraphics, minX, minY);
             final GuiIcon lastPageIcon;
             if (cp + 2 == pc) {
                 lastPageIcon = PAGE_RIGHT_LAST;
@@ -414,20 +437,23 @@ public class GuiGuide extends GuiScreen {
                 lastPageIcon = PAGE_RIGHT;
             }
 
-            lastPageIcon.drawAt(minX + PAGE_LEFT.width, minY);
+            lastPageIcon.drawAt(guiGraphics, minX + PAGE_LEFT.width, minY);
         }
 
         // Now draw the actual contents of the book
-        String title = currentPage.getTitle();
+//        String title = currentPage.getTitle();
+        Component title = currentPage.getTitle();
         if (title != null) {
             final int x;
-            int titleWidth = currentFont.getStringWidth(title);
+//            int titleWidth = currentFont.getStringWidth(title);
+            int titleWidth = currentFont.getStringWidth(title.getString());
             if (isHalfPageShown) {
                 x = (int) (minX + PAGE_LEFT_TEXT.x + (PAGE_LEFT_TEXT.width - titleWidth) / 2);
             } else {
                 x = (width - titleWidth) / 2;
             }
-            currentFont.drawString(title, x, minY + 12, 0x90816a);
+//            currentFont.drawString(poseStack, title, x, minY + 12, 0x90816a);
+            currentFont.drawString(guiGraphics, title.getString(), x, minY + 12, 0x90816a);
         }
 
         tooltipStack = null;
@@ -438,13 +464,15 @@ public class GuiGuide extends GuiScreen {
         }
 
         currentPage.renderFirstPage(
-            minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y, (int) PAGE_LEFT_TEXT.width,
-            (int) PAGE_LEFT_TEXT.height
+                guiGraphics,
+                minX + (int) PAGE_LEFT_TEXT.x, minY + (int) PAGE_LEFT_TEXT.y, (int) PAGE_LEFT_TEXT.width,
+                (int) PAGE_LEFT_TEXT.height
         );
         int secondPageX = minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x;
         if (!isHalfPageShown) {
             currentPage.renderSecondPage(
-                secondPageX, minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height
+                    guiGraphics,
+                    secondPageX, minY + (int) PAGE_RIGHT_TEXT.y, (int) PAGE_RIGHT_TEXT.width, (int) PAGE_RIGHT_TEXT.height
             );
         }
 
@@ -455,9 +483,13 @@ public class GuiGuide extends GuiScreen {
 
             String str = LocaleUtil.localize("buildcraft.guide.chapter_list");
             if (showingContentsMenu) {
-                CHAPTER_MARKER_9.draw(FLOATING_CHAPTER_MENU);
+                CHAPTER_MARKER_9.draw(FLOATING_CHAPTER_MENU, guiGraphics);
                 currentFont.drawString(
-                    str, (int) FLOATING_CHAPTER_MENU.getX() + 7, (int) FLOATING_CHAPTER_MENU.getY() + 7, 0
+                        guiGraphics,
+                        str,
+                        (int) FLOATING_CHAPTER_MENU.getX() + 7,
+                        (int) FLOATING_CHAPTER_MENU.getY() + 7,
+                        0
                 );
             } else {
                 boolean isHovered = new GuiRectangle(secondPageX, minY, 80, 10).contains(mouse);
@@ -466,8 +498,8 @@ public class GuiGuide extends GuiScreen {
 
                 int strWidth = currentFont.getStringWidth(str);
                 try (AutoGlScissor scissor = GuiUtil.scissor(secondPageX, 0, strWidth + 20, minY + 10)) {
-                    CHAPTER_MARKER_9.draw(secondPageX, y, strWidth + 20, 100);
-                    currentFont.drawString(str, secondPageX + 10, y + 3, 0);
+                    CHAPTER_MARKER_9.draw(guiGraphics, secondPageX, y, strWidth + 20, 100);
+                    currentFont.drawString(guiGraphics, str, secondPageX + 10, y + 3, 0);
                 }
             }
         }
@@ -478,7 +510,7 @@ public class GuiGuide extends GuiScreen {
                 if (chapter.hasParent()) {
                     continue;
                 }
-                chapterIndex += chapter.draw(chapterIndex, partialTicks, smallScreen);
+                chapterIndex += chapter.draw(guiGraphics, chapterIndex, partialTicks, smallScreen);
             }
         }
 
@@ -489,18 +521,21 @@ public class GuiGuide extends GuiScreen {
             if (position.contains(mouse)) {
                 icon = BACK_HOVERED;
             }
-            icon.drawAt(position);
+            icon.drawAt(position, guiGraphics);
         }
 
         // Reset the colour
-        GlStateManager.color(1, 1, 1);
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
         if (tooltipStack != null) {
-            renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
+            drawTooltip(guiGraphics, tooltipStack, (int) mouse.getX(), (int) mouse.getY());
         } else if (!tooltips.isEmpty()) {
+            // Calen: tooltipStack == null
             int y = (int) mouse.getY();
-            for (List<String> tooltip : tooltips) {
-                drawHoveringText(tooltip, (int) mouse.getX(), y);
-                y += tooltip.size() * fontRenderer.FONT_HEIGHT + 10;
+            for (List<Component> tooltip : tooltips) {
+//                drawHoveringText(tooltip, (int) mouse.getX(), y);
+                guiGraphics.renderTooltip(font, tooltip, Optional.empty(), (int) mouse.getX(), y);
+                y += tooltip.size() * font.lineHeight + 10;
             }
         }
     }
@@ -510,7 +545,8 @@ public class GuiGuide extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+//    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         mouse.setMousePosition(mouseX, mouseY);
         // Primary mouse button
         if (mouseButton == 0) {
@@ -531,7 +567,8 @@ public class GuiGuide extends GuiScreen {
                         if (showingContentsMenu && clickResult == 1) {
                             showingContentsMenu = false;
                         }
-                        return;
+//                        return;
+                        return true;
                     }
                 }
 
@@ -542,25 +579,32 @@ public class GuiGuide extends GuiScreen {
                         IGuiArea menuRect = GuiUtil.moveRectangleToCentre(new GuiRectangle(menuWidth, menuHeight));
                         if (!menuRect.contains(mouse)) {
                             showingContentsMenu = false;
-                            return;
+//                        return;
+                            return true;
                         }
-                        return;
+//                        return;
+                        return true;
                     } else {
                         int secondPageX = minX + PAGE_LEFT.width + (int) PAGE_RIGHT_TEXT.x;
                         if (new GuiRectangle(secondPageX, minY, 80, 10).contains(mouse)) {
                             showingContentsMenu = true;
-                            return;
+//                        return;
+                            return true;
                         }
                     }
                 }
 
+                GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource());
+
                 current.handleMouseClick(
-                    page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton,
-                    currentPage.getPage(), isEditing
+                        guiGraphics,
+                        page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton,
+                        currentPage.getPage(), isEditing
                 );
                 current.handleMouseClick(
-                    page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton,
-                    currentPage.getPage() + 1, isEditing
+                        guiGraphics,
+                        page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton,
+                        currentPage.getPage() + 1, isEditing
                 );
 
                 if ((!pages.isEmpty()) && BACK_POSITION.offset(minX, minY).contains(mouse)) {
@@ -569,8 +613,8 @@ public class GuiGuide extends GuiScreen {
 
             } else {
                 if (
-                    mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width && mouseY <= minY
-                        + BOOK_COVER.height
+                        mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width && mouseY <= minY
+                                + BOOK_COVER.height
                 ) {
                     if (isOpening) {// So you can double-click to open it instantly
                         isOpen = true;
@@ -579,15 +623,21 @@ public class GuiGuide extends GuiScreen {
                 }
             }
         }
+        return true;
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        if (currentPage.keyTyped(typedChar, keyCode)) {
-            return;
+//    protected void keyTyped(char typedChar, int keyCode) throws IOException
+    public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
+//        super.keyTyped(typedChar, keyCode);
+        super.keyPressed(typedChar, keyCode, modifiers);
+//        if (currentPage.keyTyped(typedChar, keyCode))
+        if (currentPage.keyTyped(typedChar, keyCode, modifiers)) {
+//            return;
+            return true;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_F3) && keyCode == Keyboard.KEY_T) {
+//        if (Keyboard.isKeyDown(Keyboard.KEY_F3) && keyCode == Keyboard.KEY_T)
+        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_F3) && typedChar == InputConstants.KEY_T) {
             GuideManager.INSTANCE.reload();
             while (true) {
                 currentPage = currentPage.createReloaded();
@@ -610,20 +660,86 @@ public class GuiGuide extends GuiScreen {
             refreshChapters();
             ISimpleDrawable icon = null;
             if (BCLibItems.guide != null) {
-                GuiStack stackIcon = new GuiStack(new ItemStack(BCLibItems.guide));
-                icon = (x, y) -> stackIcon.drawAt(x + 8, y + 8);
+                GuiStack stackIcon = new GuiStack(new ItemStack(BCLibItems.guide.get()));
+                icon = (poseStack, x, y) -> stackIcon.drawAt(poseStack, x + 8, y + 8);
             }
-            mc.getToastGui().add(new ToastInformation("buildcraft.guide_book.reloaded", icon));
+//            minecraft.getToastGui().add(new ToastInformation("buildcraft.guide_book.reloaded", icon));
+            minecraft.getToasts().addToast(new ToastInformation("buildcraft.guide_book.reloaded", icon));
         }
-        if (keyCode == mc.gameSettings.keyBindLeft.getKeyCode()) {
+        if (typedChar == minecraft.options.keyLeft.getKey().getValue()) {
             currentPage.lastPage();
-        } else if (keyCode == mc.gameSettings.keyBindRight.getKeyCode()) {
+        } else if (typedChar == minecraft.options.keyRight.getKey().getValue()) {
             currentPage.nextPage();
         }
+        return true;
+    }
+
+    public boolean charTyped(char typedChar, int keyCode) {
+        super.charTyped(typedChar, keyCode);
+        if (currentPage.charTyped(typedChar, keyCode)) {
+//            return;
+            return true;
+        }
+//        if (Keyboard.isKeyDown(Keyboard.KEY_F3) && keyCode == Keyboard.KEY_T)
+        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_F3) && typedChar == InputConstants.KEY_T) {
+            GuideManager.INSTANCE.reload();
+            while (true) {
+                currentPage = currentPage.createReloaded();
+                if (currentPage != null) {
+                    break;
+                }
+                currentPage = pages.poll();
+                if (currentPage == null) {
+                    throw new IllegalStateException("Didn't find the contents page!");
+                }
+            }
+            GuidePageBase[] history = pages.toArray(new GuidePageBase[0]);
+            pages.clear();
+            for (int i = 0; i < history.length; i++) {
+                GuidePageBase page = history[i].createReloaded();
+                if (page != null) {
+                    pages.add(page);
+                }
+            }
+            refreshChapters();
+            ISimpleDrawable icon = null;
+            if (BCLibItems.guide != null) {
+                GuiStack stackIcon = new GuiStack(new ItemStack(BCLibItems.guide.get()));
+                icon = (poseStack, x, y) -> stackIcon.drawAt(poseStack, x + 8, y + 8);
+            }
+//            minecraft.getToastGui().add(new ToastInformation("buildcraft.guide_book.reloaded", icon));
+            minecraft.getToasts().addToast(new ToastInformation("buildcraft.guide_book.reloaded", icon));
+        }
+        if (typedChar == minecraft.options.keyLeft.getKey().getValue()) {
+            currentPage.lastPage();
+        } else if (typedChar == minecraft.options.keyRight.getKey().getValue()) {
+            currentPage.nextPage();
+        }
+        return true;
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
+//    public boolean doesGuiPauseGame()
+    public boolean isPauseScreen() {
         return false;
+    }
+
+    protected final ContainerGuide menu;
+
+    @Override
+    public ContainerGuide getMenu() {
+        return this.menu;
+    }
+
+    @Override
+    public void removed() {
+        if (this.minecraft.player != null) {
+            this.menu.removed(this.minecraft.player);
+        }
+    }
+
+    public void onClose() {
+        this.minecraft.player.closeContainer();
+        super.onClose();
     }
 }

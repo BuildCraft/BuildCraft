@@ -6,37 +6,38 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class RequiredExtractorItem extends RequiredExtractor {
     private NbtPath path = null;
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<ItemStack> extractItemsFromBlock(@Nonnull BlockState blockState, @Nullable CompoundTag tileNbt) {
         return Optional.ofNullable(path.get(tileNbt))
-            .map(NBTTagCompound.class::cast)
-            .map(ItemStack::new)
-            .map(Collections::singletonList)
-            .orElseGet(Collections::emptyList);
+                .map(CompoundTag.class::cast)
+//                .map(ItemStack::new)
+                .map(ItemStack::of)
+                .map(Collections::singletonList)
+                .orElseGet(Collections::emptyList);
     }
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<ItemStack> extractItemsFromEntity(@Nonnull CompoundTag entityNbt) {
         return Optional.ofNullable(path.get(entityNbt))
-            .map(NBTTagCompound.class::cast)
-            .map(ItemStack::new)
-            .map(Collections::singletonList)
-            .orElseGet(Collections::emptyList);
+                .map(CompoundTag.class::cast)
+//            .map(ItemStack::new)
+                .map(ItemStack::of)
+                .map(Collections::singletonList)
+                .orElseGet(Collections::emptyList);
     }
 }

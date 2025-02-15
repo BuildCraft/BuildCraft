@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "key": {
+    "g": {
+      "tag": "forge:glass/light_blue"
+    },
+    "l": {
+      "tag": "forge:storage_blocks/lapis"
+    },
+    "r": {
+      "tag": "forge:gems/diamond"
+    }
+  },
+  "pattern": [
+    "lgr"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:pipe_items_daizuli_light_blue"
+  },
+  "show_notification": true
+}

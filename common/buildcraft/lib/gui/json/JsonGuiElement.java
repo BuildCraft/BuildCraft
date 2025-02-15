@@ -1,25 +1,22 @@
 package buildcraft.lib.gui.json;
 
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.gui.json.JsonGuiIterator.ResolvedIterator;
+import buildcraft.lib.json.JsonVariableObject;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.GsonHelper;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.JsonUtils;
-
-import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.json.JsonGuiIterator.ResolvedIterator;
-import buildcraft.lib.json.JsonVariableObject;
 
 public class JsonGuiElement extends JsonVariableObject {
     public final String name;
@@ -37,7 +34,7 @@ public class JsonGuiElement extends JsonVariableObject {
     private final Map<String, JsonGuiElement> types;
 
     private JsonGuiElement(String name, String fullName, FunctionContext context, JsonObject json,
-        ResolvedIterator iter) {
+                           ResolvedIterator iter) {
         this.name = name;
         this.fullName = fullName;
         this.context = new FunctionContext(context);
@@ -52,7 +49,7 @@ public class JsonGuiElement extends JsonVariableObject {
     }
 
     public JsonGuiElement(JsonObject json, String name, String fullName, Map<String, JsonGuiElement> typeLookup,
-        FunctionContext context) {
+                          FunctionContext context) {
         try {
             this.json = json;
             this.name = name;
@@ -60,7 +57,8 @@ public class JsonGuiElement extends JsonVariableObject {
             this.context = new FunctionContext(context);
             this.types = typeLookup;
 
-            String str = JsonUtils.getString(json, "type", null);
+//            String str = JsonUtils.getString(json, "type", null);
+            String str = GsonHelper.getAsString(json, "type", null);
             if (str != null) {
                 JsonGuiElement parent = typeLookup.get(str);
                 if (parent != null) {
@@ -119,7 +117,8 @@ public class JsonGuiElement extends JsonVariableObject {
                     elem.types.putAll(types);
                     elem.properties.putAll(properties);
                     list.add(elem);
-                } while (!resolvedIterator.iterate());
+                }
+                while (!resolvedIterator.iterate());
             }
         }
         return list;

@@ -6,13 +6,12 @@
 
 package buildcraft.lib.path.task;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.lib.path.MiniChunkCache;
 import buildcraft.lib.path.MiniChunkGraph;
+import net.minecraft.core.BlockPos;
+
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class MiniChunkCalculationData {
     public final MiniChunkCache cache;

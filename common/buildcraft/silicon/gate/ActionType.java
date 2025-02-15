@@ -1,9 +1,5 @@
 package buildcraft.silicon.gate;
 
-import java.io.IOException;
-
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
@@ -11,11 +7,13 @@ import buildcraft.api.statements.IAction;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.StatementManager;
-
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.ActionWrapper;
 import buildcraft.lib.statement.ActionWrapper.ActionWrapperInternal;
 import buildcraft.lib.statement.StatementType;
+import net.minecraft.nbt.CompoundTag;
+
+import java.io.IOException;
 
 public class ActionType extends StatementType<ActionWrapper> {
     public static final ActionType INSTANCE = new ActionType();
@@ -34,7 +32,7 @@ public class ActionType extends StatementType<ActionWrapper> {
     }
 
     @Override
-    public ActionWrapper readFromNbt(NBTTagCompound nbt) {
+    public ActionWrapper readFromNbt(CompoundTag nbt) {
         if (nbt == null) {
             return null;
         }
@@ -52,13 +50,13 @@ public class ActionType extends StatementType<ActionWrapper> {
     }
 
     @Override
-    public NBTTagCompound writeToNbt(ActionWrapper slot) {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundTag writeToNbt(ActionWrapper slot) {
+        CompoundTag nbt = new CompoundTag();
         if (slot == null) {
             return nbt;
         }
-        nbt.setString("kind", slot.getUniqueTag());
-        nbt.setByte("side", (byte) slot.sourcePart.getIndex());
+        nbt.putString("kind", slot.getUniqueTag());
+        nbt.putByte("side", (byte) slot.sourcePart.getIndex());
         return nbt;
     }
 
@@ -66,7 +64,7 @@ public class ActionType extends StatementType<ActionWrapper> {
     public ActionWrapper readFromBuffer(PacketBufferBC buffer) throws IOException {
         if (buffer.readBoolean()) {
             String name = buffer.readString();
-            EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
+            EnumPipePart part = buffer.readEnum(EnumPipePart.class);
             IStatement statement = StatementManager.statements.get(name);
             if (statement instanceof IAction) {
                 return ActionWrapper.wrap(statement, part.face);
@@ -84,8 +82,8 @@ public class ActionType extends StatementType<ActionWrapper> {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);
-            buffer.writeString(slot.getUniqueTag());
-            buffer.writeEnumValue(slot.sourcePart);
+            buffer.writeUtf(slot.getUniqueTag());
+            buffer.writeEnum(slot.sourcePart);
         }
     }
 }

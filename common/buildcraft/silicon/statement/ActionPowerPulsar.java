@@ -6,42 +6,43 @@
 
 package buildcraft.silicon.statement;
 
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.IActionInternalSided;
-import buildcraft.api.statements.IActionSingle;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.*;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.silicon.BCSiliconSprites;
 import buildcraft.silicon.BCSiliconStatements;
 import buildcraft.silicon.plug.PluggablePulsar;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 
 public class ActionPowerPulsar extends BCStatement implements IActionInternalSided, IActionSingle {
 
     public final boolean constant;
 
     public ActionPowerPulsar(boolean constant) {
-        super("buildcraft:pulsar." + (constant ? "constant" : "single"),
-            "buildcraft.pulsar.constant" + (constant ? "constant" : "single"));
+        super(
+                "buildcraft:pulsar." + (constant ? "constant" : "single"),
+                "buildcraft.pulsar.constant" + (constant ? "constant" : "single")
+        );
         this.constant = constant;
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize(constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single");
+    public Component getDescription() {
+//        return LocaleUtil.localize(constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single");
+        return Component.translatable(constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single");
     }
 
     @Override
-    public void actionActivate(EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
+    public String getDescriptionKey() {
+        return constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single";
+    }
+
+    @Override
+    public void actionActivate(Direction side, IStatementContainer source, IStatementParameter[] parameters) {
         if (source instanceof IGate) {
             IGate gate = (IGate) source;
             IPipeHolder pipe = gate.getPipeHolder();

@@ -1,0 +1,23 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:plug_lens",
+    "nbt": "{Damage:22}"
+  },
+  "requiredMicroJoules": 500000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "tag": "forge:glass/cyan"
+      }
+    },
+    {
+      "count": 1,
+      "ingredient": {
+        "item": "minecraft:iron_bars"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,valid=false": {
+      "model": "buildcraftbuilders:block/architect_off",
+      "y": 90
+    },
+    "facing=east,valid=true": {
+      "model": "buildcraftbuilders:block/architect_on",
+      "y": 90
+    },
+    "facing=north,valid=false": {
+      "model": "buildcraftbuilders:block/architect_off"
+    },
+    "facing=north,valid=true": {
+      "model": "buildcraftbuilders:block/architect_on"
+    },
+    "facing=south,valid=false": {
+      "model": "buildcraftbuilders:block/architect_off",
+      "y": 180
+    },
+    "facing=south,valid=true": {
+      "model": "buildcraftbuilders:block/architect_on",
+      "y": 180
+    },
+    "facing=west,valid=false": {
+      "model": "buildcraftbuilders:block/architect_off",
+      "y": 270
+    },
+    "facing=west,valid=true": {
+      "model": "buildcraftbuilders:block/architect_on",
+      "y": 270
+    }
+  }
+}

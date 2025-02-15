@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftbuilders:shaping_the_world",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftbuilders.building_for_the_future.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftbuilders:filler"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftbuilders.building_for_the_future.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

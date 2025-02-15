@@ -6,9 +6,10 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.Set;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
-import net.minecraft.util.ResourceLocation;
+import java.util.Set;
 
 /** Defines an object that will hold a model, and is automatically refreshed from the filesystem when the client reloads
  * all of its resources. */
@@ -28,6 +29,9 @@ public abstract class ModelHolder {
     protected abstract void onModelBake();
 
     protected abstract void onTextureStitchPre(Set<ResourceLocation> toRegisterSprites);
+
+    // Calen 1.20.1
+    protected abstract void onDatagenTextureRegister(Set<ResourceLocation> toRegisterSprites, ExistingFileHelper fileHelper);
 
     public abstract boolean hasBakedQuads();
 }

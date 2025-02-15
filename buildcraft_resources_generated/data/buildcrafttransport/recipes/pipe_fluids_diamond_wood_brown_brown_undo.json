@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_fluids_diamond_wood_brown"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_diamond_wood_brown"
+  }
+}

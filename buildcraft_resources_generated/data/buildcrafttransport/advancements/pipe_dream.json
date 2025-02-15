@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcrafttransport.pipe_dream.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcrafttransport:pipe_structure_cobblestone_colorless"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcrafttransport.pipe_dream.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

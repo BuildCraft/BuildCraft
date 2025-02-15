@@ -6,21 +6,20 @@
 
 package buildcraft.lib.path.task;
 
+import buildcraft.lib.misc.WorkerThreadUtil;
+import buildcraft.lib.path.MiniChunkGraph;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import buildcraft.lib.misc.WorkerThreadUtil;
-import buildcraft.lib.path.MiniChunkGraph;
-
 public class TaskMiniChunkManager implements Callable<MiniChunkGraph> {
-    private World world;
+    private Level world;
     private final BlockPos offset;
     private final Consumer<MiniChunkGraph> setter;
 
-    public TaskMiniChunkManager(World world, BlockPos offset, Consumer<MiniChunkGraph> setter) {
+    public TaskMiniChunkManager(Level world, BlockPos offset, Consumer<MiniChunkGraph> setter) {
         this.world = world;
         this.offset = offset;
         this.setter = setter;

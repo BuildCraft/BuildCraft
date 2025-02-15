@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "buildcraftfactory:block/autoworkbench_item"
+    }
+  }
+}

@@ -6,27 +6,12 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.List;
-
+import buildcraft.lib.misc.NBTUtilBC;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
+import net.minecraft.nbt.*;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
-
-import net.minecraftforge.common.util.Constants;
-
-import buildcraft.lib.misc.NBTUtilBC;
+import java.util.List;
 
 public class NbtPath {
     private final List<String> elements;
@@ -35,7 +20,7 @@ public class NbtPath {
         this.elements = elements;
     }
 
-    public NBTBase get(NBTTagByte tag) {
+    public Tag get(ByteTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -43,7 +28,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagShort tag) {
+    public Tag get(ShortTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -51,7 +36,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagInt tag) {
+    public Tag get(IntTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -59,7 +44,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagLong tag) {
+    public Tag get(LongTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -67,7 +52,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagFloat tag) {
+    public Tag get(FloatTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -75,7 +60,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagDouble tag) {
+    public Tag get(DoubleTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -83,7 +68,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagByteArray tag) {
+    public Tag get(ByteArrayTag tag) {
         if (elements.size() == 1) {
             int key;
             try {
@@ -91,8 +76,8 @@ public class NbtPath {
             } catch (NumberFormatException e) {
                 return NBTUtilBC.NBT_NULL;
             }
-            if (key >= 0 && key < tag.getByteArray().length) {
-                return new NBTTagByte(tag.getByteArray()[key]);
+            if (key >= 0 && key < tag.getAsByteArray().length) {
+                return ByteTag.valueOf(tag.getAsByteArray()[key]);
             } else {
                 return NBTUtilBC.NBT_NULL;
             }
@@ -103,7 +88,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagString tag) {
+    public Tag get(StringTag tag) {
         if (elements.isEmpty()) {
             return tag;
         } else {
@@ -111,7 +96,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagList tag) {
+    public Tag get(ListTag tag) {
         if (elements.size() == 1) {
             int key;
             try {
@@ -119,7 +104,7 @@ public class NbtPath {
             } catch (NumberFormatException e) {
                 return NBTUtilBC.NBT_NULL;
             }
-            if (key >= 0 && key < tag.tagCount()) {
+            if (key >= 0 && key < tag.size()) {
                 return new NbtPath(elements.subList(1, elements.size())).get(tag.get(key));
             } else {
                 return NBTUtilBC.NBT_NULL;
@@ -131,11 +116,11 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagCompound tag) {
+    public Tag get(CompoundTag tag) {
         if (!elements.isEmpty()) {
             String key = elements.get(0);
-            if (tag.hasKey(key)) {
-                return new NbtPath(elements.subList(1, elements.size())).get(tag.getTag(key));
+            if (tag.contains(key)) {
+                return new NbtPath(elements.subList(1, elements.size())).get(tag.get(key));
             } else {
                 return NBTUtilBC.NBT_NULL;
             }
@@ -144,7 +129,7 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTTagIntArray tag) {
+    public Tag get(IntArrayTag tag) {
         if (elements.size() == 1) {
             int key;
             try {
@@ -152,8 +137,8 @@ public class NbtPath {
             } catch (NumberFormatException e) {
                 return NBTUtilBC.NBT_NULL;
             }
-            if (key >= 0 && key < tag.getIntArray().length) {
-                return new NBTTagInt(tag.getIntArray()[key]);
+            if (key >= 0 && key < tag.getAsIntArray().length) {
+                return IntTag.valueOf(tag.getAsIntArray()[key]);
             } else {
                 return NBTUtilBC.NBT_NULL;
             }
@@ -164,30 +149,30 @@ public class NbtPath {
         }
     }
 
-    public NBTBase get(NBTBase tag) {
+    public Tag get(Tag tag) {
         switch (tag.getId()) {
-            case Constants.NBT.TAG_BYTE:
-                return get((NBTTagByte) tag);
-            case Constants.NBT.TAG_SHORT:
-                return get((NBTTagShort) tag);
-            case Constants.NBT.TAG_INT:
-                return get((NBTTagInt) tag);
-            case Constants.NBT.TAG_LONG:
-                return get((NBTTagLong) tag);
-            case Constants.NBT.TAG_FLOAT:
-                return get((NBTTagFloat) tag);
-            case Constants.NBT.TAG_DOUBLE:
-                return get((NBTTagDouble) tag);
-            case Constants.NBT.TAG_BYTE_ARRAY:
-                return get((NBTTagByteArray) tag);
-            case Constants.NBT.TAG_STRING:
-                return get((NBTTagString) tag);
-            case Constants.NBT.TAG_LIST:
-                return get((NBTTagList) tag);
-            case Constants.NBT.TAG_COMPOUND:
-                return get((NBTTagCompound) tag);
-            case Constants.NBT.TAG_INT_ARRAY:
-                return get((NBTTagIntArray) tag);
+            case Tag.TAG_BYTE:
+                return get((ByteTag) tag);
+            case Tag.TAG_SHORT:
+                return get((ShortTag) tag);
+            case Tag.TAG_INT:
+                return get((IntTag) tag);
+            case Tag.TAG_LONG:
+                return get((LongTag) tag);
+            case Tag.TAG_FLOAT:
+                return get((FloatTag) tag);
+            case Tag.TAG_DOUBLE:
+                return get((DoubleTag) tag);
+            case Tag.TAG_BYTE_ARRAY:
+                return get((ByteArrayTag) tag);
+            case Tag.TAG_STRING:
+                return get((StringTag) tag);
+            case Tag.TAG_LIST:
+                return get((ListTag) tag);
+            case Tag.TAG_COMPOUND:
+                return get((CompoundTag) tag);
+            case Tag.TAG_INT_ARRAY:
+                return get((IntArrayTag) tag);
             default:
                 return NBTUtilBC.NBT_NULL;
         }
@@ -200,11 +185,11 @@ public class NbtPath {
 
     @SuppressWarnings("WeakerAccess")
     public static final JsonDeserializer<NbtPath> DESERIALIZER = (json, typeOfT, context) ->
-        new NbtPath(
-            context.deserialize(
-                json,
-                new TypeToken<List<String>>() {
-                }.getType()
-            )
-        );
+            new NbtPath(
+                    context.deserialize(
+                            json,
+                            new TypeToken<List<String>>() {
+                            }.getType()
+                    )
+            );
 }

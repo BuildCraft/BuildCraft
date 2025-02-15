@@ -1,26 +1,23 @@
 package buildcraft.builders.snapshot.pattern;
 
-import java.util.BitSet;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Set;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.Vec3d;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
-
-import buildcraft.lib.misc.VecUtil;
-
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
+import buildcraft.lib.misc.VecUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.BitSet;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
 
 public final class PatternSpherePart extends Pattern implements IFillerPatternShape {
     public enum SpherePartType {
@@ -81,19 +78,20 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
         PatternParameterRotation rotation = getParam(2, params, PatternParameterRotation.NONE);
         PatternParameterHollow hollow = getParam(0, params, PatternParameterHollow.FILLED_INNER);
 
-        Vec3d center;
-        Vec3d radius;
+        Vec3 center;
+        Vec3 radius;
 
-        Set<EnumFacing> innerSides = EnumSet.noneOf(EnumFacing.class);
+        Set<Direction> innerSides = EnumSet.noneOf(Direction.class);
 
-        Vec3d max = new Vec3d(filledTemplate.getMax().getX(), filledTemplate.getMax().getY(), filledTemplate.getMax().getZ());
+        Vec3 max = new Vec3(filledTemplate.getMax().getX(), filledTemplate.getMax().getY(), filledTemplate.getMax().getZ());
         center = VecUtil.scale(max, 0.5);
-        radius = center.addVector(0.5, 0.5, 0.5);
+//        radius = center.addVector(0.5, 0.5, 0.5);
+        radius = center.add(0.5, 0.5, 0.5);
 
         innerSides.add(facing.face);
 
         Axis axis = facing.face.getAxis();
-        Vec3d offset = VecUtil.offset(Vec3d.ZERO, facing.face, VecUtil.getValue(radius, axis));
+        Vec3 offset = VecUtil.offset(Vec3.ZERO, facing.face, VecUtil.getValue(radius, axis));
         center = center.add(offset);
         radius = VecUtil.replaceValue(radius, axis, VecUtil.getValue(radius, axis) * 2);
 
@@ -104,10 +102,10 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
             } else {
                 secondaryAxis = axis == Axis.X ? Axis.Z : axis == Axis.Y ? Axis.X : Axis.Y;
             }
-            EnumFacing secondaryFace = VecUtil.getFacing(secondaryAxis, rotation.rotationCount >= 2);
+            Direction secondaryFace = VecUtil.getFacing(secondaryAxis, rotation.rotationCount >= 2);
             innerSides.add(secondaryFace);
 
-            offset = VecUtil.offset(Vec3d.ZERO, secondaryFace, VecUtil.getValue(radius, secondaryAxis));
+            offset = VecUtil.offset(Vec3.ZERO, secondaryFace, VecUtil.getValue(radius, secondaryAxis));
             center = center.add(offset);
             radius = VecUtil.replaceValue(radius, secondaryAxis, VecUtil.getValue(radius, secondaryAxis) * 2);
 
@@ -119,10 +117,10 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
                 } else {
                     tertiaryAxis = axis == Axis.X ? Axis.Z : axis == Axis.Y ? Axis.X : Axis.Y;
                 }
-                EnumFacing tertiaryFace = VecUtil.getFacing(tertiaryAxis, rotationCount >= 2);
+                Direction tertiaryFace = VecUtil.getFacing(tertiaryAxis, rotationCount >= 2);
                 innerSides.add(tertiaryFace);
 
-                offset = VecUtil.offset(Vec3d.ZERO, tertiaryFace, VecUtil.getValue(radius, tertiaryAxis));
+                offset = VecUtil.offset(Vec3.ZERO, tertiaryFace, VecUtil.getValue(radius, tertiaryAxis));
                 center = center.add(offset);
                 radius = VecUtil.replaceValue(radius, tertiaryAxis, VecUtil.getValue(radius, tertiaryAxis) * 2);
             }
@@ -167,7 +165,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
             // Z iteration
             for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
                 for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
-                    if (!innerSides.contains(EnumFacing.NORTH)) {
+                    if (!innerSides.contains(Direction.NORTH)) {
                         for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
                             if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
                                 filledTemplate.set(x, y, z, true);
@@ -179,7 +177,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
                         }
                     }
 
-                    if (!innerSides.contains(EnumFacing.SOUTH)) {
+                    if (!innerSides.contains(Direction.SOUTH)) {
                         for (int z = filledTemplate.getMax().getZ(); z >= 0; z--) {
                             if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
                                 filledTemplate.set(x, y, z, true);
@@ -196,7 +194,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
             // Y iteration
             for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
                 for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
-                    if (!innerSides.contains(EnumFacing.DOWN)) {
+                    if (!innerSides.contains(Direction.DOWN)) {
                         for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
                             if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
                                 filledTemplate.set(x, y, z, true);
@@ -208,7 +206,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
                         }
                     }
 
-                    if (!innerSides.contains(EnumFacing.UP)) {
+                    if (!innerSides.contains(Direction.UP)) {
                         for (int y = filledTemplate.getMax().getY(); y >= 0; y--) {
                             if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
                                 filledTemplate.set(x, y, z, true);
@@ -225,7 +223,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
             // X iteration
             for (int y = 0; y <= filledTemplate.getMax().getY(); y++) {
                 for (int z = 0; z <= filledTemplate.getMax().getZ(); z++) {
-                    if (!innerSides.contains(EnumFacing.WEST)) {
+                    if (!innerSides.contains(Direction.WEST)) {
                         for (int x = 0; x <= filledTemplate.getMax().getX(); x++) {
                             if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
                                 filledTemplate.set(x, y, z, true);
@@ -237,7 +235,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
                         }
                     }
 
-                    if (!innerSides.contains(EnumFacing.EAST)) {
+                    if (!innerSides.contains(Direction.EAST)) {
                         for (int x = filledTemplate.getMax().getX(); x >= 0; x--) {
                             if (data.get(Snapshot.posToIndex(filledTemplate.getSize(), x, y, z))) {
                                 filledTemplate.set(x, y, z, true);

@@ -6,23 +6,21 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.misc.JsonUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.core.Direction;
+import net.minecraft.util.GsonHelper;
 
-import net.minecraft.client.renderer.block.model.BlockPart;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.JsonUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.misc.JsonUtil;
-
-/** {@link BlockPart} but with a few extra features */
+/** {@link BlockElement} but with a few extra features */
 public class JsonModelPart {
     public final JsonQuad[] quads;
 
@@ -71,14 +69,15 @@ public class JsonModelPart {
     private static JsonQuad[] readCuboid(JsonObject obj) {
         float[] from = readFloatPositionSmaller(obj, "from");
         float[] to = readFloatPositionSmaller(obj, "to");
-        boolean shade = JsonUtils.getBoolean(obj, "shade", false);
+//        boolean shade = JsonUtils.getBoolean(obj, "shade", false);
+        boolean shade = GsonHelper.getAsBoolean(obj, "shade", false);
 
         if (obj.has("faces")) {
             JsonElement faces = obj.get("faces");
             if (faces.isJsonObject()) {
                 JsonObject jFaces = faces.getAsJsonObject();
                 List<JsonQuad> quads = new ArrayList<>();
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     if (jFaces.has(face.getName())) {
                         JsonElement jFace = jFaces.get(face.getName());
                         if (!jFace.isJsonObject()) {

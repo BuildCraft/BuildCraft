@@ -1,25 +1,29 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
-
+import buildcraft.core.BCCoreBlocks;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.AdvancementUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nonnull;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:free_power");
     private boolean givenAdvancement = false;
 
-    public TileEngineRedstone_BC8() {}
+    public TileEngineRedstone_BC8(BlockPos pos, BlockState blockState) {
+        super(BCCoreBlocks.engineWoodTile.get(), pos, blockState);
+    }
 
     @Nonnull
     @Override
@@ -37,7 +41,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
         super.engineUpdate();
         if (isRedstonePowered) {
             power = getMaxPower();
-            if (world.getTotalWorldTime() % 16 == 0) {
+            if (level.getGameTime() % 16 == 0) {
                 if (getHeatLevel() < 0.8) {
                     heat += 4;
                 }

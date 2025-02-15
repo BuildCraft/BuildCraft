@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftbuilders:diggy_diggy_hole",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftbuilders.destroying_the_world.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftbuilders:filler"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftbuilders.destroying_the_world.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

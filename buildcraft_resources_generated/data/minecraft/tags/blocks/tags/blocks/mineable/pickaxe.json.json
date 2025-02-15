@@ -1,0 +1,30 @@
+{
+  "values": [
+    "buildcraftcore:engine_wood",
+    "buildcraftcore:engine_stone",
+    "buildcraftcore:engine_iron",
+    "buildcraftcore:engine_creative",
+    "buildcraftfactory:autoworkbench_item",
+    "buildcraftfactory:chute",
+    "buildcraftfactory:distiller",
+    "buildcraftfactory:heat_exchange",
+    "buildcraftfactory:tank",
+    "buildcraftfactory:pump",
+    "buildcraftfactory:mining_well",
+    "buildcraftfactory:water_gel",
+    "buildcraftfactory:flood_gate",
+    "buildcraftbuilders:quarry",
+    "buildcraftbuilders:builder",
+    "buildcraftbuilders:architect",
+    "buildcraftbuilders:filler",
+    "buildcraftbuilders:library",
+    "buildcraftbuilders:replacer",
+    "buildcraftsilicon:integration_table",
+    "buildcraftsilicon:assembly_table",
+    "buildcraftsilicon:advanced_crafting_table",
+    "buildcraftsilicon:programming_table",
+    "buildcraftsilicon:laser",
+    "buildcraftsilicon:charging_table",
+    "buildcrafttransport:filtered_buffer"
+  ]
+}

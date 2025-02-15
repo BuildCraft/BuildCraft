@@ -1,0 +1,83 @@
+{
+    "textures": {
+        "#main":"buildcraftsilicon:plugs/lens",
+        "#lens":"buildcraftsilicon:plugs/overlay_lens",
+        "#water_flowing":"minecraft:block/water_flow"
+    },
+    "variables": {
+        "translucent_tex":"has_colour ? '#lens' : '#water_flowing'",
+        "lens_colour":"has_colour ? convertColourToArgb(colour) : 0xFF_FF_FF_FF",
+        "isFilter":"false"
+    },
+    "shade": true,
+    "rules": [
+        {
+            "when": "side != Facing.west",
+            "type": "builtin:rotate_facing",
+            "from": "Facing.west",
+            "to": "side"
+        }
+    ],
+    "cutout": [
+        {
+            "from": [ 0, 3, 3 ],
+            "to": [ 2, 4.01, 13 ],
+            "faces": {
+                "down":  { "uv": [ 2, 3, 4,13 ], "texture": "'#main'" },
+                "up":    { "uv": [ 2, 3, 4,13 ], "texture": "'#main'" },
+                "west":  { "uv": [ 2, 3, 3,13 ], "texture": "'#main'", "rotation": 1 },
+                "east":  { "uv": [ 3, 3, 4,13 ], "texture": "'#main'", "rotation": 3 },
+                "north": { "uv": [ 2,12, 4,13 ], "texture": "'#main'" },
+                "south": { "uv": [ 2, 3, 4, 4 ], "texture": "'#main'" }
+            }
+        },
+        {
+            "from": [ 0, 11.99, 3 ],
+            "to": [ 2, 13, 13 ],
+            "faces": {
+                "down":  { "uv": [12, 3,14,13 ], "texture": "'#main'" },
+                "up":    { "uv": [12, 3,14,13 ], "texture": "'#main'" },
+                "west":  { "uv": [12, 3,13,13 ], "texture": "'#main'", "rotation": 1 },
+                "east":  { "uv": [13, 3,14,13 ], "texture": "'#main'", "rotation": 3 },
+                "north": { "uv": [12,12,14,13 ], "texture": "'#main'" },
+                "south": { "uv": [12, 3,14, 4 ], "texture": "'#main'" }
+            }
+        },
+        {
+            "from": [ 0, 4.01, 3 ],
+            "to": [ 2, 11.99, 4.01 ],
+            "faces": {
+                "north": { "uv": [ 3, 2,13, 4 ], "texture": "'#main'", "rotation": 1 },
+                "south": { "uv": [ 3, 2,13, 4 ], "texture": "'#main'", "rotation": 3 },
+                "west":  { "uv": [ 3, 2,13, 3 ], "texture": "'#main'", "rotation": 3 },
+                "east":  { "uv": [ 3, 3,13, 4 ], "texture": "'#main'", "rotation": 1 },
+                "down":  { "uv": [12, 2,13, 4 ], "texture": "'#main'", "rotation": 1 },
+                "up":    { "uv": [ 3, 2, 4, 4 ], "texture": "'#main'", "rotation": 1 }
+            }
+        },
+        {
+            "from": [ 0, 4.01, 11.99 ],
+            "to": [ 2, 11.99, 13 ],
+            "faces": {
+                "north": { "uv": [ 3,12,13,14 ], "texture": "'#main'", "rotation": 1 },
+                "south": { "uv": [ 3,12,13,14 ], "texture": "'#main'", "rotation": 3 },
+                "west":  { "uv": [ 3,12,13,13 ], "texture": "'#main'", "rotation": 3 },
+                "east":  { "uv": [ 3,13,13,14 ], "texture": "'#main'", "rotation": 1 },
+                "down":  { "uv": [ 3,12, 4,14 ], "texture": "'#main'", "rotation": 1 },
+                "up":    { "uv": [12,12,13,14 ], "texture": "'#main'", "rotation": 1 }
+            }
+        }
+    ],
+    "translucent": [
+        {
+            "from": [ 0.5, 4, 4 ],
+            "to": [ 1.5, 12, 12 ],
+            "colour": "lens_colour",
+            "visible":"!isFilter | has_colour",
+            "faces": {
+                "east": { "uv": [ 6, 6, 10, 10 ], "texture": "translucent_tex" },
+                "west": { "uv": [ 6, 6, 10, 10 ], "texture": "translucent_tex" }
+            }
+        }
+    ]
+}

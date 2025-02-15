@@ -6,77 +6,80 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.Fluid;
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.lib.fluid.Tank;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IFluidHandlerAdv;
-
-import buildcraft.lib.fluid.Tank;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluidUtilBC {
 
-    public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
-        FluidStack potential = tank.drain(tank.getFluidAmount(), false);
+    public static void pushFluidAround(LevelAccessor world, BlockPos pos, Tank tank) {
+        FluidStack potential = tank.drain(tank.getFluidAmount(), FluidAction.SIMULATE);
         int drained = 0;
-        if (potential == null || potential.amount <= 0) {
+        if (potential == null || potential.isEmpty() || potential.getAmount() <= 0) {
             return;
         }
         FluidStack working = potential.copy();
-        for (EnumFacing side : EnumFacing.VALUES) {
-            if (potential.amount <= 0) {
+        for (Direction side : Direction.VALUES) {
+            if (potential.getAmount() <= 0) {
                 break;
             }
-            TileEntity target = world.getTileEntity(pos.offset(side));
+            BlockEntity target = world.getBlockEntity(pos.relative(side));
             if (target == null) {
                 continue;
             }
-            IFluidHandler handler = target.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
+            IFluidHandler handler = target.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
             if (handler != null) {
-                int used = handler.fill(potential.copy(), true);
+                int used = handler.fill(potential.copy(), FluidAction.EXECUTE);
 
                 if (used > 0) {
                     drained += used;
-                    potential.amount -= used;
+                    potential.setAmount(potential.getAmount() - used);
                 }
             }
         }
         if (drained > 0) {
-            FluidStack actuallyDrained = tank.drain(drained, true);
-            if (actuallyDrained == null || actuallyDrained.amount != drained) {
+            FluidStack actuallyDrained = tank.drain(drained, FluidAction.EXECUTE);
+//            if (actuallyDrained == null || actuallyDrained.getAmount() != drained)
+            if (actuallyDrained == null || actuallyDrained.isEmpty() || actuallyDrained.getAmount() != drained) {
                 String strWorking = StringUtilBC.fluidToString(working);
                 String strActual = StringUtilBC.fluidToString(actuallyDrained);
                 throw new IllegalStateException("Bad tank! Could drain " + strWorking + " but only drained " + strActual
-                    + "( tank " + tank.getClass() + ")");
+                        + "( tank " + tank.getClass() + ")");
             }
         }
     }
 
     public static List<FluidStack> mergeSameFluids(List<FluidStack> fluids) {
         List<FluidStack> stacks = new ArrayList<>();
-        fluids.forEach(toAdd -> {
+        fluids.forEach(toAdd ->
+        {
             boolean found = false;
             for (FluidStack stack : stacks) {
                 if (stack.isFluidEqual(toAdd)) {
-                    stack.amount += toAdd.amount;
+                    stack.setAmount(stack.getAmount() + toAdd.getAmount());
                     found = true;
                 }
             }
@@ -88,14 +91,24 @@ public class FluidUtilBC {
     }
 
     public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
-        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
+        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.getAmount() == b.getAmount());
     }
 
+    // Calen: use areFluidsEqualIgnoringStillOrFlow in 1.18.2
+    @Deprecated(forRemoval = true)
     public static boolean areFluidsEqual(Fluid a, Fluid b) {
         if (a == null || b == null) {
             return a == b;
         }
-        return a.getName().equals(b.getName());
+        return getRegistryName(a).toString().equals(getRegistryName(b).toString());
+    }
+
+    // Calen
+    public static boolean areFluidsEqualIgnoringStillOrFlow(Fluid a, Fluid b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        return a.isSame(b);
     }
 
     /** @return The fluidstack that was moved, or null if no fluid was moved. */
@@ -104,36 +117,44 @@ public class FluidUtilBC {
         return move(from, to, Integer.MAX_VALUE);
     }
 
-    /** @param max The maximum amount of fluid to move.
-     * @return The fluidstack that was moved, or null if no fluid was moved. */
+    /**
+     * @param max The maximum amount of fluid to move.
+     * @return The fluidstack that was moved, or null if no fluid was moved.
+     */
     @Nullable
     public static FluidStack move(IFluidHandler from, IFluidHandler to, int max) {
         if (from == null || to == null) {
-            return null;
+//            return null;
+            return StackUtil.EMPTY_FLUID;
         }
         FluidStack toDrainPotential;
         if (from instanceof IFluidHandlerAdv) {
-            IFluidFilter filter = f -> to.fill(f, false) > 0;
-            toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, false);
+            IFluidFilter filter = f -> to.fill(f, FluidAction.SIMULATE) > 0;
+            toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, FluidAction.SIMULATE);
         } else {
-            toDrainPotential = from.drain(max, false);
+            toDrainPotential = from.drain(max, FluidAction.SIMULATE);
         }
-        if (toDrainPotential == null) {
-            return null;
+//        if (toDrainPotential == null)
+        if (toDrainPotential.isEmpty()) {
+            return StackUtil.EMPTY_FLUID;
         }
-        int accepted = to.fill(toDrainPotential.copy(), false);
+        int accepted = to.fill(toDrainPotential.copy(), FluidAction.SIMULATE);
         if (accepted <= 0) {
-            return null;
+//            return null;
+            return StackUtil.EMPTY_FLUID;
         }
         FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
-        if (accepted < toDrainPotential.amount) {
-            toDrainPotential = from.drain(toDrain, false);
-            if (toDrainPotential == null || toDrainPotential.amount < accepted) {
-                return null;
+        if (accepted < toDrainPotential.getAmount()) {
+            toDrainPotential = from.drain(toDrain, FluidAction.SIMULATE);
+//            if (toDrainPotential == null || toDrainPotential.getAmount() < accepted)
+            if (toDrainPotential.isEmpty() || toDrainPotential.getAmount() < accepted) {
+//                return null;
+                return StackUtil.EMPTY_FLUID;
             }
         }
-        FluidStack drained = from.drain(toDrain.copy(), true);
-        if (drained == null || toDrain.amount != drained.amount || !toDrain.isFluidEqual(drained)) {
+        FluidStack drained = from.drain(toDrain.copy(), FluidAction.EXECUTE);
+//        if (drained == null || toDrain.getAmount() != drained.getAmount() || !toDrain.isFluidEqual(drained))
+        if (drained.isEmpty() || toDrain.getAmount() != drained.getAmount() || !toDrain.isFluidEqual(drained)) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
             detail += ",\npotential drain = " + StringUtilBC.fluidToString(toDrainPotential) + ")";
             detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
@@ -141,7 +162,7 @@ public class FluidUtilBC {
             detail += ",\nIFluidHandler (to) = " + to.getClass() + "(" + to + ")";
             throw new IllegalStateException("Drained fluid did not equal expected fluid!\n" + detail);
         }
-        int actuallyAccepted = to.fill(drained, true);
+        int actuallyAccepted = to.fill(drained, FluidAction.EXECUTE);
         if (actuallyAccepted != accepted) {
             String detail = "(actually accepted = " + actuallyAccepted + ", accepted = " + accepted + ")";
             throw new IllegalStateException("Mismatched IFluidHandler implementations!\n" + detail);
@@ -149,37 +170,39 @@ public class FluidUtilBC {
         return new FluidStack(drained, accepted);
     }
 
-    public static boolean onTankActivated(EntityPlayer player, BlockPos pos, EnumHand hand,
-        IFluidHandler fluidHandler) {
-        ItemStack held = player.getHeldItem(hand);
+    public static InteractionResult onTankActivated(Player player, BlockPos pos, InteractionHand hand, IFluidHandler fluidHandler) {
+        Level world = player.level();
+        ItemStack held = player.getItemInHand(hand);
         if (held.isEmpty()) {
-            return false;
+            return InteractionResult.PASS;
         }
-        boolean replace = !player.capabilities.isCreativeMode;
+        boolean replace = !player.isCreative(); // 非创造模式
         boolean single = held.getCount() == 1;
-        IFluidHandlerItem flItem;
+        IFluidHandlerItem flItem = null;
         if (replace && single) {
-            flItem = FluidUtil.getFluidHandler(held);
+            flItem = FluidUtil.getFluidHandler(held).resolve().orElse(null);
         } else {
             // replace and not single - need a copy and count set to 1
             // not replace and single - need a copy, does not need change of count but it should be ok
             // not replace and not single - need a copy count set to 1
             ItemStack copy = held.copy();
             copy.setCount(1);
-            flItem = FluidUtil.getFluidHandler(copy);
+            flItem = FluidUtil.getFluidHandler(copy).resolve().orElse(null);
         }
         if (flItem == null) {
-            return false;
+            return InteractionResult.PASS;
         }
-        World world = player.world;
-        if (world.isRemote) {
-            return true;
+        if (world.isClientSide) {
+            return InteractionResult.SUCCESS;
         }
         boolean changed = true;
         FluidStack moved;
-        if ((moved = FluidUtilBC.move(flItem, fluidHandler)) != null) {
+//        if ((moved = FluidUtilBC.move(flItem, fluidHandler)) != null)
+        if (!(moved = FluidUtilBC.move(flItem, fluidHandler)).isEmpty()) {
             SoundUtil.playBucketEmpty(world, pos, moved);
-        } else if ((moved = FluidUtilBC.move(fluidHandler, flItem)) != null) {
+        }
+//        else if ((moved = FluidUtilBC.move(fluidHandler, flItem)) != null)
+        else if (!(moved = FluidUtilBC.move(fluidHandler, flItem)).isEmpty()) {
             SoundUtil.playBucketFill(world, pos, moved);
         } else {
             changed = false;
@@ -188,14 +211,41 @@ public class FluidUtilBC {
         if (changed && replace) {
             if (single) {
                 // if it was the single item, replace with changed one
-                player.setHeldItem(hand, flItem.getContainer());
+                player.setItemInHand(hand, flItem.getContainer());
             } else {
                 // if it was part of stack, shrink stack and give / drop the new one
                 held.shrink(1);
                 ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
             }
-            player.inventoryContainer.detectAndSendChanges();
+            // TODO Calen inventoryMenu or getInventory()???
+//            player.inventoryContainer.detectAndSendChanges();
+            player.inventoryMenu.broadcastChanges();
         }
-        return true;
+        return InteractionResult.SUCCESS;
+    }
+
+    // Calen
+    public static Fluid getItemFromRegistryName(String name) {
+        return getItemFromRegistryName(new ResourceLocation(name));
+    }
+
+    public static Fluid getItemFromRegistryName(ResourceLocation name) {
+        return ForgeRegistries.FLUIDS.getValue(name);
+    }
+
+    public static ResourceLocation getRegistryName(Fluid fluid) {
+        return fluid.builtInRegistryHolder().key().location();
+    }
+
+    public static ResourceLocation getStillTexture(Fluid fluid) {
+        return ((IClientFluidTypeExtensions) fluid.getFluidType().getRenderPropertiesInternal()).getStillTexture();
+    }
+
+    public static ResourceLocation getFlowingTexture(Fluid fluid) {
+        return ((IClientFluidTypeExtensions) fluid.getFluidType().getRenderPropertiesInternal()).getFlowingTexture();
+    }
+
+    public static int getColor(Fluid fluid) {
+        return ((IClientFluidTypeExtensions) fluid.getFluidType().getRenderPropertiesInternal()).getTintColor();
     }
 }

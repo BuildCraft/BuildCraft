@@ -1,19 +1,17 @@
 package buildcraft.transport.statements;
 
-import javax.annotation.Nullable;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.pipe.PipeFlow;
-
-import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
+import net.minecraft.network.chat.Component;
+
+import javax.annotation.Nullable;
 
 public class TriggerPowerRequested extends BCStatement implements ITriggerInternal {
 
@@ -36,8 +34,14 @@ public class TriggerPowerRequested extends BCStatement implements ITriggerIntern
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.pipe.requestsEnergy");
+    public Component getDescription() {
+//        return LocaleUtil.localize("gate.trigger.pipe.requestsEnergy");
+        return Component.translatable("gate.trigger.pipe.requestsEnergy");
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.trigger.pipe.requestsEnergy";
     }
 
     @Nullable

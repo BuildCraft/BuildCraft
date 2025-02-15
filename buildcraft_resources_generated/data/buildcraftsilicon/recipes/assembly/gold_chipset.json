@@ -1,0 +1,22 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:chipset_gold"
+  },
+  "requiredMicroJoules": 20000000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "tag": "forge:dusts/redstone"
+      }
+    },
+    {
+      "count": 1,
+      "ingredient": {
+        "tag": "forge:ingots/gold"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

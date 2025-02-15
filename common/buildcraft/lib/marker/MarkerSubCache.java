@@ -6,52 +6,45 @@
 
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.tile.TileMarker;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     public static final boolean DEBUG_FULL = BCDebugging.shouldDebugComplex("lib.marker.full");
 
     public final int cacheId;
-    public final int dimensionId;
+    // public final String dimensionId;
+    public final ResourceKey<Level> dimensionId;
     public final boolean isServer;
     private final Map<BlockPos, C> posToConnection = new ConcurrentHashMap<>();
     private final Map<C, Set<BlockPos>> connectionToPos = new ConcurrentHashMap<>();
     private final Map<BlockPos, Optional<TileMarker<C>>> tileCache = new ConcurrentHashMap<>();
 
-    public MarkerSubCache(World world, int cacheId) {
-        this.isServer = !world.isRemote;
-        this.dimensionId = world.provider.getDimension();
+    public MarkerSubCache(Level world, int cacheId) {
+        this.isServer = !world.isClientSide;
+//        this.dimensionId = world.dimension().location().getPath();
+        this.dimensionId = world.dimension();
         this.cacheId = cacheId;
     }
 
-    public void onPlayerJoinWorld(EntityPlayerMP player) {
+    public void onPlayerJoinWorld(ServerPlayer player) {
         if (isServer) {// Sanity Check
             // Send ALL loaded markers
             if (!tileCache.isEmpty()) {
@@ -290,10 +283,10 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
 
     public abstract ImmutableList<BlockPos> getValidConnections(BlockPos from);
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public abstract LaserType getPossibleLaserType();
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public final void handleMessageMain(MessageMarker message) {
         if (handleMessage(message)) {
             return;
@@ -314,6 +307,6 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected abstract boolean handleMessage(MessageMarker message);
 }

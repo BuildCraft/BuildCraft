@@ -6,42 +6,45 @@
 
 package buildcraft.lib.list;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.tags.TagKey;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public final class ListOreDictionaryCache {
     public static final ListOreDictionaryCache INSTANCE = new ListOreDictionaryCache();
     private static final String[] TYPE_KEYWORDS = { "Tiny", "Dense", "Small" };
-    private final Map<String, Set<Integer>> namingCache = new HashMap<>();
-    private final Set<String> registeredNames = new HashSet<>();
+    // Calen not still used in 1.18
+//    private final Map<String, Set<Integer>> namingCache = new HashMap<>();
+//    private final Set<String> registeredNames = new HashSet<>();
+    private final Set<TagKey> registeredNames = new HashSet<>();
 
     private ListOreDictionaryCache() {
 
     }
 
-    public Set<Integer> getListOfPartialMatches(String part) {
-        return namingCache.get(part);
-    }
+    // Calen not still used in 1.18
+//    public Set<Integer> getListOfPartialMatches(String part) {
+//        return namingCache.get(part);
+//    }
 
-    private void addToNamingCache(String s, int id) {
-        if (s == null) {
-            return;
-        }
-
-        Set<Integer> ll = namingCache.get(s);
-
-        if (ll == null) {
-            ll = new HashSet<>();
-            ll.add(id);
-            namingCache.put(s, ll);
-        } else {
-            ll.add(id);
-        }
-    }
+    // Calen not still used in 1.18
+//    private void addToNamingCache(String s, int id) {
+//        if (s == null) {
+//            return;
+//        }
+//
+//        Set<Integer> ll = namingCache.get(s);
+//
+//        if (ll == null) {
+//            ll = new HashSet<>();
+//            ll.add(id);
+//            namingCache.put(s, ll);
+//        } else {
+//            ll.add(id);
+//        }
+//    }
 
     public static String getType(String name) {
         // Rules for finding type:
@@ -55,7 +58,7 @@ public final class ListOreDictionaryCache {
             }
         }
         return splitLocation >= 0 ? name.substring(0, splitLocation) : name; // No null - this handles things like
-                                                                             // "record".
+        // "record".
     }
 
     public static String getMaterial(String name) {
@@ -86,15 +89,17 @@ public final class ListOreDictionaryCache {
         return splitLocation < name.length() ? t : null;
     }
 
-    public void registerName(String name) {
+    // public void registerName(String name)
+    public void registerName(TagKey name) {
         if (registeredNames.contains(name)) {
             return;
         }
 
-        int oreID = OreDictionary.getOreID(name);
-
-        addToNamingCache(getType(name), oreID);
-        addToNamingCache(getMaterial(name), oreID);
+        // Calen not still used in 1.18
+//        int oreID = OreDictionary.getOreID(name);
+//
+//        addToNamingCache(getType(name), oreID);
+//        addToNamingCache(getMaterial(name), oreID);
 
         registeredNames.add(name);
     }

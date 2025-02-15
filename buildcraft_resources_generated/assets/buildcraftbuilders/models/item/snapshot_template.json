@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "buildcraftbuilders:item/snapshot_template/clean",
+      "predicate": {
+        "buildcraft:used": 0.0
+      }
+    },
+    {
+      "model": "buildcraftbuilders:item/snapshot_template/used",
+      "predicate": {
+        "buildcraft:used": 1.0
+      }
+    }
+  ]
+}

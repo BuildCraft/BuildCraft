@@ -1,0 +1,24 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:plug_gate_nether_brick_or_diamond"
+  },
+  "requiredMicroJoules": 120000000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "type": "forge:nbt",
+        "count": 1,
+        "item": "buildcraftsilicon:plug_gate_nether_brick_or_no_modifier"
+      }
+    },
+    {
+      "count": 1,
+      "ingredient": {
+        "item": "buildcraftsilicon:chipset_diamond"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

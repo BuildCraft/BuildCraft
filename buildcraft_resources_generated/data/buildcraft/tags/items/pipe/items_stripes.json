@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_stripes_colorless",
+    "buildcrafttransport:pipe_items_stripes_green",
+    "buildcrafttransport:pipe_items_stripes_brown",
+    "buildcrafttransport:pipe_items_stripes_cyan",
+    "buildcrafttransport:pipe_items_stripes_white",
+    "buildcrafttransport:pipe_items_stripes_orange",
+    "buildcrafttransport:pipe_items_stripes_gray",
+    "buildcrafttransport:pipe_items_stripes_blue",
+    "buildcrafttransport:pipe_items_stripes_black",
+    "buildcrafttransport:pipe_items_stripes_red",
+    "buildcrafttransport:pipe_items_stripes_yellow",
+    "buildcrafttransport:pipe_items_stripes_magenta",
+    "buildcrafttransport:pipe_items_stripes_purple",
+    "buildcrafttransport:pipe_items_stripes_lime",
+    "buildcrafttransport:pipe_items_stripes_pink",
+    "buildcrafttransport:pipe_items_stripes_light_blue",
+    "buildcrafttransport:pipe_items_stripes_light_gray"
+  ]
+}

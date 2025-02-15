@@ -6,34 +6,32 @@
 
 package buildcraft.lib.inventory;
 
+import buildcraft.api.core.IStackFilter;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+
 import javax.annotation.Nonnull;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-
-import buildcraft.api.core.IStackFilter;
-
-import buildcraft.lib.misc.StackUtil;
-
 public final class InventoryWrapper extends AbstractInvItemTransactor {
-    private final IInventory inventory;
+    private final Container inventory;
 
-    public InventoryWrapper(IInventory inventory) {
+    public InventoryWrapper(Container inventory) {
         this.inventory = inventory;
     }
 
     @Override
     @Nonnull
     protected ItemStack insert(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        ItemStack current = inventory.getStackInSlot(slot);
-        if (!inventory.isItemValidForSlot(slot, stack)) {
+        ItemStack current = inventory.getItem(slot);
+        if (!inventory.canPlaceItem(slot, stack)) {
             return stack;
         }
         if (current.isEmpty()) {
-            int max = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
-            ItemStack split = stack.splitStack(max);
+            int max = Math.min(inventory.getMaxStackSize(), stack.getMaxStackSize());
+            ItemStack split = stack.split(max);
             if (!simulate) {
-                inventory.setInventorySlotContents(slot, split);
+                inventory.setItem(slot, split);
             }
             if (stack.isEmpty()) {
                 return StackUtil.EMPTY;
@@ -44,17 +42,17 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
         if (StackUtil.canMerge(current, stack)) {
             ItemStack merged = current.copy();
             merged.setCount(merged.getCount() + stack.getCount());
-            int size = Math.min(inventory.getInventoryStackLimit(), merged.getMaxStackSize());
+            int size = Math.min(inventory.getMaxStackSize(), merged.getMaxStackSize());
             if (merged.getCount() > size) {
                 stack.setCount(stack.getCount() - (merged.getCount() - size));
                 merged.setCount(size);
                 if (!simulate) {
-                    inventory.setInventorySlotContents(slot, merged);
+                    inventory.setItem(slot, merged);
                 }
                 return stack;
             } else {
                 if (!simulate) {
-                    inventory.setInventorySlotContents(slot, merged);
+                    inventory.setItem(slot, merged);
                 }
                 return StackUtil.EMPTY;
             }
@@ -65,7 +63,7 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
     @Override
     @Nonnull
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
-        ItemStack current = inventory.getStackInSlot(slot);
+        ItemStack current = inventory.getItem(slot);
         if (current.isEmpty()) {
             return StackUtil.EMPTY;
         }
@@ -75,12 +73,12 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
             }
             int size = Math.min(current.getCount(), max);
             current = current.copy();
-            ItemStack other = current.splitStack(size);
+            ItemStack other = current.split(size);
             if (!simulate) {
                 if (current.getCount() <= 0) {
                     current = StackUtil.EMPTY;
                 }
-                inventory.setInventorySlotContents(slot, current);
+                inventory.setItem(slot, current);
             }
             return other;
         } else {
@@ -90,11 +88,11 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected int getSlots() {
-        return inventory.getSizeInventory();
+        return inventory.getContainerSize();
     }
 
     @Override
     protected boolean isEmpty(int slot) {
-        return inventory.getStackInSlot(slot).isEmpty();
+        return inventory.getItem(slot).isEmpty();
     }
 }

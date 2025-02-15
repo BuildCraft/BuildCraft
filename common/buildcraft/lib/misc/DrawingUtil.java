@@ -6,23 +6,22 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.core.BlockPos;
+import org.joml.Vector2i;
+
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.vecmath.Point2i;
-
-import net.minecraft.util.math.BlockPos;
-
 public class DrawingUtil {
     @SuppressWarnings("Duplicates")
     public static void drawEllipse(int cx,
-                                   int cy,
-                                   int rx,
-                                   int ry,
-                                   boolean filled,
-                                   BiConsumer<Integer, Integer> drawPixel) {
+            int cy,
+            int rx,
+            int ry,
+            boolean filled,
+            BiConsumer<Integer, Integer> drawPixel) {
         rx = Math.max(1, rx);
         ry = Math.max(1, ry);
         int rx2 = rx * rx;
@@ -85,8 +84,8 @@ public class DrawingUtil {
         while (true) {
             drawPixel.accept(currentX, currentY);
             if (currentX == x2 && currentY == y2 ||
-                Math.abs(currentX - x1) > Math.abs(x2 - x1) ||
-                Math.abs(currentY - y1) > Math.abs(y2 - y1)) {
+                    Math.abs(currentX - x1) > Math.abs(x2 - x1) ||
+                    Math.abs(currentY - y1) > Math.abs(y2 - y1)) {
                 break;
             }
             if (error * 2 > -dx) {
@@ -102,9 +101,9 @@ public class DrawingUtil {
 
     @SuppressWarnings("UnnecessaryLabelOnBreakStatement")
     public static void drawSphere(BlockPos radius,
-                                  BlockPos center,
-                                  boolean filled,
-                                  Consumer<BlockPos> drawPixel) {
+            BlockPos center,
+            boolean filled,
+            Consumer<BlockPos> drawPixel) {
 
         double nextNx = 0;
         xLabel:
@@ -136,20 +135,20 @@ public class DrawingUtil {
 
                     if (!filled) {
                         if ((nextNx * nextNx) + (ny * ny) + (nz * nz) <= 1 &&
-                            (nx * nx) + (nextNy * nextNy) + (nz * nz) <= 1 &&
-                            (nx * nx) + (ny * ny) + (nextNz * nextNz) <= 1) {
+                                (nx * nx) + (nextNy * nextNy) + (nz * nz) <= 1 &&
+                                (nx * nx) + (ny * ny) + (nextNz * nextNz) <= 1) {
                             continue;
                         }
                     }
 
-                    drawPixel.accept(center.add(-x, -y, -z));
-                    drawPixel.accept(center.add(-x, -y, z));
-                    drawPixel.accept(center.add(-x, y, -z));
-                    drawPixel.accept(center.add(-x, y, z));
-                    drawPixel.accept(center.add(x, -y, -z));
-                    drawPixel.accept(center.add(x, -y, z));
-                    drawPixel.accept(center.add(x, y, -z));
-                    drawPixel.accept(center.add(x, y, z));
+                    drawPixel.accept(center.offset(-x, -y, -z));
+                    drawPixel.accept(center.offset(-x, -y, z));
+                    drawPixel.accept(center.offset(-x, y, -z));
+                    drawPixel.accept(center.offset(-x, y, z));
+                    drawPixel.accept(center.offset(x, -y, -z));
+                    drawPixel.accept(center.offset(x, -y, z));
+                    drawPixel.accept(center.offset(x, y, -z));
+                    drawPixel.accept(center.offset(x, y, z));
                 }
             }
         }
@@ -157,10 +156,10 @@ public class DrawingUtil {
 
 
     public static void fill(boolean[][] data, int startX, int startY, int width, int height) {
-        Queue<Point2i> queue = new ArrayDeque<>();
-        queue.add(new Point2i(startX, startY));
+        Queue<Vector2i> queue = new ArrayDeque<>();
+        queue.add(new Vector2i(startX, startY));
         while (!queue.isEmpty()) {
-            Point2i point = queue.poll();
+            Vector2i point = queue.poll();
             if (point.x < 0 || point.y < 0 || point.x >= width || point.y >= height) {
                 continue;
             }
@@ -168,10 +167,10 @@ public class DrawingUtil {
                 continue;
             }
             data[point.x][point.y] = true;
-            queue.add(new Point2i(point.x - 1, point.y));
-            queue.add(new Point2i(point.x + 1, point.y));
-            queue.add(new Point2i(point.x, point.y - 1));
-            queue.add(new Point2i(point.x, point.y + 1));
+            queue.add(new Vector2i(point.x - 1, point.y));
+            queue.add(new Vector2i(point.x + 1, point.y));
+            queue.add(new Vector2i(point.x, point.y - 1));
+            queue.add(new Vector2i(point.x, point.y + 1));
         }
     }
 }

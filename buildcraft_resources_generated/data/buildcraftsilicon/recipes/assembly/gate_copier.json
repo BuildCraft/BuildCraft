@@ -1,0 +1,22 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:gate_copier"
+  },
+  "requiredMicroJoules": 500000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "item": "buildcraftcore:wrench"
+      }
+    },
+    {
+      "count": 1,
+      "ingredient": {
+        "item": "buildcraftsilicon:chipset_iron"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

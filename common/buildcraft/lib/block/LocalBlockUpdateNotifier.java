@@ -1,49 +1,65 @@
 package buildcraft.lib.block;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import buildcraft.lib.BCLib;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.event.VanillaGameEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldEventListener;
-import net.minecraft.world.World;
-
-import buildcraft.lib.world.WorldEventListenerAdapter;
+import java.util.*;
 
 
 /**
  * Listens for BlockUpdates in a given world and notifies all registered IBlockUpdateSubscribers of the update provided
  * it was within the update range of the ILocalBlockUpdateSubscriber
  */
+@Mod.EventBusSubscriber(modid = BCLib.MODID) // Calen
 public class LocalBlockUpdateNotifier {
 
-    private static final Map<World, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
+    private static final Map<LevelAccessor, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
     private final Set<ILocalBlockUpdateSubscriber> subscriberSet = new HashSet<>();
 
 
-    private LocalBlockUpdateNotifier(World world) {
+    private LocalBlockUpdateNotifier(LevelAccessor world) {
+//        IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
+//            @Override
+//            public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
+//                                          @Nonnull IBlockState newState, int flags) {
+//                notifySubscribersInRange(world, eventPos, oldState, newState, flags);
+//            }
+//        };
+//        // Calen: moved to #handleForgeEvent
+//        world.addEventListener(worldEventListener);
+    }
 
-        IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
-            @Override
-            public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
-                                          @Nonnull IBlockState newState, int flags) {
-                notifySubscribersInRange(world, eventPos, oldState, newState, flags);
-            }
-        };
-        world.addEventListener(worldEventListener);
+    private static final List<GameEvent> listenedEvents = List.of(GameEvent.BLOCK_CHANGE, GameEvent.EXPLODE, GameEvent.BLOCK_PLACE, GameEvent.BLOCK_DESTROY);
+
+    // Calen
+    @SubscribeEvent
+    public static void handleForgeEvent(VanillaGameEvent event) {
+        GameEvent gameEvent = event.getVanillaEvent();
+        if (listenedEvents.contains(gameEvent)) {
+            instanceMap.forEach(
+                    (level, notifier) ->
+                    {
+                        if (level == event.getLevel()) {
+                            notifier.notifySubscribersInRange(event.getLevel(), BlockPos.containing(event.getEventPosition()));
+                        }
+                    }
+            );
+        }
     }
 
     /**
      * Gets the LocalBlockUpdateNotifier for the given world
      *
-     * @param world the World where BlockUpdate events will be listened for
+     * @param world the Level where BlockUpdate events will be listened for
      * @return the instance of LocalBlockUpdateNotifier for the given world
      */
-    public static LocalBlockUpdateNotifier instance(World world) {
+    public static LocalBlockUpdateNotifier instance(LevelAccessor world) {
         if (!instanceMap.containsKey(world)) {
             instanceMap.put(world, new LocalBlockUpdateNotifier(world));
         }
@@ -75,21 +91,18 @@ public class LocalBlockUpdateNotifier {
      *
      * @param world    from the Block Update
      * @param eventPos from the Block Update
-     * @param oldState from the Block Update
-     * @param newState from the Block Update
-     * @param flags    from the Block Update
      */
-    private void notifySubscribersInRange(World world, BlockPos eventPos, IBlockState oldState, IBlockState newState,
-                                          int flags) {
+//    private void notifySubscribersInRange(Level world, BlockPos eventPos, BlockState oldState, BlockState newState, int flags)
+    private void notifySubscribersInRange(Level world, BlockPos eventPos) {
         for (ILocalBlockUpdateSubscriber subscriber : subscriberSet) {
             BlockPos keyPos = subscriber.getSubscriberPos();
             int updateRange = subscriber.getUpdateRange();
             if (Math.abs(keyPos.getX() - eventPos.getX()) <= updateRange &&
                     Math.abs(keyPos.getY() - eventPos.getY()) <= updateRange &&
                     Math.abs(keyPos.getZ() - eventPos.getZ()) <= updateRange) {
-                subscriber.setWorldUpdated(world, eventPos, oldState, newState, flags);
+//                subscriber.setWorldUpdated(world, eventPos, oldState, newState, flags);
+                subscriber.setWorldUpdated(world, eventPos);
             }
         }
     }
-
 }

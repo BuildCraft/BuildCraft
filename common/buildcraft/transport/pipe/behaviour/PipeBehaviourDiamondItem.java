@@ -6,21 +6,19 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pipe.PipeEventItem.ItemEntry;
-
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 
@@ -28,14 +26,14 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
         super(pipe);
     }
 
-    public PipeBehaviourDiamondItem(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourDiamondItem(IPipe pipe, CompoundTag nbt) {
         super(pipe, nbt);
     }
 
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck sideCheck) {
         ItemStack toCompare = sideCheck.stack;
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (sideCheck.isAllowed(face) && pipe.isConnected(face)) {
                 int offset = FILTERS_PER_SIDE * face.ordinal();
                 boolean sideAllowed = false;
@@ -62,7 +60,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 
     @PipeEventHandler
     public void split(PipeEventItem.Split split) {
-        EnumFacing[] allSides = split.getAllPossibleDestinations().toArray(new EnumFacing[0]);
+        Direction[] allSides = split.getAllPossibleDestinations().toArray(new Direction[0]);
 
         if (allSides.length == 0 || allSides.length == 1) {
             // Nothing to split
@@ -114,7 +112,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                     toSide.setCount(countPerSide[s] * multiples);
                     entries[s] = new ItemEntry(item.colour, toSide, item.from);
 
-                    List<EnumFacing> dests = new ArrayList<>(1);
+                    List<Direction> dests = new ArrayList<>(1);
                     dests.add(allSides[s]);
                     entries[s].to = dests;
                 }
@@ -131,13 +129,13 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 
                 while (!toSplit.isEmpty()) {
                     // Pick a random number between 0 and total count.
-                    int rand = split.holder.getPipeWorld().rand.nextInt(totalCount);
+                    int rand = split.holder.getPipeWorld().random.nextInt(totalCount);
                     int face = randLookup[rand];
                     if (entries[face] == null) {
                         ItemStack stack = toSplit.copy();
                         stack.setCount(1);
                         ItemEntry entry = new ItemEntry(item.colour, stack, item.from);
-                        List<EnumFacing> dests = entry.to = new ArrayList<>(1);
+                        List<Direction> dests = entry.to = new ArrayList<>(1);
                         dests.add(allSides[face]);
                         entries[face] = entry;
                     } else {

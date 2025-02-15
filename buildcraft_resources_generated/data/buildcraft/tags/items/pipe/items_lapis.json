@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_lapis_colorless",
+    "buildcrafttransport:pipe_items_lapis_green",
+    "buildcrafttransport:pipe_items_lapis_brown",
+    "buildcrafttransport:pipe_items_lapis_cyan",
+    "buildcrafttransport:pipe_items_lapis_white",
+    "buildcrafttransport:pipe_items_lapis_orange",
+    "buildcrafttransport:pipe_items_lapis_gray",
+    "buildcrafttransport:pipe_items_lapis_blue",
+    "buildcrafttransport:pipe_items_lapis_black",
+    "buildcrafttransport:pipe_items_lapis_red",
+    "buildcrafttransport:pipe_items_lapis_yellow",
+    "buildcrafttransport:pipe_items_lapis_magenta",
+    "buildcrafttransport:pipe_items_lapis_purple",
+    "buildcrafttransport:pipe_items_lapis_lime",
+    "buildcrafttransport:pipe_items_lapis_pink",
+    "buildcrafttransport:pipe_items_lapis_light_blue",
+    "buildcrafttransport:pipe_items_lapis_light_gray"
+  ]
+}

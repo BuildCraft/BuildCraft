@@ -6,16 +6,16 @@
 
 package buildcraft.lib.misc.data;
 
-import gnu.trove.list.array.TByteArrayList;
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 
 public class DecompactingBitSet {
     public final int bits;
-    private final TByteArrayList bytes = new TByteArrayList();
+    private final ByteArrayList bytes = new ByteArrayList();
     private int byteIndex = 0, bitIndex = 0;
 
     public DecompactingBitSet(int bits, byte[] data) {
         this.bits = bits;
-        bytes.addAll(data);
+        bytes.addElements(bytes.size(), data);
     }
 
     private int nextBit() {

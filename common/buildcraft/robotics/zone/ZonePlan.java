@@ -6,30 +6,23 @@
 
 package buildcraft.robotics.zone;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.vecmath.Point2i;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
-
 import buildcraft.api.core.IZone;
-
 import buildcraft.lib.misc.NBTUtilBC;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector2i;
+
+import java.util.*;
 
 public class ZonePlan implements IZone {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();
 
-    public ZonePlan() {}
+    public ZonePlan() {
+    }
 
     public ZonePlan(ZonePlan old) {
         for (ChunkPos chunkPos : old.chunkMapping.keySet()) {
@@ -75,18 +68,19 @@ public class ZonePlan implements IZone {
         }
     }
 
-    public List<Point2i> getAll() {
-        ImmutableList.Builder<Point2i> builder = ImmutableList.builder();
+    public List<Vector2i> getAll() {
+        ImmutableList.Builder<Vector2i> builder = ImmutableList.builder();
         for (int zChunk = 0; zChunk < 16; zChunk++) {
             for (int xChunk = 0; xChunk < 16; xChunk++) {
                 if (get(xChunk, zChunk)) {
-                    builder.add(new Point2i(xChunk, zChunk));
+                    builder.add(new Vector2i(xChunk, zChunk));
                 }
             }
         }
-        chunkMapping.forEach((chunkPos, zoneChunk) -> {
-            List<Point2i> zoneChunkAll = zoneChunk.getAll();
-            zoneChunkAll.forEach(p -> p.add(new Point2i(chunkPos.getXStart(), chunkPos.getZStart())));
+        chunkMapping.forEach((chunkPos, zoneChunk) ->
+        {
+            List<Vector2i> zoneChunkAll = zoneChunk.getAll();
+            zoneChunkAll.forEach(p -> p.add(new Vector2i(chunkPos.getMaxBlockX(), chunkPos.getMinBlockZ())));
             builder.addAll(zoneChunkAll);
         });
         return builder.build();
@@ -110,31 +104,33 @@ public class ZonePlan implements IZone {
         return chunkMapping;
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag(
+    public void writeToNBT(CompoundTag nbt) {
+        nbt.put(
                 "chunkMapping",
                 NBTUtilBC.writeCompoundList(
                         chunkMapping.entrySet().stream()
-                                .map(entry -> {
-                                    NBTTagCompound zoneChunkTag = new NBTTagCompound();
+                                .map(entry ->
+                                {
+                                    CompoundTag zoneChunkTag = new CompoundTag();
                                     entry.getValue().writeToNBT(zoneChunkTag);
-                                    zoneChunkTag.setInteger("chunkX", entry.getKey().x);
-                                    zoneChunkTag.setInteger("chunkZ", entry.getKey().z);
+                                    zoneChunkTag.putInt("chunkX", entry.getKey().x);
+                                    zoneChunkTag.putInt("chunkZ", entry.getKey().z);
                                     return zoneChunkTag;
                                 })
                 )
         );
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
-        NBTUtilBC.readCompoundList(nbt.getTag("chunkMapping"))
-                .forEach(zoneChunkTag -> {
+    public void readFromNBT(CompoundTag nbt) {
+        NBTUtilBC.readCompoundList(nbt.get("chunkMapping"))
+                .forEach(zoneChunkTag ->
+                {
                     ZoneChunk chunk = new ZoneChunk();
                     chunk.readFromNBT(zoneChunkTag);
                     chunkMapping.put(
                             new ChunkPos(
-                                    zoneChunkTag.getInteger("chunkX"),
-                                    zoneChunkTag.getInteger("chunkZ")
+                                    zoneChunkTag.getInt("chunkX"),
+                                    zoneChunkTag.getInt("chunkZ")
                             ),
                             chunk
                     );
@@ -165,7 +161,7 @@ public class ZonePlan implements IZone {
     }
 
     @Override
-    public boolean contains(Vec3d point) {
+    public boolean contains(Vec3 point) {
         int xBlock = (int) Math.floor(point.x);
         int zBlock = (int) Math.floor(point.z);
 
@@ -195,7 +191,7 @@ public class ZonePlan implements IZone {
         return null;
     }
 
-    public ZonePlan readFromByteBuf(PacketBuffer buf) {
+    public ZonePlan readFromByteBuf(FriendlyByteBuf buf) {
         chunkMapping.clear();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
@@ -207,7 +203,7 @@ public class ZonePlan implements IZone {
         return this;
     }
 
-    public void writeToByteBuf(PacketBuffer buf) {
+    public void writeToByteBuf(FriendlyByteBuf buf) {
         buf.writeInt(chunkMapping.size());
         for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
             buf.writeInt(e.getKey().x);

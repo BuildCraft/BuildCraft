@@ -1,29 +1,31 @@
 package buildcraft.silicon.gui;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
 import buildcraft.lib.gui.button.IButtonClickEventListener;
 import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.misc.collect.TypedKeyMap;
-
 import buildcraft.silicon.container.ContainerGate;
 import buildcraft.silicon.gate.GateLogic;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 public class GuiGate extends GuiBC8<ContainerGate> {
 
     public static final ResourceLocation GUI_DEFINITION = new ResourceLocation("buildcraftsilicon:gui/gate.json");
 
-    public GuiGate(ContainerGate container) {
-        super(container, GUI_DEFINITION);
+    public GuiGate(ContainerGate container, Inventory inventory, Component component) {
+        super(container, GUI_DEFINITION, inventory, component);
 
         BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
         preLoad(jsonGui);
         jsonGui.load();
-        xSize = jsonGui.getSizeX();
-        ySize = jsonGui.getSizeY();
+//        xSize = jsonGui.getSizeX();
+        imageWidth = jsonGui.getSizeX();
+//        ySize = jsonGui.getSizeY();
+        imageHeight = jsonGui.getSizeY();
     }
 
     protected void preLoad(BuildCraftJsonGui json) {
@@ -39,32 +41,36 @@ public class GuiGate extends GuiBC8<ContainerGate> {
         context.putConstant("gate.material", String.class, gate.variant.material.tag);
         context.putConstant("gate.modifier", String.class, gate.variant.modifier.tag);
         context.putConstant("gate.logic", String.class, gate.variant.logic.tag);
-        context.putConstant("gate.variant", String.class, gate.variant.getLocalizedName());
+        context.putConstant("gate.variant", String.class, gate.variant.getLocalizedName().getString());
         properties.put("gate.triggers.possible", container.possibleTriggersContext);
         properties.put("gate.actions.possible", container.possibleActionsContext);
 
-        context.put_l_b("gate.is_connected", (i) -> {
+        context.put_l_b("gate.is_connected", (i) ->
+        {
             if (i < 0 || i >= gate.connections.length) {
                 return false;
             }
             return gate.connections[(int) i];
         }).setNeverInline();
 
-        context.put_l_b("gate.trigger.is_on", (i) -> {
+        context.put_l_b("gate.trigger.is_on", (i) ->
+        {
             if (i < 0 || i >= gate.triggerOn.length) {
                 return false;
             }
             return gate.triggerOn[(int) i];
         }).setNeverInline();
 
-        context.put_l_b("gate.set.is_on", (i) -> {
+        context.put_l_b("gate.set.is_on", (i) ->
+        {
             if (i < 0 || i >= gate.triggerOn.length) {
                 return false;
             }
             return gate.actionOn[(int) i];
         }).setNeverInline();
 
-        context.put_l_b("gate.action.is_on", (i) -> {
+        context.put_l_b("gate.action.is_on", (i) ->
+        {
             if (i < 0 || i >= gate.actionOn.length) {
                 return false;
             }
@@ -86,7 +92,8 @@ public class GuiGate extends GuiBC8<ContainerGate> {
             String name = "gate.connection/" + c;
             properties.put(name, gate.connections[c]);
             properties.put(name, IButtonBehaviour.TOGGLE);
-            properties.put(name, (IButtonClickEventListener) (b, k) -> {
+            properties.put(name, (IButtonClickEventListener) (b, k) ->
+            {
                 container.setConnected(connection, b.isButtonActive());
             });
         }

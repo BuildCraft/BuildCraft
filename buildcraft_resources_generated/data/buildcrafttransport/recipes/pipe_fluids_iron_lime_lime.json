@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_items_iron_lime"
+    },
+    {
+      "tag": "buildcraft:waterproof"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_fluids_iron_lime"
+  }
+}

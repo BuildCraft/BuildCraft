@@ -1,18 +1,17 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.delta;
+
+import buildcraft.lib.net.IPayloadWriter;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-
-import buildcraft.lib.net.IPayloadWriter;
 
 public class DeltaManager {
     public enum EnumDeltaMessage {
@@ -56,7 +55,7 @@ public class DeltaManager {
         }
     }
 
-    public void receiveDeltaData(boolean gui, EnumDeltaMessage type, PacketBuffer buffer) {
+    public void receiveDeltaData(boolean gui, EnumDeltaMessage type, FriendlyByteBuf buffer) {
         EnumNetworkVisibility visibility = gui ? EnumNetworkVisibility.GUI_ONLY : EnumNetworkVisibility.RENDER;
         if (type == EnumDeltaMessage.CURRENT_STATE) {
             for (DeltaInt delta : deltas.get(visibility)) {
@@ -77,32 +76,33 @@ public class DeltaManager {
         final int index = deltas.get(from.visibility).indexOf(from);
         if (index == -1) throw new IllegalArgumentException("Unknown delta!");
 
-        sender.sendDeltaMessage(gui, type, (buffer) -> {
+        sender.sendDeltaMessage(gui, type, (buffer) ->
+        {
             buffer.writeByte(index);
             writer.write(buffer);
         });
     }
 
-    public void writeDeltaState(boolean gui, PacketBuffer buffer) {
+    public void writeDeltaState(boolean gui, FriendlyByteBuf buffer) {
         EnumNetworkVisibility visibility = gui ? EnumNetworkVisibility.GUI_ONLY : EnumNetworkVisibility.RENDER;
         for (DeltaInt delta : deltas.get(visibility)) {
             delta.writeState(buffer);
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(CompoundTag nbt) {
         for (List<DeltaInt> innerList : deltas.values()) {
             for (DeltaInt delta : innerList) {
-                delta.readFromNBT(nbt.getCompoundTag(delta.name));
+                delta.readFromNBT(nbt.getCompound(delta.name));
             }
         }
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundTag writeToNBT() {
+        CompoundTag nbt = new CompoundTag();
         for (List<DeltaInt> innerList : deltas.values()) {
             for (DeltaInt delta : innerList) {
-                nbt.setTag(delta.name, delta.writeToNBT());
+                nbt.put(delta.name, delta.writeToNBT());
             }
         }
         return nbt;

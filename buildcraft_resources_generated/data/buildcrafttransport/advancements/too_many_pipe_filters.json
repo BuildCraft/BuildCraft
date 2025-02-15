@@ -1,0 +1,34 @@
+{
+  "parent": "buildcrafttransport:pipe_diversification",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcrafttransport.too_many_pipe_filters.description"
+    },
+    "frame": "task",
+    "hidden": true,
+    "icon": {
+      "item": "minecraft:green_dye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcrafttransport.too_many_pipe_filters.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "buildcraftcore:list"
+    ]
+  },
+  "sends_telemetry_event": true
+}

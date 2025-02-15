@@ -7,13 +7,13 @@
 package buildcraft.robotics.gui;
 
 import buildcraft.lib.gui.GuiBC8;
-
 import buildcraft.robotics.container.ContainerProgrammingTable_Neptune;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
 public class GuiProgrammingTable_Neptune extends GuiBC8<ContainerProgrammingTable_Neptune> {
 
-    public GuiProgrammingTable_Neptune(ContainerProgrammingTable_Neptune container) {
-        super(container);
+    public GuiProgrammingTable_Neptune(ContainerProgrammingTable_Neptune container, Inventory inventory, Component component) {
+        super(container, inventory, component);
     }
-
 }

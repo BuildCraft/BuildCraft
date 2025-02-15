@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "buildcraftsilicon:block/laser/bottom"
+  }
+}

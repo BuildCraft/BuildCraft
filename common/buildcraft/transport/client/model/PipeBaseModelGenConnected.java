@@ -6,20 +6,20 @@
 
 package buildcraft.transport.client.model;
 
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.api.transport.pipe.PipeDefinition;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-
-import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
+import java.util.function.Consumer;
 
 public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     INSTANCE;
@@ -28,10 +28,23 @@ public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     private static final Map<PipeDefinition, TextureAtlasSprite[]> sprites = new IdentityHashMap<>();
 
     @Override
-    public void onTextureStitchPre(TextureMap map) {
-        PipeBaseModelGenStandard.INSTANCE.onTextureStitchPre(map);
+//    public void onTextureStitchPre(TextureStitchEvent.Pre event)
+    public void onTextureStitchPre() {
+//        PipeBaseModelGenStandard.INSTANCE.onTextureStitchPre(event);
+        PipeBaseModelGenStandard.INSTANCE.onTextureStitchPre();
 
         // TODO: Custom sprite creation + stitching
+    }
+
+    // Calen 1.20.1
+    @Override
+    public void onDatagenTextureRegister(Consumer<ResourceLocation> consumer) {
+        PipeBaseModelGenStandard.INSTANCE.onDatagenTextureRegister(consumer);
+    }
+
+    @Override
+    public void onTextureStitchPost(TextureStitchEvent.Post event) {
+        PipeBaseModelGenStandard.INSTANCE.onTextureStitchPost(event);
     }
 
     @Override
@@ -50,5 +63,4 @@ public enum PipeBaseModelGenConnected implements IPipeBaseModelGen {
     public List<BakedQuad> generateCutout(PipeBaseCutoutKey key) {
         return ImmutableList.of();
     }
-
 }

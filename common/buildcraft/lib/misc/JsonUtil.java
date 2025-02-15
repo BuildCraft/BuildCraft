@@ -6,79 +6,48 @@
 
 package buildcraft.lib.misc;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.StreamSupport;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.api.recipes.IngredientStack;
+import buildcraft.lib.expression.GenericExpressionCompiler;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.api.InvalidExpressionException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
+import com.google.gson.*;
 import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
+import net.minecraft.nbt.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.util.JsonUtils;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.ArrayUtils;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.GenericExpressionCompiler;
-import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
-import buildcraft.lib.expression.api.InvalidExpressionException;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.StreamSupport;
 
 public class JsonUtil {
 
-    public static final JsonDeserializer<FluidStack> FLUID_STACK_DESERIALIZER = (json, type, ctx) -> {
+    public static final JsonDeserializer<FluidStack> FLUID_STACK_DESERIALIZER = (json, type, ctx) ->
+    {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
-            Fluid fluid = FluidRegistry.getFluid(name);
+            ResourceLocation fluidName = new ResourceLocation(name); // Calen
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName); // Calen
             if (fluid == null) {
                 throw failAndListFluids(name);
             } else {
@@ -86,14 +55,18 @@ public class JsonUtil {
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
-            String id = JsonUtils.getString(obj, "id");
-            Fluid fluid = FluidRegistry.getFluid(id);
+//            String id = JsonUtils.getString(obj, "id");
+            String id = GsonHelper.getAsString(obj, "id");
+            ResourceLocation fluidName = new ResourceLocation(id);
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+            ;
             if (fluid == null) {
                 throw failAndListFluids(id);
             }
             int amount = 1;
             if (obj.has("amount")) {
-                amount = JsonUtils.getInt(obj, "amount");
+//                amount = JsonUtils.getInt(obj, "amount");
+                amount = GsonHelper.getAsInt(obj, "amount");
             }
             // TODO: NBT
             return new FluidStack(fluid, amount);
@@ -103,16 +76,17 @@ public class JsonUtil {
     };
 
     private static JsonSyntaxException failAndListFluids(String name) {
-        Set<String> knownFluids = FluidRegistry.getRegisteredFluids().keySet();
+        Set<Entry<ResourceKey<Fluid>, Fluid>> knownFluids = ForgeRegistries.FLUIDS.getEntries();
         String msg = "Unknown fluid '" + name + "'.";
         msg += "\nKnown types:";
-        for (String known : new TreeSet<>(knownFluids)) {
+        for (Entry<ResourceKey<Fluid>, Fluid> known : new TreeSet<>(knownFluids)) {
             msg += "\n   " + known;
         }
         throw new JsonSyntaxException(msg);
     }
 
-    public static final JsonDeserializer<ItemStack> ITEM_STACK_DESERIALIZER = (json, type, ctx) -> {
+    public static final JsonDeserializer<ItemStack> ITEM_STACK_DESERIALIZER = (json, type, ctx) ->
+    {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
             ResourceLocation id = new ResourceLocation(name);
@@ -123,7 +97,8 @@ public class JsonUtil {
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
-            String id = JsonUtils.getString(obj, "id");
+//            String id = JsonUtils.getString(obj, "id");
+            String id = GsonHelper.getAsString(obj, "id");
             ResourceLocation loc = new ResourceLocation(id);
             if (!ForgeRegistries.ITEMS.containsKey(loc)) {
                 throw new JsonSyntaxException("Unknown item '" + id + "'");
@@ -137,18 +112,19 @@ public class JsonUtil {
             if (obj.has("data")) {
                 meta = JsonUtil.getInt(obj, "data");
             } else if (obj.has("meta")) {
-                BCLog.logger.warn("[lib.recipe] Found deprecated item 'meta' tag inside of " + json);
+//                BCLog.logger.warn("[lib.recipe] Found deprecated item 'meta' tag inside of " + json);
+                BCLog.logger.error("[lib.recipe] Found deprecated item 'meta' tag inside of " + json);
                 meta = JsonUtil.getInt(obj, "meta");
             }
             // TODO: NBT!
-            return new ItemStack(item, count, meta);
+//            return new ItemStack(item, count, meta);
+            return new ItemStack(item, count);
         } else {
             throw new JsonSyntaxException("Expected either a string or an object, got " + json);
         }
     };
 
-    public static <K, V> ImmutableMap<K, V> getSubAsImmutableMap(JsonObject obj, String sub,
-        TypeToken<HashMap<K, V>> token) {
+    public static <K, V> ImmutableMap<K, V> getSubAsImmutableMap(JsonObject obj, String sub, TypeToken<HashMap<K, V>> token) {
         if (!obj.has(sub)) {
             return ImmutableMap.of();
         }
@@ -159,12 +135,11 @@ public class JsonUtil {
 
         } catch (IllegalStateException ise) {
             throw new JsonSyntaxException("Something was wrong with " + obj + " when deserializing it as a " + token,
-                ise);
+                    ise);
         }
     }
 
-    public static <T> ImmutableList<T> getSubAsImmutableList(JsonObject obj, String sub,
-        TypeToken<ArrayList<T>> token) {
+    public static <T> ImmutableList<T> getSubAsImmutableList(JsonObject obj, String sub, TypeToken<ArrayList<T>> token) {
         if (!obj.has(sub)) {
             return ImmutableList.of();
         }
@@ -174,7 +149,7 @@ public class JsonUtil {
             return ImmutableList.copyOf(list);
         } catch (IllegalStateException ise) {
             throw new JsonSyntaxException("Something was wrong with " + obj + " when deserializing it as a " + token,
-                ise);
+                    ise);
         }
     }
 
@@ -241,23 +216,27 @@ public class JsonUtil {
         return getAsStringArray(obj.get(string));
     }
 
-    /** Tries to get a translatable text component from the json as a string. This will either get the prefix directly
-     * for a {@link TextComponentTranslation}, or the prefix plus "_raw" for a raw {@link TextComponentString}. */
-    public static ITextComponent getTextComponent(JsonObject json, String subPrefix, String localePrefix) {
+    /**
+     * Tries to get a translatable text component from the json as a string. This will either get the prefix directly
+     * for a {@link Component#translatable(String)}, or the prefix plus "_raw" for a raw {@link Component#literal(String)}.
+     */
+    public static MutableComponent getTextComponent(JsonObject json, String subPrefix, String localePrefix) {
         if (json.has(subPrefix)) {
-            String str = JsonUtils.getString(json, subPrefix);
+//            String str = JsonUtils.getString(json, subPrefix);
+            String str = GsonHelper.getAsString(json, subPrefix);
             Object[] args;
             if (json.has(subPrefix + "_args")) {
                 args = getSubAsStringArray(json, subPrefix + "_args");
             } else {
                 args = new String[0];
             }
-            return new TextComponentTranslation(localePrefix + str, args);
+            return Component.translatable(localePrefix + str, args);
         } else if (json.has(subPrefix + "_raw")) {
-            return new TextComponentString(JsonUtils.getString(json, subPrefix + "_raw"));
+//            return Component.literal(JsonUtils.getString(json, subPrefix + "_raw"));
+            return Component.literal(GsonHelper.getAsString(json, subPrefix + "_raw"));
         } else {
             throw new JsonSyntaxException(
-                "Expected to find either '" + subPrefix + "' or '" + subPrefix + "_raw', but got neither for " + json);
+                    "Expected to find either '" + subPrefix + "' or '" + subPrefix + "_raw', but got neither for " + json);
         }
     }
 
@@ -273,7 +252,8 @@ public class JsonUtil {
         if (!obj.has(sub)) {
             return _default;
         }
-        String str = JsonUtils.getString(obj, sub).toLowerCase(Locale.ROOT);
+//        String str = JsonUtils.getString(obj, sub).toLowerCase(Locale.ROOT);
+        String str = GsonHelper.getAsString(obj, sub).toLowerCase(Locale.ROOT);
         int index = str.indexOf(':');
         if (index < 0) {
             throw new JsonSyntaxException("Expected 'domain:path', but didn't find a colon!");
@@ -424,171 +404,179 @@ public class JsonUtil {
 
     public static GsonBuilder registerNbtSerializersDeserializers(GsonBuilder gsonBuilder) {
         return gsonBuilder.registerTypeAdapterFactory(new TypeAdapterFactory() {
-            @Override
-            public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-                return type.getRawType() == NBTBase.class ? new TypeAdapter<T>() {
                     @Override
-                    public void write(JsonWriter out, T value) throws IOException {
-                        // noinspection unchecked, RedundantCast
-                        Streams.write(((JsonSerializer<T>) (JsonSerializer<NBTBase>) (src, typeOfSrc, context) -> {
-                            if (src == NBTUtilBC.NBT_NULL) {
-                                return JsonNull.INSTANCE;
-                            }
-                            switch (src.getId()) {
-                                case Constants.NBT.TAG_BYTE:
-                                    return context.serialize(src, NBTTagByte.class);
-                                case Constants.NBT.TAG_SHORT:
-                                    return context.serialize(src, NBTTagShort.class);
-                                case Constants.NBT.TAG_INT:
-                                    return context.serialize(src, NBTTagInt.class);
-                                case Constants.NBT.TAG_LONG:
-                                    return context.serialize(src, NBTTagLong.class);
-                                case Constants.NBT.TAG_FLOAT:
-                                    return context.serialize(src, NBTTagFloat.class);
-                                case Constants.NBT.TAG_DOUBLE:
-                                    return context.serialize(src, NBTTagDouble.class);
-                                case Constants.NBT.TAG_BYTE_ARRAY:
-                                    return context.serialize(src, NBTTagByteArray.class);
-                                case Constants.NBT.TAG_STRING:
-                                    return context.serialize(src, NBTTagString.class);
-                                case Constants.NBT.TAG_LIST:
-                                    return context.serialize(src, NBTTagList.class);
-                                case Constants.NBT.TAG_COMPOUND:
-                                    return context.serialize(src, NBTTagCompound.class);
-                                case Constants.NBT.TAG_INT_ARRAY:
-                                    return context.serialize(src, NBTTagIntArray.class);
-                                default:
-                                    throw new IllegalArgumentException(src.toString());
-                            }
-                        }).serialize(value, type.getType(), new JsonSerializationContext() {
+                    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+                        return type.getRawType() == Tag.class ? new TypeAdapter<T>() {
                             @Override
-                            public JsonElement serialize(Object src) {
-                                return gson.toJsonTree(src);
+                            public void write(JsonWriter out, T value) throws IOException {
+                                // noinspection unchecked, RedundantCast
+                                Streams.write(((JsonSerializer<T>) (JsonSerializer<Tag>) (src, typeOfSrc, context) ->
+                                {
+                                    if (src == NBTUtilBC.NBT_NULL) {
+                                        return JsonNull.INSTANCE;
+                                    }
+                                    switch (src.getId()) {
+                                        case Tag.TAG_BYTE:
+                                            return context.serialize(src, ByteTag.class);
+                                        case Tag.TAG_SHORT:
+                                            return context.serialize(src, ShortTag.class);
+                                        case Tag.TAG_INT:
+                                            return context.serialize(src, IntTag.class);
+                                        case Tag.TAG_LONG:
+                                            return context.serialize(src, LongTag.class);
+                                        case Tag.TAG_FLOAT:
+                                            return context.serialize(src, FloatTag.class);
+                                        case Tag.TAG_DOUBLE:
+                                            return context.serialize(src, DoubleTag.class);
+                                        case Tag.TAG_BYTE_ARRAY:
+                                            return context.serialize(src, ByteArrayTag.class);
+                                        case Tag.TAG_STRING:
+                                            return context.serialize(src, StringTag.class);
+                                        case Tag.TAG_LIST:
+                                            return context.serialize(src, ListTag.class);
+                                        case Tag.TAG_COMPOUND:
+                                            return context.serialize(src, CompoundTag.class);
+                                        case Tag.TAG_INT_ARRAY:
+                                            return context.serialize(src, IntArrayTag.class);
+                                        default:
+                                            throw new IllegalArgumentException(src.toString());
+                                    }
+                                }).serialize(value, type.getType(), new JsonSerializationContext() {
+                                    @Override
+                                    public JsonElement serialize(Object src) {
+                                        return gson.toJsonTree(src);
+                                    }
+
+                                    @Override
+                                    public JsonElement serialize(Object src, Type typeOfSrc) {
+                                        return gson.toJsonTree(src, typeOfSrc);
+                                    }
+                                }), out);
                             }
 
                             @Override
-                            public JsonElement serialize(Object src, Type typeOfSrc) {
-                                return gson.toJsonTree(src, typeOfSrc);
+                            public T read(JsonReader in) throws IOException {
+                                return ((JsonDeserializer<T>) (json, typeOfT, context) ->
+                                {
+                                    if (json.isJsonNull()) {
+                                        // noinspection unchecked
+                                        return (T) NBTUtilBC.NBT_NULL;
+                                    }
+                                    if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber()) {
+                                        Number number = json.getAsJsonPrimitive().getAsNumber();
+                                        if (number instanceof BigInteger || number instanceof Long || number instanceof Integer
+                                                || number instanceof Short || number instanceof Byte) {
+                                            return context.deserialize(json, LongTag.class);
+                                        } else {
+                                            return context.deserialize(json, DoubleTag.class);
+                                        }
+                                    }
+                                    if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isBoolean()) {
+                                        return context.deserialize(
+                                                new JsonPrimitive(json.getAsJsonPrimitive().getAsBoolean() ? (byte) 1 : (byte) 0),
+                                                ByteTag.class);
+                                    }
+                                    if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
+                                        return context.deserialize(json, StringTag.class);
+                                    }
+                                    if (json.isJsonArray()) {
+                                        return context.deserialize(json, ListTag.class);
+                                    }
+                                    if (json.isJsonObject()) {
+                                        return context.deserialize(json, CompoundTag.class);
+                                    }
+                                    throw new IllegalArgumentException(json.toString());
+                                }).deserialize(Streams.parse(in), type.getType(), gson::fromJson);
                             }
-                        }), out);
+                        } : null;
                     }
-
-                    @Override
-                    public T read(JsonReader in) throws IOException {
-                        return ((JsonDeserializer<T>) (json, typeOfT, context) -> {
-                            if (json.isJsonNull()) {
-                                // noinspection unchecked
-                                return (T) NBTUtilBC.NBT_NULL;
-                            }
-                            if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber()) {
-                                Number number = json.getAsJsonPrimitive().getAsNumber();
-                                if (number instanceof BigInteger || number instanceof Long || number instanceof Integer
-                                    || number instanceof Short || number instanceof Byte) {
-                                    return context.deserialize(json, NBTTagLong.class);
-                                } else {
-                                    return context.deserialize(json, NBTTagDouble.class);
-                                }
-                            }
-                            if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isBoolean()) {
-                                return context.deserialize(
-                                    new JsonPrimitive(json.getAsJsonPrimitive().getAsBoolean() ? (byte) 1 : (byte) 0),
-                                    NBTTagByte.class);
-                            }
-                            if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
-                                return context.deserialize(json, NBTTagString.class);
-                            }
-                            if (json.isJsonArray()) {
-                                return context.deserialize(json, NBTTagList.class);
-                            }
-                            if (json.isJsonObject()) {
-                                return context.deserialize(json, NBTTagCompound.class);
-                            }
-                            throw new IllegalArgumentException(json.toString());
-                        }).deserialize(Streams.parse(in), type.getType(), gson::fromJson);
+                }).registerTypeAdapter(ByteTag.class,
+                        (JsonSerializer<ByteTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsByte()))
+                .registerTypeAdapter(ByteTag.class,
+                        (JsonDeserializer<
+                                ByteTag>) (json, typeOfT, context) -> ByteTag.valueOf(json.getAsJsonPrimitive().getAsByte()))
+                .registerTypeAdapter(ShortTag.class,
+                        (JsonSerializer<ShortTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsShort()))
+                .registerTypeAdapter(ShortTag.class,
+                        (JsonDeserializer<
+                                ShortTag>) (json, typeOfT, context) -> ShortTag.valueOf(json.getAsJsonPrimitive().getAsShort()))
+                .registerTypeAdapter(IntTag.class,
+                        (JsonSerializer<IntTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsInt()))
+                .registerTypeAdapter(IntTag.class,
+                        (JsonDeserializer<
+                                IntTag>) (json, typeOfT, context) -> IntTag.valueOf(json.getAsJsonPrimitive().getAsInt()))
+                .registerTypeAdapter(LongTag.class,
+                        (JsonSerializer<LongTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsLong()))
+                .registerTypeAdapter(LongTag.class,
+                        (JsonDeserializer<
+                                LongTag>) (json, typeOfT, context) -> LongTag.valueOf(json.getAsJsonPrimitive().getAsLong()))
+                .registerTypeAdapter(FloatTag.class,
+                        (JsonSerializer<FloatTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsFloat()))
+                .registerTypeAdapter(FloatTag.class,
+                        (JsonDeserializer<
+                                FloatTag>) (json, typeOfT, context) -> FloatTag.valueOf(json.getAsJsonPrimitive().getAsFloat()))
+                .registerTypeAdapter(DoubleTag.class,
+                        (JsonSerializer<DoubleTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsDouble()))
+                .registerTypeAdapter(DoubleTag.class,
+                        (JsonDeserializer<DoubleTag>) (json, typeOfT,
+                                                       context) -> DoubleTag.valueOf(json.getAsJsonPrimitive().getAsDouble()))
+                .registerTypeAdapter(ByteArrayTag.class, (JsonSerializer<ByteArrayTag>) (src, typeOfSrc, context) ->
+                {
+                    JsonArray jsonArray = new JsonArray();
+                    for (byte element : src.getAsByteArray()) {
+                        jsonArray.add(new JsonPrimitive(element));
                     }
-                } : null;
-            }
-        }).registerTypeAdapter(NBTTagByte.class,
-            (JsonSerializer<NBTTagByte>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getByte()))
-            .registerTypeAdapter(NBTTagByte.class,
-                (JsonDeserializer<
-                    NBTTagByte>) (json, typeOfT, context) -> new NBTTagByte(json.getAsJsonPrimitive().getAsByte()))
-            .registerTypeAdapter(NBTTagShort.class,
-                (JsonSerializer<NBTTagShort>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getShort()))
-            .registerTypeAdapter(NBTTagShort.class,
-                (JsonDeserializer<
-                    NBTTagShort>) (json, typeOfT, context) -> new NBTTagShort(json.getAsJsonPrimitive().getAsShort()))
-            .registerTypeAdapter(NBTTagInt.class,
-                (JsonSerializer<NBTTagInt>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getInt()))
-            .registerTypeAdapter(NBTTagInt.class,
-                (JsonDeserializer<
-                    NBTTagInt>) (json, typeOfT, context) -> new NBTTagInt(json.getAsJsonPrimitive().getAsInt()))
-            .registerTypeAdapter(NBTTagLong.class,
-                (JsonSerializer<NBTTagLong>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getLong()))
-            .registerTypeAdapter(NBTTagLong.class,
-                (JsonDeserializer<
-                    NBTTagLong>) (json, typeOfT, context) -> new NBTTagLong(json.getAsJsonPrimitive().getAsLong()))
-            .registerTypeAdapter(NBTTagFloat.class,
-                (JsonSerializer<NBTTagFloat>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getFloat()))
-            .registerTypeAdapter(NBTTagFloat.class,
-                (JsonDeserializer<
-                    NBTTagFloat>) (json, typeOfT, context) -> new NBTTagFloat(json.getAsJsonPrimitive().getAsFloat()))
-            .registerTypeAdapter(NBTTagDouble.class,
-                (JsonSerializer<NBTTagDouble>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getDouble()))
-            .registerTypeAdapter(NBTTagDouble.class,
-                (JsonDeserializer<NBTTagDouble>) (json, typeOfT,
-                    context) -> new NBTTagDouble(json.getAsJsonPrimitive().getAsDouble()))
-            .registerTypeAdapter(NBTTagByteArray.class, (JsonSerializer<NBTTagByteArray>) (src, typeOfSrc, context) -> {
-                JsonArray jsonArray = new JsonArray();
-                for (byte element : src.getByteArray()) {
-                    jsonArray.add(new JsonPrimitive(element));
-                }
-                return jsonArray;
-            })
-            .registerTypeAdapter(NBTTagByteArray.class,
-                (JsonDeserializer<NBTTagByteArray>) (json, typeOfT, context) -> new NBTTagByteArray(
-                    ArrayUtils.toPrimitive(StreamSupport.stream(json.getAsJsonArray().spliterator(), false)
-                        .map(JsonElement::getAsByte).toArray(Byte[]::new))))
-            .registerTypeAdapter(NBTTagString.class,
-                (JsonSerializer<NBTTagString>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getString()))
-            .registerTypeAdapter(NBTTagString.class,
-                (JsonDeserializer<NBTTagString>) (json, typeOfT,
-                    context) -> new NBTTagString(json.getAsJsonPrimitive().getAsString()))
-            .registerTypeAdapter(NBTTagList.class, (JsonSerializer<NBTTagList>) (src, typeOfSrc, context) -> {
-                JsonArray jsonArray = new JsonArray();
-                for (int i = 0; i < src.tagCount(); i++) {
-                    NBTBase element = src.get(i);
-                    jsonArray.add(context.serialize(element, NBTBase.class));
-                }
-                return jsonArray;
-            }).registerTypeAdapter(NBTTagList.class, (JsonDeserializer<NBTTagList>) (json, typeOfT, context) -> {
-                NBTTagList nbtTagList = new NBTTagList();
-                StreamSupport.stream(json.getAsJsonArray().spliterator(), false)
-                    .map(element -> context.<NBTBase> deserialize(element, NBTBase.class))
-                    .forEach(nbtTagList::appendTag);
-                return nbtTagList;
-            }).registerTypeAdapter(NBTTagCompound.class, (JsonSerializer<NBTTagCompound>) (src, typeOfSrc, context) -> {
-                JsonObject jsonObject = new JsonObject();
-                for (String key : src.getKeySet()) {
-                    jsonObject.add(key, context.serialize(src.getTag(key), NBTBase.class));
-                }
-                return jsonObject;
-            })
-            .registerTypeAdapter(NBTTagCompound.class, (JsonDeserializer<NBTTagCompound>) (json, typeOfT, context) -> {
-                NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
-                    nbtTagCompound.setTag(entry.getKey(), context.deserialize(entry.getValue(), NBTBase.class));
-                }
-                return nbtTagCompound;
-            }).registerTypeAdapter(NBTTagIntArray.class, (JsonSerializer<NBTTagIntArray>) (src, typeOfSrc, context) -> {
-                JsonArray jsonArray = new JsonArray();
-                for (int element : src.getIntArray()) {
-                    jsonArray.add(new JsonPrimitive(element));
-                }
-                return jsonArray;
-            }).registerTypeAdapter(NBTTagIntArray.class,
-                (JsonDeserializer<NBTTagIntArray>) (json, typeOfT, context) -> new NBTTagIntArray(StreamSupport
-                    .stream(json.getAsJsonArray().spliterator(), false).mapToInt(JsonElement::getAsByte).toArray()));
+                    return jsonArray;
+                })
+                .registerTypeAdapter(ByteArrayTag.class,
+                        (JsonDeserializer<ByteArrayTag>) (json, typeOfT, context) -> new ByteArrayTag(
+                                ArrayUtils.toPrimitive(StreamSupport.stream(json.getAsJsonArray().spliterator(), false)
+                                        .map(JsonElement::getAsByte).toArray(Byte[]::new))))
+                .registerTypeAdapter(StringTag.class,
+                        (JsonSerializer<StringTag>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getAsString()))
+                .registerTypeAdapter(StringTag.class,
+                        (JsonDeserializer<StringTag>) (json, typeOfT,
+                                                       context) -> StringTag.valueOf(json.getAsJsonPrimitive().getAsString()))
+                .registerTypeAdapter(ListTag.class, (JsonSerializer<ListTag>) (src, typeOfSrc, context) ->
+                {
+                    JsonArray jsonArray = new JsonArray();
+                    for (int i = 0; i < src.size(); i++) {
+                        Tag element = src.get(i);
+                        jsonArray.add(context.serialize(element, Tag.class));
+                    }
+                    return jsonArray;
+                }).registerTypeAdapter(ListTag.class, (JsonDeserializer<ListTag>) (json, typeOfT, context) ->
+                {
+                    ListTag nbtTagList = new ListTag();
+                    StreamSupport.stream(json.getAsJsonArray().spliterator(), false)
+                            .map(element -> context.<Tag>deserialize(element, Tag.class))
+                            .forEach(nbtTagList::add);
+                    return nbtTagList;
+                }).registerTypeAdapter(CompoundTag.class, (JsonSerializer<CompoundTag>) (src, typeOfSrc, context) ->
+                {
+                    JsonObject jsonObject = new JsonObject();
+                    for (String key : src.getAllKeys()) {
+                        jsonObject.add(key, context.serialize(src.get(key), Tag.class));
+                    }
+                    return jsonObject;
+                })
+                .registerTypeAdapter(CompoundTag.class, (JsonDeserializer<CompoundTag>) (json, typeOfT, context) ->
+                {
+                    CompoundTag nbtTagCompound = new CompoundTag();
+                    for (Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
+                        nbtTagCompound.put(entry.getKey(), context.deserialize(entry.getValue(), Tag.class));
+                    }
+                    return nbtTagCompound;
+                }).registerTypeAdapter(IntArrayTag.class, (JsonSerializer<IntArrayTag>) (src, typeOfSrc, context) ->
+                {
+                    JsonArray jsonArray = new JsonArray();
+                    for (int element : src.getAsIntArray()) {
+                        jsonArray.add(new JsonPrimitive(element));
+                    }
+                    return jsonArray;
+                }).registerTypeAdapter(IntArrayTag.class,
+                        (JsonDeserializer<IntArrayTag>) (json, typeOfT, context) -> new IntArrayTag(StreamSupport
+                                .stream(json.getAsJsonArray().spliterator(), false).mapToInt(JsonElement::getAsByte).toArray()));
     }
 
     public static JsonObject inheritTags(JsonObject parent, JsonObject overwrite) {
@@ -613,5 +601,75 @@ public class JsonUtil {
             }
         }
         return object;
+    }
+
+    // Calen
+
+    public static JsonElement serializeFluidStack(FluidStack fluidStack) {
+        JsonObject json = new JsonObject();
+        json.addProperty("fluid", FluidUtilBC.getRegistryName(fluidStack.getRawFluid()).toString());
+        json.addProperty("amount", fluidStack.getAmount());
+        return json;
+    }
+
+    public static FluidStack deSerializeFluidStack(JsonObject json) {
+        String fluidId = GsonHelper.getAsString(json, "fluid");
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluidId));
+        int amount = GsonHelper.getAsInt(json, "amount");
+        return new FluidStack(fluid, amount);
+    }
+
+    public static JsonElement serializeItemStack(ItemStack stack) {
+        JsonObject json = new JsonObject();
+        json.addProperty("item", ItemUtil.getRegistryName(stack.getItem()).toString());
+        if (stack.getCount() > 1) {
+            json.addProperty("count", stack.getCount());
+        }
+        if (stack.hasTag()) {
+            json.addProperty("nbt", stack.getTag().toString());
+        }
+        return json;
+    }
+
+    public static ItemStack deSerializeItemStack(JsonObject json) {
+        String itemId = GsonHelper.getAsString(json, "item");
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemId));
+        int count = 1;
+        if (json.has("count")) {
+            count = GsonHelper.getAsInt(json, "count");
+        }
+        CompoundTag nbt = JsonUtils.readNBT(json, "nbt");
+        ItemStack ret = new ItemStack(item, count);
+        if (nbt != null) {
+            ret.setTag(nbt);
+        }
+        return ret;
+    }
+
+    public static JsonElement serializeIngredientStack(IngredientStack stack) {
+        JsonObject json = new JsonObject();
+        json.add("ingredient", stack.ingredient.toJson());
+        json.addProperty("count", stack.count);
+        return json;
+    }
+
+    public static IngredientStack deSerializeIngredientStack(JsonObject json) {
+        Ingredient ingredient = Ingredient.fromJson(json.get("ingredient"));
+        int count = GsonHelper.getAsInt(json, "count");
+        return new IngredientStack(ingredient, count);
+    }
+
+    // Calen 1.20.1
+    public static <T extends Enum<T>> boolean isEnumValue(JsonObject json, String key, Class<T> clazz) {
+        if (!GsonHelper.isValidPrimitive(json, key)) {
+            return false;
+        } else {
+            try {
+                Enum.valueOf(clazz, json.getAsJsonPrimitive(key).toString());
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }
     }
 }

@@ -6,18 +6,22 @@
 
 package buildcraft.lib.gui.slot;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class SlotValidated extends Slot {
 
-    public SlotValidated(IInventory inv, int id, int x, int y) {
+    public SlotValidated(Container inv, int id, int x, int y) {
         super(inv, id, x, y);
     }
 
     @Override
-    public boolean isItemValid(ItemStack itemStack) {
-        return inventory.isItemValidForSlot(this.getSlotIndex(), itemStack);
+//    public boolean isItemValid(ItemStack itemStack)
+    public boolean mayPlace(@Nonnull ItemStack itemStack) {
+//        return inventory.isItemValidForSlot(this.getSlotIndex(), itemStack);
+        return container.canPlaceItem(this.getSlotIndex(), itemStack);
     }
 }

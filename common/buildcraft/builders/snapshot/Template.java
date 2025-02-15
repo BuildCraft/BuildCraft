@@ -6,20 +6,18 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.api.core.InvalidInputDataException;
+import buildcraft.api.enums.EnumSnapshotType;
+import buildcraft.api.filler.IFilledTemplate;
+import buildcraft.lib.misc.VecUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Rotation;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-
-import buildcraft.api.core.InvalidInputDataException;
-import buildcraft.api.enums.EnumSnapshotType;
-import buildcraft.api.filler.IFilledTemplate;
-
-import buildcraft.lib.misc.VecUtil;
 
 public class Template extends Snapshot {
     public BitSet data;
@@ -44,21 +42,21 @@ public class Template extends Snapshot {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = super.serializeNBT();
-        nbt.setByteArray("data", data.toByteArray());
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = super.serializeNBT();
+        nbt.putByteArray("data", data.toByteArray());
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+    public void deserializeNBT(CompoundTag nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         data = BitSet.valueOf(nbt.getByteArray("data"));
         if (data.length() > getDataSize()) {
             throw new InvalidInputDataException(
-                "Serialized data has length of " + data.length() +
-                    ", but we expected at most " +
-                    getDataSize() + " (" + size.toString() + ")"
+                    "Serialized data has length of " + data.length() +
+                            ", but we expected at most " +
+                            getDataSize() + " (" + size.toString() + ")"
             );
         }
     }
@@ -204,8 +202,8 @@ public class Template extends Snapshot {
                 zParts.add(String.join("\n", yParts));
             }
             return String.join(
-                "\n" + String.join("", Collections.nCopies(getSize().getX(), "-")) + "\n",
-                zParts
+                    "\n" + String.join("", Collections.nCopies(getSize().getX(), "-")) + "\n",
+                    zParts
             );
         }
     }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftcore",
+  "key": {
+    "l": {
+      "tag": "forge:gems/lapis"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "pattern": [
+    "l",
+    "t"
+  ],
+  "result": {
+    "item": "buildcraftcore:marker_volume"
+  },
+  "show_notification": true
+}

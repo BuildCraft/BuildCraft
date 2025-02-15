@@ -6,10 +6,9 @@
 
 package buildcraft.lib.client.reload;
 
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
-import net.minecraftforge.client.model.IModel;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.UnbakedModel;
 
 /** Defines that source of the change. Listeners should check to see what actually changed to see if they also need to
  * reload.
@@ -26,7 +25,7 @@ public enum SourceType {
     CONFIG,
     /** A {@link TextureAtlasSprite} object has changed its data. */
     SPRITE,
-    /** An {@link IBakedModel} or {@link IModel} or other model storage object has changed. */
+    /** An {@link BakedModel} or {@link UnbakedModel} or other model storage object has changed. */
     MODEL;
 
     public static final SourceType[] VALUES = values();

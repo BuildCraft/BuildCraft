@@ -6,17 +6,15 @@
 
 package buildcraft.lib.gui.ledger;
 
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 public class LedgerOwnership extends Ledger_Neptune {
 
@@ -31,16 +29,16 @@ public class LedgerOwnership extends Ledger_Neptune {
 
         calculateMaxSize();
         setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"),
-            "ledger.owner.is_open", false));
+                "ledger.owner.is_open", false));
     }
 
     @Override
-    protected void drawIcon(double x, double y) {
+    protected void drawIcon(GuiGraphics guiGraphics, double x, double y) {
         ISprite sprite = SpriteUtil.getFaceSprite(tile.getOwner());
-        GuiIcon.draw(sprite, x, y, x + 16, y + 16);
+        GuiIcon.draw(sprite, guiGraphics, x, y, x + 16, y + 16);
         sprite = SpriteUtil.getFaceOverlaySprite(tile.getOwner());
         if (sprite != null) {
-            GuiIcon.draw(sprite, x - 0.5, y - 0.5, x + 17, y + 17);
+            GuiIcon.draw(sprite, guiGraphics, x - 0.5, y - 0.5, x + 17, y + 17);
         }
     }
 

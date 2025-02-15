@@ -1,0 +1,13 @@
+{
+  "type": "buildcraftfactory:heat_exchange/coolable",
+  "heatFrom": 2,
+  "heatTo": 1,
+  "in": {
+    "amount": 10,
+    "fluid": "buildcraftenergy:fuel_gaseous_heat_2"
+  },
+  "out": {
+    "amount": 10,
+    "fluid": "buildcraftenergy:fuel_gaseous_heat_1"
+  }
+}

@@ -1,32 +1,31 @@
 package buildcraft.lib.cache;
 
-import java.lang.ref.WeakReference;
-import java.util.EnumMap;
-import java.util.Map;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-
 import buildcraft.lib.misc.ChunkUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.FaceDistance;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 
-/** An {@link ITileCache} that only caches the immediate neighbours of a {@link TileEntity}. (Essentially caches
- * everything that {@link TileBC_Neptune#getNeighbourTile(EnumFacing)} can return). */
+import java.lang.ref.WeakReference;
+import java.util.EnumMap;
+import java.util.Map;
+
+/** An {@link ITileCache} that only caches the immediate neighbours of a {@link BlockEntity}. (Essentially caches
+ * everything that {@link TileBC_Neptune#getNeighbourTile(Direction)} can return). */
 public class NeighbourTileCache implements ITileCache {
 
     // TODO: Test the performance!
 
-    private final TileEntity tile;
+    private final BlockEntity tile;
     private BlockPos lastSeenTilePos;
-    private final Map<EnumFacing, WeakReference<TileEntity>> cachedTiles = new EnumMap<>(EnumFacing.class);
+    private final Map<Direction, WeakReference<BlockEntity>> cachedTiles = new EnumMap<>(Direction.class);
 
-    public NeighbourTileCache(TileEntity tile) {
+    public NeighbourTileCache(BlockEntity tile) {
         this.tile = tile;
     }
 
@@ -48,16 +47,16 @@ public class NeighbourTileCache implements ITileCache {
     }
 
     private boolean canUseCache() {
-        World w = tile.getWorld();
-        if (tile.isInvalid() || w == null) {
+        Level w = tile.getLevel();
+        if (tile.isRemoved() || w == null) {
             return false;
         }
-        BlockPos tPos = tile.getPos();
+        BlockPos tPos = tile.getBlockPos();
         if (!tPos.equals(lastSeenTilePos)) {
-            lastSeenTilePos = tPos.toImmutable();
+            lastSeenTilePos = tPos.immutable();
             cachedTiles.clear();
         }
-        if (!w.isBlockLoaded(lastSeenTilePos)) {
+        if (!w.isLoaded(lastSeenTilePos)) {
             cachedTiles.clear();
             return false;
         }
@@ -65,45 +64,45 @@ public class NeighbourTileCache implements ITileCache {
     }
 
     @Override
-    public TileCacheRet getTile(EnumFacing offset) {
+    public TileCacheRet getTile(Direction offset) {
         if (!canUseCache()) {
             return null;
         }
         return getTile0(offset);
     }
 
-    private TileCacheRet getTile0(EnumFacing offset) {
-        WeakReference<TileEntity> ref = cachedTiles.get(offset);
+    private TileCacheRet getTile0(Direction offset) {
+        WeakReference<BlockEntity> ref = cachedTiles.get(offset);
         if (ref != null) {
-            TileEntity oTile = ref.get();
-            if (oTile == null || oTile.isInvalid()) {
+            BlockEntity oTile = ref.get();
+            if (oTile == null || oTile.isRemoved()) {
                 cachedTiles.remove(offset);
             } else {
-                World w = tile.getWorld();
+                Level w = tile.getLevel();
                 // Unfortunately tile.isInvalid is false even when it is unloaded
-                if (w == null || !w.isBlockLoaded(lastSeenTilePos.offset(offset))) {
+                if (w == null || !w.isLoaded(lastSeenTilePos.relative(offset))) {
                     cachedTiles.remove(offset);
                 } else {
                     return new TileCacheRet(oTile);
                 }
             }
         }
-        BlockPos offsetPos = lastSeenTilePos.offset(offset);
+        BlockPos offsetPos = lastSeenTilePos.relative(offset);
 
-        Chunk chunk;
+        LevelChunk chunk;
         if (tile instanceof TileBC_Neptune) {
             chunk = ((TileBC_Neptune) tile).getChunk(offsetPos);
         } else {
-            chunk = ChunkUtil.getChunk(tile.getWorld(), offsetPos, true);
+            chunk = ChunkUtil.getChunk(tile.getLevel(), offsetPos, true);
         }
-        IBlockState state = chunk.getBlockState(offsetPos);
-        if (!state.getBlock().hasTileEntity(state)) {
+        BlockState state = chunk.getBlockState(offsetPos);
+        if (!state.hasBlockEntity()) {
             // Optimisation: world.getTileEntity can be slow (as it potentially iterates through a long list)
             // so just check to make sure the target block might actually have a tile entity
             return new TileCacheRet(null);
         }
 
-        TileEntity offsetTile = tile.getWorld().getTileEntity(offsetPos);
+        BlockEntity offsetTile = tile.getLevel().getBlockEntity(offsetPos);
         if (offsetTile != null) {
             cachedTiles.put(offset, new WeakReference<>(offsetTile));
         }

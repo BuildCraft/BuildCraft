@@ -1,0 +1,36 @@
+{
+  "criteria": {
+    "has_stick": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "forge:rods/wooden"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": {
+      "translate": "advancements.buildcraftcore.root.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftcore:gear_wood"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.buildcraftcore.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_stick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

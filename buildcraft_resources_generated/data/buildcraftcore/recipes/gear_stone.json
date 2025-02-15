@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftcore",
+  "key": {
+    "i": {
+      "tag": "forge:gears/wood"
+    },
+    "o": {
+      "tag": "forge:cobblestone"
+    }
+  },
+  "pattern": [
+    " o ",
+    "oio",
+    " o "
+  ],
+  "result": {
+    "item": "buildcraftcore:gear_stone"
+  },
+  "show_notification": true
+}

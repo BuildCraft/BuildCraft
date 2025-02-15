@@ -6,10 +6,9 @@
 
 package buildcraft.lib.misc;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class RegistryUtil {
     public static boolean isRegistered(Block block) {

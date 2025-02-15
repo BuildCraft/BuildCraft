@@ -6,28 +6,26 @@
 
 package buildcraft.lib.client.model;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonParseException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.json.JsonTexture;
 import buildcraft.lib.client.model.json.JsonVariableModel;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.ITickableNode;
-
+import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.transport.BCTransportModels;
+import com.google.gson.JsonParseException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /** Holds a model that can be changed by variables. Models are defined in this way by firstly creating a
  * {@link FunctionContext}, and then defining all of the variables with FunctionContext.getOrAddX(). It is recommended
@@ -36,7 +34,8 @@ import buildcraft.transport.BCTransportModels;
  * The json model definition of a variable model matches the vanilla format, except that any of the static numbers may
  * be replaced with an expression, that may use any of the variables you have defined. */
 public class ModelHolderVariable extends ModelHolder {
-    public final Map<String, TextureAtlasSprite> customSprites = new HashMap<>();
+    // public final Map<String, TextureAtlasSprite> customSprites = new HashMap<>();
+    public final Map<String, LazyLoadedValue<TextureAtlasSprite>> customSprites = new HashMap<>();
     private final FunctionContext context;
     private JsonVariableModel rawModel;
     private boolean unseen = true;
@@ -72,15 +71,38 @@ public class ModelHolderVariable extends ModelHolder {
         }
     }
 
+    // Calen 1.20.1
+    @Override
+    protected void onDatagenTextureRegister(Set<ResourceLocation> toRegisterSprites, ExistingFileHelper fileHelper) {
+        rawModel = null;
+        failReason = null;
+
+        try {
+            rawModel = JsonVariableModel.datagenDeserialize(modelLocation, context, fileHelper);
+        } catch (JsonParseException jse) {
+            rawModel = null;
+            failReason = "The model had errors: " + jse.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because ", jse);
+        } catch (IOException io) {
+            rawModel = null;
+            failReason = "The model did not exist in any resource pack: " + io.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because ", io);
+        }
+        if (rawModel != null) {
+            rawModel.onTextureStitchPre(modelLocation, toRegisterSprites);
+        }
+    }
+
     @Override
     protected void onModelBake() {
         // NO-OP: we bake every time get{Cutout/Translucent}Quads is called as this is a variable model
     }
 
-    private TexturedFace lookupTexture(String lookup) {
+    private ModelUtil.TexturedFace lookupTexture(String lookup) {
         int attempts = 0;
         JsonTexture texture = new JsonTexture(lookup);
-        TextureAtlasSprite sprite;
+//        TextureAtlasSprite sprite;
+        LazyLoadedValue<TextureAtlasSprite> sprite;
         while (texture.location.startsWith("#") && attempts < 10) {
             JsonTexture tex = rawModel.textures.get(texture.location);
             if (tex == null) break;
@@ -91,12 +113,16 @@ public class ModelHolderVariable extends ModelHolder {
         if (lookup.startsWith("~")) {
             sprite = customSprites.get(lookup.substring(1));
             if (sprite == null) {
-                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+//                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+                sprite = SpriteUtil.missingSprite();
             }
         } else {
-            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+//            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+//            sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
+            String _lookup = lookup;
+            sprite = new LazyLoadedValue<>(() -> Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(_lookup)));
         }
-        TexturedFace face = new TexturedFace();
+        ModelUtil.TexturedFace face = new ModelUtil.TexturedFace();
         face.sprite = sprite;
         face.faceData = texture.faceData;
         return face;

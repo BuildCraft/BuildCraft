@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftbuilders:architect",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftbuilders.paving_the_way.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftcore:marker_path"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftbuilders.paving_the_way.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

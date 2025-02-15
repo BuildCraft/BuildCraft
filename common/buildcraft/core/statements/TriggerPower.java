@@ -6,25 +6,17 @@
 
 package buildcraft.core.statements;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
-
+import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 public class TriggerPower extends BCStatement implements ITriggerInternal, ITriggerExternal {
     private final boolean high;
@@ -40,8 +32,14 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
+    public Component getDescription() {
+//        return LocaleUtil.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
+        return Component.translatable("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.trigger.machine.energyStored." + (high ? "high" : "low");
     }
 
     public boolean isTriggeredMjConnector(IMjReadable readable) {
@@ -62,16 +60,17 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
         return false;
     }
 
-    public static boolean isTriggeringTile(TileEntity tile) {
+    public static boolean isTriggeringTile(BlockEntity tile) {
         return isTriggeringTile(tile, null);
     }
 
-    public static boolean isTriggeringTile(TileEntity tile, EnumFacing face) {
-        return tile.getCapability(MjAPI.CAP_READABLE, face) != null;
+    public static boolean isTriggeringTile(BlockEntity tile, Direction face) {
+//        return tile.getCapability(MjAPI.CAP_READABLE, face) != null;
+        return tile.getCapability(MjAPI.CAP_READABLE, face).isPresent();
     }
 
     protected boolean isActive(ICapabilityProvider tile, EnumPipePart side) {
-        return isTriggeredMjConnector(tile.getCapability(MjAPI.CAP_READABLE, side.face));
+        return isTriggeredMjConnector(tile.getCapability(MjAPI.CAP_READABLE, side.face).orElse(null));
     }
 
     @Override
@@ -80,7 +79,7 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
+    public boolean isTriggerActive(BlockEntity target, Direction side, IStatementContainer source, IStatementParameter[] parameters) {
         return isActive(target, EnumPipePart.fromFacing(side.getOpposite()));
     }
 

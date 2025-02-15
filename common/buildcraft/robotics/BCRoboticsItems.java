@@ -6,15 +6,14 @@
 
 package buildcraft.robotics;
 
-import net.minecraft.item.Item;
-
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import buildcraft.lib.registry.RegistrationHelper;
 
 public class BCRoboticsItems {
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
+    private static final RegistrationHelper HELPER = new RegistrationHelper(BCRobotics.MODID);
+
+
+    public static void preInit() {
 
     }
 }

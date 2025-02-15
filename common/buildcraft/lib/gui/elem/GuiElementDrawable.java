@@ -12,6 +12,7 @@ import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.IGuiArea;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class GuiElementDrawable extends GuiElementSimple {
     private final ISimpleDrawable drawable;
@@ -30,22 +31,22 @@ public class GuiElementDrawable extends GuiElementSimple {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, GuiGraphics guiGraphics) {
         if (!foreground) {
-            draw();
+            draw(guiGraphics);
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(GuiGraphics guiGraphics, float partialTicks) {
         if (foreground) {
-            draw();
+            draw(guiGraphics);
         }
     }
 
-    private void draw() {
+    private void draw(GuiGraphics guiGraphics) {
         if (visible.evaluate()) {
-            drawable.drawAt(this);
+            drawable.drawAt(this, guiGraphics);
         }
     }
 }

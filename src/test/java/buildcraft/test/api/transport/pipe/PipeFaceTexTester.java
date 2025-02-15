@@ -1,9 +1,8 @@
 package buildcraft.test.api.transport.pipe;
 
+import buildcraft.api.transport.pipe.PipeFaceTex;
 import org.junit.Assert;
 import org.junit.Test;
-
-import buildcraft.api.transport.pipe.PipeFaceTex;
 
 public class PipeFaceTexTester {
     @Test

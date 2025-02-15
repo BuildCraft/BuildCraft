@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.guide.font;
 
+import net.minecraft.client.gui.GuiGraphics;
+
 import java.util.List;
 
 public interface IFontRenderer {
@@ -15,16 +17,16 @@ public interface IFontRenderer {
 
     int getMaxFontHeight();
 
-    default int drawString(String text, int x, int y, int colour) {
-        return drawString(text, x, y, colour, false, false, 1);
+    default int drawString(GuiGraphics guiGraphics, String text, int x, int y, int colour) {
+        return drawString(guiGraphics, text, x, y, colour, false, false, 1);
     }
 
-    default int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered) {
-        return drawString(text, x, y, colour, shadow, centered, 1);
+    default int drawString(GuiGraphics guiGraphics, String text, int x, int y, int colour, boolean shadow, boolean centered) {
+        return drawString(guiGraphics, text, x, y, colour, shadow, centered, 1);
     }
 
     /** @param scale The scale, relative to {@link #getFontHeight(String)} */
-    int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered, float scale);
+    int drawString(GuiGraphics guiGraphics, String text, int x, int y, int colour, boolean shadow, boolean centered, float scale);
 
     /** Breaks a string into a list of pieces where the width of each line is always less than or equal to the provided
      * width. Formatting codes will be preserved between lines. */

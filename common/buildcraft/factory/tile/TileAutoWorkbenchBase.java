@@ -6,29 +6,14 @@
 
 package buildcraft.factory.tile;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.ITickable;
 import buildcraft.api.tiles.TilesAPI;
-
 import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.StackUtil;
@@ -39,9 +24,23 @@ import buildcraft.lib.tile.craft.WorkbenchCrafting;
 import buildcraft.lib.tile.item.ItemHandlerFiltered;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 
-public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
-    implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.Arrays;
+
+public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements ITickable, IHasWork, IMjRedstoneReceiver, IAutoCraft {
 
     /** A redstone engine generates <code> 1 * {@link MjAPI#MJ}</code> per tick. This makes it a lot slower without one
      * powering it. */
@@ -69,7 +68,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
 
     public ItemStack resultClient = ItemStack.EMPTY;
 
-    public TileAutoWorkbenchBase(int width, int height) {
+    public TileAutoWorkbenchBase(BlockEntityType<?> blockEntityType, int width, int height, BlockPos pos, BlockState blockState) {
+        super(blockEntityType, pos, blockState);
         int slots = width * height;
         invBlueprint = itemManager.addInvHandler("blueprint", slots, EnumAccess.PHANTOM);
         invMaterialFilter = itemManager.addInvHandler("material_filter", slots, EnumAccess.PHANTOM);
@@ -83,17 +83,18 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
-        if (!ItemStack.areItemStacksEqual(before, after)) {
+//        if (!ItemStack.areItemStacksEqual(before, after))
+        if (!ItemStack.matches(before, after)) {
             crafting.onInventoryChange(handler);
         }
     }
 
     @Override
     public void update() {
-        if (getWorld().isRemote) {
+        ITickable.super.update();
+        if (getLevel().isClientSide) {
             return;
         }
         boolean didChange = crafting.tick();
@@ -120,21 +121,22 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Dist side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == NET_GUI_TICK) {
                 buffer.writeLong(powerStored);
             } else if (id == NET_GUI_DATA) {
-                buffer.writeItemStack(crafting.getAssumedResult());
+//                buffer.writeItemStack(crafting.getAssumedResult());
+                buffer.writeItemStack(crafting.getAssumedResult(), false);
             }
         }
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_GUI_TICK) {
                 powerStoredLast = powerStored;
                 powerStored = buffer.readLong();
@@ -143,7 +145,7 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
                     powerStoredLast = powerStored;
                 }
             } else if (id == NET_GUI_DATA) {
-                resultClient = buffer.readItemStack();
+                resultClient = buffer.readItem();
             }
         }
     }
@@ -157,7 +159,8 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune
         return MathUtil.interp(partialTicks, powerStoredLast, powerStored) / POWER_REQUIRED;
     }
 
-    public InventoryCrafting getWorkbenchCrafting() {
+    // public InventoryCrafting getWorkbenchCrafting()
+    public CraftingContainer getWorkbenchCrafting() {
         return crafting;
     }
 

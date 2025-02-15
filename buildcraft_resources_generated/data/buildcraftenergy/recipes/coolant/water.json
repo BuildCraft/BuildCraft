@@ -1,0 +1,9 @@
+{
+  "type": "buildcraftenergy:coolant",
+  "coolantType": "fluid",
+  "degreesCoolingPerMb": 0.0023,
+  "fluid": {
+    "amount": 1,
+    "fluid": "minecraft:water"
+  }
+}

@@ -1,12 +1,13 @@
 package buildcraft.lib.client.render.font;
 
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class ConfigurableFontRenderer extends DelegateFontRenderer {
 
     private Boolean forceShadow = null;
 
-    public ConfigurableFontRenderer(FontRenderer delegate) {
+    public ConfigurableFontRenderer(Font delegate) {
         super(delegate);
     }
 
@@ -26,11 +27,11 @@ public class ConfigurableFontRenderer extends DelegateFontRenderer {
     }
 
     @Override
-    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+    public int drawString(GuiGraphics guiGraphics, String text, float x, float y, int color, boolean dropShadow) {
         if (forceShadow != null) {
             dropShadow = forceShadow;
         }
-        return super.drawString(text, x, y, color, dropShadow);
+        return super.drawString(guiGraphics, text, x, y, color, dropShadow);
     }
 
 }

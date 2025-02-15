@@ -1,21 +1,18 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
 import buildcraft.lib.item.ItemDebugger;
 import buildcraft.lib.item.ItemGuide;
 import buildcraft.lib.item.ItemGuideNote;
+import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 public class BCLibItems {
+    private static final RegistrationHelper HELPER = new RegistrationHelper(BCLib.MODID);
 
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-
-    public static ItemGuide guide;
-    public static ItemGuideNote guideNote;
-    public static ItemDebugger debugger;
+    public static RegistryObject<ItemGuide> guide;
+    public static RegistryObject<ItemGuideNote> guideNote;
+    public static RegistryObject<ItemDebugger> debugger;
 
     private static boolean enableGuide, enableDebugger;
 
@@ -35,13 +32,14 @@ public class BCLibItems {
         return enableDebugger;
     }
 
+    /** We should not create register objects in {@link #<cinit>} because guide/debugger are enabled in {@link buildcraft.core.BCCore#<cinit>} */
     public static void fmlPreInit() {
         if (isGuideEnabled()) {
-            guide = HELPER.addForcedItem(new ItemGuide("item.guide"));
-            guideNote = HELPER.addForcedItem(new ItemGuideNote("item.guide.note"));
+            guide = HELPER.addForcedItem("item.guide", ItemPropertiesCreator.common64(), ItemGuide::new);
+            guideNote = HELPER.addForcedItem("item.guide.note", ItemPropertiesCreator.common64(), ItemGuideNote::new);
         }
         if (isDebuggerEnabled()) {
-            debugger = HELPER.addForcedItem(new ItemDebugger("item.debugger"));
+            debugger = HELPER.addForcedItem("item.debugger", ItemPropertiesCreator.common1(), ItemDebugger::new);
         }
     }
 }

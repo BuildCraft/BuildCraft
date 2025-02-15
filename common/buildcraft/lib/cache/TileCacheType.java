@@ -1,20 +1,20 @@
 package buildcraft.lib.cache;
 
-import java.util.function.Function;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
-import net.minecraft.tileentity.TileEntity;
+import java.util.function.Function;
 
 public enum TileCacheType {
     NO_CACHE(tile -> NoopTileCache.INSTANCE),
     NEIGHBOUR_CACHE(NeighbourTileCache::new);
 
-    private final Function<TileEntity, ITileCache> constructor;
+    private final Function<BlockEntity, ITileCache> constructor;
 
-    private TileCacheType(Function<TileEntity, ITileCache> constructor) {
+    private TileCacheType(Function<BlockEntity, ITileCache> constructor) {
         this.constructor = constructor;
     }
 
-    public ITileCache create(TileEntity tile) {
+    public ITileCache create(BlockEntity tile) {
         return constructor.apply(tile);
     }
 }

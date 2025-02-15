@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "down": "buildcraftbuilders:block/architect/bottom",
+    "east": "buildcraftbuilders:block/architect/left",
+    "north": "buildcraftbuilders:block/architect/front_on",
+    "particle": "buildcraftbuilders:block/architect/back",
+    "south": "buildcraftbuilders:block/architect/back",
+    "up": "buildcraftbuilders:block/architect/top",
+    "west": "buildcraftbuilders:block/architect/right"
+  }
+}

@@ -6,28 +6,29 @@
 
 package buildcraft.factory.client.render;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
 import buildcraft.api.properties.BuildCraftProperties;
-
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.tile.RenderPartCube;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileMiningWell;
-
-public class RenderMiningWell extends FastTESR<TileMiningWell> {
+@OnlyIn(Dist.CLIENT)
+public class RenderMiningWell implements BlockEntityRenderer<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];
     private static final int COLOUR_STATUS_ON = 0xFF_77_DD_77; // a light green
     private static final int COLOUR_STATUS_OFF = 0xFF_1f_10_1b; // black-ish
@@ -52,7 +53,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         LED_POWER = new RenderPartCube();
         LED_STATUS = new RenderPartCube();
 
-        SpriteHolder spriteTubeMiddle = SpriteHolderRegistry.getHolder("buildcraftfactory:blocks/mining_well/tube");
+        SpriteHolder spriteTubeMiddle = SpriteHolderRegistry.getHolder("buildcraftfactory:block/mining_well/tube");
         LaserRow cap = new LaserRow(spriteTubeMiddle, 0, 8, 8, 16);
         LaserRow middle = new LaserRow(spriteTubeMiddle, 0, 0, 16, 8);
 
@@ -61,24 +62,37 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         TUBE_LASER = new LaserType(cap, middle, middles, null, cap);
     }
 
-    public static void textureStitchPost() {
+    private static boolean whiteTextureFlag = false;
+
+    // public static void textureStitchPost()
+    public static void initWhiteTex() {
+        whiteTextureFlag = true;
         LED_POWER.setWhiteTex();
         LED_STATUS.setWhiteTex();
     }
 
-    private final RenderTube tubeRenderer = new RenderTube(TUBE_LASER);
+    private final RenderTube tubeRenderer = new RenderTube(null, TUBE_LASER);
 
-    public RenderMiningWell() {}
+    public RenderMiningWell(BlockEntityRendererProvider.Context context) {
+    }
 
     @Override
-    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("miner");
+//    public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer)
+    public void render(TileMiningWell tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+        // Calen: get the white texture
+        if (!whiteTextureFlag) {
+            initWhiteTex();
+        }
 
-        buffer.setTranslation(x, y, z);
-        EnumFacing facing = EnumFacing.NORTH;
-        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (state.getBlock() == BCFactoryBlocks.miningWell) {
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.solid());
+
+        Minecraft.getInstance().getProfiler().push("bc");
+        Minecraft.getInstance().getProfiler().push("miner");
+
+//        buffer.setTranslation(x, y, z);
+        Direction facing = Direction.NORTH;
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() == BCFactoryBlocks.miningWell.get()) {
             facing = state.getValue(BuildCraftProperties.BLOCK_FACING);
         }
 
@@ -87,18 +101,20 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
         if (facing.getAxis() == Axis.X) {
             dX = 0;
-            dZ = facing.getAxisDirection().getOffset();
+//            dZ = facing.getAxisDirection().getOffset();
+            dZ = facing.getAxisDirection().getStep();
             ledZ = 0.5;
-            if (facing == EnumFacing.EAST) {
+            if (facing == Direction.EAST) {
                 ledX = 15.8 / 16.0;
             } else {
                 ledX = 0.2 / 16.0;
             }
         } else {
-            dX = -facing.getAxisDirection().getOffset();
+//            dX = -facing.getAxisDirection().getOffset();
+            dX = -facing.getAxisDirection().getStep();
             dZ = 0;
             ledX = 0.5;
-            if (facing == EnumFacing.SOUTH) {
+            if (facing == Direction.SOUTH) {
                 ledZ = 15.8 / 16.0;
             } else {
                 ledZ = 0.2 / 16.0;
@@ -111,25 +127,33 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         LED_POWER.center.colouri(COLOUR_POWER[colourIndex]);
         LED_POWER.center.lightf(percentFilled > 0.01 ? 1 : 0, 0);
 
-        LED_POWER.render(buffer);
+        LED_POWER.render(poseStack, buffer);
 
         LED_STATUS.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
         boolean complete = tile.isComplete();
         LED_STATUS.center.colouri(complete ? COLOUR_STATUS_OFF : COLOUR_STATUS_ON);
-        LED_STATUS.center.lighti(complete ? BLOCK_LIGHT_STATUS_OFF : BLOCK_LIGHT_STATUS_ON, 0);
+        LED_STATUS.center.lighti((byte) (complete ? BLOCK_LIGHT_STATUS_OFF : BLOCK_LIGHT_STATUS_ON), (byte) 0);
 
-        LED_STATUS.render(buffer);
+        LED_STATUS.render(poseStack, buffer);
 
-        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
+//        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
+        tubeRenderer.render(tile, partialTicks, poseStack, bufferSource, combinedLight, combinedOverlay);
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getInstance().getProfiler().pop();
+        Minecraft.getInstance().getProfiler().pop();
     }
 
     @Override
-    public boolean isGlobalRenderer(TileMiningWell tile) {
+//    public boolean isGlobalRenderer(TileMiningWell tile)
+    public boolean shouldRenderOffScreen(TileMiningWell p_112306_) {
         return true;
     }
 
-    public static void init() {}
+    @Override
+    public int getViewDistance() {
+        return 512;
+    }
+
+    public static void init() {
+    }
 }

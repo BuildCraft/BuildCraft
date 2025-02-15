@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_structure_cobblestone_colorless",
+    "buildcrafttransport:pipe_structure_cobblestone_green",
+    "buildcrafttransport:pipe_structure_cobblestone_brown",
+    "buildcrafttransport:pipe_structure_cobblestone_cyan",
+    "buildcrafttransport:pipe_structure_cobblestone_white",
+    "buildcrafttransport:pipe_structure_cobblestone_orange",
+    "buildcrafttransport:pipe_structure_cobblestone_gray",
+    "buildcrafttransport:pipe_structure_cobblestone_blue",
+    "buildcrafttransport:pipe_structure_cobblestone_black",
+    "buildcrafttransport:pipe_structure_cobblestone_red",
+    "buildcrafttransport:pipe_structure_cobblestone_yellow",
+    "buildcrafttransport:pipe_structure_cobblestone_magenta",
+    "buildcrafttransport:pipe_structure_cobblestone_purple",
+    "buildcrafttransport:pipe_structure_cobblestone_lime",
+    "buildcrafttransport:pipe_structure_cobblestone_pink",
+    "buildcrafttransport:pipe_structure_cobblestone_light_blue",
+    "buildcrafttransport:pipe_structure_cobblestone_light_gray"
+  ]
+}

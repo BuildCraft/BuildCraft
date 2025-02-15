@@ -1,0 +1,81 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            6.0
+          ]
+        },
+        "east": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#bottom",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        3,
+        11
+      ]
+    }
+  ],
+  "textures": {
+    "bottom": "buildcraftfactory:block/chute/bottom",
+    "particle": "buildcraftfactory:block/chute/top",
+    "side": "buildcraftfactory:block/chute/side",
+    "side2": "buildcraftfactory:block/chute/side2",
+    "top": "buildcraftfactory:block/chute/top",
+    "top_bottom": "buildcraftfactory:block/chute/top_bottom",
+    "top_side": "buildcraftfactory:block/chute/top_side"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_fluids_clay_colorless",
+    "buildcrafttransport:pipe_fluids_clay_green",
+    "buildcrafttransport:pipe_fluids_clay_brown",
+    "buildcrafttransport:pipe_fluids_clay_cyan",
+    "buildcrafttransport:pipe_fluids_clay_white",
+    "buildcrafttransport:pipe_fluids_clay_orange",
+    "buildcrafttransport:pipe_fluids_clay_gray",
+    "buildcrafttransport:pipe_fluids_clay_blue",
+    "buildcrafttransport:pipe_fluids_clay_black",
+    "buildcrafttransport:pipe_fluids_clay_red",
+    "buildcrafttransport:pipe_fluids_clay_yellow",
+    "buildcrafttransport:pipe_fluids_clay_magenta",
+    "buildcrafttransport:pipe_fluids_clay_purple",
+    "buildcrafttransport:pipe_fluids_clay_lime",
+    "buildcrafttransport:pipe_fluids_clay_pink",
+    "buildcrafttransport:pipe_fluids_clay_light_blue",
+    "buildcrafttransport:pipe_fluids_clay_light_gray"
+  ]
+}

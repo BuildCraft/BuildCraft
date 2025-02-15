@@ -6,52 +6,54 @@
 
 package buildcraft.silicon.recipe;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.BCItems;
+import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IngredientStack;
-
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable;
-
-import buildcraft.silicon.BCSiliconItems;
+import buildcraft.lib.recipe.assembly.AssemblyRecipe;
+import buildcraft.lib.recipe.assembly.IFacadeAssemblyRecipes;
 import buildcraft.silicon.item.ItemPluggableFacade;
 import buildcraft.silicon.plug.FacadeBlockStateInfo;
 import buildcraft.silicon.plug.FacadeInstance;
 import buildcraft.silicon.plug.FacadePhasedState;
 import buildcraft.silicon.plug.FacadeStateManager;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Blocks;
 
-public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeViewable.IRecipePowered {
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeViewable.IRecipePowered, IFacadeAssemblyRecipes {
     public static final FacadeAssemblyRecipes INSTANCE = new FacadeAssemblyRecipes();
 
-    static {
-        INSTANCE.setRegistryName(new ResourceLocation("buildcrafttransport:facadeRecipes"));
-    }
+//    static {
+//        INSTANCE.setRegistryName(new ResourceLocation("buildcrafttransport:facade_recipes"));
+//    }
 
     private static final int TIME_GAP = 500;
     private static final long MJ_COST = 64 * MjAPI.MJ;
     private static final ChangingObject<Long> MJ_COSTS = new ChangingObject<>(new Long[] { MJ_COST });
 
+    public FacadeAssemblyRecipes() {
+        name = new ResourceLocation("buildcrafttransport:facade_recipes");
+    }
+
     public static ItemStack createFacadeStack(FacadeBlockStateInfo info, boolean isHollow) {
-        ItemStack stack = BCSiliconItems.plugFacade.createItemStack(FacadeInstance.createSingle(info, isHollow));
+        ItemStack stack = ((IFacadeItem) BCItems.Silicon.PLUG_FACADE).createItemStack(FacadeInstance.createSingle(info, isHollow));
         stack.setCount(6);
         return stack;
     }
@@ -114,10 +116,12 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     }
 
     private static ItemStack baseRequirementStack() {
-        if (BCItems.Transport.PIPE_STRUCTURE == null) {
+//        if (BCItems.Transport.PIPE_STRUCTURE == null)
+        if (BCItems.Transport.PIPE_STRUCTURE_COBBLESTONE_COLORLESS == null) {
             return new ItemStack(Blocks.COBBLESTONE_WALL);
         }
-        return new ItemStack(BCItems.Transport.PIPE_STRUCTURE, 3);
+//        return new ItemStack(BCTransportItems.PIPE_STRUCTURE, 3);
+        return new ItemStack(BCItems.Transport.PIPE_STRUCTURE_COBBLESTONE_COLORLESS, 3);
     }
 
     @Override
@@ -129,8 +133,8 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     public Set<IngredientStack> getInputsFor(@Nonnull ItemStack output) {
         FacadePhasedState state = ItemPluggableFacade.getStates(output).getCurrentStateForStack();
         ItemStack stateRequirement = state.stateInfo.requiredStack;
-        IngredientStack ingredientType = new IngredientStack(Ingredient.fromStacks(stateRequirement));
-        IngredientStack ingredientBase = new IngredientStack(Ingredient.fromStacks(baseRequirementStack()), 3);
+        IngredientStack ingredientType = new IngredientStack(Ingredient.of(stateRequirement));
+        IngredientStack ingredientBase = new IngredientStack(Ingredient.of(baseRequirementStack()), 3);
 
         return ImmutableSet.of(ingredientType, ingredientBase);
     }
@@ -138,5 +142,30 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
     @Override
     public long getRequiredMicroJoulesFor(@Nonnull ItemStack output) {
         return MJ_COST;
+    }
+
+    @Override
+    public long getRequiredMicroJoules() {
+        return MJ_COST;
+    }
+
+    @Override
+    public Set<IngredientStack> getRequiredIngredientStacks() {
+        return ImmutableSet.of();
+    }
+
+    @Override
+    public Set<ItemStack> getOutput() {
+        return ImmutableSet.of();
+    }
+
+    @Override
+    public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
+        return StackUtil.EMPTY;
+    }
+
+    @Override
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
+        return StackUtil.EMPTY;
     }
 }

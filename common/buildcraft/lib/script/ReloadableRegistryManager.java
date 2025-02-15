@@ -1,26 +1,15 @@
 package buildcraft.lib.script;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import buildcraft.api.registry.*;
+import buildcraft.api.registry.IReloadableRegistry.PackType;
+import buildcraft.lib.misc.JsonUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import net.minecraftforge.common.MinecraftForge;
 
-import buildcraft.api.registry.BuildCraftRegistryManager;
-import buildcraft.api.registry.EventBuildCraftReload;
-import buildcraft.api.registry.IReloadableRegistry;
-import buildcraft.api.registry.IReloadableRegistry.PackType;
-import buildcraft.api.registry.IReloadableRegistryManager;
-import buildcraft.api.registry.IScriptableRegistry;
-
-import buildcraft.lib.misc.JsonUtil;
+import java.util.*;
 
 public enum ReloadableRegistryManager implements IReloadableRegistryManager {
     DATA_PACKS(PackType.DATA_PACK),
@@ -83,6 +72,8 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
         }
         try {
             isReloading = true;
+            // Calen: unlock the EVENT_BUS
+            MinecraftForge.EVENT_BUS.start();
             MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
             set.forEach(registry -> registry.getReloadableEntryMap().clear());
 
@@ -142,7 +133,7 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
     public void registerRegistry(String entryType, IScriptableRegistry<?> registry) {
         if (entryType.indexOf(':') != -1) {
             throw new IllegalArgumentException(
-                "The entry type must be a valid resource path! (so it must not contain a colon)");
+                    "The entry type must be a valid resource path! (so it must not contain a colon)");
         }
         registries.put(entryType, registry);
     }

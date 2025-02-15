@@ -1,7 +1,5 @@
 package buildcraft.lib.gui.json;
 
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -9,6 +7,7 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.statement.GuiElementStatement;
 import buildcraft.lib.statement.FullStatement;
 import buildcraft.lib.statement.StatementContext;
+import com.google.gson.JsonSyntaxException;
 
 public class ElementTypeStatementSlot extends ElementType {
     public static final String NAME = "buildcraftlib:statement/slot";

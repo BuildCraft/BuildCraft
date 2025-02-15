@@ -6,15 +6,7 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.Arrays;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import buildcraft.lib.client.model.ModelUtil.TexturedFace;
-import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
-import buildcraft.lib.client.model.json.VariablePartCuboidBase.VariableFaceData;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -23,6 +15,11 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.NodeConstantBoolean;
 import buildcraft.lib.expression.node.value.NodeConstantLong;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.Arrays;
 
 public class JsonVariableFaceUV {
     final INodeDouble[] uv;
@@ -87,9 +84,11 @@ public class JsonVariableFaceUV {
         return to;
     }
 
-    public VariableFaceData evaluate(ITextureGetter spriteLookup) {
-        VariableFaceData data = new VariableFaceData();
-        TexturedFace face = spriteLookup.get(texture.evaluate());
+    public VariablePartCuboidBase.VariableFaceData evaluate(JsonVariableModel.ITextureGetter spriteLookup) {
+        VariablePartCuboidBase.VariableFaceData data = new VariablePartCuboidBase.VariableFaceData();
+        ModelUtil.TexturedFace face = spriteLookup.get(texture.evaluate());
+//        data.sprite = face.sprite;
+//        data.sprite = new LazyLoadedValue<>(() -> face.sprite);
         data.sprite = face.sprite;
         data.rotations = (int) textureRotation.evaluate();
         data.uvs.minU = (float) (uv[0].evaluate() / 16.0);

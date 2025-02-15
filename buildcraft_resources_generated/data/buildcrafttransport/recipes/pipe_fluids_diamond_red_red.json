@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_items_diamond_red"
+    },
+    {
+      "tag": "buildcraft:waterproof"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_fluids_diamond_red"
+  }
+}

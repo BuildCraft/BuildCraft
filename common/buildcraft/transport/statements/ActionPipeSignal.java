@@ -6,28 +6,25 @@
 
 package buildcraft.transport.statements;
 
-import java.util.Locale;
-
-import net.minecraft.item.EnumDyeColor;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.IWireEmitter;
-
+import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.DyeColor;
+
+import java.util.Locale;
 
 public class ActionPipeSignal extends BCStatement implements IActionInternal {
 
-    public final EnumDyeColor colour;
+    public final DyeColor colour;
 
-    public ActionPipeSignal(EnumDyeColor colour) {
+    public ActionPipeSignal(DyeColor colour) {
         super("buildcraft:pipe.wire.output." + colour.name().toLowerCase(Locale.ROOT), //
                 "buildcraft.pipe.wire.output." + colour.name().toLowerCase(Locale.ROOT));
 
@@ -35,8 +32,14 @@ public class ActionPipeSignal extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.action.pipe.wire"), ColourUtil.getTextFullTooltip(colour));
+    public Component getDescription() {
+//        return String.format(LocaleUtil.localize("gate.action.pipe.wire"), ColourUtil.getTextFullTooltip(colour));
+        return Component.translatable("gate.action.pipe.wire", ColourUtil.getTextFullTooltipComponent(colour));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.action.pipe.wire." + colour.getName();
     }
 
     @Override

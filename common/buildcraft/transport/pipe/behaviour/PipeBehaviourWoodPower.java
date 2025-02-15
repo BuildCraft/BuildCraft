@@ -6,14 +6,13 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class PipeBehaviourWoodPower extends PipeBehaviour {
 
@@ -21,28 +20,28 @@ public class PipeBehaviourWoodPower extends PipeBehaviour {
         super(pipe);
     }
 
-    public PipeBehaviourWoodPower(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourWoodPower(IPipe pipe, CompoundTag nbt) {
         super(pipe, nbt);
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+    public boolean canConnect(Direction face, PipeBehaviour other) {
         return !(other instanceof PipeBehaviourWoodPower);
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
+    public int getTextureIndex(Direction face) {
         if (face == null) {
             return 0;
         }
         if (pipe.getConnectedPipe(face) != null) {
             return 0;
         }
-        TileEntity tile = pipe.getConnectedTile(face);
+        BlockEntity tile = pipe.getConnectedTile(face);
         if (tile == null) {
             return 0;
         }
-        IMjReceiver recv = tile.getCapability(MjAPI.CAP_RECEIVER, face.getOpposite());
+        IMjReceiver recv = tile.getCapability(MjAPI.CAP_RECEIVER, face.getOpposite()).orElse(null);
         return recv == null ? 1 : recv.canReceive() ? 0 : 1;
     }
 }

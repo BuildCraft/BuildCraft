@@ -1,0 +1,1424 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_stripes"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_clay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_wood_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_sandstone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_stone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_cobblestone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_clay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_cobblestone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_gold"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_gold"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_sandstone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_sandstone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_quartz"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_stone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_wood_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_obsidian"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_white"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_orange"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_magenta"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_light_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_lime"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_pink"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_light_gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_cyan"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_purple"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_brown"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_lapis_black"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_cobblestone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_void"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_void"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_iron_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_iron_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_wood_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/structure_cobblestone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_iron_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_iron_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_wood_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_emzuli_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_emzuli_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_gold"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_wood_clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_wood_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_down"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_up"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_north"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_south"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_west"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_east"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_diamond_itemstack"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_white"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_orange"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_magenta"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_light_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_lime"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_pink"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_light_gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_cyan"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_purple"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_brown"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_black"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/items_daizuli_filled"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_stone"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_quartz"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_down"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_up"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_north"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_south"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_west"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_east"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_diamond_itemstack"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/fluids_quartz"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:white"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_black_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_brown_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/horizon"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:block/quarry/drill"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/cyan"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/pink"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/sphere_half"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_below50"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_gray_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/fill"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_up"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:triggers/action_pulsar_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/stairs"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_engineheat_yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/light_gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:block/frame/default"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_empty"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_hexagon"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/light_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/action_machinecontrol_loop"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/magenta"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/axis_z"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:item/debugger"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/stairs_descend"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipecontents_containsitems"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/axis_y"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_light_blue_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/axis_x"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_white_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/orange"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:block/scan"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_light_gray_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/face_west"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_below50"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/none"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/action_machinecontrol_on"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_below75"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/lime"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/marker_default_possible"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/black"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_blue_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/colour_border_inner"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_machine_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/arrow_up"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/hollow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/arrow_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/sphere_eighth"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/stripes_write"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_empty"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_cyan_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/purple"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_triangle"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/face_east"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_engineheat_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/purple"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/mining_well/tube"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_down"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:robot"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/engine_warm"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_below75"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/black"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/help_split"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/arrow_down"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/stripes_read"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/engine_overheat"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_5"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_7"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/stairs_ascend"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_6"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/center_8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipecontents_containsfluids"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_blue_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/sphere_quarter"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/colour_border_outer"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/marker_volume_signal"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_energy_storage_low"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_15"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/face_up"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_11"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_12"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_below25"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_13"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_14"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/pump/tube"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_10"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/box"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_south"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_engineheat_red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/marker_path_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_contains"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/sphere"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_light_blue_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_machine_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_yellow_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_engineheat_green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_gray_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/filled_inner"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/frame"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/action_redstoneoutput"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_octagon"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:addons/filler_planner"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/power_med"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_pentagon"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/face_south"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/stripes_write_direction"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/extraction_preset_red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/warning_minor"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_true"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/lock"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_lime_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_white_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/warning_major"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:gui/empty_filtered_buffer_slot"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/marker_path_possible"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/colour_item_box"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_black_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_space"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/face_down"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_light_gray_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/ledger_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_pink_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/help"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/clear"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/power_low"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_circle"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_magenta_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/filled_outer"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_red_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/marker_volume_connected"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_redstoneinput_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/overlay_stained"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_square"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_full"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_arc"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/orange"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/power_high"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_orange_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_pink_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/extraction_preset_green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_6"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_7"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/loading"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_8"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_9"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_4"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/parameter_redstone_5"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_brown_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/lime"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/pyramid"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_green_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/extraction_preset_yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_space"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_orange_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/marker_volume_possible"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/engine_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/engine_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:triggers/action_pulsar_on"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:triggers/trigger_light_dark"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_magenta_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/redstone_gate_side_only"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_inventory_contains"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/extraction_preset_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:icons/ledger_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_flow_overload"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/pink"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:lasers/power_full"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/brown"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/2d_semi_circle"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_lime_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/magenta"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_east"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/flatten"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/rotation_0"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/arrow_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/cyan"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/rotation_3"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/rotation_2"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/light_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/rotation_1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_energy_storage_high"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_full"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_liquidcontainer_below25"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/parameters/face_north"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/brown"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_purple_inactive"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_north"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_green_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/light_gray"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:triggers/trigger_light_bright"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftbuilders:filler/patterns/cylinder"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/white"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_engineheat_overheat"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/white"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_dir_west"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_cyan_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_red_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_yellow_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_flow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipecontents_requestsenergy"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/trigger_redstoneinput_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:item/paintbrush/yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:triggers/trigger_pipesignal_purple_active"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:triggers/action_machinecontrol_off"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:gui/nothing_filtered_buffer_slot"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:wires/green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:block/engine/trunk_yellow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/engine/stone/back"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:block/engine/trunk_red"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:block/engine/trunk_blue"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:block/engine/trunk_overheat"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:block/engine/chamber_base"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/engine/stone/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftlib:block/engine/trunk_green"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:block/engine/wood/back"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:block/engine/wood/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/daylight_sensor"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/plug"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcrafttransport:pipes/power_adapter"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/distiller/power_sprite_d"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/distiller/power_sprite_c"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/distiller/power_sprite_b"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/distiller/power_sprite_a"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/engine/iron/back"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftenergy:block/engine/iron/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:block/engine/creative/back"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftcore:block/engine/creative/side"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:gates/gate_or"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/bricks"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/iron_block"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:gates/gate_and"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/quartz_block_top"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/diamond_block"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/prismarine_bricks"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/gold_block"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/nether_bricks"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/lapis_block"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:gates/gate_off"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:gates/gate_on"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/pulsar_static"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/heat_exchange/sprite_a"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/heat_exchange/sprite_b"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/heat_exchange/sprite_e"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/heat_exchange/sprite_c"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftfactory:block/heat_exchange/sprite_d"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/pulsar_dynamic_on"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/pulsar_dynamic_off"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:block/water_flow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/lens"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/overlay_lens"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "buildcraftsilicon:plugs/filter"
+    }
+  ]
+}

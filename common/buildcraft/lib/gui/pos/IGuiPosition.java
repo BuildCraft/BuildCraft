@@ -6,9 +6,9 @@
 
 package buildcraft.lib.gui.pos;
 
-import java.util.function.DoubleSupplier;
-
 import buildcraft.lib.expression.api.IConstantNode;
+
+import java.util.function.DoubleSupplier;
 
 /** Defines a single point somewhere on the screen. */
 public interface IGuiPosition {

@@ -6,36 +6,41 @@
 
 package buildcraft.transport.statements;
 
-import net.minecraft.item.EnumDyeColor;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-
+import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.DyeColor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ActionPipeColor extends BCStatement implements IActionInternal {
 
-    public final EnumDyeColor color;
+    public final DyeColor color;
 
-    public ActionPipeColor(EnumDyeColor color) {
-        super("buildcraft:pipe.color." + color.getName(), "buildcraft.pipe." + color.getName());
+    public ActionPipeColor(DyeColor color) {
+        super(
+                "buildcraft:pipe.color." + color.getName(),
+                "buildcraft.pipe." + color.getName()
+        );
         this.color = color;
     }
 
     @Override
-    public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.action.pipe.item.color"), ColourUtil.getTextFullTooltip(color));
+    public Component getDescription() {
+//        return String.format(LocaleUtil.localize("gate.action.pipe.item.color"), ColourUtil.getTextFullTooltip(color));
+        return Component.translatable("gate.action.pipe.item.color", ColourUtil.getTextFullTooltipComponent(color));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.action.pipe.item.color." + color.getName();
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ActionPipeColor extends BCStatement implements IActionInternal {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public SpriteHolder getSprite() {
         return BCTransportSprites.ACTION_PIPE_COLOUR[color.ordinal()];
     }

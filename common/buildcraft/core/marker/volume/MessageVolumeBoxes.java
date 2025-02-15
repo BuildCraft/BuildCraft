@@ -6,22 +6,19 @@
 
 package buildcraft.core.marker.volume;
 
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.net.PacketBufferBC;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.net.PacketBufferBC;
 
 public class MessageVolumeBoxes implements IMessage {
     private final List<PacketBufferBC> buffers;
@@ -33,16 +30,17 @@ public class MessageVolumeBoxes implements IMessage {
 
     public MessageVolumeBoxes(List<VolumeBox> volumeBoxes) {
         this.buffers = volumeBoxes.stream()
-            .map(volumeBox -> {
-                PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
-                volumeBox.toBytes(buffer);
-                return buffer;
-            })
-            .collect(Collectors.toList());
+                .map(volumeBox ->
+                {
+                    PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+                    volumeBox.toBytes(buffer);
+                    return buffer;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void toBytes(ByteBuf buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         buf.writeInt(buffers.size());
         for (PacketBufferBC localBuffer : buffers) {
@@ -52,7 +50,7 @@ public class MessageVolumeBoxes implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buffer) {
+    public void fromBytes(FriendlyByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         buffers.clear();
         int count = buf.readInt();
@@ -63,20 +61,22 @@ public class MessageVolumeBoxes implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageVolumeBoxes, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageVolumeBoxes, IMessage> HANDLER = (message, ctx) ->
+    {
         Map<PacketBufferBC, VolumeBox> volumeBoxes = message.buffers.stream()
-            .map(buffer -> {
-                VolumeBox volumeBox;
-                try {
-                    volumeBox = new VolumeBox(BCLibProxy.getProxy().getClientWorld(), buffer);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
-                volumeBox.toBytes(buf);
-                return Pair.of(buf, volumeBox);
-            })
-            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                .map(buffer ->
+                {
+                    VolumeBox volumeBox;
+                    try {
+                        volumeBox = new VolumeBox(BCLibProxy.getProxy().getClientWorld(), buffer);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    PacketBufferBC buf = new PacketBufferBC(Unpooled.buffer());
+                    volumeBox.toBytes(buf);
+                    return Pair.of(buf, volumeBox);
+                })
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         ClientVolumeBoxes.INSTANCE.volumeBoxes.removeIf(volumeBox -> !volumeBoxes.values().contains(volumeBox));
         for (Map.Entry<PacketBufferBC, VolumeBox> entry : volumeBoxes.entrySet()) {

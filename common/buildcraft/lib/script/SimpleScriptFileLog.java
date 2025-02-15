@@ -1,11 +1,10 @@
 package buildcraft.lib.script;
 
-import java.util.Collection;
-import java.util.List;
-
+import buildcraft.api.core.BCLog;
 import com.google.gson.JsonSyntaxException;
 
-import buildcraft.api.core.BCLog;
+import java.util.Collection;
+import java.util.List;
 
 public class SimpleScriptFileLog implements IScriptFileLog {
 

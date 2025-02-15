@@ -6,24 +6,27 @@
 
 package buildcraft.factory.tile;
 
-import java.util.List;
-
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fluids.Fluid;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidType;
+
+import java.util.List;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase implements IDebuggable {
-    private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
-    private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
+    // private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
+    private final Tank tank1 = new Tank("tank1", net.minecraftforge.fluids.FluidType.BUCKET_VOLUME * 6, this);
+    // private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
+    private final Tank tank2 = new Tank("tank2", FluidType.BUCKET_VOLUME * 6, this);
 
-    public TileAutoWorkbenchFluids() {
-        super(2, 2);
+    public TileAutoWorkbenchFluids(BlockPos pos, BlockState blockState) {
+        super(BCFactoryBlocks.autoWorkbenchFluidsTile.get(), 2, 2, pos, blockState);
         tankManager.addAll(tank1, tank2);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
@@ -31,9 +34,13 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase implements ID
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Tanks:");
-        left.add("  " + tank1.getContentsString());
-        left.add("  " + tank2.getContentsString());
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<Component> left, List<Component> right, Direction side) {
+//        left.add("Tanks:");
+//        left.add("  " + tank1.getContentsString());
+//        left.add("  " + tank2.getContentsString());
+        left.add(Component.literal("Tanks:"));
+        left.add(Component.literal("  ").append(tank1.getContentsString()));
+        left.add(Component.literal("  ").append(tank2.getContentsString()));
     }
 }

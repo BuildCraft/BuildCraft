@@ -6,24 +6,20 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.builders.BCBuildersSprites;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 public enum PatternParameterCenter implements IStatementParameter {
     NORTH_WEST(-1, -1),
@@ -37,8 +33,8 @@ public enum PatternParameterCenter implements IStatementParameter {
     SOUTH_EAST(1, 1);
 
     public static final PatternParameterCenter[] POSSIBLE_ORDER = {//
-        CENTER, NORTH_WEST, NORTH, NORTH_EAST, EAST,//
-        SOUTH_EAST, SOUTH, SOUTH_WEST, WEST//
+            CENTER, NORTH_WEST, NORTH, NORTH_EAST, EAST,//
+            SOUTH_EAST, SOUTH, SOUTH_WEST, WEST//
     };
 
     public final int offsetX, offsetZ;
@@ -48,7 +44,7 @@ public enum PatternParameterCenter implements IStatementParameter {
         offsetZ = z;
     }
 
-    public static PatternParameterCenter readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterCenter readFromNbt(CompoundTag nbt) {
         int ord = nbt.getByte("dir");
         if (ord < 0 || ord >= values().length) {
             return CENTER;
@@ -57,8 +53,8 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("dir", (byte) ordinal());
+    public void writeToNbt(CompoundTag nbt) {
+        nbt.putByte("dir", (byte) ordinal());
     }
 
     @Override
@@ -67,7 +63,7 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         return BCBuildersSprites.PARAM_CENTER.get(this);
     }
@@ -79,13 +75,18 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("direction.center." + ordinal());
+    public Component getDescription() {
+//        return LocaleUtil.localize("direction.center." + ordinal());
+        return Component.translatable("direction.center." + ordinal());
     }
 
     @Override
-    public PatternParameterCenter onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
-        StatementMouseClick mouse) {
+    public String getDescriptionKey() {
+        return "direction.center." + ordinal();
+    }
+
+    @Override
+    public PatternParameterCenter onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         return null;
     }
 

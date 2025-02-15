@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftcore",
+  "key": {
+    "g": {
+      "tag": "forge:dyes/green"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "pattern": [
+    "g",
+    "t"
+  ],
+  "result": {
+    "item": "buildcraftcore:marker_path"
+  },
+  "show_notification": true
+}

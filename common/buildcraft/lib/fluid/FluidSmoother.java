@@ -1,22 +1,19 @@
 package buildcraft.lib.fluid;
 
-import java.util.List;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.BCCoreConfig;
+import java.util.List;
 
 public class FluidSmoother implements IDebuggable {
     final IFluidDataSender sender;
@@ -28,17 +25,17 @@ public class FluidSmoother implements IDebuggable {
         this.tank = tank;
     }
 
-    public void tick(World world) {
+    public void tick(Level world) {
         if (data == null) {
             if (world == null) {
                 return;
             }
-            data = world.isRemote ? new _Client() : new _Server();
+            data = world.isClientSide ? new _Client() : new _Server();
         }
         data.tick(world);
     }
 
-    public void handleMessage(World world, PacketBufferBC buffer) {
+    public void handleMessage(Level world, PacketBufferBC buffer) {
         if (data == null) {
             data = new _Client();
         }
@@ -60,8 +57,8 @@ public class FluidSmoother implements IDebuggable {
         }
     }
 
-    public void resetSmoothing(World world) {
-        if (data == null && world.isRemote) {
+    public void resetSmoothing(Level world) {
+        if (data == null && world.isClientSide) {
             data = new _Client();
         }
         if (data instanceof _Client) {
@@ -109,7 +106,8 @@ public class FluidSmoother implements IDebuggable {
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<Component> left, List<Component> right, Direction side) {
         if (data != null) {
             data.getDebugInfo(left, right, side);
         }
@@ -131,7 +129,7 @@ public class FluidSmoother implements IDebuggable {
     }
 
     abstract class _Side implements IDebuggable {
-        abstract void tick(World world);
+        abstract void tick(Level world);
     }
 
     final class _Server extends _Side {
@@ -140,7 +138,7 @@ public class FluidSmoother implements IDebuggable {
         private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate, 4);
 
         @Override
-        void tick(World world) {
+        void tick(Level world) {
             FluidStack fluid = tank.getFluid();
             boolean hasFluid = fluid != null;
             if ((tank.getFluidAmount() != sentAmount || hasFluid != sentHasFluid)) {
@@ -170,10 +168,14 @@ public class FluidSmoother implements IDebuggable {
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//        public void getDebugInfo(List<String> left, List<String> right, Direction side)
+        public void getDebugInfo(List<Component> left, List<Component> right, Direction side) {
+//            String contents = (tank.getFluid() != null) ? "Something" : "Nothing";
+//            left.add("current = " + tank.getFluidAmount() + " of " + contents);
+//            left.add("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing"));
             String contents = (tank.getFluid() != null) ? "Something" : "Nothing";
-            left.add("current = " + tank.getFluidAmount() + " of " + contents);
-            left.add("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing"));
+            left.add(Component.literal("current = " + tank.getFluidAmount() + " of " + contents));
+            left.add(Component.literal("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing")));
         }
     }
 
@@ -184,7 +186,7 @@ public class FluidSmoother implements IDebuggable {
         NetworkedFluidStackCache.Link link;
 
         @Override
-        void tick(World world) {
+        void tick(Level world) {
             amountLast = amount;
             if (amount != target) {
                 int delta = target - amount;
@@ -198,25 +200,27 @@ public class FluidSmoother implements IDebuggable {
             }
         }
 
-        void handleMessage(World world, PacketBufferBC buffer) {
+        void handleMessage(Level world, PacketBufferBC buffer) {
             target = buffer.readInt();
             if (buffer.readBoolean()) {
                 link = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
             }
             lastMessageMinus1 = lastMessage;
-            lastMessage = world.getTotalWorldTime();
+            lastMessage = world.getGameTime();
         }
 
-        void resetSmoothing(World world) {
-            lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
+        void resetSmoothing(Level world) {
+            lastMessageMinus1 = lastMessage = world.getGameTime();
             lastMessageMinus1 -= 1;
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-            left.add("shown = " + amount + ", target = " + target);
-            left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = "
-                + (lastMessage - lastMessageMinus1));
+//        public void getDebugInfo(List<String> left, List<String> right, Direction side)
+        public void getDebugInfo(List<Component> left, List<Component> right, Direction side) {
+//            left.add("shown = " + amount + ", target = " + target);
+//            left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = " + (lastMessage - lastMessageMinus1));
+            left.add(Component.literal("shown = " + amount + ", target = " + target));
+            left.add(Component.literal("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = " + (lastMessage - lastMessageMinus1)));
         }
     }
 }

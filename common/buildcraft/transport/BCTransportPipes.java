@@ -6,39 +6,19 @@
 
 package buildcraft.transport;
 
-import java.util.Arrays;
-
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeDefinition.IPipeCreator;
 import buildcraft.api.transport.pipe.PipeDefinition.IPipeLoader;
 import buildcraft.api.transport.pipe.PipeDefinition.PipeDefinitionBuilder;
 import buildcraft.api.transport.pipe.PipeFlowType;
-
 import buildcraft.transport.pipe.PipeRegistry;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourClay;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourCobble;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourDaizuli;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamondFluid;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamondItem;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourGold;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourIron;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourLapis;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourObsidian;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourQuartz;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourSandstone;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourStructure;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourVoid;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourWood;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodPower;
+import buildcraft.transport.pipe.behaviour.*;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+
+import java.util.Arrays;
 
 public class BCTransportPipes {
     public static PipeDefinition structure;
@@ -97,96 +77,96 @@ public class BCTransportPipes {
 
         builder.logic(PipeBehaviourStructure::new, PipeBehaviourStructure::new);
         builder.builder.enableBorderColouring();
-        structure = builder.idTex("structure").flow(PipeApi.flowStructure).define();
+        structure = builder.idTex("structure_cobblestone").flow(PipeApi.flowStructure).define();
         builder.builder.enableColouring();
 
         builder.logic(PipeBehaviourWood::new, PipeBehaviourWood::new).texSuffixes("_clear", "_filled");
-        woodItem = builder.idTexPrefix("wood_item").flowItem().define();
-        woodFluid = builder.idTexPrefix("wood_fluid").flowFluid().define();
+        woodItem = builder.idTexPrefix("items_wood").flowItem().define();
+        woodFluid = builder.idTexPrefix("fluids_wood").flowFluid().define();
         builder.logic(PipeBehaviourWoodPower::new, PipeBehaviourWoodPower::new);
-        woodPower = builder.idTexPrefix("wood_power").flowPower().define();
+        woodPower = builder.idTexPrefix("power_wood").flowPower().define();
 
         builder.logic(PipeBehaviourStone::new, PipeBehaviourStone::new);
-        stoneItem = builder.idTex("stone_item").flowItem().define();
-        stoneFluid = builder.idTex("stone_fluid").flowFluid().define();
-        stonePower = builder.idTex("stone_power").flowPower().define();
+        stoneItem = builder.idTex("items_stone").flowItem().define();
+        stoneFluid = builder.idTex("fluids_stone").flowFluid().define();
+        stonePower = builder.idTex("power_stone").flowPower().define();
 
         builder.logic(PipeBehaviourCobble::new, PipeBehaviourCobble::new);
-        cobbleItem = builder.idTex("cobblestone_item").flowItem().define();
-        cobbleFluid = builder.idTex("cobblestone_fluid").flowFluid().define();
-        cobblePower = builder.idTex("cobblestone_power").flowPower().define();
+        cobbleItem = builder.idTex("items_cobblestone").flowItem().define();
+        cobbleFluid = builder.idTex("fluids_cobblestone").flowFluid().define();
+        cobblePower = builder.idTex("power_cobblestone").flowPower().define();
 
         builder.logic(PipeBehaviourQuartz::new, PipeBehaviourQuartz::new);
-        quartzItem = builder.idTex("quartz_item").flowItem().define();
-        quartzFluid = builder.idTex("quartz_fluid").flowFluid().define();
-        quartzPower = builder.idTex("quartz_power").flowPower().define();
+        quartzItem = builder.idTex("items_quartz").flowItem().define();
+        quartzFluid = builder.idTex("fluids_quartz").flowFluid().define();
+        quartzPower = builder.idTex("power_quartz").flowPower().define();
 
         builder.logic(PipeBehaviourGold::new, PipeBehaviourGold::new);
-        goldItem = builder.idTex("gold_item").flowItem().define();
-        goldFluid = builder.idTex("gold_fluid").flowFluid().define();
-        goldPower = builder.idTex("gold_power").flowPower().define();
+        goldItem = builder.idTex("items_gold").flowItem().define();
+        goldFluid = builder.idTex("fluids_gold").flowFluid().define();
+        goldPower = builder.idTex("power_gold").flowPower().define();
 
         builder.logic(PipeBehaviourSandstone::new, PipeBehaviourSandstone::new);
-        sandstoneItem = builder.idTex("sandstone_item").flowItem().define();
-        sandstoneFluid = builder.idTex("sandstone_fluid").flowFluid().define();
-        sandstonePower = builder.idTex("sandstone_power").flowPower().define();
+        sandstoneItem = builder.idTex("items_sandstone").flowItem().define();
+        sandstoneFluid = builder.idTex("fluids_sandstone").flowFluid().define();
+        sandstonePower = builder.idTex("power_sandstone").flowPower().define();
 
         builder.logic(PipeBehaviourIron::new, PipeBehaviourIron::new).texSuffixes("_clear", "_filled");
-        ironItem = builder.idTexPrefix("iron_item").flowItem().define();
-        ironFluid = builder.idTexPrefix("iron_fluid").flowFluid().define();
+        ironItem = builder.idTexPrefix("items_iron").flowItem().define();
+        ironFluid = builder.idTexPrefix("fluids_iron").flowFluid().define();
         // ironPower = builder.idTexPrefix("iron_power").flowPower().define();
 
         String[] diamondTextureSuffixes = new String[8];
         diamondTextureSuffixes[0] = "";
         diamondTextureSuffixes[7] = "_itemstack";
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             diamondTextureSuffixes[face.ordinal() + 1] = "_" + face.getName();
         }
 
         builder.logic(PipeBehaviourDiamondItem::new, PipeBehaviourDiamondItem::new).texSuffixes(diamondTextureSuffixes);
         builder.builder.itemTex(7);
-        diamondItem = builder.idTexPrefix("diamond_item").flowItem().define();
+        diamondItem = builder.idTexPrefix("items_diamond").flowItem().define();
 
         builder.logic(PipeBehaviourDiamondFluid::new, PipeBehaviourDiamondFluid::new);
-        diamondFluid = builder.idTexPrefix("diamond_fluid").flowFluid().define();
+        diamondFluid = builder.idTexPrefix("fluids_diamond").flowFluid().define();
         builder.builder.itemTex(0);
 
         builder.logic(PipeBehaviourWoodDiamond::new, PipeBehaviourWoodDiamond::new).texSuffixes("_clear", "_filled");
-        diaWoodItem = builder.idTexPrefix("diamond_wood_item").flowItem().define();
-        diaWoodFluid = builder.idTexPrefix("diamond_wood_fluid").flowFluid().define();
+        diaWoodItem = builder.idTexPrefix("items_diamond_wood").flowItem().define();
+        diaWoodFluid = builder.idTexPrefix("fluids_diamond_wood").flowFluid().define();
 
         builder.logic(PipeBehaviourClay::new, PipeBehaviourClay::new);
-        clayItem = builder.idTex("clay_item").flowItem().define();
-        clayFluid = builder.idTex("clay_fluid").flowFluid().define();
+        clayItem = builder.idTex("items_clay").flowItem().define();
+        clayFluid = builder.idTex("fluids_clay").flowFluid().define();
 
         builder.logic(PipeBehaviourVoid::new, PipeBehaviourVoid::new);
-        voidItem = builder.idTex("void_item").flowItem().define();
-        voidFluid = builder.idTex("void_fluid").flowFluid().define();
+        voidItem = builder.idTex("items_void").flowItem().define();
+        voidFluid = builder.idTex("fluids_void").flowFluid().define();
 
         builder.logic(PipeBehaviourObsidian::new, PipeBehaviourObsidian::new);
-        obsidianItem = builder.idTex("obsidian_item").flowItem().define();
-        // obsidianFluid = builder.idTex("obsidian_fluid").flowFluid().define();
+        obsidianItem = builder.idTex("items_obsidian").flowItem().define();
+        // obsidianFluid = builder.idTex("obsidian_fluids").flowFluid().define();
 
-        EnumDyeColor[] colourArray = EnumDyeColor.values();
+        DyeColor[] colourArray = DyeColor.values();
         String[] texSuffix = new String[16];
         for (int i = 0; i < 16; i++) {
             texSuffix[i] = "_" + colourArray[i].getName();
         }
 
         builder.logic(PipeBehaviourLapis::new, PipeBehaviourLapis::new).texSuffixes(texSuffix);
-        lapisItem = builder.idTexPrefix("lapis_item").flowItem().define();
+        lapisItem = builder.idTexPrefix("items_lapis").flowItem().define();
 
         String[] texSuffixPlus = Arrays.copyOf(texSuffix, 17);
         texSuffixPlus[16] = "_filled";
 
         builder.logic(PipeBehaviourDaizuli::new, PipeBehaviourDaizuli::new).texSuffixes(texSuffixPlus);
-        daizuliItem = builder.idTexPrefix("daizuli_item").flowItem().define();
+        daizuliItem = builder.idTexPrefix("items_daizuli").flowItem().define();
 
         builder.logic(PipeBehaviourEmzuli::new, PipeBehaviourEmzuli::new).texSuffixes("_clear", "_filled");
-        emzuliItem = builder.idTexPrefix("emzuli_item").flowItem().define();
+        emzuliItem = builder.idTexPrefix("items_emzuli").flowItem().define();
 
         builder.logic(PipeBehaviourStripes::new, PipeBehaviourStripes::new);
-        stripesItem = builder.idTex("stripes_item").flowItem().define();
+        stripesItem = builder.idTex("items_stripes").flowItem().define();
     }
 
     private static class DefinitionBuilder {

@@ -1,20 +1,13 @@
 package buildcraft.lib.script;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Iterables;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.registry.IReloadableRegistry;
 import buildcraft.api.registry.IReloadableRegistryManager;
+import com.google.common.collect.Iterables;
+import net.minecraft.resources.ResourceLocation;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class SimpleReloadableRegistry<E> implements IReloadableRegistry<E> {
     public final IReloadableRegistryManager manager;
@@ -34,7 +27,7 @@ public class SimpleReloadableRegistry<E> implements IReloadableRegistry<E> {
     public <T extends E> T addPermanent(T recipe) {
         if (manager.isInReload()) {
             throw new IllegalStateException(
-                "Don't add permanent recipes during reload events! (Register them once literally any other time)");
+                    "Don't add permanent recipes during reload events! (Register them once literally any other time)");
         }
         permanent.add(recipe);
         return recipe;
@@ -57,7 +50,7 @@ public class SimpleReloadableRegistry<E> implements IReloadableRegistry<E> {
 
     /** Finds the first recipe that matches the given {@link Predicate} filter. This first searches in
      * {@link #getReloadableEntryMap()} and then {@link #getPermanent()} to allow overriding.
-     * 
+     *
      * @return The first matching recipe, or null if one wasn't found. */
     @Nullable
     public E getFirstMatch(Predicate<E> filter) {

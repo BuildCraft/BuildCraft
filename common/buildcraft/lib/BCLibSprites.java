@@ -7,7 +7,6 @@
 package buildcraft.lib;
 
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 
 public class BCLibSprites {
@@ -36,7 +35,7 @@ public class BCLibSprites {
         LEDGER_RIGHT = getHolder("icons/ledger_right");
         HELP = getHolder("icons/help");
         HELP_SPLIT = getHolder("icons/help_split");
-        DEBUG = getHolder("items/debugger");
+        DEBUG = getHolder("item/debugger");
         ENGINE_INACTIVE = getHolder("icons/engine_inactive");
         ENGINE_ACTIVE = getHolder("icons/engine_active");
         ENGINE_WARM = getHolder("icons/engine_warm");

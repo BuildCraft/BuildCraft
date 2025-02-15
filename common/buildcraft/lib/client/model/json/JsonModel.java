@@ -6,30 +6,20 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
-import net.minecraft.client.renderer.block.model.ModelBlock;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
-/** {@link ModelBlock} but with different/additional features */
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+/** {@link BlockModel} but with different/additional features */
 public class JsonModel {
     public final boolean ambientOcclusion;
     public final Map<String, String> textures;
@@ -39,8 +29,22 @@ public class JsonModel {
         return deserialize(from, new ResourceLoaderContext());
     }
 
+    // Calen 1.20.1
+    public static JsonModel datagenDeserialize(ResourceLocation from, ExistingFileHelper fileHelper) throws JsonParseException, IOException {
+        return datagenDeserialize(from, new ResourceLoaderContext(), fileHelper);
+    }
+
     public static JsonModel deserialize(ResourceLocation from, ResourceLoaderContext ctx) throws JsonParseException, IOException {
         try (InputStreamReader isr = ctx.startLoading(from)) {
+            return new JsonModel(new Gson().fromJson(isr, JsonObject.class), ctx);
+        } finally {
+            ctx.finishLoading();
+        }
+    }
+
+    // Calen 1.20.1
+    public static JsonModel datagenDeserialize(ResourceLocation from, ResourceLoaderContext ctx, ExistingFileHelper fileHelper) throws JsonParseException, IOException {
+        try (InputStreamReader isr = ctx.datagenStartLoading(from, fileHelper)) {
             return new JsonModel(new Gson().fromJson(isr, JsonObject.class), ctx);
         } finally {
             ctx.finishLoading();
@@ -79,8 +83,10 @@ public class JsonModel {
     }
 
     public JsonModel(JsonObject obj, ResourceLoaderContext ctx) throws JsonParseException, IOException {
-        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
-        textures = JsonUtil.getSubAsImmutableMap(obj, "textures", new TypeToken<HashMap<String, String>>() {});
+//        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
+        ambientOcclusion = GsonHelper.getAsBoolean(obj, "ambientocclusion", false);
+        textures = JsonUtil.getSubAsImmutableMap(obj, "textures", new TypeToken<HashMap<String, String>>() {
+        });
         if (obj.has("elements")) {
             cutoutElements = deserializePartArray(obj, "elements", false, ctx);
             translucentElements = new JsonModelPart[0];

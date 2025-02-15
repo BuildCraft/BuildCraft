@@ -1,37 +1,35 @@
 package buildcraft.silicon.plug;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.facades.IFacadePhasedState;
 import buildcraft.api.facades.IFacadeState;
-
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nullable;
 
 public class FacadePhasedState implements IFacadePhasedState {
     public final FacadeBlockStateInfo stateInfo;
 
     @Nullable
-    public final EnumDyeColor activeColour;
+    public final DyeColor activeColour;
 
-    public FacadePhasedState(FacadeBlockStateInfo stateInfo, EnumDyeColor activeColour) {
+    public FacadePhasedState(FacadeBlockStateInfo stateInfo, DyeColor activeColour) {
         this.stateInfo = stateInfo;
         this.activeColour = activeColour;
     }
 
-    public static FacadePhasedState readFromNbt(NBTTagCompound nbt) {
+    public static FacadePhasedState readFromNbt(CompoundTag nbt) {
         FacadeBlockStateInfo stateInfo = FacadeStateManager.defaultState;
-        if (nbt.hasKey("state")) {
+        if (nbt.contains("state")) {
             try {
-                IBlockState blockState = NBTUtil.readBlockState(nbt.getCompoundTag("state"));
+                BlockState blockState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("state"));
                 stateInfo = FacadeStateManager.validFacadeStates.get(blockState);
                 if (stateInfo == null) {
                     stateInfo = FacadeStateManager.defaultState;
@@ -40,29 +38,28 @@ public class FacadePhasedState implements IFacadePhasedState {
                 throw new RuntimeException("Failed badly when reading a facade state!", t);
             }
         }
-        EnumDyeColor colour = NBTUtilBC.readEnum(nbt.getTag("activeColour"), EnumDyeColor.class);
+        DyeColor colour = NBTUtilBC.readEnum(nbt.get("activeColour"), DyeColor.class);
         return new FacadePhasedState(stateInfo, colour);
     }
 
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundTag writeToNbt() {
+        CompoundTag nbt = new CompoundTag();
         try {
-            nbt.setTag("state", NBTUtil.writeBlockState(new NBTTagCompound(), stateInfo.state));
+            nbt.put("state", NbtUtils.writeBlockState(stateInfo.state));
         } catch (Throwable t) {
             throw new IllegalStateException("Writing facade block state"//
-                + "\n\tState = " + stateInfo//
-                + "\n\tBlock = " + stateInfo.state.getBlock() + "\n\tBlock Class = "
-                + stateInfo.state.getBlock().getClass(), t);
+                    + "\n\tState = " + stateInfo//
+                    + "\n\tBlock = " + stateInfo.state.getBlock() + "\n\tBlock Class = " + stateInfo.state.getBlock().getClass(), t);
         }
         if (activeColour != null) {
-            nbt.setTag("activeColour", NBTUtilBC.writeEnum(activeColour));
+            nbt.put("activeColour", NBTUtilBC.writeEnum(activeColour));
         }
         return nbt;
     }
 
     public static FacadePhasedState readFromBuffer(PacketBufferBC buf) {
-        IBlockState state = MessageUtil.readBlockState(buf);
-        EnumDyeColor colour = MessageUtil.readEnumOrNull(buf, EnumDyeColor.class);
+        BlockState state = MessageUtil.readBlockState(buf);
+        DyeColor colour = MessageUtil.readEnumOrNull(buf, DyeColor.class);
         FacadeBlockStateInfo info = FacadeStateManager.validFacadeStates.get(state);
         if (info == null) {
             info = FacadeStateManager.defaultState;
@@ -79,17 +76,17 @@ public class FacadePhasedState implements IFacadePhasedState {
         MessageUtil.writeEnumOrNull(buf, activeColour);
     }
 
-    public FacadePhasedState withColour(EnumDyeColor colour) {
+    public FacadePhasedState withColour(DyeColor colour) {
         return new FacadePhasedState(stateInfo, colour);
     }
 
-    public boolean isSideSolid(EnumFacing side) {
+    public boolean isSideSolid(Direction side) {
         return stateInfo.isSideSolid[side.ordinal()];
     }
 
-    public BlockFaceShape getBlockFaceShape(EnumFacing side) {
-        return stateInfo.blockFaceShape[side.ordinal()];
-    }
+//    public BlockFaceShape getBlockFaceShape(EnumFacing side) {
+//        return stateInfo.blockFaceShape[side.ordinal()];
+//    }
 
     @Override
     public String toString() {
@@ -104,7 +101,7 @@ public class FacadePhasedState implements IFacadePhasedState {
     }
 
     @Override
-    public EnumDyeColor getActiveColor() {
+    public DyeColor getActiveColor() {
         return activeColour;
     }
 }

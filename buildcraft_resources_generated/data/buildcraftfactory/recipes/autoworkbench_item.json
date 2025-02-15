@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftfactory",
+  "key": {
+    "g": {
+      "tag": "forge:gears/stone"
+    },
+    "w": {
+      "tag": "forge:workbenches"
+    }
+  },
+  "pattern": [
+    "gwg"
+  ],
+  "result": {
+    "item": "buildcraftfactory:autoworkbench_item"
+  },
+  "show_notification": true
+}

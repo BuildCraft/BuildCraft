@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftcore:wrenched",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftfactory.lazy_crafting.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftfactory:autoworkbench_item"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftfactory.lazy_crafting.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

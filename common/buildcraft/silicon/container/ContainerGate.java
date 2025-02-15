@@ -6,22 +6,8 @@
 
 package buildcraft.silicon.container;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.StatementManager;
-
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.ContainerPipe;
 import buildcraft.lib.misc.data.IdAllocator;
@@ -29,10 +15,17 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.ActionWrapper;
 import buildcraft.lib.statement.StatementWrapper;
 import buildcraft.lib.statement.TriggerWrapper;
-
 import buildcraft.silicon.gate.GateContext;
 import buildcraft.silicon.gate.GateContext.GateGroup;
 import buildcraft.silicon.gate.GateLogic;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.io.IOException;
+import java.util.*;
 
 public class ContainerGate extends ContainerPipe {
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("gate");
@@ -50,10 +43,10 @@ public class ContainerGate extends ContainerPipe {
     public final GateContext<TriggerWrapper> possibleTriggersContext;
     public final GateContext<ActionWrapper> possibleActionsContext;
 
-    public ContainerGate(EntityPlayer player, GateLogic logic) {
-        super(player, logic.getPipeHolder());
+    public ContainerGate(MenuType menuType, int id, Player player, GateLogic logic) {
+        super(menuType, id, player, logic.getPipeHolder());
         this.gate = logic;
-        gate.getPipeHolder().onPlayerOpen(player);
+//        gate.getPipeHolder().onPlayerOpen(player); // Calen: moved to BCSiliconMenuTypes to ensure message handled before gui opened
 
         boolean split = gate.isSplitInTwo();
         int s = gate.variant.numSlots;
@@ -62,7 +55,7 @@ public class ContainerGate extends ContainerPipe {
         }
         slotHeight = s;
 
-        if (gate.getPipeHolder().getPipeWorld().isRemote) {
+        if (gate.getPipeHolder().getPipeWorld().isClientSide) {
             possibleTriggers = new TreeSet<>();
             possibleActions = new TreeSet<>();
         } else {
@@ -84,8 +77,10 @@ public class ContainerGate extends ContainerPipe {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
+//    public void onContainerClosed(Player player)
+    public void removed(Player player) {
+//        super.onContainerClosed(player);
+        super.removed(player);
         gate.getPipeHolder().onPlayerClose(player);
     }
 
@@ -117,8 +112,8 @@ public class ContainerGate extends ContainerPipe {
     }
 
     @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        if (side == Side.SERVER) {
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+        if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_CONNECTION) {
                 int index = buffer.readUnsignedByte();
                 boolean to = buffer.readBoolean();
@@ -129,23 +124,23 @@ public class ContainerGate extends ContainerPipe {
             } else if (id == ID_VALID_STATEMENTS) {
                 sendMessage(ID_VALID_STATEMENTS);
             }
-        } else if (side == Side.CLIENT) {
+        } else if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == ID_VALID_STATEMENTS) {
                 possibleTriggers.clear();
                 possibleActions.clear();
                 int numTriggers = buffer.readInt();
                 int numActions = buffer.readInt();
                 for (int i = 0; i < numTriggers; i++) {
-                    String tag = buffer.readString(256);
-                    EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
+                    String tag = buffer.readUtf(256);
+                    EnumPipePart part = buffer.readEnum(EnumPipePart.class);
                     TriggerWrapper wrapper = TriggerWrapper.wrap(StatementManager.statements.get(tag), part.face);
                     if (gate.isValidTrigger(wrapper)) {
                         possibleTriggers.add(wrapper);
                     }
                 }
                 for (int i = 0; i < numActions; i++) {
-                    String tag = buffer.readString(256);
-                    EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
+                    String tag = buffer.readUtf(256);
+                    EnumPipePart part = buffer.readEnum(EnumPipePart.class);
                     ActionWrapper wrapper = ActionWrapper.wrap(StatementManager.statements.get(tag), part.face);
                     if (gate.isValidAction(wrapper)) {
                         possibleActions.add(wrapper);
@@ -157,27 +152,28 @@ public class ContainerGate extends ContainerPipe {
     }
 
     @Override
-    public void writeMessage(int id, PacketBufferBC buffer, Side side) {
+    public void writeMessage(int id, PacketBufferBC buffer, Dist side) {
         super.writeMessage(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == ID_VALID_STATEMENTS) {
                 buffer.writeInt(possibleTriggers.size());
                 buffer.writeInt(possibleActions.size());
                 for (TriggerWrapper wrapper : possibleTriggers) {
-                    buffer.writeString(wrapper.getUniqueTag());
-                    buffer.writeEnumValue(wrapper.sourcePart);
+                    buffer.writeUtf(wrapper.getUniqueTag());
+                    buffer.writeEnum(wrapper.sourcePart);
                 }
 
                 for (ActionWrapper wrapper : possibleActions) {
-                    buffer.writeString(wrapper.getUniqueTag());
-                    buffer.writeEnumValue(wrapper.sourcePart);
+                    buffer.writeUtf(wrapper.getUniqueTag());
+                    buffer.writeEnum(wrapper.sourcePart);
                 }
             }
         }
     }
 
     public void setConnected(int index, boolean to) {
-        sendMessage(ID_CONNECTION, (buffer) -> {
+        sendMessage(ID_CONNECTION, (buffer) ->
+        {
             buffer.writeByte(index);
             buffer.writeBoolean(to);
         });

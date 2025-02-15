@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "buildcrafttransport:block/filtered_buffer/default",
+    "particle": "buildcrafttransport:block/filtered_buffer/default"
+  }
+}

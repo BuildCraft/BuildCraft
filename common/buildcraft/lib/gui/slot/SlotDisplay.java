@@ -6,16 +6,17 @@
 
 package buildcraft.lib.gui.slot;
 
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+
 import java.util.function.IntFunction;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-
 public class SlotDisplay extends Slot {
-    private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
+    // private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
+    private static Container emptyInventory = new SimpleContainer(0);
     private final IntFunction<ItemStack> getter;
 
     public SlotDisplay(IntFunction<ItemStack> getter, int index, int xPosition, int yPosition) {
@@ -24,41 +25,52 @@ public class SlotDisplay extends Slot {
     }
 
     @Override
-    public ItemStack onTake(EntityPlayer player, ItemStack stack) {
-        return ItemStack.EMPTY;
+//    public ItemStack onTake(Player player, ItemStack stack)
+    public void onTake(Player player, ItemStack stack) {
+//        return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack) {
+//    public boolean isItemValid(ItemStack stack)
+    public boolean mayPlace(ItemStack stack) {
         return false;
     }
 
     @Override
-    public ItemStack getStack() {
+//    public ItemStack getStack()
+    public ItemStack getItem() {
         return getter.apply(getSlotIndex()).copy();
     }
 
     @Override
-    public void putStack(ItemStack stack) {
+//    public void putStack(ItemStack stack)
+    public void set(ItemStack stack) {
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer player) {
+//    public boolean canTakeStack(Player player)
+    public boolean mayPickup(Player player) {
         return false;
     }
 
     @Override
-    public ItemStack decrStackSize(int amount) {
-        return getStack();
+//    public ItemStack decrStackSize(int amount)
+    public ItemStack remove(int amount) {
+//        return getStack();
+        return getItem();
     }
 
     @Override
-    public int getItemStackLimit(ItemStack stack) {
-        return getStack().getCount();
+//    public int getItemStackLimit(ItemStack stack)
+    public int getMaxStackSize(ItemStack stack) {
+//        return getStack().getCount();
+        return getItem().getCount();
     }
 
     @Override
-    public int getSlotStackLimit() {
-        return getStack().getCount();
+//    public int getSlotStackLimit()
+    public int getMaxStackSize() {
+//        return getStack().getCount();
+        return getItem().getCount();
     }
 }

@@ -1,10 +1,10 @@
 package buildcraft.builders.gui;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.tiles.IControllable.Mode;
-
+import buildcraft.builders.container.ContainerFiller;
+import buildcraft.builders.filler.FillerStatementContext;
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.button.IButtonBehaviour;
@@ -13,24 +13,25 @@ import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.json.InventorySlotHolder;
 import buildcraft.lib.gui.json.SpriteDelegate;
 import buildcraft.lib.misc.collect.TypedKeyMap;
-
-import buildcraft.builders.container.ContainerFiller;
-import buildcraft.builders.filler.FillerStatementContext;
-import buildcraft.core.BCCoreSprites;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 public class GuiFiller extends GuiBC8<ContainerFiller> {
     private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
     private static final SpriteDelegate SPRITE_CONTROL_MODE = new SpriteDelegate();
 
-    public GuiFiller(ContainerFiller container) {
-        super(container, LOCATION);
+    public GuiFiller(ContainerFiller container, Inventory inventory, Component component) {
+        super(container, LOCATION, inventory, component);
 
         BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
         preLoad(jsonGui);
         jsonGui.load();
-        xSize = jsonGui.getSizeX();
-        ySize = jsonGui.getSizeY();
+//        xSize = jsonGui.getSizeX();
+        imageWidth = jsonGui.getSizeX();
+//        ySize = jsonGui.getSizeY();
+        imageHeight = jsonGui.getSizeY();
     }
 
     protected void preLoad(BuildCraftJsonGui json) {
@@ -55,18 +56,20 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
         properties.put("filler.invert", IButtonBehaviour.TOGGLE);
         properties.put("filler.invert", container.isInverted());
         properties.put("filler.invert",
-            (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
+                (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
 
         context.put_b("filler.excavate", container.tile::canExcavate);
         properties.put("filler.excavate", IButtonBehaviour.TOGGLE);
         properties.put("filler.excavate", container.tile.canExcavate());
         properties.put("filler.excavate",
-            (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive()));
+                (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive()));
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+//    public void updateScreen()
+    public void containerTick() {
+//        super.updateScreen();
+        super.containerTick();
         IFillerPattern pattern = container.getPatternStatementClient().get();
         SPRITE_PATTERN.delegate = pattern == null ? null : pattern.getSprite();
         SPRITE_CONTROL_MODE.delegate = BCCoreSprites.ACTION_MACHINE_CONTROL.get(container.tile.getControlMode());

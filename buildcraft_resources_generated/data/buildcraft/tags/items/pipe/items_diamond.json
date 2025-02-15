@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_diamond_colorless",
+    "buildcrafttransport:pipe_items_diamond_green",
+    "buildcrafttransport:pipe_items_diamond_brown",
+    "buildcrafttransport:pipe_items_diamond_cyan",
+    "buildcrafttransport:pipe_items_diamond_white",
+    "buildcrafttransport:pipe_items_diamond_orange",
+    "buildcrafttransport:pipe_items_diamond_gray",
+    "buildcrafttransport:pipe_items_diamond_blue",
+    "buildcrafttransport:pipe_items_diamond_black",
+    "buildcrafttransport:pipe_items_diamond_red",
+    "buildcrafttransport:pipe_items_diamond_yellow",
+    "buildcrafttransport:pipe_items_diamond_magenta",
+    "buildcrafttransport:pipe_items_diamond_purple",
+    "buildcrafttransport:pipe_items_diamond_lime",
+    "buildcrafttransport:pipe_items_diamond_pink",
+    "buildcrafttransport:pipe_items_diamond_light_blue",
+    "buildcrafttransport:pipe_items_diamond_light_gray"
+  ]
+}

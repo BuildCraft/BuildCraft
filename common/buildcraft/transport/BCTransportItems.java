@@ -1,84 +1,81 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
 package buildcraft.transport;
 
+import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.PipeDefinition;
-
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemPluggableSimple;
+import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
-
-import buildcraft.transport.item.ItemPipeHolder;
 import buildcraft.transport.item.ItemWire;
 import buildcraft.transport.pipe.PipeRegistry;
+import net.minecraft.world.item.DyeColor;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.Map;
 
 public class BCTransportItems {
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
+    private static final RegistrationHelper HELPER = new RegistrationHelper(BCTransport.MODID);
 
-    public static ItemBC_Neptune waterproof;
+    public static RegistryObject<ItemBC_Neptune> waterproof;
 
-    public static ItemPipeHolder pipeStructure;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeStructure;
 
-    public static ItemPipeHolder pipeItemWood;
-    public static ItemPipeHolder pipeFluidWood;
-    public static ItemPipeHolder pipePowerWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerWood;
 
-    public static ItemPipeHolder pipeItemStone;
-    public static ItemPipeHolder pipeFluidStone;
-    public static ItemPipeHolder pipePowerStone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemStone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidStone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerStone;
 
-    public static ItemPipeHolder pipeItemCobble;
-    public static ItemPipeHolder pipeFluidCobble;
-    public static ItemPipeHolder pipePowerCobble;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemCobble;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidCobble;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerCobble;
 
-    public static ItemPipeHolder pipeItemQuartz;
-    public static ItemPipeHolder pipeFluidQuartz;
-    public static ItemPipeHolder pipePowerQuartz;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemQuartz;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidQuartz;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerQuartz;
 
-    public static ItemPipeHolder pipeItemGold;
-    public static ItemPipeHolder pipeFluidGold;
-    public static ItemPipeHolder pipePowerGold;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemGold;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidGold;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerGold;
 
-    public static ItemPipeHolder pipeItemSandstone;
-    public static ItemPipeHolder pipeFluidSandstone;
-    public static ItemPipeHolder pipePowerSandstone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemSandstone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidSandstone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerSandstone;
 
-    public static ItemPipeHolder pipeItemIron;
-    public static ItemPipeHolder pipeFluidIron;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemIron;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidIron;
     // public static ItemPipeHolder pipePowerIron;
 
-    public static ItemPipeHolder pipeItemDiamond;
-    public static ItemPipeHolder pipeFluidDiamond;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemDiamond;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidDiamond;
     // public static ItemPipeHolder pipePowerDiamond;
 
-    public static ItemPipeHolder pipeItemDiaWood;
-    public static ItemPipeHolder pipeFluidDiaWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemDiaWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidDiaWood;
 
-    public static ItemPipeHolder pipeItemClay;
-    public static ItemPipeHolder pipeFluidClay;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemClay;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidClay;
 
-    public static ItemPipeHolder pipeItemVoid;
-    public static ItemPipeHolder pipeFluidVoid;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemVoid;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidVoid;
 
-    public static ItemPipeHolder pipeItemObsidian;
-    public static ItemPipeHolder pipeFluidObsidian;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemObsidian;
+//    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidObsidian;
 
-    public static ItemPipeHolder pipeItemLapis;
-    public static ItemPipeHolder pipeItemDaizuli;
-    public static ItemPipeHolder pipeItemEmzuli;
-    public static ItemPipeHolder pipeItemStripes;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemLapis;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemDaizuli;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemEmzuli;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemStripes;
 
-    public static ItemPluggableSimple plugBlocker;
-    public static ItemPluggableSimple plugPowerAdaptor;
+    public static RegistryObject<ItemPluggableSimple> plugBlocker;
+    public static RegistryObject<ItemPluggableSimple> plugPowerAdaptor;
 
-    public static ItemWire wire;
+    public static RegistryObject<ItemWire> wire;
 
     public static void preInit() {
-        waterproof = HELPER.addItem(new ItemBC_Neptune("item.waterproof"));
+        waterproof = HELPER.addItem("item.waterproof", ItemPropertiesCreator.common64(), ItemBC_Neptune::new);
 
         pipeStructure = makePipeItem(BCTransportPipes.structure);
 
@@ -121,14 +118,17 @@ public class BCTransportItems {
         // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
         pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
 
-        plugBlocker = HELPER.addItem(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
-        plugPowerAdaptor = HELPER.addItem(new ItemPluggableSimple("item.plug.power_adaptor",
-            BCTransportPlugs.powerAdaptor, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER));
+        plugBlocker = HELPER.addItem("item.plug.blocker", ItemPropertiesCreator.common64(),
+                (idBC, properties) -> new ItemPluggableSimple(idBC, properties, BCTransportPlugs.blocker)
+        );
+        plugPowerAdaptor = HELPER.addItem("item.plug.power_adaptor", ItemPropertiesCreator.common64(),
+                (idBC, properties) -> new ItemPluggableSimple(idBC, properties, BCTransportPlugs.powerAdaptor, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER)
+        );
 
-        wire = HELPER.addItem(new ItemWire("item.wire"));
+        wire = HELPER.addItem("item.wire", ItemPropertiesCreator.common64(), ItemWire::new);
     }
 
-    public static ItemPipeHolder makePipeItem(PipeDefinition def) {
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> makePipeItem(PipeDefinition def) {
         return PipeRegistry.INSTANCE.createItemForPipe(def);
     }
 }

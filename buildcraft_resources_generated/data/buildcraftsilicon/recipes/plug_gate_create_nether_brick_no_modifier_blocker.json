@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftsilicon",
+  "key": {
+    "b": {
+      "item": "buildcrafttransport:plug_blocker"
+    },
+    "m": {
+      "tag": "forge:ingots/nether_brick"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "pattern": [
+    " m ",
+    "mrm",
+    " b "
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug_gate_nether_brick_and_no_modifier"
+  },
+  "show_notification": true
+}

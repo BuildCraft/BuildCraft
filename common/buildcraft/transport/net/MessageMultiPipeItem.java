@@ -1,34 +1,28 @@
 package buildcraft.transport.net;
 
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
+import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeFlow;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.network.NetworkEvent;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Nullable;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeFlow;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.transport.pipe.flow.PipeFlowItems;
 
 public class MessageMultiPipeItem implements IMessage {
 
@@ -41,7 +35,7 @@ public class MessageMultiPipeItem implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buffer) {
+    public void fromBytes(FriendlyByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         int blockCount = buf.readShort();
         for (int b = 0; b < blockCount; b++) {
@@ -56,7 +50,7 @@ public class MessageMultiPipeItem implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         int blockCount = Math.min(items.size(), MAX_POSITIONS);
         buf.writeShort(blockCount);
@@ -75,8 +69,7 @@ public class MessageMultiPipeItem implements IMessage {
         }
     }
 
-    public void append(BlockPos pos, int stackId, byte stackCount, boolean toCenter, EnumFacing side,
-        EnumDyeColor colour, byte timeToDest) {
+    public void append(BlockPos pos, int stackId, byte stackCount, boolean toCenter, Direction side, DyeColor colour, byte timeToDest) {
         List<TravellingItemData> list = items.get(pos);
         if (list == null) {
             if (items.size() >= MAX_POSITIONS) {
@@ -95,12 +88,11 @@ public class MessageMultiPipeItem implements IMessage {
         public final int stackId;
         public final byte stackCount;
         public final boolean toCenter;
-        public final EnumFacing side;
-        public final @Nullable EnumDyeColor colour;
+        public final Direction side;
+        public final @Nullable DyeColor colour;
         public final byte timeToDest;
 
-        public TravellingItemData(int stackId, byte stackCount, boolean toCenter, EnumFacing side, EnumDyeColor colour,
-            byte timeToDest) {
+        public TravellingItemData(int stackId, byte stackCount, boolean toCenter, Direction side, DyeColor colour, byte timeToDest) {
             this.stackId = stackId;
             this.stackCount = stackCount;
             this.toCenter = toCenter;
@@ -113,8 +105,8 @@ public class MessageMultiPipeItem implements IMessage {
             stackId = buf.readVarInt();
             stackCount = buf.readByte();
             toCenter = buf.readBoolean();
-            side = buf.readEnumValue(EnumFacing.class);
-            colour = MessageUtil.readEnumOrNull(buf, EnumDyeColor.class);
+            side = buf.readEnum(Direction.class);
+            colour = MessageUtil.readEnumOrNull(buf, DyeColor.class);
             timeToDest = buf.readByte();
         }
 
@@ -122,36 +114,37 @@ public class MessageMultiPipeItem implements IMessage {
             buf.writeVarInt(stackId);
             buf.writeByte(stackCount);
             buf.writeBoolean(toCenter);
-            buf.writeEnumValue(side);
+            buf.writeEnum(side);
             MessageUtil.writeEnumOrNull(buf, colour);
             buf.writeByte(timeToDest);
         }
     }
 
     public static final IMessageHandler<MessageMultiPipeItem, IMessage> HANDLER =
-        new IMessageHandler<MessageMultiPipeItem, IMessage>() {
+            new IMessageHandler<MessageMultiPipeItem, IMessage>() {
 
-            @Override
-            public IMessage onMessage(MessageMultiPipeItem message, MessageContext ctx) {
-                World world = BCLibProxy.getProxy().getClientWorld();
-                if (world == null) {
-                    return null;
-                }
-                for (Entry<BlockPos, List<TravellingItemData>> entry : message.items.entrySet()) {
-                    BlockPos pos = entry.getKey();
-                    TileEntity tile = world.getTileEntity(pos);
-                    if (tile instanceof IPipeHolder) {
-                        IPipe pipe = ((IPipeHolder) tile).getPipe();
-                        if (pipe == null) {
-                            return null;
-                        }
-                        PipeFlow flow = pipe.getFlow();
-                        if (flow instanceof PipeFlowItems) {
-                            ((PipeFlowItems) flow).handleClientReceviedItems(entry.getValue());
+                @Override
+//                public IMessage onMessage(MessageMultiPipeItem message, MessageContext ctx)
+                public IMessage onMessage(MessageMultiPipeItem message, NetworkEvent.Context ctx) {
+                    Level world = BCLibProxy.getProxy().getClientWorld();
+                    if (world == null) {
+                        return null;
+                    }
+                    for (Entry<BlockPos, List<TravellingItemData>> entry : message.items.entrySet()) {
+                        BlockPos pos = entry.getKey();
+                        BlockEntity tile = world.getBlockEntity(pos);
+                        if (tile instanceof IPipeHolder) {
+                            IPipe pipe = ((IPipeHolder) tile).getPipe();
+                            if (pipe == null) {
+                                return null;
+                            }
+                            PipeFlow flow = pipe.getFlow();
+                            if (flow instanceof PipeFlowItems) {
+                                ((PipeFlowItems) flow).handleClientReceviedItems(entry.getValue());
+                            }
                         }
                     }
+                    return null;
                 }
-                return null;
-            }
-        };
+            };
 }

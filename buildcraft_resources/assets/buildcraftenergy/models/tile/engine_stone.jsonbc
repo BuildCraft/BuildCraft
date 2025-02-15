@@ -1,0 +1,7 @@
+{
+    "textures": {
+        "#back":"buildcraftenergy:block/engine/stone/back",
+        "#side":"buildcraftenergy:block/engine/stone/side"
+    },
+    "parent":"buildcraftlib:models/tile/engine_base"
+}

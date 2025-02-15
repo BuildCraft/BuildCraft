@@ -6,21 +6,16 @@
 
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import buildcraft.lib.tile.TileMarker;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.tile.TileMarker;
+import java.util.*;
 
 public abstract class MarkerConnection<C extends MarkerConnection<C>> {
     public final MarkerSubCache<C> subCache;
@@ -36,10 +31,11 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
 
     public abstract Collection<BlockPos> getMarkerPositions();
 
-    @SideOnly(Side.CLIENT)
-    public abstract void renderInWorld();
+    @OnlyIn(Dist.CLIENT)
+    public abstract void renderInWorld(PoseStack poseStack);
 
-    public void getDebugInfo(BlockPos caller, List<String> left) {
+    // public void getDebugInfo(BlockPos caller, List<String> left)
+    public void getDebugInfo(BlockPos caller, List<Component> left) {
         Collection<BlockPos> positions = getMarkerPositions();
         List<BlockPos> list = new ArrayList<>(positions);
         if (positions instanceof Set) {
@@ -49,18 +45,19 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
             TileMarker<C> marker = subCache.getMarker(pos);
             String s = "  " + pos + " [";
             if (marker == null) {
-                s += TextFormatting.RED + "U";
+                s += ChatFormatting.RED + "U";
             } else {
-                s += TextFormatting.GREEN + "L";
+                s += ChatFormatting.GREEN + "L";
             }
             if (pos.equals(caller)) {
-                s += TextFormatting.BLACK + "S";
+                s += ChatFormatting.BLACK + "S";
             } else {
-                s += TextFormatting.AQUA + "C";
+                s += ChatFormatting.AQUA + "C";
             }
             s += getTypeInfo(pos, marker);
-            s += TextFormatting.RESET + "]";
-            left.add(s);
+            s += ChatFormatting.RESET + "]";
+//            left.add(s);
+            left.add(Component.literal(s));
         }
     }
 

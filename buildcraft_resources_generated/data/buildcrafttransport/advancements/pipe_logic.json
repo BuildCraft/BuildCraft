@@ -1,0 +1,29 @@
+{
+  "parent": "buildcrafttransport:plugging_the_gap",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcrafttransport.pipe_logic.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftsilicon:plug_gate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcrafttransport.pipe_logic.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

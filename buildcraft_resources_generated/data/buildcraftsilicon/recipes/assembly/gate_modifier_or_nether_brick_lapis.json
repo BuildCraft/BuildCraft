@@ -1,0 +1,24 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:plug_gate_nether_brick_or_lapis"
+  },
+  "requiredMicroJoules": 80000000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "type": "forge:nbt",
+        "count": 1,
+        "item": "buildcraftsilicon:plug_gate_nether_brick_or_no_modifier"
+      }
+    },
+    {
+      "count": 1,
+      "ingredient": {
+        "tag": "forge:gems/lapis"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

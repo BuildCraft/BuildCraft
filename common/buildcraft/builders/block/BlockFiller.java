@@ -6,76 +6,77 @@
 
 package buildcraft.builders.block;
 
-import java.util.List;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
+import buildcraft.builders.tile.TileFiller;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
 
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileFiller;
+import java.util.List;
 
-public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing {
+public class BlockFiller extends BlockBCTile_Neptune<TileFiller> implements IBlockWithFacing {
     // public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
-    public BlockFiller(Material material, String id) {
-        super(material, id);
+    // public BlockFiller(Material material, String id)
+    public BlockFiller(String idBC, BlockBehaviour.Properties properties) {
+        super(idBC, properties);
         // setDefaultState(getDefaultState().withProperty(PATTERN, EnumFillerPattern.NONE));
     }
 
     // BlockState
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         // properties.add(PATTERN);
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFiller) {
-            TileFiller filler = (TileFiller) tile;
+    public BlockState getActualState(BlockState state, LevelAccessor world, BlockPos pos, BlockEntity tile) {
+        if (tile instanceof TileFiller filler) {
             // return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
         }
         return state;
     }
-
     // Others
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        return new TileFiller();
+//    public TileBC_Neptune createTileEntity(World world, IBlockState state)
+    public TileBC_Neptune newBlockEntity(BlockPos pos, BlockState state) {
+        return new TileFiller(pos, state);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFiller) {
-            if (!((TileFiller) tile).hasBox()) {
-                return false;
+//    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand, Direction side, float hitX, float hitY, float hitZ)
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        BlockEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof TileFiller filler) {
+            if (!filler.hasBox()) {
+//                return false;
+                return InteractionResult.FAIL;
+            }
+            if (!world.isClientSide) {
+//            BCBuildersGuis.FILLER.openGUI(player, pos);
+                MessageUtil.serverOpenTileGui(player, filler);
             }
         }
-        if (!world.isRemote) {
-            BCBuildersGuis.FILLER.openGUI(player, pos);
-        }
-        return true;
+//        return true;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
+    public boolean canBeRotated(LevelAccessor world, BlockPos pos, BlockState state) {
         return false;
     }
 }

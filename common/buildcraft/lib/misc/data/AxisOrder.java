@@ -8,11 +8,10 @@ package buildcraft.lib.misc.data;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.nbt.CompoundTag;
 
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;
@@ -29,7 +28,7 @@ public class AxisOrder {
 
     public final EnumAxisOrder order;
     public final Inversion inversion;
-    public final EnumFacing first, second, third;
+    public final Direction first, second, third;
 
     /** Creates an axis order that will scan axis in the order given, going in the directions specified by
      * positiveFirst, positiveSecond and positiveThird. If all are true then it will start at the smallest one and end
@@ -37,22 +36,22 @@ public class AxisOrder {
     private AxisOrder(EnumAxisOrder order, Inversion inv) {
         this.order = order;
         this.inversion = inv;
-        first = EnumFacing.getFacingFromAxis(inv.first, order.first);
-        second = EnumFacing.getFacingFromAxis(inv.second, order.second);
-        third = EnumFacing.getFacingFromAxis(inv.third, order.third);
+        first = Direction.get(inv.first, order.first);
+        second = Direction.get(inv.second, order.second);
+        third = Direction.get(inv.third, order.third);
     }
 
-    public static AxisOrder readNbt(NBTTagCompound nbt) {
+    public static AxisOrder readNbt(CompoundTag nbt) {
         return getFor(//
                 EnumAxisOrder.getOrder(nbt.getString("order")),//
                 Inversion.getFor(nbt.getString("inversion"))//
         );
     }
 
-    public NBTTagCompound writeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("order", order.name());
-        nbt.setString("inversion", inversion.name());
+    public CompoundTag writeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putString("order", order.name());
+        nbt.putString("inversion", inversion.name());
         return nbt;
     }
 
@@ -118,7 +117,7 @@ public class AxisOrder {
             throw new Error("Unknown char " + charAt);
         }
 
-        public static Inversion getFor(EnumFacing first, EnumFacing second, EnumFacing third) {
+        public static Inversion getFor(Direction first, Direction second, Direction third) {
             return getFor(first.getAxisDirection(), second.getAxisDirection(), third.getAxisDirection());
         }
 

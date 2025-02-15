@@ -6,40 +6,33 @@
 
 package buildcraft.core.statements;
 
-import java.util.Locale;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
-
 import buildcraft.api.inventory.IItemHandlerFiltered;
 import buildcraft.api.items.IList;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.ObjectUtilBC;
-import buildcraft.lib.misc.StackUtil;
-
+import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.ObjectUtilBC;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.Locale;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
     public TriggerType type;
 
     public TriggerInventoryLevel(TriggerType type) {
         super("buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ROOT),
-            "buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ROOT),
-            "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT));
+                "buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ROOT),
+                "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT)
+        );
         this.type = type;
     }
 
@@ -49,20 +42,27 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public SpriteHolder getSprite() {
         return BCCoreSprites.TRIGGER_INVENTORY_LEVEL.get(type);
     }
 
     @Override
-    public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
+    public Component getDescription() {
+//        return String.format(LocaleUtil.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
+        return Component.translatable("gate.trigger.inventorylevel.below", (int) (type.level * 100));
+    }
+
+    // Calen
+    @Override
+    public String getDescriptionKey() {
+//        return String.format(LocaleUtil.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
+        return "gate.trigger.inventorylevel.below." + (int) (type.level * 100);
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container,
-        IStatementParameter[] parameters) {
-        IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+    public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer container, IStatementParameter[] parameters) {
+        IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
         if (itemHandler == null) {
             return false;
         }

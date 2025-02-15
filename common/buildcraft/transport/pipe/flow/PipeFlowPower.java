@@ -6,27 +6,6 @@
 
 package buildcraft.transport.pipe.flow;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.function.ToLongFunction;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjConnector;
@@ -34,27 +13,42 @@ import buildcraft.api.mj.IMjPassiveProvider;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.IFlowPower;
-import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
-import buildcraft.api.transport.pipe.PipeEventPower;
-import buildcraft.api.transport.pipe.PipeFlow;
-
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AverageInt;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.network.NetworkDirection;
 
-import buildcraft.core.BCCoreConfig;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.function.ToLongFunction;
 
 public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     private static final long DEFAULT_MAX_POWER = MjAPI.MJ * 10;
     public static final int NET_POWER_AMOUNTS = 2;
 
-    public Vec3d clientDisplayFlowCentre = Vec3d.ZERO;
-    public Vec3d clientDisplayFlowCentreLast = Vec3d.ZERO;
+    public Vec3 clientDisplayFlowCentre = Vec3.ZERO;
+    public Vec3 clientDisplayFlowCentreLast = Vec3.ZERO;
     public long clientLastDisplayTime = 0;
 
     private long maxPower = -1;
@@ -64,77 +58,77 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     private long currentWorldTime;
 
     private boolean isReceiver = false;
-    private final EnumMap<EnumFacing, Section> sections;
+    private final EnumMap<Direction, Section> sections;
 
     private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate);
     private long[] transferQuery;
 
     public PipeFlowPower(IPipe pipe) {
         super(pipe);
-        sections = new EnumMap<>(EnumFacing.class);
-        for (EnumFacing face : EnumFacing.VALUES) {
+        sections = new EnumMap<>(Direction.class);
+        for (Direction face : Direction.VALUES) {
             sections.put(face, new Section(face));
         }
     }
 
-    public PipeFlowPower(IPipe pipe, NBTTagCompound nbt) {
+    public PipeFlowPower(IPipe pipe, CompoundTag nbt) {
         super(pipe, nbt);
         isReceiver = nbt.getBoolean("isReceiver");
-        sections = new EnumMap<>(EnumFacing.class);
-        for (EnumFacing face : EnumFacing.VALUES) {
+        sections = new EnumMap<>(Direction.class);
+        for (Direction face : Direction.VALUES) {
             sections.put(face, new Section(face));
         }
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setBoolean("isReceiver", isReceiver);
+    public CompoundTag writeToNbt() {
+        CompoundTag nbt = super.writeToNbt();
+        nbt.putBoolean("isReceiver", isReceiver);
         return nbt;
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, FriendlyByteBuf buffer, Dist side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     Section s = sections.get(face);
                     buffer.writeInt(s.displayPower);
-                    buffer.writeEnumValue(s.displayFlow);
+                    buffer.writeEnum(s.displayFlow);
                 }
             }
         }
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+    public void readPayload(int id, FriendlyByteBuf buffer, NetworkDirection side) throws IOException {
         super.readPayload(id, buffer, side);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_POWER_AMOUNTS || id == NET_ID_FULL_STATE) {
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.VALUES) {
                     Section s = sections.get(face);
                     s.displayPower = buffer.readInt();
-                    s.displayFlow = buffer.readEnumValue(EnumFlow.class);
+                    s.displayFlow = buffer.readEnum(EnumFlow.class);
                 }
             }
         }
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeFlow other) {
+    public boolean canConnect(Direction face, PipeFlow other) {
         return other instanceof PipeFlowPower;
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, TileEntity oTile) {
+    public boolean canConnect(Direction face, BlockEntity oTile) {
         if (isReceiver) {
-            IMjPassiveProvider provider = oTile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, face.getOpposite());
+            IMjPassiveProvider provider = oTile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, face.getOpposite()).orElse(null);
             if (provider != null) {
                 return true;
             }
         }
-        IMjConnector receiver = oTile.getCapability(MjAPI.CAP_CONNECTOR, face.getOpposite());
+        IMjConnector receiver = oTile.getCapability(MjAPI.CAP_CONNECTOR, face.getOpposite()).orElse(null);
         return receiver != null && receiver.canConnect(sections.get(face));
     }
 
@@ -167,15 +161,15 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     }
 
     @Override
-    public long tryExtractPower(long maxExtracted, EnumFacing from) {
+    public long tryExtractPower(long maxExtracted, Direction from) {
         if (!isReceiver) {
             return 0;
         }
-        TileEntity tile = pipe.getConnectedTile(from);
+        BlockEntity tile = pipe.getConnectedTile(from);
         if (tile == null) {
             return 0;
         }
-        IMjPassiveProvider receiver = tile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite());
+        IMjPassiveProvider receiver = tile.getCapability(MjAPI.CAP_PASSIVE_PROVIDER, from.getOpposite()).orElse(null);
         if (receiver == null) {
             return 0;
         }
@@ -185,45 +179,51 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     }
 
     @Override
-    public boolean onFlowActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ,
-        EnumPipePart part) {
+    public boolean onFlowActivate(Player player, HitResult trace, float hitX, float hitY, float hitZ,
+            EnumPipePart part) {
         return super.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
     }
 
-    public Section getSection(EnumFacing side) {
+    public Section getSection(Direction side) {
         return sections.get(side);
     }
 
+    @Nonnull
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (facing == null) {
-            return null;
+            return LazyOptional.empty();
         } else if (capability == MjAPI.CAP_RECEIVER) {
-            return isReceiver ? MjAPI.CAP_RECEIVER.cast(sections.get(facing)) : null;
+//            return isReceiver ? MjAPI.CAP_RECEIVER.cast(sections.get(facing)) : null;
+            return isReceiver ? LazyOptional.of(() -> sections.get(facing)).cast() : LazyOptional.empty();
         } else if (capability == MjAPI.CAP_CONNECTOR) {
-            return MjAPI.CAP_CONNECTOR.cast(sections.get(facing));
+//            return MjAPI.CAP_CONNECTOR.cast(sections.get(facing));
+            return LazyOptional.of(() -> sections.get(facing)).cast();
         } else {
-            return null;
+            return LazyOptional.empty();
         }
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("maxPower = " + LocaleUtil.localizeMj(maxPower));
-        left.add("isReceiver = " + isReceiver);
-        left.add(
-            "internalPower = " + arrayToString(s -> s.internalPower) + " <- " + arrayToString(s -> s.internalNextPower)
-        );
-        left.add("- powerQuery: " + arrayToString(s -> s.powerQuery) + " <- " + arrayToString(s -> s.nextPowerQuery));
-        left.add(
-            "- power: IN " + arrayToString(s -> s.debugPowerInput) + ", OUT " + arrayToString(s -> s.debugPowerOutput)
-        );
-        left.add("- power: OFFERED " + arrayToString(s -> s.debugPowerOffered));
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<Component> left, List<Component> right, Direction side) {
+//        left.add("maxPower = " + LocaleUtil.localizeMj(maxPower));
+//        left.add("isReceiver = " + isReceiver);
+//        left.add("internalPower = " + arrayToString(s -> s.internalPower) + " <- " + arrayToString(s -> s.internalNextPower));
+//        left.add("- powerQuery: " + arrayToString(s -> s.powerQuery) + " <- " + arrayToString(s -> s.nextPowerQuery));
+//        left.add("- power: IN " + arrayToString(s -> s.debugPowerInput) + ", OUT " + arrayToString(s -> s.debugPowerOutput));
+//        left.add("- power: OFFERED " + arrayToString(s -> s.debugPowerOffered));
+        left.add(Component.literal("maxPower = ").append(LocaleUtil.localizeMjComponent(maxPower)));
+        left.add(Component.literal("isReceiver = " + isReceiver));
+        left.add(Component.literal("internalPower = " + arrayToString(s -> s.internalPower) + " <- " + arrayToString(s -> s.internalNextPower)));
+        left.add(Component.literal("- powerQuery: " + arrayToString(s -> s.powerQuery) + " <- " + arrayToString(s -> s.nextPowerQuery)));
+        left.add(Component.literal("- power: IN " + arrayToString(s -> s.debugPowerInput) + ", OUT " + arrayToString(s -> s.debugPowerOutput)));
+        left.add(Component.literal("- power: OFFERED " + arrayToString(s -> s.debugPowerOffered)));
     }
 
     private String arrayToString(ToLongFunction<Section> getter) {
         long[] arr = new long[6];
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             arr[face.ordinal()] = getter.applyAsLong(sections.get(face)) / MjAPI.MJ;
         }
         return Arrays.toString(arr);
@@ -234,12 +234,13 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         if (maxPower == -1) {
             reconfigure();
         }
-        if (pipe.getHolder().getPipeWorld().isRemote) {
+        if (pipe.getHolder().getPipeWorld().isClientSide) {
             clientDisplayFlowCentreLast = clientDisplayFlowCentre;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 Section s = sections.get(face);
                 s.clientDisplayFlowLast = s.clientDisplayFlow;
-                double diff = s.displayFlow.value * 2.4 * face.getAxisDirection().getOffset();
+//                double diff = s.displayFlow.value * 2.4 * face.getAxisDirection().getOffset();
+                double diff = s.displayFlow.value * 2.4 * face.getAxisDirection().getStep();
                 s.clientDisplayFlow += 16 + diff;
                 s.clientDisplayFlow %= 16;
 
@@ -254,7 +255,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         EnumFlow[] lastFlows = new EnumFlow[6];
         int[] lastDisplayPower = new int[6];
 
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             Section s = sections.get(face);
             int i = face.ordinal();
             lastFlows[i] = s.displayFlow;
@@ -265,11 +266,11 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         init();
 
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             Section s = sections.get(face);
             if (s.internalPower > 0) {
                 long totalPowerQuery = 0;
-                for (EnumFacing face2 : EnumFacing.VALUES) {
+                for (Direction face2 : Direction.VALUES) {
                     if (face != face2) {
                         totalPowerQuery += sections.get(face2).powerQuery;
                     }
@@ -277,29 +278,29 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
                 if (totalPowerQuery > 0) {
                     long unusedPowerQuery = totalPowerQuery;
-                    for (EnumFacing face2 : EnumFacing.VALUES) {
+                    for (Direction face2 : Direction.VALUES) {
                         if (face == face2) {
                             continue;
                         }
                         Section s2 = sections.get(face2);
                         if (s2.powerQuery > 0) {
                             long watts = Math.min(
-                                BigInteger.valueOf(s.internalPower).multiply(BigInteger.valueOf(s2.powerQuery)).divide(
-                                    BigInteger.valueOf(unusedPowerQuery)
-                                ).longValue(), s.internalPower
+                                    BigInteger.valueOf(s.internalPower).multiply(BigInteger.valueOf(s2.powerQuery)).divide(
+                                            BigInteger.valueOf(unusedPowerQuery)
+                                    ).longValue(), s.internalPower
                             );
                             unusedPowerQuery -= s2.powerQuery;
                             IPipe neighbour = pipe.getConnectedPipe(face2);
                             long leftover = watts;
                             if (
-                                neighbour != null && neighbour.getFlow() instanceof PipeFlowPower && neighbour
-                                    .isConnected(face2.getOpposite())
+                                    neighbour != null && neighbour.getFlow() instanceof PipeFlowPower && neighbour
+                                            .isConnected(face2.getOpposite())
                             ) {
                                 PipeFlowPower oFlow = (PipeFlowPower) neighbour.getFlow();
                                 leftover = oFlow.sections.get(face2.getOpposite()).receivePowerInternal(watts);
                             } else {
                                 IMjReceiver receiver = pipe.getHolder().getCapabilityFromPipe(
-                                    face2, MjAPI.CAP_RECEIVER
+                                        face2, MjAPI.CAP_RECEIVER
                                 );
                                 if (receiver != null && receiver.canReceive()) {
                                     leftover = receiver.receivePower(watts, false);
@@ -328,7 +329,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
 
         // Compute the tiles requesting power that are not power pipes
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (pipe.getConnectedType(face) != ConnectedType.TILE) {
                 continue;
             }
@@ -343,12 +344,12 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         // Sum the amount of power requested on each side
         long[] transferQueryTemp = new long[6];
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (!pipe.isConnected(face)) {
                 continue;
             }
             long query = 0;
-            for (EnumFacing face2 : EnumFacing.VALUES) {
+            for (Direction face2 : Direction.VALUES) {
                 if (face != face2) {
                     query += sections.get(face2).powerQuery;
                 }
@@ -357,7 +358,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
 
         // Transfer requested power to neighbouring pipes
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (transferQueryTemp[face.ordinal()] <= 0 || !pipe.isConnected(face)) {
                 continue;
             }
@@ -370,7 +371,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         }
         // Networking
         boolean didChange = false;
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             Section s = sections.get(face);
             int i = face.ordinal();
             if (lastFlows[i] != s.displayFlow || lastDisplayPower[i] != s.displayPower) {
@@ -389,7 +390,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     }
 
     private void step() {
-        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+//        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        long now = pipe.getHolder().getPipeWorld().getGameTime();
         if (currentWorldTime != now) {
             currentWorldTime = now;
             sections.values().forEach(Section::step);
@@ -400,7 +402,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         // TODO: use this for initialising the tile cache
     }
 
-    private void requestPower(EnumFacing from, long amount) {
+    private void requestPower(Direction from, long amount) {
         step();
 
         Section s = sections.get(from);
@@ -412,9 +414,9 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         // s.nextPowerQuery = Math.min(s.nextPowerQuery, maxPower);
     }
 
-    public long getPowerRequested(@Nullable EnumFacing side) {
+    public long getPowerRequested(@Nullable Direction side) {
         long req = 0;
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (side == null || face != side) {
                 req += sections.get(face).powerQuery;
             }
@@ -434,7 +436,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
     }
 
     public class Section implements IMjReceiver {
-        public final EnumFacing side;
+        public final Direction side;
 
         public final AverageInt clientDisplayAverage = new AverageInt(10);
         public double clientDisplayFlow, clientDisplayFlowLast;
@@ -452,7 +454,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
         /** Debugging fields */
         long debugPowerInput, debugPowerOutput, debugPowerOffered;
 
-        public Section(EnumFacing side) {
+        public Section(Direction side) {
             this.side = side;
         }
 

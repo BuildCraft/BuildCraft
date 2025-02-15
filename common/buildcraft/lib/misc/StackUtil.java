@@ -6,31 +6,26 @@
 
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.items.IList;
 import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.StackDefinition;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {
@@ -40,43 +35,47 @@ public class StackUtil {
     // Actually the entire MC
     @Nonnull
     public static final ItemStack EMPTY;
+    @Nonnull
+    public static final FluidStack EMPTY_FLUID;
 
-    /**
-     * Registry of additional rules for {@link #isMatchingItem}.
-     */
+    /** Registry of additional rules for {@link #isMatchingItem}. */
     private static final Map<Item, List<StackMatchingPredicate>> matchingPredicates = new HashMap<>();
 
     static {
         ItemStack stack = ItemStack.EMPTY;
-        if (stack == null) throw new NullPointerException("Empty ItemStack was null!");
+        FluidStack stackF = FluidStack.EMPTY;
+        if (stack == null || stackF == null) throw new NullPointerException("Empty ItemStack was null!");
         EMPTY = stack;
+        EMPTY_FLUID = stackF;
     }
 
     /** Checks to see if the two input stacks are equal in all but stack size. Note that this doesn't check anything
      * todo with stack size, so if you pass in two stacks of 64 cobblestone this will return true. If you pass in null
      * (at all) then this will only return true if both are null. */
     public static boolean canMerge(@Nonnull ItemStack a, @Nonnull ItemStack b) {
-        // Checks item, damage
-        if (!ItemStack.areItemsEqual(a, b)) {
-            return false;
-        }
-        // checks tags and caps
-        return ItemStack.areItemStackTagsEqual(a, b);
+//        // Checks item, damage
+//        if (!ItemStack.areItemsEqual(a, b)) {
+//            return false;
+//        }
+//        // checks tags and caps
+//        return ItemStack.areItemStackTagsEqual(a, b);
+        return StackUtil.isSameItemSameDamageSameTag(a, b);
     }
 
     /** Attempts to get an item stack that might place down the given blockstate. Obviously this isn't perfect, and so
      * cannot be relied on for anything more than simple blocks. */
     @Nonnull
-    public static ItemStack getItemStackForState(IBlockState state) {
+    public static ItemStack getItemStackForState(BlockState state) {
         Block b = state.getBlock();
-        ItemStack stack = new ItemStack(b);
-        if (stack.isEmpty()) {
-            return StackUtil.EMPTY;
-        }
-        if (stack.getHasSubtypes()) {
-            stack = new ItemStack(stack.getItem(), 1, b.getMetaFromState(state));
-        }
-        return stack;
+//        ItemStack stack = new ItemStack(b);
+//        if (stack.isEmpty()) {
+//            return StackUtil.EMPTY;
+//        }
+//        if (stack.getHasSubtypes()) {
+//            stack = new ItemStack(stack.getItem(), 1, b.getMetaFromState(state));
+//        }
+//        return stack;
+        return b.getCloneItemStack(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, state);
     }
 
     /** Checks to see if the given required stack is contained fully in the given container stack. */
@@ -113,7 +112,8 @@ public class StackUtil {
 
     /** Checks that passed stack meets stack definition requirements */
     public static boolean contains(@Nonnull IngredientStack ingredientStack, @Nonnull ItemStack stack) {
-        return !stack.isEmpty() && ingredientStack.ingredient.apply(stack) && stack.getCount() >= ingredientStack.count;
+//        return !stack.isEmpty() && ingredientStack.ingredient.apply(stack) && stack.getCount() >= ingredientStack.count;
+        return !stack.isEmpty() && ingredientStack.ingredient.test(stack) && stack.getCount() >= ingredientStack.count;
     }
 
     /** Checks that passed stack definition acceptable for stack collection */
@@ -137,24 +137,25 @@ public class StackUtil {
         return true;
     }
 
-    public static NBTTagCompound stripNonFunctionNbt(@Nonnull ItemStack from) {
-        NBTTagCompound nbt = NBTUtilBC.getItemData(from).copy();
-        if (nbt.getSize() == 0) {
+    public static CompoundTag stripNonFunctionNbt(@Nonnull ItemStack from) {
+        CompoundTag nbt = NBTUtilBC.getItemData(from).copy();
+        if (nbt.size() == 0) {
             return nbt;
         }
-        nbt.removeTag("_data");
+        nbt.remove("_data");
         // TODO: Remove all of the non functional stuff (name, desc, etc)
         return nbt;
     }
 
     public static boolean doesStackNbtMatch(@Nonnull ItemStack target, @Nonnull ItemStack with) {
-        NBTTagCompound nbtTarget = stripNonFunctionNbt(target);
-        NBTTagCompound nbtWith = stripNonFunctionNbt(with);
+        CompoundTag nbtTarget = stripNonFunctionNbt(target);
+        CompoundTag nbtWith = stripNonFunctionNbt(with);
         return nbtTarget.equals(nbtWith);
     }
 
     public static boolean doesEitherStackMatch(@Nonnull ItemStack stackA, @Nonnull ItemStack stackB) {
-        return OreDictionary.itemMatches(stackA, stackB, false) || OreDictionary.itemMatches(stackB, stackA, false);
+//        return OreDictionary.itemMatches(stackA, stackB, false) || OreDictionary.itemMatches(stackB, stackA, false);
+        return isMatchingItem(stackA, stackB, false, false);
     }
 
     public static boolean canStacksOrListsMerge(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
@@ -170,11 +171,12 @@ public class StackUtil {
             return list.matches(stack2, stack1);
         }
 
-        return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+//        return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+        return StackUtil.isSameItemSameDamageSameTag(stack1, stack2);
     }
 
     /** This doesn't take into account stack sizes.
-     * 
+     *
      * @param filterOrList The exact itemstack to test, or an item that implements {@link IList} to test against.
      * @param test The stack to test for equality
      * @return True if they matched according to the above definitions, or false if theydidn't, or either was empty. */
@@ -210,26 +212,34 @@ public class StackUtil {
     }
 
     /* ITEM COMPARISONS */
+
+    // TODO Calen: Arrays.stream(oreIDs).anyMatch(comparison::is) may be better?
+
     /** Determines whether the given ItemStack should be considered equivalent for crafting purposes.
      *
      * @param base The stack to compare to.
      * @param comparison The stack to compare.
      * @param oreDictionary true to take the Forge OreDictionary into account.
      * @return true if comparison should be considered a crafting equivalent for base. */
-    public static boolean isCraftingEquivalent(@Nonnull ItemStack base, @Nonnull ItemStack comparison,
-        boolean oreDictionary) {
+    public static boolean isCraftingEquivalent(@Nonnull ItemStack base, @Nonnull ItemStack comparison, boolean oreDictionary) {
         if (isMatchingItem(base, comparison, true, false)) {
             return true;
         }
 
         if (oreDictionary) {
-            int[] idBase = OreDictionary.getOreIDs(base);
-            if (idBase.length > 0) {
-                for (int id : idBase) {
-                    for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
+//            int[] idBase = OreDictionary.getOreIDs(base);
+            List<TagKey<Item>> idBase = base.getTags().toList();
+//            if (idBase.length > 0)
+            if (!idBase.isEmpty()) {
+//                for (int id : idBase)
+                for (TagKey<Item> id : idBase) {
+//                    for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id)))
+                    for (ItemStack itemstack : ForgeRegistries.ITEMS.tags().getTag(id).stream().map(i -> new ItemStack(i, 1)).toList()) {
                         if (comparison.getItem() == itemstack.getItem()
-                            && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
-                                || comparison.getItemDamage() == itemstack.getItemDamage())) {
+//                                && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                                && (itemstack.getDamageValue() == Short.MAX_VALUE
+//                                || comparison.getItemDamage() == itemstack.getItemDamage()))
+                                || comparison.getDamageValue() == itemstack.getDamageValue())) {
                             return true;
                         }
                     }
@@ -240,13 +250,19 @@ public class StackUtil {
         return false;
     }
 
-    public static boolean isCraftingEquivalent(int[] oreIDs, ItemStack comparison) {
+    // public static boolean isCraftingEquivalent(int[] oreIDs, ItemStack comparison)
+    public static boolean isCraftingEquivalent(TagKey<Item>[] oreIDs, ItemStack comparison) {
+//        if (oreIDs.length > 0)
         if (oreIDs.length > 0) {
-            for (int id : oreIDs) {
-                for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
+//            for (int id : oreIDs)
+            for (TagKey<Item> id : oreIDs) {
+//                for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id)))
+                for (ItemStack itemstack : ForgeRegistries.ITEMS.tags().getTag(id).stream().map(i -> new ItemStack(i, 1)).toList()) {
                     if (comparison.getItem() == itemstack.getItem()
-                        && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
-                            || comparison.getItemDamage() == itemstack.getItemDamage())) {
+//                            && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                            && (itemstack.getDamageValue() == Short.MAX_VALUE
+//                            || comparison.getItemDamage() == itemstack.getItemDamage()))
+                            || comparison.getDamageValue() == itemstack.getDamageValue())) {
                         return true;
                     }
                 }
@@ -285,7 +301,7 @@ public class StackUtil {
     /** This variant also checks damage for damaged items. */
     public static boolean isEqualItem(final @Nonnull ItemStack base, final @Nonnull ItemStack comparison) {
         if (isMatchingItem(base, comparison, false, true)) {
-            return isWildcard(base) || isWildcard(comparison) || base.getItemDamage() == comparison.getItemDamage();
+            return isWildcard(base) || isWildcard(comparison) || base.getDamageValue() == comparison.getDamageValue();
         } else {
             return false;
         }
@@ -299,8 +315,7 @@ public class StackUtil {
      * @param matchDamage
      * @param matchNBT
      * @return true if matches */
-    public static boolean isMatchingItem(@Nonnull final ItemStack base, @Nonnull final ItemStack comparison,
-        final boolean matchDamage, final boolean matchNBT) {
+    public static boolean isMatchingItem(@Nonnull final ItemStack base, @Nonnull final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
         if (base.isEmpty() || comparison.isEmpty()) {
             return false;
         }
@@ -308,16 +323,16 @@ public class StackUtil {
         if (base.getItem() != comparison.getItem()) {
             return false;
         }
-        if (matchDamage && base.getHasSubtypes()) {
-            if (!isWildcard(base) && !isWildcard(comparison)) {
-                if (base.getItemDamage() != comparison.getItemDamage()) {
-                    return false;
-                }
-            }
-        }
+//        if (matchDamage && base.getHasSubtypes()) {
+//            if (!isWildcard(base) && !isWildcard(comparison)) {
+//                if (base.getItemDamage() != comparison.getItemDamage()) {
+//                    return false;
+//                }
+//            }
+//        }
         if (matchNBT) {
-            NBTTagCompound baseTag = base.getTagCompound();
-            if (baseTag != null && !baseTag.equals(comparison.getTagCompound())) {
+            CompoundTag baseTag = base.getTag();
+            if (baseTag != null && !baseTag.equals(comparison.getTag())) {
                 return false;
             }
         } else {
@@ -345,20 +360,21 @@ public class StackUtil {
 
     /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
      * the stack will be considered the same as this for recipe purposes.
-     * 
+     *
      * @param stack The stack to check
      * @return True if the stack is a wildcard, false if not. */
     public static boolean isWildcard(@Nonnull ItemStack stack) {
-        return isWildcard(stack.getItemDamage());
+        return isWildcard(stack.getDamageValue());
     }
 
     /** Checks to see if the given {@link ItemStack} is considered to be a wildcard stack - that is any damage value on
      * the stack will be considered the same as this for recipe purposes.
-     * 
+     *
      * @param damage The damage to check
      * @return True if the damage does specify a wildcard, false if not. */
     public static boolean isWildcard(int damage) {
-        return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
+//        return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
+        return damage == -1 || damage == Short.MAX_VALUE;
     }
 
     /** @return An empty, nonnull list that cannot be modified (as it cannot be expanded and it has a size of 0) */
@@ -367,7 +383,7 @@ public class StackUtil {
     }
 
     /** Creates a {@link NonNullList} of {@link ItemStack}'s with the elements given in the order that they are given.
-     * 
+     *
      * @param stacks The stacks to put into a list
      * @return A {@link NonNullList} of all the given items. Note that the returned list of of a specified size, and
      *         cannot be expanded. */
@@ -389,7 +405,7 @@ public class StackUtil {
     /** Takes a {@link Nullable} {@link Object} and checks to make sure that it is really {@link Nonnull}, like it is
      * everywhere else in the codebase. This is only required if some classes do not use the {@link Nonnull} annotation
      * on return values.
-     * 
+     *
      * @param obj The (potentially) null object.
      * @return A {@link Nonnull} object, which will be the input object
      * @throws NullPointerException if the input object was actually null (Although this should never happen, this is
@@ -427,8 +443,9 @@ public class StackUtil {
         if (stack.isEmpty()) {
             return 0;
         }
-        if (!stack.hasTagCompound()) {
-            return Objects.hash(stack.getItem(), stack.getMetadata());
+        if (!stack.hasTag()) {
+//            return Objects.hash(stack.getItem(), stack.getMetadata());
+            return Objects.hash(stack.getItem(), stack.getDamageValue());
         }
         return stack.serializeNBT().hashCode();
     }
@@ -448,5 +465,19 @@ public class StackUtil {
             }
         }
         return stacks;
+    }
+
+    // Calen
+    public static boolean isSameItemSameDamage(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
+        return !stack2.isEmpty() && stack1.getItem() == stack2.getItem() && stack1.getDamageValue() == stack2.getDamageValue();
+    }
+
+    public static boolean isSameItemSameDamageSameTag(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
+        // damage is a tag value
+        return ItemStack.isSameItemSameTags(stack1, stack2);
+    }
+
+    public static boolean isSameTag(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
+        return stack1.isEmpty() && stack2.isEmpty() ? true : Objects.equals(stack1.getTag(), stack2.getTag()) && stack1.areCapsCompatible(stack2);
     }
 }

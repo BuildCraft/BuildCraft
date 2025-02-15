@@ -1,0 +1,64 @@
+{
+  "parent": "buildcraftcore:guide",
+  "criteria": {
+    "combustion_engine": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:engine_iron"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "redstone_engine": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:engine_wood"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "strirling_engine": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:engine_stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftcore.engine.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftcore:engine_stone"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftcore.engine.title"
+    }
+  },
+  "requirements": [
+    [
+      "redstone_engine",
+      "strirling_engine",
+      "combustion_engine"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

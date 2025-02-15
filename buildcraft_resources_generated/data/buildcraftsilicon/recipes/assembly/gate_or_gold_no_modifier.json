@@ -1,0 +1,18 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:plug_gate_gold_or_no_modifier"
+  },
+  "requiredMicroJoules": 80000000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "type": "forge:nbt",
+        "count": 1,
+        "item": "buildcraftsilicon:chipset_gold"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

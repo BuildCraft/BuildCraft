@@ -6,24 +6,20 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.builders.BCBuildersSprites;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 public enum PatternParameterHollow implements IStatementParameter {
     FILLED_INNER(true, false),
@@ -38,7 +34,7 @@ public enum PatternParameterHollow implements IStatementParameter {
         this.outerFilled = outerFilled;
     }
 
-    public static PatternParameterHollow readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterHollow readFromNbt(CompoundTag nbt) {
         if (nbt.getBoolean("filled")) {
             if (nbt.getBoolean("outer")) {
                 return FILLED_OUTER;
@@ -50,10 +46,10 @@ public enum PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound compound) {
-        compound.setBoolean("filled", filled);
+    public void writeToNbt(CompoundTag compound) {
+        compound.putBoolean("filled", filled);
         if (filled) {
-            compound.setBoolean("outer", outerFilled);
+            compound.putBoolean("outer", outerFilled);
         }
     }
 
@@ -63,7 +59,7 @@ public enum PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         if (filled) {
             if (outerFilled) {
@@ -82,9 +78,16 @@ public enum PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
+    public Component getDescription() {
         String after = filled ? (outerFilled ? "filled_outer" : "filled") : "hollow";
-        return LocaleUtil.localize("fillerpattern.parameter." + after);
+//        return LocaleUtil.localize("fillerpattern.parameter." + after);
+        return Component.translatable("fillerpattern.parameter." + after);
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        String after = filled ? (outerFilled ? "filled_outer" : "filled") : "hollow";
+        return "fillerpattern.parameter." + after;
     }
 
     @Override

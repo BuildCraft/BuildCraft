@@ -6,19 +6,17 @@
 
 package buildcraft.silicon.gui;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileLaserTableBase;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 public class LedgerTablePower extends Ledger_Neptune {
     private static final int OVERLAY_COLOUR = 0xFF_D4_6C_1F;// 0xFF_FF_55_11;// TEMP!
@@ -44,8 +42,8 @@ public class LedgerTablePower extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(double x, double y) {
+    protected void drawIcon(GuiGraphics guiGraphics, double x, double y) {
         ISprite sprite = tile.avgPowerClient > 0 ? BCLibSprites.ENGINE_ACTIVE : BCLibSprites.ENGINE_INACTIVE;
-        GuiIcon.draw(sprite, x, y, x + 16, y + 16);
+        GuiIcon.draw(sprite, guiGraphics, x, y, x + 16, y + 16);
     }
 }

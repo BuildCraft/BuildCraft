@@ -6,11 +6,11 @@
 
 package buildcraft.lib.path.task;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import buildcraft.lib.misc.BlockUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 
 public enum EnumTraversalExpense {
     AIR((byte) 1),
@@ -24,20 +24,22 @@ public enum EnumTraversalExpense {
         this.expense = expense;
     }
 
-    public static EnumTraversalExpense getFor(World world, BlockPos pos) {
+    public static EnumTraversalExpense getFor(Level world, BlockPos pos) {
         return getFor(world, pos, world.getBlockState(pos));
     }
 
-    public static EnumTraversalExpense getFor(World world, BlockPos pos, IBlockState state) {
-        if (world.isAirBlock(pos)) {
+    public static EnumTraversalExpense getFor(Level world, BlockPos pos, BlockState state) {
+        if (world.isEmptyBlock(pos)) {
             return AIR;
         }
-        Material mat = state.getMaterial();
-        if (mat.isLiquid()) {
+//        Material mat = state.getMaterial();
+//        if (mat.isLiquid())
+        if (BlockUtil.isFluidBlock(state)) {
             return FLUID;
         }
-        Block block = state.getBlock();
-        if (block.isPassable(world, pos)) {
+//        Block block = state.getBlock();
+//        if (block.isPassable(world, pos))
+        if (state.isPathfindable(world, pos, PathComputationType.LAND)) {
             return AIR;
         }
         return SOLID;

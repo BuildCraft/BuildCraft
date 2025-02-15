@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftbuilders",
+  "key": {
+    "d": {
+      "tag": "forge:gears/diamond"
+    },
+    "g": {
+      "tag": "forge:gears/gold"
+    },
+    "i": {
+      "tag": "forge:gears/iron"
+    },
+    "p": {
+      "item": "minecraft:diamond_pickaxe"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "iri",
+    "gig",
+    "dpd"
+  ],
+  "result": {
+    "item": "buildcraftbuilders:quarry"
+  },
+  "show_notification": true
+}

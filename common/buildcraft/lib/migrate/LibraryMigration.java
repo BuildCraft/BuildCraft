@@ -6,11 +6,11 @@
 
 package buildcraft.lib.migrate;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 public class LibraryMigration {
-    public static NBTTagCompound getMigratedBlueprint(ItemStack stack) {
+    public static CompoundTag getMigratedBlueprint(ItemStack stack) {
         // TODO!
         return null;
     }

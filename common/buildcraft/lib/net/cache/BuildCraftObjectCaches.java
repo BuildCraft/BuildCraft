@@ -6,24 +6,20 @@
 
 package buildcraft.lib.net.cache;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.ItemStackKey;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.ItemStackKey;
 
 /** Stores default caches for {@link ItemStack} and {@link FluidStack}. Note that because {@link ItemStack} doesn't
  * override {@link #hashCode()} or {@link #equals(Object)} {@link ItemStackKey} is used as the key type instead, so you
@@ -36,7 +32,8 @@ public class BuildCraftObjectCaches {
     static final List<NetworkedObjectCache<?>> CACHES = new ArrayList<>();
 
     public static void registerCache(NetworkedObjectCache<?> cache) {
-        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
+//        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION))
+        if (ModLoadingContext.get().getActiveContainer().getCurrentState().ordinal() >= ModLoadingStage.COMPLETE.ordinal()) {
             throw new IllegalStateException("May only construct a cache BEFORE post-init!");
         }
         BuildCraftObjectCaches.CACHES.add(cache);
@@ -57,13 +54,13 @@ public class BuildCraftObjectCaches {
         return CACHE_ITEMS.client().retrieve(id);
     }
 
-    /** Called by BuildCraftLib in the {@link FMLPreInitializationEvent} */
+    /** Called by BuildCraftLib in the {@link FMLConstructModEvent} */
     public static void fmlPreInit() {
         registerCache(CACHE_ITEMS);
         registerCache(CACHE_FLUIDS);
     }
 
-    /** Called by BuildCraftLib in the {@link FMLPostInitializationEvent} */
+    /** Called by BuildCraftLib in the {@link FMLLoadCompleteEvent} */
     public static void fmlPostInit() {
         CACHES.sort(Comparator.comparing(a -> a.getClass().getSimpleName()));
         if (NetworkedObjectCache.DEBUG_LOG) {

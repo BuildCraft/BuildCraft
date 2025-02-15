@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_fluids_iron_colorless",
+    "buildcrafttransport:pipe_fluids_iron_green",
+    "buildcrafttransport:pipe_fluids_iron_brown",
+    "buildcrafttransport:pipe_fluids_iron_cyan",
+    "buildcrafttransport:pipe_fluids_iron_white",
+    "buildcrafttransport:pipe_fluids_iron_orange",
+    "buildcrafttransport:pipe_fluids_iron_gray",
+    "buildcrafttransport:pipe_fluids_iron_blue",
+    "buildcrafttransport:pipe_fluids_iron_black",
+    "buildcrafttransport:pipe_fluids_iron_red",
+    "buildcrafttransport:pipe_fluids_iron_yellow",
+    "buildcrafttransport:pipe_fluids_iron_magenta",
+    "buildcrafttransport:pipe_fluids_iron_purple",
+    "buildcrafttransport:pipe_fluids_iron_lime",
+    "buildcrafttransport:pipe_fluids_iron_pink",
+    "buildcrafttransport:pipe_fluids_iron_light_blue",
+    "buildcrafttransport:pipe_fluids_iron_light_gray"
+  ]
+}

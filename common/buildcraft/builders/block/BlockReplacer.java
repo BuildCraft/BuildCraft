@@ -6,40 +6,45 @@
 
 package buildcraft.builders.block;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import buildcraft.builders.tile.TileReplacer;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileReplacer;
+import javax.annotation.Nullable;
 
-public class BlockReplacer extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockReplacer(Material material, String id) {
-        super(material, id);
+public class BlockReplacer extends BlockBCTile_Neptune<TileReplacer> implements IBlockWithFacing {
+    public BlockReplacer(String idBC, BlockBehaviour.Properties properties) {
+        super(idBC, properties);
     }
 
     @Nullable
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        return new TileReplacer();
+//    public TileBC_Neptune createTileEntity(World world, IBlockState state)
+    public TileBC_Neptune newBlockEntity(BlockPos pos, BlockState state) {
+        return new TileReplacer(pos, state);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            BCBuildersGuis.REPLACER.openGUI(player, pos);
+//    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, Player player, InteractionHand hand,
+//                                    Direction side, float hitX, float hitY, float hitZ)
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!world.isClientSide) {
+//            BCBuildersGuis.REPLACER.openGUI(player, pos);
+            if (world.getBlockEntity(pos) instanceof TileReplacer tile) {
+                MessageUtil.serverOpenTileGui(player, tile);
+            }
         }
-        return true;
+//        return true;
+        return InteractionResult.SUCCESS;
     }
 }

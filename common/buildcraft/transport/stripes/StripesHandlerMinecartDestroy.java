@@ -6,50 +6,51 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityMinecartContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerBlock;
-
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.MinecartChest;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+
+import java.util.Collections;
+import java.util.List;
 
 public enum StripesHandlerMinecartDestroy implements IStripesHandlerBlock {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, EntityPlayer player, IStripesActivator activator) {
-        AxisAlignedBB box = new AxisAlignedBB(pos, pos.add(1, 1, 1));
-        List<EntityMinecart> minecarts = world.getEntitiesWithinAABB(EntityMinecart.class, box);
+    public boolean handle(Level world, BlockPos pos, Direction direction, Player player, IStripesActivator activator) {
+        AABB box = new AABB(pos, pos.offset(1, 1, 1));
+//        List<EntityMinecart> minecarts = world.getEntitiesWithinAABB(EntityMinecart.class, box);
+        List<AbstractMinecart> minecarts = world.getEntitiesOfClass(AbstractMinecart.class, box);
 
         if (minecarts.size() > 0) {
             Collections.shuffle(minecarts);
-            EntityMinecart cart = minecarts.get(0);
-            if (cart instanceof EntityMinecartContainer) {
+            AbstractMinecart cart = minecarts.get(0);
+            if (cart instanceof MinecartChest) {
                 // good job, Mojang. :<
-                EntityMinecartContainer container = (EntityMinecartContainer) cart;
-                for (int i = 0; i < container.getSizeInventory(); i++) {
-                    ItemStack s = container.getStackInSlot(i);
+//                EntityMinecartContainer container = (EntityMinecartContainer) cart;
+                MinecartChest container = (MinecartChest) cart;
+                for (int i = 0; i < container.getContainerSize(); i++) {
+                    ItemStack s = container.getItem(i);
                     if (!s.isEmpty()) {
-                        container.setInventorySlotContents(i, StackUtil.EMPTY);
+                        container.setItem(i, StackUtil.EMPTY);
                         // Safety check
-                        if (container.getStackInSlot(i).isEmpty()) {
+                        if (container.getItem(i).isEmpty()) {
                             activator.sendItem(s, direction);
                         }
                     }
                 }
             }
-            cart.setDead();
-            activator.sendItem(StackUtil.asNonNull(cart.getCartItem()), direction);
+            cart.kill();
+//            activator.sendItem(StackUtil.asNonNull(cart.getCartItem()), direction);
+            activator.sendItem(StackUtil.asNonNull(cart.getPickResult()), direction);
             return true;
         }
         return false;

@@ -6,11 +6,11 @@
 
 package buildcraft.lib.nbt;
 
+import buildcraft.api.core.InvalidInputDataException;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import buildcraft.api.core.InvalidInputDataException;
 
 public enum WrittenType {
     BYTE(1, (1 << 8) - 1),
@@ -54,7 +54,7 @@ public enum WrittenType {
     public void writeIndex(DataOutput out, int index) throws IOException {
         if (index > maxStorableValue) {
             throw new IllegalArgumentException("Tried to write a value that was too large! (" + index + " > "
-                + maxStorableValue + " for " + this + ")");
+                    + maxStorableValue + " for " + this + ")");
         }
         switch (this) {
             case BYTE: {

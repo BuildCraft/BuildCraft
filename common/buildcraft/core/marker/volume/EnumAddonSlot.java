@@ -6,68 +6,68 @@
 
 package buildcraft.core.marker.volume;
 
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import java.util.Optional;
 
 public enum EnumAddonSlot {
-    EAST_UP_SOUTH(EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.POSITIVE),
-    EAST_UP_NORTH(EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.NEGATIVE),
-    EAST_DOWN_SOUTH(EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.POSITIVE),
-    EAST_DOWN_NORTH(EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.NEGATIVE),
-    WEST_UP_SOUTH(EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.POSITIVE),
-    WEST_UP_NORTH(EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.POSITIVE, EnumFacing.AxisDirection.NEGATIVE),
-    WEST_DOWN_SOUTH(EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.POSITIVE),
-    WEST_DOWN_NORTH(EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.NEGATIVE, EnumFacing.AxisDirection.NEGATIVE);
+    EAST_UP_SOUTH(Direction.AxisDirection.POSITIVE, Direction.AxisDirection.POSITIVE, Direction.AxisDirection.POSITIVE),
+    EAST_UP_NORTH(Direction.AxisDirection.POSITIVE, Direction.AxisDirection.POSITIVE, Direction.AxisDirection.NEGATIVE),
+    EAST_DOWN_SOUTH(Direction.AxisDirection.POSITIVE, Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.POSITIVE),
+    EAST_DOWN_NORTH(Direction.AxisDirection.POSITIVE, Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE),
+    WEST_UP_SOUTH(Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.POSITIVE, Direction.AxisDirection.POSITIVE),
+    WEST_UP_NORTH(Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.POSITIVE, Direction.AxisDirection.NEGATIVE),
+    WEST_DOWN_SOUTH(Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.POSITIVE),
+    WEST_DOWN_NORTH(Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE, Direction.AxisDirection.NEGATIVE);
 
     public static final EnumAddonSlot[] VALUES = values();
 
-    public final Map<EnumFacing.Axis, EnumFacing.AxisDirection> directions = new EnumMap<>(EnumFacing.Axis.class);
+    public final Map<Direction.Axis, Direction.AxisDirection> directions = new EnumMap<>(Direction.Axis.class);
 
-    EnumAddonSlot(EnumFacing.AxisDirection x, EnumFacing.AxisDirection y, EnumFacing.AxisDirection z) {
-        directions.put(EnumFacing.Axis.X, x);
-        directions.put(EnumFacing.Axis.Y, y);
-        directions.put(EnumFacing.Axis.Z, z);
+    EnumAddonSlot(Direction.AxisDirection x, Direction.AxisDirection y, Direction.AxisDirection z) {
+        directions.put(Direction.Axis.X, x);
+        directions.put(Direction.Axis.Y, y);
+        directions.put(Direction.Axis.Z, z);
     }
 
-    public AxisAlignedBB getBoundingBox(VolumeBox volumeBox) {
-        AxisAlignedBB aabb = volumeBox.box.getBoundingBox();
-        Vec3d boxOffset = new Vec3d(
-            directions.get(EnumFacing.Axis.X) == EnumFacing.AxisDirection.POSITIVE ? aabb.maxX : aabb.minX,
-            directions.get(EnumFacing.Axis.Y) == EnumFacing.AxisDirection.POSITIVE ? aabb.maxY : aabb.minY,
-            directions.get(EnumFacing.Axis.Z) == EnumFacing.AxisDirection.POSITIVE ? aabb.maxZ : aabb.minZ
+    public AABB getBoundingBox(VolumeBox volumeBox) {
+        AABB aabb = volumeBox.box.getBoundingBox();
+        Vec3 boxOffset = new Vec3(
+                directions.get(Direction.Axis.X) == Direction.AxisDirection.POSITIVE ? aabb.maxX : aabb.minX,
+                directions.get(Direction.Axis.Y) == Direction.AxisDirection.POSITIVE ? aabb.maxY : aabb.minY,
+                directions.get(Direction.Axis.Z) == Direction.AxisDirection.POSITIVE ? aabb.maxZ : aabb.minZ
         );
-        return new AxisAlignedBB(
-            boxOffset.x,
-            boxOffset.y,
-            boxOffset.z,
-            boxOffset.x,
-            boxOffset.y,
-            boxOffset.z
-        ).grow(1 / 16D);
+        return new AABB(
+                boxOffset.x,
+                boxOffset.y,
+                boxOffset.z,
+                boxOffset.x,
+                boxOffset.y,
+                boxOffset.z
+        ).inflate(1 / 16D);
     }
 
-    public static Pair<VolumeBox, EnumAddonSlot> getSelectingVolumeBoxAndSlot(EntityPlayer player,
-                                                                              List<VolumeBox> volumeBoxes) {
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-        Vec3d end = start.add(player.getLookVec().scale(4));
+    public static Pair<VolumeBox, EnumAddonSlot> getSelectingVolumeBoxAndSlot(Player player, List<VolumeBox> volumeBoxes) {
+        Vec3 start = player.position().add(0, player.getEyeHeight(), 0);
+        Vec3 end = start.add(player.getLookAngle().scale(4));
         VolumeBox bestVolumeBox = null;
         EnumAddonSlot bestSlot = null;
         double bestDist = Double.MAX_VALUE;
 
         for (VolumeBox volumeBox : volumeBoxes) {
             for (EnumAddonSlot slot : values()) {
-                RayTraceResult ray = slot.getBoundingBox(volumeBox).calculateIntercept(start, end);
-                if (ray != null) {
-                    double dist = ray.hitVec.distanceTo(start);
+                Optional<Vec3> ray = slot.getBoundingBox(volumeBox).clip(start, end);
+//                if (ray != null)
+                if (ray.isPresent()) {
+//                    double dist = ray.hitVec.distanceTo(start);
+                    double dist = ray.get().distanceTo(start);
                     if (bestDist > dist) {
                         bestDist = dist;
                         bestVolumeBox = volumeBox;

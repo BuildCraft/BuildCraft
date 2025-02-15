@@ -6,15 +6,15 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.FormatString;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 /** Represents a single page, image or crafting recipe for displaying. Only exists on the client. */
 public abstract class GuidePart {
@@ -79,26 +79,30 @@ public abstract class GuidePart {
         return wasHovered;
     }
 
-    public void updateScreen() {}
+    public void updateScreen() {
+    }
 
     /** Renders a raw line at the position, lowering it appropriately */
-    protected void renderTextLine(String text, int x, int y, int colour) {
-        fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
-        GlStateManager.color(1, 1, 1);
+    protected void renderTextLine(GuiGraphics guiGraphics, String text, int x, int y, int colour) {
+        fontRenderer.drawString(guiGraphics, text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
     }
 
     /** @param current The current position to render from
      * @param index The current page index to render on
      * @return The new position for the next part to render from */
-    public abstract PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index);
+    public abstract PagePosition renderIntoArea(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index);
 
-    /** Like {@link #renderIntoArea(int, int, int, int, PagePosition, int)} but for a mouse click. */
-    public abstract PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY);
+    /** Like {@link #renderIntoArea(GuiGraphics, int, int, int, int, PagePosition, int)} but for a mouse click. */
+    public abstract PagePosition handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index,
+                                                  double mouseX, double mouseY);
 
-    public void handleMouseDragPartial(int startX, int startY, int currentX, int currentY, int button) {}
+    public void handleMouseDragPartial(int startX, int startY, int currentX, int currentY, int button) {
+    }
 
-    public void handleMouseDragFinish(int startX, int startY, int endX, int endY, int button) {}
+    public void handleMouseDragFinish(int startX, int startY, int endX, int endY, int button) {
+    }
 
     /** @param current The current location of the rendering. This will be different from start if this line needed to
      *            render over 2 (or more!) pages
@@ -108,8 +112,8 @@ public abstract class GuidePart {
      * @param width The width of rendering space available
      * @param height The height of rendering space available
      * @return The position for the next line to render at. Will automatically be the next page or line if necessary. */
-    protected PagePosition renderLine(PagePosition current, PageLine line, int x, int y, int width, int height,
-        int pageRenderIndex) {
+    protected PagePosition renderLine(GuiGraphics guiGraphics, PagePosition current, PageLine line, int x, int y, int width, int height,
+                                      int pageRenderIndex) {
         wasHovered = false;
         wasIconHovered = false;
         // Firstly break off the last chunk if the total length is greater than the width allows
@@ -118,12 +122,11 @@ public abstract class GuidePart {
             throw new IllegalStateException("Was indented too far");
         }
 
-        String toRender = line.text;
+        Component toRender = line.text;
         ISimpleDrawable icon = line.startIcon;
+        FormatString next = FormatString.split(line.text.getString());
 
-        FormatString next = FormatString.split(line.text);
-
-        int neededSpace = fontRenderer.getFontHeight(line.text);
+        int neededSpace = fontRenderer.getFontHeight(line.text.getString());
         if (icon != null) {
             neededSpace = Math.max(16, neededSpace);
         }
@@ -138,7 +141,7 @@ public abstract class GuidePart {
             if (rect.contains(gui.mouse) && line.startIconHovered != null) {
                 icon = line.startIconHovered;
             }
-            icon.drawAt(iconX, iconY);
+            icon.drawAt(guiGraphics, iconX, iconY);
         }
         didRender = false;
 
@@ -156,32 +159,32 @@ public abstract class GuidePart {
                 didRender = true;
                 if (wasHovered) {
                     if (line.link) {
-                        Gui.drawRect(_x - 2, _y - 2, _x + _w + 2, _y + 1 + neededSpace, 0xFFD3AD6C);
+                        guiGraphics.fill(_x - 2, _y - 2, _x + _w + 2, _y + 1 + neededSpace, 0xFFD3AD6C);
                     }
                     renderTooltip();
                 }
-                fontRenderer.drawString(text, _x, _y, 0);
+                fontRenderer.drawString(guiGraphics, text, _x, _y, 0);
             }
 
             next = strings.length == 1 ? null : strings[1];
             current = current.nextLine(fontRenderer.getFontHeight(text) + 3, height);
         }
 
-        int additional = LINE_HEIGHT - fontRenderer.getFontHeight(toRender) - 3;
+        int additional = LINE_HEIGHT - fontRenderer.getFontHeight(toRender.getString()) - 3;
         current = current.nextLine(additional, height);
         return current;
     }
 
-    protected PagePosition renderLines(Iterable<PageLine> lines, PagePosition part, int x, int y, int width, int height,
-        int index) {
+    protected PagePosition renderLines(GuiGraphics guiGraphics, Iterable<PageLine> lines, PagePosition part, int x, int y, int width, int height,
+                                       int index) {
         for (PageLine line : lines) {
-            part = renderLine(part, line, x, y, width, height, index);
+            part = renderLine(guiGraphics, part, line, x, y, width, height, index);
         }
         return part;
     }
 
-    protected PagePosition renderLines(Iterable<PageLine> lines, int x, int y, int width, int height, int index) {
-        return renderLines(lines, new PagePosition(0, 0), x, y, width, height, index);
+    protected PagePosition renderLines(GuiGraphics guiGraphics, Iterable<PageLine> lines, int x, int y, int width, int height, int index) {
+        return renderLines(guiGraphics, lines, new PagePosition(0, 0), x, y, width, height, index);
     }
 
     protected void renderTooltip() {

@@ -6,15 +6,12 @@
 
 package buildcraft.lib.inventory.filter;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-
-import buildcraft.api.core.IFluidFilter;
-
-import buildcraft.lib.misc.StackUtil;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {
@@ -33,8 +30,8 @@ public class ArrayFluidFilter implements IFluidFilter {
         fluids = new FluidStack[stacks.size()];
 
         for (int i = 0; i < stacks.size(); ++i) {
-            FluidStack stack = FluidUtil.getFluidContained(stacks.get(i));
-            if (stack != null) {
+            FluidStack stack = FluidUtil.getFluidContained(stacks.get(i)).orElse(StackUtil.EMPTY_FLUID);
+            if (!stack.isEmpty()) {
                 fluids[i] = stack;
             }
         }

@@ -6,10 +6,11 @@
 
 package buildcraft.core.marker.volume;
 
+
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.util.ResourceLocation;
 
 public enum AddonsRegistry {
     INSTANCE;

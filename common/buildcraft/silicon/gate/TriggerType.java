@@ -1,9 +1,5 @@
 package buildcraft.silicon.gate;
 
-import java.io.IOException;
-
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.InvalidInputDataException;
@@ -11,11 +7,13 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.ITrigger;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
-
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.StatementType;
 import buildcraft.lib.statement.TriggerWrapper;
 import buildcraft.lib.statement.TriggerWrapper.TriggerWrapperInternal;
+import net.minecraft.nbt.CompoundTag;
+
+import java.io.IOException;
 
 public class TriggerType extends StatementType<TriggerWrapper> {
     public static final TriggerType INSTANCE = new TriggerType();
@@ -34,7 +32,7 @@ public class TriggerType extends StatementType<TriggerWrapper> {
     }
 
     @Override
-    public TriggerWrapper readFromNbt(NBTTagCompound nbt) {
+    public TriggerWrapper readFromNbt(CompoundTag nbt) {
         if (nbt == null) {
             return null;
         }
@@ -52,13 +50,13 @@ public class TriggerType extends StatementType<TriggerWrapper> {
     }
 
     @Override
-    public NBTTagCompound writeToNbt(TriggerWrapper slot) {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundTag writeToNbt(TriggerWrapper slot) {
+        CompoundTag nbt = new CompoundTag();
         if (slot == null) {
             return nbt;
         }
-        nbt.setString("kind", slot.getUniqueTag());
-        nbt.setByte("side", (byte) slot.sourcePart.getIndex());
+        nbt.putString("kind", slot.getUniqueTag());
+        nbt.putByte("side", (byte) slot.sourcePart.getIndex());
         return nbt;
     }
 
@@ -66,7 +64,7 @@ public class TriggerType extends StatementType<TriggerWrapper> {
     public TriggerWrapper readFromBuffer(PacketBufferBC buffer) throws IOException {
         if (buffer.readBoolean()) {
             String name = buffer.readString();
-            EnumPipePart part = buffer.readEnumValue(EnumPipePart.class);
+            EnumPipePart part = buffer.readEnum(EnumPipePart.class);
             IStatement statement = StatementManager.statements.get(name);
             if (statement instanceof ITrigger) {
                 return TriggerWrapper.wrap(statement, part.face);
@@ -84,8 +82,8 @@ public class TriggerType extends StatementType<TriggerWrapper> {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);
-            buffer.writeString(slot.getUniqueTag());
-            buffer.writeEnumValue(slot.sourcePart);
+            buffer.writeUtf(slot.getUniqueTag());
+            buffer.writeEnum(slot.sourcePart);
         }
     }
 }

@@ -6,25 +6,26 @@
 
 package buildcraft.silicon.plug;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.silicon.BCSiliconItems;
 import buildcraft.silicon.BCSiliconStatements;
 import buildcraft.silicon.client.model.key.KeyPlugLightSensor;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PluggableLightSensor extends PipePluggable {
 
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+    private static final VoxelShape[] BOXES = new VoxelShape[6];
 
     static {
         double ll = 2 / 16.0;
@@ -35,22 +36,22 @@ public class PluggableLightSensor extends PipePluggable {
         double min = 5 / 16.0;
         double max = 11 / 16.0;
 
-        BOXES[EnumFacing.DOWN.ordinal()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.ordinal()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.ordinal()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.ordinal()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.ordinal()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+        BOXES[Direction.DOWN.ordinal()] = Shapes.box(min, ll, min, max, lu, max);
+        BOXES[Direction.UP.ordinal()] = Shapes.box(min, ul, min, max, uu, max);
+        BOXES[Direction.NORTH.ordinal()] = Shapes.box(min, min, ll, max, max, lu);
+        BOXES[Direction.SOUTH.ordinal()] = Shapes.box(min, min, ul, max, max, uu);
+        BOXES[Direction.WEST.ordinal()] = Shapes.box(ll, min, min, lu, max, max);
+        BOXES[Direction.EAST.ordinal()] = Shapes.box(ul, min, min, uu, max, max);
     }
 
-    public PluggableLightSensor(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
+    public PluggableLightSensor(PluggableDefinition definition, IPipeHolder holder, Direction side) {
         super(definition, holder, side);
     }
 
     // PipePluggable
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
+    public VoxelShape getBoundingBox() {
         return BOXES[side.ordinal()];
     }
 
@@ -61,12 +62,13 @@ public class PluggableLightSensor extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCSiliconItems.plugLightSensor);
+        return new ItemStack(BCSiliconItems.plugLightSensor.get());
     }
 
     @Override
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugLightSensor(side);
+    @OnlyIn(Dist.CLIENT)
+    public PluggableModelKey getModelRenderKey(RenderType layer) {
+        if (layer == RenderType.cutout()) return new KeyPlugLightSensor(side);
         return null;
     }
 

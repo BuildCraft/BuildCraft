@@ -6,13 +6,6 @@
 
 package buildcraft.lib.gui.help;
 
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementContainerHelp;
@@ -20,6 +13,12 @@ import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.List;
 
 /** Defines some information used when displaying help text about a specific {@link IGuiElement}. If you want to display
  * help at a particular position, but the target is not an {@link IGuiElement} then you should use
@@ -35,25 +34,25 @@ public class ElementHelpInfo {
         this.localeKeys = localeKeys;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public final HelpPosition target(IGuiArea target) {
         return new HelpPosition(this, target);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void addGuiElements(GuiElementContainerHelp container) {
         BuildCraftGui gui = container.gui;
         int y = 20;
         for (String key : localeKeys) {
             if (key == null) {
-                y += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 5;
+                y += Minecraft.getInstance().font.lineHeight + 5;
                 continue;
             }
             String localized = LocaleUtil.localize(key);
-            List<String> lines = StringUtilBC.splitIntoLines(localized);
+            List<Component> lines = StringUtilBC.splitIntoLines(localized);
 
-            for (String line : lines) {
-                GuiElementText elemText = new GuiElementText(gui, container.offset(0, y), line, 0);
+            for (Component line : lines) {
+                GuiElementText elemText = new GuiElementText(gui, container.offset(0, y), line.getString(), 0);
                 container.add(elemText);
                 y += elemText.getHeight() + 5;
             }
@@ -61,7 +60,7 @@ public class ElementHelpInfo {
     }
 
     /** Stores an {@link ElementHelpInfo} information, as well as the target area which the help element relates to. */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static final class HelpPosition {
         public final ElementHelpInfo info;
         public final IGuiArea target;

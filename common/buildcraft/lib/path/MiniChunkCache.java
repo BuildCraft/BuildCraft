@@ -6,6 +6,14 @@
 
 package buildcraft.lib.path;
 
+import buildcraft.lib.misc.WorkerThreadUtil;
+import buildcraft.lib.path.task.TaskMiniChunkManager;
+import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Futures;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -14,43 +22,39 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.Futures;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import buildcraft.lib.misc.WorkerThreadUtil;
-import buildcraft.lib.path.task.TaskMiniChunkManager;
-
 public class MiniChunkCache {
-    private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();
+    // private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();
+    private static Map<ResourceKey<Level>, MiniChunkCache> worldCaches = new HashMap<>();
 
-    public final int dimId;
+    // public final int dimId;
+    public final ResourceKey<Level> dimId;
     private final Map<BlockPos, MiniChunkGraph> cache = new ConcurrentHashMap<>();
     final Map<BlockPos, Future<MiniChunkGraph>> tempData = new ConcurrentHashMap<>();
 
-    private MiniChunkCache(int dimId) {
+    // private MiniChunkCache(int dimId)
+    private MiniChunkCache(ResourceKey<Level> dimId) {
         this.dimId = dimId;
     }
 
-    public static Future<MiniChunkGraph> requestGraph(World world, BlockPos pos) {
-        int dimId = world.provider.getDimension();
+    public static Future<MiniChunkGraph> requestGraph(Level world, BlockPos pos) {
+//        int dimId = world.provider.getDimension();
+        ResourceKey<Level> dimId = world.dimension();
         if (!worldCaches.containsKey(dimId)) {
             worldCaches.put(dimId, new MiniChunkCache(dimId));
         }
         return worldCaches.get(dimId).requestGraphImpl(world, pos);
     }
 
-    public static MiniChunkGraph getGraphIfExists(World world, BlockPos pos) {
-        int dimId = world.provider.getDimension();
+    public static MiniChunkGraph getGraphIfExists(Level world, BlockPos pos) {
+//        int dimId = world.provider.getDimension();
+        ResourceKey<Level> dimId = world.dimension();
         if (!worldCaches.containsKey(dimId)) {
             worldCaches.put(dimId, new MiniChunkCache(dimId));
         }
         return worldCaches.get(dimId).getGraphIfExistsImpl(pos);
     }
 
-    public static MiniChunkGraph requestAndWait(World world, BlockPos pos) {
+    public static MiniChunkGraph requestAndWait(Level world, BlockPos pos) {
         try {
             return requestGraph(world, pos).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -62,14 +66,17 @@ public class MiniChunkCache {
         cache.put(min, graph);
     }
 
-    private Future<MiniChunkGraph> requestGraphImpl(World world, BlockPos pos) {
+    private Future<MiniChunkGraph> requestGraphImpl(Level world, BlockPos pos) {
         final BlockPos minPos = convertToMin(pos);
         pos = minPos;
         MiniChunkGraph existing = cache.get(pos);
         if (existing != null) {
-            return Futures.immediateCheckedFuture(existing);
+//            return Futures.immediateCheckedFuture(existing);
+            return Futures.immediateFuture(existing);
         }
-        if (!world.isBlockLoaded(pos)) return Futures.immediateFailedFuture(new Throwable("The block " + pos + " is not loaded!"));
+//        if (!world.isBlockLoaded(pos))
+        if (!world.isLoaded(pos))
+            return Futures.immediateFailedFuture(new Throwable("The block " + pos + " is not loaded!"));
         synchronized (this) {
             if (tempData.containsKey(pos)) {
                 return tempData.get(pos);

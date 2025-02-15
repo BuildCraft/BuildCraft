@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_emzuli_colorless",
+    "buildcrafttransport:pipe_items_emzuli_green",
+    "buildcrafttransport:pipe_items_emzuli_brown",
+    "buildcrafttransport:pipe_items_emzuli_cyan",
+    "buildcrafttransport:pipe_items_emzuli_white",
+    "buildcrafttransport:pipe_items_emzuli_orange",
+    "buildcrafttransport:pipe_items_emzuli_gray",
+    "buildcrafttransport:pipe_items_emzuli_blue",
+    "buildcrafttransport:pipe_items_emzuli_black",
+    "buildcrafttransport:pipe_items_emzuli_red",
+    "buildcrafttransport:pipe_items_emzuli_yellow",
+    "buildcrafttransport:pipe_items_emzuli_magenta",
+    "buildcrafttransport:pipe_items_emzuli_purple",
+    "buildcrafttransport:pipe_items_emzuli_lime",
+    "buildcrafttransport:pipe_items_emzuli_pink",
+    "buildcrafttransport:pipe_items_emzuli_light_blue",
+    "buildcrafttransport:pipe_items_emzuli_light_gray"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent": "buildcrafttransport:pipe_dream",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcrafttransport.plugging_the_gap.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "buildcrafttransport:plug_blocker"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcrafttransport.plugging_the_gap.title"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

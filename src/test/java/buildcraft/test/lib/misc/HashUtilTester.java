@@ -1,17 +1,14 @@
 package buildcraft.test.lib.misc;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-
+import buildcraft.api.data.NbtSquishConstants;
+import buildcraft.lib.misc.HashUtil;
+import buildcraft.lib.nbt.NbtSquisher;
+import buildcraft.test.lib.nbt.NbtSquisherTester;
 import org.junit.Assert;
 import org.junit.Test;
 
-import buildcraft.api.data.NbtSquishConstants;
-
-import buildcraft.lib.misc.HashUtil;
-import buildcraft.lib.nbt.NbtSquisher;
-
-import buildcraft.test.lib.nbt.NbtSquisherTester;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 public class HashUtilTester {
     private static final byte[] HASH = { 0, 1, 5, 9, (byte) 0xff, (byte) 0xbc };

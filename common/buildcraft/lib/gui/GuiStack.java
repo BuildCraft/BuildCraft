@@ -6,10 +6,9 @@
 
 package buildcraft.lib.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
+import buildcraft.lib.misc.RenderUtil;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.ItemStack;
 
 public class GuiStack implements ISimpleDrawable {
     private final ItemStack stack;
@@ -19,11 +18,16 @@ public class GuiStack implements ISimpleDrawable {
     }
 
     @Override
-    public void drawAt(double x, double y) {
-        GlStateManager.color(1, 1, 1);
-        RenderHelper.enableGUIStandardItemLighting();
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, (int) x, (int) y);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.color(1, 1, 1);
+    public void drawAt(GuiGraphics guiGraphics, double x, double y) {
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
+//        RenderHelper.enableGUIStandardItemLighting();
+        RenderUtil.enableGUIStandardItemLighting();
+//        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, (int) x, (int) y);
+        guiGraphics.renderFakeItem(stack, (int) x, (int) y);
+//        RenderHelper.disableStandardItemLighting();
+        RenderUtil.disableStandardItemLighting();
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
     }
 }

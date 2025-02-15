@@ -6,21 +6,24 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.marker.MarkerSubCache;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public enum MarkerRenderer implements IDetachedRenderer {
     INSTANCE;
 
     @Override
-    public void render(EntityPlayer player, float partialTicks) {
+    public void render(Player player, float partialTicks, PoseStack poseStack) {
         for (MarkerCache<? extends MarkerSubCache<?>> cache : MarkerCache.CACHES) {
-            for (MarkerConnection<?> connection : cache.getSubCache(player.world).getConnections()) {
-                connection.renderInWorld();
+            for (MarkerConnection<?> connection : cache.getSubCache(player.level()).getConnections()) {
+                connection.renderInWorld(poseStack);
             }
         }
     }

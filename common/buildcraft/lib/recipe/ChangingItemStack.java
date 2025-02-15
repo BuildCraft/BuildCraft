@@ -6,26 +6,32 @@
 
 package buildcraft.lib.recipe;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.lib.misc.ItemStackKey;
+import buildcraft.lib.misc.ItemUtil;
 import buildcraft.lib.misc.StackUtil;
+import com.google.common.collect.Lists;
+import net.minecraft.core.NonNullList;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 
 /** Defines an {@link ItemStack} that changes between a specified list of stacks. Useful for displaying possible inputs
  * or outputs for recipes that use the oredictionary, or recipes that vary the output depending on the metadata of the
  * input (for example a pipe colouring recipe) */
 public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
     /** Creates a stack list that iterates through all of the given stacks. This does NOT check possible variants.
-     * 
+     *
      * @param stacks The list to iterate through. */
-    public ChangingItemStack(NonNullList<ItemStack> stacks) {
+//    public ChangingItemStack(NonNullList<ItemStack> stacks)
+    // Calen: ? is ItemStack or Ingredient
+    public ChangingItemStack(NonNullList<?> stacks) {
         super(makeListArray(stacks));
     }
 
@@ -37,21 +43,37 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
         super(makeStackArray(stack));
     }
 
-    public ChangingItemStack(String oreId) {
-        this(OreDictionary.getOres(oreId));
+    // public ChangingItemStack(String oreId)
+    public ChangingItemStack(TagKey<Item> oreId) {
+//        this(OreDictionary.getOres(oreId));
+        this(NonNullList.of(ForgeRegistries.ITEMS.tags().getTag(oreId).stream().map(ItemStack::new).toArray(ItemStack[]::new)));
     }
 
-    private static ItemStackKey[] makeListArray(NonNullList<ItemStack> stacks) {
-        return makeStackArray(stacks.toArray(new ItemStack[0]));
+    // private static ItemStackKey[] makeListArray(NonNullList<ItemStack> stacks)
+    private static ItemStackKey[] makeListArray(NonNullList<?> items) {
+//        return makeStackArray(stacks.toArray(new ItemStack[0]));
+        List<ItemStack> ret = Lists.newArrayList();
+        for (Object ele : items) {
+            if (ele instanceof ItemStack stack) {
+                ret.add(stack);
+            } else if (ele instanceof Ingredient ingredient) {
+                Arrays.stream(ingredient.getItems()).forEach(ret::add);
+            } else {
+                throw new RuntimeException("[lib.guide.recipe] Recipe items should be ItemStack or Ingredient!");
+            }
+        }
+//        return makeStackArray(stacks.toArray(new ItemStack[0]));
+        return makeStackArray(ret.toArray(new ItemStack[0]));
     }
 
     private static ItemStackKey[] makeStackArray(ItemStack stack) {
         if (stack.isEmpty()) {
             return new ItemStackKey[] { ItemStackKey.EMPTY };
         }
-        if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+//        if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE)
+        if (stack.getDamageValue() == Short.MAX_VALUE) {
             NonNullList<ItemStack> subs = NonNullList.create();
-            stack.getItem().getSubItems(CreativeTabs.SEARCH, subs);
+            ItemUtil.fillItemCategory(stack.getItem(), CreativeModeTabs.SEARCH, subs);
             return makeListArray(subs);
         } else {
             return new ItemStackKey[] { new ItemStackKey(stack) };
@@ -59,7 +81,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
     }
 
     private static ItemStackKey[] makeRecipeArray(Ingredient ingredient) {
-        ItemStack[] stacks = ingredient.getMatchingStacks();
+        ItemStack[] stacks = ingredient.getItems();
         return makeStackArray(stacks);
     }
 

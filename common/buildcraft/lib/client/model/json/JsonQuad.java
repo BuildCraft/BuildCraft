@@ -6,34 +6,34 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.Arrays;
-
-import javax.vecmath.Vector3f;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.JsonUtils;
-
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
+import net.minecraft.util.GsonHelper;
+import org.joml.Vector3f;
+
+import java.util.Arrays;
 
 public class JsonQuad {
     public boolean shade = false;
     public int tint = -1;
     public String texture;
     public final JsonVertex[] vertices = new JsonVertex[4];
-    public EnumFacing face;
+    public Direction face;
 
-    public JsonQuad(JsonObject obj, float[] from, float[] to, EnumFacing face) {
+    public JsonQuad(JsonObject obj, float[] from, float[] to, Direction face) {
         this.face = face;
-        tint = JsonUtils.getInt(obj, "tintindex", -1);
-        texture = JsonUtils.getString(obj, "texture");
-        int rotation = JsonUtils.getInt(obj, "rotation", 0);
+//        tint = JsonUtils.getInt(obj, "tintindex", -1);
+        tint = GsonHelper.getAsInt(obj, "tintindex", -1);
+//        texture = JsonUtils.getString(obj, "texture");
+        texture = GsonHelper.getAsString(obj, "texture");
+//        int rotation = JsonUtils.getInt(obj, "rotation", 0);
+        int rotation = GsonHelper.getAsInt(obj, "rotation", 0);
         float[] uv = JsonUtil.getSubAsFloatArray(obj, "uv");
         if (uv.length != 4) {
             throw new JsonSyntaxException("Expected exactly 4 floats, but got " + Arrays.toString(uv));
@@ -44,7 +44,8 @@ public class JsonQuad {
         uvs.maxU = uv[2] / 16f;
         uvs.maxV = uv[3] / 16f;
         Vector3f radius = new Vector3f(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
-        radius.scale(0.5f);
+//        radius.scale(0.5f);
+        radius.mul(0.5f);
         Vector3f center = new Vector3f(from);
         center.add(radius);
         MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);

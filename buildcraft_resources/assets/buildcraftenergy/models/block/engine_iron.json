@@ -1,7 +1,0 @@
-{
-    "textures": {
-        "#back":"buildcraftenergy:blocks/engine/iron/back",
-        "#side":"buildcraftenergy:blocks/engine/iron/side"
-    },
-    "parent":"buildcraftlib:models/block/engine_base"
-}

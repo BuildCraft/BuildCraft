@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftcore",
+  "key": {
+    "G": {
+      "tag": "forge:dyes/green"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "p": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    "pRp",
+    "pGp",
+    "ppp"
+  ],
+  "result": {
+    "item": "buildcraftcore:list"
+  },
+  "show_notification": true
+}

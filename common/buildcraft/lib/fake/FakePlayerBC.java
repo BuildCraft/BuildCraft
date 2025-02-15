@@ -7,19 +7,17 @@
 package buildcraft.lib.fake;
 
 import com.mojang.authlib.GameProfile;
-
-import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.world.WorldServer;
-
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraftforge.common.util.FakePlayer;
 
 public class FakePlayerBC extends FakePlayer {
-    public FakePlayerBC(WorldServer world, GameProfile name) {
+    public FakePlayerBC(ServerLevel world, GameProfile name) {
         super(world, name);
     }
 
     @Override
-    public void openEditSign(TileEntitySign signTile) {
+    public void openTextEdit(SignBlockEntity p_277909_, boolean p_277495_) {
         // TODO: Put this in forge!
     }
 }

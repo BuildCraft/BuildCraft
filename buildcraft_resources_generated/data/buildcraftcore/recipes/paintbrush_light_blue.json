@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "buildcraftcore",
+  "ingredients": [
+    {
+      "tag": "buildcraft:paintbrush"
+    },
+    {
+      "tag": "forge:dyes/light_blue"
+    }
+  ],
+  "result": {
+    "item": "buildcraftcore:paintbrush_light_blue"
+  }
+}

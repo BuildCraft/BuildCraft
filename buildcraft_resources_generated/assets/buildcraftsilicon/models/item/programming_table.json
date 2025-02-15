@@ -1,0 +1,6 @@
+{
+  "parent": "buildcraftsilicon:block/table/programming",
+  "textures": {
+    "glass": "minecraft:block/white_stained_glass"
+  }
+}

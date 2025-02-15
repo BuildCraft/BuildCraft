@@ -6,11 +6,10 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
+import net.minecraft.nbt.CompoundTag;
 
 public class PipeBehaviourStone extends PipeBehaviourSeparate {
     public static final double SPEED_DELTA = 0.008;
@@ -20,7 +19,7 @@ public class PipeBehaviourStone extends PipeBehaviourSeparate {
         super(pipe);
     }
 
-    public PipeBehaviourStone(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourStone(IPipe pipe, CompoundTag nbt) {
         super(pipe, nbt);
     }
 

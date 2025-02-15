@@ -1,0 +1,10 @@
+{
+  "type": "buildcraftenergy:fuel",
+  "dirty": false,
+  "fluid": {
+    "amount": 1,
+    "fluid": "buildcraftenergy:oil_distilled_heat_0"
+  },
+  "powerPerCycle": 1000000,
+  "totalBurningTime": 37500
+}

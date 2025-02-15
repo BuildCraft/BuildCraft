@@ -6,30 +6,29 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+
 import java.util.List;
-
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public final class CraftingUtil {
 
-    /**
-     * Deactivate constructor
-     */
+    /** Deactivate constructor */
     private CraftingUtil() {
     }
 
-    public static IRecipe findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World) {
-            List<IRecipe> recipes = GameRegistry.findRegistry(IRecipe.class).getValues();
-            for (IRecipe recipe : recipes) {
-                if (recipe.matches(par1InventoryCrafting, par2World)) {
-                    return recipe;
-                }
+    // public static Recipe findMatchingRecipe(CraftingContainer par1InventoryCrafting, Level par2World)
+    public static CraftingRecipe findMatchingRecipe(CraftingContainer par1InventoryCrafting, Level par2World) {
+//        List<IRecipe> recipes = GameRegistry.findRegistry(IRecipe.class).getValues();
+        List<CraftingRecipe> recipes = par2World.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, par1InventoryCrafting, par2World);
+//        for (IRecipe recipe : recipes)
+        for (CraftingRecipe recipe : recipes) {
+            if (recipe.matches(par1InventoryCrafting, par2World)) {
+                return recipe;
             }
-            return null;
-
+        }
+        return null;
     }
 }

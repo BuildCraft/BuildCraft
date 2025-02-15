@@ -6,55 +6,57 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.List;
-
+import buildcraft.lib.misc.SpriteUtil;
 import com.google.common.collect.ImmutableList;
-
-import org.lwjgl.util.vector.Vector3f;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Consumer;
 
 /** Provides a simple way of rendering an item model with just a list of quads. This provides some transforms to use
  * that make it simple to render as a block, item or tool (todo) */
 @SuppressWarnings("deprecation")
-public class ModelItemSimple implements IBakedModel {
-    public static final ItemCameraTransforms TRANSFORM_DEFAULT = ItemCameraTransforms.DEFAULT;
-    public static final ItemCameraTransforms TRANSFORM_BLOCK;
-    public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM;
-    public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM_BIGGER;
-    public static final ItemCameraTransforms TRANSFORM_PLUG_AS_BLOCK;
-    public static final ItemCameraTransforms TRANSFORM_ITEM;
+public class ModelItemSimple implements BakedModel {
+    public static final ItemTransforms TRANSFORM_DEFAULT = ItemTransforms.NO_TRANSFORMS;
+    public static final ItemTransforms TRANSFORM_BLOCK;
+    public static final ItemTransforms TRANSFORM_PLUG_AS_ITEM;
+    public static final ItemTransforms TRANSFORM_PLUG_AS_ITEM_BIGGER;
+    public static final ItemTransforms TRANSFORM_PLUG_AS_BLOCK;
+    public static final ItemTransforms TRANSFORM_ITEM;
     // TODO: TRANSFORM_TOOL
 
     static {
-        // Values taken from "minecraft:models/block/block.json"
-        ItemTransformVec3f thirdp_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
-        ItemTransformVec3f thirdp_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
-        ItemTransformVec3f firstp_left = def(0, 225, 0, 0, 0, 0, 0.4);
-        ItemTransformVec3f firstp_right = def(0, 45, 0, 0, 0, 0, 0.4);
-        ItemTransformVec3f head = def(0, 0, 0, 0, 0, 0, 1);
-        ItemTransformVec3f gui = def(30, 225, 0, 0, 0, 0, 0.625);
-        ItemTransformVec3f ground = def(0, 0, 0, 0, 3, 0, 0.25);
-        ItemTransformVec3f fixed = def(0, 0, 0, 0, 0, 0, 0.5);
+        // Values taken from "minecraft:models/core/core.json"
+        ItemTransform thirdp_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
+        ItemTransform thirdp_right = def(75, 225, 0, 0, 2.5, 0, 0.375);
+        ItemTransform firstp_left = def(0, 225, 0, 0, 0, 0, 0.4);
+        ItemTransform firstp_right = def(0, 45, 0, 0, 0, 0, 0.4);
+        ItemTransform head = def(0, 0, 0, 0, 0, 0, 1);
+        ItemTransform gui = def(30, 225, 0, 0, 0, 0, 0.625);
+        ItemTransform ground = def(0, 0, 0, 0, 3, 0, 0.25);
+        ItemTransform fixed = def(0, 0, 0, 0, 0, 0, 0.5);
         TRANSFORM_BLOCK =
-            new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
+                new ItemTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
 
-        ItemTransformVec3f item_head = def(0, 0, 0, 0, 0, 0, 1);
-        ItemTransformVec3f item_gui = def(0, 90, 0, 0, 0, 0, 1);
-        ItemTransformVec3f item_ground = def(0, 0, 0, 0, 3, 0, 0.5);
-        ItemTransformVec3f item_fixed = def(0, 0, 0, 0, 0, 0, 0.85);
+        ItemTransform item_head = def(0, 0, 0, 0, 0, 0, 1);
+        ItemTransform item_gui = def(0, 90, 0, 0, 0, 0, 1);
+        ItemTransform item_ground = def(0, 0, 0, 0, 3, 0, 0.5);
+        ItemTransform item_fixed = def(0, 0, 0, 0, 0, 0, 0.85);
         firstp_left = def(0, 225, 0, 0, 0, -4, 0.4);
         firstp_right = def(0, 45, 0, 0, 0, -4, 0.4);
-        TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right,
-            item_head, item_gui, item_ground, item_fixed);
+        TRANSFORM_PLUG_AS_ITEM = new ItemTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right,
+                item_head, item_gui, item_ground, item_fixed);
         TRANSFORM_PLUG_AS_ITEM_BIGGER = scale(TRANSFORM_PLUG_AS_ITEM, 1.8);
 
         thirdp_left = def(75, 45, 0, 0, 2.5, 0, 0.375);
@@ -63,7 +65,7 @@ public class ModelItemSimple implements IBakedModel {
         firstp_right = def(0, 225, 0, 0, 0, 0, 0.4);
         gui = def(30, 135, 0, -3, 1.5, 0, 0.625);
         TRANSFORM_PLUG_AS_BLOCK =
-            new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
+                new ItemTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
 
         ground = def(0, 0, 0, 0, 2, 0, 0.5);
         head = def(0, 180, 0, 0, 13, 7, 1);
@@ -74,71 +76,103 @@ public class ModelItemSimple implements IBakedModel {
         fixed = def(0, 180, 0, 0, 0, 0, 1);
         gui = def(0, 0, 0, 0, 0, 0, 1);
         TRANSFORM_ITEM =
-            new ItemCameraTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
+                new ItemTransforms(thirdp_left, thirdp_right, firstp_left, firstp_right, head, gui, ground, fixed);
     }
 
-    private static ItemCameraTransforms scale(ItemCameraTransforms from, double by) {
-        ItemTransformVec3f thirdperson_left = scale(from.thirdperson_left, by);
-        ItemTransformVec3f thirdperson_right = scale(from.thirdperson_right, by);
-        ItemTransformVec3f firstperson_left = scale(from.firstperson_left, by);
-        ItemTransformVec3f firstperson_right = scale(from.firstperson_right, by);
-        ItemTransformVec3f head = scale(from.head, by);
-        ItemTransformVec3f gui = scale(from.gui, by);
-        ItemTransformVec3f ground = scale(from.ground, by);
-        ItemTransformVec3f fixed = scale(from.fixed, by);
-        return new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head,
-            gui, ground, fixed);
+    private static ItemTransforms scale(ItemTransforms from, double by) {
+        ItemTransform thirdperson_left = scale(from.thirdPersonLeftHand, by);
+        ItemTransform thirdperson_right = scale(from.thirdPersonRightHand, by);
+        ItemTransform firstperson_left = scale(from.firstPersonLeftHand, by);
+        ItemTransform firstperson_right = scale(from.firstPersonRightHand, by);
+        ItemTransform head = scale(from.head, by);
+        ItemTransform gui = scale(from.gui, by);
+        ItemTransform ground = scale(from.ground, by);
+        ItemTransform fixed = scale(from.fixed, by);
+        return new ItemTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head,
+                gui, ground, fixed);
     }
 
-    private static ItemTransformVec3f scale(ItemTransformVec3f from, double by) {
+    private static ItemTransform scale(ItemTransform from, double by) {
 
         float scale = (float) by;
-        Vector3f nScale = new Vector3f(from.scale);
-        nScale.scale(scale);
+        Vector3f nScale = new Vector3f(from.scale.x(), from.scale.y(), from.scale.z());
+        nScale.mul(scale);
 
-        return new ItemTransformVec3f(from.rotation, from.translation, nScale);
+        return new ItemTransform(from.rotation, from.translation, nScale);
     }
 
-    private static ItemTransformVec3f translate(ItemTransformVec3f from, double dx, double dy, double dz) {
-        Vector3f nTranslation = new Vector3f(from.translation);
-        nTranslation.translate((float) dx, (float) dy, (float) dz);
-        return new ItemTransformVec3f(from.rotation, nTranslation, from.scale);
+    private static ItemTransform translate(ItemTransform from, double dx, double dy, double dz) {
+        Vector3f nTranslation = new Vector3f(from.translation.x(), from.translation.y(), from.translation.z());
+        nTranslation.add((float) dx, (float) dy, (float) dz);
+        return new ItemTransform(from.rotation, nTranslation, from.scale);
     }
 
-    private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz,
-        double scale) {
+    private static ItemTransform def(double rx, double ry, double rz, double tx, double ty, double tz, double scale) {
         return def((float) rx, (float) ry, (float) rz, (float) tx, (float) ty, (float) tz, (float) scale);
     }
 
-    private static ItemTransformVec3f def(float rx, float ry, float rz, float tx, float ty, float tz, float scale) {
+    private static ItemTransform def(float rx, float ry, float rz, float tx, float ty, float tz, float scale) {
         Vector3f rot = new Vector3f(rx, ry, rz);
         Vector3f translate = new Vector3f(tx / 16f, ty / 16f, tz / 16f);
-        return new ItemTransformVec3f(rot, translate, new Vector3f(scale, scale, scale));
+        return new ItemTransform(rot, translate, new Vector3f(scale, scale, scale));
     }
 
     private final boolean isGui3d;
-    private final List<BakedQuad> quads;
-    private final TextureAtlasSprite particle;
-    private final ItemCameraTransforms transforms;
+    // private final List<BakedQuad> quads;
+    private List<BakedQuad> quads;
+    // private final TextureAtlasSprite particle;
+    // private final TextureAtlasSprite particle;
+    private TextureAtlasSprite particle;
+    private final ItemTransforms transforms;
 
-    public ModelItemSimple(List<BakedQuad> quads, ItemCameraTransforms transforms, boolean isGui3d) {
+    // public ModelItemSimple(List<BakedQuad> quads, ItemTransforms transforms, boolean isGui3d)
+    public ModelItemSimple(List<BakedQuad> quads, ItemTransforms transforms, boolean isGui3d) {
         this.quads = quads == null ? ImmutableList.of() : quads;
         this.isGui3d = isGui3d;
         if (quads.isEmpty()) {
-            particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+//            particle = Minecraft.getInstance().getTextureMapBlocks().getMissingSprite();
+            this.particle = SpriteUtil.missingSprite().get();
         } else {
-            particle = quads.get(0).getSprite();
+            this.particle = quads.get(0).getSprite();
         }
         this.transforms = transforms;
     }
 
-    @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        return side == null ? quads : ImmutableList.of();
+    // Calen 1.20.1
+    // public ModelItemSimple(List<BakedQuad> quads, ItemTransforms transforms, boolean isGui3d)
+    public ModelItemSimple(LazyLoadedValue<List<BakedQuad>> lazyLoadedQuads, ItemTransforms transforms, boolean isGui3d, Consumer<Runnable> consumerRunOnTextureStitchEvent$Post) {
+//        this.quads = quads == null ? ImmutableList.of() : quads;
+//        this.isGui3d = isGui3d;
+//        if (quads.isEmpty()) {
+////            particle = Minecraft.getInstance().getTextureMapBlocks().getMissingSprite();
+//            this.particle = SpriteUtil.missingSprite().get();
+//        } else {
+//            this.particle = quads.get(0).getSprite();
+//        }
+//        this.transforms = transforms;
+        this.isGui3d = isGui3d;
+        this.transforms = transforms;
+        consumerRunOnTextureStitchEvent$Post.accept(() -> {
+            List<BakedQuad> quads = lazyLoadedQuads.get();
+            this.quads = quads == null ? ImmutableList.of() : quads;
+            if (quads.isEmpty()) {
+//            particle = Minecraft.getInstance().getTextureMapBlocks().getMissingSprite();
+                this.particle = SpriteUtil.missingSprite().get();
+            } else {
+                this.particle = quads.get(0).getSprite();
+            }
+        });
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+//    public List<BakedQuad> getQuads(BlockState state, Direction side, long rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, RandomSource rand) {
+        return face == null ? quads : ImmutableList.of();
+    }
+
+    @Override
+//    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
@@ -148,22 +182,30 @@ public class ModelItemSimple implements IBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+//    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+//    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon() {
         return particle;
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+//    public ItemTransforms getItemTransforms()
+    public ItemTransforms getTransforms() {
         return transforms;
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
     }
 }

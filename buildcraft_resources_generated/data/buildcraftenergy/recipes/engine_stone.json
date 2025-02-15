@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcraftenergy",
+  "key": {
+    "G": {
+      "tag": "forge:gears/stone"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    },
+    "w": {
+      "tag": "forge:cobblestone"
+    }
+  },
+  "pattern": [
+    "www",
+    " g ",
+    "GpG"
+  ],
+  "result": {
+    "item": "buildcraftcore:engine_stone"
+  },
+  "show_notification": true
+}

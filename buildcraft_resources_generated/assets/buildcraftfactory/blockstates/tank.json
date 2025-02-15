@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "joined_below=false,waterlogged=false": {
+      "model": "buildcraftfactory:block/tank"
+    },
+    "joined_below=false,waterlogged=true": {
+      "model": "buildcraftfactory:block/tank"
+    },
+    "joined_below=true,waterlogged=false": {
+      "model": "buildcraftfactory:block/tank_joined_below"
+    },
+    "joined_below=true,waterlogged=true": {
+      "model": "buildcraftfactory:block/tank_joined_below"
+    }
+  }
+}

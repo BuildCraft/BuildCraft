@@ -5,6 +5,8 @@ import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 /** A type of {@link GuiElementContainer2} that restricts the visible size of elements contained within. */
 public class GuiElementContainerScissor extends GuiElementContainer2 {
@@ -37,19 +39,19 @@ public class GuiElementContainerScissor extends GuiElementContainer2 {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, GuiGraphics guiGraphics) {
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement elem : getChildElements()) {
-                elem.drawBackground(partialTicks);
+                elem.drawBackground(partialTicks, guiGraphics);
             }
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(GuiGraphics guiGraphics, float partialTicks) {
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement elem : getChildElements()) {
-                elem.drawForeground(partialTicks);
+                elem.drawForeground(guiGraphics, partialTicks);
             }
         }
     }

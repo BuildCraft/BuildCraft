@@ -6,26 +6,28 @@
 
 package buildcraft.factory.client.render;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
-
-import net.minecraftforge.client.model.animation.FastTESR;
-
+import buildcraft.factory.tile.TilePump;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.tile.RenderPartCube;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import buildcraft.factory.tile.TilePump;
-
-public class RenderPump extends FastTESR<TilePump> {
+@OnlyIn(Dist.CLIENT)
+public class RenderPump implements BlockEntityRenderer<TilePump> {
     private static final int[] COLOUR_POWER = new int[16];
     private static final int COLOUR_STATUS_ON = 0xFF_77_DD_77; // a light green
     private static final int COLOUR_STATUS_OFF = 0xFF_1f_10_1b; // black-ish
@@ -52,26 +54,30 @@ public class RenderPump extends FastTESR<TilePump> {
 
         LED_POWER = new RenderPartCube[4];
         LED_STATUS = new RenderPartCube[4];
+
         for (int i = 0; i < 4; i++) {
-            EnumFacing facing = EnumFacing.getHorizontal(i);
+//            Direction facing = Direction.getHorizontal(i);
+            Direction facing = Direction.from2DDataValue(i);
 
             final int dX, dZ;
             final double ledX, ledZ;
 
             if (facing.getAxis() == Axis.X) {
                 dX = 0;
-                dZ = facing.getAxisDirection().getOffset();
+//                dZ = facing.getAxisDirection().getOffset();
+                dZ = facing.getAxisDirection().getStep();
                 ledZ = 0.5;
-                if (facing == EnumFacing.EAST) {
+                if (facing == Direction.EAST) {
                     ledX = 15.6 / 16.0;
                 } else {
                     ledX = 0.4 / 16.0;
                 }
             } else {
-                dX = -facing.getAxisDirection().getOffset();
+//                dX = -facing.getAxisDirection().getOffset();
+                dX = -facing.getAxisDirection().getStep();
                 dZ = 0;
                 ledX = 0.5;
-                if (facing == EnumFacing.SOUTH) {
+                if (facing == Direction.SOUTH) {
                     ledZ = 15.6 / 16.0;
                 } else {
                     ledZ = 0.4 / 16.0;
@@ -80,12 +86,16 @@ public class RenderPump extends FastTESR<TilePump> {
 
             LED_POWER[i] = new RenderPartCube();
             LED_POWER[i].center.positiond(ledX + dX * POWER, Y, ledZ + dZ * POWER);
+            LED_POWER[i].center.overlay(OverlayTexture.NO_OVERLAY); // Calen add
+            LED_POWER[i].center.normalf(1, 1, 1); // Calen add
 
             LED_STATUS[i] = new RenderPartCube();
             LED_STATUS[i].center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
+            LED_STATUS[i].center.overlay(OverlayTexture.NO_OVERLAY); // Calen add
+            LED_STATUS[i].center.normalf(1, 1, 1); // Calen add
         }
 
-        SpriteHolder spriteTubeMiddle = SpriteHolderRegistry.getHolder("buildcraftfactory:blocks/pump/tube");
+        SpriteHolder spriteTubeMiddle = SpriteHolderRegistry.getHolder("buildcraftfactory:block/pump/tube");
         LaserRow cap = new LaserRow(spriteTubeMiddle, 0, 8, 8, 16);
         LaserRow middle = new LaserRow(spriteTubeMiddle, 0, 0, 16, 8);
 
@@ -94,23 +104,38 @@ public class RenderPump extends FastTESR<TilePump> {
         TUBE_LASER = new LaserType(cap, middle, middles, null, cap);
     }
 
-    public static void textureStitchPost() {
+    private static boolean whiteTextureFlag = false;
+
+    // public static void textureStitchPost()
+    public static void initWhiteTex() {
+        whiteTextureFlag = true;
         for (int i = 0; i < 4; i++) {
             LED_POWER[i].setWhiteTex();
             LED_STATUS[i].setWhiteTex();
         }
     }
 
-    private final RenderTube tubeRenderer = new RenderTube(TUBE_LASER);
+    private final RenderTube tubeRenderer = new RenderTube(null, TUBE_LASER);
 
-    public RenderPump() {}
+    public RenderPump(BlockEntityRendererProvider.Context context) {
+    }
 
     @Override
-    public void renderTileEntityFast(@Nonnull TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("pump");
+//    public void renderTileEntityFast(@Nonnull TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer)
+    public void render(TilePump tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+        // Calen: get the white texture
+        if (!whiteTextureFlag) {
+            initWhiteTex();
+        }
 
-        buffer.setTranslation(x, y, z);
+        VertexConsumer buffer = bufferSource.getBuffer(Sheets.solidBlockSheet());
+
+//        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getInstance().getProfiler().push("bc");
+//        Minecraft.getMinecraft().mcProfiler.startSection("pump");
+        Minecraft.getInstance().getProfiler().push("pump");
+
+//        buffer.setTranslation(x, y, z);
 
         float percentFilled = tile.getPercentFilledForRender();
         int powerColour = COLOUR_POWER[(int) (percentFilled * (COLOUR_POWER.length - 1))];
@@ -118,34 +143,40 @@ public class RenderPump extends FastTESR<TilePump> {
         boolean complete = tile.isComplete();
         int statusColour = complete ? COLOUR_STATUS_OFF : COLOUR_STATUS_ON;
         int statusLight = complete ? BLOCK_LIGHT_STATUS_OFF : BLOCK_LIGHT_STATUS_ON;
-
         for (int i = 0; i < 4; i++) {
             // Get the light level of a direction
-            EnumFacing dir = EnumFacing.getHorizontal(i);
-            BlockPos pos = tile.getPos().offset(dir);
-            int block = tile.getWorld().getLightFor(EnumSkyBlock.BLOCK, pos);
-            int sky = tile.getWorld().getLightFor(EnumSkyBlock.SKY, pos);
+//            Direction dir = Direction.getHorizontal(i);
+            Direction dir = Direction.from2DDataValue(i);
+//            BlockPos pos = tile.getPos().offset(dir);
+            BlockPos pos = tile.getBlockPos().relative(dir);
+//            int block = tile.getWorld().getLightFor(EnumSkyBlock.BLOCK, pos);
+            byte block = (byte) tile.getLevel().getLightEmission(pos);
+//            int sky = tile.getWorld().getLightFor(EnumSkyBlock.SKY, pos);
+            byte sky = (byte) tile.getLevel().getLightEngine().getRawBrightness(pos, 0);
 
             LED_POWER[i].center.colouri(powerColour);
             LED_STATUS[i].center.colouri(statusColour);
 
             LED_POWER[i].center.lighti(block, sky);
-            LED_STATUS[i].center.lighti(Math.max(statusLight, block), sky);
+            LED_STATUS[i].center.lighti((byte) Math.max(statusLight, block), sky);
 
-            LED_POWER[i].render(buffer);
-            LED_STATUS[i].render(buffer);
+            LED_POWER[i].render(poseStack, buffer);
+            LED_STATUS[i].render(poseStack, buffer);
 
             // TODO: fluid rendering
         }
 
-        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
+        tubeRenderer.render(tile, partialTicks, poseStack, bufferSource, combinedLight, combinedOverlay);
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+//        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getInstance().getProfiler().pop();
+//        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getInstance().getProfiler().pop();
     }
 
     @Override
-    public boolean isGlobalRenderer(TilePump tile) {
+//    public boolean isGlobalRenderer(TilePump tile)
+    public boolean shouldRenderOffScreen(TilePump tile) {
         return true;
     }
 

@@ -6,20 +6,19 @@
 
 package buildcraft.silicon.client.model.key;
 
+import buildcraft.api.transport.pluggable.PluggableModelKey;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+
 import java.util.Objects;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 public class KeyPlugFacade extends PluggableModelKey {
-    public final IBlockState state;
+    public final BlockState state;
     public final boolean isHollow;
     private final int hash;
 
-    public KeyPlugFacade(BlockRenderLayer layer, EnumFacing side, IBlockState state, boolean isHollow) {
+    public KeyPlugFacade(RenderType layer, Direction side, BlockState state, boolean isHollow) {
         super(layer, side);
         this.state = state;
         this.isHollow = isHollow;

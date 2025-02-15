@@ -6,33 +6,35 @@
 
 package buildcraft.transport.stripes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.lib.misc.ColourUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class StripesHandlerPipeWires implements IStripesHandlerItem {
 
     private static final int PIPES_TO_TRY = 8;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        EnumDyeColor pipeWireColor = EnumDyeColor.byMetadata(stack.getMetadata());
+    public boolean handle(Level world, BlockPos pos, Direction direction, ItemStack stack, Player player, IStripesActivator activator) {
+//        EnumDyeColor pipeWireColor = EnumDyeColor.byMetadata(stack.getMetadata());
+        DyeColor pipeWireColor = ColourUtil.getStackColourFromTag(stack);
 
         for (int i = PIPES_TO_TRY; i > 0; i--) {
-            pos = pos.offset(direction.getOpposite());
+            pos = pos.relative(direction.getOpposite());
 
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile != null && tile.hasCapability(PipeApi.CAP_PIPE_HOLDER, null)) {
-                IPipeHolder pipeHolder = tile.getCapability(PipeApi.CAP_PIPE_HOLDER, null);
+            BlockEntity tile = world.getBlockEntity(pos);
+//            if (tile != null && tile.hasCapability(PipeApi.CAP_PIPE_HOLDER, null))
+            if (tile != null && tile.getCapability(PipeApi.CAP_PIPE_HOLDER, null).isPresent()) {
+                IPipeHolder pipeHolder = tile.getCapability(PipeApi.CAP_PIPE_HOLDER, null).orElse(null);
 
                 /*
                 if (!pipeHolder.pipe.wireSet[pipeWireColor]) {

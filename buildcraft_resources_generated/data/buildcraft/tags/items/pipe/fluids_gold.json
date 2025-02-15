@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_fluids_gold_colorless",
+    "buildcrafttransport:pipe_fluids_gold_green",
+    "buildcrafttransport:pipe_fluids_gold_brown",
+    "buildcrafttransport:pipe_fluids_gold_cyan",
+    "buildcrafttransport:pipe_fluids_gold_white",
+    "buildcrafttransport:pipe_fluids_gold_orange",
+    "buildcrafttransport:pipe_fluids_gold_gray",
+    "buildcrafttransport:pipe_fluids_gold_blue",
+    "buildcrafttransport:pipe_fluids_gold_black",
+    "buildcrafttransport:pipe_fluids_gold_red",
+    "buildcrafttransport:pipe_fluids_gold_yellow",
+    "buildcrafttransport:pipe_fluids_gold_magenta",
+    "buildcrafttransport:pipe_fluids_gold_purple",
+    "buildcrafttransport:pipe_fluids_gold_lime",
+    "buildcrafttransport:pipe_fluids_gold_pink",
+    "buildcrafttransport:pipe_fluids_gold_light_blue",
+    "buildcrafttransport:pipe_fluids_gold_light_gray"
+  ]
+}

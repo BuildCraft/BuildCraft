@@ -6,9 +6,9 @@
 
 package buildcraft.lib.client.reload;
 
-import java.util.Objects;
+import net.minecraft.resources.ResourceLocation;
 
-import net.minecraft.util.ResourceLocation;
+import java.util.Objects;
 
 /** A combination of a {@link ResourceLocation} (Which object changed) and {@link SourceType} (What about it
  * changed). */
@@ -45,7 +45,7 @@ public class ReloadSource {
         }
         ReloadSource other = (ReloadSource) obj;
         return type == other.type//
-            && location.equals(other.location);
+                && location.equals(other.location);
     }
 
     @Override

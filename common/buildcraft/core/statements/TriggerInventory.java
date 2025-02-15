@@ -6,36 +6,28 @@
 
 package buildcraft.core.statements;
 
-import java.util.Locale;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.items.IItemHandler;
-
 import buildcraft.api.items.IList;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
+import buildcraft.api.statements.*;
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.Locale;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
     public State state;
 
     public TriggerInventory(State state) {
         super(
-            "buildcraft:inventory." + state.name().toLowerCase(Locale.ROOT),
-            "buildcraft.inventory." + state.name().toLowerCase(Locale.ROOT)
+                "buildcraft:inventory." + state.name().toLowerCase(Locale.ROOT),
+                "buildcraft.inventory." + state.name().toLowerCase(Locale.ROOT)
         );
         this.state = state;
     }
@@ -51,19 +43,25 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT));
+    public Component getDescription() {
+//        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT));
+        return Component.translatable("gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT));
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
+    public String getDescriptionKey() {
+        return "gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT);
+    }
+
+    @Override
+    public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer container, IStatementParameter[] parameters) {
         ItemStack searchedStack = StackUtil.EMPTY;
 
         if (parameters != null && parameters.length >= 1 && parameters[0] != null) {
             searchedStack = parameters[0].getItemStack();
         }
 
-        IItemHandler handler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+        IItemHandler handler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite()).orElse(null);
 
         if (handler != null) {
             boolean hasSlots = false;
@@ -78,7 +76,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 foundItems |= !stack.isEmpty() && (searchedStack.isEmpty() || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
                 foundSpace |= (stack.isEmpty() || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxStackSize()))//
-                    && (searchedStack.isEmpty() || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true).isEmpty());
+                        && (searchedStack.isEmpty() || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true).isEmpty());
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a
                 // heuristic which is more desirable than expensive computation

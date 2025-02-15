@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_daizuli_colorless",
+    "buildcrafttransport:pipe_items_daizuli_green",
+    "buildcrafttransport:pipe_items_daizuli_brown",
+    "buildcrafttransport:pipe_items_daizuli_cyan",
+    "buildcrafttransport:pipe_items_daizuli_white",
+    "buildcrafttransport:pipe_items_daizuli_orange",
+    "buildcrafttransport:pipe_items_daizuli_gray",
+    "buildcrafttransport:pipe_items_daizuli_blue",
+    "buildcrafttransport:pipe_items_daizuli_black",
+    "buildcrafttransport:pipe_items_daizuli_red",
+    "buildcrafttransport:pipe_items_daizuli_yellow",
+    "buildcrafttransport:pipe_items_daizuli_magenta",
+    "buildcrafttransport:pipe_items_daizuli_purple",
+    "buildcrafttransport:pipe_items_daizuli_lime",
+    "buildcrafttransport:pipe_items_daizuli_pink",
+    "buildcrafttransport:pipe_items_daizuli_light_blue",
+    "buildcrafttransport:pipe_items_daizuli_light_gray"
+  ]
+}

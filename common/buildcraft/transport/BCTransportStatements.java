@@ -6,26 +6,12 @@
 
 package buildcraft.transport;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.statements.StatementManager;
-
 import buildcraft.lib.misc.ColourUtil;
-
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
-import buildcraft.transport.statements.ActionExtractionPreset;
-import buildcraft.transport.statements.ActionParameterSignal;
-import buildcraft.transport.statements.ActionPipeColor;
-import buildcraft.transport.statements.ActionPipeDirection;
-import buildcraft.transport.statements.ActionPipeSignal;
-import buildcraft.transport.statements.ActionProviderPipes;
-import buildcraft.transport.statements.TriggerFluidsTraversing;
-import buildcraft.transport.statements.TriggerItemsTraversing;
-import buildcraft.transport.statements.TriggerParameterSignal;
-import buildcraft.transport.statements.TriggerPipeSignal;
-import buildcraft.transport.statements.TriggerPowerRequested;
-import buildcraft.transport.statements.TriggerProviderPipes;
+import buildcraft.transport.statements.*;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.DyeColor;
 
 public class BCTransportStatements {
 
@@ -40,18 +26,18 @@ public class BCTransportStatements {
 
     static {
         TRIGGER_PIPE_SIGNAL = new TriggerPipeSignal[2 * ColourUtil.COLOURS.length];
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+        for (DyeColor colour : ColourUtil.COLOURS) {
             TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 0] = new TriggerPipeSignal(true, colour);
             TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 1] = new TriggerPipeSignal(false, colour);
         }
 
         ACTION_PIPE_SIGNAL = new ActionPipeSignal[ColourUtil.COLOURS.length];
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+        for (DyeColor colour : ColourUtil.COLOURS) {
             ACTION_PIPE_SIGNAL[colour.ordinal()] = new ActionPipeSignal(colour);
         }
 
         ACTION_PIPE_COLOUR = new ActionPipeColor[ColourUtil.COLOURS.length];
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+        for (DyeColor colour : ColourUtil.COLOURS) {
             ACTION_PIPE_COLOUR[colour.ordinal()] = new ActionPipeColor(colour);
         }
 
@@ -60,8 +46,8 @@ public class BCTransportStatements {
             ACTION_EXTRACTION_PRESET[index.ordinal()] = new ActionExtractionPreset(index);
         }
 
-        ACTION_PIPE_DIRECTION = new ActionPipeDirection[EnumFacing.VALUES.length];
-        for (EnumFacing face : EnumFacing.VALUES) {
+        ACTION_PIPE_DIRECTION = new ActionPipeDirection[Direction.VALUES.length];
+        for (Direction face : Direction.VALUES) {
             ACTION_PIPE_DIRECTION[face.ordinal()] = new ActionPipeDirection(face);
         }
 

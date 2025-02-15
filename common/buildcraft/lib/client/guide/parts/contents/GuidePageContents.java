@@ -6,17 +6,6 @@
 
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.text.TextFormatting;
-
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.client.guide.GuiGuide;
@@ -26,14 +15,22 @@ import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.render.font.ConfigurableFontRenderer;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.WrappedTextData;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
-import buildcraft.lib.misc.search.ISuffixArray.SearchResult;
+import buildcraft.lib.misc.search.ISuffixArray;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
+
+import java.util.*;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
@@ -42,28 +39,38 @@ public class GuidePageContents extends GuidePageBase {
     private static final int ORDER_OFFSET_Y = -10;
 
     private ContentsNodeGui contents;
-    private final GuiTextField searchText;
+    private final EditBox searchText;
     private String lastSearchText = "";
     /** -1 if all of the results can be displayed or the actual number of results if it's too many. */
     private int realResultCount = -1;
 
+    // private final int DEFAULT_TEXT_COLOR = 0xFF_00_00_00;
+    private final int DEFAULT_TEXT_COLOR = 0xFF_00_BF_FF;
+
     public GuidePageContents(GuiGuide gui) {
         super(gui);
         loadMainGui();
-        FontRenderer fr = new ConfigurableFontRenderer(gui.mc.fontRenderer).disableShadow();
-        searchText = new GuiTextField(0, fr, 0, 0, 80, fr.FONT_HEIGHT + 5);
-        searchText.setEnableBackgroundDrawing(false);
-        searchText.setTextColor(0xFF_00_00_00);
+//        FontRenderer fr = new ConfigurableFontRenderer(gui.mc.fontRenderer).disableShadow();
+        Font fr = Minecraft.getInstance().font;
+//        searchText = new GuiTextField(0, fr, 0, 0, 80, fr.FONT_HEIGHT + 5);
+        searchText = new EditBox(fr, 0, 0, 80, fr.lineHeight + 5, Component.literal(""));
+//        searchText.setEnableBackgroundDrawing(false);
+        searchText.setBordered(false);
+        // TODO Calen: something wrong if use custom Font, so... change text colour?
+//        searchText.setTextColor(0xFF_00_00_00);
+        searchText.setTextColor(DEFAULT_TEXT_COLOR);
         setupChapters();
     }
 
     @Override
     public GuidePageBase createReloaded() {
         GuidePageContents newPage = new GuidePageContents(gui);
-        newPage.searchText.setText(searchText.getText());
+//        newPage.searchText.setText(searchText.getText());
+        newPage.searchText.setValue(searchText.getValue());
         newPage.searchText.setCursorPosition(searchText.getCursorPosition());
         newPage.searchText.setFocused(searchText.isFocused());
-        newPage.searchText.setSelectionPos(searchText.getSelectionEnd());
+//        newPage.searchText.setSelectionPos(searchText.getSelectionEnd());
+        newPage.searchText.setHighlightPos(searchText.getCursorPosition());
         newPage.numPages = numPages;
         newPage.goToPage(getIndex());
         return newPage;
@@ -85,20 +92,24 @@ public class GuidePageContents extends GuidePageBase {
     }
 
     @Override
-    public String getTitle() {
+//    public String getTitle()
+    public Component getTitle() {
         return null;
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
-        searchText.updateCursorCounter();
-        if (lastSearchText.equals(searchText.getText())) {
+//        searchText.updateCursorCounter();
+        searchText.tick();
+//        if (lastSearchText.equals(searchText.getText()))
+        if (lastSearchText.equals(searchText.getValue())) {
             if (numPages >= 3 && getPage() >= numPages) {
                 goToPage(numPages);
             }
         } else {
-            lastSearchText = searchText.getText();
+//            lastSearchText = searchText.getText();
+            lastSearchText = searchText.getValue();
             numPages = -1;
             if (lastSearchText.isEmpty()) {
                 realResultCount = -1;
@@ -107,8 +118,8 @@ public class GuidePageContents extends GuidePageBase {
                 setupChapters();
             } else {
                 String text = lastSearchText.toLowerCase(Locale.ROOT);
-                SearchResult<PageLink> ret = GuideManager.INSTANCE.quickSearcher.search(
-                    text, BCLibConfig.maxGuideSearchCount
+                ISuffixArray.SearchResult<PageLink> ret = GuideManager.INSTANCE.quickSearcher.search(
+                        text, BCLibConfig.maxGuideSearchCount
                 );
                 realResultCount = ret.hasAllResults() ? -1 : ret.realResultCount;
                 Set<PageLink> matches = new HashSet<>(ret.results);
@@ -116,7 +127,8 @@ public class GuidePageContents extends GuidePageBase {
                 contents.invalidate();
 
                 if (contents.node.isVisible()) {
-                    searchText.setTextColor(0xFF_00_00_00);
+//                    searchText.setTextColor(0xFF_00_00_00);
+                    searchText.setTextColor(DEFAULT_TEXT_COLOR);
                 } else {
                     searchText.setTextColor(0xFF_FF_00_00);
                 }
@@ -130,24 +142,24 @@ public class GuidePageContents extends GuidePageBase {
     }
 
     @Override
-    protected void renderPage(int x, int y, int width, int height, int index) {
+    protected void renderPage(GuiGraphics guiGraphics, int x, int y, int width, int height, int index) {
         IFontRenderer f = getFontRenderer();
         if (index == 0) {
             int xMiddle = x + width / 2;
             int _y = y;
-            String text = gui.book == null ? "Everything" : gui.book.title.getUnformattedText();
+            String text = gui.book == null ? "Everything" : gui.book.title.getString();
             WrappedTextData wrapped = GuiUtil.getWrappedTextData(text, f, width, false, 3f);
-            wrapped.drawAt(xMiddle, _y, 0, true);
+            wrapped.drawAt(guiGraphics, xMiddle, _y, 0, true);
             _y += wrapped.height;
             if (true) {
-                f.drawString("v" + BCLib.VERSION, xMiddle, _y, 0, false, true);
+                f.drawString(guiGraphics, "v" + BCLib.VERSION, xMiddle, _y, 0, false, true);
             }
             _y = y + height - 80;
-            f.drawString(LocaleUtil.localize("options.title"), xMiddle, _y, 0, false, true, 2f);
+            f.drawString(guiGraphics, LocaleUtil.localize("options.title"), xMiddle, _y, 0, false, true, 2f);
             _y += 28;
-            f.drawString("Show Lore " + (XmlPageLoader.SHOW_LORE ? "[x]" : "[ ]"), xMiddle, _y, 0, false, true);
+            f.drawString(guiGraphics, "Show Lore " + (XmlPageLoader.SHOW_LORE ? "[x]" : "[ ]"), xMiddle, _y, 0, false, true);
             _y += 14;
-            f.drawString("Show Hints " + (XmlPageLoader.SHOW_HINTS ? "[x]" : "[ ]"), xMiddle, _y, 0, false, true);
+            f.drawString(guiGraphics, "Show Hints " + (XmlPageLoader.SHOW_HINTS ? "[x]" : "[ ]"), xMiddle, _y, 0, false, true);
         } else if (index == 1) {
             int _height = gui.bookData.loadedMods.size() + 1;
             if (gui.bookData.loadedOther.size() > 0) {
@@ -159,47 +171,51 @@ public class GuidePageContents extends GuidePageBase {
             int _y = y + (height - _height) / 2;
 
             if (gui.bookData.loadedMods.size() > 0) {
-                drawCenteredText(TextFormatting.BOLD + "Loaded Mods:", x, _y, width);
+                drawCenteredText(guiGraphics, ChatFormatting.BOLD + "Loaded Mods:", x, _y, width);
                 _y += perLineHeight;
                 for (String text : gui.bookData.loadedMods) {
-                    drawCenteredText(text, x, _y, width);
+                    drawCenteredText(guiGraphics, text, x, _y, width);
                     _y += perLineHeight;
                 }
             }
             if (gui.bookData.loadedOther.size() > 0) {
-                drawCenteredText(TextFormatting.BOLD + "Loaded Resource Packs:", x, _y, width);
+                drawCenteredText(guiGraphics, ChatFormatting.BOLD + "Loaded Resource Packs:", x, _y, width);
                 _y += perLineHeight;
                 for (String text : gui.bookData.loadedOther) {
-                    drawCenteredText(text, x, _y, width);
+                    drawCenteredText(guiGraphics, text, x, _y, width);
                     _y += perLineHeight;
                 }
             }
         }
         if (index % 2 == 0) {
-            searchText.x = x + 23;
-            searchText.y = y - 16;
-            if (!searchText.isFocused() && searchText.getText().isEmpty()) {
-                GuiGuide.SEARCH_TAB_CLOSED.drawAt(x + 8, y - 20);
-                GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 19);
+//            searchText.x = x + 23;
+            searchText.setX(x + 23);
+//            searchText.y = y - 16;
+            searchText.setY(y - 16);
+//            if (!searchText.isFocused() && searchText.getText().isEmpty())
+            if (!searchText.isFocused() && searchText.getValue().isEmpty()) {
+                GuiGuide.SEARCH_TAB_CLOSED.drawAt(guiGraphics, x + 8, y - 20);
+                GuiGuide.SEARCH_ICON.drawAt(guiGraphics, x + 8, y - 19);
             } else {
-                GuiGuide.SEARCH_TAB_OPEN.drawAt(x - 2, y - 22);
-                GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 18);
+                GuiGuide.SEARCH_TAB_OPEN.drawAt(guiGraphics, x - 2, y - 22);
+                GuiGuide.SEARCH_ICON.drawAt(guiGraphics, x + 8, y - 18);
             }
-            searchText.drawTextBox();
+//            searchText.drawTextBox();
+            searchText.renderWidget(guiGraphics, 0, 0, 0); // Calen: paras I I F is not used in this method
             if (realResultCount >= 0) {
                 String text = LocaleUtil.localize("buildcraft.guide.too_many_results", realResultCount);
-                getFontRenderer().drawString(text, x + 105, y - 23, -1);
+                getFontRenderer().drawString(guiGraphics, text, x + 105, y - 23, -1);
             }
         }
         RenderUtil.setGLColorFromInt(-1);
         PagePosition pos = new PagePosition(2, 0);
 
-        pos = contents.render(x, y, width, height, pos, index);
+        pos = contents.render(guiGraphics, x, y, width, height, pos, index);
 
         if (numPages == -1) {
             numPages = pos.page + 1;
         }
-        super.renderPage(x, y, width, height, index);
+        super.renderPage(guiGraphics, x, y, width, height, index);
         if (index != 0 && index % 2 == 0) {
             int oX = x + ORDER_OFFSET_X;
             int oY = y + ORDER_OFFSET_Y;
@@ -211,24 +227,25 @@ public class GuidePageContents extends GuidePageBase {
                 }
                 if (icon.containsGuiPos(oX, oY, gui.mouse)) {
                     icon = icon.offset(0, 28);
-                    gui.tooltips.add(Collections.singletonList(LocaleUtil.localize(typeOrder.localeKey)));
+//                    gui.tooltips.add(Collections.singletonList(LocaleUtil.localize(typeOrder.localeKey)));
+                    gui.tooltips.add(Collections.singletonList(Component.translatable(typeOrder.localeKey)));
+
                 }
-                icon.drawAt(oX, oY);
+                icon.drawAt(guiGraphics, oX, oY);
                 oY += 14;
             }
         }
     }
 
-    private void drawCenteredText(String text, int x, int y, int width) {
+    private void drawCenteredText(GuiGraphics guiGraphics, String text, int x, int y, int width) {
         IFontRenderer f = getFontRenderer();
         int fWidth = f.getStringWidth(text);
-        f.drawString(text, (x + (width - fWidth) / 2), y, 0);
+        f.drawString(guiGraphics, text, (x + (width - fWidth) / 2), y, 0);
     }
 
     @Override
-    public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton,
-        int index, boolean isEditing) {
-        super.handleMouseClick(x, y, width, height, mouseX, mouseY, mouseButton, index, isEditing);
+    public void handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, double mouseX, double mouseY, int mouseButton, int index, boolean isEditing) {
+        super.handleMouseClick(guiGraphics, x, y, width, height, mouseX, mouseY, mouseButton, index, isEditing);
         if (index % 2 == 0) {
             int oX = x + ORDER_OFFSET_X;
             int oY = y + ORDER_OFFSET_Y;
@@ -245,12 +262,17 @@ public class GuidePageContents extends GuidePageBase {
                 oY += 14;
             }
             if (!searchText.mouseClicked(mouseX, mouseY, mouseButton) && !searchText.isFocused()
-                && new GuiRectangle(x - 2, y - 34, 40, 34).contains(mouseX, mouseY)) {
+                    && new GuiRectangle(x - 2, y - 34, 40, 34).contains(mouseX, mouseY))
+            {
                 searchText.setFocused(true);
             }
-            if (mouseButton == 1 && mouseX >= searchText.x && mouseX < searchText.x + searchText.width
-                && mouseY >= searchText.y && mouseY < searchText.y + searchText.height) {
-                searchText.setText("");
+//            if (mouseButton == 1 && mouseX >= searchText.x && mouseX < searchText.x + searchText.width
+            if (mouseButton == 1 && mouseX >= searchText.getX() && mouseX < searchText.getX() + searchText.getWidth()
+//                    && mouseY >= searchText.y && mouseY < searchText.y + searchText.height)
+                    && mouseY >= searchText.getY() && mouseY < searchText.getY() + searchText.getHeight())
+            {
+//                searchText.setText("");
+                searchText.setValue("");
             }
         }
         if (mouseButton == 0) {
@@ -274,12 +296,21 @@ public class GuidePageContents extends GuidePageBase {
         }
 
         if (new GuiRectangle(x, y, width, height).contains(mouseX, mouseY)) {
-            contents.onClicked(x, y, width, height, new PagePosition(2, 0), index);
+            contents.onClicked(guiGraphics, x, y, width, height, new PagePosition(2, 0), index);
         }
     }
 
     @Override
-    public boolean keyTyped(char typedChar, int keyCode) throws IOException {
-        return searchText.textboxKeyTyped(typedChar, keyCode);
+//    public boolean keyTyped(char typedChar, int keyCode) throws IOException
+    public boolean keyTyped(int typedChar, int keyCode, int modifiers) {
+//        return searchText.textboxKeyTyped(typedChar, keyCode);
+        return searchText.keyPressed(typedChar, keyCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char typedChar, int keyCode) {
+//        return searchText.textboxKeyTyped(typedChar, keyCode);
+        return searchText.charTyped(typedChar, keyCode);
     }
 }
+

@@ -6,6 +6,19 @@
 
 package buildcraft.lib.client.model;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.model.json.JsonModel;
+import buildcraft.lib.client.model.json.JsonModelPart;
+import buildcraft.lib.client.model.json.JsonQuad;
+import buildcraft.lib.misc.SpriteUtil;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonParseException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,21 +26,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonParseException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.model.json.JsonModel;
-import buildcraft.lib.client.model.json.JsonModelPart;
-import buildcraft.lib.client.model.json.JsonQuad;
-
 /** Holds a model that will never change except if the json file it is defined from is changed.
- * 
+ *
  * @deprecated Unused -- and a lot of duplicated code with ModelHolderVariable */
 @Deprecated
 public class ModelHolderStatic extends ModelHolder {
@@ -118,8 +118,58 @@ public class ModelHolderStatic extends ModelHolder {
         }
     }
 
+    // Calen 1.20.1
+    @Override
+    protected void onDatagenTextureRegister(Set<ResourceLocation> toRegisterSprites, ExistingFileHelper fileHelper) {
+        rawModel = null;
+        quads = null;
+        failReason = null;
+        try {
+            rawModel = JsonModel.datagenDeserialize(modelLocation, fileHelper);
+        } catch (JsonParseException jse) {
+            rawModel = null;
+            failReason = "The model had errors: " + jse.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + jse.getMessage());
+        } catch (IOException io) {
+            rawModel = null;
+            failReason = "The model did not exist in any resource pack: " + io.getMessage();
+            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + io.getMessage());
+        }
+        if (rawModel != null) {
+            if (ModelHolderRegistry.DEBUG) {
+                BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
+            }
+            for (Entry<String, String> entry : rawModel.textures.entrySet()) {
+                String lookup = entry.getValue();
+                if (lookup.startsWith("#")) {
+                    // its somewhere else in the map so we don't need to register it twice
+                    continue;
+                }
+                if (lookup.startsWith("~") && textureLookup.containsKey(lookup)) {
+                    lookup = textureLookup.get(lookup);
+                }
+                if (lookup == null || lookup.startsWith("#") || lookup.startsWith("~")) {
+                    if (!allowTextureFallthrough) {
+                        failReason = "The sprite lookup '" + lookup + "' did not exist in ay of the maps";
+                        rawModel = null;
+                        break;
+                    }
+                } else {
+                    toRegisterSprites.add(new ResourceLocation(lookup));
+                }
+                if (ModelHolderRegistry.DEBUG) {
+                    BCLog.logger.info("[lib.model.holder]  - " + lookup);
+                }
+            }
+        }
+    }
+
     @Override
     protected void onModelBake() {
+//        _onModelBake();
+    }
+
+    protected void _onModelBake() {
         if (rawModel == null) {
             quads = null;
         } else {
@@ -131,7 +181,7 @@ public class ModelHolderStatic extends ModelHolder {
     }
 
     private MutableQuad[] bakePart(JsonModelPart[] a) {
-        TextureAtlasSprite missingSprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        TextureAtlasSprite missingSprite = SpriteUtil.missingSprite().get();
         List<MutableQuad> list = new ArrayList<>();
         for (JsonModelPart part : a) {
             for (JsonQuad quad : part.quads) {
@@ -154,7 +204,8 @@ public class ModelHolderStatic extends ModelHolder {
                         sprite = missingSprite;
                     }
                 } else {
-                    sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+//                    sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+                    sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
                 }
                 list.add(quad.toQuad(sprite));
             }
@@ -179,6 +230,10 @@ public class ModelHolderStatic extends ModelHolder {
     }
 
     public MutableQuad[] getCutoutQuads() {
+        // Calen
+        if (quads == null) {
+            _onModelBake();
+        }
         return getQuadsChecking()[0];
     }
 

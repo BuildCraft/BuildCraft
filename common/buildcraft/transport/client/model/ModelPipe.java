@@ -6,69 +6,95 @@
 
 package buildcraft.transport.client.model;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.property.IExtendedBlockState;
-
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllTranslucentKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.key.PipeModelKey;
 import buildcraft.transport.tile.TilePipeHolder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
 
-public enum ModelPipe implements IBakedModel {
+import javax.annotation.Nullable;
+import java.util.List;
+
+@OnlyIn(Dist.CLIENT)
+public enum ModelPipe implements BakedModel {
     INSTANCE;
 
+    @NotNull
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
+        return getQuads(state, side, rand, ModelData.EMPTY, null);
+    }
+
+    /**
+     * @param extraData Defined by {@link TilePipeHolder#getModelData()} in 1.18.2
+     */
+    @NotNull
+    @Override
+//    public List<BakedQuad> getQuads(IBlockState state, Direction side, long rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType renderType) {
         if (side != null) {
             return ImmutableList.of();
         }
 
-        TilePipeHolder tile = null;
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState ext = (IExtendedBlockState) state;
-            WeakReference<TilePipeHolder> ref = ext.getValue(BlockPipeHolder.PROP_TILE);
-            if (ref != null) {
-                tile = ref.get();
-            }
-        }
+//        TilePipeHolder tile = null;
+//        if (state instanceof IExtendedBlockState) {
+//            IExtendedBlockState ext = (IExtendedBlockState) state;
+//            WeakReference<TilePipeHolder> ref = ext.getValue(BlockPipeHolder.PROP_TILE);
+//            if (ref != null) {
+//                tile = ref.get();
+//            }
+//        }
+        TilePipeHolder tile = extraData.get(BlockPipeHolder.PROP_TILE);
 
-        BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+//        BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+        RenderType layer = renderType;
 
         if (tile == null || tile.getPipe() == null) {
-            if (layer == BlockRenderLayer.TRANSLUCENT) {
+            if (layer == RenderType.translucent()) {
                 return ImmutableList.of();
             }
             return PipeModelCacheBase.cacheCutout.bake(new PipeBaseCutoutKey(PipeModelKey.DEFAULT_KEY));
         }
 
-        if (layer == BlockRenderLayer.TRANSLUCENT) {
-            PipeAllTranslucentKey realKey = new PipeAllTranslucentKey(tile);
-            return PipeModelCacheAll.cacheTranslucent.bake(realKey);
-        } else {
-            PipeAllCutoutKey realKey = new PipeAllCutoutKey(tile);
-            return PipeModelCacheAll.cacheCutout.bake(realKey);
-        }
+        // Calen:if only bake translucent, the colorless pipe texture will disappear
+////        if (layer == BlockRenderLayer.TRANSLUCENT)
+//        if (layer == RenderType.translucent()) {
+//            PipeAllTranslucentKey realKey = new PipeAllTranslucentKey(tile);
+//            return PipeModelCacheAll.cacheTranslucent.bake(realKey);
+//        } else {
+//            PipeAllCutoutKey realKey = new PipeAllCutoutKey(tile);
+//            return PipeModelCacheAll.cacheCutout.bake(realKey);
+//        }
+
+        List<BakedQuad> translucent = PipeModelCacheAll.cacheTranslucent.bake(new PipeAllTranslucentKey(tile));
+        List<BakedQuad> cutout = PipeModelCacheAll.cacheCutout.bake(new PipeAllCutoutKey(tile));
+        List<BakedQuad> ret = Lists.newArrayList();
+        ret.addAll(translucent);
+        ret.addAll(cutout);
+        return ret;
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+//    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
@@ -78,22 +104,33 @@ public enum ModelPipe implements IBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+//    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer() {
         return false;
     }
 
+    // Calen: if missingno, the particle when entity falls onto the pipe, the particle will be missingno
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+//    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon() {
+//        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        return SpriteUtil.white();
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
-        return ItemCameraTransforms.DEFAULT;
+//    public ItemCameraTransforms getItemCameraTransforms()
+    public ItemTransforms getTransforms() {
+        return ModelItemSimple.TRANSFORM_DEFAULT;
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
+//    public ItemOverrideList getOverrides()
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
     }
 }

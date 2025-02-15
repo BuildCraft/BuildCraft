@@ -6,14 +6,17 @@
 
 package buildcraft.lib.gui.elem;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /** @deprecated Help *should* be moved to GuiElementContainer rather than this. */
 @Deprecated
@@ -83,16 +86,16 @@ public class GuiElementContainerHelp implements IGuiElement {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, GuiGraphics guiGraphics) {
         for (IGuiElement element : internalElements) {
-            element.drawBackground(partialTicks);
+            element.drawBackground(partialTicks, guiGraphics);
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(GuiGraphics guiGraphics, float partialTicks) {
         for (IGuiElement element : internalElements) {
-            element.drawForeground(partialTicks);
+            element.drawForeground(guiGraphics, partialTicks);
         }
     }
 

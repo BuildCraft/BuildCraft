@@ -6,57 +6,62 @@
 
 package buildcraft.silicon.tile;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.recipes.AssemblyRecipe;
-
+import buildcraft.api.net.IMessage;
+import buildcraft.api.recipes.IAssemblyRecipe;
 import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.assembly.AssemblyRecipeRegistry;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.craft.IAssemblyCraft;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
+import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.BCSiliconMenuTypes;
 import buildcraft.silicon.EnumAssemblyRecipeState;
+import buildcraft.silicon.container.ContainerAssemblyTable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 
-public class TileAssemblyTable extends TileLaserTableBase {
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
+
+public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCraft {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("assembly_table");
     public static final int NET_RECIPE_STATE = IDS.allocId("RECIPE_STATE");
 
     public final ItemHandlerSimple inv = itemManager.addInvHandler(
-        "inv",
-        3 * 4,
-        ItemHandlerManager.EnumAccess.BOTH,
-        EnumPipePart.VALUES
+            "inv",
+            3 * 4,
+            ItemHandlerManager.EnumAccess.BOTH,
+            EnumPipePart.VALUES
     );
     public SortedMap<AssemblyInstruction, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftsilicon:precision_crafting");
+
+    public TileAssemblyTable(BlockPos pos, BlockState blockState) {
+        super(BCSiliconBlocks.assemblyTableTile.get(), pos, blockState);
+    }
 
     @Override
     public IdAllocator getIdAllocator() {
@@ -66,11 +71,12 @@ public class TileAssemblyTable extends TileLaserTableBase {
     private void updateRecipes() {
         //TODO: rework this to not iterate over every recipe every tick
         int count = recipesStates.size();
-        for (AssemblyRecipe recipe: AssemblyRecipeRegistry.REGISTRY.values()) {
+//        for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values())
+        for (IAssemblyRecipe recipe : AssemblyRecipeRegistry.getAll(level)) {
             Set<ItemStack> outputs = recipe.getOutputs(inv.stacks);
-            for (ItemStack out: outputs) {
+            for (ItemStack out : outputs) {
                 boolean found = false;
-                for (AssemblyInstruction instruction: recipesStates.keySet()) {
+                for (AssemblyInstruction instruction : recipesStates.keySet()) {
                     if (instruction.recipe == recipe && out == instruction.output) {
                         found = true;
                         break;
@@ -84,7 +90,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
         }
 
         boolean findActive = false;
-        for (Iterator<Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator<Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext(); )
+        {
             Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState> entry = iterator.next();
             AssemblyInstruction instruction = entry.getKey();
             EnumAssemblyRecipeState state = entry.getValue();
@@ -153,7 +160,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
             }
             index = 0;
             for (Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState> entry : recipesStates.entrySet()) {
-                AssemblyRecipe recipe = entry.getKey().recipe;
+                IAssemblyRecipe recipe = entry.getKey().recipe;
                 EnumAssemblyRecipeState state = entry.getValue();
                 if (state == EnumAssemblyRecipeState.SAVED_ENOUGH && recipe != activeRecipe.recipe && (index > activeIndex || isActiveLast)) {
                     state = EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE;
@@ -174,7 +181,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public void update() {
         super.update();
 
-        if (world.isRemote) {
+        if (level.isClientSide) {
             return;
         }
 
@@ -186,7 +193,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
                 AssemblyInstruction instruction = getActiveRecipe();
                 extract(inv, instruction.recipe.getInputsFor(instruction.output), false, false);
 
-                InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, instruction.output.copy());
+                InventoryUtil.addToBestAcceptor(getLevel(), getBlockPos(), null, instruction.output.copy());
 
                 power -= getTarget();
                 activateNextRecipe();
@@ -196,65 +203,76 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        NBTTagList recipesStatesTag = new NBTTagList();
-        recipesStates.forEach((instruction, state) -> {
-            NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setString("recipe", instruction.recipe.getRegistryName().toString());
-            entryTag.setTag("output", instruction.output.serializeNBT());
-            entryTag.setInteger("state", state.ordinal());
-            recipesStatesTag.appendTag(entryTag);
+    public void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
+        ListTag recipesStatesTag = new ListTag();
+        recipesStates.forEach((instruction, state) ->
+        {
+            CompoundTag entryTag = new CompoundTag();
+            entryTag.putString("recipe", instruction.recipe.getId().toString());
+            entryTag.put("output", instruction.output.serializeNBT());
+            entryTag.putInt("state", state.ordinal());
+            recipesStatesTag.add(entryTag);
         });
-        nbt.setTag("recipes_states", recipesStatesTag);
-        return nbt;
+        nbt.put("recipes_states", recipesStatesTag);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         recipesStates.clear();
-        NBTTagList recipesStatesTag = nbt.getTagList("recipes_states", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < recipesStatesTag.tagCount(); i++) {
-            NBTTagCompound entryTag = recipesStatesTag.getCompoundTagAt(i);
+        ListTag recipesStatesTag = nbt.getList("recipes_states", Tag.TAG_COMPOUND);
+        for (int i = 0; i < recipesStatesTag.size(); i++) {
+//            CompoundTag entryTag = recipesStatesTag.getCompound(i);
+            CompoundTag entryTag = recipesStatesTag.getCompound(i).copy();
             String name = entryTag.getString("recipe");
-            if (entryTag.hasKey("output")) {
-                AssemblyInstruction instruction = lookupRecipe(name, new ItemStack(entryTag.getCompoundTag("output")));
-                if (instruction != null)
-                    recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInteger("state")]);
+            if (entryTag.contains("output")) {
+                // Calen: Here this.level is null. lookup recipes -> NPE
+//                AssemblyInstruction instruction = lookupRecipe(name, ItemStack.of(entryTag.getCompound("output")));
+//                if (instruction != null)
+//                    recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInt("state")]);
+                runWhenWorldNotNull(() ->
+                        {
+                            AssemblyInstruction instruction = lookupRecipe(name, ItemStack.of(entryTag.getCompound("output")));
+                            if (instruction != null)
+                                recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInt("state")]);
+                        },
+                        false);
             }
         }
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Dist side) {
         super.writePayload(id, buffer, side);
 
         if (id == NET_GUI_DATA) {
             buffer.writeInt(recipesStates.size());
-            recipesStates.forEach((instruction, state) -> {
-                buffer.writeString(instruction.recipe.getRegistryName().toString());
-                buffer.writeItemStack(instruction.output);
+            recipesStates.forEach((instruction, state) ->
+            {
+                buffer.writeUtf(instruction.recipe.getId().toString());
+                buffer.writeItemStack(instruction.output, false);
                 buffer.writeInt(state.ordinal());
             });
         }
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+//    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
         if (id == NET_GUI_DATA) {
             recipesStates.clear();
             int count = buffer.readInt();
             for (int i = 0; i < count; i++) {
-                AssemblyInstruction instruction = lookupRecipe(buffer.readString(), buffer.readItemStack());
+                AssemblyInstruction instruction = lookupRecipe(buffer.readString(), buffer.readItem());
                 recipesStates.put(instruction, EnumAssemblyRecipeState.values()[buffer.readInt()]);
             }
         }
 
         if (id == NET_RECIPE_STATE) {
-            AssemblyInstruction recipe = lookupRecipe(buffer.readString(), buffer.readItemStack());
+            AssemblyInstruction recipe = lookupRecipe(buffer.readString(), buffer.readItem());
             EnumAssemblyRecipeState state = EnumAssemblyRecipeState.values()[buffer.readInt()];
             if (recipesStates.containsKey(recipe)) {
                 recipesStates.put(recipe, state);
@@ -263,32 +281,38 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     public void sendRecipeStateToServer(AssemblyInstruction instruction, EnumAssemblyRecipeState state) {
-        IMessage message = createMessage(NET_RECIPE_STATE, (buffer) -> {
-            buffer.writeString(instruction.recipe.getRegistryName().toString());
-            buffer.writeItemStack(instruction.output);
+        IMessage message = createMessage(NET_RECIPE_STATE, (buffer) ->
+        {
+            buffer.writeUtf(instruction.recipe.getId().toString());
+            buffer.writeItemStack(instruction.output, false);
             buffer.writeInt(state.ordinal());
         });
         MessageManager.sendToServer(message);
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<Component> left, List<Component> right, Direction side) {
         super.getDebugInfo(left, right, side);
-        left.add("recipes - " + recipesStates.size());
-        left.add("target - " + LocaleUtil.localizeMj(getTarget()));
+//        left.add("recipes - " + recipesStates.size());
+        left.add(Component.literal("recipes - " + recipesStates.size()));
+//        left.add("target - " + LocaleUtil.localizeMj(getTarget()));
+        left.add(Component.literal("target - ").append(LocaleUtil.localizeMjComponent(getTarget())));
     }
 
     @Nullable
     private AssemblyInstruction lookupRecipe(String name, ItemStack output) {
-        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.get(new ResourceLocation(name));
-        return recipe != null ? new AssemblyInstruction(recipe, output) : null;
+//        AssemblyRecipe recipe = AssemblyRecipeRegistry.REGISTRY.get(new ResourceLocation(name));
+        Optional<IAssemblyRecipe> recipe = AssemblyRecipeRegistry.getAll(level).stream().filter(r -> r.getId().equals(new ResourceLocation(name))).findFirst();
+//        return recipe != null ? new AssemblyInstruction(recipe, output) : null;
+        return recipe.map(assemblyRecipe -> new AssemblyInstruction(assemblyRecipe, output)).orElse(null);
     }
 
     public class AssemblyInstruction implements Comparable<AssemblyInstruction> {
-        public final AssemblyRecipe recipe;
+        public final IAssemblyRecipe recipe;
         public final ItemStack output;
 
-        private AssemblyInstruction(AssemblyRecipe recipe, ItemStack output) {
+        private AssemblyInstruction(IAssemblyRecipe recipe, ItemStack output) {
             this.recipe = recipe;
             this.output = output;
         }
@@ -302,7 +326,22 @@ public class TileAssemblyTable extends TileLaserTableBase {
         public boolean equals(Object obj) {
             if (!(obj instanceof AssemblyInstruction)) return false;
             AssemblyInstruction instruction = (AssemblyInstruction) obj;
-            return recipe.getRegistryName().equals(instruction.recipe.getRegistryName()) && ItemStack.areItemStacksEqual(output, instruction.output);
+            return recipe.getId().equals(instruction.recipe.getId()) && ItemStack.matches(output, instruction.output);
         }
+    }
+
+    // MenuProvider
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new ContainerAssemblyTable(BCSiliconMenuTypes.ASSEMBLY_TABLE, id, player, this);
+    }
+
+    // Calen: to show current recipe
+    @Override
+    public ItemStack getAssemblyResult() {
+        AssemblyInstruction recipe = this.getActiveRecipe();
+        return recipe == null ? StackUtil.EMPTY : recipe.output;
     }
 }

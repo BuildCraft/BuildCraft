@@ -6,21 +6,17 @@
 
 package buildcraft.silicon.client.render;
 
-
-import net.minecraft.client.renderer.BufferBuilder;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.transport.pluggable.IPlugDynamicRenderer;
-
 import buildcraft.lib.client.model.AdvModelCache;
 import buildcraft.lib.client.model.MutableQuad;
-
 import buildcraft.silicon.BCSiliconModels;
 import buildcraft.silicon.plug.PluggableGate;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {
     INSTANCE;
 
@@ -31,8 +27,9 @@ public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {
     }
 
     @Override
-    public void render(PluggableGate gate, double x, double y, double z, float partialTicks, BufferBuilder vb) {
-        vb.setTranslation(x, y, z);
+//    public void render(PluggableGate gate, double x, double y, double z, float partialTicks, BufferBuilder vb)
+    public void render(PluggableGate gate, float partialTicks, PoseStack poseStack, VertexConsumer vb, int combinedLight, int combinedOverlay) {
+//        vb.setTranslation(x, y, z);
         gate.setClientModelVariables();
         if (gate.clientModelData.hasNoNodes()) {
             gate.clientModelData.setNodes(BCSiliconModels.GATE_DYNAMIC.createTickableNodes());
@@ -42,8 +39,12 @@ public enum PlugGateRenderer implements IPlugDynamicRenderer<PluggableGate> {
         for (MutableQuad q : cache.getCutoutQuads()) {
             copy.copyFrom(q);
             copy.multShade();
-            copy.render(vb);
+
+            copy.lighti(combinedLight);
+            copy.overlay(combinedOverlay);
+
+            copy.render(poseStack.last(), vb);
         }
-        vb.setTranslation(0, 0, 0);
+//        vb.setTranslation(0, 0, 0);
     }
 }

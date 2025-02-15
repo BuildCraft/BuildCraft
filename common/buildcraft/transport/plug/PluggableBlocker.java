@@ -6,28 +6,28 @@
 
 package buildcraft.transport.plug;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.misc.AdvancementUtil;
-
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PluggableBlocker extends PipePluggable {
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+    private static final VoxelShape[] BOXES = new VoxelShape[6];
 
     private static final ResourceLocation ADVANCEMENT_PLACE_PLUG = new ResourceLocation(
-        "buildcrafttransport:plugging_the_gap"
+            "buildcrafttransport:plugging_the_gap"
     );
 
     static {
@@ -39,21 +39,21 @@ public class PluggableBlocker extends PipePluggable {
         double min = 4 / 16.0;
         double max = 12 / 16.0;
 
-        BOXES[EnumFacing.DOWN.getIndex()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.getIndex()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.getIndex()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+        BOXES[Direction.DOWN.ordinal()] = Shapes.box(min, ll, min, max, lu, max);
+        BOXES[Direction.UP.ordinal()] = Shapes.box(min, ul, min, max, uu, max);
+        BOXES[Direction.NORTH.ordinal()] = Shapes.box(min, min, ll, max, max, lu);
+        BOXES[Direction.SOUTH.ordinal()] = Shapes.box(min, min, ul, max, max, uu);
+        BOXES[Direction.WEST.ordinal()] = Shapes.box(ll, min, min, lu, max, max);
+        BOXES[Direction.EAST.ordinal()] = Shapes.box(ul, min, min, uu, max, max);
     }
 
-    public PluggableBlocker(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
+    public PluggableBlocker(PluggableDefinition definition, IPipeHolder holder, Direction side) {
         super(definition, holder, side);
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
-        return BOXES[side.getIndex()];
+    public VoxelShape getBoundingBox() {
+        return BOXES[side.ordinal()];
     }
 
     @Override
@@ -63,20 +63,21 @@ public class PluggableBlocker extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugBlocker);
+        return new ItemStack(BCTransportItems.plugBlocker.get());
     }
 
     @Override
-    public void onPlacedBy(EntityPlayer player) {
+    public void onPlacedBy(Player player) {
         super.onPlacedBy(player);
-        if (!holder.getPipeWorld().isRemote && holder.getPipe().isConnected(side)) {
+        if (!holder.getPipeWorld().isClientSide && holder.getPipe().isConnected(side)) {
             AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_PLACE_PLUG);
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugBlocker(side);
+    public PluggableModelKey getModelRenderKey(RenderType layer) {
+        if (layer == RenderType.cutout()) return new KeyPlugBlocker(side);
         return null;
     }
 }

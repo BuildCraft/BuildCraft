@@ -6,61 +6,104 @@
 
 package buildcraft.lib.fluid;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.Fluid;
+import buildcraft.energy.BCEnergyConfig;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class BCFluidBlock extends BlockFluidClassic {
+import java.util.function.Supplier;
+
+public class BCFluidBlock extends LiquidBlock {
     private boolean sticky = false;
+    private final LazyLoadedValue<Boolean> displaceWater;
+    private final LazyLoadedValue<Boolean> displaceLava;
+    private final BCFluidRegistryContainer registryContainer;
 
-    public BCFluidBlock(Fluid fluid, Material material) {
-        super(fluid, material);
-        Boolean displaceWater = fluid.getDensity() > 1000;
-        displacements.put(Blocks.WATER, displaceWater);
-        displacements.put(Blocks.FLOWING_WATER, displaceWater);
+    public BCFluidBlock(Supplier<? extends FlowingFluid> p_54694_, BlockBehaviour.Properties properties, boolean sticky, BCFluidRegistryContainer registryContainer) {
+        super(p_54694_, properties);
+        this.registerDefaultState(
+                this.stateDefinition.any()
+                        .setValue(LEVEL, Integer.valueOf(0))
+        );
+        displaceWater = new LazyLoadedValue<>(() -> this.getFluid().getFluidType().getDensity() > 1000);
+        displaceLava = new LazyLoadedValue<>(() -> this.getFluid().getFluidType().getDensity() > 9000);
 
-        Boolean displaceLava = fluid.getDensity() > 9000;
-        displacements.put(Blocks.LAVA, displaceLava);
-        displacements.put(Blocks.FLOWING_LAVA, displaceLava);
-
-        renderLayer = BlockRenderLayer.SOLID;
+        this.sticky = sticky;
+        this.registryContainer = registryContainer;
+//        renderLayer = BlockRenderLayer.SOLID; // Calen: moved to BCEnergy#clientInit
     }
 
     @Override
-    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity, double yToTest, Material material, boolean testingHead) {
-        if (material == Material.WATER) {
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+        Item itemInHand = context.getItemInHand().getItem();
+        if (itemInHand == Items.WATER_BUCKET && displaceWater.get()) {
+            return false;
+        } else if (itemInHand == Items.LAVA_BUCKET && displaceLava.get()) {
+            return false;
+        } else {
             return true;
         }
-        return null;
     }
 
+//    @Override
+//    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity, double yToTest, Material material, boolean testingHead) {
+//        if (material == Material.WATER) {
+//            return true;
+//        }
+//        return null;
+//    }
+
+    // public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face)
     @Override
-    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return blockMaterial.getCanBurn() ? 200 : 0;
+    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return state.ignitedByLava() ? 200 : 0;
     }
 
+    // public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face)
     @Override
-    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return blockMaterial.getCanBurn() ? 200 : 0;
+    public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return state.ignitedByLava() ? 200 : 0;
     }
 
+    // public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-        if (sticky) {
-            entityIn.setInWeb();
+    public void entityInside(BlockState p_58180_, Level p_58181_, BlockPos p_58182_, Entity entityIn) {
+        if (BCEnergyConfig.oilIsSticky && sticky) {
+            entityIn.makeStuckInBlock(p_58180_, new Vec3(0.25D, (double) 0.05F, 0.25D));
         }
     }
 
-    public void setSticky(boolean sticky) {
-        this.sticky = sticky;
+//    public void setSticky(boolean sticky) {
+//        this.sticky = sticky;
+//    }
+
+    // Calen 1.20.1
+    public ResourceLocation getRegistryName() {
+        return ForgeRegistries.BLOCKS.getKey(this);
+    }
+
+    @Override
+    public String getDescriptionId() {
+        return registryContainer.getStill().getFluidType().getDescriptionId();
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return (MutableComponent) registryContainer.getStill().getFluidType().getDescription();
     }
 }

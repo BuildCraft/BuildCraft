@@ -6,14 +6,21 @@
 
 package buildcraft.core.client.render;
 
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.render.tile.RenderEngine_BC8;
-
 import buildcraft.core.BCCoreModels;
 import buildcraft.core.tile.TileEngineCreative;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.render.tile.RenderEngine_BC8;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderEngineCreative extends RenderEngine_BC8<TileEngineCreative> {
-    public static final RenderEngineCreative INSTANCE = new RenderEngineCreative();
+//    public static final RenderEngineCreative INSTANCE = new RenderEngineCreative();
+
+    public RenderEngineCreative(BlockEntityRendererProvider.Context context) {
+        super(context);
+    }
 
     @Override
     protected MutableQuad[] getEngineModel(TileEngineCreative engine, float partialTicks) {

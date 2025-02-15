@@ -1,12 +1,13 @@
 package buildcraft.lib.gui.elem;
 
-import net.minecraft.inventory.Slot;
-
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.inventory.Slot;
 
 public class GuiElementSlotMover extends GuiElementSimple {
 
@@ -20,13 +21,13 @@ public class GuiElementSlotMover extends GuiElementSimple {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, GuiGraphics guiGraphics) {
         if (visible.evaluate()) {
-            toMove.xPos = 1 + (int) Math.round(getX());
-            toMove.yPos = 1 + (int) Math.round(getY());
+            toMove.x = 1 + (int) Math.round(getX());
+            toMove.y = 1 + (int) Math.round(getY());
         } else {
-            toMove.xPos = -10000;
-            toMove.yPos = -10000;
+            toMove.x = -10000;
+            toMove.y = -10000;
         }
     }
 }

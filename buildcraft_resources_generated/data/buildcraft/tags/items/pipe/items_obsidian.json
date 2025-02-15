@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_obsidian_colorless",
+    "buildcrafttransport:pipe_items_obsidian_green",
+    "buildcrafttransport:pipe_items_obsidian_brown",
+    "buildcrafttransport:pipe_items_obsidian_cyan",
+    "buildcrafttransport:pipe_items_obsidian_white",
+    "buildcrafttransport:pipe_items_obsidian_orange",
+    "buildcrafttransport:pipe_items_obsidian_gray",
+    "buildcrafttransport:pipe_items_obsidian_blue",
+    "buildcrafttransport:pipe_items_obsidian_black",
+    "buildcrafttransport:pipe_items_obsidian_red",
+    "buildcrafttransport:pipe_items_obsidian_yellow",
+    "buildcrafttransport:pipe_items_obsidian_magenta",
+    "buildcrafttransport:pipe_items_obsidian_purple",
+    "buildcrafttransport:pipe_items_obsidian_lime",
+    "buildcrafttransport:pipe_items_obsidian_pink",
+    "buildcrafttransport:pipe_items_obsidian_light_blue",
+    "buildcrafttransport:pipe_items_obsidian_light_gray"
+  ]
+}

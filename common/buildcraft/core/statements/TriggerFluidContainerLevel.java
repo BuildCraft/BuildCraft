@@ -6,36 +6,27 @@
 
 package buildcraft.core.statements;
 
-import java.util.Locale;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
+import buildcraft.api.statements.*;
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.CapUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.BCCoreSprites;
-import buildcraft.core.BCCoreStatements;
+import java.util.Locale;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
     public final TriggerType type;
 
     public TriggerFluidContainerLevel(TriggerType type) {
         super(
-            "buildcraft:fluid." + type.name().toLowerCase(Locale.ROOT),
-            "buildcraft.fluid." + type.name().toLowerCase(Locale.ROOT)
+                "buildcraft:fluid." + type.name().toLowerCase(Locale.ROOT),
+                "buildcraft.fluid." + type.name().toLowerCase(Locale.ROOT)
         );
         this.type = type;
     }
@@ -51,41 +42,51 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
     }
 
     @Override
-    public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.trigger.fluidlevel.below"), (int) (type.level * 100));
+    public Component getDescription() {
+//        return String.format(LocaleUtil.localize("gate.trigger.fluidlevel.below"), (int) (type.level * 100));
+        return Component.translatable("gate.trigger.fluidlevel.below", (int) (type.level * 100));
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
+    public String getDescriptionKey() {
+        return "gate.trigger.fluidlevel.below." + (int) (type.level * 100);
+    }
+
+    @Override
+    public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
+        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite()).orElse(null);
         if (handler == null) {
             return false;
         }
         FluidStack searchedFluid = null;
 
-        if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack() .isEmpty()) {
-            searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
+        if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack().isEmpty()) {
+            searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack()).orElse(null);
             if (searchedFluid != null) {
-                searchedFluid.amount = 1;
+                searchedFluid.setAmount(1);
             }
         }
 
-        IFluidTankProperties[] tankPropertiesArray = handler.getTankProperties();
-        if (tankPropertiesArray == null || tankPropertiesArray.length == 0) {
+//        IFluidTankProperties[] tankPropertiesArray = handler.getTankProperties();
+        int tankPropertiesArray = handler.getTanks();
+//        if (tankPropertiesArray == null || tankPropertiesArray.length == 0)
+        if (tankPropertiesArray == 0) {
             return false;
         }
 
-        for (IFluidTankProperties tankProperties : tankPropertiesArray) {
-            if (tankProperties == null) {
-                continue;
-            }
-            FluidStack fluid = tankProperties.getContents();
-            if (fluid == null) {
-                return searchedFluid == null || handler.fill(searchedFluid, false) > 0;
+//        for (IFluidTankProperties tankProperties : tankPropertiesArray)
+        for (int i = 0; i < tankPropertiesArray; i++) {
+//            if (tankProperties == null) { continue; }
+//            FluidStack fluid = tankProperties.getContents();
+            FluidStack fluid = handler.getFluidInTank(i);
+//            if (fluid == null)
+            if (fluid.isEmpty()) {
+                return searchedFluid == null || handler.fill(searchedFluid, IFluidHandler.FluidAction.SIMULATE) > 0;
             }
 
             if (searchedFluid == null || searchedFluid.isFluidEqual(fluid)) {
-                float percentage = fluid.amount / (float) tankProperties.getCapacity();
+//                float percentage = fluid.amount / (float) tankProperties.getCapacity();
+                float percentage = fluid.getAmount() / (float) handler.getTankCapacity(i);
                 return percentage < type.level;
             }
         }

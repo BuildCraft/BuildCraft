@@ -6,26 +6,6 @@
 
 package buildcraft.silicon.plug;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.Explosion;
-
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.BCModules;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacade;
@@ -34,17 +14,36 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
-
 import buildcraft.silicon.BCSiliconItems;
 import buildcraft.silicon.client.model.key.KeyPlugFacade;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 public class PluggableFacade extends PipePluggable implements IFacade {
 
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+    private static final VoxelShape[] BOXES = new VoxelShape[6];
 
     static {
         double ll = 0 / 16.0;
@@ -55,76 +54,81 @@ public class PluggableFacade extends PipePluggable implements IFacade {
         double min = 0 / 16.0;
         double max = 16 / 16.0;
 
-        BOXES[EnumFacing.DOWN.getIndex()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.getIndex()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.getIndex()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+        BOXES[Direction.DOWN.ordinal()] = Shapes.box(min, ll, min, max, lu, max);
+        BOXES[Direction.UP.ordinal()] = Shapes.box(min, ul, min, max, uu, max);
+        BOXES[Direction.NORTH.ordinal()] = Shapes.box(min, min, ll, max, max, lu);
+        BOXES[Direction.SOUTH.ordinal()] = Shapes.box(min, min, ul, max, max, uu);
+        BOXES[Direction.WEST.ordinal()] = Shapes.box(ll, min, min, lu, max, max);
+        BOXES[Direction.EAST.ordinal()] = Shapes.box(ul, min, min, uu, max, max);
     }
 
     public static final int SIZE = 2;
     public final FacadeInstance states;
     public final boolean isSideSolid;
-    public final BlockFaceShape blockFaceShape;
+    // Calen: seems not still useful in 1.18.2
+//    public final BlockFaceShape blockFaceShape;
     public int activeState;
 
-    public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, FacadeInstance states) {
+    public PluggableFacade(PluggableDefinition definition, IPipeHolder holder, Direction side, FacadeInstance states) {
         super(definition, holder, side);
         this.states = states;
         isSideSolid = states.areAllStatesSolid(side);
-        blockFaceShape = states.getBlockFaceShape(side);
+        // Calen: seems not still useful in 1.18.2
+//        blockFaceShape = states.getBlockFaceShape(side);
     }
 
-    public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
+    public PluggableFacade(PluggableDefinition def, IPipeHolder holder, Direction side, CompoundTag nbt) {
         super(def, holder, side);
-        if (nbt.hasKey("states") && !nbt.hasKey("facade")) {
-            NBTTagList tagStates = nbt.getTagList("states", Constants.NBT.TAG_COMPOUND);
-            if (tagStates.tagCount() > 0) {
-                boolean isHollow = tagStates.getCompoundTagAt(0).getBoolean("isHollow");
-                NBTTagCompound tagFacade = new NBTTagCompound();
-                tagFacade.setTag("states", tagStates);
-                tagFacade.setBoolean("isHollow", isHollow);
-                nbt.setTag("facade", tagFacade);
+        if (nbt.contains("states") && !nbt.contains("facade")) {
+            ListTag tagStates = nbt.getList("states", Tag.TAG_COMPOUND);
+            if (tagStates.size() > 0) {
+                boolean isHollow = tagStates.getCompound(0).getBoolean("isHollow");
+                CompoundTag tagFacade = new CompoundTag();
+                tagFacade.put("states", tagStates);
+                tagFacade.putBoolean("isHollow", isHollow);
+                nbt.put("facade", tagFacade);
             }
         }
-        this.states = FacadeInstance.readFromNbt(nbt.getCompoundTag("facade"));
-        activeState = MathUtil.clamp(nbt.getInteger("activeState"), 0, states.phasedStates.length - 1);
+        this.states = FacadeInstance.readFromNbt(nbt.getCompound("facade"));
+        activeState = MathUtil.clamp(nbt.getInt("activeState"), 0, states.phasedStates.length - 1);
         isSideSolid = states.areAllStatesSolid(side);
-        blockFaceShape = states.getBlockFaceShape(side);
+        // Calen: seems not still useful in 1.18.2
+//        blockFaceShape = states.getBlockFaceShape(side);
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("facade", states.writeToNbt());
-        nbt.setInteger("activeState", activeState);
+    public CompoundTag writeToNbt() {
+        CompoundTag nbt = super.writeToNbt();
+        nbt.put("facade", states.writeToNbt());
+        nbt.putInt("activeState", activeState);
         return nbt;
     }
 
     // Networking
 
-    public PluggableFacade(PluggableDefinition def, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
+    public PluggableFacade(PluggableDefinition def, IPipeHolder holder, Direction side, FriendlyByteBuf buffer) {
         super(def, holder, side);
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         states = FacadeInstance.readFromBuffer(buf);
         isSideSolid = buf.readBoolean();
-        blockFaceShape = buf.readEnumValue(BlockFaceShape.class);
+        // Calen: seems not still useful in 1.18.2
+//        blockFaceShape = buf.readEnum(SupportType.class);
     }
 
     @Override
-    public void writeCreationPayload(PacketBuffer buffer) {
+    public void writeCreationPayload(FriendlyByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         states.writeToBuffer(buf);
         buf.writeBoolean(isSideSolid);
-        buf.writeEnumValue(blockFaceShape);
+        // Calen: seems not still useful in 1.18.2
+//        buf.writeEnum(blockFaceShape);
     }
 
     // Pluggable methods
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
-        return BOXES[side.getIndex()];
+    public VoxelShape getBoundingBox() {
+        return BOXES[side.ordinal()];
     }
 
     @Override
@@ -143,46 +147,55 @@ public class PluggableFacade extends PipePluggable implements IFacade {
     }
 
     @Override
-    public float getExplosionResistance(@Nullable Entity exploder, Explosion explosion) {
-        return states.phasedStates[activeState].stateInfo.state.getBlock().getExplosionResistance(exploder);
+//    public float getExplosionResistance(@Nullable Entity exploder, Explosion explosion)
+    public float getExplosionResistance(@Nonnull Entity exploder, Explosion explosion) {
+//        return states.phasedStates[activeState].stateInfo.state.getBlock().getExplosionResistance(exploder);
+        BlockState state = states.phasedStates[activeState].stateInfo.state;
+        Level level = exploder.level();
+        BlockPos pos = exploder.blockPosition();
+        return state.getBlock().getExplosionResistance(state, level, pos, explosion);
     }
 
-    @Override
-    public BlockFaceShape getBlockFaceShape() {
-        return blockFaceShape;
-    }
+    // Calen: seems not still useful in 1.18.2
+//    @Override
+//    public BlockFaceShape getBlockFaceShape() {
+//        return blockFaceShape;
+//    }
 
     @Override
     public ItemStack getPickStack() {
-        return BCSiliconItems.plugFacade.createItemStack(states);
+        return BCSiliconItems.plugFacade.get().createItemStack(states);
     }
 
     @Override
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
+    @OnlyIn(Dist.CLIENT)
+    public PluggableModelKey getModelRenderKey(RenderType layer) {
         if (states.type == FacadeType.Basic) {
             FacadePhasedState facadeState = states.phasedStates[activeState];
-            IBlockState blockState = facadeState.stateInfo.state;
-            BlockRenderLayer targetLayer = blockState.getBlock().getBlockLayer();
-            if (targetLayer == BlockRenderLayer.TRANSLUCENT) {
+            BlockState blockState = facadeState.stateInfo.state;
+//            RenderType targetLayer = blockState.getBlock().getBlockLayer();
+            // Calen true -> Block  false -> Item
+            RenderType targetLayer = ItemBlockRenderTypes.getRenderType(blockState, true);
+            if (targetLayer == RenderType.translucent()) {
                 if (layer != targetLayer) {
                     return null;
                 }
-            } else if (layer == BlockRenderLayer.TRANSLUCENT) {
+            } else if (layer == RenderType.translucent()) {
                 return null;
             }
             return new KeyPlugFacade(layer, side, blockState, isHollow());
-        } else if (layer == BlockRenderLayer.CUTOUT && BCModules.TRANSPORT.isLoaded()) {
+        } else if (layer == RenderType.cutout() && BCModules.TRANSPORT.isLoaded()) {
             return KeyPlugBlocker.create(side);
         }
         return null;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public int getBlockColor(int tintIndex) {
         FacadePhasedState state = states.phasedStates[activeState];
-        BlockColors colours = Minecraft.getMinecraft().getBlockColors();
-        return colours.colorMultiplier(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex);
+        BlockColors colours = Minecraft.getInstance().getBlockColors();
+        return colours.getColor(state.stateInfo.state, holder.getPipeWorld(), holder.getPipePos(), tintIndex);
     }
 
     // IFacade

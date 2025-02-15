@@ -6,9 +6,9 @@
 
 package buildcraft.lib.gui;
 
-import java.util.List;
-
 import buildcraft.lib.gui.pos.IGuiArea;
+
+import java.util.List;
 
 public class GuiElementSimple implements IGuiElement {
     public final BuildCraftGui gui;

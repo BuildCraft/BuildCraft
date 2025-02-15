@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "key": {
+    "g": {
+      "tag": "forge:glass/gray"
+    },
+    "l": {
+      "tag": "forge:clay"
+    },
+    "r": {
+      "tag": "forge:clay"
+    }
+  },
+  "pattern": [
+    "lgr"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:pipe_items_clay_gray"
+  },
+  "show_notification": true
+}

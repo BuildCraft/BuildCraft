@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#forge:gears/wood",
+    "#forge:gears/stone",
+    "#forge:gears/iron",
+    "#forge:gears/gold",
+    "#forge:gears/diamond"
+  ]
+}

@@ -7,6 +7,7 @@
 package buildcraft.lib.client.guide.parts;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class GuidePartNewPage extends GuidePart {
     public GuidePartNewPage(GuiGuide gui) {
@@ -14,13 +15,12 @@ public class GuidePartNewPage extends GuidePart {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+    public PagePosition renderIntoArea(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index) {
         return current.newPage();
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index, double mouseX, double mouseY) {
         return current.newPage();
     }
 }

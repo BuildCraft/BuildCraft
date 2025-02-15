@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "key": {
+    "c": {
+      "tag": "forge:cobblestone"
+    },
+    "g": {
+      "tag": "forge:gravel"
+    }
+  },
+  "pattern": [
+    "cgc"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:pipe_structure_cobblestone_colorless"
+  },
+  "show_notification": true
+}

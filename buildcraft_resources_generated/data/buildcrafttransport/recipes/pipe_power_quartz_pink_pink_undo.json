@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_power_quartz_pink"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_quartz_pink"
+  }
+}

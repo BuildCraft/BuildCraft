@@ -6,27 +6,19 @@
 
 package buildcraft.transport.statements;
 
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.ITriggerInternalSided;
-import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.api.statements.*;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventStatement;
-
 import buildcraft.lib.misc.ColourUtil;
-
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public enum TriggerProviderPipes implements ITriggerProvider {
     INSTANCE;
@@ -38,7 +30,7 @@ public enum TriggerProviderPipes implements ITriggerProvider {
             IPipeHolder holder = gate.getPipeHolder();
             holder.fireEvent(new PipeEventStatement.AddTriggerInternal(holder, triggers));
 
-            for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            for (DyeColor colour : ColourUtil.COLOURS) {
                 if (TriggerPipeSignal.doesGateHaveColour(gate, colour)) {
                     triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 0]);
                     triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 1]);
@@ -52,7 +44,7 @@ public enum TriggerProviderPipes implements ITriggerProvider {
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> triggers, IStatementContainer container, @Nonnull EnumFacing side) {
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> triggers, IStatementContainer container, @Nonnull Direction side) {
         if (container instanceof IGate) {
             IGate gate = (IGate) container;
             IPipeHolder holder = gate.getPipeHolder();
@@ -61,7 +53,7 @@ public enum TriggerProviderPipes implements ITriggerProvider {
     }
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> triggers, @Nonnull EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> triggers, @Nonnull Direction side, BlockEntity tile) {
 
     }
 }

@@ -6,51 +6,63 @@
 
 package buildcraft.lib.debug;
 
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.item.ItemDebugger;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.HitResult.Type;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.item.ItemDebugger;
-
 public class ClientDebuggables {
-    public static final List<String> SERVER_LEFT = new ArrayList<>();
-    public static final List<String> SERVER_RIGHT = new ArrayList<>();
+    // public static final List<String> SERVER_LEFT = new ArrayList<>();
+    public static final List<Component> SERVER_LEFT = new ArrayList<>();
+    // public static final List<String> SERVER_RIGHT = new ArrayList<>();
+    public static final List<Component> SERVER_RIGHT = new ArrayList<>();
 
     @Nullable
-    public static IDebuggable getDebuggableObject(RayTraceResult mouseOver) {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (mc.gameSettings.reducedDebugInfo ||
-            mc.player.hasReducedDebug() ||
-            !mc.gameSettings.showDebugInfo ||
-            !ItemDebugger.isShowDebugInfo(mc.player)) {
+    public static IDebuggable getDebuggableObject(HitResult mouseOver) {
+        Minecraft mc = Minecraft.getInstance();
+        if (
+//                mc.gameSettings.reducedDebugInfo ||
+                mc.options.reducedDebugInfo().get() ||
+//                        mc.player.hasReducedDebug() ||
+                        mc.player.isReducedDebugInfo() ||
+//                        !mc.gameSettings.showDebugInfo ||
+                        !mc.options.renderDebug ||
+                        !ItemDebugger.isShowDebugInfo(mc.player)
+        )
+        {
             return null;
         }
         if (mouseOver == null) {
             return null;
         }
-        RayTraceResult.Type type = mouseOver.typeOfHit;
-        WorldClient world = mc.world;
+//        RayTraceResult.Type type = mouseOver.typeOfHit;
+        Type type = mouseOver.getType();
+        ClientLevel world = mc.level;
         if (world == null) {
             return null;
         }
-        if (type == RayTraceResult.Type.BLOCK) {
-            BlockPos pos = mouseOver.getBlockPos();
-            TileEntity tile = world.getTileEntity(pos);
+        if (type == Type.BLOCK) {
+            BlockPos pos = ((BlockHitResult) mouseOver).getBlockPos();
+            BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof IDebuggable) {
                 return (IDebuggable) tile;
             }
-        } else if (type == RayTraceResult.Type.ENTITY) {
-            Entity entity = mouseOver.entityHit;
+        }
+//        else if (type == RayTraceResult.Type.ENTITY)
+        else if (type == Type.ENTITY) {
+            Entity entity = ((EntityHitResult) mouseOver).getEntity();
             if (entity instanceof IDebuggable) {
                 return (IDebuggable) entity;
             }

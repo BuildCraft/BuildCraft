@@ -6,35 +6,46 @@
 
 package buildcraft.lib.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-
+import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 
-public abstract class ContainerBCTile<T extends TileBC_Neptune> extends ContainerBC_Neptune {
+//public abstract class ContainerBCTile<T extends TileBC_Neptune> extends ContainerBC_Neptune<T>
+public abstract class ContainerBCTile<T extends TileBC_Neptune & IBCTileMenuProvider> extends ContainerBC_Neptune<T> {
     public final T tile;
 
-    public ContainerBCTile(EntityPlayer player, T tile) {
-        super(player);
+    public ContainerBCTile(MenuType menuType, int id, Player player, T tile) {
+        super(menuType, id, player);
         this.tile = tile;
-        if (!tile.getWorld().isRemote) {
-            tile.onPlayerOpen(player);
-        }
+        // Calen: Moved to MessageUtil#serverOpenTileGui:MessageUpdateTile msg = tile.onServerPlayerOpenNoSend(player);
+        // to ensure the message received before GUI opened in client
+        // Not called in Client. We just handle the MessageUpdateTile in Client
+//        if (!tile.getLevel().isClientSide) {
+//            tile.onPlayerOpen(player);
+//        }
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
+//    public void onContainerClosed(Player player)
+    public void removed(Player player) {
+//        super.onContainerClosed(player);
+        super.removed(player);
         tile.onPlayerClose(player);
     }
 
     @Override
-    public final boolean canInteractWith(EntityPlayer player) {
+//    public final boolean canInteractWith(Player player)
+    public final boolean stillValid(Player player) {
         return tile.canInteractWith(player);
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        tile.sendNetworkGuiTick(this.player);
+//    public void detectAndSendChanges()
+    public void broadcastChanges() {
+//        super.detectAndSendChanges();
+        super.broadcastChanges();
+        tile.sendNetworkGuiTick((ServerPlayer) this.player);
     }
 }

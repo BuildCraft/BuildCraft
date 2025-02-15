@@ -1,23 +1,31 @@
 package buildcraft.lib.gui.recipe;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+import net.minecraft.world.item.crafting.Recipe;
+
 import java.lang.reflect.Field;
-import java.util.BitSet;
+import java.util.Set;
 
-import net.minecraft.client.gui.recipebook.RecipeList;
-import net.minecraft.item.crafting.IRecipe;
+//public class RecipeListPhantom extends RecipeList
+public class RecipeListPhantom extends RecipeCollection {
 
-public class RecipeListPhantom extends RecipeList {
-
-    public RecipeListPhantom(RecipeList from) throws ReflectiveOperationException {
-        getRecipes().addAll(from.getRecipes());
-        Class<?> clazzBitSet = BitSet.class;
+    // public RecipeListPhantom(RecipeList from) throws ReflectiveOperationException
+    public RecipeListPhantom(RecipeCollection from) throws ReflectiveOperationException {
+//        getRecipes().addAll(from.getRecipes());
+        super(Minecraft.getInstance().level.registryAccess(), from.getRecipes());
+//        Class<?> clazzBitSet = BitSet.class;
+        Class<?> clazzBitSet = Set.class;
         boolean first = true;
-        for (Field fld : RecipeList.class.getDeclaredFields()) {
+//        for (Field fld : RecipeList.class.getDeclaredFields())
+        for (Field fld : RecipeCollection.class.getDeclaredFields()) {
             if (fld.getType() == clazzBitSet) {
                 fld.setAccessible(true);
                 Object object = fld.get(from);
                 if (first) {
-                    ((BitSet) object).set(0, getRecipes().size());
+                    // TODO Calen which field?
+////                    ((BitSet) object).set(0, getRecipes().size());
+//                    ((Set) object).set(0, getRecipes().size());
                 }
                 fld.set(this, object);
                 first = false;
@@ -33,12 +41,13 @@ public class RecipeListPhantom extends RecipeList {
     }
 
     @Override
-    public boolean isCraftable(IRecipe recipe) {
+    public boolean isCraftable(Recipe recipe) {
         return true;
     }
 
     @Override
-    public boolean containsCraftableRecipes() {
+//    public boolean containsCraftableRecipes()
+    public boolean hasCraftable() {
         return !getRecipes().isEmpty();
     }
 }

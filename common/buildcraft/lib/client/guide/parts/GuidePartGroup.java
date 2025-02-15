@@ -1,7 +1,5 @@
 package buildcraft.lib.client.guide.parts;
 
-import java.util.List;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.PageLine;
@@ -10,6 +8,10 @@ import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.ref.GuideGroupSet;
 import buildcraft.lib.client.guide.ref.GuideGroupSet.GroupDirection;
 import buildcraft.lib.gui.ISimpleDrawable;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public class GuidePartGroup extends GuidePart {
 
@@ -26,11 +28,12 @@ public class GuidePartGroup extends GuidePart {
             values[i] = groupValues.get(i).value;
         }
         texts = new GuideText[1 + values.length];
-        texts[0] = new GuideText(gui, group.getTitle(direction));
+//        texts[0] = new GuideText(gui, group.getTitle(direction));
+        texts[0] = new GuideText(gui, group.getTitle(direction), Component.nullToEmpty(group.getTitle(direction)));
         int i = 1;
         for (PageValue<?> single : groupValues) {
             ISimpleDrawable icon = single.createDrawable();
-            texts[i++] = new GuideText(gui, new PageLine(icon, icon, 1, single.title, true, single::getTooltip));
+            texts[i++] = new GuideText(gui, new PageLine(icon, icon, 1, single.titleKey, single.title, true, single::getTooltip));
         }
     }
 
@@ -58,21 +61,21 @@ public class GuidePartGroup extends GuidePart {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+    public PagePosition renderIntoArea(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index) {
         current = current.guaranteeSpace(getFontRenderer().getMaxFontHeight() * 4, height);
         for (GuideText text : texts) {
-            current = text.renderIntoArea(x, y, width, height, current, index);
+            current = text.renderIntoArea(guiGraphics, x, y, width, height, current, index);
         }
         return current;
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(GuiGraphics guiGraphics, int x, int y, int width, int height, PagePosition current, int index,
+                                         double mouseX, double mouseY) {
         current = current.guaranteeSpace(getFontRenderer().getMaxFontHeight() * 4, height);
         for (int i = 0; i < texts.length; i++) {
             GuideText text = texts[i];
-            current = text.handleMouseClick(x, y, width, height, current, index, mouseX, mouseY);
+            current = text.handleMouseClick(guiGraphics, x, y, width, height, current, index, mouseX, mouseY);
             if (text.wasHovered && current.page == index && i > 0) {
                 Object value = values[i - 1];
                 GuidePageFactory factory = GuideManager.INSTANCE.getFactoryFor(value);

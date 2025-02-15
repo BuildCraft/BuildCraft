@@ -7,9 +7,10 @@
 package buildcraft.lib.gui;
 
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 /** An {@link ISimpleDrawable} that draws the specified {@link ISprite} as-is into the given width and height. */
 public class GuiSpriteScaled implements ISimpleDrawable {
@@ -26,11 +27,11 @@ public class GuiSpriteScaled implements ISimpleDrawable {
     }
 
     @Override
-    public void drawAt(double x, double y) {
+    public void drawAt(GuiGraphics guiGraphics, double x, double y) {
         x += area.getX();
         y += area.getY();
         double x2 = x + area.getWidth();
         double y2 = y + area.getHeight();
-        GuiIcon.draw(sprite, x, y, x2, y2);
+        GuiIcon.draw(sprite, guiGraphics, x, y, x2, y2);
     }
 }

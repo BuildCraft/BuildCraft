@@ -1,14 +1,12 @@
 package buildcraft.lib.gui.button;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.GuiUtil;
+import net.minecraft.resources.ResourceLocation;
 
 public class StandardSpriteButtons {
 

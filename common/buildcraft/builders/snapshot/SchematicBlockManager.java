@@ -6,18 +6,16 @@
 
 package buildcraft.builders.snapshot;
 
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.Lists;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.api.schematics.SchematicBlockFactory;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
+import com.google.common.collect.Lists;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+
+import javax.annotation.Nonnull;
 
 public class SchematicBlockManager {
     @SuppressWarnings("WeakerAccess")
@@ -35,34 +33,34 @@ public class SchematicBlockManager {
     @SuppressWarnings("WeakerAccess")
     public static <S extends ISchematicBlock> S createCleanCopy(S schematicBlock) {
         return SchematicBlockFactoryRegistry
-            .getFactoryByInstance(schematicBlock)
-            .supplier
-            .get();
+                .getFactoryByInstance(schematicBlock)
+                .supplier
+                .get();
     }
 
     @Nonnull
-    public static <S extends ISchematicBlock> NBTTagCompound writeToNBT(S schematicBlock) {
-        NBTTagCompound schematicBlockTag = new NBTTagCompound();
-        schematicBlockTag.setString(
-            "name",
-            SchematicBlockFactoryRegistry
-                .getFactoryByInstance(schematicBlock)
-                .name
-                .toString()
+    public static <S extends ISchematicBlock> CompoundTag writeToNBT(S schematicBlock) {
+        CompoundTag schematicBlockTag = new CompoundTag();
+        schematicBlockTag.putString(
+                "name",
+                SchematicBlockFactoryRegistry
+                        .getFactoryByInstance(schematicBlock)
+                        .name
+                        .toString()
         );
-        schematicBlockTag.setTag("data", schematicBlock.serializeNBT());
+        schematicBlockTag.put("data", schematicBlock.serializeNBT());
         return schematicBlockTag;
     }
 
     @Nonnull
-    public static ISchematicBlock readFromNBT(NBTTagCompound schematicBlockTag) throws InvalidInputDataException {
+    public static ISchematicBlock readFromNBT(CompoundTag schematicBlockTag) throws InvalidInputDataException {
         ResourceLocation name = new ResourceLocation(schematicBlockTag.getString("name"));
         SchematicBlockFactory<?> factory = SchematicBlockFactoryRegistry.getFactoryByName(name);
         if (factory == null) {
             throw new InvalidInputDataException("Unknown schematic type " + name);
         }
         ISchematicBlock schematicBlock = factory.supplier.get();
-        NBTTagCompound data = schematicBlockTag.getCompoundTag("data");
+        CompoundTag data = schematicBlockTag.getCompound("data");
         try {
             schematicBlock.deserializeNBT(data);
             return schematicBlock;

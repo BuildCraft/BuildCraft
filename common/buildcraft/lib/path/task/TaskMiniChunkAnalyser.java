@@ -6,14 +6,13 @@
 
 package buildcraft.lib.path.task;
 
+import buildcraft.lib.path.task.AnalysedChunk.MiniGraph;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-
-import buildcraft.lib.path.task.AnalysedChunk.MiniGraph;
 
 public class TaskMiniChunkAnalyser implements Callable<AnalysedChunk> {
     private final FilledChunk filled;
@@ -54,8 +53,8 @@ public class TaskMiniChunkAnalyser implements Callable<AnalysedChunk> {
                 graph.blockCount++;
                 graph.totalExpense += expense.expense;
                 chunk.graphs[x_][y_][z_] = graph;
-                for (EnumFacing face : EnumFacing.VALUES) {
-                    BlockPos offset = toTest.offset(face);
+                for (Direction face : Direction.VALUES) {
+                    BlockPos offset = toTest.relative(face);
                     if (!isValid(offset)) continue;
                     if (closedSet.contains(offset)) continue;
                     openSet.add(offset);

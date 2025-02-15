@@ -6,9 +6,31 @@
 
 package buildcraft.silicon.tile;
 
+import buildcraft.silicon.BCSiliconBlocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nullable;
+
 public class TileChargingTable extends TileLaserTableBase {
+    public TileChargingTable(BlockPos pos, BlockState blockState) {
+        super(BCSiliconBlocks.chargingTableTile.get(), pos, blockState);
+    }
+
     @Override
     public long getTarget() {
         return 0;
+    }
+
+    // MenuProvider
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+//        return new ContainerChargingTable(BCSiliconMenuTypes.CHARGING_TABLE, id, player, this);
+        return null;
     }
 }

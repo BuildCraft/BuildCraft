@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcrafttransport:pipe_items_wood_colorless",
+    "buildcrafttransport:pipe_items_wood_green",
+    "buildcrafttransport:pipe_items_wood_brown",
+    "buildcrafttransport:pipe_items_wood_cyan",
+    "buildcrafttransport:pipe_items_wood_white",
+    "buildcrafttransport:pipe_items_wood_orange",
+    "buildcrafttransport:pipe_items_wood_gray",
+    "buildcrafttransport:pipe_items_wood_blue",
+    "buildcrafttransport:pipe_items_wood_black",
+    "buildcrafttransport:pipe_items_wood_red",
+    "buildcrafttransport:pipe_items_wood_yellow",
+    "buildcrafttransport:pipe_items_wood_magenta",
+    "buildcrafttransport:pipe_items_wood_purple",
+    "buildcrafttransport:pipe_items_wood_lime",
+    "buildcrafttransport:pipe_items_wood_pink",
+    "buildcrafttransport:pipe_items_wood_light_blue",
+    "buildcrafttransport:pipe_items_wood_light_gray"
+  ]
+}

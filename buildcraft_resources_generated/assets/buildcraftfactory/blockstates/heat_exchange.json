@@ -1,0 +1,292 @@
+{
+  "variants": {
+    "connected_left=false,connected_right=false,connected_y=false,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=false,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=false,connected_y=true,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=false,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=false,connected_right=true,connected_y=true,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=false,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=false,connected_y=true,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=false,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=east,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=east,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=east,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=north,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=north,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=north,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=south,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=south,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=south,part=start": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=west,part=end": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=west,part=middle": {
+      "model": "minecraft:builtin/entity"
+    },
+    "connected_left=true,connected_right=true,connected_y=true,facing=west,part=start": {
+      "model": "minecraft:builtin/entity"
+    }
+  }
+}

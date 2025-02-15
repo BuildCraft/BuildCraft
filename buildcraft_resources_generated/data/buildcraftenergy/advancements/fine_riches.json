@@ -1,0 +1,59 @@
+{
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "oil_desert_biome": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "buildcraftenergy:oil_desert"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    },
+    "oil_ocean_biome": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "buildcraftenergy:oil_ocean"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.buildcraftenergy.fine_riches.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "buildcraftenergy:glob_oil"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.buildcraftenergy.fine_riches.title"
+    }
+  },
+  "requirements": [
+    [
+      "oil_desert_biome",
+      "oil_ocean_biome"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

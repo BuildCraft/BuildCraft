@@ -1,0 +1,16 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "output": {
+    "item": "buildcraftsilicon:plug_light_sensor"
+  },
+  "requiredMicroJoules": 500000000,
+  "requiredStacks": [
+    {
+      "count": 1,
+      "ingredient": {
+        "item": "minecraft:daylight_detector"
+      }
+    }
+  ],
+  "subType": "BASIC"
+}

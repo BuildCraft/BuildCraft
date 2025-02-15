@@ -1,8 +1,5 @@
 package buildcraft.lib.gui.elem;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IContainingElement;
 import buildcraft.lib.gui.IGuiElement;
@@ -10,6 +7,11 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScrollWindow implements IContainingElement {
 
@@ -52,19 +54,19 @@ public class ScrollWindow implements IContainingElement {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, GuiGraphics guiGraphics) {
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement element : innerElements) {
-                element.drawBackground(partialTicks);
+                element.drawBackground(partialTicks, guiGraphics);
             }
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(GuiGraphics guiGraphics, float partialTicks) {
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement element : innerElements) {
-                element.drawForeground(partialTicks);
+                element.drawForeground(guiGraphics, partialTicks);
             }
         }
     }

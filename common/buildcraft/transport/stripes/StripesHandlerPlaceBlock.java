@@ -4,42 +4,57 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.transport.stripes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
-    public boolean handle(World world,
+    public boolean handle(Level world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          Player player,
                           IStripesActivator activator) {
-        if (!(stack.getItem() instanceof ItemBlock)) {
+        if (!(stack.getItem() instanceof BlockItem)) {
             return false;
         }
-        if (!world.isAirBlock(pos.offset(direction))) {
+        if (!world.isEmptyBlock(pos.relative(direction))) {
             return false;
         }
-        stack.getItem().onItemUse(
-            player,
-            world,
-            pos.offset(direction),
-            EnumHand.MAIN_HAND,
-            direction,
-            0.5f,
-            0.5f,
-            0.5f
+//        stack.getItem().onItemUse(
+        stack.onItemUseFirst(
+//                player,
+//                world,
+//                pos.offset(direction),
+//                EnumHand.MAIN_HAND,
+//                direction,
+//                0.5f,
+//                0.5f,
+//                0.5f
+                new UseOnContext(
+                        world,
+                        player,
+                        InteractionHand.MAIN_HAND,
+                        stack,
+                        new BlockHitResult(
+                                new Vec3(0, 0, 0),
+                                direction,
+                                pos.relative(direction),
+                                false
+                        )
+                )
         );
         return true;
     }

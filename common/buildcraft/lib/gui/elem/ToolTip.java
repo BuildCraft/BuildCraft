@@ -6,27 +6,27 @@
 
 package buildcraft.lib.gui.elem;
 
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StringUtilBC;
+import com.google.common.collect.ForwardingList;
+import net.minecraft.network.chat.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
 
-import com.google.common.collect.ForwardingList;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StringUtilBC;
-
-public class ToolTip extends ForwardingList<String> implements RandomAccess {
+public class ToolTip extends ForwardingList<Component> implements RandomAccess {
 
     /* If the impl list class does not implement RandomAccess then the interface MUST be removed from this class */
-    private final List<String> delegate = new ArrayList<>();
+    private final List<Component> delegate = new ArrayList<>();
     private final long delay;
     private long mouseOverStart;
 
     /** Creates a {@link ToolTip} based off of an array of localisation keys. The localised strings can use "\n" to
      * split up into separate lines. */
     public static ToolTip createLocalized(String... localeKeys) {
-        List<String> allLines = new ArrayList<>();
+        List<Component> allLines = new ArrayList<>();
         for (String key : localeKeys) {
             String localized = LocaleUtil.localize(key);
             allLines.addAll(StringUtilBC.splitIntoLines(localized));
@@ -34,23 +34,23 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
         return new ToolTip(allLines);
     }
 
-    public ToolTip(String... lines) {
+    public ToolTip(Component... lines) {
         this.delay = 0;
         Collections.addAll(delegate, lines);
     }
 
-    public ToolTip(int delay, String... lines) {
+    public ToolTip(int delay, Component... lines) {
         this.delay = delay;
         Collections.addAll(delegate, lines);
     }
 
-    public ToolTip(List<String> lines) {
+    public ToolTip(List<Component> lines) {
         this.delay = 0;
         delegate.addAll(lines);
     }
 
     @Override
-    protected final List<String> delegate() {
+    protected final List<Component> delegate() {
         return delegate;
     }
 
@@ -77,5 +77,6 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
         return System.currentTimeMillis() - mouseOverStart >= delay;
     }
 
-    public void refresh() {}
+    public void refresh() {
+    }
 }

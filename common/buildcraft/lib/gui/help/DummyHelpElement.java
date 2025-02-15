@@ -6,11 +6,11 @@
 
 package buildcraft.lib.gui.help;
 
-import java.util.List;
-
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
+
+import java.util.List;
 
 /** A simple, non-drawing, gui element that holds an {@link ElementHelpInfo}. */
 public class DummyHelpElement implements IGuiElement {

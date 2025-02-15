@@ -6,66 +6,54 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.BCLog;
+import com.google.common.collect.Sets;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Sets;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.common.util.Constants;
-
-import buildcraft.api.core.BCLog;
-
 public final class NBTUtilBC {
     @SuppressWarnings("WeakerAccess")
-    public static final NBTTagCompound NBT_NULL = new NBTTagCompound();
+    public static final CompoundTag NBT_NULL = new CompoundTag();
 
-    public static <N extends NBTBase> Optional<N> toOptional(N value) {
+    public static <N> Optional<N> toOptional(N value) {
         return value == NBTUtilBC.NBT_NULL ? Optional.empty() : Optional.of(value);
     }
 
-    public static NBTBase merge(NBTBase destination, NBTBase source) {
+    public static Tag merge(Tag destination, Tag source) {
         if (source == null) {
             return null;
         }
         if (destination == null) {
             return source;
         }
-        if (destination.getId() == Constants.NBT.TAG_COMPOUND && source.getId() == Constants.NBT.TAG_COMPOUND) {
-            NBTTagCompound result = new NBTTagCompound();
+        if (destination.getId() == Tag.TAG_COMPOUND && source.getId() == Tag.TAG_COMPOUND) {
+            CompoundTag result = new CompoundTag();
             for (String key : Sets.union(
-                ((NBTTagCompound) destination).getKeySet(),
-                ((NBTTagCompound) source).getKeySet()
+                    ((CompoundTag) destination).getAllKeys(),
+                    ((CompoundTag) source).getAllKeys()
             )) {
-                if (!((NBTTagCompound) source).hasKey(key)) {
-                    result.setTag(key, ((NBTTagCompound) destination).getTag(key));
-                } else if (((NBTTagCompound) source).getTag(key) != NBT_NULL) {
-                    if (!((NBTTagCompound) destination).hasKey(key)) {
-                        result.setTag(key, ((NBTTagCompound) source).getTag(key));
+                if (!((CompoundTag) source).contains(key)) {
+                    result.put(key, ((CompoundTag) destination).get(key));
+                } else if (((CompoundTag) source).get(key) != NBT_NULL) {
+                    if (!((CompoundTag) destination).contains(key)) {
+                        result.put(key, ((CompoundTag) source).get(key));
                     } else {
-                        result.setTag(
-                            key,
-                            merge(
-                                ((NBTTagCompound) destination).getTag(key),
-                                ((NBTTagCompound) source).getTag(key)
-                            )
+                        result.put(
+                                key,
+                                merge(
+                                        ((CompoundTag) destination).get(key),
+                                        ((CompoundTag) source).get(key)
+                                )
                         );
                     }
                 }
@@ -75,65 +63,65 @@ public final class NBTUtilBC {
         return source;
     }
 
-    public static NBTTagCompound getItemData(@Nonnull ItemStack stack) {
+    public static CompoundTag getItemData(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
-            return new NBTTagCompound();
+            return new CompoundTag();
         }
-        NBTTagCompound nbt = stack.getTagCompound();
+        CompoundTag nbt = stack.getTag();
         if (nbt == null) {
-            nbt = new NBTTagCompound();
-            stack.setTagCompound(nbt);
+            nbt = new CompoundTag();
+            stack.setTag(nbt);
         }
         return nbt;
     }
 
-    public static NBTTagIntArray writeBlockPos(BlockPos pos) {
+    public static IntArrayTag writeBlockPos(BlockPos pos) {
         if (pos == null) {
             throw new NullPointerException("Cannot return a null NBTTag -- pos was null!");
         }
-        return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
+        return new IntArrayTag(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 
     @SuppressWarnings("unused")
-    public static NBTTagCompound writeBlockPosAsCompound(BlockPos pos) {
+    public static CompoundTag writeBlockPosAsCompound(BlockPos pos) {
         if (pos == null) {
             throw new NullPointerException("Cannot return a null NBTTag -- pos was null!");
         }
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("x", pos.getX());
-        nbt.setInteger("y", pos.getY());
-        nbt.setInteger("z", pos.getZ());
+        CompoundTag nbt = new CompoundTag();
+        nbt.putInt("x", pos.getX());
+        nbt.putInt("y", pos.getY());
+        nbt.putInt("z", pos.getZ());
         return nbt;
     }
 
     @Nullable
-    public static BlockPos readBlockPos(NBTBase base) {
+    public static BlockPos readBlockPos(Tag base) {
         if (base == null) {
             return null;
         }
         switch (base.getId()) {
-            case Constants.NBT.TAG_INT_ARRAY: {
-                int[] array = ((NBTTagIntArray) base).getIntArray();
-                if (array.length == 3){
+            case Tag.TAG_INT_ARRAY: {
+                int[] array = ((IntArrayTag) base).getAsIntArray();
+                if (array.length == 3) {
                     return new BlockPos(array[0], array[1], array[2]);
                 }
                 return null;
             }
-            case Constants.NBT.TAG_COMPOUND: {
-                NBTTagCompound nbt = (NBTTagCompound) base;
+            case Tag.TAG_COMPOUND: {
+                CompoundTag nbt = (CompoundTag) base;
                 BlockPos pos = null;
-                if (nbt.hasKey("i")) {
-                    int i = nbt.getInteger("i");
-                    int j = nbt.getInteger("j");
-                    int k = nbt.getInteger("k");
+                if (nbt.contains("i")) {
+                    int i = nbt.getInt("i");
+                    int j = nbt.getInt("j");
+                    int k = nbt.getInt("k");
                     pos = new BlockPos(i, j, k);
-                } else if (nbt.hasKey("x")) {
-                    int x = nbt.getInteger("x");
-                    int y = nbt.getInteger("y");
-                    int z = nbt.getInteger("z");
+                } else if (nbt.contains("x")) {
+                    int x = nbt.getInt("x");
+                    int y = nbt.getInt("y");
+                    int z = nbt.getInt("z");
                     pos = new BlockPos(x, y, z);
-                } else if (nbt.hasKey("pos")) {
-                    return readBlockPos(nbt.getTag("pos"));
+                } else if (nbt.contains("pos")) {
+                    return readBlockPos(nbt.get("pos"));
                 } else {
                     BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")", new Throwable());
                 }
@@ -144,38 +132,38 @@ public final class NBTUtilBC {
         return null;
     }
 
-    public static NBTTagList writeVec3d(Vec3d vec3) {
-        NBTTagList list = new NBTTagList();
-        list.appendTag(new NBTTagDouble(vec3.x));
-        list.appendTag(new NBTTagDouble(vec3.y));
-        list.appendTag(new NBTTagDouble(vec3.z));
+    public static ListTag writeVec3d(Vec3 vec3) {
+        ListTag list = new ListTag();
+        list.add(DoubleTag.valueOf(vec3.x));
+        list.add(DoubleTag.valueOf(vec3.y));
+        list.add(DoubleTag.valueOf(vec3.z));
         return list;
     }
 
     @Nullable
-    public static Vec3d readVec3d(NBTBase nbt) {
-        if (nbt instanceof NBTTagList) {
-            return readVec3d((NBTTagList) nbt);
+    public static Vec3 readVec3d(Tag nbt) {
+        if (nbt instanceof ListTag) {
+            return readVec3d((ListTag) nbt);
         }
         return null;
     }
 
-    public static Vec3d readVec3d(NBTTagList list) {
-        return new Vec3d(list.getDoubleAt(0), list.getDoubleAt(1), list.getDoubleAt(2));
+    public static Vec3 readVec3d(ListTag list) {
+        return new Vec3(list.getDouble(0), list.getDouble(1), list.getDouble(2));
     }
 
     private static final String NULL_ENUM_STRING = "_NULL";
 
-    public static <E extends Enum<E>> NBTBase writeEnum(E value) {
+    public static <E extends Enum<E>> Tag writeEnum(E value) {
         if (value == null) {
-            return new NBTTagString(NULL_ENUM_STRING);
+            return StringTag.valueOf(NULL_ENUM_STRING);
         }
-        return new NBTTagString(value.name());
+        return StringTag.valueOf(value.name());
     }
 
-    public static <E extends Enum<E>> E readEnum(NBTBase nbt, Class<E> clazz) {
-        if (nbt instanceof NBTTagString) {
-            String value = ((NBTTagString) nbt).getString();
+    public static <E extends Enum<E>> E readEnum(Tag nbt, Class<E> clazz) {
+        if (nbt instanceof StringTag) {
+            String value = ((StringTag) nbt).getAsString();
             if (NULL_ENUM_STRING.equals(value)) {
                 return null;
             }
@@ -186,8 +174,8 @@ public final class NBTUtilBC {
                 BCLog.logger.warn("Tried and failed to read the value(" + value + ") from " + clazz.getSimpleName(), t);
                 return null;
             }
-        } else if (nbt instanceof NBTTagByte) {
-            byte value = ((NBTTagByte) nbt).getByte();
+        } else if (nbt instanceof ByteTag) {
+            byte value = ((ByteTag) nbt).getAsByte();
             if (value < 0 || value >= clazz.getEnumConstants().length) {
                 return null;
             } else {
@@ -201,31 +189,48 @@ public final class NBTUtilBC {
         }
     }
 
-    public static NBTBase writeDoubleArray(double[] data) {
-        NBTTagList list = new NBTTagList();
+    public static ListTag writeDoubleArray(double[] data) {
+        ListTag list = new ListTag();
         for (double d : data) {
-            list.appendTag(new NBTTagDouble(d));
+            list.add(DoubleTag.valueOf(d));
         }
         return list;
     }
 
-    public static double[] readDoubleArray(NBTBase tag, int intendedLength) {
+    // Calen Add
+    public static ListTag writeBooleanArray(boolean[] data) {
+        ListTag list = new ListTag();
+        for (boolean d : data) {
+            list.add(IntTag.valueOf(d ? 1 : 0));
+        }
+        return list;
+    }
+
+    public static double[] readDoubleArray(Tag tag, int intendedLength) {
         double[] arr = new double[intendedLength];
-        if (tag instanceof NBTTagList) {
-            NBTTagList list = (NBTTagList) tag;
-            for (int i = 0; i < list.tagCount() && i < intendedLength; i++) {
-                arr[i] = list.getDoubleAt(i);
+        if (tag instanceof ListTag) {
+            ListTag list = (ListTag) tag;
+            for (int i = 0; i < list.size() && i < intendedLength; i++) {
+                arr[i] = list.getDouble(i);
             }
         }
         return arr;
     }
 
-    /** Writes an {@link EnumSet} to an {@link NBTBase}. The returned type will either be {@link NBTTagByte} or
-     * {@link NBTTagByteArray}.
-     * 
+    public static boolean[] readBooleanArray(ListTag tag) {
+        boolean[] arr = new boolean[tag.size()];
+        for (int i = 0; i < tag.size(); i++) {
+            arr[i] = tag.getInt(i) != 0;
+        }
+        return arr;
+    }
+
+    /** Writes an {@link EnumSet} to an {@link Tag}. The returned type will either be {@link ByteTag} or
+     * {@link ByteArrayTag}.
+     *
      * @param clazz The class that the {@link EnumSet} is of. This is required as we have no way of getting the class
      *            from the set. */
-    public static <E extends Enum<E>> NBTBase writeEnumSet(EnumSet<E> set, Class<E> clazz) {
+    public static <E extends Enum<E>> Tag writeEnumSet(EnumSet<E> set, Class<E> clazz) {
         E[] constants = clazz.getEnumConstants();
         if (constants == null) throw new IllegalArgumentException("Not an enum type " + clazz);
         BitSet bitset = new BitSet();
@@ -236,20 +241,20 @@ public final class NBTUtilBC {
         }
         byte[] bytes = bitset.toByteArray();
         if (bytes.length == 1) {
-            return new NBTTagByte(bytes[0]);
+            return ByteTag.valueOf(bytes[0]);
         } else {
-            return new NBTTagByteArray(bytes);
+            return new ByteArrayTag(bytes);
         }
     }
 
-    public static <E extends Enum<E>> EnumSet<E> readEnumSet(NBTBase tag, Class<E> clazz) {
+    public static <E extends Enum<E>> EnumSet<E> readEnumSet(Tag tag, Class<E> clazz) {
         E[] constants = clazz.getEnumConstants();
         if (constants == null) throw new IllegalArgumentException("Not an enum type " + clazz);
         byte[] bytes;
-        if (tag instanceof NBTTagByte) {
-            bytes = new byte[] { ((NBTTagByte) tag).getByte() };
-        } else if (tag instanceof NBTTagByteArray) {
-            bytes = ((NBTTagByteArray) tag).getByteArray();
+        if (tag instanceof ByteTag) {
+            bytes = new byte[] { ((ByteTag) tag).getAsByte() };
+        } else if (tag instanceof ByteArrayTag) {
+            bytes = ((ByteArrayTag) tag).getAsByteArray();
         } else {
             bytes = new byte[] {};
             BCLog.logger.warn("[lib.nbt] Tried to read an enum set from " + tag);
@@ -264,35 +269,35 @@ public final class NBTUtilBC {
         return set;
     }
 
-    public static NBTTagList writeCompoundList(Stream<NBTTagCompound> stream) {
-        NBTTagList list = new NBTTagList();
-        stream.forEach(list::appendTag);
+    public static ListTag writeCompoundList(Stream<CompoundTag> stream) {
+        ListTag list = new ListTag();
+        stream.forEach(list::add);
         return list;
     }
 
-    public static Stream<NBTTagCompound> readCompoundList(NBTBase list) {
+    public static Stream<CompoundTag> readCompoundList(Tag list) {
         if (list == null) {
             return Stream.empty();
         }
-        if (!(list instanceof NBTTagList)) {
+        if (!(list instanceof ListTag)) {
             throw new IllegalArgumentException();
         }
-        return IntStream.range(0, ((NBTTagList) list).tagCount()).mapToObj(((NBTTagList) list)::getCompoundTagAt);
+        return IntStream.range(0, ((ListTag) list).size()).mapToObj(((ListTag) list)::getCompound);
     }
 
-    public static NBTTagList writeStringList(Stream<String> stream) {
-        NBTTagList list = new NBTTagList();
-        stream.map(NBTTagString::new).forEach(list::appendTag);
+    public static ListTag writeStringList(Stream<String> stream) {
+        ListTag list = new ListTag();
+        stream.map(StringTag::valueOf).forEach(list::add);
         return list;
     }
 
-    public static Stream<String> readStringList(NBTBase list) {
+    public static Stream<String> readStringList(Tag list) {
         if (list == null) {
             return Stream.empty();
         }
-        if (!(list instanceof NBTTagList)) {
+        if (!(list instanceof ListTag)) {
             throw new IllegalArgumentException();
         }
-        return IntStream.range(0, ((NBTTagList) list).tagCount()).mapToObj(((NBTTagList) list)::getStringTagAt);
+        return IntStream.range(0, ((ListTag) list).size()).mapToObj(((ListTag) list)::getString);
     }
 }

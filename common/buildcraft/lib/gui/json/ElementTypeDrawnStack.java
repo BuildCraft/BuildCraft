@@ -1,9 +1,5 @@
 package buildcraft.lib.gui.json;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.JsonUtils;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.gui.GuiStack;
@@ -12,6 +8,9 @@ import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class ElementTypeDrawnStack extends ElementType {
     public static final String NAME = "buildcraftlib:drawable/stack";
@@ -29,9 +28,17 @@ public class ElementTypeDrawnStack extends ElementType {
         INodeBoolean visible = getEquationBool(json, "visible", ctx, true);
         boolean foreground = resolveEquationBool(json, "foreground", ctx, false);
 
-        Item item = JsonUtils.getItem(json.json, "id");
+//        Item item = JsonUtils.getItem(json.json, "id");
+        Item item = GsonHelper.getAsItem(json.json, "id");
+
+        // 1.18.2: to ensure no meta appears
         int meta = resolveEquationInt(json, "meta", ctx);
-        ItemStack stack = new ItemStack(item, 1, meta);
+        if (meta != 0) {
+            throw new RuntimeException("[lib.gui.json] Found stack with meta in " + json + " , but meta is not supported in this MC version!");
+        }
+
+//        ItemStack stack = new ItemStack(item, 1, meta);
+        ItemStack stack = new ItemStack(item, 1);
 
         ISimpleDrawable icon = new GuiStack(stack);
         IGuiArea area = IGuiArea.create(pos, 16, 16);

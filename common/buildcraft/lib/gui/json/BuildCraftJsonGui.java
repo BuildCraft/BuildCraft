@@ -1,19 +1,7 @@
 package buildcraft.lib.gui.json;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.inventory.Slot;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
@@ -27,6 +15,17 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.collect.TypedKeyMap;
 import buildcraft.lib.misc.data.ModelVariableData;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.Slot;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /** A GUI that is defined (mostly) in a json file. Note that callers generally have to add {@link Slot}'s,
  * {@link ISprite}'s and configure buttons in code - currently this only allows for completely defining simple elements
@@ -50,12 +49,12 @@ public class BuildCraftJsonGui extends BuildCraftGui {
         time = context.putVariableDouble("time");
     }
 
-    public BuildCraftJsonGui(GuiScreen gui, ResourceLocation jsonGuiDefinition) {
+    public BuildCraftJsonGui(Screen gui, ResourceLocation jsonGuiDefinition) {
         super(gui);
         this.jsonGuiDefinition = jsonGuiDefinition;
     }
 
-    public BuildCraftJsonGui(GuiScreen gui, IGuiArea rootElement, ResourceLocation jsonGuiDefinition) {
+    public BuildCraftJsonGui(Screen gui, IGuiArea rootElement, ResourceLocation jsonGuiDefinition) {
         super(gui, rootElement);
         this.jsonGuiDefinition = jsonGuiDefinition;
     }
@@ -111,9 +110,9 @@ public class BuildCraftJsonGui extends BuildCraftGui {
     }
 
     @Override
-    public void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY, Runnable backgroundRenderer) {
+    public void drawBackgroundLayer(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY, Runnable backgroundRenderer) {
         time.value = timeOpen + partialTicks;
         varData.refresh();
-        super.drawBackgroundLayer(partialTicks, mouseX, mouseY, backgroundRenderer);
+        super.drawBackgroundLayer(guiGraphics, partialTicks, mouseX, mouseY, backgroundRenderer);
     }
 }

@@ -6,24 +6,20 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.builders.BCBuildersSprites;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 public enum PatternParameterRotation implements IStatementParameter {
     NONE,
@@ -32,7 +28,7 @@ public enum PatternParameterRotation implements IStatementParameter {
     THREE_QUARTERS;
 
     private static final PatternParameterRotation[] POSSIBLE_ORDER =
-        { null, null, NONE, null, QUARTER, null, HALF, null, THREE_QUARTERS };
+            { null, null, NONE, null, QUARTER, null, HALF, null, THREE_QUARTERS };
 
     public final int rotationCount;
 
@@ -40,14 +36,14 @@ public enum PatternParameterRotation implements IStatementParameter {
         this.rotationCount = ordinal();
     }
 
-    public static PatternParameterRotation readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterRotation readFromNbt(CompoundTag nbt) {
         int d = nbt.getByte("d");
         return values()[d & 3];
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("d", (byte) rotationCount);
+    public void writeToNbt(CompoundTag nbt) {
+        nbt.putByte("d", (byte) rotationCount);
     }
 
     @Override
@@ -56,7 +52,7 @@ public enum PatternParameterRotation implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         return BCBuildersSprites.PARAM_ROTATION[rotationCount];
     }
@@ -68,13 +64,18 @@ public enum PatternParameterRotation implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("buildcraft.param.rotation." + rotationCount);
+    public Component getDescription() {
+//        return LocaleUtil.localize("buildcraft.param.rotation." + rotationCount);
+        return Component.translatable("buildcraft.param.rotation." + rotationCount);
     }
 
     @Override
-    public PatternParameterRotation onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
-        StatementMouseClick mouse) {
+    public String getDescriptionKey() {
+        return "buildcraft.param.rotation." + rotationCount;
+    }
+
+    @Override
+    public PatternParameterRotation onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         return null;
     }
 

@@ -6,26 +6,25 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.ModelCacheMultipleSame;
-
 import buildcraft.transport.client.PipeRegistryClient;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.core.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.List;
+
+@OnlyIn(Dist.CLIENT)
 public class PipeModelCachePluggable {
     public static final IModelCache<PluggableKey> cacheCutoutAll, cacheTranslucentAll;
     public static final ModelCache<PluggableModelKey> cacheCutoutSingle, cacheTranslucentSingle;
@@ -53,9 +52,10 @@ public class PipeModelCachePluggable {
         private final ImmutableSet<PluggableModelKey> pluggables;
         private final int hash;
 
-        public PluggableKey(BlockRenderLayer layer, IPipeHolder holder) {
+        // public PluggableKey(BlockRenderLayer layer, IPipeHolder holder)
+        public PluggableKey(RenderType layer, IPipeHolder holder) {
             ImmutableSet.Builder<PluggableModelKey> builder = ImmutableSet.builder();
-            for (EnumFacing side : EnumFacing.VALUES) {
+            for (Direction side : Direction.VALUES) {
                 PipePluggable pluggable = holder.getPluggable(side);
                 if (pluggable == null) continue;
                 PluggableModelKey key = pluggable.getModelRenderKey(layer);

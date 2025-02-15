@@ -1,0 +1,21 @@
+{
+  "values": [
+    "buildcraftcore:paintbrush_clean",
+    "buildcraftcore:paintbrush_green",
+    "buildcraftcore:paintbrush_brown",
+    "buildcraftcore:paintbrush_cyan",
+    "buildcraftcore:paintbrush_white",
+    "buildcraftcore:paintbrush_orange",
+    "buildcraftcore:paintbrush_gray",
+    "buildcraftcore:paintbrush_blue",
+    "buildcraftcore:paintbrush_black",
+    "buildcraftcore:paintbrush_red",
+    "buildcraftcore:paintbrush_yellow",
+    "buildcraftcore:paintbrush_magenta",
+    "buildcraftcore:paintbrush_purple",
+    "buildcraftcore:paintbrush_lime",
+    "buildcraftcore:paintbrush_pink",
+    "buildcraftcore:paintbrush_light_blue",
+    "buildcraftcore:paintbrush_light_gray"
+  ]
+}

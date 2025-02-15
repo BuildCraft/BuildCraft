@@ -6,40 +6,39 @@
 
 package buildcraft.lib.block;
 
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.blocks.ICustomRotationHandler;
-
 import buildcraft.lib.misc.RotationUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 
-/** Marker interface used by {@link BlockBCBase_Neptune} to automatically add an {@link EnumFacing} property to blocks,
+/** Marker interface used by {@link BlockBCBase_Neptune} to automatically add an {@link Direction} property to blocks,
  * and go to and from meta. */
 public interface IBlockWithFacing extends ICustomRotationHandler {
     default boolean canFaceVertically() {
         return false;
     }
 
-    default IProperty<EnumFacing> getFacingProperty() {
+    default Property<Direction> getFacingProperty() {
         return canFaceVertically() ? BlockBCBase_Neptune.BLOCK_FACING_6 : BlockBCBase_Neptune.PROP_FACING;
     }
 
-    default boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
+    default boolean canBeRotated(LevelAccessor world, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    default EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+    default InteractionResult attemptRotation(Level world, BlockPos pos, BlockState state, Direction sideWrenched) {
         if (!canBeRotated(world, pos, state)) {
-            return EnumActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
-        EnumFacing currentFacing = state.getValue(getFacingProperty());
-        EnumFacing newFacing = canFaceVertically() ? RotationUtil.rotateAll(currentFacing) : currentFacing.rotateY();
-        world.setBlockState(pos, state.withProperty(getFacingProperty(), newFacing));
-        return EnumActionResult.SUCCESS;
+        Direction currentFacing = state.getValue(getFacingProperty());
+        Direction newFacing = canFaceVertically() ? RotationUtil.rotateAll(currentFacing) : currentFacing.getClockWise();
+        world.setBlock(pos, state.setValue(getFacingProperty(), newFacing), 3);
+        return InteractionResult.SUCCESS;
     }
 }

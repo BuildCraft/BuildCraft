@@ -1,0 +1,63 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/base"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/connection",
+        "x": 270
+      },
+      "when": {
+        "connected_up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/connection",
+        "x": 90
+      },
+      "when": {
+        "connected_down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/connection",
+        "y": 90
+      },
+      "when": {
+        "connected_east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/connection",
+        "x": 180,
+        "y": 90
+      },
+      "when": {
+        "connected_west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/connection"
+      },
+      "when": {
+        "connected_north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraftbuilders:block/frame/connection",
+        "x": 180
+      },
+      "when": {
+        "connected_south": "true"
+      }
+    }
+  ]
+}

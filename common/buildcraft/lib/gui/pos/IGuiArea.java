@@ -6,10 +6,10 @@
 
 package buildcraft.lib.gui.pos;
 
-import java.util.function.DoubleSupplier;
-
 import buildcraft.lib.expression.api.IConstantNode;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
+
+import java.util.function.DoubleSupplier;
 
 /** Defines an area somewhere on the screen. */
 public interface IGuiArea extends IGuiPosition {
@@ -147,10 +147,10 @@ public interface IGuiArea extends IGuiPosition {
             return expand(dX.getAsDouble(), dY.getAsDouble());
         }
         return create(//
-            () -> getX() - dX.getAsDouble(), //
-            () -> getY() - dY.getAsDouble(), //
-            () -> getWidth() + dX.getAsDouble() * 2, //
-            () -> getHeight() + dY.getAsDouble() * 2//
+                () -> getX() - dX.getAsDouble(), //
+                () -> getY() - dY.getAsDouble(), //
+                () -> getWidth() + dX.getAsDouble() * 2, //
+                () -> getHeight() + dY.getAsDouble() * 2//
         );
     }
 
@@ -167,7 +167,8 @@ public interface IGuiArea extends IGuiPosition {
 
     static IGuiArea create(DoubleSupplier x, DoubleSupplier y, DoubleSupplier width, DoubleSupplier height) {
         if (x instanceof IConstantNode && y instanceof IConstantNode && width instanceof IConstantNode
-            && height instanceof IConstantNode) {
+                && height instanceof IConstantNode)
+        {
             return new GuiRectangle(x.getAsDouble(), y.getAsDouble(), width.getAsDouble(), height.getAsDouble());
         }
         return new AreaCallable(x, y, width, height);

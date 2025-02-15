@@ -6,20 +6,12 @@
 
 package buildcraft.lib.client.reload;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
+import buildcraft.api.core.BCLog;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
-import buildcraft.api.core.BCLog;
+import java.util.*;
 
 public enum ReloadManager {
     INSTANCE;
@@ -37,7 +29,8 @@ public enum ReloadManager {
     }
 
     public void addDependency(ReloadSource from, Runnable to) {
-        addDependency(from, (sources) -> {
+        addDependency(from, (sources) ->
+        {
             to.run();
             return false;
         }, null);
@@ -88,7 +81,8 @@ public enum ReloadManager {
             Iterator<Reloadable> potentialItr = potentialReloadables.iterator();
             while (potentialItr.hasNext()) {
                 Reloadable r = potentialItr.next();
-                searchForNonReloadedParent: {
+                searchForNonReloadedParent:
+                {
                     for (ReloadSource parent : parents.get(r)) {
                         if (allReloadable.contains(parent)) {
                             if (!reloaded.contains(parent)) {
@@ -116,7 +110,8 @@ public enum ReloadManager {
                 }
             }
             toReload.clear();
-        } while (hasChanged);
+        }
+        while (hasChanged);
         if (potentialReloadables.isEmpty()) {
             return;
         }
@@ -148,7 +143,7 @@ public enum ReloadManager {
             }
             Reloadable other = (Reloadable) obj;
             return reloadable == other.reloadable//
-                && Objects.equals(source, other.source);
+                    && Objects.equals(source, other.source);
         }
 
         @Override
@@ -163,8 +158,11 @@ public enum ReloadManager {
     }
 
     static {
-        CONFIG_COLOUR_BLIND = cfg("config/colourBlindMode");
-        CONFIG_ROTATE_TRAVEL_ITEMS = cfg("config/rotateTravelingItems");
+        // 1.18.2: forced lower
+//        CONFIG_COLOUR_BLIND = cfg("config/colourBlindMode");
+//        CONFIG_ROTATE_TRAVEL_ITEMS = cfg("config/rotateTravelingItems");
+        CONFIG_COLOUR_BLIND = cfg("config/colour_blind_mode");
+        CONFIG_ROTATE_TRAVEL_ITEMS = cfg("config/rotate_traveling_items");
     }
 
     private static ReloadSource cfg(String path) {

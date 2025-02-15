@@ -1,9 +1,8 @@
 package buildcraft.lib.misc.collect;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Nullable;
 
 /** A {@link TypedMap} instance that only maps classes directly to the classes - that is {@link #get(Class)} will return
  * either null, or an object whose {@link #getClass()} equals the argument class. */
