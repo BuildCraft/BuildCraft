@@ -216,8 +216,12 @@ public class GateVanilla extends Gate {
 	}
 
 	@Override
-	public boolean resolveAction(IAction action, int count) {
+	public boolean resolveAction(IAction action) {
+		return resolveAction(action, 1);
+	}
 
+	@Override
+	public boolean resolveAction(IAction action, int count) {
 		if (action instanceof ActionEnergyPulser) {
 			pulser.enablePulse(count);
 			return true;

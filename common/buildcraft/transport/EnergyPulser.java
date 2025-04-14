@@ -48,6 +48,11 @@ public class EnergyPulser {
 		pulseCount = count;
 	}
 
+	@Deprecated
+	public void enablePulse() {
+		enablePulse(1);
+	}
+
 	public void disablePulse() {
 		if (!isActive) {
 			hasPulsed = false;
