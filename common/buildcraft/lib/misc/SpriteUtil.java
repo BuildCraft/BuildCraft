@@ -76,8 +76,7 @@ public class SpriteUtil {
         try {
             if (!CACHED.containsKey(profile)) {
 //                CACHED.put(profile, TileEntitySkull.updateGameprofile(profile));
-                SkullTileEntity.updateGameprofile(profile);
-                CACHED.put(profile, profile);
+                CACHED.put(profile, SkullTileEntity.updateGameprofile(profile));
             }
             GameProfile p2 = CACHED.get(profile);
             if (p2 == null) {
