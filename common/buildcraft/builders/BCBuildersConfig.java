@@ -8,16 +8,10 @@ package buildcraft.builders;
 
 import buildcraft.api.BCModules;
 import buildcraft.lib.config.BCConfig;
+import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.MathUtil;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class BCBuildersConfig {
     private static Configuration config;
@@ -40,26 +34,22 @@ public class BCBuildersConfig {
     /** Client-side config to enable stencils-based drawing for the architect table. */
     public static boolean enableStencil = true;
 
-    private static IntValue propBptStoreExternalThreshold;
-    private static IntValue propQuarryFrameMinHeight;
-    private static BooleanValue propQuarryFrameMoveBoth;
-    private static IntValue propQuarryMaxTasksPerTick;
-    private static IntValue propQuarryPowerDivisor;
-    private static DoubleValue propQuarryMaxFrameSpeed;
-    private static DoubleValue propQuarryMaxBlockMineRate;
-    private static BooleanValue propEnableStencil;
+    private static ConfigCategory<Integer> propBptStoreExternalThreshold;
+    private static ConfigCategory<Integer> propQuarryFrameMinHeight;
+    private static ConfigCategory<Boolean> propQuarryFrameMoveBoth;
+    private static ConfigCategory<Integer> propQuarryMaxTasksPerTick;
+    private static ConfigCategory<Integer> propQuarryPowerDivisor;
+    private static ConfigCategory<Double> propQuarryMaxFrameSpeed;
+    private static ConfigCategory<Double> propQuarryMaxBlockMineRate;
+    private static ConfigCategory<Boolean> propEnableStencil;
 
-    static BooleanValue internalStencilCrashTest;
+    static ConfigCategory<Boolean> internalStencilCrashTest;
 
     public static void preInit() {
 //        Configuration config = BCCoreConfig.config;
         BCModules module = BCModules.BUILDERS;
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        config = new Configuration(builder, module);
+        config = new Configuration(module);
         createProps();
-        ForgeConfigSpec spec = config.build();
-        ModContainer container = ModList.get().getModContainerById(module.getModId()).get();
-        container.addConfig(new ModConfig(ModConfig.Type.COMMON, spec, container, config.getFileName()));
 
 //        BCCoreConfig.config.getCategory("internal").setShowInGui(false);
 //        BCCoreConfig.saveConfigs();
@@ -146,5 +136,13 @@ public class BCBuildersConfig {
         quarryTaskPowerDivisor = MathUtil.clamp(propQuarryPowerDivisor.get(), 0, 100);
         quarryMaxFrameMoveSpeed = MathUtil.clamp(propQuarryMaxFrameSpeed.get(), 0, 5120.0);
         quarryMaxBlockMineRate = MathUtil.clamp(propQuarryMaxBlockMineRate.get(), 0, 1000.0);
+
+        saveConfigs();
+    }
+
+    public static void saveConfigs() {
+        if (config.hasChanged()) {
+            config.save();
+        }
     }
 }

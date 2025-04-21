@@ -71,7 +71,7 @@ public class BCItemTagsGenerator extends ItemTagsProvider {
         ;
 
         // pipe plugs
-        tag(OreDictionaryTags.waterproof).add(BCTransportItems.waterproof.get());
+        tag(OreDictionaryTags.WATERPROOF).add(BCTransportItems.waterproof.get());
 
         // pipes
         OreDictionaryTags.pipeColorTags.forEach((c, t) ->

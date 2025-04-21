@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO Calen: In 1.18.2 config file is loaded after item/block/fluid/... registry, so the registries like propOilIsSticky/enableOilBurn/... is always default value.
 public class BCConfig {
     private static Map<BCModules, List<Runnable>> reloadListeners = new ConcurrentHashMap<>();
 

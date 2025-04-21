@@ -14,6 +14,7 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.compat.CompatManager;
 import buildcraft.lib.inventory.TransactorEntityItem;
 import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
@@ -48,6 +49,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -558,8 +560,7 @@ public final class BlockUtil {
                     Type doubleblockcombiner$blocktype1 = p_52824_.apply(otherState);
                     if (doubleblockcombiner$blocktype1 != Type.SINGLE
                             && doubleblockcombiner$blocktype != doubleblockcombiner$blocktype1
-                            && otherState.getValue(directionProperty) == thisState.getValue(directionProperty))
-                    {
+                            && otherState.getValue(directionProperty) == thisState.getValue(directionProperty)) {
                         return (ChestTileEntity) chest.getType().getBlockEntity(world, otherPos);
                     }
                 }
@@ -661,5 +662,21 @@ public final class BlockUtil {
 
     public static Block getBlockFromName(ResourceLocation name) {
         return ForgeRegistries.BLOCKS.getValue(name);
+    }
+
+    public static boolean isReplaceable(BlockState blockState) {
+        return blockState.isAir() || blockState.getMaterial().isReplaceable();
+    }
+
+    public static boolean isSoftBlock(World world, BlockPos pos) {
+        return isSoftBlock(world.getBlockState(pos));
+    }
+
+    public static boolean isSoftBlock(BlockState blockState) {
+        return blockState.is(OreDictionaryTags.SOFT) ||
+                blockState.getBlock() instanceof IFluidBlock ||
+                blockState.getBlock() instanceof FlowingFluidBlock ||
+                blockState.getBlock() instanceof IPlantable ||
+                blockState.getMaterial().isReplaceable();
     }
 }

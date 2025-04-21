@@ -39,7 +39,6 @@ import java.util.List;
 
 public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemPipe {
     public final PipeDefinition definition;
-    private final String namespace;
     private final String id;
     private String unlocalizedName;
     private final DyeColor colour;
@@ -49,7 +48,6 @@ public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemP
     protected ItemPipeHolder(PipeDefinition definition, String tagId, DyeColor colour) {
         super(BCTransportBlocks.pipeHolder.get(), definition.properties.tab(CreativeTabManager.getTab(TagManager.getTag(tagId, TagManager.EnumTagType.CREATIVE_TAB))));
         this.definition = definition;
-        this.namespace = definition.identifier.getNamespace();
         this.id = tagId;
 //        this.setMaxDamage(0);
 //        this.setHasSubtypes(true);

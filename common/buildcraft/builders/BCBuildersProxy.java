@@ -34,59 +34,46 @@ public abstract class BCBuildersProxy {
     }
 
 //    @Override
-//    public Object getServerGuiElement(int id, PlayerEntity player, World world, int x, int y, int z)
-//    {
+//    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 //        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-//        if (id == BCBuildersGuis.LIBRARY.ordinal())
-//        {
-//            if (tile instanceof TileElectronicLibrary)
-//            {
+//        if (id == BCBuildersGuis.LIBRARY.ordinal()) {
+//            if (tile instanceof TileElectronicLibrary) {
 //                TileElectronicLibrary electronicLibrary = (TileElectronicLibrary) tile;
 //                return new ContainerElectronicLibrary(player, electronicLibrary);
 //            }
 //        }
-//        if (id == BCBuildersGuis.BUILDER.ordinal())
-//        {
-//            if (tile instanceof TileBuilder)
-//            {
+//        if (id == BCBuildersGuis.BUILDER.ordinal()) {
+//            if (tile instanceof TileBuilder) {
 //                TileBuilder builder = (TileBuilder) tile;
 //                return new ContainerBuilder(player, builder);
 //            }
 //        }
-//        if (id == BCBuildersGuis.FILLER.ordinal())
-//        {
-//            if (tile instanceof TileFiller)
-//            {
+//        if (id == BCBuildersGuis.FILLER.ordinal()) {
+//            if (tile instanceof TileFiller) {
 //                TileFiller filler = (TileFiller) tile;
 //                return new ContainerFiller(player, filler);
 //            }
 //        }
-//        if (id == BCBuildersGuis.ARCHITECT.ordinal())
-//        {
-//            if (tile instanceof TileArchitectTable)
-//            {
+//        if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
+//            if (tile instanceof TileArchitectTable) {
 //                TileArchitectTable architectTable = (TileArchitectTable) tile;
 //                return new ContainerArchitectTable(player, architectTable);
 //            }
 //        }
-//        if (id == BCBuildersGuis.REPLACER.ordinal())
-//        {
-//            if (tile instanceof TileReplacer)
-//            {
+//        if (id == BCBuildersGuis.REPLACER.ordinal()) {
+//            if (tile instanceof TileReplacer) {
 //                TileReplacer replacer = (TileReplacer) tile;
 //                return new ContainerReplacer(player, replacer);
 //            }
 //        }
-//        if (id == BCBuildersGuis.FILLER_PLANNER.ordinal())
-//        {
+//        if (id == BCBuildersGuis.FILLER_PLANNER.ordinal()) {
 //            return new ContainerFillerPlanner(player);
 //        }
 //        return null;
 //    }
 
 //    @Override
-//    public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z)
-//    {
+//    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 //        return null;
 //    }
 
@@ -110,51 +97,39 @@ public abstract class BCBuildersProxy {
 //    @OnlyIn(Dist.CLIENT)
     public static class ClientProxy extends BCBuildersProxy {
 //        @Override
-//        public Object getClientGuiElement(int id, PlayerEntity player, World world, int x, int y, int z)
-//        {
+//        public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 //            TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-//            if (id == BCBuildersGuis.LIBRARY.ordinal())
-//            {
-//                if (tile instanceof TileElectronicLibrary)
-//                {
+//            if (id == BCBuildersGuis.LIBRARY.ordinal()) {
+//                if (tile instanceof TileElectronicLibrary) {
 //                    TileElectronicLibrary library = (TileElectronicLibrary) tile;
 //                    return new GuiElectronicLibrary(new ContainerElectronicLibrary(player, library));
 //                }
 //            }
-//            if (id == BCBuildersGuis.BUILDER.ordinal())
-//            {
-//                if (tile instanceof TileBuilder)
-//                {
+//            if (id == BCBuildersGuis.BUILDER.ordinal()) {
+//                if (tile instanceof TileBuilder) {
 //                    TileBuilder builder = (TileBuilder) tile;
 //                    return new GuiBuilder(new ContainerBuilder(player, builder));
 //                }
 //            }
-//            if (id == BCBuildersGuis.FILLER.ordinal())
-//            {
-//                if (tile instanceof TileFiller)
-//                {
+//            if (id == BCBuildersGuis.FILLER.ordinal()) {
+//                if (tile instanceof TileFiller) {
 //                    TileFiller filler = (TileFiller) tile;
 //                    return new GuiFiller(new ContainerFiller(player, filler));
 //                }
 //            }
-//            if (id == BCBuildersGuis.ARCHITECT.ordinal())
-//            {
-//                if (tile instanceof TileArchitectTable)
-//                {
+//            if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
+//                if (tile instanceof TileArchitectTable) {
 //                    TileArchitectTable architectTable = (TileArchitectTable) tile;
 //                    return new GuiArchitectTable(new ContainerArchitectTable(player, architectTable));
 //                }
 //            }
-//            if (id == BCBuildersGuis.REPLACER.ordinal())
-//            {
-//                if (tile instanceof TileReplacer)
-//                {
+//            if (id == BCBuildersGuis.REPLACER.ordinal()) {
+//                if (tile instanceof TileReplacer) {
 //                    TileReplacer replacer = (TileReplacer) tile;
 //                    return new GuiReplacer(new ContainerReplacer(player, replacer));
 //                }
 //            }
-//            if (id == BCBuildersGuis.FILLER_PLANNER.ordinal())
-//            {
+//            if (id == BCBuildersGuis.FILLER_PLANNER.ordinal()) {
 //                return new GuiFillerPlanner(new ContainerFillerPlanner(player));
 //            }
 //            return null;
@@ -196,6 +171,7 @@ public abstract class BCBuildersProxy {
             ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.builderTile.get(), RenderBuilder::new);
             ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.fillerTile.get(), RenderFiller::new);
             ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.quarryTile.get(), RenderQuarry::new);
+            ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.markerConstructionTile.get(), RenderMarkerConstruction::new);
             DetachedRenderer.INSTANCE.addRenderer(DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN, RenderArchitectTables.INSTANCE);
         }
     }

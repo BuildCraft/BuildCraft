@@ -143,7 +143,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
                     int spend = Math.min(remaining, slotStack.getCount());
                     remaining -= spend;
                     if (!simulate) {
-                        slotStack.setCount(slotStack.getCount() - spend);
+                        slotStack.shrink(spend);
                         inv.setStackInSlot(i, slotStack);
                     }
                 }

@@ -19,6 +19,7 @@ import buildcraft.lib.misc.FakePlayerProvider;
 import buildcraft.lib.recipe.coolant.CoolantRegistry;
 import buildcraft.lib.recipe.fuel.FuelRegistry;
 import buildcraft.lib.recipe.integration.IntegrationRecipeRegistry;
+import buildcraft.lib.recipe.programming.ProgrammingRecipeManager;
 import buildcraft.lib.recipe.refinery.RefineryRecipeRegistry;
 import buildcraft.lib.registry.PluggableRegistry;
 import buildcraft.lib.script.ReloadableRegistryManager;
@@ -43,6 +44,7 @@ public class BCLibRegistries {
     public static void initRecipeRegistry() {
         BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
         BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
+        BuildcraftRecipeRegistry.programmingRecipes = ProgrammingRecipeManager.INSTANCE;
         BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
     }

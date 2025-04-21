@@ -116,8 +116,7 @@ public class WorldSavedDataVolumeBoxes extends WorldSavedData {
     }
 
     @SuppressWarnings("NullableProblems")
-    // Calen: not override, load by ourselves -> #get: ret.load(nbt)
-//    @Override
+    @Override
     public void load(CompoundNBT nbt) {
         volumeBoxes.clear();
         NBTUtilBC.readCompoundList(nbt.get("volumeBoxes"))

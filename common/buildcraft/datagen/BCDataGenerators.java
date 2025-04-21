@@ -21,13 +21,12 @@ import buildcraft.datagen.factory.FactoryCraftingRecipeGenerator;
 import buildcraft.datagen.factory.FactoryItemModelGenerator;
 import buildcraft.datagen.lib.LibCraftingRecipeGenerator;
 import buildcraft.datagen.lib.LibItemModelProvider;
-import buildcraft.datagen.robotics.RoboticsBlockStateGenerator;
-import buildcraft.datagen.robotics.RoboticsCraftingRecipeGenerator;
-import buildcraft.datagen.robotics.RoboticsItemModelGenerator;
+import buildcraft.datagen.robotics.*;
 import buildcraft.datagen.silicon.*;
 import buildcraft.datagen.transport.*;
 import buildcraft.energy.BCEnergy;
 import buildcraft.factory.BCFactory;
+import buildcraft.lib.BCLib;
 import buildcraft.robotics.BCRobotics;
 import buildcraft.silicon.BCSilicon;
 import buildcraft.transport.BCTransport;
@@ -92,6 +91,8 @@ public class BCDataGenerators {
         generator.addProvider(new SiliconBlockStateGenerator(generator, BCSilicon.MODID, existingFileHelper));
         generator.addProvider(new TransportBlockStateGenerator(generator, BCTransport.MODID, existingFileHelper));
         generator.addProvider(new RoboticsBlockStateGenerator(generator, BCRobotics.MODID, existingFileHelper));
+        generator.addProvider(new RoboticsIntegrationRecipeGenerator(generator, existingFileHelper));
+        generator.addProvider(new RoboticsProgrammingRecipeGenerator(generator, existingFileHelper));
 
         // Item Model
         generator.addProvider(new EnergyOilBucketModelGenerator(generator, BCEnergy.MODID, existingFileHelper));
@@ -102,7 +103,7 @@ public class BCDataGenerators {
         generator.addProvider(new BuildersItemModelGenerator(generator, BCBuilders.MODID, existingFileHelper));
         generator.addProvider(new SiliconItemModelGenerator(generator, BCSilicon.MODID, existingFileHelper));
         generator.addProvider(new TransportItemModelGenerator(generator, BCTransport.MODID, existingFileHelper));
-        generator.addProvider(new LibItemModelProvider(generator, BCTransport.MODID, existingFileHelper));
+        generator.addProvider(new LibItemModelProvider(generator, BCLib.MODID, existingFileHelper));
         generator.addProvider(new RoboticsItemModelGenerator(generator, BCRobotics.MODID, existingFileHelper));
     }
 }

@@ -7,28 +7,28 @@
 package buildcraft.core.client;
 
 import buildcraft.core.BCCoreConfig;
+import buildcraft.lib.config.ConfigCategory;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 // TODO Calen ConfigGui?
 //public class ConfigGuiFactoryBC implements ModGuiFactory
 public class ConfigGuiFactoryBC {
-    //    public static class GuiConfigManager extends GuiConfig
+    // public static class GuiConfigManager extends GuiConfig
     public static class GuiConfigManager {
-        //        public GuiConfigManager(GuiScreen parentScreen)
+        // public GuiConfigManager(GuiScreen parentScreen)
         public GuiConfigManager(Screen parentScreen) {
-//            super(parentScreen, new ArrayList<>(), "buildcraftcore", "config", false, false, new TranslationTextComponent("config.buildcraftcore").getContents());
+//            super(parentScreen, new ArrayList<>(), "buildcraftcore", "config", false, false, new TranslatableComponent("config.buildcraftcore").getContents());
 
 //            for (String s : BCCoreConfig.config.getCategoryNames())
-            for (ConfigValue<?> s : BCCoreConfig.config.getAll()) {
-                if (s.getPath().size() == 1) {
+            for (ConfigCategory<?> s : BCCoreConfig.config.getAll()) {
+                if (s.getFullPath().split("\\.").length == 1) {
 //                    configElements.add(new BCConfigElement(BCCoreConfig.config.getCategory(s)));
                 }
             }
 
 //            for (String s : BCCoreConfig.objConfig.getCategoryNames())
-            for (ConfigValue<?> s : BCCoreConfig.objConfig.getAll()) {
-                if (s.getPath().size() == 1) {
+            for (ConfigCategory<?> s : BCCoreConfig.objConfig.getAll()) {
+                if (s.getFullPath().split("\\.").length == 1) {
 //                    configElements.add(new BCConfigElement(BCCoreConfig.objConfig.getCategory(s)));
                 }
             }
@@ -59,7 +59,7 @@ public class ConfigGuiFactoryBC {
 //    }
 
 //    @Override
-//    public GuiScreen createConfigGui(AbstractGui parentScreen) {
+//    public GuiScreen createConfigGui(Gui parentScreen) {
 //        return new GuiConfigManager(parentScreen);
 //    }
 }

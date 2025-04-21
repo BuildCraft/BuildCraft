@@ -14,9 +14,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.misc.VecUtil;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -74,13 +72,12 @@ public class RenderMarkerVolume extends TileEntityRenderer<TileMarkerVolume> {
         BlockPos markerPos = marker.getBlockPos();
         poseStack.translate(-markerPos.getX(), -markerPos.getY(), -markerPos.getZ());
 
-        IVertexBuilder buffer = bufferSource.getBuffer(Atlases.solidBlockSheet());
         for (Direction face : Direction.values()) {
             if (taken.contains(face.getAxis())) {
                 continue;
             }
             Vector3d end = VecUtil.offset(start, face, BCCoreConfig.markerMaxDistance);
-            renderLaser(start, end, face.getAxis(), poseStack, buffer);
+            renderLaser(start, end, face.getAxis(), poseStack);
         }
 
         poseStack.popPose();
@@ -93,14 +90,14 @@ public class RenderMarkerVolume extends TileEntityRenderer<TileMarkerVolume> {
         Minecraft.getInstance().getProfiler().pop();
     }
 
-    private static void renderLaser(Vector3d minWorldPos, Vector3d maxWorldPos, Axis axis, MatrixStack poseStack, IVertexBuilder buffer) {
+    private static void renderLaser(Vector3d minWorldPos, Vector3d maxWorldPos, Axis axis, MatrixStack poseStack) {
         Direction faceForMin = VecUtil.getFacing(axis, true);
         Direction faceForMax = VecUtil.getFacing(axis, false);
         Vector3d one = offset(minWorldPos, faceForMin);
         Vector3d two = offset(maxWorldPos, faceForMax);
         LaserData_BC8 data = new LaserData_BC8(LASER_TYPE, one, two, SCALE);
 //        LaserRenderer_BC8.renderLaserStatic(data);
-        LaserRenderer_BC8.renderLaserDynamic(data, poseStack.last(), buffer);
+        LaserRenderer_BC8.renderLaserStatic(data, poseStack.last());
     }
 
     private static Vector3d offset(Vector3d vec, Direction face) {

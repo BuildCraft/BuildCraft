@@ -5,20 +5,11 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
-import buildcraft.silicon.container.ContainerAssemblyTable;
-import buildcraft.silicon.container.ContainerGate;
-import buildcraft.silicon.container.ContainerIntegrationTable;
+import buildcraft.silicon.container.*;
 import buildcraft.silicon.gate.GateLogic;
-import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
-import buildcraft.silicon.gui.GuiAssemblyTable;
-import buildcraft.silicon.gui.GuiGate;
-import buildcraft.silicon.gui.GuiIntegrationTable;
+import buildcraft.silicon.gui.*;
 import buildcraft.silicon.plug.PluggableGate;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.silicon.tile.TileIntegrationTable;
-import buildcraft.transport.tile.TilePipeHolder;
+import buildcraft.silicon.tile.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
@@ -71,6 +62,30 @@ public class BCSiliconMenuTypes {
                 }
             }
     );
+    public static final ContainerType<ContainerChargingTable> CHARGING_TABLE = IForgeContainerType.create((windowId, inv, data) ->
+            {
+                TileEntity te = inv.player.level.getBlockEntity(data.readBlockPos());
+                if (te instanceof TileChargingTable) {
+                    TileChargingTable tile = (TileChargingTable) te;
+                    MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
+                    return new ContainerChargingTable(BCSiliconMenuTypes.CHARGING_TABLE, windowId, inv.player, tile);
+                } else {
+                    return null;
+                }
+            }
+    );
+    public static final ContainerType<ContainerProgrammingTable_Neptune> PROGRAMMING_TABLE = IForgeContainerType.create((windowId, inv, data) ->
+            {
+                TileEntity te = inv.player.level.getBlockEntity(data.readBlockPos());
+                if (te instanceof TileProgrammingTable_Neptune) {
+                    TileProgrammingTable_Neptune tile = (TileProgrammingTable_Neptune) te;
+                    MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
+                    return new ContainerProgrammingTable_Neptune(BCSiliconMenuTypes.PROGRAMMING_TABLE, windowId, inv.player, tile);
+                } else {
+                    return null;
+                }
+            }
+    );
     /**
      * {@link IPipeHolder#onPlayerOpen(PlayerEntity)} is moved from {@link ContainerGate#ContainerGate(ContainerType, int, PlayerEntity, GateLogic)} in 1.12.2
      * to ensure the new gate obj created before GUI opened.
@@ -85,14 +100,14 @@ public class BCSiliconMenuTypes {
             {
                 BlockPos pos = data.readBlockPos();
                 TileEntity te = inv.player.level.getBlockEntity(pos);
-                if (te instanceof TilePipeHolder) {
-                    TilePipeHolder holder = (TilePipeHolder) te;
+                if (te instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) te;
                     int id = data.readInt();
                     Direction direction = Direction.from3DDataValue(id >>> 8);
                     PipePluggable pluggable = holder.getPluggable(direction);
                     if (pluggable instanceof PluggableGate) {
                         PluggableGate gate = (PluggableGate) pluggable;
-                        MessageUtil.clientHandleUpdateTileMsgBeforeOpen(holder, data);
+                        MessageUtil.clientHandleUpdateTileMsgBeforeOpen((TileBC_Neptune) holder, data);
                         gate.logic.getPipeHolder().onPlayerOpen(inv.player);
 
                         // Refresh the gate object
@@ -110,6 +125,8 @@ public class BCSiliconMenuTypes {
                 ASSEMBLY_TABLE.setRegistryName("assembly_table"),
                 INTEGRATION_TABLE.setRegistryName("integration_table"),
                 ADVANCED_CRAFTING_TABLE.setRegistryName("advanced_crafting_table"),
+                CHARGING_TABLE.setRegistryName("charging_table"),
+                PROGRAMMING_TABLE.setRegistryName("programming_table"),
                 GATE.setRegistryName("gate")
         );
 
@@ -117,6 +134,8 @@ public class BCSiliconMenuTypes {
             ScreenManager.register(ASSEMBLY_TABLE, GuiAssemblyTable::new);
             ScreenManager.register(INTEGRATION_TABLE, GuiIntegrationTable::new);
             ScreenManager.register(ADVANCED_CRAFTING_TABLE, GuiAdvancedCraftingTable::new);
+            ScreenManager.register(CHARGING_TABLE, GuiChargingTable::new);
+            ScreenManager.register(PROGRAMMING_TABLE, GuiProgrammingTable_Neptune::new);
             ScreenManager.register(GATE, GuiGate::new);
         }
     }

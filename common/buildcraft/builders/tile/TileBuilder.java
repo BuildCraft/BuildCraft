@@ -14,6 +14,7 @@ import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITickable;
@@ -61,7 +62,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -73,8 +73,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class TileBuilder extends TileBC_Neptune
-        implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder, IBCTileMenuProvider {
+// public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder, IBCTileMenuProvider
+public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder, IBCTileMenuProvider, IRequestProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
@@ -133,7 +133,8 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
-        if (!level.isClientSide) {
+        // if (!level.isClientSide)
+        if (!level.isClientSide && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
             if (handler == invSnapshot) {
                 currentBasePosIndex = 0;
                 snapshot = null;
@@ -403,7 +404,7 @@ public class TileBuilder extends TileBC_Neptune
                     // Calen FIX: the items prepared to build will not disappear after tileentity reloaded in 1.18.2
                     if (snapshot == null) {
                         // Calen: load snapshot, this should before builder#deserializeNBT
-                        itemManager.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h ->
+                        itemManager.getCapability(CapUtil.CAP_ITEMS).ifPresent(h ->
                         {
                             ItemStack stack = h.getStackInSlot(0);
                             if (stack.getItem() instanceof ItemSnapshot) {
@@ -418,7 +419,7 @@ public class TileBuilder extends TileBC_Neptune
                         Optional.ofNullable(getBuilder())
                                 .ifPresent(builder -> builder.deserializeNBT(nbt.getCompound("builder")));
                         // Calen: make the required items able to be seen, this should after builder#deserializeNBT
-                        itemManager.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h ->
+                        itemManager.getCapability(CapUtil.CAP_ITEMS).ifPresent(h ->
                         {
                             ItemStack stack = h.getStackInSlot(0);
                             if (stack.getItem() instanceof ItemSnapshot) {
@@ -549,5 +550,40 @@ public class TileBuilder extends TileBC_Neptune
     @Override
     public Container createMenu(int id, PlayerInventory inventory, PlayerEntity player) {
         return new ContainerBuilder(BCBuildersMenuTypes.BUILDER, id, player, this);
+    }
+
+    // IRequestProvider
+
+    @Override
+    public int getRequestsCount() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return 0;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return this.blueprintBuilder.remainingDisplayRequired.size();
+        }
+        return 0;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getRequest(int slot) {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return StackUtil.EMPTY;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            if (slot >= this.blueprintBuilder.remainingDisplayRequired.size()) {
+                return StackUtil.EMPTY;
+            } else {
+                return this.blueprintBuilder.remainingDisplayRequired.get(slot).copy();
+            }
+        }
+        return StackUtil.EMPTY;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack offerItem(int slot, ItemStack stack) {
+        return this.invResources.insert(stack, true, false);
     }
 }

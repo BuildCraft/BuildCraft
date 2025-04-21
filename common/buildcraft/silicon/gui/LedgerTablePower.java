@@ -13,7 +13,6 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileLaserTableBase;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +24,7 @@ public class LedgerTablePower extends Ledger_Neptune {
 
     public final TileLaserTableBase tile;
 
-    public LedgerTablePower(BuildCraftGui gui, TileAssemblyTable tile, boolean expandPositive) {
+    public LedgerTablePower(BuildCraftGui gui, TileLaserTableBase tile, boolean expandPositive) {
         super(gui, OVERLAY_COLOUR, expandPositive);
         this.tile = tile;
         title = "gui.power";

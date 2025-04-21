@@ -24,10 +24,8 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -173,12 +171,10 @@ public class RenderTickListener {
         Item mainHandItem = mainHand.getItem();
         Item offHandItem = offHand.getItem();
 
-        IVertexBuilder bb = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(Atlases.solidBlockSheet());
-
         if (mainHandItem == BCCoreItems.mapLocation.get()) {
-            renderMapLocation(mainHand, poseStack, bb);
+            renderMapLocation(mainHand, poseStack);
         } else if (mainHandItem == BCCoreItems.markerConnector.get() || offHandItem == BCCoreItems.markerConnector.get()) {
-            renderMarkerConnector(world, player, poseStack, bb);
+            renderMarkerConnector(world, player, poseStack);
         }
 
         // Calen: pop
@@ -190,7 +186,7 @@ public class RenderTickListener {
         mc.getProfiler().pop();
     }
 
-    private static void renderMapLocation(@Nonnull ItemStack stack, MatrixStack poseStack, IVertexBuilder bb) {
+    private static void renderMapLocation(@Nonnull ItemStack stack, MatrixStack poseStack) {
         MapLocationType type = MapLocationType.getFromStack(stack);
         if (type == MapLocationType.SPOT) {
             Direction face = ItemMapLocation.getPointFace(stack);
@@ -204,7 +200,7 @@ public class RenderTickListener {
                     LaserData_BC8 laser =
                             new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
 //                    LaserRenderer_BC8.renderLaserStatic(laser);
-                    LaserRenderer_BC8.renderLaserDynamic(laser, poseStack.last(), bb);
+                    LaserRenderer_BC8.renderLaserStatic(laser, poseStack.last());
                 }
                 poseStack.popPose();
             }
@@ -215,7 +211,7 @@ public class RenderTickListener {
             LAST_RENDERED_MAP_LOC.reset();
             LAST_RENDERED_MAP_LOC.initialize(box);
 //            LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, true);
-            LaserBoxRenderer.renderLaserBoxDynamic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), bb, true);
+            LaserBoxRenderer.renderLaserBoxStatic(LAST_RENDERED_MAP_LOC, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), true);
 
         } else if (type == MapLocationType.PATH) {
             List<BlockPos> path = BCCoreItems.mapLocation.get().getPath(stack);
@@ -234,18 +230,18 @@ public class RenderTickListener {
         }
     }
 
-    private static void renderMarkerConnector(ClientWorld world, PlayerEntity player, MatrixStack poseStack, IVertexBuilder bb) {
+    private static void renderMarkerConnector(ClientWorld world, PlayerEntity player, MatrixStack poseStack) {
         IProfiler profiler = Minecraft.getInstance().getProfiler();
         profiler.push("marker");
         for (MarkerCache<?> cache : MarkerCache.CACHES) {
             profiler.push(cache.name);
-            renderMarkerCache(player, cache.getSubCache(world), poseStack, bb);
+            renderMarkerCache(player, cache.getSubCache(world), poseStack);
             profiler.pop();
         }
         profiler.pop();
     }
 
-    private static void renderMarkerCache(PlayerEntity player, MarkerSubCache<?> cache, MatrixStack poseStack, IVertexBuilder bb) {
+    private static void renderMarkerCache(PlayerEntity player, MarkerSubCache<?> cache, MatrixStack poseStack) {
         IProfiler profiler = Minecraft.getInstance().getProfiler();
         profiler.push("compute");
         Set<LaserData_BC8> toRender = new HashSet<>();
@@ -276,7 +272,7 @@ public class RenderTickListener {
         profiler.popPush("render");
         for (LaserData_BC8 laser : toRender) {
 //            LaserRenderer_BC8.renderLaserStatic(laser);
-            LaserRenderer_BC8.renderLaserDynamic(laser, poseStack.last(), bb);
+            LaserRenderer_BC8.renderLaserStatic(laser, poseStack.last());
         }
         profiler.pop();
     }

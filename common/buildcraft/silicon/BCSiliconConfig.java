@@ -8,13 +8,9 @@ package buildcraft.silicon;
 
 import buildcraft.api.BCModules;
 import buildcraft.lib.config.BCConfig;
+import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class BCSiliconConfig {
     private static Configuration config;
@@ -22,18 +18,14 @@ public class BCSiliconConfig {
     public static boolean renderLaserBeams = true;
     public static boolean differStatesOfNoteBlockForFacade = false;
 
-    private static BooleanValue propRenderLaserBeams;
-    private static BooleanValue propDifferStatesOfNoteBlockForFacade;
+    private static ConfigCategory<Boolean> propRenderLaserBeams;
+    private static ConfigCategory<Boolean> propDifferStatesOfNoteBlockForFacade;
 
     public static void preInit() {
 //        Configuration config = BCCoreConfig.config;
         BCModules module = BCModules.SILICON;
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        config = new Configuration(builder, module);
+        config = new Configuration(module);
         createProps();
-        ForgeConfigSpec spec = config.build();
-        ModContainer container = ModList.get().getModContainerById(module.getModId()).get();
-        container.addConfig(new ModConfig(ModConfig.Type.COMMON, spec, container, config.getFileName()));
 
 //        reloadConfig(EnumRestartRequirement.NONE);
         reloadConfig();
@@ -60,6 +52,14 @@ public class BCSiliconConfig {
     public static void reloadConfig() {
         renderLaserBeams = propRenderLaserBeams.get();
         differStatesOfNoteBlockForFacade = propDifferStatesOfNoteBlockForFacade.get();
+
+        saveConfigs();
+    }
+
+    public static void saveConfigs() {
+        if (config.hasChanged()) {
+            config.save();
+        }
     }
 
 //    @SubscribeEvent

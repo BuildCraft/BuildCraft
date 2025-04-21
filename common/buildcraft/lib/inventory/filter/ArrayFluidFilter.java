@@ -31,7 +31,7 @@ public class ArrayFluidFilter implements IFluidFilter {
 
         for (int i = 0; i < stacks.size(); ++i) {
             FluidStack stack = FluidUtil.getFluidContained(stacks.get(i)).orElse(StackUtil.EMPTY_FLUID);
-            if (stack.isEmpty()) {
+            if (!stack.isEmpty()) {
                 fluids[i] = stack;
             }
         }

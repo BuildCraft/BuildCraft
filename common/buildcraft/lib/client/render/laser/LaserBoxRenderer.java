@@ -9,6 +9,7 @@ package buildcraft.lib.client.render.laser;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.matrix.MatrixStack.Entry;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.Direction;
@@ -24,19 +25,20 @@ import java.util.List;
 public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;
 
-    // Calen: seems GlList cannot be used in 1.18.2 world rendering
-//    public static void renderLaserBoxStatic(Box box, LaserType type, boolean center) {
-//        if (box == null || box.min() == null || box.max() == null) {
-//            return;
-//        }
-//
-//        makeLaserBox(box, type, center);
-//
-//        for (LaserData_BC8 data : box.laserData) {
-//            LaserRenderer_BC8.renderLaserStatic(data);
-//        }
-//    }
+    public static void renderLaserBoxStatic(Box box, LaserType type, MatrixStack.Entry modelViewMatrix, boolean center) {
+        if (box == null || box.min() == null || box.max() == null) {
+            return;
+        }
 
+        makeLaserBox(box, type, center);
+
+        for (LaserData_BC8 data : box.laserData) {
+//            LaserRenderer_BC8.renderLaserStatic(data);
+            LaserRenderer_BC8.renderLaserStatic(data, modelViewMatrix);
+        }
+    }
+
+    /** Calen 1.18.2: Before calling, please translate the posestack to (0, 0, 0). */
     public static void renderLaserBoxDynamic(Box box, LaserType type, Entry pose, IVertexBuilder bb, boolean center) {
         if (box == null || box.min() == null || box.max() == null) {
             return;
@@ -51,8 +53,7 @@ public class LaserBoxRenderer {
 
     private static void makeLaserBox(Box box, LaserType type, boolean center) {
         if (box.min().equals(box.lastMin) && box.max().equals(box.lastMax) && box.lastType == type
-                && box.laserData != null)
-        {
+                && box.laserData != null) {
             return;
         }
 

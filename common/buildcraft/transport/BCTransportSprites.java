@@ -13,6 +13,7 @@ import buildcraft.transport.client.model.PipeModelCacheAll;
 import buildcraft.transport.client.model.PipeModelCacheBase;
 import buildcraft.transport.client.render.PipeFlowRendererItems;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
@@ -106,6 +107,9 @@ public class BCTransportSprites {
 
     @SubscribeEvent
     public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
+        if (!AtlasTexture.LOCATION_BLOCKS.equals(event.getMap().location())) {
+            return;
+        }
         PipeModelCacheBase.generator.onTextureStitchPre(event);
     }
 

@@ -53,7 +53,7 @@ public class BlockChute extends BlockBCTile_Neptune<TileChute> implements IBlock
 
     @Override
 //    public TileBC_Neptune createTileEntity(World world, IBlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         return new TileChute();
     }
 

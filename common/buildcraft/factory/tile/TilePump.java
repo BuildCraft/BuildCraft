@@ -353,7 +353,7 @@ public class TilePump extends TileMiner {
                     }
                     break drain_attempt;
                 }
-                tank.fill(drain, FluidAction.EXECUTE);
+                tank.fillInternal(drain, FluidAction.EXECUTE);
                 progress = 0;
                 isInfiniteWaterSource &= !BCCoreConfig.pumpsConsumeWater;
                 if (isInfiniteWaterSource) {

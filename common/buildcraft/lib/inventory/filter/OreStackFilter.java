@@ -25,9 +25,10 @@ public class OreStackFilter implements IStackFilter {
     // private final String[] ores;
     private final List<ResourceLocation> ores = NonNullList.create();
 
-    public OreStackFilter(String... iOres) {
+    // public OreStackFilter(String... iOres)
+    public OreStackFilter(ResourceLocation... iOres) {
 //        ores = iOres;
-        Arrays.stream(iOres).forEach(ore -> ores.add(new ResourceLocation(ore)));
+        ores.addAll(Arrays.asList(iOres));
     }
 
     @Override
@@ -63,11 +64,13 @@ public class OreStackFilter implements IStackFilter {
         return ret;
     }
 
-    public static StackDefinition definition(int count, String... ores) {
+    // public static StackDefinition definition(int count, String... ores)
+    public static StackDefinition definition(int count, ResourceLocation... ores) {
         return new StackDefinition(new OreStackFilter(ores), count);
     }
 
-    public static StackDefinition definition(String... ores) {
+    // public static StackDefinition definition(String... ores)
+    public static StackDefinition definition(ResourceLocation... ores) {
         return definition(1, ores);
     }
 }

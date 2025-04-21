@@ -29,6 +29,10 @@ public class VanillaPaintHandlers {
         registerDoubleTypedHandler(Blocks.GLASS, createColourBlockMap("minecraft", "_terracotta"));
         registerDoubleTypedHandler(Blocks.GLASS_PANE, createColourBlockMap("minecraft", "_stained_glass"));
         registerDoubleTypedHandler(Blocks.TERRACOTTA, createColourBlockMap("minecraft", "_stained_glass_pane"));
+        registerDoubleTypedHandler(Blocks.WHITE_WOOL, createColourBlockMap("minecraft", "_wool"));
+        registerDoubleTypedHandler(Blocks.WHITE_CARPET, createColourBlockMap("minecraft", "_carpet"));
+        registerDoubleTypedHandler(Blocks.WHITE_CONCRETE, createColourBlockMap("minecraft", "_concrete"));
+        registerDoubleTypedHandler(Blocks.WHITE_CONCRETE_POWDER, createColourBlockMap("minecraft", "_concrete_powder"));
     }
 
     // private static void registerDoubleTypedHandler(Block clear, Block dyed, Property<DyeColor> colourProp)

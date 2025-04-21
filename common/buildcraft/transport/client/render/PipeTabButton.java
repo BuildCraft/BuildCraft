@@ -34,9 +34,9 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 public class PipeTabButton {
-    private static int LEFT_POS_ADD = 116;
+    private static int LEFT_POS_ADD = 104;
     private static int TOP_POS_ADD = 3;
-    private static int BUTTON_W = 72;
+    private static int BUTTON_W = 84;
     private static int BUTTON_H = 14;
     private static CreativeScreen screen = null;
     private static Button button;

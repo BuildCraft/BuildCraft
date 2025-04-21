@@ -6,10 +6,8 @@
 
 package buildcraft.lib.client.render;
 
-import buildcraft.lib.misc.SpriteUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -78,7 +76,6 @@ public enum DetachedRenderer {
 
     public void renderWorldLastEvent(PlayerEntity player, float partialTicks, MatrixStack poseStack, ActiveRenderInfo camera) {
 //        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        SpriteUtil.bindTexture(AtlasTexture.LOCATION_BLOCKS);
 //        Minecraft.getInstance().entityRenderer.enableLightmap();
 
         for (RenderMatrixType type : RenderMatrixType.values()) {

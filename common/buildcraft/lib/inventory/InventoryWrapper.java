@@ -41,10 +41,10 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
         }
         if (StackUtil.canMerge(current, stack)) {
             ItemStack merged = current.copy();
-            merged.setCount(merged.getCount() + stack.getCount());
+            merged.grow(stack.getCount());
             int size = Math.min(inventory.getMaxStackSize(), merged.getMaxStackSize());
             if (merged.getCount() > size) {
-                stack.setCount(stack.getCount() - (merged.getCount() - size));
+                stack.shrink(merged.getCount() - size);
                 merged.setCount(size);
                 if (!simulate) {
                     inventory.setItem(slot, merged);

@@ -54,12 +54,13 @@ public class StackUtil {
      * todo with stack size, so if you pass in two stacks of 64 cobblestone this will return true. If you pass in null
      * (at all) then this will only return true if both are null. */
     public static boolean canMerge(@Nonnull ItemStack a, @Nonnull ItemStack b) {
-        // Checks item, damage
-        if (!ItemStack.isSame(a, b)) {
-            return false;
-        }
-        // checks tags and caps
-        return ItemStack.tagMatches(a, b);
+//        // Checks item, damage
+//        if (!ItemStack.areItemsEqual(a, b)) {
+//            return false;
+//        }
+//        // checks tags and caps
+//        return ItemStack.areItemStackTagsEqual(a, b);
+        return StackUtil.isSameItemSameDamageSameTag(a, b);
     }
 
     /** Attempts to get an item stack that might place down the given blockstate. Obviously this isn't perfect, and so
@@ -172,7 +173,7 @@ public class StackUtil {
         }
 
 //        return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
-        return isItemEqual(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
+        return StackUtil.isSameItemSameDamageSameTag(stack1, stack2);
     }
 
     /** This doesn't take into account stack sizes.
@@ -206,7 +207,7 @@ public class StackUtil {
             return 0;
         }
         if (doMerge) {
-            mergeTarget.setCount(mergeTarget.getCount() + mergeCount);
+            mergeTarget.grow(mergeCount);
         }
         return mergeCount;
     }
@@ -239,8 +240,7 @@ public class StackUtil {
 //                                && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
                                 && (itemstack.getDamageValue() == Short.MAX_VALUE
 //                                || comparison.getItemDamage() == itemstack.getItemDamage()))
-                                || comparison.getDamageValue() == itemstack.getDamageValue()))
-                        {
+                                || comparison.getDamageValue() == itemstack.getDamageValue())) {
                             return true;
                         }
                     }
@@ -263,8 +263,7 @@ public class StackUtil {
 //                            && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE
                             && (itemstack.getDamageValue() == Short.MAX_VALUE
 //                            || comparison.getItemDamage() == itemstack.getItemDamage()))
-                            || comparison.getDamageValue() == itemstack.getDamageValue()))
-                    {
+                            || comparison.getDamageValue() == itemstack.getDamageValue())) {
                         return true;
                     }
                 }
@@ -352,6 +351,7 @@ public class StackUtil {
      * Registers a predicate, that will be used in {@link #isMatchingItem} as an additional comparison rule.
      * If any of registered predicates will return false, then the function will also return false.
      * It can be helpful, if item stacks are clearly not the same, but have common {@link Item} instance.
+     *
      * @param forItem {@link Item} instance for which to register the rule.
      * @param predicate predicate to register.
      */
@@ -470,7 +470,17 @@ public class StackUtil {
     }
 
     // Calen
-    public static boolean isItemEqual(ItemStack thisStack, ItemStack otherStack) {
-        return !otherStack.isEmpty() && thisStack.getItem() == otherStack.getItem() && thisStack.getDamageValue() == otherStack.getDamageValue();
+    public static boolean isSameItemSameDamage(ItemStack stack1, ItemStack stack2) {
+        return !stack2.isEmpty() && stack1.getItem() == stack2.getItem() && stack1.getDamageValue() == stack2.getDamageValue();
+    }
+
+    public static boolean isSameItemSameDamageSameTag(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
+        // damage is a tag value
+        return StackUtil.isSameItemSameDamage(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
+    }
+
+    public static boolean isSameItemSameDamageSameTagSameCount(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
+        // damage is a tag value
+        return stack1.getCount() == stack2.getCount() && ItemStack.isSame(stack1, stack2) && ItemStack.tagMatches(stack1, stack2);
     }
 }

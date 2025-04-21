@@ -19,6 +19,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -100,12 +101,23 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
      * returns true for a given fluidstack then it will be allowed in the tank. The given fluidstack will NEVER be
      * null. */
     public TileEntity tile; // Calen added
+    public Entity entity; // Calen added
 
     public Tank(@Nonnull String name, int capacity, TileEntity tile, @Nullable Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
+        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
+                DEFAULT_HELP_KEY);
+    }
+
+    // Calen 1.18.2 for robot
+    public Tank(@Nonnull String name, int capacity, Entity entity) {
+        super(capacity);
+        this.name = name;
+        this.entity = entity;
+        this.filter = (f) -> true;
         helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
                 DEFAULT_HELP_KEY);
     }
@@ -202,19 +214,21 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         }
     }
 
-    @Override
-    public boolean isFluidValid(FluidStack fluid) {
-//        return super.isFluidValid(fluid) && fluid != null && filter.test(fluid);
-        return super.isFluidValid(fluid) && !fluid.isEmpty() && filter.test(fluid);
+    public boolean canFillFluidType(FluidStack fluid) {
+        return this.canFill && super.isFluidValid(fluid) && !fluid.isEmpty() && filter.test(fluid);
     }
 
     @Override
 //    public int fill(FluidStack resource, boolean doFill)
     public int fill(FluidStack resource, FluidAction doFill) {
-        if (isFluidValid(resource)) {
-            return super.fill(resource, doFill);
+        if (canFillFluidType(resource)) {
+            return fillInternal(resource, doFill);
         }
         return 0;
+    }
+
+    public int fillInternal(FluidStack resource, FluidAction doFill) {
+        return super.fill(resource, doFill);
     }
 
     @Nonnull
@@ -233,11 +247,50 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         return StackUtil.EMPTY_FLUID;
     }
 
+    public boolean canDrainFluidType(@Nullable FluidStack fluid) {
+        return this.canDrain && super.isFluidValid(fluid) && !fluid.isEmpty();
+    }
+
+    // Calen 1.18.2
+    @Override
+    public FluidStack drain(FluidStack resource, FluidAction action) {
+        if (!canDrainFluidType(getFluid())) {
+            return StackUtil.EMPTY_FLUID;
+        }
+        return drainInternal(resource, action);
+    }
+
+    // Calen 1.18.2
+    @Override
+    public FluidStack drain(int maxDrain, FluidAction action) {
+        if (!canDrainFluidType(fluid)) {
+            return StackUtil.EMPTY_FLUID;
+        }
+        return drainInternal(maxDrain, action);
+    }
+
+    public FluidStack drainInternal(FluidStack resource, FluidAction action) {
+        if (resource == null || resource.isEmpty() || !resource.isFluidEqual(getFluid())) {
+            return StackUtil.EMPTY_FLUID;
+        }
+        return drainInternal(resource.getAmount(), action);
+    }
+
+    public FluidStack drainInternal(int maxDrain, FluidAction action) {
+        if (fluid == null || fluid.isEmpty() || maxDrain < 0) {
+            return StackUtil.EMPTY_FLUID;
+        }
+        return super.drain(maxDrain, action);
+    }
+
     @Override
     protected void onContentsChanged() {
         super.onContentsChanged();
         if (tile instanceof TileBC_Neptune) {
             ((TileBC_Neptune) tile).markChunkDirty();
+        }
+        if (entity instanceof Entity) {
+            // entity.shouldBeSaved(); // Calen 1.16.5: no this method
         }
     }
 

@@ -54,10 +54,11 @@ public class RenderProgrammingTable extends TileEntityRenderer<TileProgrammingTa
 
         Entry pose = poseStack.last();
 
-        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
-        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
-        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
-        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+        // Calen 1.18.2: With RenderType.translucent(), the higher translucent layer will hide the lower. Only using the face in json model.
+//        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+//        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+//        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+//        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
 
         poseStack.popPose();
 

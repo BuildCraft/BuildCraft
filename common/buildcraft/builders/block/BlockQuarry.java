@@ -95,7 +95,7 @@ public class BlockQuarry extends BlockBCTile_Neptune<TileQuarry> implements IBlo
 
     @Override
 //    public TileBC_Neptune createTileEntity(World world, IBlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
 //        return new TileQuarry();
         return new TileQuarry();
     }

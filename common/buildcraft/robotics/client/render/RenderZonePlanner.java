@@ -9,7 +9,6 @@ package buildcraft.robotics.client.render;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.client.sprite.DynamicTextureBC;
-import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.WorldPos;
 import buildcraft.robotics.BCRoboticsBlocks;
 import buildcraft.robotics.tile.TileZonePlanner;
@@ -20,17 +19,15 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalNotification;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.matrix.MatrixStack.Entry;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.sun.javafx.geom.Vec3d;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -79,38 +76,27 @@ public class RenderZonePlanner extends TileEntityRenderer<TileZonePlanner> {
         if (texture == null) {
             return;
         }
-        poseStack.pushPose();
-//        try (AutoTessellator tessellator = RenderUtil.getThreadLocalUnusedTessellator())
-//        {
+//        try (RenderUtil.AutoTessellator tessellator = RenderUtil.getThreadLocalUnusedTessellator()) {
 //            BufferBuilder buffer = tessellator.tessellator.getBuffer();
-        IVertexBuilder buffer = bufferSource.getBuffer(RenderType.translucent());
-        // TODO Calen: it seems that TileEntityRender only can use sprite in AtlasTexture.LOCATION_BLOCKS
+        IVertexBuilder buffer = bufferSource.getBuffer(texture.getRenderType());
         texture.updateTexture();
-        texture.bindGlTexture();
+//            texture.bindGlTexture();
 //            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-//        RenderSystem.activeTexture(33985);
-        // TODO Calen
-//        GlStateManager.disableTexture2D();
-//        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-//        RenderSystem.activeTexture(33984);
+//            GlStateManager.disableTexture2D();
+//            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 //            GlStateManager.disableBlend();
-        RenderUtil.disableBlend();
-        // TODO Calen
-//         GlStateManager.disableCull();
-////        if (Minecraft.isAmbientOcclusionEnabled())
-//        if (Minecraft.useAmbientOcclusion()) {
-////            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-//            RenderSystem.setShader(GameRenderer::getRendertypeEntitySmoothCutoutShader);
-//        } else {
-////            GlStateManager.shadeModel(GL11.GL_FLAT);
-//            RenderSystem.setShader(GameRenderer::getBlockShader);
-//        }
-
+//            GlStateManager.disableCull();
+//            if (Minecraft.isAmbientOcclusionEnabled()) {
+//                GlStateManager.shadeModel(GL11.GL_SMOOTH);
+//            } else {
+//                GlStateManager.shadeModel(GL11.GL_FLAT);
+//            }
+//
 //            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 //            buffer.setTranslation(x, y, z);
 
-        Vector3d min;
-        Vector3d max;
+        Vec3d min;
+        Vec3d max;
 
         float minU = 0;
         float maxU = texture.getMaxU();
@@ -119,21 +105,21 @@ public class RenderZonePlanner extends TileEntityRenderer<TileZonePlanner> {
 
         switch (side) {
             case NORTH:
-                min = new Vector3d(minX, minY, maxZ);
-                max = new Vector3d(maxX, maxY, maxZ);
+                min = new Vec3d(minX, minY, maxZ);
+                max = new Vec3d(maxX, maxY, maxZ);
                 break;
             case EAST:
-                min = new Vector3d(minZ, minY, minX);
-                max = new Vector3d(minZ, maxY, maxX);
+                min = new Vec3d(minZ, minY, minX);
+                max = new Vec3d(minZ, maxY, maxX);
                 break;
             case SOUTH:
-                min = new Vector3d(minX, minY, minZ);
-                max = new Vector3d(maxX, maxY, minZ);
+                min = new Vec3d(minX, minY, minZ);
+                max = new Vec3d(maxX, maxY, minZ);
                 break;
             case WEST:
             default:
-                min = new Vector3d(maxZ, minY, minX);
-                max = new Vector3d(maxZ, maxY, maxX);
+                min = new Vec3d(maxZ, minY, minX);
+                max = new Vec3d(maxZ, maxY, maxX);
                 break;
         }
 
@@ -143,7 +129,7 @@ public class RenderZonePlanner extends TileEntityRenderer<TileZonePlanner> {
         vertex.lighti((byte) 0xF, (byte) 0xF);
 
         // Calen
-        Entry pose = poseStack.last();
+        MatrixStack.Entry pose = poseStack.last();
 
         vertex.positiond(min.x, min.y, min.z).texf(minU, minV).render(pose, buffer);
         vertex.positiond(max.x, min.y, max.z).texf(maxU, minV).render(pose, buffer);
@@ -153,9 +139,7 @@ public class RenderZonePlanner extends TileEntityRenderer<TileZonePlanner> {
 //            buffer.setTranslation(0, 0, 0);
 //            tessellator.tessellator.draw();
 //        }
-        // TODO Calen
 //        RenderHelper.enableStandardItemLighting();
-        poseStack.popPose();
 
         Minecraft.getInstance().getProfiler().pop();
         Minecraft.getInstance().getProfiler().pop();
@@ -172,7 +156,8 @@ public class RenderZonePlanner extends TileEntityRenderer<TileZonePlanner> {
     }
 
     private static DynamicTextureBC createTexture(TileZonePlanner tile, Direction side) {
-        DynamicTextureBC texture = new DynamicTextureBC(TEXTURE_WIDTH, TEXTURE_HEIGHT);
+//        DynamicTextureBC texture = new DynamicTextureBC(TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        DynamicTextureBC texture = new DynamicTextureBC(TEXTURE_WIDTH, TEXTURE_HEIGHT, tile.getBlockPos().getX() + "_" + tile.getBlockPos().getY() + "_" + tile.getBlockPos().getZ());
         for (int textureX = 0; textureX < TEXTURE_WIDTH; textureX++) {
             for (int textureY = 0; textureY < TEXTURE_HEIGHT; textureY++) {
                 int posX;

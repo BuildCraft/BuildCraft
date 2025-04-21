@@ -6,15 +6,16 @@ package buildcraft.transport.stripes;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
@@ -22,11 +23,11 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
 
     @Override
     public boolean handle(World world,
-                          BlockPos pos,
-                          Direction direction,
-                          ItemStack stack,
-                          PlayerEntity player,
-                          IStripesActivator activator) {
+            BlockPos pos,
+            Direction direction,
+            ItemStack stack,
+            PlayerEntity player,
+            IStripesActivator activator) {
         if (!(stack.getItem() instanceof BlockItem)) {
             return false;
         }
@@ -34,7 +35,6 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
             return false;
         }
 //        stack.getItem().onItemUse(
-        stack.onItemUseFirst(
 //                player,
 //                world,
 //                pos.offset(direction),
@@ -43,19 +43,21 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
 //                0.5f,
 //                0.5f,
 //                0.5f
-                new ItemUseContext(
-                        world,
-                        player,
-                        Hand.MAIN_HAND,
-                        stack,
-                        new BlockRayTraceResult(
-                                new Vector3d(0, 0, 0),
-                                direction,
-                                pos.relative(direction),
-                                false
-                        )
+//        );
+        player.setItemInHand(Hand.MAIN_HAND, stack);
+        ActionResultType result = ((ServerPlayerEntity) player).gameMode.useItemOn(
+                (ServerPlayerEntity) player,
+                world,
+                stack,
+                Hand.MAIN_HAND,
+                new BlockRayTraceResult(
+                        VecUtil.convertCenter(pos),
+                        direction,
+                        pos.relative(direction),
+                        false
                 )
         );
-        return true;
+        // return true;
+        return result.consumesAction();
     }
 }

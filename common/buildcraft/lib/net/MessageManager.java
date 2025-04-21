@@ -13,6 +13,7 @@ import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.MessageUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.RegistryKey;
@@ -300,5 +301,11 @@ public class MessageManager {
      * @param message The message to send */
     public static void sendToServer(IMessage message) {
         getSimpleNetworkWrapper(message).sendToServer(message);
+    }
+
+    // Calen 1.18.2 form 1.8 for robotics
+    public static void sendToEntity(IMessage message, Entity entity) {
+//        getSimpleNetworkWrapper(message).sendTo(message, player);
+        getSimpleNetworkWrapper(message).send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
     }
 }

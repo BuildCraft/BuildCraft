@@ -133,6 +133,7 @@ sourceSets {
             srcDir "sub_projects/expression/src/autogen/java"
         }
         resources {
+            srcDir "mod_info"
             srcDir "buildcraft_resources"
             srcDir 'buildcraft_resources_generated'
             srcDir "BuildCraft-Localization"
@@ -151,7 +152,6 @@ sourceSets {
             srcDir "sub_projects/expression/src/autogen/java"
         }
         resources {
-            srcDir "mod_info"
             srcDir "buildcraft_resources"
             srcDir "BuildCraftGuide/guide_resources"
             exclude "pack.png" // exclude from the guide repo

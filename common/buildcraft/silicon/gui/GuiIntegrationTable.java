@@ -27,6 +27,8 @@ public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
         imageWidth = SIZE_X;
 //        ySize = SIZE_Y;
         imageHeight = SIZE_Y;
+
+        mainGui.shownElements.add(new LedgerTablePower(mainGui, container.tile, true));
     }
 
     @Override
@@ -46,6 +48,12 @@ public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
                     poseStack
             );
         }
+
+//        if (container.tile.recipe != null && container.tile.recipe.getMaxExpansionCount() > 0) {
+//            for (int i = 8; i > container.tile.recipe.getMaxExpansionCount(); i--) {
+//                drawTexturedModalRect(leftPos + ContainerIntegrationTable.SLOT_X[i] - 1, topPos + ContainerIntegrationTable.SLOT_Y[i] - 1, 180, 17, 18, 18);
+//            }
+//        }
     }
 
     @Override

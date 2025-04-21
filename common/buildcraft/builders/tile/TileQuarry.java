@@ -214,7 +214,8 @@ public class TileQuarry extends TileBC_Neptune implements ITickable, IDebuggable
         openSet.add(getBlockPos());
 
         // Hold on to the array of orders, as we shuffle it on each iteration
-        Direction[] order = Direction.values();
+//        Direction[] order = Direction.values();
+        Direction[] order = Direction.values().clone();
         // Also hold on to it as a list, so that we don't have to re-create it all the time
         List<Direction> orderAsList = Arrays.asList(order);
 

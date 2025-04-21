@@ -246,11 +246,11 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements IDebuggable, IT
             FluidStack outLiquid = currentRecipe.outLiquid();
             FluidStack outGas = currentRecipe.outGas();
 
-            FluidStack potentialIn = tankIn.drain(reqIn, IFluidHandler.FluidAction.SIMULATE);
+            FluidStack potentialIn = tankIn.drainInternal(reqIn, IFluidHandler.FluidAction.SIMULATE);
             boolean canExtract = reqIn.isFluidStackIdentical(potentialIn);
 
-            boolean canFillLiquid = tankLiquidOut.fill(outLiquid, IFluidHandler.FluidAction.SIMULATE) == outLiquid.getAmount();
-            boolean canFillGas = tankGasOut.fill(outGas, IFluidHandler.FluidAction.SIMULATE) == outGas.getAmount();
+            boolean canFillLiquid = tankLiquidOut.fillInternal(outLiquid, IFluidHandler.FluidAction.SIMULATE) == outLiquid.getAmount();
+            boolean canFillGas = tankGasOut.fillInternal(outGas, IFluidHandler.FluidAction.SIMULATE) == outGas.getAmount();
 
             if (canExtract && canFillLiquid && canFillGas) {
                 long max = MAX_MJ_PER_TICK;
@@ -265,9 +265,9 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements IDebuggable, IT
                 if (distillPower >= powerReq) {
                     isActive = true;
                     distillPower -= powerReq;
-                    tankIn.drain(reqIn, IFluidHandler.FluidAction.EXECUTE);
-                    tankGasOut.fill(outGas, IFluidHandler.FluidAction.EXECUTE);
-                    tankLiquidOut.fill(outLiquid, IFluidHandler.FluidAction.EXECUTE);
+                    tankIn.drainInternal(reqIn, IFluidHandler.FluidAction.EXECUTE);
+                    tankGasOut.fillInternal(outGas, IFluidHandler.FluidAction.EXECUTE);
+                    tankLiquidOut.fillInternal(outLiquid, IFluidHandler.FluidAction.EXECUTE);
                 }
             } else {
                 mjBattery.addPowerChecking(distillPower, false);

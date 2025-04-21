@@ -1,8 +1,6 @@
 package buildcraft.lib;
 
-import buildcraft.api.registry.EventBuildCraftReload;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.command.CommandBuildCraft;
 import buildcraft.lib.debug.BCAdvDebugging;
@@ -71,12 +69,15 @@ public enum BCLibEventDist {
         }
     }
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onReloadFinish(EventBuildCraftReload.FinishLoad event) {
-        // Note: when you need to add server-side listeners the client listeners need to be moved to BCLibProxy
-        GuideManager.INSTANCE.onRegistryReload(event);
-    }
+    // Calen: When the event is posted, MinecraftForge.EVENT_BUS will be shut down.
+    // If we unlock the event bus, some subscribers will be called wrongly.
+    // Moved to BCLibEventDistModBus.
+//    @SubscribeEvent
+//    @OnlyIn(Dist.CLIENT)
+//    public void onReloadFinish(EventBuildCraftReload.FinishLoad event) {
+//        // Note: when you need to add server-side listeners the client listeners need to be moved to BCLibProxy
+//        GuideManager.INSTANCE.onRegistryReload(event);
+//    }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
@@ -128,9 +129,8 @@ public enum BCLibEventDist {
                         MessageManager.sendToServer(new MessageDebugRequest(tile.getBlockPos(), result.getDirection()));
                     } else if (debuggable instanceof Entity) {
                         Entity entity = (Entity) debuggable;
-                        // TODO: Support entities!
-                        // Calen
-                        MessageManager.sendToServer(new MessageDebugRequest(entity.blockPosition(), null));
+                        // Calen 1.18.2
+                        MessageManager.sendToServer(new MessageDebugRequest(entity.getUUID()));
                     }
                 }
             }
@@ -145,7 +145,7 @@ public enum BCLibEventDist {
         CommandBuildCraft.register(dispatcher);
     }
 
-    // Calen: update guidebook not to early
+    // Calen: update guidebook not too early
     private List<IResourceManagerReloadListener> reloadListeners = new ArrayList<>();
 
     @SubscribeEvent

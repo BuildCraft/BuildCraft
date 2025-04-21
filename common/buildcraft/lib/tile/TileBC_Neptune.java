@@ -367,7 +367,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     // Item caps
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
-        if (level.isLoaded(worldPosition)) {
+        // if (level.isLoaded(worldPosition))
+        if (level.isLoaded(worldPosition) && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
 //            if (getCurrentState().hasComparatorInputOverride())
             if (getCurrentState().hasAnalogOutputSignal()) {
 //                markDirty();
@@ -472,7 +473,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             }
         }
     }
-
 
     public final void sendNetworkGuiTick(ServerPlayerEntity player) {
         if (hasLevel() && !level.isClientSide) {

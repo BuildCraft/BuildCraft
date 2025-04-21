@@ -10,9 +10,7 @@ import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -41,9 +39,8 @@ public class RenderArchitectTable extends TileEntityRenderer<TileArchitectTable>
 //        RenderHelper.disableStandardItemLighting();
 
         Minecraft.getInstance().getProfiler().push("box");
-        IVertexBuilder bb = bufferSource.getBuffer(Atlases.solidBlockSheet()); // Calen
 //        LaserBoxRenderer.renderLaserBoxStatic(tile.box, BuildCraftLaserManager.STRIPES_READ, true);
-        LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_READ, poseStack.last(), bb, true);
+        LaserBoxRenderer.renderLaserBoxStatic(tile.box, BuildCraftLaserManager.STRIPES_READ, poseStack.last(), true);
         Minecraft.getInstance().getProfiler().pop();
 
 //        RenderHelper.enableStandardItemLighting();

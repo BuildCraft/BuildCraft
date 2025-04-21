@@ -3,28 +3,28 @@ package buildcraft.energy;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.config.BCConfig;
+import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
-import com.google.common.collect.Lists;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.*;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Level;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BCEnergyConfig {
     private static Configuration config;
 
+    // Calen: remove the json file
     public static boolean enableOilOceanBiome;
+    // Calen: remove the json file
     public static boolean enableOilDesertBiome;
 
+    // Calen: remove the json file
+    @Deprecated
     public static boolean enableOilGeneration;
     public static double oilWellGenerationRate;
     public static boolean enableOilSpouts;
@@ -50,41 +50,37 @@ public class BCEnergyConfig {
     public static boolean excludedBiomesIsBlackList;
     public static SpecialEventType christmasEventStatus = SpecialEventType.DAY_ONLY;
 
-    private static BooleanValue propEnableOilOceanBiome;
-    private static BooleanValue propEnableOilDesertBiome;
+    private static ConfigCategory<Boolean> propEnableOilOceanBiome;
+    private static ConfigCategory<Boolean> propEnableOilDesertBiome;
 
-    private static BooleanValue propEnableOilGeneration;
-    private static DoubleValue propOilWellGenerationRate;
-    private static BooleanValue propEnableOilSpouts;
-    private static BooleanValue propEnableOilBurn;
-    private static BooleanValue propOilIsSticky;
+    private static ConfigCategory<Boolean> propEnableOilGeneration;
+    private static ConfigCategory<Double> propOilWellGenerationRate;
+    private static ConfigCategory<Boolean> propEnableOilSpouts;
+    private static ConfigCategory<Boolean> propEnableOilBurn;
+    private static ConfigCategory<Boolean> propOilIsSticky;
 
-    private static IntValue propSmallSpoutMinHeight;
-    private static IntValue propSmallSpoutMaxHeight;
-    private static IntValue propLargeSpoutMinHeight;
-    private static IntValue propLargeSpoutMaxHeight;
+    private static ConfigCategory<Integer> propSmallSpoutMinHeight;
+    private static ConfigCategory<Integer> propSmallSpoutMaxHeight;
+    private static ConfigCategory<Integer> propLargeSpoutMinHeight;
+    private static ConfigCategory<Integer> propLargeSpoutMaxHeight;
 
-    private static DoubleValue propSmallOilGenProb;
-    private static DoubleValue propMediumOilGenProb;
-    private static DoubleValue propLargeOilGenProb;
+    private static ConfigCategory<Double> propSmallOilGenProb;
+    private static ConfigCategory<Double> propMediumOilGenProb;
+    private static ConfigCategory<Double> propLargeOilGenProb;
 
-    private static ConfigValue<List<? extends String>> propExcessiveBiomes;
-    private static ConfigValue<List<? extends String>> propSurfaceDepositBiomes;
-    private static ConfigValue<List<? extends String>> propExcludedBiomes;
-    private static BooleanValue propExcludedBiomesIsBlacklist;
-    private static ConfigValue<List<? extends String>> propExcludedDimensions;
-    private static BooleanValue propExcludedDimensionsIsBlacklist;
-    private static EnumValue<SpecialEventType> propChristmasEventType;
+    private static ConfigCategory<List<String>> propExcessiveBiomes;
+    private static ConfigCategory<List<String>> propSurfaceDepositBiomes;
+    private static ConfigCategory<List<String>> propExcludedBiomes;
+    private static ConfigCategory<Boolean> propExcludedBiomesIsBlacklist;
+    private static ConfigCategory<List<String>> propExcludedDimensions;
+    private static ConfigCategory<Boolean> propExcludedDimensionsIsBlacklist;
+    private static ConfigCategory<SpecialEventType> propChristmasEventType;
 
     public static void preInit() {
 //        Configuration config = BCCoreConfig.config;
         BCModules module = BCModules.ENERGY;
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        config = new Configuration(builder, module);
+        config = new Configuration(module);
         createProps();
-        ForgeConfigSpec spec = config.build();
-        ModContainer container = ModList.get().getModContainerById(module.getModId()).get();
-        container.addConfig(new ModConfig(ModConfig.Type.COMMON, spec, container, config.getFileName()));
 
 //        reloadConfig(EnumRestartRequirement.GAME);
         reloadConfig();
@@ -187,21 +183,21 @@ public class BCEnergyConfig {
                         "Biome registry names (e.g. 'minecraft:ocean','minecraft:plains')"
                                 + " of biomes that should have GREATLY increased oil generation rates.",
                         world,
-                        "excessiveBiomes", Lists.newArrayList(_excessive), b -> ForgeRegistries.BIOMES.containsKey(new ResourceLocation(b.toString())));
+                        "excessiveBiomes", Arrays.stream(_excessive).collect(Collectors.toList()));
 
         String[] _surface = {};
         propSurfaceDepositBiomes = config
                 .defineList("worldgen.oil",
                         "Biome registry names (e.g. 'minecraft:ocean','minecraft:hills') of biomes that should have slightly increased oil generation rates.",
                         world,
-                        "surfaceDepositBiomes", Lists.newArrayList(_surface), b -> ForgeRegistries.BIOMES.containsKey(new ResourceLocation(b.toString())));
+                        "surfaceDepositBiomes", Arrays.stream(_surface).collect(Collectors.toList()));
 
         String[] _excluded = { "minecraft:hell", "minecraft:sky", };
         propExcludedBiomes = config
                 .defineList("worldgen.oil",
                         "Biome registry names (e.g. 'minecraft:hell','minecraft:jungle') of biomes that should never generate oil.",
                         world,
-                        "excludedBiomes", Lists.newArrayList(_excluded), b -> ForgeRegistries.BIOMES.containsKey(new ResourceLocation(b.toString())));
+                        "excludedBiomes", Arrays.stream(_excluded).collect(Collectors.toList()));
 
         propExcludedBiomesIsBlacklist = config
                 .define("worldgen.oil",
@@ -214,7 +210,7 @@ public class BCEnergyConfig {
                 .defineList("worldgen.oil",
                         "Dimension ID's (e.g. 'minecraft:the_nether' for the nether,'minecraft:the_end' for the end) of dimensions that should never generate oil.",
                         world,
-                        "excludedDimensions", Lists.newArrayList(_dims), d -> true);
+                        "excludedDimensions", Arrays.stream(_dims).collect(Collectors.toList()));
 
         propExcludedDimensionsIsBlacklist = config
                 .define("worldgen.oil",
@@ -273,9 +269,11 @@ public class BCEnergyConfig {
         validateBiomeNames();
 //            }
 //        }
+
+        saveConfigs();
     }
 
-    private static void addBiomeNames(ConfigValue<List<? extends String>> prop, Set<ResourceLocation> set) {
+    private static void addBiomeNames(ConfigCategory<List<String>> prop, Set<ResourceLocation> set) {
         set.clear();
         for (String s : prop.get()) {
             set.add(new ResourceLocation(s));
@@ -305,7 +303,7 @@ public class BCEnergyConfig {
         BCLog.logger.warn("****************************************************");
         BCLog.logger.warn("*");
         BCLog.logger.warn("* Unknown biome name detected in buildcraft config!");
-        BCLog.logger.warn("* (Config file = " + BCEnergyConfig.config.getFileName() + ")");
+        BCLog.logger.warn("* (Config file = " + BCEnergyConfig.config.getConfigFilePath().toAbsolutePath() + ")");
         BCLog.logger.warn("*");
         BCLog.logger.warn("* Unknown biomes: ");
         printList(Level.WARN, invalidList);
@@ -327,6 +325,12 @@ public class BCEnergyConfig {
             if (!ForgeRegistries.BIOMES.containsKey(test)) {
                 invalidDest.add(test);
             }
+        }
+    }
+
+    public static void saveConfigs() {
+        if (config.hasChanged()) {
+            config.save();
         }
     }
 

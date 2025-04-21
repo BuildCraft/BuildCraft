@@ -72,7 +72,7 @@ public abstract class BlockBCTile_Neptune<T extends TileEntity> extends BlockBCB
         if (!TileBC_Neptune.shouldRefresh(world, pos, state, newState)) {
             return;
         }
-        // BC
+        // BC 1.12.2
         TileEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;

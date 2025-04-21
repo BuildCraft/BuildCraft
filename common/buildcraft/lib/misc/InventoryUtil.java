@@ -6,12 +6,18 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.DoubleSidedInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -144,4 +150,44 @@ public class InventoryUtil {
     }
 
     // NBT migration
+
+    // Calen: from 1.8.9
+
+    public static IInvSlot getItem(IItemHandler inv, IStackFilter filter) {
+        for (IInvSlot s : InventoryIterator.getIterable(inv)) {
+            // if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot()))
+            if (!s.getStackInSlot().isEmpty() && filter.matches(s.getStackInSlot())) {
+                return s;
+            }
+        }
+
+        return null;
+    }
+
+    /** Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
+     *
+     * @param inv
+     * @return Modified inventory if double chest, unmodified otherwise. */
+    public static IInventory getInventory(IInventory inv) {
+        if (inv instanceof ChestTileEntity) {
+            ChestTileEntity adjacent = BlockUtil.getOtherDoubleChest((ChestTileEntity) inv);
+            if (adjacent != null) {
+                // return new InventoryLargeChest("", (TileEntityChest) inv, adjacent);
+                return new DoubleSidedInventory(inv, adjacent);
+            }
+            return inv;
+        }
+        return inv;
+    }
+
+    public static ItemStack insert(IItemHandler itemHandler, ItemStack stack, boolean simulate) {
+        ItemStack overflow = stack.copy();
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            overflow = itemHandler.insertItem(i, overflow, simulate);
+            if (overflow.isEmpty()) {
+                break;
+            }
+        }
+        return overflow;
+    }
 }

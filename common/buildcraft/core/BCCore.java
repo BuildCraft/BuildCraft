@@ -104,6 +104,8 @@ public class BCCore {
 //    public static void postInit(FMLPostInitializationEvent event)
     public static void postInit(FMLLoadCompleteEvent event) {
 //        BCCoreConfig.saveConfigs();
+        BCCoreConfig.saveCoreConfigs();
+        BCCoreConfig.saveObjConfigs();
         BCCoreProxy.getProxy().fmlPostInit();
 //        BCCoreConfig.postInit();
     }

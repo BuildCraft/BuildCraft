@@ -18,6 +18,7 @@ import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.block.BlockState;
@@ -90,7 +91,8 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMe
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
-        if (handler == invFuel) {
+        // if (handler == invFuel)
+        if (handler == invFuel && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
             if (isForceInserting && after.isEmpty()) {
                 isForceInserting = false;
             }

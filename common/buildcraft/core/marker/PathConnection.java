@@ -208,33 +208,30 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderInWorld(MatrixStack poseStack) {
-        // 1.18.2 add
-        IVertexBuilder buffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(Atlases.solidBlockSheet());
-        // 1.12.2
         BlockPos last = null;
         for (BlockPos p : positions) {
             if (last == null) {
                 last = p;
             } else {
-                renderLaser(VecUtil.add(VEC_HALF, last), VecUtil.add(VEC_HALF, p), poseStack.last(), buffer);
+                renderLaser(VecUtil.add(VEC_HALF, last), VecUtil.add(VEC_HALF, p), poseStack.last());
                 last = p;
             }
         }
         if (loop) {
             BlockPos from = positions.getLast();
             BlockPos to = positions.getFirst();
-            renderLaser(VecUtil.add(VEC_HALF, from), VecUtil.add(VEC_HALF, to), poseStack.last(), buffer);
+            renderLaser(VecUtil.add(VEC_HALF, from), VecUtil.add(VEC_HALF, to), poseStack.last());
         }
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void renderLaser(Vector3d from, Vector3d to, Entry pose, IVertexBuilder buffer) {
+    private static void renderLaser(Vector3d from, Vector3d to, Entry pose) {
         Vector3d one = offset(from, to);
         Vector3d two = offset(to, from);
         LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_PATH_CONNECTED, one, two, RENDER_SCALE);
 //        LaserRenderer_BC8.renderLaserStatic(data);
-        LaserRenderer_BC8.renderLaserDynamic(data, pose, buffer);
+        LaserRenderer_BC8.renderLaserStatic(data, pose);
     }
 
     @OnlyIn(Dist.CLIENT)

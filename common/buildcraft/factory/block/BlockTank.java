@@ -49,7 +49,7 @@ public class BlockTank extends BlockBCTile_Neptune<TileTank> implements ICustomP
     }
 
     @Override
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         return BCFactoryBlocks.tankTile.get().create();
     }
 

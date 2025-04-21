@@ -11,20 +11,10 @@ import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
 import buildcraft.lib.BCLibConfig.RenderRotation;
 import buildcraft.lib.BCLibConfig.TimeGap;
-import buildcraft.lib.config.BCConfig;
-import buildcraft.lib.config.Configuration;
-import buildcraft.lib.config.EnumRestartRequirement;
-import buildcraft.lib.config.FileConfigManager;
+import buildcraft.lib.config.*;
+import buildcraft.lib.misc.ConfigUtil;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.registry.RegistryConfig;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
@@ -36,6 +26,7 @@ public class BCCoreConfig {
     public static Configuration objConfig;
     public static FileConfigManager detailedConfigManager;
 
+    // Calen 1.20.1: use datagen
     public static boolean worldGen;
     public static boolean worldGenWaterSpring;
     public static boolean minePlayerProtected;
@@ -48,32 +39,32 @@ public class BCCoreConfig {
     public static double miningMultiplier = 1;
     public static int miningMaxDepth;
 
-    private static BooleanValue propColourBlindMode;
-    private static BooleanValue propWorldGen;
-    private static BooleanValue propWorldGenWaterSpring;
-    private static BooleanValue propMinePlayerProtected;
-    private static BooleanValue propUseColouredLabels;
-    private static BooleanValue propUseHighContrastColouredLabels;
-    private static BooleanValue propHidePower;
-    private static BooleanValue propHideFluid;
-    private static BooleanValue propGuideBookEnableDetail;
-    private static IntValue propGuideItemSearchLimit;
-    private static BooleanValue propUseBucketsStatic;
-    private static BooleanValue propUseBucketsFlow;
-    private static BooleanValue propUseLongLocalizedName;
-    private static EnumValue<TimeGap> propDisplayTimeGap;
-    private static BooleanValue propUseSwappableSprites;
-    private static BooleanValue propEnableAnimatedSprites;
-    private static IntValue propMaxGuideSearchResults;
-    private static EnumValue<ChunkLoaderLevel> propChunkLoadLevel;
-    private static EnumValue<RenderRotation> propItemRenderRotation;
-    private static IntValue propItemLifespan;
-    private static BooleanValue propPumpsConsumeWater;
-    private static IntValue propMarkerMaxDistance;
-    private static IntValue propPumpMaxDistance;
-    private static IntValue propNetworkUpdateRate;
-    private static DoubleValue propMiningMultiplier;
-    private static IntValue propMiningMaxDepth;
+    private static ConfigCategory<Boolean> propColourBlindMode;
+    private static ConfigCategory<Boolean> propWorldGen;
+    private static ConfigCategory<Boolean> propWorldGenWaterSpring;
+    private static ConfigCategory<Boolean> propMinePlayerProtected;
+    private static ConfigCategory<Boolean> propUseColouredLabels;
+    private static ConfigCategory<Boolean> propUseHighContrastColouredLabels;
+    private static ConfigCategory<Boolean> propHidePower;
+    private static ConfigCategory<Boolean> propHideFluid;
+    private static ConfigCategory<Boolean> propGuideBookEnableDetail;
+    private static ConfigCategory<Integer> propGuideItemSearchLimit;
+    private static ConfigCategory<Boolean> propUseBucketsStatic;
+    private static ConfigCategory<Boolean> propUseBucketsFlow;
+    private static ConfigCategory<Boolean> propUseLongLocalizedName;
+    private static ConfigCategory<TimeGap> propDisplayTimeGap;
+    private static ConfigCategory<Boolean> propUseSwappableSprites;
+    private static ConfigCategory<Boolean> propEnableAnimatedSprites;
+    private static ConfigCategory<Integer> propMaxGuideSearchResults;
+    private static ConfigCategory<ChunkLoaderLevel> propChunkLoadLevel;
+    private static ConfigCategory<RenderRotation> propItemRenderRotation;
+    private static ConfigCategory<Integer> propItemLifespan;
+    private static ConfigCategory<Boolean> propPumpsConsumeWater;
+    private static ConfigCategory<Integer> propMarkerMaxDistance;
+    private static ConfigCategory<Integer> propPumpMaxDistance;
+    private static ConfigCategory<Integer> propNetworkUpdateRate;
+    private static ConfigCategory<Double> propMiningMultiplier;
+    private static ConfigCategory<Integer> propMiningMaxDepth;
 
     // Calen: just ensure <cinit> run and registered to RegistryConfig#modObjectConfigs
     public static synchronized void cinit() {
@@ -81,19 +72,7 @@ public class BCCoreConfig {
 
     static {
         BCModules module = BCModules.CORE;
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        config = new Configuration(builder, module);
-        createProps();
-        ForgeConfigSpec spec = config.build();
-        ModContainer container = ModList.get().getModContainerById(module.getModId()).get();
-        container.addConfig(new ModConfig(ModConfig.Type.COMMON, spec, container, config.getFileName()));
-
-//        reloadConfig(EnumRestartRequirement.GAME);
-        reloadConfig();
-//        addReloadListener(BCCoreConfig::reloadConfig);
-//        MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
-        BCConfig.registerReloadListener(module, BCCoreConfig::reloadConfig);
-
+        config = new Configuration(module);
 
         File forgeConfigFolder = FMLPaths.CONFIGDIR.get().toFile();
         File buildCraftConfigFolder = new File(forgeConfigFolder, "buildcraft");
@@ -109,6 +88,14 @@ public class BCCoreConfig {
                         + "affect on gameplay.\n You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)\n"
                         + " This file will be overwritten every time that buildcraf starts, so don't change anything other than the values.");
         detailedConfigManager.setConfigFile(new File(buildCraftConfigFolder, "detailed.properties"));
+
+        createProps();
+
+//        reloadConfig(EnumRestartRequirement.GAME);
+        reloadConfig();
+//        addReloadListener(BCCoreConfig::reloadConfig);
+//        MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
+        BCConfig.registerReloadListener(module, BCCoreConfig::reloadConfig);
     }
 
     public static void createProps() {
@@ -301,19 +288,32 @@ public class BCCoreConfig {
 //        }
 //    }
 
-//    public static void postInit() {
-//        ConfigUtil.setLang(config);
+    public static void postInit() {
+        ConfigUtil.setLang(config);
 //        saveConfigs();
-//    }
+        saveCoreConfigs();
+        saveObjConfigs();
+    }
 
-//    public static void saveConfigs() {
-//        if (config.hasChanged()) {
-//            config.save();
-//        }
-//        if (objConfig.hasChanged()) {
-//            objConfig.save();
-//        }
-//    }
+    // public static void saveConfigs() {
+    //     if (config.hasChanged()) {
+    //         config.save();
+    //     }
+    //     if (objConfig.hasChanged()) {
+    //         objConfig.save();
+    //     }
+    // }
+    public static void saveCoreConfigs() {
+        if (config.hasChanged()) {
+            config.save();
+        }
+    }
+
+    public static void saveObjConfigs() {
+        if (objConfig.hasChanged()) {
+            objConfig.save();
+        }
+    }
 
     // public static void reloadConfig(EnumRestartRequirement restarted)
     public static void reloadConfig() {
@@ -349,5 +349,7 @@ public class BCCoreConfig {
 //        }
         BCLibConfig.refreshConfigs();
 //        saveConfigs();
+        saveCoreConfigs();
+        saveObjConfigs();
     }
 }

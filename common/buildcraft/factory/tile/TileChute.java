@@ -93,7 +93,8 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable,
 
     private void putInNearInventories(Direction currentSide) {
         boolean[] didWork = { false };
-        List<Direction> sides = new ArrayList<>(Arrays.asList(Direction.values()));
+//        List<Direction> sides = new ArrayList<>(Arrays.asList(Direction.values()));
+        List<Direction> sides = new ArrayList<>(Arrays.asList(Direction.values().clone()));
         Collections.shuffle(sides, new Random());
         sides.removeIf(Predicate.isEqual(currentSide));
         Stream.<Pair<Direction, ICapabilityProvider>>concat(

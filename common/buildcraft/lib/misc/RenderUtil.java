@@ -230,6 +230,10 @@ public class RenderUtil {
         RenderSystem.colorMask(true, true, true, true);
     }
 
+    public static void disableAlpha() {
+        RenderSystem.colorMask(true, true, true, false);
+    }
+
     static class TessellatorQueue {
         // Max size of 20: if we go over this then something has gone very wrong
         // In theory this shouldn't even go above about 3.

@@ -1,12 +1,12 @@
 package buildcraft.robotics;
 
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.robotics.container.ContainerProgrammingTable_Neptune;
+import buildcraft.robotics.container.ContainerRequester;
 import buildcraft.robotics.container.ContainerZonePlanner;
-import buildcraft.robotics.gui.GuiProgrammingTable_Neptune;
+import buildcraft.robotics.gui.GuiRequester;
 import buildcraft.robotics.gui.GuiZonePlanner;
+import buildcraft.robotics.tile.TileRequester;
 import buildcraft.robotics.tile.TileZonePlanner;
-import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntity;
@@ -28,13 +28,13 @@ public class BCRoboticsMenuTypes {
                 }
             }
     );
-    public static final ContainerType<ContainerProgrammingTable_Neptune> PROGRAMMING_TABLE = IForgeContainerType.create((windowId, inv, data) ->
+    public static final ContainerType<ContainerRequester> REQUESTER = IForgeContainerType.create((windowId, inv, data) ->
             {
                 TileEntity te = inv.player.level.getBlockEntity(data.readBlockPos());
-                if (te instanceof TileProgrammingTable_Neptune) {
-                    TileProgrammingTable_Neptune tile = (TileProgrammingTable_Neptune) te;
+                if (te instanceof TileRequester) {
+                    TileRequester tile = (TileRequester) te;
                     MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
-                    return new ContainerProgrammingTable_Neptune(BCRoboticsMenuTypes.PROGRAMMING_TABLE, windowId, inv.player, tile);
+                    return new ContainerRequester(BCRoboticsMenuTypes.REQUESTER, windowId, inv.player, tile);
                 } else {
                     return null;
                 }
@@ -44,12 +44,12 @@ public class BCRoboticsMenuTypes {
     public static void registerAll(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().registerAll(
                 ZONE_PLANNER.setRegistryName("zone_planner"),
-                PROGRAMMING_TABLE.setRegistryName("programming_table")
+                REQUESTER.setRegistryName("requester")
         );
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ScreenManager.register(ZONE_PLANNER, GuiZonePlanner::new);
-            ScreenManager.register(PROGRAMMING_TABLE, GuiProgrammingTable_Neptune::new);
+            ScreenManager.register(REQUESTER, GuiRequester::new);
         }
     }
 }

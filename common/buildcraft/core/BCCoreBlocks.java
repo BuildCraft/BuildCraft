@@ -36,7 +36,7 @@ public class BCCoreBlocks {
     public static RegistryObject<BlockEngine_BC8> engineCreative;
     public static RegistryObject<BlockSpring> springWater;
     public static RegistryObject<BlockSpring> springOil;
-    //    public static RegistryObject<BlockDecoration> decorated;
+    // public static RegistryObject<BlockDecoration> decorated;
     public static final Map<EnumDecoratedBlock, RegistryObject<BlockDecoration>> decoratedMap = new HashMap<>();
     public static RegistryObject<BlockMarkerVolume> markerVolume;
     public static RegistryObject<BlockMarkerPath> markerPath;
@@ -81,8 +81,8 @@ public class BCCoreBlocks {
             );
             decoratedMap.put(decoratedBlock, reg);
         }
-        markerVolume = HELPER.addBlockAndItem("block.marker.volume", BlockPropertiesCreator.createDefaultProperties(Material.DECORATION).strength(0.25F).noOcclusion().noCollission(), BlockMarkerVolume::new);
-        markerPath = HELPER.addBlockAndItem("block.marker.path", BlockPropertiesCreator.createDefaultProperties(Material.DECORATION).strength(0.25F).noOcclusion().noCollission(), BlockMarkerPath::new);
+        markerVolume = HELPER.addBlockAndItem("block.marker.volume", BlockPropertiesCreator.createDefaultProperties(Material.DECORATION).strength(0.25F).noOcclusion().noCollission().lightLevel(state -> 1), BlockMarkerVolume::new);
+        markerPath = HELPER.addBlockAndItem("block.marker.path", BlockPropertiesCreator.createDefaultProperties(Material.DECORATION).strength(0.25F).noOcclusion().noCollission().lightLevel(state -> 1), BlockMarkerPath::new);
         if (BCLib.DEV) {
             powerTester = HELPER.addBlockAndItem("block.power_tester", BlockPropertiesCreator.createDefaultProperties(Material.METAL), BlockPowerConsumerTester::new);
         }

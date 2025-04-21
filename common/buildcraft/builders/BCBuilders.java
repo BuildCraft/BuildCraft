@@ -139,6 +139,7 @@ public class BCBuilders {
 //                .model("frame");
         registerTag("item.block.quarry").reg("quarry").locale("quarryBlock");
 //                .model("quarry");
+        registerTag("item.block.marker.construction").reg("marker_construction").locale("constructionMarkerBlock");
         // Blocks
         registerTag("block.architect").reg("architect").locale("architectBlock");
 //                .model("architect");
@@ -154,6 +155,7 @@ public class BCBuilders {
 //                .model("frame");
         registerTag("block.quarry").reg("quarry").locale("quarryBlock");
 //                .model("quarry");
+        registerTag("block.marker.construction").reg("marker_construction").locale("constructionMarkerBlock");
         // Tiles
         registerTag("tile.architect").reg("architect");
         registerTag("tile.builder").reg("builder");
@@ -161,6 +163,7 @@ public class BCBuilders {
         registerTag("tile.replacer").reg("replacer");
         registerTag("tile.filler").reg("filler");
         registerTag("tile.quarry").reg("quarry");
+        registerTag("tile.marker.construction").reg("marker_construction");
 
 //        endBatch(TagManager.prependTags("buildcraftbuilders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(TagManager.setTab("buildcraft.main")));
         endBatch(TagManager.prependTags("buildcraftbuilders:", EnumTagType.REGISTRY_NAME).andThen(TagManager.setTab("buildcraft.main")));

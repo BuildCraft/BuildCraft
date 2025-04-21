@@ -12,7 +12,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Vector3f;
 
 import javax.annotation.Nullable;
@@ -98,12 +97,11 @@ public class ModelItemSimple implements IBakedModel {
 
     private static ItemTransformVec3f translate(ItemTransformVec3f from, double dx, double dy, double dz) {
         Vector3f nTranslation = new Vector3f(from.translation.x(), from.translation.y(), from.translation.z());
-        nTranslation.transform(Matrix3f.createScaleMatrix((float) dx, (float) dy, (float) dz));
+        nTranslation.add((float) dx, (float) dy, (float) dz);
         return new ItemTransformVec3f(from.rotation, nTranslation, from.scale);
     }
 
-    private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz,
-                                          double scale) {
+    private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz, double scale) {
         return def((float) rx, (float) ry, (float) rz, (float) tx, (float) ty, (float) tz, (float) scale);
     }
 

@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.facades.IFacadeItem;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemPluggableSimple;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
@@ -13,7 +14,6 @@ import buildcraft.silicon.gate.EnumGateModifier;
 import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.item.*;
 import buildcraft.silicon.plug.PluggablePulsar;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fml.RegistryObject;
 
@@ -24,21 +24,22 @@ public class BCSiliconItems {
 
     private static final RegistrationHelper HELPER = new RegistrationHelper(BCSilicon.MODID);
 
-    public static RegistryObject<Item> chipsetRedstone;
-    public static RegistryObject<Item> chipsetIron;
-    public static RegistryObject<Item> chipsetGold;
-    public static RegistryObject<Item> chipsetQuartz;
-    public static RegistryObject<Item> chipsetDiamond;
+    public static RegistryObject<ItemRedstoneChipset> chipsetRedstone;
+    public static RegistryObject<ItemRedstoneChipset> chipsetIron;
+    public static RegistryObject<ItemRedstoneChipset> chipsetGold;
+    public static RegistryObject<ItemRedstoneChipset> chipsetQuartz;
+    public static RegistryObject<ItemRedstoneChipset> chipsetDiamond;
+
+    public static RegistryObject<ItemBC_Neptune> redstoneCrystal;
 
     public static RegistryObject<ItemGateCopier> gateCopier;
 
     // public static RegistryObject<ItemPluggableGate> plugGate;
     public static final Map<GateVariant, RegistryObject<ItemPluggableGate>> variantGateMap = new HashMap<>();
     public static RegistryObject<ItemPluggableLens> plugLens;
-    public static RegistryObject<Item> plugPulsar;
-    public static RegistryObject<Item> plugLightSensor;
+    public static RegistryObject<ItemPluggableSimple> plugPulsar;
+    public static RegistryObject<ItemPluggableSimple> plugLightSensor;
     public static RegistryObject<? extends IFacadeItem> plugFacade;
-
 
     public static void preInit() {
         chipsetRedstone = HELPER.addItem("item.chipset.redstone", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.RED));
@@ -46,6 +47,8 @@ public class BCSiliconItems {
         chipsetGold = HELPER.addItem("item.chipset.gold", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.GOLD));
         chipsetQuartz = HELPER.addItem("item.chipset.quartz", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.QUARTZ));
         chipsetDiamond = HELPER.addItem("item.chipset.diamond", ItemPropertiesCreator.common64(), (idBC, properties) -> new ItemRedstoneChipset(idBC, properties, EnumRedstoneChipset.DIAMOND));
+
+        redstoneCrystal = HELPER.addItem("item.redstone_crystal", ItemPropertiesCreator.common64(), ItemBC_Neptune::new);
 
         gateCopier = HELPER.addItem("item.gate_copier", ItemPropertiesCreator.common1(), ItemGateCopier::new);
 

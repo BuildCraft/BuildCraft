@@ -179,7 +179,9 @@ public class GuiGuide extends Screen implements IHasContainer<ContainerGuide> {
     private boolean isOpening = false;
     private boolean showingContentsMenu = false;
 
-    /** Float between -90 and 90} */
+    /**
+     * Float between -90 and 90}
+     */
     private float openingAngleLast = -90, openingAngleNext = -90;
 
     public int minX, minY;
@@ -287,7 +289,7 @@ public class GuiGuide extends Screen implements IHasContainer<ContainerGuide> {
 
     public boolean isSmallScreen() {
 //        return new ScaledResolution(minecraft).getScaledWidth() < 590;
-        return minecraft.getWindow().getGuiScaledWidth() < 590;
+        return minecraft.getWindow().getWidth() < 590;
     }
 
     @Override
@@ -476,6 +478,10 @@ public class GuiGuide extends Screen implements IHasContainer<ContainerGuide> {
             );
         }
 
+        // Calen 1.18.2 to avoid items rendered above contents menu
+        poseStack.pushPose();
+        poseStack.translate(0, 0, 400);
+
         boolean drawContents = true;
         boolean smallScreen = isSmallScreen();
         if (smallScreen) {
@@ -513,6 +519,9 @@ public class GuiGuide extends Screen implements IHasContainer<ContainerGuide> {
                 chapterIndex += chapter.draw(poseStack, chapterIndex, partialTicks, smallScreen);
             }
         }
+
+        // Calen 1.18.2 to avoid items rendered above contents menu
+        poseStack.popPose();
 
         // Draw the back button if there are any pages on the stack
         if (!pages.isEmpty()) {
@@ -615,8 +624,7 @@ public class GuiGuide extends Screen implements IHasContainer<ContainerGuide> {
                 if (
                         mouseX >= minX && mouseY >= minY && mouseX <= minX + BOOK_COVER.width && mouseY <= minY
                                 + BOOK_COVER.height
-                )
-                {
+                ) {
                     if (isOpening) {// So you can double-click to open it instantly
                         isOpen = true;
                     }

@@ -472,7 +472,6 @@ public class FluidRenderer {
     }
 
     private static void guiVertex(Matrix4f poseMatrix, double x, double y, double u, double v) {
-        // TODO Calen getUOffset?
 //        float ru = sprite.getInterpolatedU(u);
         float ru = sprite.getU(u);
 //        float rv = sprite.getInterpolatedV(v);

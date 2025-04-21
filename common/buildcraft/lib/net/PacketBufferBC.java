@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 
 /** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with similar bits into a single byte. */
@@ -291,5 +292,20 @@ public class PacketBufferBC extends PacketBuffer {
             array[i] = readByte();
         }
         return new String(array, Charsets.UTF_8);
+    }
+
+    // Calen 1.18.2 from 1.8.9
+
+    public void writeVec3(Vector3d vector) {
+        this.writeDouble(vector.x());
+        this.writeDouble(vector.y());
+        this.writeDouble(vector.z());
+    }
+
+    public Vector3d readVec3() {
+        double x = this.readDouble();
+        double y = this.readDouble();
+        double z = this.readDouble();
+        return new Vector3d(x, y, z);
     }
 }

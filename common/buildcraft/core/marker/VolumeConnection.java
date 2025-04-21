@@ -171,10 +171,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderInWorld(MatrixStack poseStack) {
-        Minecraft.getInstance().textureManager.bind(AtlasTexture.LOCATION_BLOCKS);
-        IVertexBuilder bb = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(Atlases.solidBlockSheet());
 //        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
-        LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, poseStack.last(), bb, true);
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, poseStack.last(), true);
     }
 }

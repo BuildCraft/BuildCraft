@@ -42,3 +42,6 @@ forge*changelog.txt
 
 # For some annoying reason the tests creates a log file in "/logs/latest.txt"
 logs
+
+# datagen cache
+buildcraft_resources_generated/.cache

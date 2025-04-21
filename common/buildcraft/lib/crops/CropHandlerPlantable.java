@@ -6,8 +6,10 @@
 
 package buildcraft.lib.crops;
 
+import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -17,6 +19,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IPlantable;
 
 public enum CropHandlerPlantable implements ICropHandler {
@@ -66,8 +69,7 @@ public enum CropHandlerPlantable implements ICropHandler {
                 || block instanceof MelonBlock
                 || block instanceof MushroomBlock
                 || block instanceof DoublePlantBlock
-                || block == Blocks.PUMPKIN)
-        {
+                || block == Blocks.PUMPKIN) {
             return true;
         }
 //        else if (block instanceof BlockCrops)
@@ -88,14 +90,15 @@ public enum CropHandlerPlantable implements ICropHandler {
     }
 
     @Override
-    public boolean harvestCrop(World world, BlockPos pos, NonNullList<ItemStack> drops) {
+    public CropManager.HarvestResult harvestCrop(World world, BlockPos pos, ItemStack tool, NonNullList<ItemStack> drops) {
 //        if (!world.isRemote) {
 //            IBlockState state = world.getBlockState(pos);
-//            if (BlockUtil.breakBlock((ServerWorld) world, pos, drops, pos)) {
+//            if (BlockUtil.breakBlock((ServerLevel) world, pos, drops, pos)) {
 //                SoundUtil.playBlockBreak(world, pos, state);
 //                return true;
 //            }
 //        }
-        return false;
+        // return false;
+        return BlockUtil.harvestBlock((ServerWorld) world, pos, tool, FakePlayerProvider.NULL_PROFILE) ? CropManager.HarvestResult.SUCCESS : CropManager.HarvestResult.FAIL;
     }
 }

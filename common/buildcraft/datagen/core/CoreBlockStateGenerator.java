@@ -17,6 +17,8 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import javax.annotation.Nonnull;
 
 public class CoreBlockStateGenerator extends BCBaseBlockStateGenerator {
+    public static ModelBuilder torch_center_lit;
+
     public CoreBlockStateGenerator(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
         super(gen, modid, exFileHelper);
     }
@@ -82,7 +84,7 @@ public class CoreBlockStateGenerator extends BCBaseBlockStateGenerator {
         );
 
         // markerVolume
-        ModelBuilder torch_center_lit = models().getBuilder("buildcraftcore:block/torch_center_lit")
+        torch_center_lit = models().getBuilder("buildcraftcore:block/torch_center_lit")
                 .texture("particle", "#all")
                 .element()
                 .from(7, 0, 7)

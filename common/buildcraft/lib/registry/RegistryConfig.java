@@ -5,17 +5,14 @@
 package buildcraft.lib.registry;
 
 import buildcraft.api.core.BCDebugging;
-import buildcraft.core.BCCore;
 import buildcraft.core.BCCoreConfig;
+import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import java.util.*;
@@ -33,12 +30,7 @@ public class RegistryConfig {
     // #######################
 
     public static Configuration setRegistryConfig(String modid, String file) {
-//        Configuration cfg = new Configuration(file);
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        Configuration cfg = new Configuration(builder, file);
-        ForgeConfigSpec spec = cfg.build();
-        ModContainer container = ModList.get().getModContainerById(BCCore.MODID).get();
-        container.addConfig(new ModConfig(ModConfig.Type.COMMON, spec, container, cfg.getFileName()));
+        Configuration cfg = new Configuration(file);
         return setRegistryConfig(modid, cfg);
     }
 
@@ -138,7 +130,7 @@ public class RegistryConfig {
         return modObjectConfigs;
     }
 
-    private static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
+    private synchronized static boolean isEnabled(ModContainer activeMod, String category, String resourcePath, String langKey) {
 //        Configuration config = modObjectConfigs.get(activeMod);
         Configuration config = getModObjectConfigs().get(activeMod);
         if (config == null) {
@@ -149,14 +141,13 @@ public class RegistryConfig {
             }
         }
 
-        BooleanValue prop = config
+        ConfigCategory<Boolean> prop = config
                 .define(category,
                         "",
                         EnumRestartRequirement.WORLD,
                         resourcePath, true);
-        config.build();
+        prop.setLanguageKey(langKey);
         boolean isEnabled = prop.get();
-
         if (!isEnabled) {
             setDisabled(category, resourcePath);
         }

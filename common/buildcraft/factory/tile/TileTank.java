@@ -63,7 +63,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
     }
 
     public TileTank(int capacity) {
-        this(new Tank("tank", capacity, null));
+        this(new Tank("tank", capacity, (TileEntity) null));
     }
 
     public TileTank(Tank tank) {
@@ -380,13 +380,13 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         return filled;
     }
 
-    @javax.annotation.Nonnull
+    @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction doDrain) {
         return drain((fluid) -> true, maxDrain, doDrain);
     }
 
-    @javax.annotation.Nonnull
+    @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction doDrain) {
 //        if (resource == null)
@@ -399,7 +399,7 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
 
     // IFluidHandlerAdv
 
-    @javax.annotation.Nonnull
+    @Nonnull
     @Override
     public FluidStack drain(IFluidFilter filter, int maxDrain, FluidAction doDrain) {
         if (maxDrain <= 0) {

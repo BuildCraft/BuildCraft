@@ -259,6 +259,14 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune<?>> extends Container
         return true;
     }
 
+    // Calen 1.18.2
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        boolean ret = super.mouseScrolled(mouseX, mouseY, delta);
+        mainGui.mouseScrolled(mouseX, mouseY, delta);
+        return ret;
+    }
+
     @Override
 //    protected void mouseReleased(int mouseX, int mouseY, int state)
     public boolean mouseReleased(double mouseX, double mouseY, int state) {

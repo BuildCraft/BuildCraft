@@ -29,7 +29,7 @@ public class BlockLaser extends BlockBCTile_Neptune<TileLaser> implements IBlock
 
     @Override
 //    public TileBC_Neptune createTileEntity(World world, BlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         return BCSiliconBlocks.laserTile.get().create();
     }
 

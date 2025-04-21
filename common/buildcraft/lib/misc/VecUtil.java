@@ -6,6 +6,7 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.AxisDirection;
@@ -210,5 +211,31 @@ public class VecUtil {
         double d2 = ((double) pos1.getY()) - (double) pos2.getY();
         double d3 = ((double) pos1.getZ()) - (double) pos2.getZ();
         return d1 * d1 + d2 * d2 + d3 * d3;
+    }
+
+    // Calen 1.18.2: from 1.8.9
+
+    /** Factory that converts an integer vector to a double vector. */
+    public static Vector3d convert(Vector3i vec3i) {
+        return new Vector3d(vec3i.getX(), vec3i.getY(), vec3i.getZ());
+    }
+
+    public static Vector3d convert(Direction face) {
+        if (face == null) {
+            return Vector3d.ZERO;
+        }
+        return new Vector3d(face.getStepX(), face.getStepY(), face.getStepZ());
+    }
+
+    public static Vector3d convert(Direction face, double size) {
+        return scale(convert(face), size);
+    }
+
+    public static Vector3d getVec(Entity entity) {
+        return new Vector3d(entity.getX(), entity.getY(), entity.getZ());
+    }
+
+    public static BlockPos getPos(Entity entity) {
+        return convertFloor(entity.position());
     }
 }

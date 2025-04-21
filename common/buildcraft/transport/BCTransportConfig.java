@@ -13,17 +13,10 @@ import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.lib.config.BCConfig;
+import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.MathUtil;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.common.ForgeConfigSpec.LongValue;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class BCTransportConfig {
     public enum PowerLossMode {
@@ -46,21 +39,17 @@ public class BCTransportConfig {
     public static boolean fluidPipeColourBorder;
     public static PowerLossMode lossMode = PowerLossMode.DEFAULT;
 
-    private static LongValue propMjPerMillibucket;
-    private static LongValue propMjPerItem;
-    private static IntValue propBaseFlowRate;
-    private static BooleanValue propFluidPipeColourBorder;
-    private static EnumValue<PowerLossMode> propLossMode;
+    private static ConfigCategory<Long> propMjPerMillibucket;
+    private static ConfigCategory<Long> propMjPerItem;
+    private static ConfigCategory<Integer> propBaseFlowRate;
+    private static ConfigCategory<Boolean> propFluidPipeColourBorder;
+    private static ConfigCategory<PowerLossMode> propLossMode;
 
     public static void preInit() {
 //        Configuration config = BCCoreConfig.config;
         BCModules module = BCModules.TRANSPORT;
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        config = new Configuration(builder, module);
+        config = new Configuration(module);
         createProps();
-        ForgeConfigSpec spec = config.build();
-        ModContainer container = ModList.get().getModContainerById(module.getModId()).get();
-        container.addConfig(new ModConfig(ModConfig.Type.COMMON, spec, container, config.getFileName()));
 
         reloadConfig();
 //        MinecraftForge.EVENT_BUS.register(BCTransportConfig.class);
@@ -149,6 +138,8 @@ public class BCTransportConfig {
         powerTransfer(BCTransportPipes.goldPower, basePowerRate * 16, 32, false);
         // powerTransfer(BCTransportPipes.diamondPower, basePowerRate * 32, false);
 //        }
+
+        saveConfigs();
     }
 
     private static void fluidTransfer(PipeDefinition def, int rate, int delay) {
@@ -159,6 +150,12 @@ public class BCTransportConfig {
         long transfer = MjAPI.MJ * transferMultiplier;
         long resistance = MjAPI.MJ / resistanceDivisor;
         PipeApi.powerTransferData.put(def, PowerTransferInfo.createFromResistance(transfer, resistance, recv));
+    }
+
+    public static void saveConfigs() {
+        if (config.hasChanged()) {
+            config.save();
+        }
     }
 
 //    @SubscribeEvent

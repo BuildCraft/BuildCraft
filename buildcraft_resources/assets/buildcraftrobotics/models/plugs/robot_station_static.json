@@ -1,0 +1,35 @@
+{
+    "textures": {
+        "#all":"buildcraftrobotics:station/base",
+        "particle":"#all"
+    },
+    "shade": true,
+    "elements": [
+        {
+            "from": [ 3, 4, 4 ],
+            "to": [ 4.01, 12, 12 ],
+            "shade": true,
+            "faces": {
+                "down":  { "uv": [ 0, 0, 1, 8 ], "texture": "#all" },
+                "up":    { "uv": [ 0, 0, 1, 8 ], "texture": "#all" },
+                "north": { "uv": [ 0, 0, 1, 8 ], "texture": "#all" },
+                "south": { "uv": [ 0, 0, 1, 8 ], "texture": "#all" },
+                "west":  { "uv": [ 0, 0, 8, 8 ], "texture": "#all" },
+                "east":  { "uv": [ 0, 0, 8, 8 ], "texture": "#all" }
+            }
+        },
+        {
+            "from": [ 0, 7, 7 ],
+            "to": [ 3, 9, 9 ],
+            "shade": true,
+            "faces": {
+                "down":  { "uv": [ 8, 0, 11, 2 ], "texture": "#all" },
+                "up":    { "uv": [ 8, 2, 11, 4 ], "texture": "#all" },
+                "north": { "uv": [ 8, 4, 11, 6 ], "texture": "#all" },
+                "south": { "uv": [ 8, 6, 11, 8 ], "texture": "#all" },
+                "west":  { "uv": [ 8, 0, 10, 2 ], "texture": "#all" },
+                "east":  { "uv": [ 8, 0, 10, 2 ], "texture": "#all" }
+            }
+        }
+    ]
+}

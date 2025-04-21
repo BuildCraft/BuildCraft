@@ -180,14 +180,15 @@ public class MutableVertex {
 //            bb.endVertex();
 //        }
         renderAsBlock(pose, vertexConsumer);
-        }
     }
 
     // Calen
-    public void renderPositionColour(MatrixStack.Entry pose, IVertexBuilder vertexConsumer) {
-        renderPosition(vertexConsumer, pose.pose());
+    public void renderPositionColour(IVertexBuilder vertexConsumer) {
+//        renderPosition(vertexConsumer, pose.pose());
+        renderPositionWithoutPose(vertexConsumer);
         renderColour(vertexConsumer);
-        renderNormal(pose.normal(), vertexConsumer);
+//        renderNormal(pose.normal(), vertexConsumer);
+        renderNormalWithoutPose(vertexConsumer);
         vertexConsumer.endVertex();
     }
 
@@ -214,8 +215,19 @@ public class MutableVertex {
         bb.vertex(matrix4f, position_x, position_y, position_z);
     }
 
+    // Calen 1.20.1
+    public void renderPositionWithoutPose(IVertexBuilder bb) {
+//        bb.pos(position_x, position_y, position_z);
+        bb.vertex(position_x, position_y, position_z);
+    }
+
     public void renderNormal(net.minecraft.util.math.vector.Matrix3f normal, IVertexBuilder bb) {
         bb.normal(normal, normal_x, normal_y, normal_z);
+    }
+
+    // Calen 1.20.1
+    public void renderNormalWithoutPose(IVertexBuilder bb) {
+        bb.normal(normal_x, normal_y, normal_z);
     }
 
     // public void renderColour(BufferBuilder bb)

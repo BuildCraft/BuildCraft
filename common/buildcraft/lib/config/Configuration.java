@@ -1,201 +1,349 @@
 package buildcraft.lib.config;
 
 import buildcraft.api.BCModules;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.*;
+import buildcraft.api.core.BCLog;
+import com.google.common.collect.Lists;
+import com.google.gson.*;
+import net.minecraft.util.JSONUtils;
+import net.minecraftforge.fml.loading.FMLPaths;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Configuration {
-    private final ForgeConfigSpec.Builder builder;
+    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
+    private static final Path BC_CONFIG_FOLDER_PATH = FMLPaths.CONFIGDIR.relative().resolve("buildcraft");
 
-    private final String fileName;
-
+    private JsonObject configJson;
+    private boolean changed;
+    private final String name;
+    private final Path configFilePath;
+    private final List<ConfigCategory<?>> all = Lists.newArrayList();
     private final Lock lock = new ReentrantLock();
 
-    private final List<ConfigValue<?>> all = new CopyOnWriteArrayList<>();
-
-    public Configuration(ForgeConfigSpec.Builder builder, BCModules module) {
-        this.builder = builder;
-        this.fileName = "buildcraft/" + module.lowerCaseName + ".toml";
+    public Configuration(BCModules module) {
+        this(module.lowerCaseName);
     }
 
-    public Configuration(ForgeConfigSpec.Builder builder, String name) {
-        this.builder = builder;
-        this.fileName = "buildcraft/" + name + ".toml";
-    }
-
-    public Builder getBuilder() {
-        return builder;
-    }
-
-    public List<ConfigValue<?>> getAll() {
-        return all;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public synchronized BooleanValue define(String category, String comment, EnumRestartRequirement worldRestart, String subPath, boolean defaultValue) {
-        lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
-        String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
+    public Configuration(String name) {
+        this.name = name;
+        this.configFilePath = BC_CONFIG_FOLDER_PATH.resolve(name + ".json");
+        try {
+            BC_CONFIG_FOLDER_PATH.toFile().mkdirs();
+            if (configFilePath.toFile().exists()) {
+                try (Reader reader = Files.newBufferedReader(configFilePath, StandardCharsets.UTF_8)) {
+                    this.configJson = JSONUtils.fromJson(GSON, reader, JsonObject.class);
+                } catch (Exception e) {
+                    throw e;
+                }
+            } else {
+                this.configJson = new JsonObject();
+            }
+        } catch (Exception e) {
+            BCLog.logger.warn("[lib.config] Failed to open config file [" + configFilePath + "]", e);
+            this.configJson = new JsonObject();
         }
-        BooleanValue ret = builder.define(fullPath, defaultValue);
+    }
+
+    public synchronized ConfigCategory<Boolean> define(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, boolean defaultValue) {
+        lock.lock();
+
+        String comment = ensureCommentNotEmpty(rawComment, subPath);
+        String fullPath = category + "." + subPath;
+        String[] split = fullPath.split("\\.");
+        ConfigCategory<Boolean> ret = new ConfigCategory<>(fullPath, () -> {
+            JsonObject j = this.getConfigJson();
+            for (int index = 0; index < split.length; index++) {
+                try {
+                    j = JSONUtils.getAsJsonObject(j, split[index]);
+                } catch (JsonSyntaxException e) {
+                    JsonObject newObj = new JsonObject();
+                    j.add(split[index], newObj);
+                    j = newObj;
+                }
+            }
+            j.addProperty("#Comment", comment);
+            if (!isBooleanValue(j, "value")) {
+                this.setChanged();
+                j.addProperty("value", defaultValue);
+            }
+            return j.get("value").getAsBoolean();
+        }, worldRestart);
+
         all.add(ret);
         lock.unlock();
         return ret;
     }
 
-    public synchronized IntValue defineInRange(String category, String comment, EnumRestartRequirement worldRestart, String subPath, int defaultValue, int min, int max) {
+    public synchronized ConfigCategory<Integer> defineInRange(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, int defaultValue, int min, int max) {
         lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
+
+        String comment = ensureCommentNotEmpty(rawComment, subPath);
         String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        IntValue ret = builder.defineInRange(fullPath, defaultValue, min, max);
+        String[] split = fullPath.split("\\.");
+        ConfigCategory<Integer> ret = new ConfigCategory<>(fullPath, () -> {
+            JsonObject j = this.getConfigJson();
+            for (int index = 0; index < split.length; index++) {
+                try {
+                    j = JSONUtils.getAsJsonObject(j, split[index]);
+                } catch (JsonSyntaxException e) {
+                    JsonObject newObj = new JsonObject();
+                    j.add(split[index], newObj);
+                    j = newObj;
+                }
+            }
+            j.addProperty("#Comment", comment);
+            j.addProperty("#Range", min + " - " + max);
+            int gotValue = defaultValue;
+            if (j.get("value") == null || !JSONUtils.isNumberValue(j.get("value"))) {
+                this.setChanged();
+                j.addProperty("value", defaultValue);
+            } else {
+                gotValue = j.get("value").getAsInt();
+                if (gotValue < min || gotValue > max) {
+                    this.setChanged();
+                    j.addProperty("value", defaultValue);
+                    gotValue = defaultValue;
+                }
+            }
+            return gotValue;
+        }, worldRestart);
+
         all.add(ret);
         lock.unlock();
         return ret;
     }
 
-    public synchronized IntValue defineInRange(String category, String comment, EnumRestartRequirement worldRestart, String subPath, int defaultValue, int min) {
+    public synchronized ConfigCategory<Integer> defineInRange(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, int defaultValue, int min) {
+        return defineInRange(category, rawComment, worldRestart, subPath, defaultValue, min, Integer.MAX_VALUE);
+    }
+
+    public synchronized ConfigCategory<Long> defineInRange(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, long defaultValue, long min) {
         lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
+
+        long max = Long.MAX_VALUE;
+        String comment = ensureCommentNotEmpty(rawComment, subPath);
         String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        IntValue ret = builder.defineInRange(fullPath, defaultValue, min, Integer.MAX_VALUE);
+        String[] split = fullPath.split("\\.");
+        ConfigCategory<Long> ret = new ConfigCategory<>(fullPath, () -> {
+            JsonObject j = this.getConfigJson();
+            for (int index = 0; index < split.length; index++) {
+                try {
+                    j = JSONUtils.getAsJsonObject(j, split[index]);
+                } catch (JsonSyntaxException e) {
+                    JsonObject newObj = new JsonObject();
+                    j.add(split[index], newObj);
+                    j = newObj;
+                }
+            }
+            j.addProperty("#Comment", comment);
+            j.addProperty("#Range", min + " - " + max);
+            long gotValue = defaultValue;
+            if (j.get("value") == null || !JSONUtils.isNumberValue(j.get("value"))) {
+                this.setChanged();
+                j.addProperty("value", defaultValue);
+            } else {
+                gotValue = j.get("value").getAsLong();
+                if (gotValue < min || gotValue > max) {
+                    this.setChanged();
+                    j.addProperty("value", defaultValue);
+                    gotValue = defaultValue;
+                }
+            }
+            return gotValue;
+        }, worldRestart);
+
         all.add(ret);
         lock.unlock();
         return ret;
     }
 
-    public synchronized LongValue defineInRange(String category, String comment, EnumRestartRequirement worldRestart, String subPath, long defaultValue, long min) {
+    public synchronized ConfigCategory<Integer> defineInRange(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, int defaultValue) {
+        return defineInRange(category, rawComment, worldRestart, subPath, defaultValue, 0, Integer.MAX_VALUE);
+    }
+
+    public synchronized ConfigCategory<Double> defineInRange(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, double defaultValue) {
+        return defineInRange(category, rawComment, worldRestart, subPath, defaultValue, 0D, Double.MAX_VALUE);
+    }
+
+    public synchronized ConfigCategory<Double> defineInRange(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, double defaultValue, double min, double max) {
         lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
+
+        String comment = ensureCommentNotEmpty(rawComment, subPath);
         String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        LongValue ret = builder.defineInRange(fullPath, defaultValue, min, Integer.MAX_VALUE);
+        String[] split = fullPath.split("\\.");
+        ConfigCategory<Double> ret = new ConfigCategory<>(fullPath, () -> {
+            JsonObject j = this.getConfigJson();
+            for (int index = 0; index < split.length; index++) {
+                try {
+                    j = JSONUtils.getAsJsonObject(j, split[index]);
+                } catch (JsonSyntaxException e) {
+                    JsonObject newObj = new JsonObject();
+                    j.add(split[index], newObj);
+                    j = newObj;
+                }
+            }
+            j.addProperty("#Comment", comment);
+            j.addProperty("#Range", min + " - " + max);
+            double gotValue = defaultValue;
+            if (j.get("value") == null || !JSONUtils.isNumberValue(j.get("value"))) {
+                this.setChanged();
+                j.addProperty("value", defaultValue);
+            } else {
+                gotValue = j.get("value").getAsDouble();
+                if (gotValue < min || gotValue > max) {
+                    this.setChanged();
+                    j.addProperty("value", defaultValue);
+                    gotValue = defaultValue;
+                }
+            }
+            return gotValue;
+        }, worldRestart);
+
         all.add(ret);
         lock.unlock();
         return ret;
     }
 
-    public synchronized IntValue defineInRange(String category, String comment, EnumRestartRequirement worldRestart, String subPath, int defaultValue) {
+    public synchronized <V extends Enum<V>> ConfigCategory<V> defineEnum(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, V defaultValue) {
         lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
+
+        String comment = ensureCommentNotEmpty(rawComment, subPath);
         String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        IntValue ret = builder.defineInRange(fullPath, defaultValue, 0, Integer.MAX_VALUE);
+        String[] split = fullPath.split("\\.");
+        ConfigCategory<V> ret = new ConfigCategory<>(fullPath, () -> {
+            JsonObject j = this.getConfigJson();
+            for (int index = 0; index < split.length; index++) {
+                try {
+                    j = JSONUtils.getAsJsonObject(j, split[index]);
+                } catch (JsonSyntaxException e) {
+                    JsonObject newObj = new JsonObject();
+                    j.add(split[index], newObj);
+                    j = newObj;
+                }
+            }
+            j.addProperty("#Comment", comment);
+            j.addProperty("#Allowed Values", Arrays.stream(defaultValue.getDeclaringClass().getEnumConstants()).map(Enum::name).collect(Collectors.joining(", ")));
+            V gotEnum = defaultValue;
+            if (!JSONUtils.isStringValue(j, "value")) {
+                this.setChanged();
+                j.addProperty("value", defaultValue.name());
+            } else {
+                String gotString = j.get("value").getAsString();
+                try {
+                    gotEnum = Enum.valueOf(defaultValue.getDeclaringClass(), gotString);
+                } catch (IllegalArgumentException e) {
+                    this.setChanged();
+                    j.addProperty("value", defaultValue.name());
+                }
+            }
+            return gotEnum;
+        }, worldRestart);
+
         all.add(ret);
         lock.unlock();
         return ret;
     }
 
-    public synchronized DoubleValue defineInRange(String category, String comment, EnumRestartRequirement worldRestart, String subPath, double defaultValue) {
+    public synchronized ConfigCategory<List<String>> defineList(String category, String rawComment, EnumRestartRequirement worldRestart, String subPath, List<String> defaultValue) {
         lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
+
+        String comment = ensureCommentNotEmpty(rawComment, subPath);
         String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        DoubleValue ret = builder.defineInRange(fullPath, defaultValue, 0D, Double.MAX_VALUE);
+        String[] split = fullPath.split("\\.");
+        ConfigCategory<List<String>> ret = new ConfigCategory<>(fullPath, () -> {
+            JsonObject j = this.getConfigJson();
+            for (int index = 0; index < split.length; index++) {
+                try {
+                    j = JSONUtils.getAsJsonObject(j, split[index]);
+                } catch (JsonSyntaxException e) {
+                    JsonObject newObj = new JsonObject();
+                    j.add(split[index], newObj);
+                    j = newObj;
+                }
+            }
+            j.addProperty("#Comment", comment);
+            List<String> gotList = defaultValue;
+            if (!JSONUtils.isArrayNode(j, "value")) {
+                this.setChanged();
+                JsonArray defaultValueJson = new JsonArray();
+                defaultValue.forEach(defaultValueJson::add);
+                j.add("value", defaultValueJson);
+            } else {
+                gotList = Lists.newArrayList();
+                JsonArray gotString = j.get("value").getAsJsonArray();
+                for (JsonElement jsonElement : gotString) {
+                    gotList.add(jsonElement.getAsString());
+                }
+            }
+            return gotList;
+        }, worldRestart);
+
         all.add(ret);
         lock.unlock();
         return ret;
     }
 
-    public synchronized DoubleValue defineInRange(String category, String comment, EnumRestartRequirement worldRestart, String subPath, double defaultValue, double min, double max) {
-        lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
-        String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        DoubleValue ret = builder.defineInRange(fullPath, defaultValue, min, max);
-        all.add(ret);
-        lock.unlock();
-        return ret;
-    }
-
-    public synchronized <V extends Enum<V>> EnumValue<V> defineEnum(String category, String comment, EnumRestartRequirement worldRestart, String subPath, V defaultValue) {
-        lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
-        String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        EnumValue<V> ret = builder.defineEnum(fullPath, defaultValue);
-        all.add(ret);
-        lock.unlock();
-        return ret;
-    }
-
-    public synchronized <T> ConfigValue<List<? extends T>> defineList(String category, String comment, EnumRestartRequirement worldRestart, String subPath, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
-        lock.lock();
-        comment = ensureCommentNotEmpty(comment, subPath);
-        String fullPath = category + "." + subPath;
-        builder
-                .translation("config." + fullPath)
-                .comment(comment);
-        if (worldRestart == EnumRestartRequirement.WORLD) {
-            builder.worldRestart();
-        }
-        ConfigValue<List<? extends T>> ret = builder.defineList(fullPath, defaultValue, elementValidator);
-        all.add(ret);
-        lock.unlock();
-        return ret;
-    }
-
-    public synchronized ForgeConfigSpec build() {
-        lock.lock();
-        ForgeConfigSpec spec = builder.build();
-        lock.unlock();
-        return spec;
-    }
-
-    private String ensureCommentNotEmpty(String comment, String subPath) {
+    private static String ensureCommentNotEmpty(String comment, String subPath) {
         if (comment.equals("")) {
             comment = subPath;
         }
         return comment;
+    }
+
+    private JsonObject getConfigJson() {
+        return configJson;
+    }
+
+    public Path getConfigFilePath() {
+        return configFilePath;
+    }
+
+    public void save() {
+        this.lock.lock();
+        this.changed = false;
+        if (configFilePath.toFile().exists()) {
+            try {
+                Files.copy(configFilePath, BC_CONFIG_FOLDER_PATH.resolve(name + ".bak.json"), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                BCLog.logger.error("[lib.config] Failed to backup old config file [" + this.configFilePath + "]", e);
+            }
+        }
+        try (BufferedWriter bufferedwriter = Files.newBufferedWriter(configFilePath)) {
+            String s = GSON.toJson(this.configJson);
+            bufferedwriter.write(s);
+        } catch (IOException e) {
+            BCLog.logger.error("[lib.config] Failed to save config [" + this.configFilePath + "]", e);
+        } finally {
+            this.lock.unlock();
+        }
+    }
+
+    public void setChanged() {
+        this.changed = true;
+    }
+
+    public boolean hasChanged() {
+        return changed;
+    }
+
+    public List<ConfigCategory<?>> getAll() {
+        return all;
+    }
+
+    // Calen 1.16.5 from JSONUtils
+    // why JSONUtils#isBooleanValue is client-only???
+    public static boolean isBooleanValue(JsonObject p_180199_0_, String p_180199_1_) {
+        return !JSONUtils.isValidPrimitive(p_180199_0_, p_180199_1_) ? false : p_180199_0_.getAsJsonPrimitive(p_180199_1_).isBoolean();
     }
 }

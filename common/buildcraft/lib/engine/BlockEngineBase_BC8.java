@@ -186,12 +186,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
                     return NORTH;
             }
         }
-        return VoxelShapes.empty();
+        return VoxelShapes.block();
     }
 
     @Override
 //    public TileBC_Neptune createTileEntity(World world, BlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
 //        E engineType = state.getValue(getEngineProperty());
         E engineType = this.engineType;
 //        BiFunction<BlockPos, BlockState, ? extends TileEngineBase_BC8> constructor = engineTileConstructors.get(engineType);

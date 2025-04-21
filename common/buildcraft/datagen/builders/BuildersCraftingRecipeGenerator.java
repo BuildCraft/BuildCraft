@@ -95,6 +95,15 @@ public class BuildersCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(Items.BOOKSHELF))
                 .group(MOD_ID)
                 .save(consumer);
+        // markerConstruction
+        ShapedRecipeBuilder.shaped(BCBuildersBlocks.markerConstruction.get())
+                .pattern("l")
+                .pattern("r")
+                .define('l', Ingredient.of(OreDictionaryTags.GEAR_GOLD))
+                .define('r', Ingredient.of(Items.REDSTONE_TORCH))
+                .unlockedBy("has_item", has(Items.REDSTONE_TORCH))
+                .group(MOD_ID)
+                .save(consumer);
         // schematicSingle
         ShapelessRecipeBuilder.shapeless(BCBuildersItems.schematicSingle.get(), 4)
                 .requires(Items.PAPER)

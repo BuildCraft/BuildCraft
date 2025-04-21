@@ -43,12 +43,40 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
 
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
-        return false;
+        // Calen: if here is false, player.isShiftKeyDown() in PipeBehaviourLapis#onPipeActivate will always return false
+//        return false;
+        return true;
+    }
+
+    /**
+     * Calen: called before block#use
+     *
+     * <br> {@link Item#onItemUseFirst(ItemStack, ItemUseContext)} // pipe_lapis color negative shift
+     * <br> if({@link PlayerEntity#isShiftKeyDown()} && {@link Item#doesSneakBypassUse(ItemStack, IWorldReader, BlockPos, PlayerEntity)}) {
+     * <br>     result = {@link net.minecraft.block.Block#use(BlockState, World, BlockPos, PlayerEntity, Hand, BlockRayTraceResult)} // pipe_lapis color positive shift | chest open gui
+     * <br> }
+     * <br> if(!{@link ActionResultType#consumesAction()}) {
+     * <br>     {@link Item#useOn(ItemUseContext)} // rotate block
+     * <br> }
+     * <br> to enable following all:
+     * <br> right click chest -> open
+     * <br> shift + right click chest -> rotate
+     * <br> right click pipe_lapis -> positive shift color
+     * <br> shift + right click pipe_lapis -> negative shift color
+     */
+    @Override
+    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext ctx) {
+        PlayerEntity player = ctx.getPlayer();
+        if (player.isShiftKeyDown()) {
+            return useOn(ctx);
+        } else {
+            return super.onItemUseFirst(stack, ctx);
+        }
     }
 
     @Override
 //    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext ctx) {
+    public ActionResultType useOn(ItemUseContext ctx) {
         PlayerEntity player = ctx.getPlayer();
         World world = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();

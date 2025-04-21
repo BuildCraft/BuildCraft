@@ -1,11 +1,11 @@
 package buildcraft.lib.recipe.integration;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.lib.misc.StackUtil;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
@@ -14,23 +14,22 @@ import java.util.Iterator;
 import java.util.List;
 
 public class IntegrationRecipeBasic extends IntegrationRecipe {
-    protected final long requiredMicroJoules;
+    // protected final long requiredMicroJoules;
     protected final IngredientStack target;
     protected final ImmutableList<IngredientStack> toIntegrate;
     protected final @Nonnull ItemStack output;
 
     public IntegrationRecipeBasic(ResourceLocation name, long requiredMicroJoules, IngredientStack target, List<IngredientStack> toIntegrate, @Nonnull ItemStack output) {
-        super(name);
-        this.requiredMicroJoules = requiredMicroJoules;
+        super(name, requiredMicroJoules, 1);
+        // this.requiredMicroJoules = requiredMicroJoules;
         this.target = target;
         this.toIntegrate = ImmutableList.copyOf(toIntegrate);
         this.output = output;
     }
 
-    public IntegrationRecipeBasic(String name, long requiredMicroJoules, IngredientStack target, List<IngredientStack> toIntegrate, @Nonnull ItemStack output) {
-        this(BuildCraftAPI.nameToResourceLocation(name), requiredMicroJoules, target, toIntegrate, output);
-    }
-
+    // public IntegrationRecipeBasic(String name, long requiredMicroJoules, IngredientStack target, List<IngredientStack> toIntegrate, @Nonnull ItemStack output) {
+    //     this(BuildCraftAPI.nameToResourceLocation(name), requiredMicroJoules, target, toIntegrate, output);
+    // }
 
     protected boolean matches(@Nonnull ItemStack target, NonNullList<ItemStack> toIntegrate) {
         if (!StackUtil.contains(this.target, target)) {
@@ -60,27 +59,34 @@ public class IntegrationRecipeBasic extends IntegrationRecipe {
     }
 
     @Override
-    public ImmutableList<IngredientStack> getRequirements(ItemStack output) {
-        return toIntegrate;
-    }
-
-    @Override
-    public ImmutableList<IngredientStack> getRequirements() {
-        return toIntegrate;
-    }
-
-    @Override
-    public ItemStack getOutput() {
+    @Nonnull
+    public ItemStack getExampleOutput() {
         return output;
     }
 
     @Override
-    public long getRequiredMicroJoules(ItemStack output) {
-        return requiredMicroJoules;
+    // public ImmutableList<IngredientStack> getRequirements(ItemStack output)
+    public ImmutableList<IngredientStack> getRequirements() {
+        return toIntegrate;
     }
+
+    // @Override
+    // public long getRequiredMicroJoules(ItemStack output) {
+    //     return requiredMicroJoules;
+    // }
 
     @Override
     public IngredientStack getCenterStack() {
         return target;
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return name;
+    }
+
+    @Override
+    public IRecipeSerializer<IntegrationRecipe> getSerializer() {
+        return IntegrationRecipeSerializer.INSTANCE;
     }
 }

@@ -28,14 +28,7 @@ public class PageValue<T> {
 
     public static String getTitle(JsonObject json) {
         ITextComponent component = JsonUtil.getTextComponent(json, "title", "buildcraft.guide.page.");
-        if (component instanceof StringTextComponent) {
-            StringTextComponent textComponent = (StringTextComponent) component;
-            return textComponent.getString();
-        } else if (component instanceof TranslationTextComponent) {
-            TranslationTextComponent translatableComponent = (TranslationTextComponent) component;
-            return translatableComponent.getString();
-        }
-        return "";
+        return component.getString();
     }
 
     /** @param test An unknown object.

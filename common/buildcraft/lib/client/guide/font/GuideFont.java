@@ -22,13 +22,14 @@ import java.util.List;
 
 public class GuideFont implements IFontRenderer {
 
-    private final DynamicTextureBC tex = new DynamicTextureBC(512, 512);
+    private final DynamicTextureBC tex;
     private final BufferedImage img;
     private final Graphics2D g2d;
 
     private final Font font;
 
     public GuideFont(Font font) {
+        this.tex = new DynamicTextureBC(512, 512, font.getFontName());
         this.font = font;
         this.img = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
         this.g2d = img.createGraphics();

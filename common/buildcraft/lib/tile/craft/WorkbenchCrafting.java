@@ -10,6 +10,7 @@ import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.ItemStackKey;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import gnu.trove.map.TObjectIntMap;
@@ -232,7 +233,9 @@ public class WorkbenchCrafting extends CraftingInventory {
             if (!remaining.isEmpty()) {
                 if (inSlot.isEmpty()) {
                     setItem(s, remaining);
-                } else if (ItemStack.tagMatches(inSlot, remaining)) {
+                }
+//                else if (ItemStack.areItemsEqual(inSlot, remaining) && ItemStack.areItemStackTagsEqual(inSlot, remaining))
+                else if (StackUtil.isSameItemSameDamageSameTag(inSlot, remaining)) {
                     remaining.grow(inSlot.getCount());
                     setItem(s, remaining);
                 } else {

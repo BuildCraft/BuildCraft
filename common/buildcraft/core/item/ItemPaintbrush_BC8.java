@@ -64,7 +64,8 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 
     @Override
 //    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ)
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+    public ActionResultType useOn(ItemUseContext context) {
+        ItemStack stack = context.getItemInHand();
         PlayerEntity player = context.getPlayer();
         World world = context.getLevel();
         BlockPos pos = context.getClickedPos();
@@ -142,7 +143,6 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 //        Brush brush = new Brush(stack);
 //        return 1 - (brush.usesLeft / (double) MAX_USES);
 //    }
-
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {

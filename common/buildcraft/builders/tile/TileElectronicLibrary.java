@@ -97,6 +97,9 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
+        if (StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
+            return;
+        }
         if (handler == invDownIn) {
             if (progressDown > 0) {
                 progressDown = -1;
@@ -262,8 +265,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, 
                                 pos = 0;
                                 write(true);
                             }
-                        })
-                        {
+                        }) {
                             NbtSquisher.squish(
                                     Snapshot.writeToNBT(snapshot),
                                     NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,

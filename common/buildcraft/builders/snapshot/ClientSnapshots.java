@@ -174,7 +174,7 @@ public enum ClientSnapshots {
 //        int viewportX = offsetX * scaledResolution.getScaleFactor();
         int viewportX = (int) (offsetX * scaleFactor);
 //        int viewportY = Minecraft.getMinecraft().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor();
-        int viewportY = (int) (window.getGuiScaledHeight() - (sizeY + offsetY) * scaleFactor);
+        int viewportY = (int) (window.getHeight() - (sizeY + offsetY) * scaleFactor);
 //        int viewportWidth = sizeX * scaledResolution.getScaleFactor();
         int viewportWidth = (int) (sizeX * scaleFactor);
 //        int viewportHeight = sizeY * scaledResolution.getScaleFactor();

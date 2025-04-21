@@ -12,10 +12,13 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +26,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class BCFluidBlock extends FlowingFluidBlock {
@@ -86,4 +90,15 @@ public class BCFluidBlock extends FlowingFluidBlock {
 //    public void setSticky(boolean sticky) {
 //        this.sticky = sticky;
 //    }
+
+    @Override
+    public boolean isPathfindable(BlockState blockState, IBlockReader world, BlockPos pos, PathType type) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public PathNodeType getAiPathNodeType(BlockState state, IBlockReader level, BlockPos pos, @Nullable MobEntity entity) {
+        return PathNodeType.LAVA;
+    }
 }

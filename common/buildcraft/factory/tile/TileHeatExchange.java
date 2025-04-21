@@ -761,8 +761,8 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             // fluid == null => the fluid is consumed in the process (e.g. water, lava)
 //            int c_out_amount = c_out_f == null ? max_amount : c_out.fillInternal(c_out_f, false);
 //            int h_out_amount = h_out_f == null ? max_amount : h_out.fillInternal(h_out_f, false);
-            int c_out_amount = c_out_f.isEmpty() ? max_amount : c_out.fill(c_out_f, IFluidHandler.FluidAction.SIMULATE);
-            int h_out_amount = h_out_f.isEmpty() ? max_amount : h_out.fill(h_out_f, IFluidHandler.FluidAction.SIMULATE);
+            int c_out_amount = c_out_f.isEmpty() ? max_amount : c_out.fillInternal(c_out_f, IFluidHandler.FluidAction.SIMULATE);
+            int h_out_amount = h_out_f.isEmpty() ? max_amount : h_out.fillInternal(h_out_f, IFluidHandler.FluidAction.SIMULATE);
 
             int c_in_amount = drainableAmount(c_in, c_in_f);
             int h_in_amount = drainableAmount(h_in, h_in_f);
@@ -864,7 +864,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
         private static int drainableAmount(Tank t, FluidStack fluid) {
 //            FluidStack f2 = t.drainInternal(fluid, false);
-            FluidStack f2 = t.drain(fluid, IFluidHandler.FluidAction.SIMULATE);
+            FluidStack f2 = t.drainInternal(fluid, IFluidHandler.FluidAction.SIMULATE);
             return f2.isEmpty() ? 0 : f2.getAmount();
         }
 
@@ -872,7 +872,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
             if (fluid == null) {
                 return;
             }
-            int a = t.fill(fluid, IFluidHandler.FluidAction.EXECUTE);
+            int a = t.fillInternal(fluid, IFluidHandler.FluidAction.EXECUTE);
             if (a != fluid.getAmount()) {
                 String err = "Buggy transition! Failed to fill " + fluid.getRawFluid();
                 throw new IllegalStateException(err + " x " + fluid.getAmount() + " into " + t);
@@ -881,7 +881,7 @@ public class TileHeatExchange extends TileBC_Neptune implements ITickable, IDebu
 
         private static void drain(Tank t, FluidStack fluid) {
 //            FluidStack f2 = t.drainInternal(fluid, true);
-            FluidStack f2 = t.drain(fluid, IFluidHandler.FluidAction.EXECUTE);
+            FluidStack f2 = t.drainInternal(fluid, IFluidHandler.FluidAction.EXECUTE);
             if (f2.isEmpty() || f2.getAmount() != fluid.getAmount()) {
                 String err = "Buggy transition! Failed to drain " + fluid.getRawFluid();
                 throw new IllegalStateException(err + " x " + fluid.getAmount() + " from " + t);

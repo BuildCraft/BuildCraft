@@ -10,6 +10,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithTickableTE;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
@@ -32,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BlockFloodGate extends BlockBCTile_Neptune<TileFloodGate> {
+public class BlockFloodGate extends BlockBCTile_Neptune<TileFloodGate> implements IBlockWithTickableTE<TileFloodGate> {
     public static final Map<Direction, Property<Boolean>> CONNECTED_MAP;
 
     static {

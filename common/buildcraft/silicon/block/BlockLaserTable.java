@@ -51,7 +51,6 @@ public class BlockLaserTable extends BlockBCTile_Neptune<TileLaserTableBase> imp
         return 1.0F;
     }
 
-//
 //    @Override
 //    public boolean isFullCube(BlockState state) {
 //        return false;
@@ -64,7 +63,7 @@ public class BlockLaserTable extends BlockBCTile_Neptune<TileLaserTableBase> imp
 
     @Override
 //    public TileBC_Neptune createTileEntity(World world, BlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         switch (type) {
             case ASSEMBLY_TABLE:
                 return new TileAssemblyTable();

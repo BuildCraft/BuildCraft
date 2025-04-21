@@ -111,7 +111,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> impleme
 
     @Override
 //    public TileBC_Neptune createTileEntity(BlockPos pos, BlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         return BCTransportBlocks.pipeHolderTile.get().create();
     }
 

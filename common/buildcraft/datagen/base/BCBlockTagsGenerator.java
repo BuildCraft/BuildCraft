@@ -58,14 +58,23 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
 //                        BCSiliconBlocks.assemblyTable.get(),
 //                        BCSiliconBlocks.advancedCraftingTable.get(),
 //                        BCSiliconBlocks.programmingTable.get(),
-//                        BCSiliconBlocks.laser.get(),
 //                        BCSiliconBlocks.chargingTable.get(),
+//                        BCSiliconBlocks.laser.get(),
+//                        BCRoboticsBlocks.zonePlanner.get(),
+//                        BCRoboticsBlocks.requester.get(),
 //                        BCTransportBlocks.filteredBuffer.get()
 //                )
 //        ;
 
         tag(OreDictionaryTags.WORKBENCHES_BLOCK)
                 .add(Blocks.CRAFTING_TABLE)
+        ;
+
+        tag(OreDictionaryTags.SOFT)
+                .add(Blocks.AIR)
+                .add(Blocks.SNOW)
+                .add(Blocks.VINE)
+                .add(Blocks.FIRE)
         ;
     }
 

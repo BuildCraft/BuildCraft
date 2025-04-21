@@ -6,10 +6,16 @@
 
 package buildcraft.lib.misc;
 
-@Deprecated()
+import buildcraft.lib.config.ConfigCategory;
+import buildcraft.lib.config.Configuration;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ConfigUtil {
-//    /** Sets a good default language key for all of the properties contained in the given configuration */
-//    public static void setLang(Configuration cfg) {
+    /** Sets a good default language key for all of the properties contained in the given configuration */
+    public static void setLang(Configuration cfg) {
 //        for (String s : cfg.getCategoryNames()) {
 //            ConfigCategory cat = cfg.getCategory(s);
 //            ConfigCategory p = cat;
@@ -21,7 +27,17 @@ public class ConfigUtil {
 //                prop.setLanguageKey(cat.getLanguagekey() + "." + prop.getName());
 //            }
 //        }
-//    }
+        for (ConfigCategory<?> cat : cfg.getAll()) {
+            String catPath = cat.getFullPath();
+            while (!"".equals(catPath)) {
+                cat.setLanguageKey("config." + catPath);
+                String[] splitArray = catPath.split("\\.");
+                List<String> splitList = Lists.newArrayList(catPath.split("\\."));
+                splitList.remove(splitArray.length - 1);
+                catPath = splitList.stream().collect(Collectors.joining("."));
+            }
+        }
+    }
 
 //    public static <E extends Enum<E>> void setEnumProperty(Property prop, E[] possible) {
 //        String[] validValues = new String[possible.length];

@@ -32,7 +32,7 @@ public class GuideSmeltingFactory implements GuidePartFactory {
 //        this.input = StackUtil.asNonNull(input);
         this.input = input;
         this.output = StackUtil.asNonNull(output);
-//        this.hash = Arrays.hashCode(new int[]{input.serializeNBT().hashCode(), output.serializeNBT().hashCode()});
+//        this.hash = Arrays.hashCode(new int[] { input.serializeNBT().hashCode(), output.serializeNBT().hashCode() });
         this.hash = Arrays.hashCode(new int[] { input.hashCode(), output.serializeNBT().hashCode() });
     }
 
@@ -40,7 +40,7 @@ public class GuideSmeltingFactory implements GuidePartFactory {
 //        for (Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
         for (FurnaceRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(IRecipeType.SMELTING)) {
 //            if (ItemStack.areItemsEqual(stack, entry.getValue()))
-            if (ItemStack.isSame(stack, recipe.getResultItem())) {
+            if (StackUtil.isSameItemSameDamage(stack, recipe.getResultItem())) {
 //                return new GuideSmeltingFactory(entry.getKey(), stack);
                 return new GuideSmeltingFactory(recipe.getIngredients(), stack);
             }

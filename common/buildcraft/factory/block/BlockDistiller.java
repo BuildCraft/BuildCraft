@@ -31,7 +31,7 @@ public class BlockDistiller extends BlockBCTile_Neptune<TileDistiller_BC8> imple
 
     @Override
 //    public TileBC_Neptune createTileEntity(World worldIn, BlockState state)
-    public TileBC_Neptune newBlockEntity(net.minecraft.world.IBlockReader world) {
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         return BCFactoryBlocks.distillerTile.get().create();
     }
 

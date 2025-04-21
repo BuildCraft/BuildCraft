@@ -132,7 +132,7 @@ public abstract class Snapshot {
         return nbt;
     }
 
-    //    public void deserializeNBT(CompoundNBT nbt) throws InvalidInputDataException
+    // public void deserializeNBT(CompoundNBT nbt) throws InvalidInputDataException
     public void deserializeNBT(CompoundNBT nbt) throws InvalidInputDataException {
         key = new Key(nbt.getCompound("key"));
         size = NBTUtil.readBlockPos(nbt.getCompound("size"));

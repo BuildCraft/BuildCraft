@@ -8,21 +8,28 @@ package buildcraft.lib.recipe.integration;
 
 import buildcraft.api.recipes.IIntegrationRecipeRegistry;
 import buildcraft.api.recipes.IntegrationRecipe;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 
 public class IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     public static final IntegrationRecipeRegistry INSTANCE = new IntegrationRecipeRegistry();
     public final Map<ResourceLocation, IntegrationRecipe> recipes = new HashMap<>();
 
     @Override
-    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull NonNullList<ItemStack> toIntegrate) {
-        for (IntegrationRecipe recipe : recipes.values()) {
+    // public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull NonNullList<ItemStack> toIntegrate)
+    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull NonNullList<ItemStack> toIntegrate, World world) {
+        // for (IntegrationRecipe recipe : recipes.values())
+        for (IntegrationRecipe recipe : getAllRecipes(world)) {
             if (!recipe.getOutput(target, toIntegrate).isEmpty()) {
                 return recipe;
             }
@@ -40,13 +47,24 @@ public class IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     }
 
     @Override
-    public Iterable<IntegrationRecipe> getAllRecipes() {
-        return recipes.values();
+    // public Iterable<IntegrationRecipe> getAllRecipes()
+    public Iterable<IntegrationRecipe> getAllRecipes(World world) {
+        List<IntegrationRecipe> ret = Lists.newArrayList();
+        ret.addAll(world.getRecipeManager().getAllRecipesFor(IntegrationRecipe.TYPE));
+        ret.addAll(recipes.values());
+        return ret;
     }
 
 
     @Override
-    public IntegrationRecipe getRecipe(@Nonnull ResourceLocation name) {
-        return recipes.get(name);
+    // public IntegrationRecipe getRecipe(@Nonnull ResourceLocation name)
+    public IntegrationRecipe getRecipe(@Nonnull ResourceLocation name, World world) {
+        List<IntegrationRecipe> all = world.getRecipeManager().getAllRecipesFor(IntegrationRecipe.TYPE);
+        List<IntegrationRecipe> found = all.stream().filter(r -> name.equals(r.name)).collect(Collectors.toList());
+        if (!found.isEmpty()) {
+            return found.get(0);
+        } else {
+            return recipes.get(name);
+        }
     }
 }

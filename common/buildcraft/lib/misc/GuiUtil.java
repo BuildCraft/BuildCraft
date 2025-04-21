@@ -30,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -108,6 +109,10 @@ public class GuiUtil {
     }
 
     public static void drawItemStackAt(ItemStack stack, MatrixStack poseStack, int x, int y) {
+        RenderSystem.pushMatrix();
+        Vector4f vector4f = new Vector4f(0, 0, 0, 1);
+        vector4f.transform(poseStack.last().pose());
+        RenderSystem.translatef(vector4f.x(), vector4f.y(), vector4f.z());
 //        RenderHelper.enableGUIStandardItemLighting();
         RenderUtil.enableGUIStandardItemLighting();
         Minecraft mc = Minecraft.getInstance();
@@ -118,6 +123,7 @@ public class GuiUtil {
         itemRender.renderGuiItemDecorations(mc.font, stack, x, y, null);
 //        RenderHelper.disableStandardItemLighting();
         RenderUtil.disableStandardItemLighting();
+        RenderSystem.popMatrix();
     }
 
     @FunctionalInterface
@@ -142,7 +148,7 @@ public class GuiUtil {
      * @param font the font for drawing the text in the tooltip box */
 //    public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
     public static int drawHoveringText(MatrixStack poseStack, List<ITextComponent> textLines, final int mouseX, final int mouseY,
-                                       final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
+            final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
         if (!textLines.isEmpty()) {
 //            GlStateManager.disableRescaleNormal();
 //            RenderHelper.disableStandardItemLighting();
@@ -416,7 +422,7 @@ public class GuiUtil {
 //        int rx = (int) (x * scaleW);
         int rx = (int) (x * scaleFactor);
 //        int ry = (int) (mc.displayHeight - (y + height) * scaleH);
-        int ry = (int) ((window.getGuiScaledHeight() - height - y) * scaleFactor);
+        int ry = (int) (window.getHeight() - (y + height) * scaleFactor);
 //        GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
         RenderSystem.enableScissor(rx, ry, (int) (width * scaleFactor), (int) (height * scaleFactor));
     }
@@ -446,7 +452,7 @@ public class GuiUtil {
     }
 
     public static SpriteNineSliced slice(ISprite sprite, double uMin, double vMin, double uMax, double vMax,
-                                         double scale) {
+            double scale) {
         return new SpriteNineSliced(sprite, uMin, vMin, uMax, vMax, scale);
     }
 
