@@ -56,10 +56,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
@@ -576,7 +575,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
 
     // Caps
 
-    @NotNull
+    @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (facing != null) {
@@ -631,7 +630,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
 //        return true;
 //    }
 
-    @NotNull
+    @Nonnull
     @Override
     public IModelData getModelData() {
         return new ModelDataMap.Builder().withInitial(BlockPipeHolder.PROP_TILE, this).build();
@@ -639,7 +638,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
 
     // MenuProvider
 
-    @NotNull
+    @Nonnull
     @Override
     public Component getDisplayName() {
         ResourceLocation reg = this.getPipe().getDefinition().identifier;

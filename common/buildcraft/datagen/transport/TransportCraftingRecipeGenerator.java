@@ -100,7 +100,7 @@ public class TransportCraftingRecipeGenerator extends RecipeProvider {
         addPipeRecipe(BCTransportItems.pipeItemStripes, OreDictionaryTags.GEAR_GOLD);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeItemEmzuli, Tags.Items.STORAGE_BLOCKS_LAPIS);
 
-        TagKey<Item> waterproof = OreDictionaryTags.waterproof;
+        TagKey<Item> waterproof = OreDictionaryTags.WATERPROOF;
         addPipeUpgradeRecipe(BCTransportItems.pipeItemWood, BCTransportItems.pipeFluidWood, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemCobble, BCTransportItems.pipeFluidCobble, waterproof);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemStone, BCTransportItems.pipeFluidStone, waterproof);

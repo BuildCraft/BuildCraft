@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import buildcraft.api.registry.EventBuildCraftReload;
+import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.model.ModelHolderRegistry;
 import buildcraft.lib.client.reload.ReloadManager;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
@@ -63,5 +65,12 @@ public enum BCLibEventDistModBus {
         // or the engine texture will not be loaded
         SpriteHolderRegistry.onTextureStitchPost(event);
         FluidRenderer.onTextureStitchPost(event);
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onReloadFinish(EventBuildCraftReload.FinishLoad event) {
+        // Note: when you need to add server-side listeners the client listeners need to be moved to BCLibProxy
+        GuideManager.INSTANCE.onRegistryReload(event);
     }
 }

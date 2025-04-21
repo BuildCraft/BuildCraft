@@ -6,27 +6,28 @@ package buildcraft.transport.stripes;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 
 public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
     INSTANCE;
 
     @Override
     public boolean handle(Level world,
-                          BlockPos pos,
-                          Direction direction,
-                          ItemStack stack,
-                          Player player,
-                          IStripesActivator activator) {
+            BlockPos pos,
+            Direction direction,
+            ItemStack stack,
+            Player player,
+            IStripesActivator activator) {
         if (!(stack.getItem() instanceof BlockItem)) {
             return false;
         }
@@ -34,7 +35,6 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
             return false;
         }
 //        stack.getItem().onItemUse(
-        stack.onItemUseFirst(
 //                player,
 //                world,
 //                pos.offset(direction),
@@ -43,19 +43,21 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
 //                0.5f,
 //                0.5f,
 //                0.5f
-                new UseOnContext(
-                        world,
-                        player,
-                        InteractionHand.MAIN_HAND,
-                        stack,
-                        new BlockHitResult(
-                                new Vec3(0, 0, 0),
-                                direction,
-                                pos.relative(direction),
-                                false
-                        )
+//        );
+        player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        InteractionResult result = ((ServerPlayer) player).gameMode.useItemOn(
+                (ServerPlayer) player,
+                world,
+                stack,
+                InteractionHand.MAIN_HAND,
+                new BlockHitResult(
+                        VecUtil.convertCenter(pos),
+                        direction,
+                        pos.relative(direction),
+                        false
                 )
         );
-        return true;
+        // return true;
+        return result.consumesAction();
     }
 }

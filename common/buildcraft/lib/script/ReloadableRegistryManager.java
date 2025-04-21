@@ -2,12 +2,15 @@ package buildcraft.lib.script;
 
 import buildcraft.api.registry.*;
 import buildcraft.api.registry.IReloadableRegistry.PackType;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.misc.JsonUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import java.util.*;
 
@@ -70,20 +73,22 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
         if (isInReload()) {
             throw new IllegalStateException("Cannot reload while we are reloading!");
         }
+        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCLib.MODID).get()).getEventBus();
         try {
             isReloading = true;
-            // Calen: unlock the EVENT_BUS
-            MinecraftForge.EVENT_BUS.start();
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
+            modEventBus.post(new EventBuildCraftReload.BeforeClear(this, set));
             set.forEach(registry -> registry.getReloadableEntryMap().clear());
 
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PreLoad(this, set));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PreLoad(this, set));
+            modEventBus.post(new EventBuildCraftReload.PreLoad(this, set));
 
             GsonBuilder builder = new GsonBuilder();
             // register our own types here, so that others can replace them
             JsonUtil.registerTypeAdaptors(builder);
 
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
+            modEventBus.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
             Gson gson = builder.create();
 
             for (IReloadableRegistry<?> registry : set) {
@@ -92,12 +97,14 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
                 }
             }
 
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PostLoad(this, set));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PostLoad(this, set));
+            modEventBus.post(new EventBuildCraftReload.PostLoad(this, set));
         } finally {
             reloadCount++;
             isReloading = false;
         }
-        MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.FinishLoad(this, set));
+        // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.FinishLoad(this, set));
+        modEventBus.post(new EventBuildCraftReload.FinishLoad(this, set));
     }
 
     @Override

@@ -78,4 +78,14 @@ public enum StripesRegistry implements IStripesRegistry {
         }
         return false;
     }
+
+    @Override
+    public EnumMap<EnumHandlerPriority, List<IStripesHandlerItem>> getItemHandlers() {
+        return itemHandlers;
+    }
+
+    @Override
+    public EnumMap<EnumHandlerPriority, List<IStripesHandlerBlock>> getBlockHandlers() {
+        return blockHandlers;
+    }
 }

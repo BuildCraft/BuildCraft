@@ -9,6 +9,8 @@ package buildcraft.silicon.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.IngredientStack;
 import buildcraft.api.recipes.IntegrationRecipe;
+import buildcraft.api.tiles.IBCTileMenuProvider;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.integration.IntegrationRecipeRegistry;
@@ -37,7 +39,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-public class TileIntegrationTable extends TileLaserTableBase {
+public class TileIntegrationTable extends TileLaserTableBase implements IHasWork, IBCTileMenuProvider {
     public final ItemHandlerSimple invTarget = itemManager.addInvHandler(
             "target",
             1,
@@ -68,7 +70,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
         if (!StackUtil.contains(item, targetStack)) return false;
         if (!extract(invToIntegrate, items, simulate, true)) return false;
         if (!simulate) {
-            targetStack.setCount(targetStack.getCount() - item.count);
+            targetStack.shrink(item.count);
             invTarget.setStackInSlot(0, targetStack);
         }
         return true;
@@ -82,10 +84,12 @@ public class TileIntegrationTable extends TileLaserTableBase {
     private void updateRecipe() {
         if (recipe != null) {
             ItemStack output = getOutput();
-            if (!output.isEmpty() && extract(recipe.getCenterStack(), recipe.getRequirements(output), true))
+            // if (!output.isEmpty() && extract(recipe.getCenterStack(), recipe.getRequirements(output), true))
+            if (!output.isEmpty() && extract(recipe.getCenterStack(), recipe.getRequirements(), true))
                 return;
         }
-        recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks);
+        // recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks);
+        recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks, level);
     }
 
     public ItemStack getOutput() {
@@ -95,7 +99,8 @@ public class TileIntegrationTable extends TileLaserTableBase {
     @Override
     public long getTarget() {
         ItemStack output = getOutput();
-        return recipe != null && isSpaceEnough(output) ? recipe.getRequiredMicroJoules(output) : 0;
+        // return recipe != null && isSpaceEnough(output) ? recipe.getRequiredMicroJoules(output) : 0;
+        return recipe != null && isSpaceEnough(output) ? recipe.getRequiredMicroJoules() : 0;
     }
 
     @Override
@@ -110,11 +115,12 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
         if (getTarget() > 0 && power >= getTarget()) {
             ItemStack output = getOutput();
-            extract(recipe.getCenterStack(), recipe.getRequirements(output), false);
+            // extract(recipe.getCenterStack(), recipe.getRequirements(output), false);
+            extract(recipe.getCenterStack(), recipe.getRequirements(), false);
             ItemStack result = invResult.getStackInSlot(0);
             if (!result.isEmpty()) {
                 result = result.copy();
-                result.setCount(result.getCount() + output.getCount());
+                result.grow(output.getCount());
             } else {
                 result = output.copy();
             }
@@ -180,14 +186,27 @@ public class TileIntegrationTable extends TileLaserTableBase {
     }
 
     private IntegrationRecipe lookupRecipe(String name) {
-        return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name));
+        // return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name));
+        return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name), level);
     }
 
     // MenuProvider
+
+    @Override
+    public Component getDisplayName() {
+        return this.getBlockState().getBlock().getName();
+    }
 
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new ContainerIntegrationTable(BCSiliconMenuTypes.INTEGRATION_TABLE, id, player, this);
+    }
+
+    // IHasWork
+
+    @Override
+    public boolean hasWork() {
+        return recipe != null;
     }
 }

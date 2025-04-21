@@ -18,11 +18,11 @@ import java.util.function.Consumer;
 
 //public class ItemGoggles extends ArmorItem implements IItemBuildCraft, ISpecialArmor
 public class ItemGoggles extends ArmorItem implements IItemBuildCraft {
-    //    private static final ArmorProperties HELMET_PROPERTIES = new ArmorProperties(0, 0, 0);
-//    private static final Item.Properties HELMET_PROPERTIES = new Item.Properties().;
+    // private static final ArmorProperties HELMET_PROPERTIES = new ArmorProperties(0, 0, 0);
+    // private static final Item.Properties HELMET_PROPERTIES = new Item.Properties().;
     private final String idBC;
-//    private final String nameSpace;
-//    private final ResourceLocation id;
+    // private final String nameSpace;
+    // private final ResourceLocation id;
 
     public ItemGoggles(String idBC, Item.Properties properties) {
         super(ArmorMaterials.CHAIN, EquipmentSlot.HEAD, properties);

@@ -21,7 +21,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class TileFilteredBuffer extends TileBC_Neptune implements IBCTileMenuProvider {
     public final ItemHandlerSimple invFilter;

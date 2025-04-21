@@ -195,7 +195,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean isCarryingNonEmptyList() {
 //        ItemStack stack = mc.player.inventory.getItemStack();
-        ItemStack stack = minecraft.player.inventoryMenu.getCarried();
+        ItemStack stack = minecraft.player.containerMenu.getCarried();
 //        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
         return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTag() != null;
     }

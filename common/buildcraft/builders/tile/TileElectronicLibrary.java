@@ -40,9 +40,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
@@ -99,6 +99,9 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
+        if (StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
+            return;
+        }
         if (handler == invDownIn) {
             if (progressDown > 0) {
                 progressDown = -1;
@@ -264,8 +267,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable, 
                                 pos = 0;
                                 write(true);
                             }
-                        })
-                        {
+                        }) {
                             NbtSquisher.squish(
                                     Snapshot.writeToNBT(snapshot),
                                     NbtSquishConstants.BUILDCRAFT_V1_COMPRESSED,

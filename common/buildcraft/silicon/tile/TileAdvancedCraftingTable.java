@@ -8,6 +8,7 @@ package buildcraft.silicon.tile;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.craft.IAutoCraft;
 import buildcraft.lib.tile.craft.WorkbenchCrafting;
@@ -53,7 +54,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
-        if (!ItemStack.matches(before, after)) {
+        // if (!ItemStack.matches(before, after))
+        if (!StackUtil.isSameItemSameDamageSameTagSameCount(before, after) && !ItemStack.matches(before, after)) {
             crafting.onInventoryChange(handler);
         }
     }

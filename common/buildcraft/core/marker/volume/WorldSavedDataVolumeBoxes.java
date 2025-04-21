@@ -41,11 +41,10 @@ public class WorldSavedDataVolumeBoxes extends SavedData {
         super();
     }
 
-    @SuppressWarnings("unused")
-    public WorldSavedDataVolumeBoxes(String name) {
-        super();
+//    @SuppressWarnings("unused")
+//    public WorldSavedDataVolumeBoxes(String name) {
 //        super(name);
-    }
+//    }
 
     public VolumeBox getVolumeBoxAt(BlockPos pos) {
         return volumeBoxes.stream().filter(volumeBox -> volumeBox.box.contains(pos)).findFirst().orElse(null);
@@ -136,7 +135,7 @@ public class WorldSavedDataVolumeBoxes extends SavedData {
         WorldSavedDataVolumeBoxes instance =
                 storage.get((nbt) ->
                 {
-                    WorldSavedDataVolumeBoxes ret = new WorldSavedDataVolumeBoxes(DATA_NAME);
+                    WorldSavedDataVolumeBoxes ret = new WorldSavedDataVolumeBoxes();
                     ret.load(nbt);
                     return ret;
                 }, DATA_NAME);

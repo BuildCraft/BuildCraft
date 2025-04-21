@@ -88,7 +88,8 @@ public class FluidRenderer {
             fluidSprites.put(type, new HashMap<>());
         }
 
-        Minecraft.getInstance().textureManager.register(FROZEN_ATLAS.location(), FROZEN_ATLAS);
+        // Calen 1.18.2: RenderSystem.recordRenderCall -> optifine compat
+        RenderSystem.recordRenderCall(()->Minecraft.getInstance().textureManager.register(FROZEN_ATLAS.location(), FROZEN_ATLAS));
     }
 
     // public static void onTextureStitchPre(TextureAtlas map)

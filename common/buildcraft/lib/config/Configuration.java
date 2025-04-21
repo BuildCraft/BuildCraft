@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -313,7 +314,7 @@ public class Configuration {
         this.changed = false;
         if (configFilePath.toFile().exists()) {
             try {
-                Files.copy(configFilePath, BC_CONFIG_FOLDER_PATH.resolve(name + ".bak.json"));
+                Files.copy(configFilePath, BC_CONFIG_FOLDER_PATH.resolve(name + ".bak.json"), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 BCLog.logger.error("[lib.config] Failed to backup old config file [" + this.configFilePath + "]", e);
             }

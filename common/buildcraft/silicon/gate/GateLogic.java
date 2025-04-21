@@ -135,6 +135,53 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             statements[i].trigger.readFromNbt(nbt.getCompound(tName));
             statements[i].action.readFromNbt(nbt.getCompound(aName));
         }
+
+        // Calen 1.18.2: to store the state. without these, robot will get default(false) action states when world loading, then the working area will be lost
+        short t = nbt.getShort("triggerOn");
+        for (int i = 0; i < triggerOn.length; i++) {
+            triggerOn[i] = ((t >>> i) & 1) == 1;
+        }
+
+        // similar to GateLogic#resolveActions
+        int groupCount = 0;
+        int groupActive = 0;
+        for (int triggerIndex = 0; triggerIndex < statements.length; triggerIndex++) {
+            StatementPair pair = statements[triggerIndex];
+            TriggerWrapper trigger = pair.trigger.get();
+            groupCount++;
+            if (trigger != null) {
+                if (triggerOn[triggerIndex]) {
+                    groupActive++;
+                }
+            }
+            if (connections.length == triggerIndex || !connections[triggerIndex]) {
+                boolean allActionsActive;
+                if (variant.logic == EnumGateLogic.AND) {
+                    allActionsActive = groupActive == groupCount;
+                } else {
+                    allActionsActive = groupActive > 0;
+                }
+                for (int i = groupCount - 1; i >= 0; i--) {
+                    int actionIndex = triggerIndex - i;
+                    StatementPair fullAction = statements[actionIndex];
+
+                    ActionWrapper action = fullAction.action.get();
+                    actionOn[actionIndex] = allActionsActive;
+                    if (action != null) {
+                        if (allActionsActive) {
+                            isOn = true;
+                            StatementSlot slot = new StatementSlot();
+                            slot.statement = action.delegate;
+                            slot.parameters = fullAction.action.getParameters().clone();
+                            slot.part = action.sourcePart;
+                            activeActions.add(slot);
+                        }
+                    }
+                }
+                groupActive = 0;
+                groupCount = 0;
+            }
+        }
     }
 
     public CompoundTag writeToNbt() {
@@ -158,6 +205,15 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             }
         }
         nbt.put("wireBroadcasts", NBTUtilBC.writeEnumSet(wireBroadcasts, DyeColor.class));
+
+        // Calen 1.18.2: to store the state. without these, robot will get default(false) action states when world loading, then the working area will be lost
+        short t = 0;
+        for (int i = 0; i < triggerOn.length; i++) {
+            if (triggerOn[i]) {
+                t |= 1 << i;
+            }
+        }
+        nbt.putShort("triggerOn", t);
         return nbt;
     }
 

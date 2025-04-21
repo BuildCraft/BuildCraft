@@ -370,6 +370,17 @@ public class BuildCraftGui {
         }
     }
 
+    // Calen 1.18.2
+    public void mouseScrolled(double mouseX, double mouseY, double delta) {
+        mouse.setMousePosition(mouseX, mouseY);
+
+        for (IGuiElement element : shownElements) {
+            if (element instanceof IInteractionElement) {
+                ((IInteractionElement) element).onMouseScrolled(delta);
+            }
+        }
+    }
+
     // public void onMouseReleased(int mouseX, int mouseY, int state)
     public void onMouseReleased(double mouseX, double mouseY, int state) {
         mouse.setMousePosition(mouseX, mouseY);

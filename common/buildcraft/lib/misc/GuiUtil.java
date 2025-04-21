@@ -22,6 +22,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector4f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -108,6 +109,10 @@ public class GuiUtil {
     }
 
     public static void drawItemStackAt(ItemStack stack, PoseStack poseStack, int x, int y) {
+        RenderSystem.getModelViewStack().pushPose();
+        Vector4f vector4f = new Vector4f(0, 0, 0, 1);
+        vector4f.transform(poseStack.last().pose());
+        RenderSystem.getModelViewStack().translate(vector4f.x(), vector4f.y(), vector4f.z());
 //        RenderHelper.enableGUIStandardItemLighting();
         RenderUtil.enableGUIStandardItemLighting();
         Minecraft mc = Minecraft.getInstance();
@@ -118,6 +123,8 @@ public class GuiUtil {
         itemRender.renderGuiItemDecorations(mc.font, stack, x, y, null);
 //        RenderHelper.disableStandardItemLighting();
         RenderUtil.disableStandardItemLighting();
+        RenderSystem.getModelViewStack().popPose();
+        RenderSystem.applyModelViewMatrix(); //  Without this line, the tooltip will be rendered at a wrong position
     }
 
     @FunctionalInterface

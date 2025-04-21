@@ -6,6 +6,8 @@
 
 package buildcraft.silicon.plug;
 
+import buildcraft.api.gates.IGate;
+import buildcraft.api.gates.IGateProvider;
 import buildcraft.api.net.IMessage;
 import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.api.transport.IWireEmitter;
@@ -64,7 +66,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTileMenuProvider {
+public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTileMenuProvider, IGateProvider {
     public static final FunctionContext MODEL_FUNC_CTX_STATIC, MODEL_FUNC_CTX_DYNAMIC;
     private static final NodeVariableObject<String> MODEL_MATERIAL;
     private static final NodeVariableObject<String> MODEL_MODIFIER;
@@ -359,5 +361,12 @@ public class PluggableGate extends PipePluggable implements IWireEmitter, IBCTil
     @Override
     public IMessage onServerPlayerOpenNoSend(Player player) {
         return holder.onServerPlayerOpenNoSend(player);
+    }
+
+    // IGateProvider
+
+    @Override
+    public IGate getGate() {
+        return logic;
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
@@ -209,5 +210,31 @@ public class VecUtil {
         double d2 = ((double) pos1.getY()) - (double) pos2.getY();
         double d3 = ((double) pos1.getZ()) - (double) pos2.getZ();
         return d1 * d1 + d2 * d2 + d3 * d3;
+    }
+
+    // Calen 1.18.2: from 1.8.9
+
+    /** Factory that converts an integer vector to a double vector. */
+    public static Vec3 convert(Vec3i vec3i) {
+        return new Vec3(vec3i.getX(), vec3i.getY(), vec3i.getZ());
+    }
+
+    public static Vec3 convert(Direction face) {
+        if (face == null) {
+            return Vec3.ZERO;
+        }
+        return new Vec3(face.getStepX(), face.getStepY(), face.getStepZ());
+    }
+
+    public static Vec3 convert(Direction face, double size) {
+        return scale(convert(face), size);
+    }
+
+    public static Vec3 getVec(Entity entity) {
+        return new Vec3(entity.getX(), entity.getY(), entity.getZ());
+    }
+
+    public static BlockPos getPos(Entity entity) {
+        return convertFloor(entity.position());
     }
 }

@@ -45,7 +45,10 @@ public class OreDictionaryTags {
     public static final TagKey<Biome> OIL_GEN = biomeTag("buildcraftenergy:oil_gen");
 
     // pipe plugs
-    public static final TagKey<Item> waterproof = itemTag("buildcraft:waterproof");
+    public static final TagKey<Item> WATERPROOF = itemTag("buildcraft:waterproof");
+
+    // soft for robotics
+    public static final TagKey<Block> SOFT = blockTag("buildcraft:soft");
 
     // Pipe
     public static final TagKey<Block> PIPE = blockTag("buildcraftcore:pipe");

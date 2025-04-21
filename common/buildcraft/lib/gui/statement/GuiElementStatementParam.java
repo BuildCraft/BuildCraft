@@ -106,10 +106,46 @@ public class GuiElementStatementParam extends GuiElementSimple
                 heldStack = ItemStack.EMPTY;
             } else {
 //                heldStack = currentPlayer.inventory.getItemStack();
-                heldStack = currentPlayer.inventoryMenu.getCarried();
+                heldStack = currentPlayer.containerMenu.getCarried();
             }
 
             IStatementParameter pNew = param.onClick(container, ref.get(), heldStack, clickEvent);
+            if (pNew != null) {
+                set(pNew);
+            } else {
+                IStatementParameter[] possible = param.getPossible(container);
+                if (!param.isPossibleOrdered()) {
+                    List<IStatementParameter> list = new ArrayList<>();
+                    for (IStatementParameter p2 : possible) {
+                        if (p2 != null) {
+                            list.add(p2);
+                        }
+                    }
+                    possible = list.toArray(new IStatementParameter[0]);
+                }
+                gui.currentMenu = GuiElementStatementVariant.create(gui, this, this, possible);
+            }
+        }
+    }
+
+    @Override
+    public void onMouseScrolled(double delta) {
+        if (ref.canInteract && contains(gui.mouse)) {
+            IStatementParameter param = get();
+            if (param == null) {
+                return;
+            }
+
+            final ItemStack heldStack;
+            Player currentPlayer = Minecraft.getInstance().player;
+            if (currentPlayer == null) {
+                heldStack = ItemStack.EMPTY;
+            } else {
+//                heldStack = currentPlayer.inventory.getItemStack();
+                heldStack = currentPlayer.containerMenu.getCarried();
+            }
+
+            IStatementParameter pNew = param.onScroll(container, ref.get(), heldStack, delta);
             if (pNew != null) {
                 set(pNew);
             } else {

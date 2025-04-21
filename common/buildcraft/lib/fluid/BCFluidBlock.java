@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,7 +22,10 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -86,4 +90,15 @@ public class BCFluidBlock extends LiquidBlock {
 //    public void setSticky(boolean sticky) {
 //        this.sticky = sticky;
 //    }
+
+    @Override
+    public boolean isPathfindable(BlockState blockState, BlockGetter world, BlockPos pos, PathComputationType type) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockPathTypes getAiPathNodeType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob entity) {
+        return BlockPathTypes.LAVA;
+    }
 }

@@ -50,7 +50,6 @@ public class BlockLaserTable extends BlockBCTile_Neptune<TileLaserTableBase> imp
         return 1.0F;
     }
 
-//
 //    @Override
 //    public boolean isFullCube(BlockState state) {
 //        return false;

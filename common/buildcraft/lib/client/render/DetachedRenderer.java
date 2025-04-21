@@ -6,10 +6,8 @@
 
 package buildcraft.lib.client.render;
 
-import buildcraft.lib.misc.SpriteUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;

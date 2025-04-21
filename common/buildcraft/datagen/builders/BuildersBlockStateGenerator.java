@@ -7,6 +7,7 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.block.BlockArchitectTable;
 import buildcraft.builders.block.BlockBuilder;
 import buildcraft.datagen.base.BCBaseBlockStateGenerator;
+import buildcraft.datagen.core.CoreBlockStateGenerator;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.core.Direction;
@@ -324,6 +325,51 @@ public class BuildersBlockStateGenerator extends BCBaseBlockStateGenerator {
                         .texture("south", "buildcraftbuilders:blocks/replacer/side")
                         .texture("west", "buildcraftbuilders:blocks/replacer/side")
         );
+
+        // markerConstruction
+        ModelBuilder markerConstruction = models().getBuilder("buildcraftbuilders:block/marker_construction")
+                .parent(CoreBlockStateGenerator.torch_center_lit)
+                .texture("all", "buildcraftbuilders:blocks/marker_construction");
+        getMultipartBuilder(BCBuildersBlocks.markerConstruction.get())
+                .part()
+                .modelFile(markerConstruction)
+                .addModel()
+                .condition(BuildCraftProperties.BLOCK_FACING_6, Direction.UP)
+                .end()
+                .part()
+                .modelFile(markerConstruction)
+                .rotationX(180)
+                .addModel()
+                .condition(BuildCraftProperties.BLOCK_FACING_6, Direction.DOWN)
+                .end()
+                .part()
+                .modelFile(markerConstruction)
+                .rotationX(90)
+                .rotationY(90)
+                .addModel()
+                .condition(BuildCraftProperties.BLOCK_FACING_6, Direction.EAST)
+                .end()
+                .part()
+                .modelFile(markerConstruction)
+                .rotationX(90)
+                .rotationY(180)
+                .addModel()
+                .condition(BuildCraftProperties.BLOCK_FACING_6, Direction.SOUTH)
+                .end()
+                .part()
+                .modelFile(markerConstruction)
+                .rotationX(90)
+                .rotationY(270)
+                .addModel()
+                .condition(BuildCraftProperties.BLOCK_FACING_6, Direction.WEST)
+                .end()
+                .part()
+                .modelFile(markerConstruction)
+                .rotationX(90)
+                .addModel()
+                .condition(BuildCraftProperties.BLOCK_FACING_6, Direction.NORTH)
+                .end()
+        ;
     }
 
     @NotNull

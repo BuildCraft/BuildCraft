@@ -32,6 +32,7 @@ import buildcraft.core.marker.volume.*;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReceiver;
@@ -60,17 +61,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-public class TileFiller extends TileBC_Neptune
-        implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable, IBCTileMenuProvider {
+public class TileFiller extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable, IBCTileMenuProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("filler");
     @SuppressWarnings("WeakerAccess")
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
@@ -186,10 +186,11 @@ public class TileFiller extends TileBC_Neptune
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler,
-                                int slot,
-                                @Nonnull ItemStack before,
-                                @Nonnull ItemStack after) {
-        if (!level.isClientSide) {
+            int slot,
+            @Nonnull ItemStack before,
+            @Nonnull ItemStack after) {
+        // if (!level.isClientSide)
+        if (!level.isClientSide && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
             if (handler == invResources) {
                 Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::resourcesChanged);
             }

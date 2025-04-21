@@ -23,6 +23,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -101,12 +102,23 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
      * returns true for a given fluidstack then it will be allowed in the tank. The given fluidstack will NEVER be
      * null. */
     public BlockEntity tile; // Calen added
+    public Entity entity; // Calen added
 
     public Tank(@Nonnull String name, int capacity, BlockEntity tile, @Nullable Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;
         this.tile = tile;
         this.filter = filter == null ? ((f) -> true) : filter;
+        helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
+                DEFAULT_HELP_KEY);
+    }
+
+    // Calen 1.18.2 for robot
+    public Tank(@Nonnull String name, int capacity, Entity entity) {
+        super(capacity);
+        this.name = name;
+        this.entity = entity;
+        this.filter = (f) -> true;
         helpInfo = new ElementHelpInfo("buildcraft.help.tank.title." + name, 0xFF_00_00_00 | name.hashCode(),
                 DEFAULT_HELP_KEY);
     }
@@ -277,6 +289,9 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         super.onContentsChanged();
         if (tile instanceof TileBC_Neptune) {
             ((TileBC_Neptune) tile).markChunkDirty();
+        }
+        if (entity instanceof Entity) {
+            entity.shouldBeSaved();
         }
     }
 

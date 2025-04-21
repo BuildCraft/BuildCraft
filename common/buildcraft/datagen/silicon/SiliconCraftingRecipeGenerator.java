@@ -66,6 +66,30 @@ public class SiliconCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(OreDictionaryTags.GEAR_DIAMOND))
                 .group(MOD_ID)
                 .save(consumer);
+        // programming_table
+        ShapedRecipeBuilder.shaped(BCSiliconBlocks.programmingTable.get())
+                .pattern("OCO")
+                .pattern("ORO")
+                .pattern("OGO")
+                .define('O', Tags.Items.OBSIDIAN)
+                .define('R', BCSiliconItems.chipsetRedstone.get())
+                .define('C', Tags.Items.GEMS_EMERALD)
+                .define('G', OreDictionaryTags.GEAR_DIAMOND)
+                .unlockedBy("has_item", has(OreDictionaryTags.GEAR_DIAMOND))
+                .group(MOD_ID)
+                .save(consumer);
+        // charging_table
+        ShapedRecipeBuilder.shaped(BCSiliconBlocks.chargingTable.get())
+                .pattern("OIO")
+                .pattern("OCO")
+                .pattern("OGO")
+                .define('O', Tags.Items.OBSIDIAN)
+                .define('I', Tags.Items.DUSTS_REDSTONE)
+                .define('C', BCSiliconItems.chipsetRedstone.get())
+                .define('G', OreDictionaryTags.GEAR_GOLD)
+                .unlockedBy("has_item", has(OreDictionaryTags.GEAR_GOLD))
+                .group(MOD_ID)
+                .save(consumer);
         // laser
         ShapedRecipeBuilder.shaped(BCSiliconBlocks.laser.get())
                 .pattern("rro")

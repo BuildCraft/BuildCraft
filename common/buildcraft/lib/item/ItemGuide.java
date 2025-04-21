@@ -29,7 +29,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class ItemGuide extends ItemBC_Neptune implements MenuProvider {
     private static final String DEFAULT_BOOK = "buildcraftcore:main";

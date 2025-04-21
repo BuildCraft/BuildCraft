@@ -236,7 +236,7 @@ public class VanillaRotationHandlers {
             {
                 BlockPos offsetPos = pos.relative(toTry.getOpposite());
                 BlockState offsetState = world.getBlockState(offsetPos);
-//
+
 //                if (toTry == EnumFacing.UP && offsetState.getBlock().canPlaceTorchOnTop(state, world, offsetPos)) {
 //                    return true;
 //                } else if (toTry != EnumFacing.UP && toTry != EnumFacing.DOWN) {

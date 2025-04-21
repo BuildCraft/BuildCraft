@@ -388,4 +388,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             return stack;
         }).forEach(remainingDisplayRequired::add);
     }
+
+    // Calen 1.18.2 for robot builder
+    public List<ItemStack>[] getRemainingDisplayRequiredBlocks() {
+        return remainingDisplayRequiredBlocks;
+    }
 }

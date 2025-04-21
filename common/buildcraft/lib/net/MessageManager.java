@@ -16,6 +16,7 @@ import buildcraft.lib.misc.MessageUtil;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -299,5 +300,11 @@ public class MessageManager {
      * @param message The message to send */
     public static void sendToServer(IMessage message) {
         getSimpleNetworkWrapper(message).sendToServer(message);
+    }
+
+    // Calen 1.18.2 form 1.8 for robotics
+    public static void sendToEntity(IMessage message, Entity entity) {
+//        getSimpleNetworkWrapper(message).sendTo(message, player);
+        getSimpleNetworkWrapper(message).send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
     }
 }

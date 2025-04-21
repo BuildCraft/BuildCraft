@@ -18,6 +18,7 @@ import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import net.minecraft.core.BlockPos;
@@ -36,9 +37,9 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMenuProvider {
@@ -90,7 +91,8 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMe
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
-        if (handler == invFuel) {
+        // if (handler == invFuel)
+        if (handler == invFuel && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
             if (isForceInserting && after.isEmpty()) {
                 isForceInserting = false;
             }

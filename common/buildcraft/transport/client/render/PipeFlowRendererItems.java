@@ -76,6 +76,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
             if (stack != null && !stack.isEmpty()) {
 //                ItemRenderUtil.renderItemStack(x + pos.x, y + pos.y, z + pos.z, stack, item.stackSize, lightc, item.getRenderDirection(now, partialTicks), bb);
                 ItemRenderUtil.renderItemStack(stack, item.stackSize, lightc, item.getRenderDirection(now, partialTicks), poseStack, bb);
+                ItemRenderUtil.endItemBatch(poseStack);
             }
             if (item.colour != null) {
 //                bb.setTranslation(x + pos.x, y + pos.y, z + pos.z);
@@ -93,7 +94,5 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
             }
             poseStack.popPose();
         }
-
-//        ItemRenderUtil.endItemBatch();
     }
 }

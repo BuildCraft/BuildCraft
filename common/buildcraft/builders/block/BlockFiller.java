@@ -9,6 +9,7 @@ package buildcraft.builders.block;
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.block.IBlockWithTickableTE;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.core.BlockPos;
@@ -25,7 +26,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
 
-public class BlockFiller extends BlockBCTile_Neptune<TileFiller> implements IBlockWithFacing {
+public class BlockFiller extends BlockBCTile_Neptune<TileFiller> implements IBlockWithFacing, IBlockWithTickableTE<TileFiller> {
     // public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
     // public BlockFiller(Material material, String id)

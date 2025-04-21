@@ -7,6 +7,8 @@ import buildcraft.api.imc.BcImcMessage;
 import buildcraft.core.BCCore;
 import buildcraft.lib.recipe.assembly.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.assembly.AssemblyRecipeSerializer;
+import buildcraft.lib.recipe.integration.IntegrationRecipeSerializer;
+import buildcraft.lib.recipe.programming.ProgrammingRecipeSerializer;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryConfig;
@@ -128,6 +130,8 @@ public class BCSilicon {
         IForgeRegistry<RecipeSerializer<?>> registry = event.getRegistry();
         registry.register(AssemblyRecipeSerializer.INSTANCE);
         registry.register(FacadeSwapRecipeSerializer.INSTANCE);
+        registry.register(ProgrammingRecipeSerializer.INSTANCE);
+        registry.register(IntegrationRecipeSerializer.INSTANCE);
 
         AssemblyRecipeRegistry.FACADE_ASSEMBLY_RECIPE = FacadeAssemblyRecipes.INSTANCE;
     }
@@ -140,7 +144,7 @@ public class BCSilicon {
         ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.integrationTable.get(), RenderType.cutout());
         // Calen: 1.12.2 not impl……
         ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.chargingTable.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.programmingTable.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.programmingTable.get(), RenderType.translucent());
 
         SiliconItemModelPredicates.register(event);
     }
@@ -160,6 +164,7 @@ public class BCSilicon {
 //                .model("chipset_redstone/");
         registerTag("item.chipset.diamond").reg("chipset_diamond").locale("chipset_diamond");
 //                .model("chipset_redstone/");
+        registerTag("item.redstone_crystal").reg("redstone_crystal").locale("redstoneCrystal");
         registerTag("item.gate_copier").reg("gate_copier").locale("gateCopier");
 //                .model("gatecopier_");
         registerTag("item.plug.gate").reg("plug_gate").locale("gate")

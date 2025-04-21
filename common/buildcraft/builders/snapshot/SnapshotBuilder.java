@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -32,7 +33,8 @@ import java.util.stream.IntStream;
 public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> implements INBTSerializable<CompoundTag> {
     private static final int MAX_QUEUE_SIZE = 16;
     @SuppressWarnings("WeakerAccess")
-    protected static final byte CHECK_RESULT_UNKNOWN = 0;
+    // protected static final byte CHECK_RESULT_UNKNOWN = 0;
+    public static final byte CHECK_RESULT_UNKNOWN = 0;
     @SuppressWarnings("WeakerAccess")
     protected static final byte CHECK_RESULT_CORRECT = 1;
     @SuppressWarnings("WeakerAccess")
@@ -91,7 +93,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
     @SuppressWarnings("WeakerAccess")
     public final Queue<PlaceTask> prevClientPlaceTasks = new ArrayDeque<>();
     @SuppressWarnings("WeakerAccess")
-    protected byte[] checkResults;
+    // protected byte[] checkResults;
+    @Nonnull
+    protected byte[] checkResults = new byte[0];
     private byte[] requiredCache;
     private int[] breakOrder;
     private int[] placeOrder;
@@ -221,7 +225,8 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         placeTasks.clear();
         clientPlaceTasks.clear();
         prevClientPlaceTasks.clear();
-        checkResults = null;
+        // checkResults = null;
+        checkResults = new byte[0];
         requiredCache = null;
         breakOrder = null;
         placeOrder = null;
@@ -308,7 +313,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         boolean isDone = true;
 
-        // TODO Calen Builder #1
+        // Calen Fix:
+        // without this, if there is too many blocks to check, a block should be broken or placed may not be checked, when other blocks are correct, this method will return true by mistake.
+        // Example: We'd like to build a 5x5 redstone wall, if the right up corner is air and other blocks are already redstone, then the corner wil be ignored.
         for (byte v : checkResults) {
             if (v == CHECK_RESULT_UNKNOWN) {
                 isDone = false;
@@ -441,9 +448,9 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                     );
                     tile.getWorldBC().getProfiler().pop();
                 }
-                // TODO Calen Builder #2
-                isDone = false;
             }
+            // Calen Fix:
+            isDone = false;
         }
         tile.getWorldBC().getProfiler().pop();
         tile.getWorldBC().getProfiler().push("place");
@@ -462,19 +469,16 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
                     tile.getWorldBC().getProfiler().push("work");
                     if (!doPlaceTask(placeTask)) {
                         cancelPlaceTask(placeTask);
-                        // TODO Calen Builder #3
-                        isDone = false;
                     }
                     tile.getWorldBC().getProfiler().pop();
                     if (check(placeTask.pos)) {
                         checkResultsChanged = true;
                     }
                     iterator.remove();
-                } else {
-                    // TODO Calen Builder #4
-                    isDone = false;
                 }
             }
+            // Calen Fix:
+            isDone = false;
         }
         tile.getWorldBC().getProfiler().pop();
         tile.getWorldBC().getProfiler().pop();
@@ -557,6 +561,21 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
         placeTasks.clear();
         NBTUtilBC.readCompoundList(nbt.get("placeTasks")).map(PlaceTask::new).forEach(placeTasks::add);
         currentCheckIndex = nbt.getInt("currentCheckIndex");
+    }
+
+    // Calen 1.18.2 for robot builder
+
+    public Queue<BreakTask> getBreakTasks() {
+        return breakTasks;
+    }
+
+    public Queue<PlaceTask> getPlaceTasks() {
+        return placeTasks;
+    }
+
+    @Nonnull
+    public byte[] getCheckResults() {
+        return checkResults;
     }
 
     public class BreakTask {

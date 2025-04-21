@@ -8,9 +8,12 @@ package buildcraft.lib.crops;
 
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -47,11 +50,13 @@ public enum CropHandlerReeds implements ICropHandler {
 
     @Override
     public boolean isMature(LevelAccessor access, BlockState state, BlockPos pos) {
-        return false;
+        // return false;
+        return state.is(Blocks.SUGAR_CANE) && access.getBlockState(pos.relative(Direction.DOWN)).is(Blocks.SUGAR_CANE);
     }
 
     @Override
-    public boolean harvestCrop(Level world, BlockPos pos, NonNullList<ItemStack> drops) {
-        return false;
+    public CropManager.HarvestResult harvestCrop(Level world, BlockPos pos, ItemStack tool, NonNullList<ItemStack> drops) {
+        // return false;
+        return BlockUtil.harvestBlock((ServerLevel) world, pos, tool, FakePlayerProvider.NULL_PROFILE) ? CropManager.HarvestResult.SUCCESS : CropManager.HarvestResult.FAIL;
     }
 }

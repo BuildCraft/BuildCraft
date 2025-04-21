@@ -23,11 +23,11 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
 
     @Override
     public boolean handle(Level world,
-                          BlockPos pos,
-                          Direction direction,
-                          ItemStack stack,
-                          Player player,
-                          IStripesActivator activator) {
+            BlockPos pos,
+            Direction direction,
+            ItemStack stack,
+            Player player,
+            IStripesActivator activator) {
 
         if (!(stack.getItem() instanceof HoeItem)) {
             return false;
@@ -56,8 +56,7 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
                                 false
                         )
                 )
-        ) != InteractionResult.PASS)
-        {
+        ) != InteractionResult.PASS) {
             return true;
         }
 
@@ -83,8 +82,7 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
                                 false
                         )
                 )
-        ) != InteractionResult.PASS)
-        {
+        ) != InteractionResult.PASS) {
             return true;
         }
 

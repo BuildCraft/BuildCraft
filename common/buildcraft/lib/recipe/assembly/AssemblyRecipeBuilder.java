@@ -39,7 +39,6 @@ public class AssemblyRecipeBuilder {
         return new AssemblyRecipeBuilder(requiredMicroJoules, requiredStacks, output);
     }
 
-
     public static AssemblyRecipeBuilder facade() {
         return new AssemblyRecipeBuilder();
     }

@@ -91,8 +91,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
         }
 
         boolean findActive = false;
-        for (Iterator<Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext(); )
-        {
+        for (Iterator<Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState> entry = iterator.next();
             AssemblyInstruction instruction = entry.getKey();
             EnumAssemblyRecipeState state = entry.getValue();
@@ -267,13 +266,13 @@ public class TileAssemblyTable extends TileLaserTableBase implements IAssemblyCr
             recipesStates.clear();
             int count = buffer.readInt();
             for (int i = 0; i < count; i++) {
-                AssemblyInstruction instruction = lookupRecipe(buffer.readString(), buffer.readItem());
+                AssemblyInstruction instruction = lookupRecipe(buffer.readUtf(), buffer.readItem());
                 recipesStates.put(instruction, EnumAssemblyRecipeState.values()[buffer.readInt()]);
             }
         }
 
         if (id == NET_RECIPE_STATE) {
-            AssemblyInstruction recipe = lookupRecipe(buffer.readString(), buffer.readItem());
+            AssemblyInstruction recipe = lookupRecipe(buffer.readUtf(), buffer.readItem());
             EnumAssemblyRecipeState state = EnumAssemblyRecipeState.values()[buffer.readInt()];
             if (recipesStates.containsKey(recipe)) {
                 recipesStates.put(recipe, state);

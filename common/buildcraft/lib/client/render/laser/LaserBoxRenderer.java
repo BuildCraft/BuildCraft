@@ -37,6 +37,7 @@ public class LaserBoxRenderer {
         }
     }
 
+    /** Calen 1.18.2: Before calling, please translate the posestack to (0, 0, 0). */
     public static void renderLaserBoxDynamic(Box box, LaserType type, PoseStack.Pose pose, VertexConsumer bb, boolean center) {
         if (box == null || box.min() == null || box.max() == null) {
             return;

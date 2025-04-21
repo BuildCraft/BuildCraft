@@ -5,6 +5,7 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
+import buildcraft.robotics.BCRoboticsBlocks;
 import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.transport.BCTransportBlocks;
 import net.minecraft.data.DataGenerator;
@@ -63,14 +64,23 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
                         BCSiliconBlocks.assemblyTable.get(),
                         BCSiliconBlocks.advancedCraftingTable.get(),
                         BCSiliconBlocks.programmingTable.get(),
-                        BCSiliconBlocks.laser.get(),
                         BCSiliconBlocks.chargingTable.get(),
+                        BCSiliconBlocks.laser.get(),
+                        BCRoboticsBlocks.zonePlanner.get(),
+                        BCRoboticsBlocks.requester.get(),
                         BCTransportBlocks.filteredBuffer.get()
                 )
         ;
 
         tag(OreDictionaryTags.WORKBENCHES_BLOCK)
                 .add(Blocks.CRAFTING_TABLE)
+        ;
+
+        tag(OreDictionaryTags.SOFT)
+                .add(Blocks.AIR)
+                .add(Blocks.SNOW)
+                .add(Blocks.VINE)
+                .add(Blocks.FIRE)
         ;
     }
 

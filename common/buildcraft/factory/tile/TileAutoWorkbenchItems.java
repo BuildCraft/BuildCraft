@@ -13,7 +13,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class TileAutoWorkbenchItems extends TileAutoWorkbenchBase implements IBCTileMenuProvider {
     public TileAutoWorkbenchItems(BlockPos pos, BlockState blockState) {

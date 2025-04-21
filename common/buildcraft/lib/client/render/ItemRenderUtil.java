@@ -45,8 +45,7 @@ public class ItemRenderUtil {
     //    private static final RenderEntityItem customItemRenderer =
 //    private static final ItemEntityRenderer customItemRenderer =
 ////            new RenderEntityItem(Minecraft.getInstance().getRenderManager(), Minecraft.getInstance().getRenderItem())
-//            new ItemEntityRenderer(null)
-//            {
+//            new ItemEntityRenderer(null) {
 //                @Override
 //                public boolean shouldSpreadItems() {
 //                    return false;

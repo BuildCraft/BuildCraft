@@ -8,6 +8,7 @@ package buildcraft.transport.pipe.flow;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
@@ -514,7 +515,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     @Override
     public boolean canInjectItems(Direction from) {
-        return pipe.isConnected(from);
+        // return pipe.isConnected(from);
+        // Calen 1.18.2: supported robot station
+        return pipe.isConnected(from) || (pipe.getHolder().getPluggable(from) instanceof IDockingStationProvider);
     }
 
     @Nonnull

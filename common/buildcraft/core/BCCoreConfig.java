@@ -295,14 +295,14 @@ public class BCCoreConfig {
         saveObjConfigs();
     }
 
-    //    public static void saveConfigs() {
-//        if (config.hasChanged()) {
-//            config.save();
-//        }
-//        if (objConfig.hasChanged()) {
-//            objConfig.save();
-//        }
-//    }
+    // public static void saveConfigs() {
+    //     if (config.hasChanged()) {
+    //         config.save();
+    //     }
+    //     if (objConfig.hasChanged()) {
+    //         objConfig.save();
+    //     }
+    // }
     public static void saveCoreConfigs() {
         if (config.hasChanged()) {
             config.save();

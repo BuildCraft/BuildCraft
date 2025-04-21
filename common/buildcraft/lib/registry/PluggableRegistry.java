@@ -10,13 +10,14 @@ import buildcraft.api.transport.pluggable.IPluggableRegistry;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum PluggableRegistry implements IPluggableRegistry {
     INSTANCE;
 
-    private final Map<ResourceLocation, PluggableDefinition> registered = new HashMap<>();
+    // private final Map<ResourceLocation, PluggableDefinition> registered = new HashMap<>();
+    private final Map<ResourceLocation, PluggableDefinition> registered = new ConcurrentHashMap<>();
 
     @Override
     public void register(ResourceLocation id, PluggableDefinition definition) {

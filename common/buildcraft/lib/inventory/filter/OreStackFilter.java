@@ -9,8 +9,6 @@ package buildcraft.lib.inventory.filter;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.recipes.StackDefinition;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,34 +24,33 @@ public class OreStackFilter implements IStackFilter {
     // private final String[] ores;
     private final List<TagKey<Item>> ores = NonNullList.create();
 
-    public OreStackFilter(String... iOres) {
+    // public OreStackFilter(String... iOres)
+    public OreStackFilter(TagKey<Item>... iOres) {
 //        ores = iOres;
-        Arrays.stream(iOres).forEach(ore -> ores.add(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(ore))));
+        ores.addAll(Arrays.asList(iOres));
     }
 
     @Override
     public boolean matches(@Nonnull ItemStack stack) {
 //        int[] ids = OreDictionary.getOreIDs(stack);
-        TagKey<Item>[] ids = (TagKey<Item>[]) stack.getTags().toArray();
-
-        if (ids.length == 0) {
-            return false;
-        }
-
-//        for (String ore : ores)
-        for (TagKey<Item> ore : ores) {
+//
+//        if (ids.length == 0) {
+//            return false;
+//        }
+//
+//        for (String ore : ores) {
 //            int expected = OreDictionary.getOreID(ore);
+//
+//            for (int id : ids) {
+//                if (id == expected) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
 
-//            for (int id : ids)
-            for (TagKey<Item> id : ids) {
-//                if (id == expected)
-                if (id.equals(ore)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return ores.stream().anyMatch(stack::is);
     }
 
     @Override
@@ -64,11 +61,13 @@ public class OreStackFilter implements IStackFilter {
         return ret;
     }
 
-    public static StackDefinition definition(int count, String... ores) {
+    // public static StackDefinition definition(int count, String... ores)
+    public static StackDefinition definition(int count, TagKey<Item>... ores) {
         return new StackDefinition(new OreStackFilter(ores), count);
     }
 
-    public static StackDefinition definition(String... ores) {
+    // public static StackDefinition definition(String... ores)
+    public static StackDefinition definition(TagKey<Item>... ores) {
         return definition(1, ores);
     }
 }

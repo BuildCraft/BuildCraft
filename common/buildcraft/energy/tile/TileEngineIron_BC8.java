@@ -47,10 +47,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMenuProvider {
@@ -416,7 +415,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
             return properties.length;
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public FluidStack getFluidInTank(int tank) {
             return properties[tank].getContents();
@@ -457,7 +456,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
 
         // 1.18.2
         @Override
-        public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
+        public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
             return properties[tank].canFillFluidType(stack);
         }
     }

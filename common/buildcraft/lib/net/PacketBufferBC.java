@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 /** Special {@link FriendlyByteBuf} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with similar bits into a single byte. */
@@ -291,5 +292,20 @@ public class PacketBufferBC extends FriendlyByteBuf {
             array[i] = readByte();
         }
         return new String(array, Charsets.UTF_8);
+    }
+
+    // Calen 1.18.2 from 1.8.9
+
+    public void writeVec3(Vec3 vector) {
+        this.writeDouble(vector.x());
+        this.writeDouble(vector.y());
+        this.writeDouble(vector.z());
+    }
+
+    public Vec3 readVec3() {
+        double x = this.readDouble();
+        double y = this.readDouble();
+        double z = this.readDouble();
+        return new Vec3(x, y, z);
     }
 }

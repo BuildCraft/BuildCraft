@@ -51,8 +51,7 @@ public class SiliconItemModelGenerator extends BCBaseItemModelGenerator {
         withExistingParent(BCSiliconBlocks.assemblyTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/assembly"));
         withExistingParent(BCSiliconBlocks.chargingTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/charging"));
         withExistingParent(BCSiliconBlocks.integrationTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/integration"));
-        withExistingParent(BCSiliconBlocks.programmingTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/programming"))
-                .texture("glass", "minecraft:block/white_stained_glass");
+        withExistingParent(BCSiliconBlocks.programmingTable.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/table/programming"));
 
         // laser
         withExistingParent(BCSiliconBlocks.laser.get().getRegistryName().toString(), new ResourceLocation("buildcraftsilicon:block/laser"));
@@ -75,6 +74,10 @@ public class SiliconItemModelGenerator extends BCBaseItemModelGenerator {
                 .predicate(SiliconItemModelPredicates.PREDICATE_HAS_DATA, 1)
                 .end()
         ;
+
+        // redstoneCrystal
+        withExistingParent(BCSiliconItems.redstoneCrystal.get().getRegistryName().toString(), GENERATED)
+                .texture("layer0", "buildcraftsilicon:items/redstone_crystal");
     }
 
     @Nonnull

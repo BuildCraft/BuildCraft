@@ -69,27 +69,20 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
 //        IngredientStack lapis = IngredientStack.of("gemLapis");
         IngredientStack lapis = IngredientStack.of(Tags.Items.GEMS_LAPIS);
         makeGateAssembly(20_000, EnumGateMaterial.IRON, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON);
-        makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER,
-                EnumRedstoneChipset.IRON, IngredientStack.of(new ItemStack(Blocks.NETHER_BRICKS)));
+        makeGateAssembly(40_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.IRON, IngredientStack.of(new ItemStack(Blocks.NETHER_BRICKS)));
         makeGateAssembly(80_000, EnumGateMaterial.GOLD, EnumGateModifier.NO_MODIFIER, EnumRedstoneChipset.GOLD);
 
         makeGateModifierAssembly(40_000, EnumGateMaterial.IRON, EnumGateModifier.LAPIS, lapis);
-        makeGateModifierAssembly(60_000, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ,
-                IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
-        makeGateModifierAssembly(80_000, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND,
-                IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
+        makeGateModifierAssembly(60_000, EnumGateMaterial.IRON, EnumGateModifier.QUARTZ, IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
+        makeGateModifierAssembly(80_000, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND, IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
 
         makeGateModifierAssembly(80_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.LAPIS, lapis);
-        makeGateModifierAssembly(100_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.QUARTZ,
-                IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
-        makeGateModifierAssembly(120_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.DIAMOND,
-                IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
+        makeGateModifierAssembly(100_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.QUARTZ, IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
+        makeGateModifierAssembly(120_000, EnumGateMaterial.NETHER_BRICK, EnumGateModifier.DIAMOND, IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
 
         makeGateModifierAssembly(100_000, EnumGateMaterial.GOLD, EnumGateModifier.LAPIS, lapis);
-        makeGateModifierAssembly(140_000, EnumGateMaterial.GOLD, EnumGateModifier.QUARTZ,
-                IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
-        makeGateModifierAssembly(180_000, EnumGateMaterial.GOLD, EnumGateModifier.DIAMOND,
-                IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
+        makeGateModifierAssembly(140_000, EnumGateMaterial.GOLD, EnumGateModifier.QUARTZ, IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
+        makeGateModifierAssembly(180_000, EnumGateMaterial.GOLD, EnumGateModifier.DIAMOND, IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
 
         AssemblyRecipeBuilder.basic(
                 500 * MjAPI.MJ,
@@ -140,13 +133,13 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
         input3 = ImmutableSet.of(IngredientStack.of(Tags.Items.DUSTS_REDSTONE), IngredientStack.of(Tags.Items.INGOTS_IRON));
         output3 = EnumRedstoneChipset.IRON.getStack(1);
 //        AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("iron_chipset", 20000 * MjAPI.MJ, input, output));
-        AssemblyRecipeBuilder.basic(40000 * MjAPI.MJ, input3, output3).save(consumer, "iron_chipset");
+        AssemblyRecipeBuilder.basic(20000 * MjAPI.MJ, input3, output3).save(consumer, "iron_chipset");
 
 //        input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("ingotGold"));
         input3 = ImmutableSet.of(IngredientStack.of(Tags.Items.DUSTS_REDSTONE), IngredientStack.of(Tags.Items.INGOTS_GOLD));
         output3 = EnumRedstoneChipset.GOLD.getStack(1);
 //        AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("gold_chipset", 40000 * MjAPI.MJ, input, output));
-        AssemblyRecipeBuilder.basic(20000 * MjAPI.MJ, input3, output3).save(consumer, "gold_chipset");
+        AssemblyRecipeBuilder.basic(40000 * MjAPI.MJ, input3, output3).save(consumer, "gold_chipset");
 
 //        input = ImmutableSet.of(IngredientStack.of("dustRedstone"), IngredientStack.of("gemQuartz"));
         input3 = ImmutableSet.of(IngredientStack.of(Tags.Items.DUSTS_REDSTONE), IngredientStack.of(Tags.Items.GEMS_QUARTZ));
@@ -182,6 +175,8 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
 
 //        AssemblyRecipeRegistry.register(new AssemblyRecipeBasic("gate_copier", 500 * MjAPI.MJ, input.build(), new ItemStack(BCSiliconItems.gateCopier.get())));
         AssemblyRecipeBuilder.basic(500 * MjAPI.MJ, input4.build(), new ItemStack(BCSiliconItems.gateCopier.get())).save(consumer, "gate_copier");
+
+        AssemblyRecipeBuilder.basic(1000000 * MjAPI.MJ, ImmutableSet.of(IngredientStack.of(Tags.Items.STORAGE_BLOCKS_REDSTONE)), new ItemStack(BCSiliconItems.redstoneCrystal.get())).save(consumer, "redstone_crystal");
     }
 
     private void makeGateModifierAssembly(int multiplier, EnumGateMaterial material, EnumGateModifier modifier, IngredientStack... mods) {

@@ -6,11 +6,14 @@
 
 package buildcraft.lib.crops;
 
+import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
 import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -67,8 +70,7 @@ public enum CropHandlerPlantable implements ICropHandler {
                 || block instanceof MelonBlock
                 || block instanceof MushroomBlock
                 || block instanceof DoublePlantBlock
-                || block == Blocks.PUMPKIN)
-        {
+                || block == Blocks.PUMPKIN) {
             return true;
         }
 //        else if (block instanceof BlockCrops)
@@ -89,7 +91,7 @@ public enum CropHandlerPlantable implements ICropHandler {
     }
 
     @Override
-    public boolean harvestCrop(Level world, BlockPos pos, NonNullList<ItemStack> drops) {
+    public CropManager.HarvestResult harvestCrop(Level world, BlockPos pos, ItemStack tool, NonNullList<ItemStack> drops) {
 //        if (!world.isRemote) {
 //            IBlockState state = world.getBlockState(pos);
 //            if (BlockUtil.breakBlock((ServerLevel) world, pos, drops, pos)) {
@@ -97,6 +99,7 @@ public enum CropHandlerPlantable implements ICropHandler {
 //                return true;
 //            }
 //        }
-        return false;
+        // return false;
+        return BlockUtil.harvestBlock((ServerLevel) world, pos, tool, FakePlayerProvider.NULL_PROFILE) ? CropManager.HarvestResult.SUCCESS : CropManager.HarvestResult.FAIL;
     }
 }

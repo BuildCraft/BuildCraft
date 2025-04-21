@@ -1,11 +1,11 @@
 package buildcraft.builders.snapshot;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.properties.BedPart;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -181,7 +181,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
     @Override
     public boolean onFlowActivate(Player player, HitResult trace, float hitX, float hitY, float hitZ,
-                                  EnumPipePart part) {
+            EnumPipePart part) {
         return super.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
     }
 
@@ -296,8 +296,7 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
                             if (
                                     neighbour != null && neighbour.getFlow() instanceof PipeFlowPower && neighbour
                                             .isConnected(face2.getOpposite())
-                            )
-                            {
+                            ) {
                                 PipeFlowPower oFlow = (PipeFlowPower) neighbour.getFlow();
                                 leftover = oFlow.sections.get(face2.getOpposite()).receivePowerInternal(watts);
                             } else {
@@ -332,7 +331,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         // Compute the tiles requesting power that are not power pipes
         for (Direction face : Direction.values()) {
-            if (pipe.getConnectedType(face) != ConnectedType.TILE) {
+            // if (pipe.getConnectedType(face) != ConnectedType.TILE)
+            if (pipe.getConnectedType(face) != ConnectedType.TILE && pipe.getHolder().getPluggable(face) == null) {
                 continue;
             }
             IMjReceiver recv = pipe.getHolder().getCapabilityFromPipe(face, MjAPI.CAP_RECEIVER);

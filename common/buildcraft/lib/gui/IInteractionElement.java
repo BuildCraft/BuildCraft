@@ -13,6 +13,11 @@ public interface IInteractionElement extends IGuiElement {
     default void onMouseDragged(int button) {
     }
 
+    // Calen 1.18.2
+    /** This is called EVEN IF the mouse is not inside your width and height! */
+    default void onMouseScrolled(double delta) {
+    }
+
     /** This is called EVEN IF the mouse is not inside your width and height! */
     default void onMouseReleased(int button) {
     }

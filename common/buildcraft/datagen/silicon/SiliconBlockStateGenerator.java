@@ -433,7 +433,7 @@ public class SiliconBlockStateGenerator extends BCBaseBlockStateGenerator {
                 .end()
                 .element()
                 .from(4, 9, 4).to(12, 9, 12)
-                .face(Direction.UP).texture("#glass").uvs(0, 0, 16, 16).end()
+                .face(Direction.UP).texture("#glass").uvs(4, 4, 12, 12).end()
                 .end()
                 .texture("particle", "buildcraftsilicon:blocks/table/programming/top")
                 .texture("top", "buildcraftsilicon:blocks/table/programming/top")
@@ -441,7 +441,7 @@ public class SiliconBlockStateGenerator extends BCBaseBlockStateGenerator {
                 .texture("bottom", "buildcraftsilicon:blocks/table/programming/bottom")
                 .texture("side", "buildcraftsilicon:blocks/table/programming/side")
                 .texture("center", "buildcraftsilicon:blocks/table/programming/center")
-                .texture("glass", "buildcraftsilicon:blocks/table/programming/transparent");
+                .texture("glass", "minecraft:block/white_stained_glass");
         getVariantBuilder(BCSiliconBlocks.programmingTable.get())
                 .forAllStates(
                         s -> ConfiguredModel.builder().modelFile(programming).build()

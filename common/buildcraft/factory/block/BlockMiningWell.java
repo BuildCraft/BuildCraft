@@ -13,7 +13,8 @@ import buildcraft.lib.block.IBlockWithTickableTE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class BlockMiningWell extends BlockBCTile_Neptune<TileMiningWell> implements IBlockWithFacing, IBlockWithTickableTE<TileMiningWell> {
     public BlockMiningWell(String idBC, BlockBehaviour.Properties props) {

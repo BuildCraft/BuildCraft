@@ -107,8 +107,8 @@ public enum StripesHandlerDispenser implements IStripesHandlerItem {
                           ItemStack stack,
                           Player player,
                           IStripesActivator activator) {
-//        if (!DispenserBlock.DISPENSE_BEHAVIOR_REGISTRY.containsKey(stack.getItem()))
-        if (DispenserBlock.DISPENSER_REGISTRY.containsKey(stack.getItem())) {
+//        if (!BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.containsKey(stack.getItem()))
+        if (!DispenserBlock.DISPENSER_REGISTRY.containsKey(stack.getItem())) {
             return false;
         }
 //        IBehaviorDispenseItem behaviour = BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(stack.getItem());

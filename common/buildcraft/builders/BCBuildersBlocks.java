@@ -5,6 +5,7 @@
 package buildcraft.builders;
 
 import buildcraft.builders.block.*;
+import buildcraft.builders.item.ItemMarkerConstruction;
 import buildcraft.builders.tile.*;
 import buildcraft.lib.block.BlockPropertiesCreator;
 import buildcraft.lib.registry.RegistrationHelper;
@@ -23,12 +24,16 @@ public class BCBuildersBlocks {
 
     public static RegistryObject<BlockFrame> frame;
     public static RegistryObject<BlockQuarry> quarry;
+
+    public static RegistryObject<BlockMarkerConstruction> markerConstruction;
+
     public static RegistryObject<BlockEntityType<TileFiller>> fillerTile;
     public static RegistryObject<BlockEntityType<TileBuilder>> builderTile;
     public static RegistryObject<BlockEntityType<TileArchitectTable>> architectTile;
     public static RegistryObject<BlockEntityType<TileElectronicLibrary>> libraryTile;
     public static RegistryObject<BlockEntityType<TileReplacer>> replacerTile;
     public static RegistryObject<BlockEntityType<TileQuarry>> quarryTile;
+    public static RegistryObject<BlockEntityType<TileMarkerConstruction>> markerConstructionTile;
 
     public static void fmlPreInit() {
         filler = HELPER.addBlockAndItem("block.filler", BlockPropertiesCreator.createDefaultProperties(Material.METAL), BlockFiller::new);
@@ -40,11 +45,14 @@ public class BCBuildersBlocks {
         frame = HELPER.addBlockAndItem("block.frame", BlockPropertiesCreator.createDefaultProperties(Material.METAL), BlockFrame::new);
         quarry = HELPER.addBlockAndItem("block.quarry", BlockPropertiesCreator.createDefaultProperties(Material.METAL), BlockQuarry::new);
 
+        markerConstruction = HELPER.addBlockAndItem("block.marker.construction", BlockPropertiesCreator.createDefaultProperties(Material.DECORATION).strength(0.25F).noOcclusion().noCollission().lightLevel(state -> 1), BlockMarkerConstruction::new, ItemMarkerConstruction::new);
+
         fillerTile = HELPER.registerTile("tile.filler", TileFiller::new, filler);
         builderTile = HELPER.registerTile("tile.builder", TileBuilder::new, builder);
         architectTile = HELPER.registerTile("tile.architect", TileArchitectTable::new, architect);
         libraryTile = HELPER.registerTile("tile.library", TileElectronicLibrary::new, library);
         replacerTile = HELPER.registerTile("tile.replacer", TileReplacer::new, replacer);
         quarryTile = HELPER.registerTile("tile.quarry", TileQuarry::new, quarry);
+        markerConstructionTile = HELPER.registerTile("tile.marker.construction", TileMarkerConstruction::new, markerConstruction);
     }
 }

@@ -43,7 +43,7 @@ public enum ClientSnapshots {
     INSTANCE;
 
     // Calen
-    private static final int COMBINED_LIGHT = 0x00F0_0000;
+    private static final int COMBINED_LIGHT = 0x00F0_00F0;
 
     private final List<Snapshot> snapshots = new ArrayList<>();
     private final List<Snapshot.Key> pending = new ArrayList<>();

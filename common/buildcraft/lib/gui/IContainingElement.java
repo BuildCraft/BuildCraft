@@ -58,6 +58,15 @@ public interface IContainingElement extends IInteractionElement {
     }
 
     @Override
+    default void onMouseScrolled(double delta) {
+        for (IGuiElement elem : getChildElements()) {
+            if (elem instanceof IInteractionElement) {
+                ((IInteractionElement) elem).onMouseScrolled(delta);
+            }
+        }
+    }
+
+    @Override
     default void onMouseReleased(int button) {
         for (IGuiElement elem : getChildElements()) {
             if (elem instanceof IInteractionElement) {

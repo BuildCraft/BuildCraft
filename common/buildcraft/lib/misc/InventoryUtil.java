@@ -6,17 +6,23 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.CompoundContainer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -144,4 +150,44 @@ public class InventoryUtil {
     }
 
     // NBT migration
+
+    // Calen: from 1.8.9
+
+    public static IInvSlot getItem(IItemHandler inv, IStackFilter filter) {
+        for (IInvSlot s : InventoryIterator.getIterable(inv)) {
+            // if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot()))
+            if (!s.getStackInSlot().isEmpty() && filter.matches(s.getStackInSlot())) {
+                return s;
+            }
+        }
+
+        return null;
+    }
+
+    /** Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
+     *
+     * @param inv
+     * @return Modified inventory if double chest, unmodified otherwise. */
+    public static Container getInventory(Container inv) {
+        if (inv instanceof ChestBlockEntity) {
+            ChestBlockEntity adjacent = BlockUtil.getOtherDoubleChest((ChestBlockEntity) inv);
+            if (adjacent != null) {
+                // return new InventoryLargeChest("", (TileEntityChest) inv, adjacent);
+                return new CompoundContainer(inv, adjacent);
+            }
+            return inv;
+        }
+        return inv;
+    }
+
+    public static ItemStack insert(IItemHandler itemHandler, ItemStack stack, boolean simulate) {
+        ItemStack overflow = stack.copy();
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            overflow = itemHandler.insertItem(i, overflow, simulate);
+            if (overflow.isEmpty()) {
+                break;
+            }
+        }
+        return overflow;
+    }
 }

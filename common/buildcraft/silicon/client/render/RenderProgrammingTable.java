@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -48,14 +48,15 @@ public class RenderProgrammingTable implements BlockEntityRenderer<TileProgrammi
 //        buffer.pos(x + 12 / 16D, y + 9 / 16D, z + 12 / 16D).color(255, 255, 255, 255).tex(sprite.getInterpolatedU(12), sprite.getInterpolatedV(12)).lightmap(light1, light2).endVertex();
 //        buffer.pos(x + 4 / 16D, y + 9 / 16D, z + 12 / 16D).color(255, 255, 255, 255).tex(sprite.getInterpolatedU(4), sprite.getInterpolatedV(12)).lightmap(light1, light2).endVertex();
 
-        VertexConsumer buffer = bufferSource.getBuffer(Sheets.solidBlockSheet());
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.translucent());
 
         PoseStack.Pose pose = poseStack.last();
 
-        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
-        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
-        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
-        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+        // Calen 1.18.2: With RenderType.translucent(), the higher translucent layer will hide the lower. Only using the face in json model.
+//        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+//        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (12 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(12)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+//        buffer.vertex(pose.pose(), (float) (12 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(12), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
+//        buffer.vertex(pose.pose(), (float) (4 / 16D), (float) (9 / 16D), (float) (4 / 16D)).color(255, 255, 255, 255).uv(sprite.getU(4), sprite.getV(4)).overlayCoords(combinedOverlay).uv2(light1, light2).normal(pose.normal(), 1, 1, 1).endVertex();
 
         poseStack.popPose();
 

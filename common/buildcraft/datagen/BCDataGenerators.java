@@ -17,9 +17,7 @@ import buildcraft.datagen.factory.FactoryCraftingRecipeGenerator;
 import buildcraft.datagen.factory.FactoryItemModelGenerator;
 import buildcraft.datagen.lib.LibCraftingRecipeGenerator;
 import buildcraft.datagen.lib.LibItemModelProvider;
-import buildcraft.datagen.robotics.RoboticsBlockStateGenerator;
-import buildcraft.datagen.robotics.RoboticsCraftingRecipeGenerator;
-import buildcraft.datagen.robotics.RoboticsItemModelGenerator;
+import buildcraft.datagen.robotics.*;
 import buildcraft.datagen.silicon.*;
 import buildcraft.datagen.transport.*;
 import net.minecraft.data.DataGenerator;
@@ -63,6 +61,8 @@ public class BCDataGenerators {
         generator.addProvider(new EnergyOilRecipeGenerator(generator, existingFileHelper));
         generator.addProvider(new SiliconAssemblyRecipeGenerator(generator, existingFileHelper));
         generator.addProvider(new TransportAssemblyRecipeGenerator(generator, existingFileHelper));
+        generator.addProvider(new RoboticsIntegrationRecipeGenerator(generator, existingFileHelper));
+        generator.addProvider(new RoboticsProgrammingRecipeGenerator(generator, existingFileHelper));
 
         // Advancement
         generator.addProvider(new CoreAdvancementGenerator(generator, existingFileHelper));

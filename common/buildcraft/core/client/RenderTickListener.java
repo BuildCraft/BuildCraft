@@ -144,8 +144,8 @@ public class RenderTickListener {
 
     @SubscribeEvent
     public static void renderLast(RenderLevelStageEvent event) {
-        // Calen: AFTER_SKY is the correct state for this render
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_SKY) {
+        // Calen: AFTER_TRANSLUCENT_BLOCKS is the correct state for this render
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
         }
         float partialTicks = event.getPartialTick();

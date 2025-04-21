@@ -5,11 +5,17 @@ import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.item.ItemPropertiesCreator;
 import buildcraft.lib.registry.TagManager.EnumTagType;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
@@ -31,6 +37,8 @@ public final class RegistrationHelper {
 //    private static final Map<String, Block> oredictBlocks = new HashMap<>();
 //    private static final Map<String, Item> oredictItems = new HashMap<>();
 
+    private final IEventBus MOD_EVENT_BUS;
+
     private final List<RegistryObject<? extends Block>> blocks = new ArrayList<>();
     private final List<RegistryObject<? extends Item>> items = new ArrayList<>();
 
@@ -38,6 +46,8 @@ public final class RegistrationHelper {
     public final DeferredRegister<Block> BLOCKS;
     public final DeferredRegister<Item> ITEMS;
     public final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES;
+    public final DeferredRegister<EntityType<?>> ENTITIES;
+    public final DeferredRegister<ParticleType<?>> PARTICLE_TYPES;
 
     private final String namespace;
 
@@ -45,10 +55,14 @@ public final class RegistrationHelper {
         BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, namespace);
         ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, namespace);
         TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, namespace);
-        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(namespace).get()).getEventBus(); // Calen: don't use FMLJavaModLoadingContext.get().getModEventBus()
-        BLOCKS.register(modEventBus);
-        ITEMS.register(modEventBus);
-        TILE_ENTITIES.register(modEventBus);
+        ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, namespace);
+        PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, namespace);
+        MOD_EVENT_BUS = ((FMLModContainer) ModList.get().getModContainerById(namespace).get()).getEventBus(); // Calen: don't use FMLJavaModLoadingContext.get().getModEventBus()
+        BLOCKS.register(MOD_EVENT_BUS);
+        ITEMS.register(MOD_EVENT_BUS);
+        TILE_ENTITIES.register(MOD_EVENT_BUS);
+        ENTITIES.register(MOD_EVENT_BUS);
+        PARTICLE_TYPES.register(MOD_EVENT_BUS);
 
         this.namespace = namespace;
     }
@@ -280,5 +294,23 @@ public final class RegistrationHelper {
                         blockEntityConstructor,
                         block.get()
                 ).build(null));
+    }
+
+    // Calen 1.18.2
+    public <E extends LivingEntity> RegistryObject<EntityType<E>> addEntity(String idBC, Supplier<EntityType.Builder<E>> entityTypeBuilder, String registryName, Supplier<AttributeSupplier.Builder> attributes) {
+        // String regName = TagManager.getTag(idBC, EnumTagType.REGISTRY_NAME).replace(this.namespace + ":", "");
+        RegistryObject<EntityType<E>> ret = ENTITIES.register(registryName, () -> entityTypeBuilder.get().build(registryName));
+        EntityAttributesRegisterer r = (event) -> event.put(ret.get(), attributes.get().build());
+        MOD_EVENT_BUS.addListener(r::registerEntityAttributes);
+        return ret;
+    }
+
+    public RegistryObject<SimpleParticleType> addParticle(String name) {
+        return PARTICLE_TYPES.register(name, () -> new SimpleParticleType(false));
+    }
+
+    @FunctionalInterface
+    public static interface EntityAttributesRegisterer {
+        void registerEntityAttributes(EntityAttributeCreationEvent event);
     }
 }
