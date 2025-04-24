@@ -13,6 +13,7 @@ import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,7 +21,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import java.util.Arrays;
@@ -71,15 +71,15 @@ public class BCFactoryModels {
 
     public static void fmlInit() {
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
-        ClientRegistry.bindTileEntityRenderer(BCFactoryBlocks.miningWellTile.get(), RenderMiningWell::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.miningWellTile, RenderMiningWell::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
-        ClientRegistry.bindTileEntityRenderer(BCFactoryBlocks.pumpTile.get(), RenderPump::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.pumpTile, RenderPump::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
-        ClientRegistry.bindTileEntityRenderer(BCFactoryBlocks.tankTile.get(), RenderTank::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.tankTile, RenderTank::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
-        ClientRegistry.bindTileEntityRenderer(BCFactoryBlocks.distillerTile.get(), RenderDistiller::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.distillerTile, RenderDistiller::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchange.class, new RenderHeatExchange());
-        ClientRegistry.bindTileEntityRenderer(BCFactoryBlocks.heatExchangeTile.get(), RenderHeatExchange::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.heatExchangeTile, RenderHeatExchange::new);
     }
 
     @SubscribeEvent

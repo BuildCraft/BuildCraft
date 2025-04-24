@@ -14,6 +14,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.silicon.client.FacadeItemColours;
@@ -38,7 +39,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 @OnlyIn(Dist.CLIENT)
@@ -105,8 +105,8 @@ public class BCSiliconModels {
     public static void fmlInit() {
 //        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCSiliconItems.plugGate, GateMeshDefinition.INSTANCE);
 
-        ClientRegistry.bindTileEntityRenderer(BCSiliconBlocks.laserTile.get(), RenderLaser::new);
-        ClientRegistry.bindTileEntityRenderer(BCSiliconBlocks.programmingTableTile.get(), RenderProgrammingTable::new);
+        RegistryUtil.regTesrIfTilePresent(BCSiliconBlocks.laserTile, RenderLaser::new);
+        RegistryUtil.regTesrIfTilePresent(BCSiliconBlocks.programmingTableTile, RenderProgrammingTable::new);
 
         IClientRegistry pipeRegistryClient = PipeApiClient.registry;
         if (pipeRegistryClient != null) {

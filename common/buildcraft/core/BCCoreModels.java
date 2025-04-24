@@ -23,6 +23,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.Direction;
@@ -32,7 +33,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import java.util.Arrays;
@@ -84,9 +84,9 @@ public class BCCoreModels {
 
     // Calen: use onTesrReg(event)
     public static void fmlInit() {
-        ClientRegistry.bindTileEntityRenderer(BCCoreBlocks.markerVolumeTile.get(), RenderMarkerVolume::new);
-        ClientRegistry.bindTileEntityRenderer(BCCoreBlocks.engineWoodTile.get(), RenderEngineWood::new);
-        ClientRegistry.bindTileEntityRenderer(BCCoreBlocks.engineCreativeTile.get(), RenderEngineCreative::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.markerVolumeTile, RenderMarkerVolume::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.engineWoodTile, RenderEngineWood::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.engineCreativeTile, RenderEngineCreative::new);
     }
 
 //    @SubscribeEvent
@@ -106,8 +106,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-//                new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCCoreBlocks.engineWood.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_REDSTONE.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)
@@ -121,8 +120,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-//                new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCCoreBlocks.engineCreative.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_CREATIVE.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)

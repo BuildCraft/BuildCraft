@@ -9,6 +9,10 @@ package buildcraft.energy;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.core.block.BlockEngine_BC8;
+import buildcraft.energy.client.render.RenderDynamoMJ;
+import buildcraft.energy.client.render.RenderEngineIron;
+import buildcraft.energy.client.render.RenderEngineRF;
+import buildcraft.energy.client.render.RenderEngineStone;
 import buildcraft.energy.event.ChristmasHandler;
 import buildcraft.energy.tile.TileDynamoMJ;
 import buildcraft.energy.tile.TileEngineIron_BC8;
@@ -23,9 +27,12 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
+import buildcraft.lib.registry.TagManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -85,6 +92,13 @@ public class BCEnergyModels {
         modEventBus.register(BCEnergyModels.class);
     }
 
+    public static void fmlInit() {
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.engineStoneTile, RenderEngineStone::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.engineIronTile, RenderEngineIron::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.engineRfTile, RenderEngineRF::new);
+        RegistryUtil.regTesrIfTilePresent(BCEnergyBlocks.mjDynamoTile, RenderDynamoMJ::new);
+    }
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void onModelRegistry(ModelRegistryEvent event) {
@@ -104,8 +118,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-//                new ModelResourceLocation(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCEnergyBlocks.engineStone.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_STONE.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)
@@ -118,8 +131,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-//                new ModelResourceLocation(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCEnergyBlocks.engineIron.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_IRON.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)
@@ -132,8 +144,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-                // new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCEnergyBlocks.engineRf.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_RF.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)
@@ -146,7 +157,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-                new ModelResourceLocation(BCEnergyBlocks.mjDynamo.getId(), "inventory"),
+                new ModelResourceLocation(new ResourceLocation(BCEnergy.MODID, TagManager.getTag("block.mj_dynamo", TagManager.EnumTagType.REGISTRY_NAME)), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(MJ_DYNAMO.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)

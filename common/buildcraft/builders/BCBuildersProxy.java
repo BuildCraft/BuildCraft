@@ -9,9 +9,9 @@ import buildcraft.builders.client.render.*;
 import buildcraft.builders.snapshot.MessageSnapshotRequest;
 import buildcraft.builders.snapshot.MessageSnapshotResponse;
 import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.net.MessageManager;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.loading.FMLLoader;
 
 //public abstract class BCBuildersProxy implements IGuiHandler
@@ -167,11 +167,11 @@ public abstract class BCBuildersProxy {
         @Override
         public void fmlInit() {
             super.fmlInit();
-            ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.architectTile.get(), RenderArchitectTable::new);
-            ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.builderTile.get(), RenderBuilder::new);
-            ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.fillerTile.get(), RenderFiller::new);
-            ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.quarryTile.get(), RenderQuarry::new);
-            ClientRegistry.bindTileEntityRenderer(BCBuildersBlocks.markerConstructionTile.get(), RenderMarkerConstruction::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.architectTile, RenderArchitectTable::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.builderTile, RenderBuilder::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.fillerTile, RenderFiller::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.quarryTile, RenderQuarry::new);
+            RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.markerConstructionTile, RenderMarkerConstruction::new);
             DetachedRenderer.INSTANCE.addRenderer(DetachedRenderer.RenderMatrixType.FROM_WORLD_ORIGIN, RenderArchitectTables.INSTANCE);
         }
     }

@@ -9,6 +9,7 @@ import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.plug.PlugBakerSimple;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.robotics.client.model.RoboticsNodeTypes;
 import buildcraft.robotics.client.model.key.KeyPlugRobotStation;
 import buildcraft.robotics.client.render.PlugRobotStationRenderer;
@@ -24,7 +25,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 @OnlyIn(Dist.CLIENT)
@@ -59,9 +59,8 @@ public class BCRoboticsModels {
     }
 
     public static void fmlInit() {
-        ClientRegistry.bindTileEntityRenderer(BCRoboticsBlocks.zonePlannerTile.get(), RenderZonePlanner::new);
+        RegistryUtil.regTesrIfTilePresent(BCRoboticsBlocks.zonePlannerTile, RenderZonePlanner::new);
 
-        ClientRegistry.bindTileEntityRenderer(BCRoboticsBlocks.zonePlannerTile.get(), RenderZonePlanner::new);
         EntityRendererManager entityRendererManager = Minecraft.getInstance().getEntityRenderDispatcher();
         BCRoboticsEntities.robotMap.values().forEach(robot -> entityRendererManager.register(robot.get(), new RenderRobot(entityRendererManager)));
 

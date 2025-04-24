@@ -18,6 +18,7 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.transport.client.PipeBlockColours;
 import buildcraft.transport.client.model.ModelPipe;
@@ -40,7 +41,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 public class BCTransportModels {
@@ -86,7 +86,7 @@ public class BCTransportModels {
     }
 
     public static void fmlInit() {
-        ClientRegistry.bindTileEntityRenderer(BCTransportBlocks.pipeHolderTile.get(), RenderPipeHolder::new);
+        RegistryUtil.regTesrIfTilePresent(BCTransportBlocks.pipeHolderTile, RenderPipeHolder::new);
 
         PipeApiClient.registry.registerBaker(KeyPlugBlocker.class, BAKER_PLUG_BLOCKER);
         PipeApiClient.registry.registerBaker(KeyPlugPowerAdaptor.class, BAKER_PLUG_POWER_ADAPTOR);
