@@ -108,7 +108,7 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune<TileMarker> im
 //    }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState p_49928_, BlockGetter p_49929_, BlockPos p_49930_) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
         return true;
     }
 

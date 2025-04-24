@@ -182,8 +182,9 @@ public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemP
             PipeApi.PowerTransferInfo pti = PipeApi.getPowerTransferInfo(definition);
 //            tooltip.add(new TextComponent(LocaleUtil.localizeMjFlow(pti.transferPerTick)));
             tooltip.add(LocaleUtil.localizeMjFlowComponent(pti.transferPerTick));
-            // TODO: remove this! (Not localised b/c localisations happen AFTER this is removed)
-            tooltip.add(new TextComponent("Work in progress - the above limit isn't enforced!"));
+        } else if (definition.flowType == PipeApi.flowRf && PipeApi.flowRf != null) {
+            PipeApi.RedstoneFluxTransferInfo pti = PipeApi.getRfTransferInfo(definition);
+            tooltip.add(new TextComponent(pti.transferPerTick + " RF/t"));//TODO: Locale!
         }
     }
 }

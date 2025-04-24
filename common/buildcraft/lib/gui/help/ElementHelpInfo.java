@@ -27,11 +27,24 @@ public class ElementHelpInfo {
     public final String title;
     public final int colour;
     public final String[] localeKeys;
+    public final boolean isPreTranslated;
 
     public ElementHelpInfo(String title, int colour, String... localeKeys) {
         this.title = title;
         this.colour = colour;
         this.localeKeys = localeKeys;
+        this.isPreTranslated = false;
+    }
+
+    public ElementHelpInfo(String title, int colour, boolean isPreTranslated, String... localeKeys) {
+        this.title = title;
+        this.colour = colour;
+        this.localeKeys = localeKeys;
+        this.isPreTranslated = isPreTranslated;
+    }
+
+    public static ElementHelpInfo preTranslated(String title, int colour, String... lines) {
+        return new ElementHelpInfo(title, colour, true, lines);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -43,12 +56,13 @@ public class ElementHelpInfo {
     public void addGuiElements(GuiElementContainerHelp container) {
         BuildCraftGui gui = container.gui;
         int y = 20;
-        for (String key : localeKeys) {
+        for (int i = 0; i < localeKeys.length; i++) {
+            String key = localeKeys[i];
             if (key == null) {
                 y += Minecraft.getInstance().font.lineHeight + 5;
                 continue;
             }
-            String localized = LocaleUtil.localize(key);
+            String localized = isPreTranslated ? key : LocaleUtil.localize(key);
             List<Component> lines = StringUtilBC.splitIntoLines(localized);
 
             for (Component line : lines) {

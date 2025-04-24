@@ -20,6 +20,8 @@ import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithTickableTE;
 import buildcraft.lib.misc.*;
+import buildcraft.lib.net.IPayloadWriter;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.raytrace.RayTraceResultBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.BCTransportBlocks;
@@ -76,10 +78,7 @@ import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> implements ICustomPaintHandler, IBlockWithTickableTE<TilePipeHolder> {
@@ -137,6 +136,19 @@ public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> impleme
 //    }
 
     // Collisions
+
+    @Override
+    @Deprecated
+    // public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter source, BlockPos pos, CollisionContext context) {
+        // if (source.isAirBlock(pos))
+        if (source.getBlockState(pos).isAir()) {
+            // Permit placing pipes below when jumping
+            return BOX_CENTER;
+        }
+        // return super.getBoundingBox(state, source, pos);
+        return super.getCollisionShape(state, source, pos, context);
+    }
 
     @Override
 //    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving)
@@ -534,14 +546,16 @@ public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> impleme
                     attachTile = getPipe(world, node.pos, false);
                 }
             } else {
-                wirePart = EnumWirePart.get((trace.getLocation().x % 1 + 1) % 1 > 0.5, (trace.getLocation().y % 1 + 1) % 1 > 0.5,
-                        (trace.getLocation().z % 1 + 1) % 1 > 0.5);
+                wirePart = EnumWirePart.get(
+                        (trace.getLocation().x % 1 + 1) % 1 > 0.5,
+                        (trace.getLocation().y % 1 + 1) % 1 > 0.5,
+                        (trace.getLocation().z % 1 + 1) % 1 > 0.5
+                );
             }
             if (wirePart != null && attachTile != null) {
 //                EnumDyeColor colour = EnumDyeColor.byMetadata(held.getMetadata());
                 DyeColor colour = ColourUtil.getStackColourFromTag(held);
-                boolean attached =
-                        attachTile.getWireManager().addPart(wirePart, colour);
+                boolean attached = attachTile.getWireManager().addPart(wirePart, colour);
                 attachTile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
                 if (attached) {
                     WireNode from = new WireNode(attachTile.getPipePos(), wirePart);
@@ -815,13 +829,118 @@ public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> impleme
     // Block overrides
 
     @Override
-    public boolean addLandingEffects(BlockState state, ServerLevel worldObj, BlockPos blockPosition, BlockState iblockstate, LivingEntity entity, int numberOfParticles) {
-        return super.addLandingEffects(state, worldObj, blockPosition, iblockstate, entity, numberOfParticles);
+    public boolean addLandingEffects(BlockState state, ServerLevel world, BlockPos pos, BlockState iblockstate, LivingEntity entity, int numberOfParticles) {
+        BlockEntity te = world.getBlockEntity(pos);
+        if (te instanceof TilePipeHolder) {
+            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
+
+            pipeHolder.createAndSendMessage(TilePipeHolder.NET_CREATE_LANDING_PARTICLE, new IPayloadWriter() {
+
+                @Override
+                public void write(PacketBufferBC buffer) {
+                    // buffer.writeDouble(entity.posX);
+                    // buffer.writeDouble(entity.posY);
+                    // buffer.writeDouble(entity.posZ);
+                    buffer.writeDouble(entity.position().x);
+                    buffer.writeDouble(entity.position().y);
+                    buffer.writeDouble(entity.position().z);
+                    buffer.writeInt(numberOfParticles);
+                }
+            });
+            return true;
+        }
+
+        return super.addLandingEffects(state, world, pos, iblockstate, entity, numberOfParticles);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean addRunningEffects(BlockState state, Level world, BlockPos pos, Entity entity) {
+        if (!world.isClientSide) {
+            return super.addRunningEffects(state, world, pos, entity);
+        }
+
+        BlockEntity te = world.getBlockEntity(pos);
+        if (te instanceof TilePipeHolder) {
+            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
+
+            // spawnRunningParticles(pipeHolder, entity.posX, entity.getEntityBoundingBox().minY, entity.posZ, entity.width, entity.motionX, entity.motionZ);
+            spawnRunningParticles(pipeHolder, entity.getX(), entity.getBoundingBox().minY, entity.getZ(), entity.getBbWidth(), entity.getDeltaMovement().x(), entity.getDeltaMovement().z());
+
+            return true;
+        }
+
+        return super.addRunningEffects(state, world, pos, entity);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void spawnLandingParticles(
+            TilePipeHolder pipe, double posX, double posY, double posZ, int numberOfParticles
+    ) {
+        int subHit = 0;
+        if (pipe.getPluggable(Direction.UP) != null) {
+            subHit = 6 + 1 + Direction.UP.ordinal();
+        }
+        HitSpriteInfo info = getHitSpriteInfo(subHit, pipe);
+        if (info != null) {
+
+            Random random = pipe.getLevel().random;
+
+            for (int i = 0; i < numberOfParticles; i++) {
+
+                double speedX = random.nextGaussian() * 0.15;
+                double speedY = random.nextGaussian() * 0.15;
+                double speedZ = random.nextGaussian() * 0.15;
+
+                // ParticleDigging particle = new ParticleBlockDust(pipe.getWorld(), posX, posY, posZ, speedX, speedY, speedZ, pipe.getCurrentState());
+                TerrainParticle particle = new TerrainParticle((ClientLevel) pipe.getLevel(), posX, posY, posZ, speedX, speedY, speedZ, pipe.getCurrentState());
+                // particle.setBlockPos(pipe.getPos());
+                particle.setPos(pipe.getBlockPos().getX(), pipe.getBlockPos().getY(), pipe.getBlockPos().getZ());
+                // particle.setParticleTexture(info.sprite);
+                particle.setSprite(info.sprite);
+
+                Minecraft.getInstance().particleEngine.add(particle);
+            }
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void spawnRunningParticles(TilePipeHolder pipe, double posX, double posY, double posZ, float entityWidth, double motionX, double motionZ) {
+        int subHit = 0;
+        if (pipe.getPluggable(Direction.UP) != null) {
+            subHit = 6 + 1 + Direction.UP.ordinal();
+        }
+        HitSpriteInfo info = getHitSpriteInfo(subHit, pipe);
+        if (info != null) {
+
+            Random random = pipe.getLevel().random;
+
+            posX += (random.nextFloat() - 0.5) * entityWidth;
+            posY += 0.1;
+            posZ += (random.nextFloat() - 0.5) * entityWidth;
+
+            double speedX = motionX * -0.4;
+            double speedY = 0.15;
+            double speedZ = motionZ * -0.4;
+
+            // ParticleDigging particle = new ParticleBlockDust(pipe.getWorld(), posX, posY, posZ, speedX, speedY, speedZ, pipe.getCurrentState());
+            TerrainParticle particle = new TerrainParticle((ClientLevel) pipe.getLevel(), posX, posY, posZ, speedX, speedY, speedZ, pipe.getCurrentState());
+            // particle.setBlockPos(pipe.getPos());
+            particle.setPos(pipe.getBlockPos().getX(), pipe.getBlockPos().getY(), pipe.getBlockPos().getZ());
+            // particle.setParticleTexture(info.sprite);
+            particle.setSprite(info.sprite);
+
+            Minecraft.getInstance().particleEngine.add(particle);
+        }
     }
 
     @OnlyIn(Dist.CLIENT)
     private static HitSpriteInfo getHitSpriteInfo(RayTraceResultBC target, TilePipeHolder pipeHolder) {
-        int p = target.subHit;
+        return getHitSpriteInfo(target.subHit, pipeHolder);
+    }
+
+    private static HitSpriteInfo getHitSpriteInfo(int subHit, TilePipeHolder pipeHolder) {
+        int p = subHit;
         VoxelShape aabb = null;
         TextureAtlasSprite sprite = SpriteUtil.missingSprite();
         if (0 <= p && p <= 6) {
@@ -889,6 +1008,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> impleme
             public boolean addHitEffects(BlockState state, Level worldIn, HitResult targetIn, ParticleEngine manager) {
                 ClientLevel world = (ClientLevel) worldIn;
                 RayTraceResultBC target = rayTrace(world, ((BlockHitResult) targetIn).getBlockPos(), Minecraft.getInstance().player);
+
+                if (target == null) {
+                    return false;
+                }
+
                 BlockEntity te = world.getBlockEntity(target.getBlockPos());
                 if (te instanceof TilePipeHolder) {
                     TilePipeHolder pipeHolder = ((TilePipeHolder) te);

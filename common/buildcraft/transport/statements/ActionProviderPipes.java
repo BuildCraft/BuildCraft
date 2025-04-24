@@ -10,8 +10,11 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.*;
 import buildcraft.api.transport.IWireEmitter;
 import buildcraft.api.transport.pipe.IPipeHolder;
+import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportConfig;
+import buildcraft.transport.BCTransportPipes;
 import buildcraft.transport.BCTransportStatements;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeColor;
@@ -19,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Collections;
 
 public enum ActionProviderPipes implements IActionProvider {
     INSTANCE;
@@ -35,6 +39,26 @@ public enum ActionProviderPipes implements IActionProvider {
                     if (TriggerPipeSignal.doesGateHaveColour(gate, colour)) {
                         actions.add(BCTransportStatements.ACTION_PIPE_SIGNAL[colour.ordinal()]);
                     }
+                }
+            }
+
+            PipeDefinition def = holder.getPipe().getDefinition();
+
+            if (def == BCTransportPipes.ironPower) {
+                Collections.addAll(actions, BCTransportStatements.ACTION_IRON_POWER_LIMIT);
+            }
+
+            if (def == BCTransportPipes.diamondPower) {
+                Collections.addAll(actions, BCTransportStatements.ACTION_DIAMOND_POWER_LIMIT);
+            }
+
+            if (!BCTransportConfig.disableRfPipe) {
+                if (def == BCTransportPipes.ironRf) {
+                    Collections.addAll(actions, BCTransportStatements.ACTION_IRON_RF_LIMIT);
+                }
+
+                if (def == BCTransportPipes.diamondRf) {
+                    Collections.addAll(actions, BCTransportStatements.ACTION_DIAMOND_RF_LIMIT);
                 }
             }
         }

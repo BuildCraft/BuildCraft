@@ -1,0 +1,7 @@
+{
+  "type": "buildcraftsilicon:programming",
+  "output": {
+    "item": "buildcraftrobotics:board_robot_picker"
+  },
+  "energyCost": 800000000
+}

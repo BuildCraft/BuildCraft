@@ -23,37 +23,47 @@ public class BCTransportItems {
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemWood;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidWood;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfWood;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemStone;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidStone;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerStone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfStone;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemCobble;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidCobble;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerCobble;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfCobble;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemQuartz;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidQuartz;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerQuartz;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfQuartz;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemGold;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidGold;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerGold;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfGold;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemSandstone;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidSandstone;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerSandstone;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfSandstone;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemIron;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidIron;
-    // public static ItemPipeHolder pipePowerIron;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerIron;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfIron;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemDiamond;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidDiamond;
-    // public static ItemPipeHolder pipePowerDiamond;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerDiamond;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfDiamond;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemDiaWood;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidDiaWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipePowerDiaWood;
+    public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeRfDiaWood;
 
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeItemClay;
     public static Map<DyeColor, RegistryObject<? extends IItemPipe>> pipeFluidClay;
@@ -114,9 +124,23 @@ public class BCTransportItems {
         pipePowerCobble = makePipeItem(BCTransportPipes.cobblePower);
         pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
         pipePowerQuartz = makePipeItem(BCTransportPipes.quartzPower);
+        pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
         pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
-        // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
         pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
+        pipePowerDiamond = makePipeItem(BCTransportPipes.diamondPower);
+        pipePowerDiaWood = makePipeItem(BCTransportPipes.diaWoodPower);
+
+        if (!BCTransportConfig.disableRfPipe) {
+            pipeRfWood = makePipeItem(BCTransportPipes.woodRf);
+            pipeRfCobble = makePipeItem(BCTransportPipes.cobbleRf);
+            pipeRfStone = makePipeItem(BCTransportPipes.stoneRf);
+            pipeRfQuartz = makePipeItem(BCTransportPipes.quartzRf);
+            pipeRfIron = makePipeItem(BCTransportPipes.ironRf);
+            pipeRfGold = makePipeItem(BCTransportPipes.goldRf);
+            pipeRfSandstone = makePipeItem(BCTransportPipes.sandstoneRf);
+            pipeRfDiamond = makePipeItem(BCTransportPipes.diamondRf);
+            pipeRfDiaWood = makePipeItem(BCTransportPipes.diaWoodRf);
+        }
 
         plugBlocker = HELPER.addItem("item.plug.blocker", ItemPropertiesCreator.common64(),
                 (idBC, properties) -> new ItemPluggableSimple(idBC, properties, BCTransportPlugs.blocker)

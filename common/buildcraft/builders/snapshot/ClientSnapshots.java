@@ -90,7 +90,7 @@ public enum ClientSnapshots {
 
 //        GlStateManager.pushAttrib();
 //        GlStateManager.enableDepth();
-        RenderUtil.enableBlend();
+        RenderUtil.enableDepth();
 //        GlStateManager.enableBlend();
         RenderUtil.enableBlend();
 //        GlStateManager.pushMatrix();

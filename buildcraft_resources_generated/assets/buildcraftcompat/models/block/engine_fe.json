@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:builtin/entity",
-  "textures": {
-    "particle": "buildcraftcompat:block/engine/fe/back"
-  }
-}

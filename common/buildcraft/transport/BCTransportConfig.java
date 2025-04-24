@@ -36,13 +36,21 @@ public class BCTransportConfig {
     public static long mjPerMillibucket = 1_000;
     public static long mjPerItem = MjAPI.MJ;
     public static int baseFlowRate = 10;
+    public static int basePowerRate = 4;
+    public static int baseRfRate = 40;
     public static boolean fluidPipeColourBorder;
+    public static boolean disableRfPipe;
+    public static boolean powerPipeUseOldMjTexture;
     public static PowerLossMode lossMode = PowerLossMode.DEFAULT;
 
     private static ConfigCategory<Long> propMjPerMillibucket;
     private static ConfigCategory<Long> propMjPerItem;
     private static ConfigCategory<Integer> propBaseFlowRate;
+    private static ConfigCategory<Integer> propBasePowerRate;
+    private static ConfigCategory<Integer> propBaseRfRate;
     private static ConfigCategory<Boolean> propFluidPipeColourBorder;
+    private static ConfigCategory<Boolean> propPowerPipeUseOldMjTexture;
+    private static ConfigCategory<Boolean> propDisableRfPipe;
     private static ConfigCategory<PowerLossMode> propLossMode;
 
     public static void preInit() {
@@ -62,28 +70,56 @@ public class BCTransportConfig {
         String experimental = "experimental";
 
         EnumRestartRequirement world = EnumRestartRequirement.WORLD;
+        EnumRestartRequirement none = EnumRestartRequirement.NONE;
 
         propMjPerMillibucket = config
                 .defineInRange(general,
                         "",
                         world,
                         "pipes.mjPerMillibucket", mjPerMillibucket, MJ_REQ_MILLIBUCKET_MIN);
+
         propMjPerItem = config
                 .defineInRange(general,
                         "",
                         world,
                         "pipes.mjPerItem", mjPerItem, MJ_REQ_ITEM_MIN);
+
         propBaseFlowRate = config
                 .defineInRange(general,
                         "",
                         world,
                         "pipes.baseFluidRate", baseFlowRate, 1, 40);
 
+        propBasePowerRate = config
+                .defineInRange(general,
+                        "",
+                        world,
+                        "pipes.basePowerRate", basePowerRate, 1, 40);
+
+        propBaseRfRate = config.defineInRange(general,
+                "",
+                world,
+                "pipes.baseRfRate", baseRfRate, 10, 4000);
+
         propFluidPipeColourBorder = config
                 .define(display,
                         "",
                         world,
                         "pipes.fluidColourIsBorder", true);
+
+        propDisableRfPipe = config
+                .define(general,
+                        "",
+                        none,
+                        "pipes.disable_rf_pipe", false);
+        disableRfPipe = propDisableRfPipe.get();
+
+        propPowerPipeUseOldMjTexture = config
+                .define(display,
+                        "",
+                        none,
+                        "pipes.powerUseOldMjTexture", false);
+        powerPipeUseOldMjTexture = disableRfPipe && propPowerPipeUseOldMjTexture.get();
 
         propLossMode = config
                 .defineEnum(experimental,
@@ -106,7 +142,8 @@ public class BCTransportConfig {
         }
 
         baseFlowRate = MathUtil.clamp(propBaseFlowRate.get(), 1, 40);
-        int basePowerRate = 4;
+        basePowerRate = MathUtil.clamp(propBasePowerRate.get(), 1, 40);
+        baseRfRate = MathUtil.clamp(propBaseRfRate.get(), 1, 4000);
 
         fluidPipeColourBorder = propFluidPipeColourBorder.get();
         PipeApi.flowFluids.fallbackColourType =
@@ -134,10 +171,22 @@ public class BCTransportConfig {
         powerTransfer(BCTransportPipes.woodPower, basePowerRate * 4, 128, true);
         powerTransfer(BCTransportPipes.sandstonePower, basePowerRate * 4, 32, false);
         powerTransfer(BCTransportPipes.quartzPower, basePowerRate * 8, 32, false);
-        // powerTransfer(BCTransportPipes.ironPower, basePowerRate * 8, false);
+        powerTransfer(BCTransportPipes.ironPower, basePowerRate * 8, 32, false);
         powerTransfer(BCTransportPipes.goldPower, basePowerRate * 16, 32, false);
-        // powerTransfer(BCTransportPipes.diamondPower, basePowerRate * 32, false);
-//        }
+        powerTransfer(BCTransportPipes.diamondPower, basePowerRate * 64, 32, false);
+        powerTransfer(BCTransportPipes.diaWoodPower, basePowerRate * 64, 32, true);
+
+        if (!disableRfPipe) {
+            rfTransfer(BCTransportPipes.cobbleRf, baseRfRate, false);
+            rfTransfer(BCTransportPipes.stoneRf, baseRfRate * 2, false);
+            rfTransfer(BCTransportPipes.woodRf, baseRfRate * 4, true);
+            rfTransfer(BCTransportPipes.sandstoneRf, baseRfRate * 4, false);
+            rfTransfer(BCTransportPipes.quartzRf, baseRfRate * 8, false);
+            rfTransfer(BCTransportPipes.ironRf, baseRfRate * 8, false);
+            rfTransfer(BCTransportPipes.goldRf, baseRfRate * 32, false);
+            rfTransfer(BCTransportPipes.diamondRf, baseRfRate * 64, false);
+            rfTransfer(BCTransportPipes.diaWoodRf, baseRfRate * 64, true);
+        }
 
         saveConfigs();
     }
@@ -150,6 +199,10 @@ public class BCTransportConfig {
         long transfer = MjAPI.MJ * transferMultiplier;
         long resistance = MjAPI.MJ / resistanceDivisor;
         PipeApi.powerTransferData.put(def, PowerTransferInfo.createFromResistance(transfer, resistance, recv));
+    }
+
+    private static void rfTransfer(PipeDefinition def, int maxTransfer, boolean recv) {
+        PipeApi.rfTransferData.put(def, new PipeApi.RedstoneFluxTransferInfo(maxTransfer, recv));
     }
 
     public static void saveConfigs() {

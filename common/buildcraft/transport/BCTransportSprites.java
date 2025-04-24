@@ -48,6 +48,10 @@ public class BCTransportSprites {
 
     public static final SpriteHolder POWER_FLOW;
     public static final SpriteHolder POWER_FLOW_OVERLOAD;
+    public static final SpriteHolder POWER_FLOW_RF;
+
+    public static final SpriteHolder[] POWER_LIMIT;
+    public static final SpriteHolder[] POWER_LIMIT_RF;
 
     static {
         EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
@@ -84,6 +88,27 @@ public class BCTransportSprites {
 
         POWER_FLOW = getHolder("pipes/power_flow");
         POWER_FLOW_OVERLOAD = getHolder("pipes/power_flow_overload");
+        POWER_FLOW_RF = getHolder("pipes/rf_flow");
+
+        POWER_LIMIT = new SpriteHolder[] {//
+                getHolder("triggers/trigger_limiter_m256"),// 0 shift (100%)
+                getHolder("triggers/trigger_limiter_m128"),// 1 shift (50%)
+                getHolder("triggers/trigger_limiter_m64"),// 2 shift (25%)
+                getHolder("triggers/trigger_limiter_m16"),// 3 shift (12.5%)
+                getHolder("triggers/trigger_limiter_m8"),// 4 shift (6.25%)
+                getHolder("triggers/trigger_limiter_m2"),// 5 shift (3.125%)
+                getHolder("triggers/trigger_limiter_m0"),// 6 shift (0%)
+        };
+
+        POWER_LIMIT_RF = new SpriteHolder[] {//
+                getHolder("triggers/trigger_rf_limiter_m256"),// 0 shift (100%)
+                getHolder("triggers/trigger_rf_limiter_m128"),// 1 shift (50%)
+                getHolder("triggers/trigger_rf_limiter_m64"),// 2 shift (25%)
+                getHolder("triggers/trigger_rf_limiter_m16"),// 3 shift (12.5%)
+                getHolder("triggers/trigger_rf_limiter_m8"),// 4 shift (6.25%)
+                getHolder("triggers/trigger_rf_limiter_m2"),// 5 shift (3.125%)
+                getHolder("triggers/trigger_rf_limiter_m0"),// 6 shift (0%)
+        };
 
         TRIGGER_POWER_REQUESTED = getHolder("transport", "triggers/trigger_pipecontents_requestsenergy");
         TRIGGER_ITEMS_TRAVERSING = getHolder("transport", "triggers/trigger_pipecontents_containsitems");

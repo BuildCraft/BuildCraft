@@ -6,6 +6,8 @@
 
 package buildcraft.lib;
 
+import buildcraft.api.mj.IMjToRfStatus;
+import buildcraft.api.mj.MjRfConversion;
 import buildcraft.lib.chunkload.IChunkLoadingTile;
 import buildcraft.lib.chunkload.IChunkLoadingTile.LoadType;
 import buildcraft.lib.client.sprite.AtlasSpriteSwappable;
@@ -102,6 +104,12 @@ public class BCLibConfig {
 
     /** The maximum number of items that the guide book will index. */
     public static int guideItemSearchLimit = 10_000;
+
+    /** MJ to RF conversion. Requires {@link #powerMode} to be either {@link PowerMode#MJ_AUTOCONVERT_RF} or
+     * {@link PowerMode#DISPLAY_RF} to be used. */
+    public static MjRfConversion mjRfConversion = MjRfConversion.createDefault();
+
+    public static PowerMode powerMode = PowerMode.MJ_ONLY;
 
     public static final List<Runnable> configChangeListeners = new ArrayList<>();
 
@@ -201,6 +209,35 @@ public class BCLibConfig {
                 default:
                     throw new IllegalStateException("Unknown ChunkLoaderLevel " + this);
             }
+        }
+    }
+
+    public enum PowerMode {
+        /** MJ &lt;-&gt; RF conversion disabled, all machines require MJ exclusively to operate. */
+        MJ_ONLY(false),
+        /** MJ &lt;-&gt; RF conversion enabled, machines accept both MJ and RF. */
+        MJ_AUTOCONVERT_RF(true),
+        /** MJ &lt;-&gt; RF conversion enabled, machines accept both MJ and RF. Additionally machines will display power
+         * amounts in RF rather than MJ. */
+        DISPLAY_RF(true);
+
+        final boolean autoconvert;
+
+        private PowerMode(boolean autoconvert) {
+            this.autoconvert = autoconvert;
+        }
+    }
+
+    public static final class MjToRfStatus implements IMjToRfStatus {
+
+        @Override
+        public MjRfConversion getConversion() {
+            return BCLibConfig.mjRfConversion;
+        }
+
+        @Override
+        public boolean isAutoconvertEnabled() {
+            return powerMode.autoconvert;
         }
     }
 }

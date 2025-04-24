@@ -183,6 +183,10 @@ public class BCSilicon {
 //                .model("plug_light_sensor")
                 .tab("buildcraft.plugs");
 //                .oldReg("plug_light_sensor");
+        registerTag("item.plug.timer").reg("plug_timer").locale("timer")
+//                .model("plug_timer")
+                .tab("buildcraft.plugs");
+//                .oldReg("plug_timer");
         registerTag("item.plug.facade").reg("plug_facade").locale("Facade")
 //                .model("plug_facade")
                 .tab("buildcraft.facades");

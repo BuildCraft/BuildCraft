@@ -54,14 +54,35 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
                 }
                 int i = side.ordinal();
                 Section s = flow.getSection(side);
-                double offset = MathUtil.interp(partialTicks, s.clientDisplayFlowLast, s.clientDisplayFlow);
+                double offset = computeOffset(s.clientDisplayFlowLast, s.clientDisplayFlow, partialTicks);
                 renderSidePower(side, power[i], centrePower, offset, poseStack.last(), bb);
             }
 
-            renderCentrePower(centrePower, flow.clientDisplayFlowCentre, poseStack.last(), bb);
+            Vec3 offsetLast = flow.clientDisplayFlowCentreLast;
+            Vec3 offsetThis = flow.clientDisplayFlowCentre;
+            double offsetX = computeOffset(offsetLast.x, offsetThis.x, partialTicks);
+            double offsetY = computeOffset(offsetLast.y, offsetThis.y, partialTicks);
+            double offsetZ = computeOffset(offsetLast.z, offsetThis.z, partialTicks);
+
+            renderCentrePower(centrePower, offsetX, offsetY, offsetZ, poseStack.last(), bb);
         }
 
 //        bb.setTranslation(0, 0, 0);
+    }
+
+    private static double computeOffset(double tick0, double tick1, float partialTicks) {
+        if (tick0 + 8 < tick1) {
+            // overflow upwards
+            tick0 += 16;
+        } else if (tick1 + 8 < tick0) {
+            // overflow downwards
+            tick1 += 16;
+        }
+        double offset = MathUtil.interp(partialTicks, tick0, tick1);
+        if (offset >= 16) {
+            offset -= 16;
+        }
+        return offset;
     }
 
     private static void renderSidePower(Direction side, double power, double centrePower, double offset, PoseStack.Pose pose, VertexConsumer bb) {
@@ -106,7 +127,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
         }
     }
 
-    private static void renderCentrePower(double power, Vec3 offset, PoseStack.Pose pose, VertexConsumer bb) {
+    private static void renderCentrePower(double power, double offsetX, double offsetY, double offsetZ, PoseStack.Pose pose, VertexConsumer bb) {
         boolean overload = false;
         float radius = 0.248f * (float) power;
         if (radius > 0.248f) {
@@ -127,7 +148,7 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
                     new Vec3(0.5 - radius, 0.5 - radius, 0.5 - radius).scale(0.5), //
                     new Vec3(0.5 + radius, 0.5 + radius, 0.5 + radius).scale(0.5)//
             );
-            box = box.move(offset.scale(1 / 32.0));
+            box = box.move(offsetX / 32.0, offsetY / 32.0, offsetZ / 32.0);
             ModelUtil.mapBoxToUvs(box, face, uvs);
 
             MutableQuad quad = ModelUtil.createFace(face, centre, radiusP, uvs);

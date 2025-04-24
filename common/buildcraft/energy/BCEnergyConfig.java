@@ -29,6 +29,8 @@ public class BCEnergyConfig {
     public static boolean enableOilSpouts;
     public static boolean enableOilBurn;
     public static boolean oilIsSticky;
+    public static boolean enableRfEngine;
+    public static boolean enableMjDynamo;
 
     public static int smallSpoutMinHeight;
     public static int smallSpoutMaxHeight;
@@ -57,6 +59,8 @@ public class BCEnergyConfig {
     private static ConfigCategory<Boolean> propEnableOilSpouts;
     private static ConfigCategory<Boolean> propEnableOilBurn;
     private static ConfigCategory<Boolean> propOilIsSticky;
+    private static ConfigCategory<Boolean> propEnableRfEngine;
+    private static ConfigCategory<Boolean> propEnableMjDynamo;
 
     private static ConfigCategory<Integer> propSmallSpoutMinHeight;
     private static ConfigCategory<Integer> propSmallSpoutMaxHeight;
@@ -230,6 +234,18 @@ public class BCEnergyConfig {
                         "",
                         world,
                         "christmas_chocolate", SpecialEventType.DAY_ONLY);
+
+        propEnableRfEngine = config
+                .define("general",
+                        "Enable the RF to MJ engine?",
+                        EnumRestartRequirement.NONE,
+                        "enableRfEngine", false);
+
+        propEnableMjDynamo = config
+                .define("general",
+                        "Enable the MJ to RF dynamo / engine / generator?",
+                        EnumRestartRequirement.NONE,
+                        "enableMjDynamo", false);
     }
 
     // public static void reloadConfig(EnumRestartRequirement restarted)
@@ -253,6 +269,8 @@ public class BCEnergyConfig {
         enableOilSpouts = propEnableOilSpouts.get();
         enableOilBurn = propEnableOilBurn.get();
         oilIsSticky = propOilIsSticky.get();
+        enableRfEngine = propEnableRfEngine.get();
+        enableMjDynamo = propEnableMjDynamo.get();
 
         smallSpoutMinHeight = propSmallSpoutMinHeight.get();
         smallSpoutMaxHeight = propSmallSpoutMaxHeight.get();

@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftbuilders",
+  "pattern": [
+    "btb",
+    "ycy",
+    "gCg"
+  ],
+  "key": {
+    "b": {
+      "tag": "forge:dyes/black"
+    },
+    "t": {
+      "item": "buildcraftcore:marker_volume"
+    },
+    "y": {
+      "tag": "forge:dyes/yellow"
+    },
+    "c": {
+      "tag": "forge:workbenches"
+    },
+    "g": {
+      "tag": "forge:gears/gold"
+    },
+    "C": {
+      "tag": "forge:chests/wooden"
+    }
+  },
+  "result": {
+    "item": "buildcraftbuilders:filler"
+  }
+}

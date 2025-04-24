@@ -6,6 +6,7 @@ import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportBlocks;
+import buildcraft.transport.BCTransportConfig;
 import buildcraft.transport.BCTransportItems;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
@@ -119,10 +120,23 @@ public class TransportCraftingRecipeGenerator extends RecipeProvider {
         addPipeUpgradeRecipe(BCTransportItems.pipeItemCobble, BCTransportItems.pipePowerCobble, upgrade);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemStone, BCTransportItems.pipePowerStone, upgrade);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemQuartz, BCTransportItems.pipePowerQuartz, upgrade);
-        // addPipeUpgradeRecipe(BCTransportItems.pipeItemIron, BCTransportItems.pipePowerIron, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemIron, BCTransportItems.pipePowerIron, upgrade);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemGold, BCTransportItems.pipePowerGold, upgrade);
         addPipeUpgradeRecipe(BCTransportItems.pipeItemSandstone, BCTransportItems.pipePowerSandstone, upgrade);
-        // addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipePowerDiamond, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipePowerDiamond, upgrade);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipePowerDiaWood, upgrade);
+
+        if (!BCTransportConfig.disableRfPipe) {
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerWood, BCTransportItems.pipeRfWood, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerCobble, BCTransportItems.pipeRfCobble, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerStone, BCTransportItems.pipeRfStone, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerQuartz, BCTransportItems.pipeRfQuartz, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerIron, BCTransportItems.pipeRfIron, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerGold, BCTransportItems.pipeRfGold, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerSandstone, BCTransportItems.pipeRfSandstone, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerDiamond, BCTransportItems.pipeRfDiamond, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerDiaWood, BCTransportItems.pipeRfDiaWood, upgrade);
+        }
     }
 
     private void addPipeRecipe(Map<DyeColor, RegistryObject<? extends IItemPipe>> pipe, TagKey material) {

@@ -9,6 +9,7 @@ import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
+import buildcraft.transport.pipe.flow.PipeFlowRedstoneFlux;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -26,12 +27,13 @@ public class TriggerPowerRequested extends BCStatement implements ITriggerIntern
             return false;
         }
         PipeFlow f = ((IGate) source).getPipeHolder().getPipe().getFlow();
-        if (!(f instanceof PipeFlowPower)) {
+        if (f instanceof PipeFlowPower) {
+            return ((PipeFlowPower) f).getPowerRequested(null) > 0;
+        } else if (f instanceof PipeFlowRedstoneFlux) {
+            return ((PipeFlowRedstoneFlux) f).getPowerRequested(null) > 0;
+        } else {
             return false;
         }
-        final PipeFlowPower flow = (PipeFlowPower) f;
-
-        return flow.getPowerRequested(null) > 0;
     }
 
     @Override

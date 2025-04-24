@@ -19,6 +19,8 @@ public class EnergyItemModelGenerator extends BCBaseItemModelGenerator {
         // Block Items
         getBuilder(BCEnergyBlocks.engineStone.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
         getBuilder(BCEnergyBlocks.engineIron.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
+        getBuilder(BCEnergyBlocks.engineRf.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
+        getBuilder(BCEnergyBlocks.mjDynamo.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
 
         // Items
         withExistingParent(BCEnergyItems.globOil.get().getRegistryName().toString(), GENERATED)

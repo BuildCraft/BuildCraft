@@ -198,7 +198,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune<TileHeatExchange> imp
 //    }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState p_49928_, BlockGetter p_49929_, BlockPos p_49930_) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
         return true;
     }
 

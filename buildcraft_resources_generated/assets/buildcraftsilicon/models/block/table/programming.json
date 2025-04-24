@@ -7,7 +7,7 @@
     "bottom": "buildcraftsilicon:blocks/table/programming/bottom",
     "side": "buildcraftsilicon:blocks/table/programming/side",
     "center": "buildcraftsilicon:blocks/table/programming/center",
-    "glass": "buildcraftsilicon:blocks/table/programming/transparent"
+    "glass": "minecraft:block/white_stained_glass"
   },
   "elements": [
     {
@@ -343,13 +343,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#glass",
-          "uv": [
-            0.0,
-            0.0,
-            16.0,
-            16.0
-          ]
+          "texture": "#glass"
         }
       }
     }

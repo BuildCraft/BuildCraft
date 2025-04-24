@@ -3,6 +3,7 @@ package buildcraft.datagen.base;
 import buildcraft.api.BCModules;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.BCCoreBlocks;
+import buildcraft.energy.BCEnergyBlocks;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.oredictionarytag.OreDictionaryTags;
 import buildcraft.robotics.BCRoboticsBlocks;
@@ -45,6 +46,7 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
                         BCCoreBlocks.engineBlockMap.values().stream().map(RegistryObject::get).toArray(Block[]::new)
                 )
                 .add(
+                        BCEnergyBlocks.mjDynamo.get(),
                         BCFactoryBlocks.autoWorkbenchItems.get(),
                         BCFactoryBlocks.chute.get(),
                         BCFactoryBlocks.distiller.get(),

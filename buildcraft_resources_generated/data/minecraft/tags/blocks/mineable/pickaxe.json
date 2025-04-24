@@ -5,6 +5,8 @@
     "buildcraftcore:engine_stone",
     "buildcraftcore:engine_iron",
     "buildcraftcore:engine_creative",
+    "buildcraftcore:engine_rf",
+    "buildcraftenergy:mj_dynamo",
     "buildcraftfactory:autoworkbench_item",
     "buildcraftfactory:chute",
     "buildcraftfactory:distiller",
@@ -24,8 +26,10 @@
     "buildcraftsilicon:assembly_table",
     "buildcraftsilicon:advanced_crafting_table",
     "buildcraftsilicon:programming_table",
-    "buildcraftsilicon:laser",
     "buildcraftsilicon:charging_table",
+    "buildcraftsilicon:laser",
+    "buildcraftrobotics:zone_planner",
+    "buildcraftrobotics:requester",
     "buildcrafttransport:filtered_buffer"
   ]
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "buildcraftrobotics:item/robot",
+  "textures": {
+    "all": "buildcraftrobotics:entities/robot_shovelman"
+  }
+}

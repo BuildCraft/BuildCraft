@@ -10,9 +10,12 @@ import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import buildcraft.transport.pipe.flow.PipeFlowRedstoneFlux;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
 public class PipeBehaviourWoodPower extends PipeBehaviour {
 
@@ -41,7 +44,12 @@ public class PipeBehaviourWoodPower extends PipeBehaviour {
         if (tile == null) {
             return 0;
         }
-        IMjReceiver recv = tile.getCapability(MjAPI.CAP_RECEIVER, face.getOpposite()).orElse(null);
-        return recv == null ? 1 : recv.canReceive() ? 0 : 1;
+        if (pipe.getFlow() instanceof PipeFlowRedstoneFlux) {
+            IEnergyStorage recv = tile.getCapability(CapabilityEnergy.ENERGY, face.getOpposite()).orElse(null);
+            return recv == null ? 1 : recv.canReceive() ? 0 : 1;
+        } else {
+            IMjReceiver recv = tile.getCapability(MjAPI.CAP_RECEIVER, face.getOpposite()).orElse(null);
+            return recv == null ? 1 : recv.canReceive() ? 0 : 1;
+        }
     }
 }

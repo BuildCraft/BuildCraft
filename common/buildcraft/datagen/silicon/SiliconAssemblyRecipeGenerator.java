@@ -84,12 +84,21 @@ public class SiliconAssemblyRecipeGenerator extends RecipeProvider {
         makeGateModifierAssembly(140_000, EnumGateMaterial.GOLD, EnumGateModifier.QUARTZ, IngredientStack.of(EnumRedstoneChipset.QUARTZ.getStack()));
         makeGateModifierAssembly(180_000, EnumGateMaterial.GOLD, EnumGateModifier.DIAMOND, IngredientStack.of(EnumRedstoneChipset.DIAMOND.getStack()));
 
+        // plugLightSensor
         AssemblyRecipeBuilder.basic(
                 500 * MjAPI.MJ,
                 ImmutableSet.of(IngredientStack.of(Blocks.DAYLIGHT_DETECTOR)),
                 new ItemStack(BCSiliconItems.plugLightSensor.get())
         ).save(consumer, "light_sensor");
 
+        // plugTimer
+        AssemblyRecipeBuilder.basic(
+                500 * MjAPI.MJ,
+                ImmutableSet.of(IngredientStack.of(Items.CLOCK)),
+                new ItemStack(BCSiliconItems.plugTimer.get())
+        ).save(consumer, "timer");
+
+        // facade
 //        AssemblyRecipeRegistry.register(FacadeAssemblyRecipes.INSTANCE);
         AssemblyRecipeBuilder.facade().save(consumer, "facade");
 

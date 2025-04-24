@@ -135,8 +135,8 @@ public class BCCoreModels {
     }
 
     private static MutableQuad[] getEngineQuads(ModelHolderVariable model,
-                                                TileEngineBase_BC8 tile,
-                                                float partialTicks) {
+            TileEngineBase_BC8 tile,
+            float partialTicks) {
         ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
         ENGINE_STAGE.value = tile.getPowerStage();
         ENGINE_FACING.value = tile.getCurrentFacing();

@@ -192,6 +192,12 @@ public abstract class TileAutoWorkbenchBase extends TileBC_Neptune implements IT
             }
         }
         int uniqueSlotCount = uniqueStacks.size();
+        if (uniqueSlotCount == 0) {
+            for (int s = 0; s < invMaterialFilter.getSlots(); s++) {
+                invMaterialFilter.setStackInSlot(s, ItemStack.EMPTY);
+            }
+            return;
+        }
         int[] slotAllocationCount = new int[uniqueSlotCount];
         Arrays.fill(slotAllocationCount, 1);
         int slotsLeft = slotCount - uniqueSlotCount;

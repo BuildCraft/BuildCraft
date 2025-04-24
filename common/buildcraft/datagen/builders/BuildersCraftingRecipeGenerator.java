@@ -99,6 +99,20 @@ public class BuildersCraftingRecipeGenerator extends RecipeProvider {
                 .unlockedBy("has_item", has(Items.BOOKSHELF))
                 .group(MOD_ID)
                 .save(consumer);
+        // filler
+        ShapedRecipeBuilder.shaped(BCBuildersBlocks.filler.get())
+                .pattern("btb")
+                .pattern("ycy")
+                .pattern("gCg")
+                .define('b', Ingredient.of(Tags.Items.DYES_BLACK))
+                .define('t', Ingredient.of(BCCoreBlocks.markerVolume.get()))
+                .define('y', Ingredient.of(Tags.Items.DYES_YELLOW))
+                .define('c', Ingredient.of(OreDictionaryTags.WORKBENCHES_ITEM))
+                .define('g', Ingredient.of(OreDictionaryTags.GEAR_GOLD))
+                .define('C', Ingredient.of(Tags.Items.CHESTS_WOODEN))
+                .unlockedBy("has_item", has(BCCoreBlocks.markerVolume.get()))
+                .group(MOD_ID)
+                .save(consumer);
         // markerConstruction
         ShapedRecipeBuilder.shaped(BCBuildersBlocks.markerConstruction.get())
                 .pattern("l")
