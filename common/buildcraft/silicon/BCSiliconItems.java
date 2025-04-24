@@ -39,6 +39,7 @@ public class BCSiliconItems {
     public static RegistryObject<ItemPluggableLens> plugLens;
     public static RegistryObject<ItemPluggableSimple> plugPulsar;
     public static RegistryObject<ItemPluggableSimple> plugLightSensor;
+    public static RegistryObject<ItemPluggableSimple> plugTimer;
     public static RegistryObject<? extends IFacadeItem> plugFacade;
 
     public static void preInit() {
@@ -76,6 +77,7 @@ public class BCSiliconItems {
         plugPulsar = HELPER.addItem("item.plug.pulsar", ItemPropertiesCreator.common64(), (id, p) -> new ItemPluggableSimple(id, p, BCSiliconPlugs.pulsar,
                 PluggablePulsar::new, ItemPluggableSimple.PIPE_BEHAVIOUR_ACCEPTS_RS_POWER));
         plugLightSensor = HELPER.addItem("item.plug.light_sensor", ItemPropertiesCreator.common64(), (id, p) -> new ItemPluggableSimple(id, p, BCSiliconPlugs.lightSensor));
+        plugTimer = HELPER.addItem("item.plug.timer", ItemPropertiesCreator.common64(), (id, p) -> new ItemPluggableSimple(id, p, BCSiliconPlugs.timer));
         plugFacade = HELPER.addItem("item.plug.facade", ItemPropertiesCreator.common64(), ItemPluggableFacade::new);
         FacadeAPI.facadeItem = plugFacade;
     }

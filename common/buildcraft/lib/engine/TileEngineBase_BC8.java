@@ -7,10 +7,7 @@
 package buildcraft.lib.engine;
 
 import buildcraft.api.enums.EnumPowerStage;
-import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.mj.*;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITickable;
 import buildcraft.lib.block.VanillaRotationHandlers;
@@ -37,6 +34,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -44,7 +43,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
+public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable, IEngineLikeForLedger {
 
     /** Heat per {@link MjAPI#MJ}. */
     public static final double HEAT_PER_MJ = 0.0023;
@@ -224,6 +223,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         else return EnumPowerStage.OVERHEAT;
     }
 
+    @Override
     public final EnumPowerStage getPowerStage() {
         if (!level.isClientSide) {
             EnumPowerStage newStage = computePowerStage();
@@ -249,6 +249,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return heat / IDEAL_HEAT;
     }
 
+    @Override
     public double getHeat() {
         return heat;
     }
@@ -316,12 +317,17 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         getPowerStage();
         engineUpdate();
 
+        IMjReceiver receiver = getReceiverToPower(currentDirection);
+        boolean pulsedPower = receiver instanceof IMjRedstoneReceiver;
+
         if (progressPart != 0) {
             progress += getPistonSpeed();
 
             if (progress > 0.5 && progressPart == 1) {
                 progressPart = 2;
-                sendPower(); // Comment out for constant power
+                if (pulsedPower) {
+                    sendPower(receiver);
+                }
             } else if (progress >= 1) {
                 progress = 0;
                 progressPart = 0;
@@ -337,10 +343,14 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             setPumping(false);
         }
 
-        // Uncomment for constant power
-        // if (isRedstonePowered && isActive()) {
-        // sendPower();
-        // } else currentOutput = 0;
+        // Comment for constant power
+        if (!pulsedPower) {
+            if (isRedstonePowered && isActive()) {
+                sendPower(receiver);
+            } else {
+                currentOutput = 0;
+            }
+        }
 
         if (!overheat) {
             burn();
@@ -364,10 +374,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         // return extractEnergy(0, getActualOutput(), false); // Uncomment for constant power
     }
 
-    private void sendPower() {
-        IMjReceiver receiver = getReceiverToPower(currentDirection);
+    private void sendPower(IMjReceiver receiver) {
         if (receiver != null) {
-            long extracted = getPowerToExtract(true);
+            long extracted = getPowerToExtract(false);
             if (extracted > 0) {
                 long excess = receiver.receivePower(extracted, false);
                 extractPower(extracted - excess, extracted - excess, true); // Comment out for constant power
@@ -518,6 +527,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite()).orElse(null);
         if (rec != null && rec.canConnect(mjConnector) && mjConnector.canConnect(rec)) {
             return rec;
+        } else if (MjAPI.isRfAutoConversionEnabled()) {
+            IEnergyStorage rf = tile.getCapability(CapabilityEnergy.ENERGY, side.getOpposite()).orElse(null);
+            return MjToRfAutoConvertor.createReceiver(rf);
         } else {
             return null;
         }
@@ -554,12 +566,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             return null;
         }
 
-        IMjReceiver recv = next.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite()).orElse(null);
-        if (recv != null && recv.canConnect(mjConnector) && mjConnector.canConnect(recv)) {
-            return recv;
-        } else {
-            return null;
-        }
+        return getReceiverToPower(next, side);
     }
 
     @Override
@@ -589,8 +596,21 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     public abstract long getCurrentOutput();
 
+    @Override
     public boolean isEngineOn() {
         return isPumping;
+    }
+
+    // IEngineLikeForLedger
+
+    @Override
+    public final long getCurrentMjOutput() {
+        return getCurrentOutput();
+    }
+
+    @Override
+    public final long getMjStored() {
+        return getEnergyStored();
     }
 
     @OnlyIn(Dist.CLIENT)

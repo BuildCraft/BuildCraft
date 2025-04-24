@@ -6,7 +6,9 @@
 
 package buildcraft.energy;
 
+import buildcraft.energy.client.render.RenderDynamoMJ;
 import buildcraft.energy.client.render.RenderEngineIron;
+import buildcraft.energy.client.render.RenderEngineRF;
 import buildcraft.energy.client.render.RenderEngineStone;
 import buildcraft.energy.event.ChristmasHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -95,6 +97,8 @@ public abstract class BCEnergyProxy {
 //            ClientRegistry.bindTileEntitySpecialRenderer(TileEngineIron_BC8.class, RenderEngineIron.INSTANCE);
             ClientRegistry.bindTileEntityRenderer(BCEnergyBlocks.engineStoneTile.get(), RenderEngineStone::new);
             ClientRegistry.bindTileEntityRenderer(BCEnergyBlocks.engineIronTile.get(), RenderEngineIron::new);
+            ClientRegistry.bindTileEntityRenderer(BCEnergyBlocks.engineRfTile.get(), RenderEngineRF::new);
+            ClientRegistry.bindTileEntityRenderer(BCEnergyBlocks.mjDynamoTile.get(), RenderDynamoMJ::new);
         }
 
 //        @Override

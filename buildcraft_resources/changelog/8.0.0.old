@@ -1,0 +1,113 @@
+Breaking Changes:
+
+* Factory
+  * Chute:
+    * Does not extract from inventories
+    * Inserts into entities, blocks (including pipes)
+    * Is omnidirectional (the opening can face any of 6 sides, the pipe/chest exit can face any of the 5 remaining sides)
+    * When powered with a engine, it can pick up entities from the ground near it
+      * If facing up then it can pick up without a seperate power source (but slowly)
+
+* Transport:
+  * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves
+  * Gate expansions have been moved to separate pluggables
+    * The "Autarchic gate" expansion is now the "Pipe Pulsar" pluggable, and requires a redstone engine to craft
+  * Stripes pipe mining speed is now determined by how much power you give it, it is no longer instant
+
+* Silicon:
+  * Removed the emerald chipset and the pulsating chipset
+    * All recipes using those chipsets now use a different item
+  * Pipe wire is now placed on the 8 corners of a pipe, rather than anywhere on the pipe.
+    * Allows for up to 8 different colours of wire on a single pipe.
+    * Wires must be placed next to each other to transfer a signal.
+
+* Robotics:
+  * Zone Planner:
+    * 3D map
+    * Brushes slots are now not fake slots but slots for storing brushes in it (empty in new machine)
+    * By default all layers are displayed
+    * When taking colored brush from slot with mouse layer of its color will be displayed
+    * Left-click while having colored brush on your cursor to add rectangle to layer
+    * Right-click while having colored brush on your cursor to subtract rectangle to layer
+    * Now stores layers data relatively to its position (useful for copying it with architect table and builder)
+
+Additions:
+
+* Lib:
+  * Moved "buildcraft.core.lib" into its own module, which is contained within the "core" jar file, or can be downloaded seperatly
+    * This allows developers to use all of the BC library code, without forcing players to also have BuildCraft itself
+  * Added the guide book, a form of ingame documentation
+
+* Core:
+  * Added volume boxes
+    * Right-click block with volume box to place in near this block
+    * Right-click volume box with wrench to activate editing mode
+      * Move and look to change size
+      * Right-click to confirm
+      * Shift+Right-click to cancel
+    * Addons:
+      * Right-click corner of volume box with addon to install it
+      * Right-click addon with wrench to open its GUI
+      * Shift+Right-click addon with wrench to remove it
+    * Shift+Right-click volume box with wrench to remove it
+    * Most blocks support it as new alternative to old land mark system
+
+* Builders:
+  * Filling planner (volume box addon):
+    * Visibly shows a filler pattern in the world, without having to set up a filler.
+    * Placing a filler down to use that volume box will make the filler use its pattern.
+
+Improvements:
+
+* General:
+  * All coloured items (pipes, paintbrushes, pipe wire) are displayed with an appropriate text colour infront
+    * This behaviour can be toggled in the config (GUI or file)
+  * Tanks in GUI's now display their contents
+  * Tanks in GUI's can be added to or removed from by clicking on them with a bucket or other fluid container in hand
+    * This removes most of the slots found in various fluid holding blocks, such as the combustion engine
+  * Displayed fluid values can be displayed in buckets or millibuckets, and in long or short form
+    * This behaviour can be toggled in the config, or in game
+  * You can now clone items from phantom slots if you are in creative mode
+  * Gui ledgers now render their contents even if they are not fully open
+  * Most GUI's now have a "help" ledger, which describes whatever GUI element you are hovering over
+  * Tiles save the first valid player as their owner, which is used as the fake player UUID
+    * This owner is displayed in a ledger in the GUI, alongside the face of the owner
+
+* Factory:
+  * Pump, Mining Well:
+    * Both have tube made with fake unbreakable blocks
+
+* Builders:
+  * Quarry:
+    * The drill bit has an animation while it is mining
+    * The frame has a collision box (so you can walk on top of it)
+    * The frame will break automatically when you break quarry
+  * Architect Table
+    * Now has scanning animation
+  * Builder:
+    * Now uses builtin Minecraft methods for rotating blocks (for default schematics)
+    * JSON schematics system
+  * Builder, Filler:
+    * Now have counters ledger which shows how many blocks left to place and to break
+  * Snapshots (templates + blueprints) items:
+    * When hovered display preview (in GUIs)
+
+* Transport:
+  * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
+  * The stripes pipe now shows which direction it is pointing.
+  * Gates:
+    * Added a small selection area for changing between different triggers, actions and parameters. Complex params still require the existing mechanism (for example with itemstack params)
+    * Dragging a trigger or action with the secondary mouse button will copy that statement, and can be placed in a similar way to dragging from the side selections
+  * Facades:
+    * Now have shape of square frustum
+    * Added support for grass, leaves and sponge facades
+    * Now glass, fences and other blocks connect to them
+    * Pipes now inherit facades' blocks resistance (depending on side where explosion took place)
+  * Schematic Single:
+    * Item that stores data of 1 block (like 1x1x1 blueprint)
+    * Right-click empty one to record data
+    * Right-click used to place recorded block (if they are need items in your inventory then they will be taken, else nothing will happen)
+    * Shift+Right-click used to clear it
+
+* Silicon:
+  * Added the remaining 12 colours of pipe wire.

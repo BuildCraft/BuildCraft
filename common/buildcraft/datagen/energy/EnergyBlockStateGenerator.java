@@ -20,6 +20,8 @@ public class EnergyBlockStateGenerator extends BCBaseBlockStateGenerator {
         // engine
         builtinEntity(BCEnergyBlocks.engineStone.get(), "buildcraftenergy:blocks/engine/stone/back");
         builtinEntity(BCEnergyBlocks.engineIron.get(), "buildcraftenergy:blocks/engine/iron/back");
+        builtinEntity(BCEnergyBlocks.engineRf.get(), "buildcraftenergy:blocks/engine/rf/back");
+        builtinEntity(BCEnergyBlocks.mjDynamo.get(), "buildcraftenergy:blocks/mj_dynamo/back");
 
         // oil block
         for (RegistryObject<BCFluid.Source> fluid : BCEnergyFluids.allStill) {

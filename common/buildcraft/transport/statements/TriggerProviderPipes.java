@@ -13,6 +13,7 @@ import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
+import buildcraft.transport.pipe.flow.PipeFlowRedstoneFlux;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -38,6 +39,10 @@ public enum TriggerProviderPipes implements ITriggerProvider {
             }
 
             if (holder.getPipe().getFlow() instanceof PipeFlowPower) {
+                triggers.add(BCTransportStatements.TRIGGER_POWER_REQUESTED);
+            }
+
+            if (holder.getPipe().getFlow() instanceof PipeFlowRedstoneFlux) {
                 triggers.add(BCTransportStatements.TRIGGER_POWER_REQUESTED);
             }
         }

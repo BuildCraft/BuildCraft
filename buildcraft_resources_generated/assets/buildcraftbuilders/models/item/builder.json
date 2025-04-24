@@ -1,3 +1,195 @@
 {
-  "parent": "buildcraftbuilders:block/builder/main"
+  "gui_light": "side",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.625,
+        0.625,
+        0.625
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "fixed": {
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  },
+  "textures": {
+    "particle": "buildcraftbuilders:blocks/builder/side",
+    "down": "buildcraftbuilders:blocks/builder/bottom",
+    "up": "buildcraftbuilders:blocks/builder/top",
+    "north": "buildcraftbuilders:blocks/builder/front",
+    "east": "buildcraftbuilders:blocks/builder/side",
+    "south": "buildcraftbuilders:blocks/builder/back",
+    "west": "buildcraftbuilders:blocks/builder/side",
+    "slot": "buildcraftbuilders:blocks/builder/slot_blueprint"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#down",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#up",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#north",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#south",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#west",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#east",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        4,
+        -2
+      ],
+      "to": [
+        13,
+        6,
+        8
+      ],
+      "faces": {
+        "down": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            13.0
+          ]
+        },
+        "up": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            3.0,
+            13.0,
+            13.0
+          ]
+        },
+        "north": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#slot",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            2.0
+          ]
+        }
+      }
+    }
+  ]
 }

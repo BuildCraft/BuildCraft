@@ -17,12 +17,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.ModelLoader;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
 
 @OnlyIn(Dist.CLIENT)
 public enum DebugRenderHelper implements IDetachedRenderer {
@@ -45,8 +43,8 @@ public enum DebugRenderHelper implements IDetachedRenderer {
     private static final LazyValue<MutableQuad[]> smallCuboid = new LazyValue(() ->
     {
         MutableQuad[] smallCuboidInner = new MutableQuad[6];
-        Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
-        Tuple3f radius = new Point3f(0.25f, 0.25f, 0.25f);
+        Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
+        Vector3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
 
         for (Direction face : Direction.values()) {
             MutableQuad quad = ModelUtil.createFace(face, center, radius, null);
@@ -81,7 +79,7 @@ public enum DebugRenderHelper implements IDetachedRenderer {
         for (Direction face : Direction.values()) {
             MutableQuad quad = ModelUtil.createFace(
                     face,
-                    new Point3f(
+                    new Vector3f(
                             (float) aabb.getCenter().x,
                             (float) aabb.getCenter().y,
                             (float) aabb.getCenter().z
@@ -92,7 +90,7 @@ public enum DebugRenderHelper implements IDetachedRenderer {
 ////                            (float) aabb.getCenter().z
 //                            0, 0, 0
 //                    ),
-                    new Point3f(
+                    new Vector3f(
                             (float) (aabb.maxX - aabb.minX) / 2,
                             (float) (aabb.maxY - aabb.minY) / 2,
                             (float) (aabb.maxZ - aabb.minZ) / 2

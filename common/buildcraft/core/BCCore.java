@@ -202,11 +202,11 @@ public class BCCore {
 //        registerTag("block.engine.bc.wood").locale("engine_wood");
         // Calen: moved to energy
 //        registerTag("block.engine.bc.stone").locale("engineStone");
-////        registerTag("block.engine.bc.stone").locale("engine_stone");
 //        registerTag("block.engine.bc.iron").locale("engineIron");
-////        registerTag("block.engine.bc.iron").locale("engine_iron");
-//        registerTag("block.engine.bc.creative").locale("engine_creative");
+//        registerTag("block.engine.bc.creative").locale("engineCreative");
         registerTag("block.engine.bc.creative").reg("engine_creative").locale("engineCreative");
+        // registerTag("block.engine.bc.rf").locale("engineRf");
+        registerTag("block.engine.bc.rf").reg("engine_rf").locale("engineRf");
 //        registerTag("block.marker.volume").reg("marker_volume").locale("marker_volume").oldReg("markerBlock").model("marker_volume");
         registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock");
 //        registerTag("block.marker.path").reg("marker_path").locale("marker_path").oldReg("pathMarkerBlock").model("marker_path");

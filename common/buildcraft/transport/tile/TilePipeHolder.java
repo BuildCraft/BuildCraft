@@ -77,6 +77,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public static final int NET_UPDATE_PLUG_WEST = getReceiverId(PipeMessageReceiver.PLUGGABLE_WEST);
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
     public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
+    public static final int NET_CREATE_LANDING_PARTICLE;
 
     private static final ResourceLocation ADVANCEMENT_PLACE_PIPE = new ResourceLocation(
             "buildcrafttransport:pipe_dream"
@@ -94,6 +95,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
         for (PipeMessageReceiver rec : PipeMessageReceiver.VALUES) {
             IDS.allocId("UPDATE_" + rec);
         }
+        NET_CREATE_LANDING_PARTICLE = IDS.allocId("CREATE_LANDING_PARTICLE");
     }
 
     public static final int[] NET_UPDATE_PLUGS = { //
@@ -278,6 +280,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
         for (Direction face : Direction.values()) {
             pluggables.get(face).onTick();
         }
+        if (pipe != null) {
+            pipe.postPluggableTick();
+        }
 
         // Send network updates
         if (networkUpdates.size() > 0) {
@@ -408,6 +413,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
                 }
             } else if (id == NET_UPDATE_WIRES) {
                 wireManager.readPayload(buffer, side, ctx);
+            } else if (id == NET_CREATE_LANDING_PARTICLE) {
+                double posX = buffer.readDouble();
+                double posY = buffer.readDouble();
+                double posZ = buffer.readDouble();
+                int number = buffer.readInt();
+                BlockPipeHolder.spawnLandingParticles(this, posX, posY, posZ, number);
             }
         }
         if (id == NET_UPDATE_PIPE_FLOW) {

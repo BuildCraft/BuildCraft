@@ -31,13 +31,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -46,16 +44,20 @@ import java.util.Random;
 public enum ModelPipeItem implements IBakedModel {
     INSTANCE;
 
+    private static final int INDEX_TOP = 0;
+    private static final int INDEX_CENTER = 1;
+    private static final int INDEX_BOTTOM = 2;
+
     private static final MutableQuad[] QUADS_SAME;
-    // private static final MutableQuad[][] QUADS_DIFFERENT;
+    private static final MutableQuad[][] QUADS_DIFFERENT;
     private static final MutableQuad[] QUADS_COLOUR;
 
     static {
         // Same sprite for all 3 sections
         {
             QUADS_SAME = new MutableQuad[6];
-            Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
-            Tuple3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
+            Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
+            Vector3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
             UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
             UvFaceData uvsXZ = UvFaceData.from16(4, 0, 12, 16);
             for (Direction face : Direction.values()) {
@@ -66,14 +68,68 @@ public enum ModelPipeItem implements IBakedModel {
 
         // Different sprite for any of the 3 sections
         {
-            // QUADS_DIFFERENT = new MutableQuad[3];
+            QUADS_DIFFERENT = new MutableQuad[3][];
+
+            {
+                MutableQuad[] cube = new MutableQuad[6];
+
+                Vector3f center = new Vector3f(0.5f, 0.875f, 0.5f);
+                Vector3f radius = new Vector3f(0.25f, 0.125f, 0.25f);
+                UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
+                UvFaceData uvsXZ = UvFaceData.from16(4, 0, 12, 4);
+                for (Direction face : Direction.values()) {
+                    if (face == Direction.DOWN) {
+                        continue;
+                    }
+                    UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                    cube[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
+                }
+
+                QUADS_DIFFERENT[INDEX_TOP] = cube;
+            }
+
+            {
+                MutableQuad[] cube = new MutableQuad[6];
+
+                Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
+                Vector3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
+                UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
+                UvFaceData uvsXZ = UvFaceData.from16(4, 4, 12, 12);
+                for (Direction face : Direction.values()) {
+                    if (face.getAxis() == Axis.Y) {
+                        continue;
+                    }
+                    UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                    cube[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
+                }
+
+                QUADS_DIFFERENT[INDEX_CENTER] = cube;
+            }
+
+            {
+                MutableQuad[] cube = new MutableQuad[6];
+
+                Vector3f center = new Vector3f(0.5f, 0.125f, 0.5f);
+                Vector3f radius = new Vector3f(0.25f, 0.125f, 0.25f);
+                UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
+                UvFaceData uvsXZ = UvFaceData.from16(4, 12, 12, 16);
+                for (Direction face : Direction.values()) {
+                    if (face == Direction.UP) {
+                        continue;
+                    }
+                    UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                    cube[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
+                }
+
+                QUADS_DIFFERENT[INDEX_BOTTOM] = cube;
+            }
         }
 
         // Translucent Coloured pipes
         {
             QUADS_COLOUR = new MutableQuad[6];
-            Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
-            Tuple3f radius = new Vector3f(0.24f, 0.49f, 0.24f);
+            Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
+            Vector3f radius = new Vector3f(0.24f, 0.49f, 0.24f);
             UvFaceData uvsY = UvFaceData.from16(4, 4, 12, 12);
             UvFaceData uvsXZ = UvFaceData.from16(4, 0, 12, 16);
             for (Direction face : Direction.values()) {
@@ -91,17 +147,15 @@ public enum ModelPipeItem implements IBakedModel {
 
     // private static List<BakedQuad> getQuads(PipeFaceTex center, PipeFaceTex top, PipeFaceTex bottom, TextureAtlasSprite[] sprites, int colour, EnumPipeColourType colourType)
     private static List<BakedQuad> getQuads(PipeFaceTex center, PipeFaceTex top, PipeFaceTex bottom, TextureAtlasSprite[] sprites, DyeColor rColour, EnumPipeColourType colourType) {
-        // TEMP!
-        top = center;
-        bottom = center;
-
         List<BakedQuad> quads = new ArrayList<>();
 
-        // if (center == top && center == bottom) {
-        addQuads(QUADS_SAME, sprites, quads, center);
-        // } else {
-        // TODO: Differing sprite quads
-        // }
+        if (center == top && center == bottom) {
+            addQuads(QUADS_SAME, sprites, quads, center);
+        } else {
+            addQuads(QUADS_DIFFERENT[INDEX_BOTTOM], sprites, quads, bottom);
+            addQuads(QUADS_DIFFERENT[INDEX_CENTER], sprites, quads, center);
+            addQuads(QUADS_DIFFERENT[INDEX_TOP], sprites, quads, top);
+        }
 
 //        if (colour > 0 && colour <= 16)
         if (rColour != null) {

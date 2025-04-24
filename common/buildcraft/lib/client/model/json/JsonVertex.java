@@ -7,15 +7,13 @@
 package buildcraft.lib.client.model.json;
 
 import buildcraft.lib.client.model.MutableVertex;
-
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class JsonVertex {
-    public Point3f pos;
+    public Vector3f pos;
     public Vector3f normal;
-    public Point2f uv;
+    public Vector2f uv;
 
     public JsonVertex(MutableVertex vertex) {
         pos = vertex.positionvf();

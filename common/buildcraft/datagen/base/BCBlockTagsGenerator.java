@@ -39,6 +39,7 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
 //                        BCCoreBlocks.engineBlockMap.values().stream().map(RegistryObject::get).toArray(Block[]::new)
 //                )
 //                .add(
+//                        BCEnergyBlocks.mjDynamo.get(),
 //                        BCFactoryBlocks.autoWorkbenchItems.get(),
 //                        BCFactoryBlocks.chute.get(),
 //                        BCFactoryBlocks.distiller.get(),

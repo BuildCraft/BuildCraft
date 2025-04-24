@@ -11,10 +11,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 
 /** Provides various utilities for creating {@link MutableQuad} out of various position information, such as a single
  * face of a cuboid. */
@@ -82,7 +79,7 @@ public class ModelUtil {
         public UvFaceData faceData = new UvFaceData();
     }
 
-    public static MutableQuad createFace(Direction face, Tuple3f a, Tuple3f b, Tuple3f c, Tuple3f d, UvFaceData uvs) {
+    public static MutableQuad createFace(Direction face, Vector3f a, Vector3f b, Vector3f c, Vector3f d, UvFaceData uvs) {
         MutableQuad quad = new MutableQuad(-1, face);
         if (uvs == null) {
             uvs = UvFaceData.DEFAULT;
@@ -101,22 +98,22 @@ public class ModelUtil {
         return quad;
     }
 
-    public static <T extends Tuple3f> MutableQuad createFace(Direction face, T[] points, UvFaceData uvs) {
+    public static <T extends Vector3f> MutableQuad createFace(Direction face, T[] points, UvFaceData uvs) {
         return createFace(face, points[0], points[1], points[2], points[3], uvs);
     }
 
-    public static MutableQuad createFace(Direction face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
-        Point3f[] points = getPointsForFace(face, center, radius);
+    public static MutableQuad createFace(Direction face, Vector3f center, Vector3f radius, UvFaceData uvs) {
+        Vector3f[] points = getPointsForFace(face, center, radius);
         return createFace(face, points, uvs).normalf(
                 face.getStepX(), face.getStepY(), face.getStepZ()
         );
     }
 
-    public static MutableQuad createInverseFace(Direction face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
+    public static MutableQuad createInverseFace(Direction face, Vector3f center, Vector3f radius, UvFaceData uvs) {
         return createFace(face, center, radius, uvs).copyAndInvertNormal();
     }
 
-    public static MutableQuad[] createDoubleFace(Direction face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
+    public static MutableQuad[] createDoubleFace(Direction face, Vector3f center, Vector3f radius, UvFaceData uvs) {
         MutableQuad norm = createFace(face, center, radius, uvs);
         return new MutableQuad[] { norm, norm.copyAndInvertNormal() };
     }
@@ -172,13 +169,13 @@ public class ModelUtil {
         }
     }
 
-    public static Point3f[] getPointsForFace(Direction face, Tuple3f center, Tuple3f radius) {
-        Point3f centerOfFace = new Point3f(center);
-        Point3f faceAdd = new Point3f(
-                face.getStepX() * radius.x, face.getStepY() * radius.y, face.getStepZ() * radius.z
+    public static Vector3f[] getPointsForFace(Direction face, Vector3f center, Vector3f radius) {
+        Vector3f centerOfFace = center.copy();
+        Vector3f faceAdd = new Vector3f(
+                face.getStepX() * radius.x(), face.getStepY() * radius.y(), face.getStepZ() * radius.z()
         );
         centerOfFace.add(faceAdd);
-        Vector3f faceRadius = new Vector3f(radius);
+        Vector3f faceRadius = radius.copy();
         if (face.getAxisDirection() == AxisDirection.POSITIVE) {
             faceRadius.sub(faceAdd);
         } else {
@@ -187,10 +184,8 @@ public class ModelUtil {
         return getPoints(centerOfFace, faceRadius);
     }
 
-    public static Point3f[] getPoints(Point3f centerFace, Tuple3f faceRadius) {
-        Point3f[] array = { new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace), new Point3f(
-                centerFace
-        ) };
+    public static Vector3f[] getPoints(Vector3f centerFace, Vector3f faceRadius) {
+        Vector3f[] array = { centerFace.copy(), centerFace.copy(), centerFace.copy(), centerFace.copy() };
         array[0].add(addOrNegate(faceRadius, false, false));
         array[1].add(addOrNegate(faceRadius, false, true));
         array[2].add(addOrNegate(faceRadius, true, true));
@@ -198,11 +193,11 @@ public class ModelUtil {
         return array;
     }
 
-    public static Vector3f addOrNegate(Tuple3f coord, boolean u, boolean v) {
-        boolean zisv = coord.x != 0 && coord.y == 0;
-        float x = coord.x * (u ? 1 : -1);
-        float y = coord.y * (v ? -1 : 1);
-        float z = coord.z * (zisv ? (v ? -1 : 1) : (u ? 1 : -1));
+    public static Vector3f addOrNegate(Vector3f coord, boolean u, boolean v) {
+        boolean zisv = coord.x() != 0 && coord.y() == 0;
+        float x = coord.x() * (u ? 1 : -1);
+        float y = coord.y() * (v ? -1 : 1);
+        float z = coord.z() * (zisv ? (v ? -1 : 1) : (u ? 1 : -1));
         Vector3f neg = new Vector3f(x, y, z);
         return neg;
     }

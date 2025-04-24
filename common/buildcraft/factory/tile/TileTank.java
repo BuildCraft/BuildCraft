@@ -9,20 +9,22 @@ package buildcraft.factory.tile;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
+import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.ITickable;
 import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.BCFactoryMenuTypes;
+import buildcraft.factory.container.ContainerTank;
 import buildcraft.lib.fluid.FluidSmoother;
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.misc.AdvancementUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.FluidUtilBC;
-import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.*;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -40,10 +42,11 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandlerAdv, ITickable {
+public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandlerAdv, ITickable, IBCTileMenuProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("tank");
     public static final int NET_FLUID_DELTA = IDS.allocId("FLUID_DELTA");
 
@@ -159,7 +162,13 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         if (didChange == ActionResultType.SUCCESS && !player.level.isClientSide && amountBefore < tank.getFluidAmount()) {
             AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_STORE_FLUIDS);
         }
-        return didChange;
+        if (didChange != ActionResultType.SUCCESS) {
+            if (!level.isClientSide) {
+                // BCFactoryGuis.TANK.openGUI(player, pos);
+                MessageUtil.serverOpenTileGui(player, this);
+            }
+        }
+        return ActionResultType.SUCCESS;
     }
 
     // Networking
@@ -172,6 +181,8 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
                 writePayload(NET_FLUID_DELTA, buffer, side);
             } else if (id == NET_FLUID_DELTA) {
                 smoothedTank.writeInit(buffer);
+            } else if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
+                tankManager.writeData(buffer);
             }
         }
     }
@@ -185,6 +196,8 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
                 smoothedTank.resetSmoothing(getLevel());
             } else if (id == NET_FLUID_DELTA) {
                 smoothedTank.handleMessage(getLevel(), buffer);
+            } else if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
+                tankManager.readData(buffer);
             }
         }
     }
@@ -442,5 +455,18 @@ public class TileTank extends TileBC_Neptune implements IDebuggable, IFluidHandl
         }
 //        return total == null ? StackUtil.EMPTY_FLUID : total;
         return total.isEmpty() ? StackUtil.EMPTY_FLUID : total;
+    }
+
+    // MenuProvider
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return this.getBlockState().getBlock().getName();
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory inventory, PlayerEntity player) {
+        return new ContainerTank(BCFactoryMenuTypes.TANK, id, player, this);
     }
 }

@@ -18,6 +18,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.math.BlockPos;
@@ -48,13 +49,13 @@ public class RenderBuilder extends TileEntityRenderer<TileBuilder> {
         Minecraft.getInstance().getProfiler().push("box");
         Box box = tile.getBox();
 //        IVertexBuilder buffer = bufferSource.getBuffer(Atlases.translucentCullBlockSheet());
-        IVertexBuilder buffer = bufferSource.getBuffer(Atlases.solidBlockSheet());
+        IVertexBuilder buffer = bufferSource.getBuffer(RenderType.solid());
         LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, poseStack.last(), buffer, true);
 
         Minecraft.getInstance().getProfiler().popPush("path");
 
 //        buffer = bufferSource.getBuffer(Atlases.translucentCullBlockSheet());
-        buffer = bufferSource.getBuffer(Atlases.solidBlockSheet());
+        buffer = bufferSource.getBuffer(RenderType.solid());
         List<BlockPos> path = tile.path;
         if (path != null) {
             BlockPos last = null;

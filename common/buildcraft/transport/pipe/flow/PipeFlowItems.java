@@ -56,6 +56,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     public static final int NET_CREATE_ITEM = 2;
 
     private final DelayedList<TravellingItem> items = new DelayedList<>();
+    private final List<ItemStack> postDropCache = new ArrayList<>();
 
     public PipeFlowItems(IPipe pipe) {
         super(pipe);
@@ -295,6 +296,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 continue;
             }
             if (item.isPhantom) {
+                postDropCache.add(item.stack);
                 continue;
             }
             if (world.isClientSide) {
@@ -307,6 +309,11 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 onItemReachEnd(item);
             }
         }
+    }
+
+    @Override
+    public void postPluggableTick() {
+        postDropCache.clear();
     }
 
     private void onItemReachCenter(TravellingItem item) {
@@ -453,6 +460,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             }
         }
         if (excess.isEmpty()) {
+            postDropCache.add(item.stack);
             return;
         }
         item.tried.add(item.side);
@@ -646,7 +654,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         // (including phantom items, which is fine)
         // This only works because this list is only expanded to add elements
         // and elements are only removed in advance()
-        return items.getMaxDelay() > 0;
+        return items.getMaxDelay() > 0 || !postDropCache.isEmpty();
     }
 
     public boolean containsItemMatching(ItemStack filter) {
@@ -658,6 +666,11 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 if (StackUtil.matchesStackOrList(filter, item.stack)) {
                     return true;
                 }
+            }
+        }
+        for (ItemStack stack : postDropCache) {
+            if (StackUtil.matchesStackOrList(filter, stack)) {
+                return true;
             }
         }
         return false;

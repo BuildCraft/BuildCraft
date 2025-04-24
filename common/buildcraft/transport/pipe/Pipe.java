@@ -257,6 +257,10 @@ public final class Pipe implements IPipe, IDebuggable {
         }
     }
 
+    public void postPluggableTick() {
+        flow.postPluggableTick();
+    }
+
     private void updateConnections() {
         if (holder.getPipeWorld().isClientSide) {
             return;
@@ -305,8 +309,7 @@ public final class Pipe implements IPipe, IDebuggable {
                     + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
 
             if (behaviour.shouldForceConnection(facing, oTile) || flow.shouldForceConnection(facing, oTile)
-                    || (behaviour.canConnect(facing, oTile) && flow.canConnect(facing, oTile)))
-            {
+                    || (behaviour.canConnect(facing, oTile) && flow.canConnect(facing, oTile))) {
                 connected.put(facing, ext);
                 types.put(facing, ConnectedType.TILE);
             }

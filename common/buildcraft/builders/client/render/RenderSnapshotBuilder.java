@@ -23,11 +23,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Point3f;
 import java.util.Collections;
 
 @OnlyIn(Dist.CLIENT)
@@ -99,8 +99,8 @@ public class RenderSnapshotBuilder {
             for (Direction face : Direction.values()) {
                 ModelUtil.createFace(
                                 face,
-                                new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
-                                new Point3f(4 / 16F, 4 / 16F, 4 / 16F),
+                                new Vector3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
+                                new Vector3f(4 / 16F, 4 / 16F, 4 / 16F),
                                 new ModelUtil.UvFaceData(
                                         BCBuildersSprites.ROBOT.getInterpU((i * 8) / 64D),
                                         BCBuildersSprites.ROBOT.getInterpV(0 / 64D),
@@ -109,7 +109,7 @@ public class RenderSnapshotBuilder {
                                 )
                         )
 //                        .lighti(world.getCombinedLight(new BlockPos(robotPos), 0))
-                        .lighti(RenderUtil.getCombinedLight(world,new BlockPos(robotPos)))
+                        .lighti(RenderUtil.getCombinedLight(world, new BlockPos(robotPos)))
                         .render(poseStack.last(), bb);
                 i++;
             }

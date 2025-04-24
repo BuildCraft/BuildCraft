@@ -30,6 +30,8 @@ public class SiliconItemModelGenerator extends BCBaseItemModelGenerator {
         getBuilder(BCSiliconItems.plugPulsar.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
         // plugLightSensor
         getBuilder(BCSiliconItems.plugLightSensor.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
+        // plugTimer
+        getBuilder(BCSiliconItems.plugTimer.get().getRegistryName().toString()).parent(BUILTIN_ENTITY);
         // plugFacade
         getBuilder(((Item) BCSiliconItems.plugFacade.get()).getRegistryName().toString()).parent(BUILTIN_ENTITY);
 

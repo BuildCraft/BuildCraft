@@ -22,13 +22,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
@@ -38,8 +36,8 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
     private static final MutableQuad[] COLOURED_QUADS = new MutableQuad[6];
 
     public static void onModelBake() {
-        Tuple3f center = new Point3f();
-        Tuple3f radius = new Vector3f(0.2f, 0.2f, 0.2f);
+        Vector3f center = new Vector3f();
+        Vector3f radius = new Vector3f(0.2f, 0.2f, 0.2f);
 
         ISprite sprite = BCTransportSprites.COLOUR_ITEM_BOX;
         UvFaceData uvs = new UvFaceData();

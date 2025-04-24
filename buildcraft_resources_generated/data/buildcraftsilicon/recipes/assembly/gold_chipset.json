@@ -1,7 +1,7 @@
 {
   "type": "buildcraftsilicon:assembly",
   "subType": "BASIC",
-  "requiredMicroJoules": 20000000000,
+  "requiredMicroJoules": 40000000000,
   "requiredStacks": [
     {
       "ingredient": {

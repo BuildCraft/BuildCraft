@@ -10,6 +10,7 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.BCLibConfig.PowerMode;
 import buildcraft.lib.BCLibConfig.TimeGap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.DyeColor;
@@ -30,10 +31,12 @@ public class LocaleUtil {
     private static final Set<String> failedStrings = new HashSet<>();
 
     private static final NumberFormat FORMAT_FLUID = NumberFormat.getNumberInstance();
+    private static final NumberFormat FORMAT_RF = NumberFormat.getIntegerInstance();
 
     private static String localeKeyFluidStatic, localeKeyFluidFlow;
     private static String localeKeyFluidStaticCap, localeKeyFluidStaticEmpty, localeKeyFluidStaticFull;
     private static String localeKeyMjStatic, localeKeyMjFlow;
+    private static String localeKeyRfStatic, localeKeyRfFlow;
 
     static {
         BCLibConfig.configChangeListeners.add(LocaleUtil::onConfigChanged);
@@ -54,6 +57,8 @@ public class LocaleUtil {
         localeKeyFluidStaticFull = "buildcraft.fluid.full." + (bucketStatic ? "bucket." : "milli.") + longName;
         localeKeyMjStatic = "buildcraft.mj.static." + longName;
         localeKeyMjFlow = "buildcraft.mj.flow." + timeGap + longName;
+        localeKeyRfStatic = "buildcraft.rf.static." + longName;
+        localeKeyRfFlow = "buildcraft.rf.flow." + timeGap + longName;
     }
 
     /** Localizes the give key to the current locale.
@@ -237,23 +242,57 @@ public class LocaleUtil {
     }
 
     public static String localizeMj(long mj) {
+        if (BCLibConfig.powerMode == PowerMode.DISPLAY_RF) {
+            return localizeRf((int) (mj / MjAPI.getRfConversion().mjPerRf));
+        }
         return localize(localeKeyMjStatic, MjAPI.formatMj(mj));
     }
 
     // Calen
     public static IFormattableTextComponent localizeMjComponent(long mj) {
+        if (BCLibConfig.powerMode == PowerMode.DISPLAY_RF) {
+            return localizeRfComponent((int) (mj / MjAPI.getRfConversion().mjPerRf));
+        }
         return new TranslationTextComponent(localeKeyMjStatic, MjAPI.formatMj(mj));
     }
 
     public static String localizeMjFlow(long mj) {
+        if (BCLibConfig.powerMode == PowerMode.DISPLAY_RF) {
+            return localizeRfFlow((int) (mj / MjAPI.getRfConversion().mjPerRf));
+        }
         mj = BCLibConfig.displayTimeGap.convertTicksToGap(mj);
         return localize(localeKeyMjFlow, MjAPI.formatMj(mj));
     }
 
     // Calen
     public static TranslationTextComponent localizeMjFlowComponent(long mj) {
+        if (BCLibConfig.powerMode == PowerMode.DISPLAY_RF) {
+            return localizeRfFlowComponent((int) (mj / MjAPI.getRfConversion().mjPerRf));
+        }
         mj = BCLibConfig.displayTimeGap.convertTicksToGap(mj);
         return new TranslationTextComponent(localeKeyMjFlow, MjAPI.formatMj(mj));
+    }
+
+    public static String localizeRf(int rf) {
+        return localize(localeKeyRfStatic, formatRf(rf));
+    }
+
+    public static TranslationTextComponent localizeRfComponent(int rf) {
+        return new TranslationTextComponent(localeKeyRfStatic, formatRf(rf));
+    }
+
+    public static String localizeRfFlow(int rf) {
+        rf = BCLibConfig.displayTimeGap.convertTicksToGap(rf);
+        return localize(localeKeyRfFlow, formatRf(rf));
+    }
+
+    public static TranslationTextComponent localizeRfFlowComponent(int rf) {
+        rf = BCLibConfig.displayTimeGap.convertTicksToGap(rf);
+        return new TranslationTextComponent(localeKeyRfFlow, formatRf(rf));
+    }
+
+    public static String formatRf(int rf) {
+        return FORMAT_RF.format(rf);
     }
 
     public static String localizeHeat(double heat) {

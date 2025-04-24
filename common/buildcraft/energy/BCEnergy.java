@@ -127,11 +127,21 @@ public class BCEnergy {
         registerTag("item.oil_placer").reg("oil_placer").locale("oilPlacer");
 
         // Item Blocks
+//        registerTag("item.block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo").model("mj_dynamo");
+        registerTag("item.block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo");
+
+        // Tiles
+        registerTag("tile.mj_dynamo").reg("mj_dynamo");
 
 //        endBatch(TagManager.prependTags("buildcraftenergy:", TagManager.EnumTagType.REGISTRY_NAME, TagManager.EnumTagType.MODEL_LOCATION)
         endBatch(TagManager.prependTags("buildcraftenergy:", TagManager.EnumTagType.REGISTRY_NAME)
                 .andThen(TagManager.setTab("buildcraft.main"))
         );
+
+        // Blocks
+
+//        registerTag("block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo").model("mj_dynamo");
+        registerTag("block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo");
 
         // Calen: in namespace Core
         startBatch();
@@ -140,15 +150,20 @@ public class BCEnergy {
         registerTag("item.block.engine.bc.stone").reg("engine_stone").locale("engineStone");
 //        registerTag("item.block.engine.bc.iron").reg("engine_iron").locale("engineIron").model("");
         registerTag("item.block.engine.bc.iron").reg("engine_iron").locale("engineIron");
+        registerTag("item.block.engine.bc.rf").reg("engine_rf").locale("engineRf");
+
         // Blocks
         registerTag("block.engine.bc.stone").reg("engine_stone").locale("engineStone");
 //        registerTag("block.engine.bc.stone").locale("engine_stone");
         registerTag("block.engine.bc.iron").reg("engine_iron").locale("engineIron");
 //        registerTag("block.engine.bc.iron").locale("engine_iron");
+        registerTag("block.engine.bc.rf").reg("engine_rf").locale("engineRf");
 
         // Tiles
         registerTag("tile.engine.stone").reg("engine_stone");
         registerTag("tile.engine.iron").reg("engine_iron");
+        registerTag("tile.engine.rf").reg("engine_rf");
+
         registerTag("tile.spring.oil").reg("spring_oil");
 
 //        endBatch(TagManager.prependTags("buildcraftcore:", TagManager.EnumTagType.REGISTRY_NAME, TagManager.EnumTagType.MODEL_LOCATION)

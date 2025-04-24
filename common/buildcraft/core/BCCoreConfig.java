@@ -7,6 +7,8 @@
 package buildcraft.core;
 
 import buildcraft.api.BCModules;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjRfConversion;
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.BCLibConfig.ChunkLoaderLevel;
 import buildcraft.lib.BCLibConfig.RenderRotation;
@@ -65,6 +67,8 @@ public class BCCoreConfig {
     private static ConfigCategory<Integer> propNetworkUpdateRate;
     private static ConfigCategory<Double> propMiningMultiplier;
     private static ConfigCategory<Integer> propMiningMaxDepth;
+    private static ConfigCategory<Double> propMjPerRf;
+    private static ConfigCategory<BCLibConfig.PowerMode> propPowerMode;
 
     // Calen: just ensure <cinit> run and registered to RegistryConfig#modObjectConfigs
     public static synchronized void cinit() {
@@ -268,6 +272,25 @@ public class BCCoreConfig {
                                 + "\n(Note: values above 256 only have an effect if a mod like cubic chunks is installed).",
                         none,
                         "miningMaxDepth", 512, 32, 4096);
+
+        propMjPerRf = config.defineInRange(general,
+                "The MJ to RF conversion constant (how much MJ is needed per 1 RF)",
+                none,
+                "mjPerRf",
+                MjRfConversion.DEFAULT_MJ_PER_RF / (double) MjAPI.MJ,
+                MjRfConversion.MIN_MJ_PER_RF / (double) MjAPI.MJ,
+                MjRfConversion.MAX_MJ_PER_RF / (double) MjAPI.MJ
+        );
+
+        propPowerMode = config.defineEnum(general,
+                "Controls how BuildCraft handles Power."//
+                        + "\nThere are three options:"//
+                        + "\n\n'MJ_ONLY' - the default, all buildcraft machines only accept or generate MJ. This does NOT affect the MJ Dynamo or RF Engine, which can be enabled."//
+                        + "\n\n'MJ_AUTOCONVERT_RF' - buildcraft machnes accept MJ or RF, and generate MJ and self-convert to RF for RF accepting machines"//
+                        + "\n\n'DISPLAY_RF' - identical to 'MJ_AUTOCONVERT_RF', but also displays MJ as RF in all buildcraft machines.",
+                none,
+                "powerMode",
+                BCLibConfig.PowerMode.MJ_ONLY);
     }
 
 //    public static void addReloadListener(Consumer<EnumRestartRequirement> listener) {
@@ -345,6 +368,8 @@ public class BCCoreConfig {
         worldGen = propWorldGen.get();
         worldGenWaterSpring = propWorldGenWaterSpring.get();
         BCLibConfig.useSwappableSprites = propUseSwappableSprites.get();
+        BCLibConfig.mjRfConversion = MjRfConversion.createParsed(propMjPerRf.get());
+        BCLibConfig.powerMode = propPowerMode.get();
 //            }
 //        }
         BCLibConfig.refreshConfigs();

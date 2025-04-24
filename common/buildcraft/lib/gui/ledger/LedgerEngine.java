@@ -8,6 +8,7 @@ package buildcraft.lib.gui.ledger;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.engine.IEngineLikeForLedger;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
@@ -22,17 +23,17 @@ public class LedgerEngine extends Ledger_Neptune {
     private static final int SUB_HEADER_COLOUR = 0xFF_AA_AF_b8;
     private static final int TEXT_COLOUR = 0xFF_00_00_00;
 
-    public final TileEngineBase_BC8 engine;
+    public final IEngineLikeForLedger engine;
 
-    public LedgerEngine(BuildCraftGui gui, TileEngineBase_BC8 engine, boolean expandPositive) {
+    public LedgerEngine(BuildCraftGui gui, IEngineLikeForLedger engine, boolean expandPositive) {
         super(gui, OVERLAY_COLOUR, expandPositive);
         this.engine = engine;
         this.title = "gui.power";
 
         appendText(LocaleUtil.localize("gui.currentOutput") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
-        appendText(() -> LocaleUtil.localizeMjFlow(engine.currentOutput), TEXT_COLOUR);
+        appendText(() -> LocaleUtil.localizeMjFlow(engine.getCurrentMjOutput()), TEXT_COLOUR);
         appendText(LocaleUtil.localize("gui.stored") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
-        appendText(() -> LocaleUtil.localizeMj(engine.getEnergyStored()), TEXT_COLOUR);
+        appendText(() -> LocaleUtil.localizeMj(engine.getMjStored()), TEXT_COLOUR);
         appendText(LocaleUtil.localize("gui.heat") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeHeat(engine.getHeat()), TEXT_COLOUR);
         calculateMaxSize();

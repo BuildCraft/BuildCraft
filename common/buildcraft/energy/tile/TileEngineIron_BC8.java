@@ -112,6 +112,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
         super.save(nbt);
         nbt.putInt("penaltyCooling", penaltyCooling);
         nbt.putDouble("burnTime", burnTime);
+        nbt.putDouble("residueAmount", residueAmount);
         return nbt;
     }
 
@@ -121,6 +122,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 implements IBCTileMen
         super.load(state, nbt);
         penaltyCooling = nbt.getInt("penaltyCooling");
         burnTime = nbt.getDouble("burnTime");
+        residueAmount = Math.max(0, nbt.getDouble("residueAmount"));
     }
 
     @Override

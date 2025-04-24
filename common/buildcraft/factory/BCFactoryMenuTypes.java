@@ -2,10 +2,13 @@ package buildcraft.factory;
 
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.factory.container.ContainerChute;
+import buildcraft.factory.container.ContainerTank;
 import buildcraft.factory.gui.GuiAutoCraftItems;
 import buildcraft.factory.gui.GuiChute;
+import buildcraft.factory.gui.GuiTank;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.misc.MessageUtil;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
@@ -40,16 +43,30 @@ public class BCFactoryMenuTypes {
                 }
             }
     );
+    public static final ContainerType<ContainerTank> TANK = IForgeContainerType.create((windowId, inv, data) ->
+            {
+                TileEntity te = inv.player.level.getBlockEntity(data.readBlockPos());
+                if (te instanceof TileTank) {
+                    TileTank tile = (TileTank) te;
+                    MessageUtil.clientHandleUpdateTileMsgBeforeOpen(tile, data);
+                    return new ContainerTank(BCFactoryMenuTypes.TANK, windowId, inv.player, tile);
+                } else {
+                    return null;
+                }
+            }
+    );
 
     public static void registerAll(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().registerAll(
                 CHUTE.setRegistryName("chute"),
-                AUTO_WORKBENCH_ITEMS.setRegistryName("auto_workbench_items")
+                AUTO_WORKBENCH_ITEMS.setRegistryName("auto_workbench_items"),
+                TANK.setRegistryName("tank")
         );
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ScreenManager.register(CHUTE, GuiChute::new);
             ScreenManager.register(AUTO_WORKBENCH_ITEMS, GuiAutoCraftItems::new);
+            ScreenManager.register(TANK, GuiTank::new);
         }
     }
 }

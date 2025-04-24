@@ -28,12 +28,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.TextureStitchEvent;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
 import java.util.*;
 
 public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
@@ -96,8 +94,8 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         // not connected
         QUADS[0] = new MutableQuad[6][2];
         QUADS_COLOURED[0] = new MutableQuad[6][2];
-        Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
-        Tuple3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
+        Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
+        Vector3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
         UvFaceData uvs = new UvFaceData();
         uvs.minU = uvs.minV = 4 / 16f;
         uvs.maxU = uvs.maxV = 12 / 16f;
@@ -134,7 +132,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         QUADS[1] = new MutableQuad[6][8];
         QUADS_COLOURED[1] = new MutableQuad[6][8];
         for (Direction side : Direction.values()) {
-            center = new Point3f(//
+            center = new Vector3f(//
                     side.getStepX() * 0.375f, //
                     side.getStepY() * 0.375f, //
                     side.getStepZ() * 0.375f //
@@ -144,7 +142,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                     side.getAxis() == Axis.Y ? 0.125f : 0.25f, //
                     side.getAxis() == Axis.Z ? 0.125f : 0.25f //
             );//
-            center.add(new Point3f(0.5f, 0.5f, 0.5f));
+            center.add(new Vector3f(0.5f, 0.5f, 0.5f));
 
             int i = 0;
             for (Direction face : Direction.values()) {

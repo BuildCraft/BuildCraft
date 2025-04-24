@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftenergy",
+  "pattern": [
+    "wgw",
+    " p ",
+    "GwG"
+  ],
+  "key": {
+    "w": {
+      "tag": "forge:dusts/redstone"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "G": {
+      "tag": "forge:gears/iron"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "buildcraftenergy:mj_dynamo"
+  }
+}

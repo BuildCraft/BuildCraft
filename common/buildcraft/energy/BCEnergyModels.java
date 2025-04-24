@@ -10,7 +10,9 @@ import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.energy.event.ChristmasHandler;
+import buildcraft.energy.tile.TileDynamoMJ;
 import buildcraft.energy.tile.TileEngineIron_BC8;
+import buildcraft.energy.tile.TileEngineRF;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
@@ -44,6 +46,8 @@ public class BCEnergyModels {
 
     private static final ModelHolderVariable ENGINE_STONE;
     private static final ModelHolderVariable ENGINE_IRON;
+    private static final ModelHolderVariable ENGINE_RF;
+    private static final ModelHolderVariable MJ_DYNAMO;
 
     static {
         FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
@@ -63,6 +67,15 @@ public class BCEnergyModels {
                 fnCtx
         );
         BlockEngine_BC8.setModel(EnumEngineType.IRON, ENGINE_IRON); // Calen
+        ENGINE_RF = new ModelHolderVariable(
+                "buildcraftenergy:models/tiles/engine_rf.json",
+                fnCtx
+        );
+        BlockEngine_BC8.setModel(EnumEngineType.RF, ENGINE_RF); // Calen
+        MJ_DYNAMO = new ModelHolderVariable(
+                "buildcraftenergy:models/tiles/mj_dynamo.json",
+                fnCtx
+        );
     }
 
     public static void fmlPreInit() {
@@ -115,13 +128,40 @@ public class BCEnergyModels {
                         true
                 )
         );
+        varData.setNodes(ENGINE_RF.createTickableNodes());
+        varData.tick();
+        varData.refresh();
+        event.getModelRegistry().put(
+                // new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
+                new ModelResourceLocation(BCEnergyBlocks.engineRf.getId(), "inventory"),
+                new ModelItemSimple(
+                        Arrays.stream(ENGINE_RF.getCutoutQuads())
+                                .map(MutableQuad::toBakedItem)
+                                .collect(Collectors.toList()),
+                        ModelItemSimple.TRANSFORM_BLOCK,
+                        true
+                )
+        );
+        varData.setNodes(MJ_DYNAMO.createTickableNodes());
+        varData.tick();
+        varData.refresh();
+        event.getModelRegistry().put(
+                new ModelResourceLocation(BCEnergyBlocks.mjDynamo.getId(), "inventory"),
+                new ModelItemSimple(
+                        Arrays.stream(MJ_DYNAMO.getCutoutQuads())
+                                .map(MutableQuad::toBakedItem)
+                                .collect(Collectors.toList()),
+                        ModelItemSimple.TRANSFORM_BLOCK,
+                        true
+                )
+        );
 
         ChristmasHandler.replaceBucketNoFlipModel(event);
     }
 
     private static MutableQuad[] getEngineQuads(ModelHolderVariable model,
-                                                TileEngineBase_BC8 tile,
-                                                float partialTicks) {
+            TileEngineBase_BC8 tile,
+            float partialTicks) {
         ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
         ENGINE_STAGE.value = tile.getPowerStage();
         ENGINE_FACING.value = tile.getCurrentFacing();
@@ -138,5 +178,20 @@ public class BCEnergyModels {
 
     public static MutableQuad[] getIronEngineQuads(TileEngineIron_BC8 tile, float partialTicks) {
         return getEngineQuads(ENGINE_IRON, tile, partialTicks);
+    }
+
+    public static MutableQuad[] getRfEngineQuads(TileEngineRF tile, float partialTicks) {
+        return getEngineQuads(ENGINE_RF, tile, partialTicks);
+    }
+
+    public static MutableQuad[] getMjDynamoQuads(TileDynamoMJ tile, float partialTicks) {
+        ENGINE_PROGRESS.value = tile.getProgressClient(partialTicks);
+        ENGINE_STAGE.value = tile.getPowerStage();
+        ENGINE_FACING.value = tile.getCurrentDirection();
+        if (tile.clientModelData.hasNoNodes()) {
+            tile.clientModelData.setNodes(MJ_DYNAMO.createTickableNodes());
+        }
+        tile.clientModelData.refresh();
+        return MJ_DYNAMO.getCutoutQuads();
     }
 }

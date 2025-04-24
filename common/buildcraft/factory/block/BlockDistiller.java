@@ -41,7 +41,7 @@ public class BlockDistiller extends BlockBCTile_Neptune<TileDistiller_BC8> imple
 //    }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState p_49928_, IBlockReader p_49929_, BlockPos p_49930_) {
+    public boolean propagatesSkylightDown(BlockState state, IBlockReader world, BlockPos pos) {
         return true;
     }
 

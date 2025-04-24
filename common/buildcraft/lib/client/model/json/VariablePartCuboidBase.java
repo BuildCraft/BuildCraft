@@ -19,8 +19,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.LazyValue;
+import net.minecraft.util.math.vector.Vector3f;
 
-import javax.vecmath.Vector3f;
 import java.util.List;
 
 public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
@@ -52,7 +52,7 @@ public abstract class VariablePartCuboidBase extends JsonVariableModelPart {
                 VariableFaceData data = getFaceData(face, spriteLookup);
                 if (data != null) {
                     Vector3f radius = new Vector3f(t[0] - f[0], t[1] - f[1], t[2] - f[2]);
-                    radius.scale(0.5f);
+                    radius.mul(0.5f);
                     Vector3f center = new Vector3f(f);
                     center.add(radius);
                     MutableQuad quad = ModelUtil.createFace(face, center, radius, data.uvs);
