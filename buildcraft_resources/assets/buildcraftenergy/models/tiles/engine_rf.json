@@ -3,5 +3,5 @@
         "#back":"buildcraftenergy:blocks/engine/rf/back",
         "#side":"buildcraftenergy:blocks/engine/rf/side"
     },
-    "parent":"buildcraftlib:models/block/engine_base"
+    "parent":"buildcraftlib:models/tiles/engine_base"
 }

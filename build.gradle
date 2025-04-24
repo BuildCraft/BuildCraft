@@ -138,7 +138,7 @@ minecraft {
         }
 
         data {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run_data')
 
             property 'forge.logging.markers', 'REGISTRIES'
 

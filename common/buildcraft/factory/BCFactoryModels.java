@@ -13,7 +13,7 @@ import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ExpressionCompat;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import buildcraft.lib.misc.RegistryUtil;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -75,15 +75,15 @@ public class BCFactoryModels {
 //    public static void fmlInit()
     public static void onTesrReg(RegisterRenderers event) {
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
-        BlockEntityRenderers.register(BCFactoryBlocks.miningWellTile.get(), RenderMiningWell::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.miningWellTile, RenderMiningWell::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
-        BlockEntityRenderers.register(BCFactoryBlocks.pumpTile.get(), RenderPump::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.pumpTile, RenderPump::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
-        BlockEntityRenderers.register(BCFactoryBlocks.tankTile.get(), RenderTank::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.tankTile, RenderTank::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
-        BlockEntityRenderers.register(BCFactoryBlocks.distillerTile.get(), RenderDistiller::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.distillerTile, RenderDistiller::new);
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchange.class, new RenderHeatExchange());
-        BlockEntityRenderers.register(BCFactoryBlocks.heatExchangeTile.get(), RenderHeatExchange::new);
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.heatExchangeTile, RenderHeatExchange::new);
     }
 
     @SubscribeEvent

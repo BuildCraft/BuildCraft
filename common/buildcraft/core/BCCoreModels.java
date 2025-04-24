@@ -23,8 +23,8 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableDouble;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
@@ -92,9 +92,9 @@ public class BCCoreModels {
 
     @SubscribeEvent
     public static void onTesrReg(RegisterRenderers event) {
-        BlockEntityRenderers.register(BCCoreBlocks.markerVolumeTile.get(), RenderMarkerVolume::new);
-        BlockEntityRenderers.register(BCCoreBlocks.engineWoodTile.get(), RenderEngineWood::new);
-        BlockEntityRenderers.register(BCCoreBlocks.engineCreativeTile.get(), RenderEngineCreative::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.markerVolumeTile, RenderMarkerVolume::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.engineWoodTile, RenderEngineWood::new);
+        RegistryUtil.regTesrIfTilePresent(BCCoreBlocks.engineCreativeTile, RenderEngineCreative::new);
     }
 
     @SubscribeEvent
@@ -107,8 +107,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-//                new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCCoreBlocks.engineWood.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_REDSTONE.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)
@@ -122,8 +121,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().put(
-//                new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
-                new ModelResourceLocation(BCCoreBlocks.engineCreative.getId(), "inventory"),
+                new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
                 new ModelItemSimple(
                         Arrays.stream(ENGINE_CREATIVE.getCutoutQuads())
                                 .map(MutableQuad::toBakedItem)

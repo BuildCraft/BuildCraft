@@ -23,6 +23,7 @@ libs
 #runtime
 run
 run_server
+run_data
 
 #mac
 .DS_Store

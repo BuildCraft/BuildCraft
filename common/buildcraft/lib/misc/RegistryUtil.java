@@ -6,9 +6,16 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class RegistryUtil {
     public static boolean isRegistered(Block block) {
@@ -17,5 +24,12 @@ public class RegistryUtil {
 
     public static boolean isRegistered(Item item) {
         return ForgeRegistries.ITEMS.containsValue(item);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static <T extends BlockEntity> void regTesrIfTilePresent(RegistryObject<BlockEntityType<T>> tileReg, BlockEntityRendererProvider<T> tesrConstructor) {
+        if (tileReg != null && tileReg.isPresent()) {
+            BlockEntityRenderers.register(tileReg.get(), tesrConstructor);
+        }
     }
 }

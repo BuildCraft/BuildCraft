@@ -9,13 +9,13 @@ import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.plug.PlugBakerSimple;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.robotics.client.model.RoboticsNodeTypes;
 import buildcraft.robotics.client.model.key.KeyPlugRobotStation;
 import buildcraft.robotics.client.render.PlugRobotStationRenderer;
 import buildcraft.robotics.client.render.RenderRobot;
 import buildcraft.robotics.client.render.RenderZonePlanner;
 import buildcraft.robotics.plug.PluggableRobotStation;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraftforge.api.distmarker.Dist;
@@ -68,7 +68,7 @@ public class BCRoboticsModels {
 
     @SubscribeEvent
     public static void onRendererReg(EntityRenderersEvent.RegisterRenderers event) {
-        BlockEntityRenderers.register(BCRoboticsBlocks.zonePlannerTile.get(), RenderZonePlanner::new);
+        RegistryUtil.regTesrIfTilePresent(BCRoboticsBlocks.zonePlannerTile, RenderZonePlanner::new);
 
         BCRoboticsEntities.robotMap.values().forEach(robot -> EntityRenderers.register(robot.get(), RenderRobot::new));
     }

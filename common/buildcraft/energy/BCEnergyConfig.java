@@ -7,6 +7,7 @@ import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Level;
 
@@ -269,8 +270,8 @@ public class BCEnergyConfig {
         enableOilSpouts = propEnableOilSpouts.get();
         enableOilBurn = propEnableOilBurn.get();
         oilIsSticky = propOilIsSticky.get();
-        enableRfEngine = propEnableRfEngine.get();
-        enableMjDynamo = propEnableMjDynamo.get();
+        enableRfEngine = DatagenModLoader.isRunningDataGen() ? true : propEnableRfEngine.get();
+        enableMjDynamo = DatagenModLoader.isRunningDataGen() ? true : propEnableMjDynamo.get();
 
         smallSpoutMinHeight = propSmallSpoutMinHeight.get();
         smallSpoutMaxHeight = propSmallSpoutMaxHeight.get();

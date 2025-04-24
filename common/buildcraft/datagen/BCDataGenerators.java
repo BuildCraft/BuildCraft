@@ -20,25 +20,15 @@ import buildcraft.datagen.lib.LibItemModelProvider;
 import buildcraft.datagen.robotics.*;
 import buildcraft.datagen.silicon.*;
 import buildcraft.datagen.transport.*;
-import buildcraft.energy.BCEnergyConfig;
-import buildcraft.transport.BCTransportConfig;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = BCCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BCDataGenerators {
-    @SubscribeEvent
-    public static void forceEnableRegistries(FMLConstructModEvent event) {
-        BCEnergyConfig.enableRfEngine = true;
-        BCEnergyConfig.enableMjDynamo = true;
-        BCTransportConfig.disableRfPipe = false;
-    }
-
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();

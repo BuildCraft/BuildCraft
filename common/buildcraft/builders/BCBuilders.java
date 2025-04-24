@@ -9,13 +9,13 @@ import buildcraft.builders.client.render.*;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.core.BCCore;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -93,11 +93,11 @@ public class BCBuilders {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void onTesrReg(RegisterRenderers event) {
-        BlockEntityRenderers.register(BCBuildersBlocks.architectTile.get(), RenderArchitectTable::new);
-        BlockEntityRenderers.register(BCBuildersBlocks.builderTile.get(), RenderBuilder::new);
-        BlockEntityRenderers.register(BCBuildersBlocks.fillerTile.get(), RenderFiller::new);
-        BlockEntityRenderers.register(BCBuildersBlocks.quarryTile.get(), RenderQuarry::new);
-        BlockEntityRenderers.register(BCBuildersBlocks.markerConstructionTile.get(), RenderMarkerConstruction::new);
+        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.architectTile, RenderArchitectTable::new);
+        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.builderTile, RenderBuilder::new);
+        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.fillerTile, RenderFiller::new);
+        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.quarryTile, RenderQuarry::new);
+        RegistryUtil.regTesrIfTilePresent(BCBuildersBlocks.markerConstructionTile, RenderMarkerConstruction::new);
     }
 
     @OnlyIn(Dist.CLIENT)

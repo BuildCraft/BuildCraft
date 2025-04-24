@@ -17,6 +17,7 @@ import buildcraft.lib.config.ConfigCategory;
 import buildcraft.lib.config.Configuration;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.MathUtil;
+import net.minecraftforge.data.loading.DatagenModLoader;
 
 public class BCTransportConfig {
     public enum PowerLossMode {
@@ -112,7 +113,7 @@ public class BCTransportConfig {
                         "",
                         none,
                         "pipes.disable_rf_pipe", false);
-        disableRfPipe = propDisableRfPipe.get();
+        disableRfPipe = DatagenModLoader.isRunningDataGen() ? false : propDisableRfPipe.get();
 
         propPowerPipeUseOldMjTexture = config
                 .define(display,
