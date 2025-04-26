@@ -75,6 +75,7 @@ public class SpriteUtil {
 
         try {
             if (!CACHED.containsKey(profile)) {
+                CACHED.put(profile, profile); // Calen: to avoid auth check every tick before network access completed
                 GameProfile _profile = profile;
 //                CACHED.put(profile, TileEntitySkull.updateGameprofile(profile));
                 SkullBlockEntity.updateGameprofile(profile, (gameProfile) ->
