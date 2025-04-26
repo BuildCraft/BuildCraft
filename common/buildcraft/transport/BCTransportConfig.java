@@ -43,6 +43,7 @@ public class BCTransportConfig {
     public static boolean disableRfPipe;
     public static boolean powerPipeUseOldMjTexture;
     public static PowerLossMode lossMode = PowerLossMode.DEFAULT;
+    public static boolean disableStrictDaizuliItemPipeLogic = false;
 
     private static ConfigCategory<Long> propMjPerMillibucket;
     private static ConfigCategory<Long> propMjPerItem;
@@ -53,6 +54,7 @@ public class BCTransportConfig {
     private static ConfigCategory<Boolean> propPowerPipeUseOldMjTexture;
     private static ConfigCategory<Boolean> propDisableRfPipe;
     private static ConfigCategory<PowerLossMode> propLossMode;
+    private static ConfigCategory<Boolean> propDisableStrictDaizuliItemPipeLogic;
 
     public static void preInit() {
 //        Configuration config = BCCoreConfig.config;
@@ -127,6 +129,15 @@ public class BCTransportConfig {
                         "",
                         world,
                         "kinesisLossMode", PowerLossMode.LOSSLESS);
+
+        // Calen 1.20.1
+        propDisableStrictDaizuliItemPipeLogic = config
+                .define(general,
+                        "The logic of the daizuli item pipe: " +
+                                "[false]: Use strict daizuli item pipe logic. Bounce the items back if no expected available directions exist. " +
+                                "[true]: Use the daizuli item pipe logic of BC7. Colour only influences the priority of the travelling direction of items.",
+                        world,
+                        "pipes.disableStrictDaizuliItemPipeLogic", false);
     }
 
     // public static void reloadConfig(EnumRestartRequirement restarted)
@@ -151,6 +162,8 @@ public class BCTransportConfig {
                 fluidPipeColourBorder ? EnumPipeColourType.BORDER_INNER : EnumPipeColourType.TRANSLUCENT;
 
         lossMode = propLossMode.get();
+
+        disableStrictDaizuliItemPipeLogic = propDisableStrictDaizuliItemPipeLogic.get();
 
         fluidTransfer(BCTransportPipes.cobbleFluid, baseFlowRate, 10);
         fluidTransfer(BCTransportPipes.woodFluid, baseFlowRate, 10);

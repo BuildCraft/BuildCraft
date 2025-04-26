@@ -61,7 +61,6 @@ public class JsonUtil {
             String id = JSONUtils.getAsString(obj, "id");
             ResourceLocation fluidName = new ResourceLocation(id);
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
-            ;
             if (fluid == null) {
                 throw failAndListFluids(id);
             }

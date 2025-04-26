@@ -21,7 +21,7 @@ import net.minecraftforge.common.util.LazyOptional;
 
 @OnlyIn(Dist.CLIENT)
 public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer<T> {
-    //    private final TextureAtlasSprite s;
+    // private final TextureAtlasSprite s;
     private final LazyOptional<TextureAtlasSprite> s;
 
     public AddonDefaultRenderer() {

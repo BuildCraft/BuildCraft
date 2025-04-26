@@ -213,7 +213,7 @@ public class FluidRenderer {
             IVertexBuilder bbIn,
             boolean[] sideRender
     ) {
-        if (fluid == null || fluid.getRawFluid() == null || amount <= 0) {
+        if (fluid == null || fluid.getRawFluid() == null || fluid.getRawFluid() instanceof EmptyFluid || amount <= 0) {
             return;
         }
         IProfiler prof = Minecraft.getInstance().getProfiler();

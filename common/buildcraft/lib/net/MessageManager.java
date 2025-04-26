@@ -191,7 +191,7 @@ public class MessageManager {
 //        handler.netWrapper.registerMessage(wrapHandler(info.serverHandler, msgClass), msgClass, id, Side.SERVER);
         handler.netWrapper.messageBuilder(msgClass, id, null)
                 .encoder(I::toBytes)
-                .decoder((buf) -> (I) IMessage.staticFromBytes(msgClass, buf))
+                .decoder((buf) -> IMessage.staticFromBytes(msgClass, buf))
                 .consumer((msg, supplier) ->
                 {
                     NetworkEvent.Context context = supplier.get();
