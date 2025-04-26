@@ -123,7 +123,9 @@ public class BCSiliconModels {
     }
 
     public static void fmlPostInit() {
-        RenderUtil.registerItemColour(((Item) BCSiliconItems.plugFacade.get()), FacadeItemColours.INSTANCE);
+        if (BCSiliconItems.plugFacade != null && BCSiliconItems.plugFacade.isPresent()) {
+            RenderUtil.registerItemColour(((Item) BCSiliconItems.plugFacade.get()), FacadeItemColours.INSTANCE);
+        }
     }
 
 //    @SubscribeEvent

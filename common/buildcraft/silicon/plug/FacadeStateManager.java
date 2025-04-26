@@ -216,7 +216,13 @@ public enum FacadeStateManager implements IFacadeRegistry {
         Stopwatch watch = Stopwatch.createStarted();
 
         for (Block block : ForgeRegistries.BLOCKS) {
-            scanBlock(block);
+            // scanBlock(block);
+
+            // Calen: Too many scanned facades will waste lots of memory and even cause client fail to connect to server
+            // So we only scan config allowed blocks
+            if (BCSiliconConfig.isFacadeBlockIdAllowedInCreativeModTabByConfig(block)) {
+                scanBlock(block);
+            }
         }
 
         watch.stop();
@@ -225,11 +231,12 @@ public enum FacadeStateManager implements IFacadeRegistry {
             BCLog.logger.info("[silicon.facade] Scanned blocks for facade. (" + time / 1000 + "ms)");
         }
 
-        previewState = validFacadeStates.get(Blocks.BRICKS.defaultBlockState());
+        previewState = validFacadeStates.getOrDefault(Blocks.BRICKS.defaultBlockState(), defaultState);
         FacadeSwapRecipe.genRecipes();
     }
 
-    private static void scanBlock(Block block) {
+    // private static void scanBlock(Block block)
+    public static void scanBlock(Block block) {
         try {
             if (!DEBUG && KNOWN_INVALID_REPORTED_MODS.contains(block.getRegistryName().getNamespace())) {
                 if (BCLib.VERSION.startsWith("7.99")) {

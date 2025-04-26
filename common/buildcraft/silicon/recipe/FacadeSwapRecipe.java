@@ -86,7 +86,7 @@ public enum FacadeSwapRecipe implements ICraftingRecipe, IRecipeViewable.IViewab
                 }
             }
         }
-        if (stackIn.getItem() != BCSiliconItems.plugFacade.get()) {
+        if (BCSiliconItems.plugFacade == null || !BCSiliconItems.plugFacade.isPresent() || stackIn.getItem() != BCSiliconItems.plugFacade.get()) {
             return StackUtil.EMPTY;
         }
         FacadeInstance states = ItemPluggableFacade.getStates(stackIn);

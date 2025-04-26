@@ -17,6 +17,7 @@ import buildcraft.lib.recipe.ChangingObject;
 import buildcraft.lib.recipe.IRecipeViewable;
 import buildcraft.lib.recipe.assembly.AssemblyRecipe;
 import buildcraft.lib.recipe.assembly.IFacadeAssemblyRecipes;
+import buildcraft.silicon.BCSiliconConfig;
 import buildcraft.silicon.item.ItemPluggableFacade;
 import buildcraft.silicon.plug.FacadeBlockStateInfo;
 import buildcraft.silicon.plug.FacadeInstance;
@@ -25,6 +26,7 @@ import buildcraft.silicon.plug.FacadeStateManager;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
@@ -103,6 +105,10 @@ public class FacadeAssemblyRecipes extends AssemblyRecipe implements IRecipeView
             stack = stack.copy();
             stack.setCount(1);
             List<FacadeBlockStateInfo> infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
+            if (BCSiliconConfig.facadesNotInCreativeModTabCanBeCrafted && infos == null && stack.getItem() instanceof BlockItem) {
+                FacadeStateManager.scanBlock(((BlockItem) stack.getItem()).getBlock());
+                infos = FacadeStateManager.stackFacades.get(new ItemStackKey(stack));
+            }
             if (infos == null || infos.isEmpty()) {
                 continue;
             }

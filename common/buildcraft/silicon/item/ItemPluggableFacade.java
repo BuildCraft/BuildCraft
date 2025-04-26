@@ -15,6 +15,7 @@ import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.*;
+import buildcraft.silicon.BCSiliconConfig;
 import buildcraft.silicon.BCSiliconPlugs;
 import buildcraft.silicon.plug.*;
 import com.google.common.base.Stopwatch;
@@ -117,6 +118,11 @@ public class ItemPluggableFacade extends ItemBC_Neptune implements IItemPluggabl
                 subItems.add(createItemStack(inst));
 
                 for (FacadeBlockStateInfo info : FacadeStateManager.validFacadeStates.values()) {
+                    // Calen
+                    if (!BCSiliconConfig.isFacadeBlockIdAllowedInCreativeModTabByConfig(info.state.getBlock())) {
+                        continue;
+                    }
+                    // 1.12.2
                     if (!ForgeRegistries.BLOCKS.containsValue(info.state.getBlock())) {
                         // Forge can de-register blocks if the server a client is connected to
                         // doesn't have the mods that created them.

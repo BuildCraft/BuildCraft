@@ -75,8 +75,13 @@ public class SpriteUtil {
 
         try {
             if (!CACHED.containsKey(profile)) {
+                CACHED.put(profile, profile); // Calen: to avoid delay in GUI creating caused by network access
+                GameProfile _profile = profile;
 //                CACHED.put(profile, TileEntitySkull.updateGameprofile(profile));
-                CACHED.put(profile, SkullTileEntity.updateGameprofile(profile));
+                Thread t = new Thread(() -> {
+                    CACHED.put(_profile, SkullTileEntity.updateGameprofile(_profile));
+                });
+                t.start();
             }
             GameProfile p2 = CACHED.get(profile);
             if (p2 == null) {
