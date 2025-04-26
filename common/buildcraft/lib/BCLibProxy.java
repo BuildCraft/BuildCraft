@@ -68,11 +68,9 @@ public abstract class BCLibProxy {
         MessageManager.registerMessageClass(BCModules.LIB, MessageUpdateTile.class, MessageUpdateTile.HANDLER);
         MessageManager.registerMessageClass(BCModules.LIB, MessageContainer.class, MessageContainer.HANDLER);
         MessageManager.registerMessageClass(BCModules.LIB, MessageMarker.class, Dist.CLIENT);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheRequest.class,
-                MessageObjectCacheRequest.HANDLER, Dist.DEDICATED_SERVER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheRequest.class, MessageObjectCacheRequest.HANDLER, Dist.DEDICATED_SERVER);
         MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheResponse.class, Dist.CLIENT);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugRequest.class, MessageDebugRequest.HANDLER,
-                Dist.DEDICATED_SERVER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugRequest.class, MessageDebugRequest.HANDLER, Dist.DEDICATED_SERVER);
         MessageManager.registerMessageClass(BCModules.LIB, MessageDebugResponse.class, Dist.CLIENT);
     }
 
@@ -152,8 +150,7 @@ public abstract class BCLibProxy {
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
 
             MessageManager.setHandler(MessageMarker.class, MessageMarker.HANDLER, Dist.CLIENT);
-            MessageManager.setHandler(MessageObjectCacheResponse.class, MessageObjectCacheResponse.HANDLER,
-                    Dist.CLIENT);
+            MessageManager.setHandler(MessageObjectCacheResponse.class, MessageObjectCacheResponse.HANDLER, Dist.CLIENT);
             MessageManager.setHandler(MessageDebugResponse.class, MessageDebugResponse.HANDLER, Dist.CLIENT);
         }
 

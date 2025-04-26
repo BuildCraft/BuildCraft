@@ -11,6 +11,7 @@ import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.transport.BCTransportConfig;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionPipeColor;
 import net.minecraft.core.Direction;
@@ -101,11 +102,29 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
 
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck sideCheck) {
+        if (BCTransportConfig.disableStrictDaizuliItemPipeLogic) {
+            // Calen 1.20.1: daizuli logic from BC7
+            if (currentDir != EnumPipePart.CENTER) {
+                if (colour == sideCheck.colour) {
+                    sideCheck.increasePriority(currentDir.face, 100);
+                } else {
+                    sideCheck.decreasePriority(currentDir.face, 100);
+                }
+            }
+            return;
+        }
         if (colour == sideCheck.colour) {
+            // Calen 1.20.1: strict logic of daizuli item pipe
             sideCheck.disallowAllExcept(currentDir.face);
         } else {
             sideCheck.disallow(currentDir.face);
         }
+    }
+
+    // Calen 1.20.1 from PipeBehaviourIron
+    @PipeEventHandler
+    public static void tryBounce(PipeEventItem.TryBounce tryBounce) {
+        tryBounce.canBounce = true;
     }
 
     @Override

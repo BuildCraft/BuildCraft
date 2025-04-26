@@ -244,7 +244,7 @@ public class FluidRenderer {
             VertexConsumer bbIn,
             boolean[] sideRender
     ) {
-        if (fluid == null || fluid.getRawFluid() == null || amount <= 0) {
+        if (fluid == null || fluid.getRawFluid() == null || fluid.getRawFluid() instanceof EmptyFluid || amount <= 0) {
             return;
         }
         ProfilerFiller prof = Minecraft.getInstance().getProfiler();

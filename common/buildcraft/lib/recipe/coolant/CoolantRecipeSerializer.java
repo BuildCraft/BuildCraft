@@ -32,15 +32,14 @@ public class CoolantRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer
         String type = GsonHelper.getAsString(json, "type");
         EnumCoolantType coolantType = EnumCoolantType.byName(GsonHelper.getAsString(json, "coolantType"));
         FluidStack fluid = JsonUtil.deSerializeFluidStack(json.getAsJsonObject("fluid"));
-        float degreesCoolingPerMb;
         switch (coolantType) {
             case FLUID:
-                degreesCoolingPerMb = GsonHelper.getAsFloat(json, "degreesCoolingPerMb");
+                float degreesCoolingPerMb = GsonHelper.getAsFloat(json, "degreesCoolingPerMb");
                 return new FluidCoolant(recipeId, fluid, degreesCoolingPerMb);
             case SOLID:
-                degreesCoolingPerMb = GsonHelper.getAsFloat(json, "multiplier");
+                float multiplier = GsonHelper.getAsFloat(json, "multiplier");
                 ItemStack solid = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "solid"));
-                return new SolidCoolant(recipeId, solid, fluid, degreesCoolingPerMb);
+                return new SolidCoolant(recipeId, solid, fluid, multiplier);
         }
         throw new IllegalArgumentException("[energy.recipe] Unexpected Coolant Type!");
     }
