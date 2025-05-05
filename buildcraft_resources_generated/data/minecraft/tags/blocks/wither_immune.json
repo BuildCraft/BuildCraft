@@ -1,8 +1,17 @@
 {
   "replace": false,
   "values": [
-    "buildcraftcore:spring_water",
-    "buildcraftcore:spring_oil",
-    "buildcraftfactory:tube"
+    {
+      "id": "buildcraftcore:spring_water",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:spring_oil",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:tube",
+      "required": false
+    }
   ]
 }

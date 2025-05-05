@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_items_cobblestone_colorless",
-    "buildcrafttransport:pipe_items_cobblestone_magenta",
-    "buildcrafttransport:pipe_items_cobblestone_pink",
-    "buildcrafttransport:pipe_items_cobblestone_purple",
-    "buildcrafttransport:pipe_items_cobblestone_white",
-    "buildcrafttransport:pipe_items_cobblestone_orange",
-    "buildcrafttransport:pipe_items_cobblestone_light_gray",
-    "buildcrafttransport:pipe_items_cobblestone_red",
-    "buildcrafttransport:pipe_items_cobblestone_cyan",
-    "buildcrafttransport:pipe_items_cobblestone_brown",
-    "buildcrafttransport:pipe_items_cobblestone_green",
-    "buildcrafttransport:pipe_items_cobblestone_lime",
-    "buildcrafttransport:pipe_items_cobblestone_gray",
-    "buildcrafttransport:pipe_items_cobblestone_black",
-    "buildcrafttransport:pipe_items_cobblestone_light_blue",
-    "buildcrafttransport:pipe_items_cobblestone_yellow",
-    "buildcrafttransport:pipe_items_cobblestone_blue"
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_gray",
+      "required": false
+    }
   ]
 }

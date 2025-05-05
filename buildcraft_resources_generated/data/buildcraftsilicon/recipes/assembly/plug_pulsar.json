@@ -5,15 +5,15 @@
   "requiredStacks": [
     {
       "ingredient": {
-        "item": "buildcraftcore:engine_wood"
-      },
-      "count": 1
-    },
-    {
-      "ingredient": {
         "tag": "forge:ingots/iron"
       },
       "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "buildcraftcore:engine_wood"
+      },
+      "count": 1
     }
   ],
   "output": {

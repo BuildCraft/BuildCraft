@@ -1,0 +1,73 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_gray",
+      "required": false
+    }
+  ]
+}

@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_items_lapis_colorless",
-    "buildcrafttransport:pipe_items_lapis_magenta",
-    "buildcrafttransport:pipe_items_lapis_pink",
-    "buildcrafttransport:pipe_items_lapis_purple",
-    "buildcrafttransport:pipe_items_lapis_white",
-    "buildcrafttransport:pipe_items_lapis_orange",
-    "buildcrafttransport:pipe_items_lapis_light_gray",
-    "buildcrafttransport:pipe_items_lapis_red",
-    "buildcrafttransport:pipe_items_lapis_cyan",
-    "buildcrafttransport:pipe_items_lapis_brown",
-    "buildcrafttransport:pipe_items_lapis_green",
-    "buildcrafttransport:pipe_items_lapis_lime",
-    "buildcrafttransport:pipe_items_lapis_gray",
-    "buildcrafttransport:pipe_items_lapis_black",
-    "buildcrafttransport:pipe_items_lapis_light_blue",
-    "buildcrafttransport:pipe_items_lapis_yellow",
-    "buildcrafttransport:pipe_items_lapis_blue"
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_gray",
+      "required": false
+    }
   ]
 }

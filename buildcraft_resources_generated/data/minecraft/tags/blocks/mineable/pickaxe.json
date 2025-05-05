@@ -1,35 +1,125 @@
 {
   "replace": false,
   "values": [
-    "buildcraftcore:engine_wood",
-    "buildcraftcore:engine_stone",
-    "buildcraftcore:engine_iron",
-    "buildcraftcore:engine_creative",
-    "buildcraftcore:engine_rf",
-    "buildcraftenergy:mj_dynamo",
-    "buildcraftfactory:autoworkbench_item",
-    "buildcraftfactory:chute",
-    "buildcraftfactory:distiller",
-    "buildcraftfactory:heat_exchange",
-    "buildcraftfactory:tank",
-    "buildcraftfactory:pump",
-    "buildcraftfactory:mining_well",
-    "buildcraftfactory:water_gel",
-    "buildcraftfactory:flood_gate",
-    "buildcraftbuilders:quarry",
-    "buildcraftbuilders:builder",
-    "buildcraftbuilders:architect",
-    "buildcraftbuilders:filler",
-    "buildcraftbuilders:library",
-    "buildcraftbuilders:replacer",
-    "buildcraftsilicon:integration_table",
-    "buildcraftsilicon:assembly_table",
-    "buildcraftsilicon:advanced_crafting_table",
-    "buildcraftsilicon:programming_table",
-    "buildcraftsilicon:charging_table",
-    "buildcraftsilicon:laser",
-    "buildcraftrobotics:zone_planner",
-    "buildcraftrobotics:requester",
-    "buildcrafttransport:filtered_buffer"
+    {
+      "id": "buildcraftenergy:mj_dynamo",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:autoworkbench_item",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:chute",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:distiller",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:heat_exchange",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:tank",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:pump",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:mining_well",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:water_gel",
+      "required": false
+    },
+    {
+      "id": "buildcraftfactory:flood_gate",
+      "required": false
+    },
+    {
+      "id": "buildcraftbuilders:quarry",
+      "required": false
+    },
+    {
+      "id": "buildcraftbuilders:builder",
+      "required": false
+    },
+    {
+      "id": "buildcraftbuilders:architect",
+      "required": false
+    },
+    {
+      "id": "buildcraftbuilders:filler",
+      "required": false
+    },
+    {
+      "id": "buildcraftbuilders:library",
+      "required": false
+    },
+    {
+      "id": "buildcraftbuilders:replacer",
+      "required": false
+    },
+    {
+      "id": "buildcraftsilicon:integration_table",
+      "required": false
+    },
+    {
+      "id": "buildcraftsilicon:assembly_table",
+      "required": false
+    },
+    {
+      "id": "buildcraftsilicon:advanced_crafting_table",
+      "required": false
+    },
+    {
+      "id": "buildcraftsilicon:programming_table",
+      "required": false
+    },
+    {
+      "id": "buildcraftsilicon:charging_table",
+      "required": false
+    },
+    {
+      "id": "buildcraftsilicon:laser",
+      "required": false
+    },
+    {
+      "id": "buildcraftrobotics:zone_planner",
+      "required": false
+    },
+    {
+      "id": "buildcraftrobotics:requester",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:filtered_buffer",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:engine_wood",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:engine_stone",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:engine_iron",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:engine_creative",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:engine_rf",
+      "required": false
+    }
   ]
 }

@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_power_sandstone_colorless",
-    "buildcrafttransport:pipe_power_sandstone_magenta",
-    "buildcrafttransport:pipe_power_sandstone_pink",
-    "buildcrafttransport:pipe_power_sandstone_purple",
-    "buildcrafttransport:pipe_power_sandstone_white",
-    "buildcrafttransport:pipe_power_sandstone_orange",
-    "buildcrafttransport:pipe_power_sandstone_light_gray",
-    "buildcrafttransport:pipe_power_sandstone_red",
-    "buildcrafttransport:pipe_power_sandstone_cyan",
-    "buildcrafttransport:pipe_power_sandstone_brown",
-    "buildcrafttransport:pipe_power_sandstone_green",
-    "buildcrafttransport:pipe_power_sandstone_lime",
-    "buildcrafttransport:pipe_power_sandstone_gray",
-    "buildcrafttransport:pipe_power_sandstone_black",
-    "buildcrafttransport:pipe_power_sandstone_light_blue",
-    "buildcrafttransport:pipe_power_sandstone_yellow",
-    "buildcrafttransport:pipe_power_sandstone_blue"
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_gray",
+      "required": false
+    }
   ]
 }

@@ -15,6 +15,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.stream.Stream;
+
 public class BCItemTagsGenerator extends ItemTagsProvider {
     public BCItemTagsGenerator(DataGenerator generator, ExistingFileHelper existingFileHelper, BlockTagsProvider blockTagsProvider) {
         super(generator, blockTagsProvider, BCModules.BUILDCRAFT, existingFileHelper);
@@ -24,101 +26,113 @@ public class BCItemTagsGenerator extends ItemTagsProvider {
     protected void addTags() {
         // gear
         tag(OreDictionaryTags.GEAR_WOOD)
-                .add(BCCoreItems.gearWood.get())
+                .addOptional(BCCoreItems.gearWood.getId())
         ;
         tag(OreDictionaryTags.GEAR_STONE)
-                .add(BCCoreItems.gearStone.get())
+                .addOptional(BCCoreItems.gearStone.getId())
         ;
         tag(OreDictionaryTags.GEAR_IRON)
-                .add(BCCoreItems.gearIron.get())
+                .addOptional(BCCoreItems.gearIron.getId())
         ;
         tag(OreDictionaryTags.GEAR_GOLD)
-                .add(BCCoreItems.gearGold.get())
+                .addOptional(BCCoreItems.gearGold.getId())
         ;
         tag(OreDictionaryTags.GEAR_DIAMOND)
-                .add(BCCoreItems.gearDiamond.get())
+                .addOptional(BCCoreItems.gearDiamond.getId())
         ;
         tag(OreDictionaryTags.GEARS)
-                .addTag(OreDictionaryTags.GEAR_WOOD)
-                .addTag(OreDictionaryTags.GEAR_STONE)
-                .addTag(OreDictionaryTags.GEAR_IRON)
-                .addTag(OreDictionaryTags.GEAR_GOLD)
-                .addTag(OreDictionaryTags.GEAR_DIAMOND)
+                .addOptionalTag(OreDictionaryTags.GEAR_WOOD.location())
+                .addOptionalTag(OreDictionaryTags.GEAR_STONE.location())
+                .addOptionalTag(OreDictionaryTags.GEAR_IRON.location())
+                .addOptionalTag(OreDictionaryTags.GEAR_GOLD.location())
+                .addOptionalTag(OreDictionaryTags.GEAR_DIAMOND.location())
         ;
 
         // tool
         tag(OreDictionaryTags.WRENCH)
-                .add(BCCoreItems.wrench.get())
+                .addOptional(BCCoreItems.wrench.getId())
         ;
 
-        tag(OreDictionaryTags.PAINT_BRUSH)
-                .add(BCCoreItems.colourBrushMap.values().stream().map(RegistryObject::get).toArray(Item[]::new))
-        ;
+        addAllOptional(tag(OreDictionaryTags.PAINT_BRUSH), BCCoreItems.colourBrushMap.values().stream().map(reg -> reg));
 
         // sealant
         tag(OreDictionaryTags.SEALANT)
-                .addTag(Tags.Items.DYES_GREEN)
-                .addTag(Tags.Items.SLIMEBALLS)
+                .addOptionalTag(Tags.Items.DYES_GREEN.location())
+                .addOptionalTag(Tags.Items.SLIMEBALLS.location())
         ;
 
         // misc
         tag(OreDictionaryTags.WORKBENCHES_ITEM)
-                .add(Items.CRAFTING_TABLE)
+                .addOptional(Items.CRAFTING_TABLE.getRegistryName())
         ;
 
         tag(OreDictionaryTags.CLAY)
-                .add(Items.CLAY)
+                .addOptional(Items.CLAY.getRegistryName())
         ;
 
         // pipe plugs
-        tag(OreDictionaryTags.WATERPROOF).add(BCTransportItems.waterproof.get());
+        tag(OreDictionaryTags.WATERPROOF)
+                .addOptional(BCTransportItems.waterproof.getId())
+        ;
 
         // pipes
         OreDictionaryTags.pipeColorTags.forEach((c, t) ->
         {
             TagsProvider.TagAppender<Item> tagProvider = tag(t);
-            PipeRegistry.INSTANCE.getAllRegisteredPipes().forEach(d -> tagProvider.add((Item) PipeRegistry.INSTANCE.getItemForPipe(d, c)));
+            PipeRegistry.INSTANCE.getAllRegisteredPipes().forEach(d -> tagProvider.addOptional(((Item) PipeRegistry.INSTANCE.getItemForPipe(d, c)).getRegistryName()));
         });
 
-        tag(OreDictionaryTags.pipeStructure).add(BCTransportItems.pipeStructure.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemWood).add(BCTransportItems.pipeItemWood.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidWood).add(BCTransportItems.pipeFluidWood.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipePowerWood).add(BCTransportItems.pipePowerWood.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemStone).add(BCTransportItems.pipeItemStone.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidStone).add(BCTransportItems.pipeFluidStone.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipePowerStone).add(BCTransportItems.pipePowerStone.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemCobble).add(BCTransportItems.pipeItemCobble.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidCobble).add(BCTransportItems.pipeFluidCobble.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipePowerCobble).add(BCTransportItems.pipePowerCobble.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemQuartz).add(BCTransportItems.pipeItemQuartz.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidQuartz).add(BCTransportItems.pipeFluidQuartz.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipePowerQuartz).add(BCTransportItems.pipePowerQuartz.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemGold).add(BCTransportItems.pipeItemGold.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidGold).add(BCTransportItems.pipeFluidGold.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipePowerGold).add(BCTransportItems.pipePowerGold.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemSandstone).add(BCTransportItems.pipeItemSandstone.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidSandstone).add(BCTransportItems.pipeFluidSandstone.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipePowerSandstone).add(BCTransportItems.pipePowerSandstone.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemIron).add(BCTransportItems.pipeItemIron.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidIron).add(BCTransportItems.pipeFluidIron.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-//        tag(OreDictTag.pipePowerIron).add(BCTransportItems.pipePowerIron.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemDiamond).add(BCTransportItems.pipeItemDiamond.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidDiamond).add(BCTransportItems.pipeFluidDiamond.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-//        tag(OreDictTag.pipePowerDiamond).add(BCTransportItems.pipePowerDiamond.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemDiaWood).add(BCTransportItems.pipeItemDiaWood.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidDiaWood).add(BCTransportItems.pipeFluidDiaWood.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-//        tag(OreDictTag.pipePowerDiaWood).add(BCTransportItems.pipePowerDiaWood.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemClay).add(BCTransportItems.pipeItemClay.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidClay).add(BCTransportItems.pipeFluidClay.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemVoid).add(BCTransportItems.pipeItemVoid.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeFluidVoid).add(BCTransportItems.pipeFluidVoid.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemObsidian).add(BCTransportItems.pipeItemObsidian.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-//        tag(OreDictTag.pipeFluidObsidian).add(BCTransportItems.pipeFluidObsidian.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemLapis).add(BCTransportItems.pipeItemLapis.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemDaizuli).add(BCTransportItems.pipeItemDaizuli.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemEmzuli).add(BCTransportItems.pipeItemEmzuli.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
-        tag(OreDictionaryTags.pipeItemStripes).add(BCTransportItems.pipeItemStripes.values().stream().map(r -> (Item) r.get()).toArray(Item[]::new));
+        addAllOptional(tag(OreDictionaryTags.pipeStructure), BCTransportItems.pipeStructure.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemWood), BCTransportItems.pipeItemWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidWood), BCTransportItems.pipeFluidWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerWood), BCTransportItems.pipePowerWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfWood), BCTransportItems.pipeRfWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemStone), BCTransportItems.pipeItemStone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidStone), BCTransportItems.pipeFluidStone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerStone), BCTransportItems.pipePowerStone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfStone), BCTransportItems.pipeRfStone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemCobble), BCTransportItems.pipeItemCobble.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidCobble), BCTransportItems.pipeFluidCobble.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerCobble), BCTransportItems.pipePowerCobble.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfCobble), BCTransportItems.pipeRfCobble.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemQuartz), BCTransportItems.pipeItemQuartz.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidQuartz), BCTransportItems.pipeFluidQuartz.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerQuartz), BCTransportItems.pipePowerQuartz.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfQuartz), BCTransportItems.pipeRfQuartz.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemGold), BCTransportItems.pipeItemGold.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidGold), BCTransportItems.pipeFluidGold.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerGold), BCTransportItems.pipePowerGold.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfGold), BCTransportItems.pipeRfGold.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemSandstone), BCTransportItems.pipeItemSandstone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidSandstone), BCTransportItems.pipeFluidSandstone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerSandstone), BCTransportItems.pipePowerSandstone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfSandstone), BCTransportItems.pipeRfSandstone.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemIron), BCTransportItems.pipeItemIron.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidIron), BCTransportItems.pipeFluidIron.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerIron), BCTransportItems.pipePowerIron.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfIron), BCTransportItems.pipeRfIron.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemDiamond), BCTransportItems.pipeItemDiamond.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidDiamond), BCTransportItems.pipeFluidDiamond.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerDiamond), BCTransportItems.pipePowerDiamond.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfDiamond), BCTransportItems.pipeRfDiamond.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemDiaWood), BCTransportItems.pipeItemDiaWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidDiaWood), BCTransportItems.pipeFluidDiaWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipePowerDiaWood), BCTransportItems.pipePowerDiaWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeRfDiaWood), BCTransportItems.pipeRfDiaWood.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemClay), BCTransportItems.pipeItemClay.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidClay), BCTransportItems.pipeFluidClay.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemVoid), BCTransportItems.pipeItemVoid.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeFluidVoid), BCTransportItems.pipeFluidVoid.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemObsidian), BCTransportItems.pipeItemObsidian.values().stream().map(reg -> reg));
+//        addAllOptional(tag(OreDictionaryTags.pipeFluidObsidian), BCTransportItems.pipeFluidObsidian.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemLapis), BCTransportItems.pipeItemLapis.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemDaizuli), BCTransportItems.pipeItemDaizuli.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemEmzuli), BCTransportItems.pipeItemEmzuli.values().stream().map(reg -> reg));
+        addAllOptional(tag(OreDictionaryTags.pipeItemStripes), BCTransportItems.pipeItemStripes.values().stream().map(reg -> reg));
+    }
 
+    private static void addAllOptional(TagAppender<Item> tag, Stream<RegistryObject<?>> allToAdd) {
+        allToAdd.forEach(reg -> tag.addOptional(reg.getId()));
     }
 
     @Override

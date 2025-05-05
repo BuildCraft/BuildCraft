@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcraftcore:paintbrush_clean",
-    "buildcraftcore:paintbrush_magenta",
-    "buildcraftcore:paintbrush_pink",
-    "buildcraftcore:paintbrush_purple",
-    "buildcraftcore:paintbrush_white",
-    "buildcraftcore:paintbrush_orange",
-    "buildcraftcore:paintbrush_light_gray",
-    "buildcraftcore:paintbrush_red",
-    "buildcraftcore:paintbrush_cyan",
-    "buildcraftcore:paintbrush_brown",
-    "buildcraftcore:paintbrush_green",
-    "buildcraftcore:paintbrush_lime",
-    "buildcraftcore:paintbrush_gray",
-    "buildcraftcore:paintbrush_black",
-    "buildcraftcore:paintbrush_light_blue",
-    "buildcraftcore:paintbrush_yellow",
-    "buildcraftcore:paintbrush_blue"
+    {
+      "id": "buildcraftcore:paintbrush_clean",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_lime",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_brown",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_orange",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_black",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_pink",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_white",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_green",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_purple",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_blue",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_red",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_gray",
+      "required": false
+    }
   ]
 }

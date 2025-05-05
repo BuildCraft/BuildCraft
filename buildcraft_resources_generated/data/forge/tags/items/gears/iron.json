@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "buildcraftcore:gear_iron"
+    {
+      "id": "buildcraftcore:gear_iron",
+      "required": false
+    }
   ]
 }

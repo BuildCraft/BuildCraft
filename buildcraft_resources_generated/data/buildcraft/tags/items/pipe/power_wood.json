@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_power_wood_colorless",
-    "buildcrafttransport:pipe_power_wood_magenta",
-    "buildcrafttransport:pipe_power_wood_pink",
-    "buildcrafttransport:pipe_power_wood_purple",
-    "buildcrafttransport:pipe_power_wood_white",
-    "buildcrafttransport:pipe_power_wood_orange",
-    "buildcrafttransport:pipe_power_wood_light_gray",
-    "buildcrafttransport:pipe_power_wood_red",
-    "buildcrafttransport:pipe_power_wood_cyan",
-    "buildcrafttransport:pipe_power_wood_brown",
-    "buildcrafttransport:pipe_power_wood_green",
-    "buildcrafttransport:pipe_power_wood_lime",
-    "buildcrafttransport:pipe_power_wood_gray",
-    "buildcrafttransport:pipe_power_wood_black",
-    "buildcrafttransport:pipe_power_wood_light_blue",
-    "buildcrafttransport:pipe_power_wood_yellow",
-    "buildcrafttransport:pipe_power_wood_blue"
+    {
+      "id": "buildcrafttransport:pipe_power_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_gray",
+      "required": false
+    }
   ]
 }

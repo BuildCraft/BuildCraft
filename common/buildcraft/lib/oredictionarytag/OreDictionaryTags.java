@@ -65,38 +65,47 @@ public class OreDictionaryTags {
     public static final TagKey<Item> pipeItemWood = itemTag("buildcraft:pipe/items_wood");
     public static final TagKey<Item> pipeFluidWood = itemTag("buildcraft:pipe/fluids_wood");
     public static final TagKey<Item> pipePowerWood = itemTag("buildcraft:pipe/power_wood");
+    public static final TagKey<Item> pipeRfWood = itemTag("buildcraft:pipe/rf_wood");
 
     public static final TagKey<Item> pipeItemStone = itemTag("buildcraft:pipe/items_stone");
     public static final TagKey<Item> pipeFluidStone = itemTag("buildcraft:pipe/fluids_stone");
     public static final TagKey<Item> pipePowerStone = itemTag("buildcraft:pipe/power_stone");
+    public static final TagKey<Item> pipeRfStone = itemTag("buildcraft:pipe/rf_stone");
 
     public static final TagKey<Item> pipeItemCobble = itemTag("buildcraft:pipe/items_cobblestone");
     public static final TagKey<Item> pipeFluidCobble = itemTag("buildcraft:pipe/fluids_cobblestone");
     public static final TagKey<Item> pipePowerCobble = itemTag("buildcraft:pipe/power_cobblestone");
+    public static final TagKey<Item> pipeRfCobble = itemTag("buildcraft:pipe/rf_cobblestone");
 
     public static final TagKey<Item> pipeItemQuartz = itemTag("buildcraft:pipe/items_quartz");
     public static final TagKey<Item> pipeFluidQuartz = itemTag("buildcraft:pipe/fluids_quartz");
     public static final TagKey<Item> pipePowerQuartz = itemTag("buildcraft:pipe/power_quartz");
+    public static final TagKey<Item> pipeRfQuartz = itemTag("buildcraft:pipe/rf_quartz");
 
     public static final TagKey<Item> pipeItemGold = itemTag("buildcraft:pipe/items_gold");
     public static final TagKey<Item> pipeFluidGold = itemTag("buildcraft:pipe/fluids_gold");
     public static final TagKey<Item> pipePowerGold = itemTag("buildcraft:pipe/power_gold");
+    public static final TagKey<Item> pipeRfGold = itemTag("buildcraft:pipe/rf_gold");
 
     public static final TagKey<Item> pipeItemSandstone = itemTag("buildcraft:pipe/items_sandstone");
     public static final TagKey<Item> pipeFluidSandstone = itemTag("buildcraft:pipe/fluids_sandstone");
     public static final TagKey<Item> pipePowerSandstone = itemTag("buildcraft:pipe/power_sandstone");
+    public static final TagKey<Item> pipeRfSandstone = itemTag("buildcraft:pipe/rf_sandstone");
 
     public static final TagKey<Item> pipeItemIron = itemTag("buildcraft:pipe/items_iron");
     public static final TagKey<Item> pipeFluidIron = itemTag("buildcraft:pipe/fluids_iron");
-    // public static ItemPipeHolder pipePowerIron= itemTag("buildcraft:pipe/power_iron");
+    public static final TagKey<Item> pipePowerIron = itemTag("buildcraft:pipe/power_iron");
+    public static final TagKey<Item> pipeRfIron = itemTag("buildcraft:pipe/rf_iron");
 
     public static final TagKey<Item> pipeItemDiamond = itemTag("buildcraft:pipe/items_diamond");
     public static final TagKey<Item> pipeFluidDiamond = itemTag("buildcraft:pipe/fluids_diamond");
-    // public static ItemPipeHolder pipePowerDiamond= itemTag("buildcraft:pipe/power_diamond");
+    public static final TagKey<Item> pipePowerDiamond = itemTag("buildcraft:pipe/power_diamond");
+    public static final TagKey<Item> pipeRfDiamond = itemTag("buildcraft:pipe/rf_diamond");
 
     public static final TagKey<Item> pipeItemDiaWood = itemTag("buildcraft:pipe/items_diamond_wood");
     public static final TagKey<Item> pipeFluidDiaWood = itemTag("buildcraft:pipe/fluids_diamond_wood");
-//    public static final TagKey<Item> pipePowerDiaWood= itemTag("buildcraft:pipe/power_diamond_wood");
+    public static final TagKey<Item> pipePowerDiaWood = itemTag("buildcraft:pipe/power_diamond_wood");
+    public static final TagKey<Item> pipeRfDiaWood = itemTag("buildcraft:pipe/rf_diamond_wood");
 
     public static final TagKey<Item> pipeItemClay = itemTag("buildcraft:pipe/items_clay");
     public static final TagKey<Item> pipeFluidClay = itemTag("buildcraft:pipe/fluids_clay");

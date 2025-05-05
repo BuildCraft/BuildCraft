@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_items_clay_colorless",
-    "buildcrafttransport:pipe_items_clay_magenta",
-    "buildcrafttransport:pipe_items_clay_pink",
-    "buildcrafttransport:pipe_items_clay_purple",
-    "buildcrafttransport:pipe_items_clay_white",
-    "buildcrafttransport:pipe_items_clay_orange",
-    "buildcrafttransport:pipe_items_clay_light_gray",
-    "buildcrafttransport:pipe_items_clay_red",
-    "buildcrafttransport:pipe_items_clay_cyan",
-    "buildcrafttransport:pipe_items_clay_brown",
-    "buildcrafttransport:pipe_items_clay_green",
-    "buildcrafttransport:pipe_items_clay_lime",
-    "buildcrafttransport:pipe_items_clay_gray",
-    "buildcrafttransport:pipe_items_clay_black",
-    "buildcrafttransport:pipe_items_clay_light_blue",
-    "buildcrafttransport:pipe_items_clay_yellow",
-    "buildcrafttransport:pipe_items_clay_blue"
+    {
+      "id": "buildcrafttransport:pipe_items_clay_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_gray",
+      "required": false
+    }
   ]
 }

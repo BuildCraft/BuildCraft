@@ -1,10 +1,25 @@
 {
   "replace": false,
   "values": [
-    "#forge:gears/wood",
-    "#forge:gears/stone",
-    "#forge:gears/iron",
-    "#forge:gears/gold",
-    "#forge:gears/diamond"
+    {
+      "id": "#forge:gears/wood",
+      "required": false
+    },
+    {
+      "id": "#forge:gears/stone",
+      "required": false
+    },
+    {
+      "id": "#forge:gears/iron",
+      "required": false
+    },
+    {
+      "id": "#forge:gears/gold",
+      "required": false
+    },
+    {
+      "id": "#forge:gears/diamond",
+      "required": false
+    }
   ]
 }

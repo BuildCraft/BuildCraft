@@ -1,9 +1,21 @@
 {
   "replace": false,
   "values": [
-    "minecraft:air",
-    "minecraft:snow",
-    "minecraft:vine",
-    "minecraft:fire"
+    {
+      "id": "minecraft:air",
+      "required": false
+    },
+    {
+      "id": "minecraft:snow",
+      "required": false
+    },
+    {
+      "id": "minecraft:vine",
+      "required": false
+    },
+    {
+      "id": "minecraft:fire",
+      "required": false
+    }
   ]
 }

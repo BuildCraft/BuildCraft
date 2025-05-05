@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_items_diamond_colorless",
-    "buildcrafttransport:pipe_items_diamond_magenta",
-    "buildcrafttransport:pipe_items_diamond_pink",
-    "buildcrafttransport:pipe_items_diamond_purple",
-    "buildcrafttransport:pipe_items_diamond_white",
-    "buildcrafttransport:pipe_items_diamond_orange",
-    "buildcrafttransport:pipe_items_diamond_light_gray",
-    "buildcrafttransport:pipe_items_diamond_red",
-    "buildcrafttransport:pipe_items_diamond_cyan",
-    "buildcrafttransport:pipe_items_diamond_brown",
-    "buildcrafttransport:pipe_items_diamond_green",
-    "buildcrafttransport:pipe_items_diamond_lime",
-    "buildcrafttransport:pipe_items_diamond_gray",
-    "buildcrafttransport:pipe_items_diamond_black",
-    "buildcrafttransport:pipe_items_diamond_light_blue",
-    "buildcrafttransport:pipe_items_diamond_yellow",
-    "buildcrafttransport:pipe_items_diamond_blue"
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_gray",
+      "required": false
+    }
   ]
 }

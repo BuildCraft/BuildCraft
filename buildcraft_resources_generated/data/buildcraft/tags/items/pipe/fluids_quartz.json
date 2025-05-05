@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_fluids_quartz_colorless",
-    "buildcrafttransport:pipe_fluids_quartz_magenta",
-    "buildcrafttransport:pipe_fluids_quartz_pink",
-    "buildcrafttransport:pipe_fluids_quartz_purple",
-    "buildcrafttransport:pipe_fluids_quartz_white",
-    "buildcrafttransport:pipe_fluids_quartz_orange",
-    "buildcrafttransport:pipe_fluids_quartz_light_gray",
-    "buildcrafttransport:pipe_fluids_quartz_red",
-    "buildcrafttransport:pipe_fluids_quartz_cyan",
-    "buildcrafttransport:pipe_fluids_quartz_brown",
-    "buildcrafttransport:pipe_fluids_quartz_green",
-    "buildcrafttransport:pipe_fluids_quartz_lime",
-    "buildcrafttransport:pipe_fluids_quartz_gray",
-    "buildcrafttransport:pipe_fluids_quartz_black",
-    "buildcrafttransport:pipe_fluids_quartz_light_blue",
-    "buildcrafttransport:pipe_fluids_quartz_yellow",
-    "buildcrafttransport:pipe_fluids_quartz_blue"
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_gray",
+      "required": false
+    }
   ]
 }
