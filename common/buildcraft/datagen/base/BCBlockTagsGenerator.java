@@ -22,60 +22,55 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
     protected void addTags() {
         // bedrock_like
         tag(BlockTags.DRAGON_IMMUNE)
-                .add(BCCoreBlocks.springWater.get())
-                .add(BCCoreBlocks.springOil.get())
-                .add(BCFactoryBlocks.tube.get())
+                .addOptional(BCCoreBlocks.springWater.getId())
+                .addOptional(BCCoreBlocks.springOil.getId())
+                .addOptional(BCFactoryBlocks.tube.getId())
         ;
 
         tag(BlockTags.WITHER_IMMUNE)
-                .add(BCCoreBlocks.springWater.get())
-                .add(BCCoreBlocks.springOil.get())
-                .add(BCFactoryBlocks.tube.get())
+                .addOptional(BCCoreBlocks.springWater.getId())
+                .addOptional(BCCoreBlocks.springOil.getId())
+                .addOptional(BCFactoryBlocks.tube.getId())
         ;
 
 //        // pickaxe mineable
-//        tag(BlockTags.MINEABLE_WITH_PICKAXE)
-//                .add(
-//                        BCCoreBlocks.engineBlockMap.values().stream().map(RegistryObject::get).toArray(Block[]::new)
-//                )
-//                .add(
-//                        BCEnergyBlocks.mjDynamo.get(),
-//                        BCFactoryBlocks.autoWorkbenchItems.get(),
-//                        BCFactoryBlocks.chute.get(),
-//                        BCFactoryBlocks.distiller.get(),
-//                        BCFactoryBlocks.heatExchange.get(),
-//                        BCFactoryBlocks.tank.get(),
-//                        BCFactoryBlocks.pump.get(),
-//                        BCFactoryBlocks.miningWell.get(),
-//                        BCFactoryBlocks.waterGel.get(),
-//                        BCFactoryBlocks.floodGate.get(),
-//                        BCBuildersBlocks.quarry.get(),
-//                        BCBuildersBlocks.builder.get(),
-//                        BCBuildersBlocks.architect.get(),
-//                        BCBuildersBlocks.filler.get(),
-//                        BCBuildersBlocks.library.get(),
-//                        BCBuildersBlocks.replacer.get(),
-//                        BCSiliconBlocks.integrationTable.get(),
-//                        BCSiliconBlocks.assemblyTable.get(),
-//                        BCSiliconBlocks.advancedCraftingTable.get(),
-//                        BCSiliconBlocks.programmingTable.get(),
-//                        BCSiliconBlocks.chargingTable.get(),
-//                        BCSiliconBlocks.laser.get(),
-//                        BCRoboticsBlocks.zonePlanner.get(),
-//                        BCRoboticsBlocks.requester.get(),
-//                        BCTransportBlocks.filteredBuffer.get()
-//                )
-//        ;
+//        TagAppender<Block> mineable_with_pickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE)
+//                .addOptional(BCEnergyBlocks.mjDynamo.getId())
+//                .addOptional(BCFactoryBlocks.autoWorkbenchItems.getId())
+//                .addOptional(BCFactoryBlocks.chute.getId())
+//                .addOptional(BCFactoryBlocks.distiller.getId())
+//                .addOptional(BCFactoryBlocks.heatExchange.getId())
+//                .addOptional(BCFactoryBlocks.tank.getId())
+//                .addOptional(BCFactoryBlocks.pump.getId())
+//                .addOptional(BCFactoryBlocks.miningWell.getId())
+//                .addOptional(BCFactoryBlocks.waterGel.getId())
+//                .addOptional(BCFactoryBlocks.floodGate.getId())
+//                .addOptional(BCBuildersBlocks.quarry.getId())
+//                .addOptional(BCBuildersBlocks.builder.getId())
+//                .addOptional(BCBuildersBlocks.architect.getId())
+//                .addOptional(BCBuildersBlocks.filler.getId())
+//                .addOptional(BCBuildersBlocks.library.getId())
+//                .addOptional(BCBuildersBlocks.replacer.getId())
+//                .addOptional(BCSiliconBlocks.integrationTable.getId())
+//                .addOptional(BCSiliconBlocks.assemblyTable.getId())
+//                .addOptional(BCSiliconBlocks.advancedCraftingTable.getId())
+//                .addOptional(BCSiliconBlocks.programmingTable.getId())
+//                .addOptional(BCSiliconBlocks.chargingTable.getId())
+//                .addOptional(BCSiliconBlocks.laser.getId())
+//                .addOptional(BCRoboticsBlocks.zonePlanner.getId())
+//                .addOptional(BCRoboticsBlocks.requester.getId())
+//                .addOptional(BCTransportBlocks.filteredBuffer.getId());
+//        BCCoreBlocks.engineBlockMap.values().stream().forEach(reg -> mineable_with_pickaxe.addOptional(reg.getId()));
 
         tag(OreDictionaryTags.WORKBENCHES_BLOCK)
-                .add(Blocks.CRAFTING_TABLE)
+                .addOptional(Blocks.CRAFTING_TABLE.getRegistryName())
         ;
 
         tag(OreDictionaryTags.SOFT)
-                .add(Blocks.AIR)
-                .add(Blocks.SNOW)
-                .add(Blocks.VINE)
-                .add(Blocks.FIRE)
+                .addOptional(Blocks.AIR.getRegistryName())
+                .addOptional(Blocks.SNOW.getRegistryName())
+                .addOptional(Blocks.VINE.getRegistryName())
+                .addOptional(Blocks.FIRE.getRegistryName())
         ;
     }
 
@@ -90,4 +85,3 @@ public class BCBlockTagsGenerator extends BlockTagsProvider {
         return "BuildCraft Block Tags Generator";
     }
 }
-

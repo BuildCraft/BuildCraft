@@ -1,0 +1,73 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_light_gray",
+      "required": false
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "minecraft:clay"
+    {
+      "id": "minecraft:clay",
+      "required": false
+    }
   ]
 }

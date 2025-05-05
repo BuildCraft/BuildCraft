@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:waterproof"
+    {
+      "id": "buildcrafttransport:waterproof",
+      "required": false
+    }
   ]
 }

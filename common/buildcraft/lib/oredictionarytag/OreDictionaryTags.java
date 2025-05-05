@@ -66,38 +66,47 @@ public class OreDictionaryTags {
     public static final INamedTag<Item> pipeItemWood = itemTag("buildcraft:pipe/items_wood");
     public static final INamedTag<Item> pipeFluidWood = itemTag("buildcraft:pipe/fluids_wood");
     public static final INamedTag<Item> pipePowerWood = itemTag("buildcraft:pipe/power_wood");
+    public static final INamedTag<Item> pipeRfWood = itemTag("buildcraft:pipe/rf_wood");
 
     public static final INamedTag<Item> pipeItemStone = itemTag("buildcraft:pipe/items_stone");
     public static final INamedTag<Item> pipeFluidStone = itemTag("buildcraft:pipe/fluids_stone");
     public static final INamedTag<Item> pipePowerStone = itemTag("buildcraft:pipe/power_stone");
+    public static final INamedTag<Item> pipeRfStone = itemTag("buildcraft:pipe/rf_stone");
 
     public static final INamedTag<Item> pipeItemCobble = itemTag("buildcraft:pipe/items_cobblestone");
     public static final INamedTag<Item> pipeFluidCobble = itemTag("buildcraft:pipe/fluids_cobblestone");
     public static final INamedTag<Item> pipePowerCobble = itemTag("buildcraft:pipe/power_cobblestone");
+    public static final INamedTag<Item> pipeRfCobble = itemTag("buildcraft:pipe/rf_cobblestone");
 
     public static final INamedTag<Item> pipeItemQuartz = itemTag("buildcraft:pipe/items_quartz");
     public static final INamedTag<Item> pipeFluidQuartz = itemTag("buildcraft:pipe/fluids_quartz");
     public static final INamedTag<Item> pipePowerQuartz = itemTag("buildcraft:pipe/power_quartz");
+    public static final INamedTag<Item> pipeRfQuartz = itemTag("buildcraft:pipe/rf_quartz");
 
     public static final INamedTag<Item> pipeItemGold = itemTag("buildcraft:pipe/items_gold");
     public static final INamedTag<Item> pipeFluidGold = itemTag("buildcraft:pipe/fluids_gold");
     public static final INamedTag<Item> pipePowerGold = itemTag("buildcraft:pipe/power_gold");
+    public static final INamedTag<Item> pipeRfGold = itemTag("buildcraft:pipe/rf_gold");
 
     public static final INamedTag<Item> pipeItemSandstone = itemTag("buildcraft:pipe/items_sandstone");
     public static final INamedTag<Item> pipeFluidSandstone = itemTag("buildcraft:pipe/fluids_sandstone");
     public static final INamedTag<Item> pipePowerSandstone = itemTag("buildcraft:pipe/power_sandstone");
+    public static final INamedTag<Item> pipeRfSandstone = itemTag("buildcraft:pipe/rf_sandstone");
 
     public static final INamedTag<Item> pipeItemIron = itemTag("buildcraft:pipe/items_iron");
     public static final INamedTag<Item> pipeFluidIron = itemTag("buildcraft:pipe/fluids_iron");
-    // public static ItemPipeHolder pipePowerIron= itemTag("buildcraft:pipe/power_iron");
+    public static final INamedTag<Item> pipePowerIron = itemTag("buildcraft:pipe/power_iron");
+    public static final INamedTag<Item> pipeRfIron = itemTag("buildcraft:pipe/rf_iron");
 
     public static final INamedTag<Item> pipeItemDiamond = itemTag("buildcraft:pipe/items_diamond");
     public static final INamedTag<Item> pipeFluidDiamond = itemTag("buildcraft:pipe/fluids_diamond");
-    // public static ItemPipeHolder pipePowerDiamond= itemTag("buildcraft:pipe/power_diamond");
+    public static final INamedTag<Item> pipePowerDiamond = itemTag("buildcraft:pipe/power_diamond");
+    public static final INamedTag<Item> pipeRfDiamond = itemTag("buildcraft:pipe/rf_diamond");
 
     public static final INamedTag<Item> pipeItemDiaWood = itemTag("buildcraft:pipe/items_diamond_wood");
     public static final INamedTag<Item> pipeFluidDiaWood = itemTag("buildcraft:pipe/fluids_diamond_wood");
-//    public static final INamedTag<Item> pipePowerDiaWood= itemTag("buildcraft:pipe/power_diamond_wood");
+    public static final INamedTag<Item> pipePowerDiaWood = itemTag("buildcraft:pipe/power_diamond_wood");
+    public static final INamedTag<Item> pipeRfDiaWood = itemTag("buildcraft:pipe/rf_diamond_wood");
 
     public static final INamedTag<Item> pipeItemClay = itemTag("buildcraft:pipe/items_clay");
     public static final INamedTag<Item> pipeFluidClay = itemTag("buildcraft:pipe/fluids_clay");

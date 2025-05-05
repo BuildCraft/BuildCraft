@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "buildcraftcore:gear_gold"
+    {
+      "id": "buildcraftcore:gear_gold",
+      "required": false
+    }
   ]
 }

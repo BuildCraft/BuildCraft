@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "buildcraftcore:wrench"
+    {
+      "id": "buildcraftcore:wrench",
+      "required": false
+    }
   ]
 }

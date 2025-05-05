@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_power_quartz_colorless",
-    "buildcrafttransport:pipe_power_quartz_white",
-    "buildcrafttransport:pipe_power_quartz_yellow",
-    "buildcrafttransport:pipe_power_quartz_cyan",
-    "buildcrafttransport:pipe_power_quartz_light_gray",
-    "buildcrafttransport:pipe_power_quartz_red",
-    "buildcrafttransport:pipe_power_quartz_black",
-    "buildcrafttransport:pipe_power_quartz_magenta",
-    "buildcrafttransport:pipe_power_quartz_purple",
-    "buildcrafttransport:pipe_power_quartz_lime",
-    "buildcrafttransport:pipe_power_quartz_gray",
-    "buildcrafttransport:pipe_power_quartz_brown",
-    "buildcrafttransport:pipe_power_quartz_light_blue",
-    "buildcrafttransport:pipe_power_quartz_pink",
-    "buildcrafttransport:pipe_power_quartz_orange",
-    "buildcrafttransport:pipe_power_quartz_blue",
-    "buildcrafttransport:pipe_power_quartz_green"
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_light_gray",
+      "required": false
+    }
   ]
 }

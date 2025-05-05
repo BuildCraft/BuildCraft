@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "minecraft:crafting_table"
+    {
+      "id": "minecraft:crafting_table",
+      "required": false
+    }
   ]
 }

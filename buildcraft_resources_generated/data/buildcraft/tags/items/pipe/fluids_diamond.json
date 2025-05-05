@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_fluids_diamond_colorless",
-    "buildcrafttransport:pipe_fluids_diamond_white",
-    "buildcrafttransport:pipe_fluids_diamond_yellow",
-    "buildcrafttransport:pipe_fluids_diamond_cyan",
-    "buildcrafttransport:pipe_fluids_diamond_light_gray",
-    "buildcrafttransport:pipe_fluids_diamond_red",
-    "buildcrafttransport:pipe_fluids_diamond_black",
-    "buildcrafttransport:pipe_fluids_diamond_magenta",
-    "buildcrafttransport:pipe_fluids_diamond_purple",
-    "buildcrafttransport:pipe_fluids_diamond_lime",
-    "buildcrafttransport:pipe_fluids_diamond_gray",
-    "buildcrafttransport:pipe_fluids_diamond_brown",
-    "buildcrafttransport:pipe_fluids_diamond_light_blue",
-    "buildcrafttransport:pipe_fluids_diamond_pink",
-    "buildcrafttransport:pipe_fluids_diamond_orange",
-    "buildcrafttransport:pipe_fluids_diamond_blue",
-    "buildcrafttransport:pipe_fluids_diamond_green"
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_light_gray",
+      "required": false
+    }
   ]
 }

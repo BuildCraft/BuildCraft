@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_items_emzuli_colorless",
-    "buildcrafttransport:pipe_items_emzuli_white",
-    "buildcrafttransport:pipe_items_emzuli_yellow",
-    "buildcrafttransport:pipe_items_emzuli_cyan",
-    "buildcrafttransport:pipe_items_emzuli_light_gray",
-    "buildcrafttransport:pipe_items_emzuli_red",
-    "buildcrafttransport:pipe_items_emzuli_black",
-    "buildcrafttransport:pipe_items_emzuli_magenta",
-    "buildcrafttransport:pipe_items_emzuli_purple",
-    "buildcrafttransport:pipe_items_emzuli_lime",
-    "buildcrafttransport:pipe_items_emzuli_gray",
-    "buildcrafttransport:pipe_items_emzuli_brown",
-    "buildcrafttransport:pipe_items_emzuli_light_blue",
-    "buildcrafttransport:pipe_items_emzuli_pink",
-    "buildcrafttransport:pipe_items_emzuli_orange",
-    "buildcrafttransport:pipe_items_emzuli_blue",
-    "buildcrafttransport:pipe_items_emzuli_green"
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_light_gray",
+      "required": false
+    }
   ]
 }

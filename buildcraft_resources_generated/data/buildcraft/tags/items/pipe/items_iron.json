@@ -1,22 +1,73 @@
 {
   "replace": false,
   "values": [
-    "buildcrafttransport:pipe_items_iron_colorless",
-    "buildcrafttransport:pipe_items_iron_white",
-    "buildcrafttransport:pipe_items_iron_yellow",
-    "buildcrafttransport:pipe_items_iron_cyan",
-    "buildcrafttransport:pipe_items_iron_light_gray",
-    "buildcrafttransport:pipe_items_iron_red",
-    "buildcrafttransport:pipe_items_iron_black",
-    "buildcrafttransport:pipe_items_iron_magenta",
-    "buildcrafttransport:pipe_items_iron_purple",
-    "buildcrafttransport:pipe_items_iron_lime",
-    "buildcrafttransport:pipe_items_iron_gray",
-    "buildcrafttransport:pipe_items_iron_brown",
-    "buildcrafttransport:pipe_items_iron_light_blue",
-    "buildcrafttransport:pipe_items_iron_pink",
-    "buildcrafttransport:pipe_items_iron_orange",
-    "buildcrafttransport:pipe_items_iron_blue",
-    "buildcrafttransport:pipe_items_iron_green"
+    {
+      "id": "buildcrafttransport:pipe_items_iron_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_light_gray",
+      "required": false
+    }
   ]
 }
