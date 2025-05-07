@@ -2,6 +2,7 @@ package buildcraft.lib.recipe.programming;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.recipes.IProgrammingRecipe;
+import buildcraft.api.recipes.IngredientStack;
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -12,12 +13,18 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class ProgrammingRecipeBuilder {
+    private final IngredientStack input;
     private final ItemStack output;
     private final long energyCost;
 
-    private ProgrammingRecipeBuilder(ItemStack output, long energyCost) {
+    private ProgrammingRecipeBuilder(IngredientStack input, ItemStack output, long energyCost) {
+        this.input = input;
         this.output = output;
         this.energyCost = energyCost;
+    }
+
+    public IngredientStack getInput() {
+        return input;
     }
 
     public ItemStack getOutput() {
@@ -28,8 +35,8 @@ public class ProgrammingRecipeBuilder {
         return energyCost;
     }
 
-    public static ProgrammingRecipeBuilder programming(ItemStack output, long energyCost) {
-        return new ProgrammingRecipeBuilder(output, energyCost);
+    public static ProgrammingRecipeBuilder programming(IngredientStack input, ItemStack output, long energyCost) {
+        return new ProgrammingRecipeBuilder(input, output, energyCost);
     }
 
     public void save(Consumer<FinishedRecipe> consumer, String name) {

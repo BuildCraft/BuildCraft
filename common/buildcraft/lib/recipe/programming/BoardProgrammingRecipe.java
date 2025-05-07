@@ -1,6 +1,5 @@
 package buildcraft.lib.recipe.programming;
 
-import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.api.recipes.IngredientStack;
 import net.minecraft.resources.ResourceLocation;
@@ -28,12 +27,13 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 //    }
 
     private final ResourceLocation id;
-    private static final IngredientStack INPUT = IngredientStack.of(new ItemStack(RedstoneBoardRegistry.instance.getBoardNBTItemMap().get(RedstoneBoardRegistry.instance.getEmptyRobotBoard()).get()));
+    private final IngredientStack input;
     private final ItemStack output;
     private final long energyCost;
 
-    public BoardProgrammingRecipe(ResourceLocation id, ItemStack output, long energyCost) {
+    public BoardProgrammingRecipe(ResourceLocation id, IngredientStack input, ItemStack output, long energyCost) {
         this.id = id;
+        this.input = input;
         this.output = output;
         this.energyCost = energyCost;
     }
@@ -71,7 +71,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
     @Override
     public boolean canCraft(ItemStack input) {
         // return input.getItem() instanceof ItemRedstoneBoard;
-        return INPUT.ingredient.test(input);
+        return this.input.ingredient.test(input);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 
     @Override
     public IngredientStack getInput() {
-        return INPUT;
+        return input;
     }
 
     @Override
