@@ -16,6 +16,7 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.VecUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -78,6 +79,10 @@ public class RenderQuarry extends TileEntityRenderer<TileQuarry> {
     @Override
 //    public void render(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
     public void render(TileQuarry tile, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int combinedLight, int combinedOverlay) {
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() != BCBuildersBlocks.quarry.get()) {
+            return;
+        }
         IProfiler profiler = Minecraft.getInstance().getProfiler();
         profiler.push("bc");
         profiler.push("quarry");
@@ -210,7 +215,7 @@ public class RenderQuarry extends TileEntityRenderer<TileQuarry> {
                         : -1 /* not possible */;
                 double xProgress = -1;
                 double zProgress = -1;
-                Direction side = tile.getLevel().getBlockState(tile.getBlockPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+                Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
                 BlockPos firstPos = tile.getBlockPos().relative(side);
                 switch (side) {
                     case SOUTH:

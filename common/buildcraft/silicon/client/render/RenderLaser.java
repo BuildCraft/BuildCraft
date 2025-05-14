@@ -11,10 +11,12 @@ import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.item.ItemGoggles;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.BCSiliconConfig;
 import buildcraft.silicon.tile.TileLaser;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -38,6 +40,10 @@ public class RenderLaser extends TileEntityRenderer<TileLaser> {
     @Override
 //    public void renderTileEntityFast(@Nonnull TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer)
     public void render(TileLaser tile, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int combinedLight, int combinedOverlay) {
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() != BCSiliconBlocks.laser.get()) {
+            return;
+        }
         if (BCSiliconConfig.renderLaserBeams || isPlayerWearingGoggles()) {
             Minecraft.getInstance().getProfiler().push("bc");
             Minecraft.getInstance().getProfiler().push("laser");
@@ -50,7 +56,7 @@ public class RenderLaser extends TileEntityRenderer<TileLaser> {
                 long avg = tile.getAverageClient();
                 if (avg > 200_000) {
                     avg += 200_000;
-                    Direction side = tile.getLevel().getBlockState(tile.getBlockPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
+                    Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
                     Vector3d offset = new Vector3d(0.5, 0.5, 0.5).add(Vector3d.atLowerCornerOf(side.getNormal()).scale(4 / 16D));
                     int index = (int) (avg * MAX_POWER / tile.getMaxPowerPerTick());
                     if (index > MAX_POWER) {
