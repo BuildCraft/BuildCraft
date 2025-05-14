@@ -25,6 +25,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -77,6 +78,10 @@ public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
     @Override
 //    public void render(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
     public void render(TileQuarry tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() != BCBuildersBlocks.quarry.get()) {
+            return;
+        }
         ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
         profiler.push("bc");
         profiler.push("quarry");
@@ -208,7 +213,7 @@ public class RenderQuarry implements BlockEntityRenderer<TileQuarry> {
                         : -1 /* not possible */;
                 double xProgress = -1;
                 double zProgress = -1;
-                Direction side = tile.getLevel().getBlockState(tile.getBlockPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+                Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
                 BlockPos firstPos = tile.getBlockPos().relative(side);
                 switch (side) {
                     case SOUTH:

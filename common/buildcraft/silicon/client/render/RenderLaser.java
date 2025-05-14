@@ -11,6 +11,7 @@ import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.item.ItemGoggles;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.silicon.BCSiliconBlocks;
 import buildcraft.silicon.BCSiliconConfig;
 import buildcraft.silicon.tile.TileLaser;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -23,6 +24,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,6 +39,10 @@ public class RenderLaser implements BlockEntityRenderer<TileLaser> {
     @Override
 //    public void renderTileEntityFast(@Nonnull TileLaser tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer)
     public void render(TileLaser tile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() != BCSiliconBlocks.laser.get()) {
+            return;
+        }
         if (BCSiliconConfig.renderLaserBeams || isPlayerWearingGoggles()) {
             Minecraft.getInstance().getProfiler().push("bc");
             Minecraft.getInstance().getProfiler().push("laser");
@@ -49,7 +55,7 @@ public class RenderLaser implements BlockEntityRenderer<TileLaser> {
                 long avg = tile.getAverageClient();
                 if (avg > 200_000) {
                     avg += 200_000;
-                    Direction side = tile.getLevel().getBlockState(tile.getBlockPos()).getValue(BuildCraftProperties.BLOCK_FACING_6);
+                    Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
                     Vec3 offset = new Vec3(0.5, 0.5, 0.5).add(Vec3.atLowerCornerOf(side.getNormal()).scale(4 / 16D));
                     int index = (int) (avg * MAX_POWER / tile.getMaxPowerPerTick());
                     if (index > MAX_POWER) {
