@@ -212,19 +212,21 @@ public class BuildCraftTransport {
 
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "woodenPipe.item.exclusion", "");
 
-			String[] excludedItemBlocks = exclusionItemList.value.split(",");
+			String[] excludedItemBlocks = exclusionItemList.value.isEmpty() ? new String[0] : exclusionItemList.value.split(",");
 			for (int j = 0; j < excludedItemBlocks.length; ++j) {
 				excludedItemBlocks[j] = excludedItemBlocks[j].trim();
 			}
 
 			Property exclusionLiquidList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_BLOCK, "woodenPipe.liquid.exclusion", "");
 
-			String[] excludedLiquidBlocks = exclusionLiquidList.value.split(",");
+			String[] excludedLiquidBlocks = exclusionLiquidList.value.isEmpty() ? new String[0] : exclusionLiquidList.value.split(",");
 			for (int j = 0; j < excludedLiquidBlocks.length; ++j) {
 				excludedLiquidBlocks[j] = excludedLiquidBlocks[j].trim();
 			}
 
-			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedLiquidBlocks));
+			if (excludedItemBlocks.length > 0 || excludedLiquidBlocks.length > 0) {
+				PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedLiquidBlocks));
+			}
 
 			Property maxItemInPipesProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.maxItems", 100);
 			maxItemInPipesProp.comment = "pipes containing more than this amount of items will explode, not dropping any item";
