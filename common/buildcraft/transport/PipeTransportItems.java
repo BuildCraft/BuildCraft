@@ -208,12 +208,8 @@ public class PipeTransportItems extends PipeTransport {
 		if (!Utils.checkPipesConnections(entity, container))
 			return false;
 
-		if (entity instanceof IPipeEntry)
-			return true;
-		else if (entity instanceof TileGenericPipe) {
-			TileGenericPipe pipe = (TileGenericPipe) entity;
-
-			return pipe.pipe.transport instanceof PipeTransportItems;
+		if (entity instanceof IPipeEntry) {
+			return ((IPipeEntry) entity).acceptItems();
 		} else if (entity instanceof IInventory)
 			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0)
 				return true;
