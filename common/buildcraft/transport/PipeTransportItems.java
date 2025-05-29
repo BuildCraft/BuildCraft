@@ -9,14 +9,15 @@
 
 package buildcraft.transport;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -507,33 +508,99 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	/**
-	 * Group all items that are similar, that is to say same dmg, same id and no contribution controlling them
+	 * Group all items that are similar, that is to say same dmg, same id, same nbt and no contribution controlling them
 	 */
 	public void groupEntities() {
-		EntityData[] entities = travelingEntities.values().toArray(new EntityData[travelingEntities.size()]);
+		// determine groupable entities
+		List<EntityData> entities = new ArrayList<EntityData>();
 
-		TreeSet<Integer> remove = new TreeSet<Integer>();
-
-		for (int i = 0; i < entities.length; ++i) {
-			EntityData data1 = entities[i];
-
-			for (int j = i + 1; j < entities.length; ++j) {
-				EntityData data2 = entities[j];
-
-				if (data1.item.getItemStack().itemID == data2.item.getItemStack().itemID
-						&& data1.item.getItemStack().getItemDamage() == data2.item.getItemStack().getItemDamage() && !remove.contains(data1.item.getEntityId())
-						&& !remove.contains(data2.item.getEntityId()) && !data1.item.hasContributions() && !data2.item.hasContributions()
-						&& data1.item.getItemStack().stackSize + data2.item.getItemStack().stackSize < data1.item.getItemStack().getMaxStackSize()) {
-
-					data1.item.getItemStack().stackSize += data2.item.getItemStack().stackSize;
-					remove.add(data2.item.getEntityId());
-				}
+		for (EntityData entityData : travelingEntities.values()) {
+			if (!entityData.item.hasContributions() &&
+				entityData.item.getItemStack().stackSize < entityData.item.getItemStack().getMaxStackSize()) {
+				entities.add(entityData);
 			}
 		}
 
-		for (Integer i : remove) {
-			travelingEntities.get(i).item.remove();
-			travelingEntities.remove(i);
+		if (entities.size() < 2) return; // nothing groupable
+
+		// sort the groupable entities to have all entities with the same id:dmg next to each other (contiguous range)
+		Collections.sort(entities, new Comparator<EntityData>() {
+			@Override
+			public int compare(EntityData a, EntityData b) {
+				// the item id is always less than 2^15 so the int won't overflow
+				ItemStack stackA = a.item.getItemStack();
+				ItemStack stackB = b.item.getItemStack();
+				int itemA = (stackA.itemID << 16) | stackA.getItemDamage();
+				int itemB = (stackB.itemID << 16) | stackB.getItemDamage();
+
+				return itemA - itemB;
+			}
+		});
+
+		// group the entities
+		ItemStack firstItemStack = entities.get(0).item.getItemStack();
+		int matchStart = 0;
+		int lastId = (firstItemStack.itemID << 16) | firstItemStack.getItemDamage();
+
+		for (int i = 1; i < entities.size(); i++) {
+			ItemStack itemStack = entities.get(i).item.getItemStack();
+			int id = (itemStack.itemID << 16) | itemStack.getItemDamage();
+
+			if (id != lastId) {
+				// merge within the last matching ID range
+				groupEntityRange(entities, matchStart, i);
+
+				// start of the next matching ID range
+				matchStart = i;
+				lastId = id;
+			}
+		}
+
+		// merge last matching ID range
+		groupEntityRange(entities, matchStart, entities.size());
+	}
+
+	/**
+	 * Group a range of items with matching IDs (item id + meta/dmg)
+	 *
+	 * @param entities entity list to group
+	 * @param start start index (inclusive)
+	 * @param end end index (exclusive)
+	 */
+	private void groupEntityRange(List<EntityData> entities, int start, int end) {
+		for (int j = start; j < end; j++) {
+			EntityData target = entities.get(j);
+			if (target == null) continue;
+
+			for (int k = j + 1; k < end; k++) {
+				EntityData source = entities.get(k);
+				if (source == null) continue;
+
+				// only merge if the ItemStack tags match
+				if (ItemStack.areItemStackTagsEqual(source.item.getItemStack(), target.item.getItemStack())) {
+					// merge source to target
+					int amount = source.item.getItemStack().stackSize;
+					int space = target.item.getItemStack().getMaxStackSize() - target.item.getItemStack().stackSize;
+
+					if (amount <= space) {
+						// source fits completely into target
+						target.item.getItemStack().stackSize += amount;
+
+						source.item.remove();
+						travelingEntities.remove(source.item.getEntityId());
+						entities.set(k, null);
+					} else {
+						target.item.getItemStack().stackSize += space;
+
+						source.item.getItemStack().stackSize -= space;
+					}
+
+					if (amount >= space) {
+						// target not usable for further additions, no need to check more sources
+						break;
+					}
+				}
+			}
 		}
 	}
 
