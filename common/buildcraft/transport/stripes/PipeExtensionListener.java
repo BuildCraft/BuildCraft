@@ -27,7 +27,7 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeExtensionListener {
-	private class PipeExtensionRequest {
+	private static class PipeExtensionRequest {
 		public ItemStack stack;
 		public int x, y, z;
 		public ForgeDirection o;

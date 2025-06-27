@@ -38,7 +38,7 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 
 public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamondPipe {
-	private class SimpleFilterInventory extends SimpleInventory {
+	private static class SimpleFilterInventory extends SimpleInventory {
 		protected int[] filterCounts = new int[6];
 
 		public SimpleFilterInventory(int size, String invName, int invStackLimit) {

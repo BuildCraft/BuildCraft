@@ -30,7 +30,7 @@ import buildcraft.transport.PipeIconProvider;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver, IDebuggable,
 		IDockingStationProvider {
-	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
+	public static class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override

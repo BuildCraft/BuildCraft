@@ -40,7 +40,7 @@ import buildcraft.transport.pipes.events.PipeEventFluid;
 
 public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDiamondPipe {
 
-	private class FilterInventory extends SimpleInventory {
+	private static class FilterInventory extends SimpleInventory {
 		public boolean[] filteredDirections = new boolean[6];
 		public Fluid[] fluids = new Fluid[54];
 

@@ -42,7 +42,9 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	private SchematicRegistry() {
 	}
 
-	public class SchematicConstructor {
+	public static class SchematicConstructor {
+		private static final Object[] EMPTY_PARAMS = new Object[0];
+
 		public final Class<? extends Schematic> clazz;
 		public final Object[] params;
 
@@ -50,7 +52,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 
 		SchematicConstructor(Class<? extends Schematic> clazz, Object[] params) throws IllegalArgumentException {
 			this.clazz = clazz;
-			this.params = params;
+			this.params = params != null && params.length > 0 ? params : EMPTY_PARAMS;
 			this.constructor = findConstructor();
 		}
 

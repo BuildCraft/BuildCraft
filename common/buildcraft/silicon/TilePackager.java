@@ -27,7 +27,7 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class TilePackager extends TileBuildCraft implements ISidedInventory {
-	private class Requirement {
+	private static class Requirement {
 		public final IInventory location;
 		public final int slot;
 

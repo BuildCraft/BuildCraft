@@ -30,7 +30,7 @@ public class PipeTransportFluidsRenderer extends PipeTransportRenderer<PipeTrans
 	private static final int[] angleY = {0, 0, 270, 90, 0, 180};
 	private static final int[] angleZ = {90, 270, 0, 0, 0, 0};
 
-	private class DisplayFluidList {
+	private static class DisplayFluidList {
 		public int[] sideHorizontal = new int[LIQUID_STAGES];
 		public int[] sideVertical = new int[LIQUID_STAGES];
 		public int[] centerHorizontal = new int[LIQUID_STAGES];

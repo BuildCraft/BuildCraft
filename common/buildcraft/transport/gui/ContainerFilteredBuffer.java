@@ -20,7 +20,7 @@ import buildcraft.transport.TileFilteredBuffer;
 
 public class ContainerFilteredBuffer extends BuildCraftContainer {
 
-	private class SlotPhantomLockable extends SlotPhantom {
+	private static class SlotPhantomLockable extends SlotPhantom {
 
 		final IInventory locks;
 

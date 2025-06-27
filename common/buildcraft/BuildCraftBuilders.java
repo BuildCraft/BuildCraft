@@ -176,7 +176,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	private String oldBlueprintServerDir, blueprintClientDir;
 
-	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
+	public static class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
 		@Override
 		public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
 			for (ForgeChunkManager.Ticket ticket : tickets) {

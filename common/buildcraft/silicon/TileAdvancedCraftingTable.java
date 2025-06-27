@@ -63,7 +63,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
 
-	private final class InternalInventoryCraftingContainer extends Container {
+	private static final class InternalInventoryCraftingContainer extends Container {
 
 		@Override
 		public boolean canInteractWith(EntityPlayer var1) {

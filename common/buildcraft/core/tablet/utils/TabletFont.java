@@ -12,7 +12,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import buildcraft.api.tablet.TabletBitmap;
 
 public final class TabletFont {
-	public final class Glyph {
+	public static final class Glyph {
 		public byte[] glyphData;
 		private final int loadOffset;
 		private int width, height, xOffset, yOffset, deviceWidth;
