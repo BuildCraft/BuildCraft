@@ -26,7 +26,7 @@ def forgeVersion = '1.5.2-7.8.1.738'
 
 archivesBaseName = "buildcraft-A-1.5.2"
 def buildNumber = '1'
-version = "3.7.3"
+version = "3.7.4"
 group = "com.mod-buildcraft"
 
 repositories {
