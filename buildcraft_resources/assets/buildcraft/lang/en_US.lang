@@ -40,11 +40,11 @@ buildcraft.boardRobotPump.desc=Pumps out liquids
 buildcraft.boardRobotStripes.desc=Uhh... Stripes!
 buildcraft.boardRobotBreaker.desc=Mines stone
 
-chat.gateCopier.clear=Gate information cleared.
-chat.gateCopier.gateCopied=Copied gate information to copier.
-chat.gateCopier.gatePasted=Pasted copied data to gate.
+chat.gateCopier.clear=Gate configuration cleared.
+chat.gateCopier.gateCopied=Copied gate configuration to copier.
+chat.gateCopier.gatePasted=Pasted copied configuration to gate.
 chat.gateCopier.noGate=No gate found on this side!
-chat.gateCopier.noInformation=No gate information stored!
+chat.gateCopier.noInformation=No gate configuration stored!
 chat.gateCopier.warning.actionParameters=§6Warning: Target has less action parameters!
 chat.gateCopier.warning.logic=§6Warning: Target has different logic type!
 chat.gateCopier.warning.load=§6Warning: Gate triggers/actions might be missing!
