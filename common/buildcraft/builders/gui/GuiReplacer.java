@@ -11,6 +11,7 @@ import buildcraft.builders.container.ContainerReplacer;
 import buildcraft.builders.snapshot.ClientSnapshots;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
@@ -36,11 +37,13 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     }
 
     @Override
-    public void initGui() {
-//        super.initGui();
+    public void initWhenOpenGuiOrResizeWindow() {
+        super.initWhenOpenGuiOrResizeWindow();
+
+        this.removeWidget(this.nameField);
 //        nameField = new GuiTextField(0, fontRenderer, guiLeft + 30, guiTop + 117, 138, 12);
-//        nameField = new EditBox(font, leftPos + 30, topPos + 117, 138, 12, new TextComponent(""));
-        nameField = new EditBox(font, 30, 117, 138, 12, new TextComponent(""));
+        nameField = new EditBox(font, leftPos + 30, topPos + 117, 138, 12, new TextComponent(""));
+        this.addWidget(nameField);
     }
 
     @Override
@@ -61,10 +64,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     @Override
     protected void drawForegroundLayer(PoseStack poseStack) {
 //        nameField.drawTextBox();
-        poseStack.pushPose();
-        poseStack.translate(leftPos, topPos, 0);
         nameField.renderButton(poseStack, 0, 0, Minecraft.getInstance().getFrameTime());
-        poseStack.popPose();
     }
 
     @Override
@@ -81,9 +81,9 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
 //    public boolean charTyped(char typedChar, int keyCode)
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
         boolean typed = false;
-        if (nameField.isFocused()) {
+        if (typedChar != InputConstants.KEY_ESCAPE && nameField.isFocused()) {
 //            typed = nameField.textboxKeyTyped(typedChar, keyCode);
-            typed = nameField.keyPressed(typedChar, keyCode, modifiers);
+            typed = nameField.keyPressed(typedChar, keyCode, modifiers) || this.nameField.canConsumeInput();
             // container.sendNameToServer(nameField.getText().trim());
         }
         if (!typed) {
@@ -94,11 +94,12 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
         }
     }
 
+    @Override
     public boolean charTyped(char typedChar, int keyCode) {
         boolean typed = false;
-        if (nameField.isFocused()) {
+        if (typedChar != InputConstants.KEY_ESCAPE && nameField.isFocused()) {
 //            typed = nameField.textboxKeyTyped(typedChar, keyCode);
-            typed = nameField.charTyped(typedChar, keyCode);
+            typed = nameField.charTyped(typedChar, keyCode) || this.nameField.canConsumeInput();
             // container.sendNameToServer(nameField.getText().trim());
         }
         if (!typed) {

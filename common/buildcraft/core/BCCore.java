@@ -4,6 +4,7 @@ import buildcraft.core.client.CoreItemModelPredicates;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.lib.BCLibItems;
+import buildcraft.lib.BCLibRegistries;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.TagManager;
@@ -60,7 +61,9 @@ public class BCCore {
     @SubscribeEvent
 //    public static void preInit(FMLPreInitializationEvent event)
     public static void preInit(FMLConstructModEvent event) {
-        BCCoreConfig.cinit();
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
+        BCCoreConfig.clinit();
 
 //        CreativeTabBC tab = CreativeTabManager.createTab("buildcraft.main");
         mainTab = CreativeTabManager.createTab("buildcraft.main");
@@ -90,7 +93,7 @@ public class BCCore {
     @SubscribeEvent
     public static void init(FMLCommonSetupEvent event) {
 //        BCCoreConfig.saveConfigs();
-        // Calen: moved to BCLib#<cinit>
+        // Calen: moved to BCLib#<clinit>
 //        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
 
         BCCoreProxy.getProxy().fmlInit();

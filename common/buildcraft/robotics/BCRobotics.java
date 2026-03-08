@@ -10,6 +10,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.core.BCCore;
+import buildcraft.lib.BCLibRegistries;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
@@ -58,6 +59,8 @@ public class BCRobotics {
     @SubscribeEvent
 //    public static void preInit(FMLPreInitializationEvent evt)
     public static void preInit(FMLConstructModEvent evt) {
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
         BCRoboticsConfig.preInit();
 

@@ -62,6 +62,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -1211,5 +1212,20 @@ public class BlockPipeHolder extends BlockBCTile_Neptune<TilePipeHolder> impleme
     public int getSignal(@NotNull BlockState blockState, @NotNull BlockGetter blockAccess, @NotNull BlockPos pos, @NotNull Direction side) {
 //        return getStrongPower(blockState, blockAccess, pos, side);
         return getDirectSignal(blockState, blockAccess, pos, side);
+    }
+
+    @Override
+    public MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor) {
+        BlockEntity te = level.getBlockEntity(pos);
+        if (te instanceof TilePipeHolder) {
+            TilePipeHolder pipeHolder = (TilePipeHolder) te;
+            DyeColor colour = pipeHolder.getPipe().getColour();
+            if (colour != null) {
+                return colour.getMaterialColor();
+            } else {
+                return pipeHolder.getPipe().definition.flowType.getDefaultMapColour();
+            }
+        }
+        return super.getMapColor(state, level, pos, defaultColor);
     }
 }

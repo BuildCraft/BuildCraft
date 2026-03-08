@@ -17,6 +17,7 @@ import buildcraft.transport.pipe.flow.*;
 import buildcraft.transport.stripes.*;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.MinecraftForge;
 
 public class BCTransportRegistries {
@@ -27,11 +28,11 @@ public class BCTransportRegistries {
         PipeApi.extensionManager = PipeExtensionManager.INSTANCE;
         MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);
 
-        PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
-        PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
-        PipeApi.flowPower = new PipeFlowType(PipeFlowPower::new, PipeFlowPower::new);
-        PipeApi.flowRf = new PipeFlowType(PipeFlowRedstoneFlux::new, PipeFlowRedstoneFlux::new);
-        PipeApi.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new);
+        PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new).setDefaultMapColour(MaterialColor.METAL);
+        PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new).setDefaultMapColour(MaterialColor.COLOR_GREEN);
+        PipeApi.flowPower = new PipeFlowType(PipeFlowPower::new, PipeFlowPower::new).setDefaultMapColour(MaterialColor.COLOR_LIGHT_BLUE);
+        PipeApi.flowRf = new PipeFlowType(PipeFlowRedstoneFlux::new, PipeFlowRedstoneFlux::new).setDefaultMapColour(MaterialColor.COLOR_RED);
+        PipeApi.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new).setDefaultMapColour(MaterialColor.STONE);
         PipeApi.flowStructure.fallbackColourType = EnumPipeColourType.BORDER_OUTER;
     }
 

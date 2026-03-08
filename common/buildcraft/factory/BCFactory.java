@@ -2,6 +2,7 @@ package buildcraft.factory;
 
 import buildcraft.core.BCCore;
 import buildcraft.factory.loot.LootConditionSpreading;
+import buildcraft.lib.BCLibRegistries;
 import buildcraft.lib.recipe.refinery.DistillationRecipeSerializer;
 import buildcraft.lib.recipe.refinery.HeatExchangeRecipeSerializer;
 import buildcraft.lib.registry.RegistryConfig;
@@ -46,6 +47,8 @@ public class BCFactory {
 
     @SubscribeEvent
     public static void preInit(FMLConstructModEvent event) {
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCFactoryBlocks.fmlPreInit();

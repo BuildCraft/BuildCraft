@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class Configuration {
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
+    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Path BC_CONFIG_FOLDER_PATH = FMLPaths.CONFIGDIR.relative().resolve("buildcraft");
 
     private JsonObject configJson;

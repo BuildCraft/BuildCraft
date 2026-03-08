@@ -26,7 +26,13 @@ import buildcraft.lib.registry.PluggableRegistry;
 import buildcraft.lib.script.ReloadableRegistryManager;
 
 public class BCLibRegistries {
-    public static void fmlPreInit() {
+    private static boolean preInitialized = false;
+    public static synchronized void fmlPreInit() {
+        if (preInitialized) {
+            return;
+        }
+        preInitialized = true;
+
 //        BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
 //        BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
 //        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;

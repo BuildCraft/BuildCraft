@@ -259,21 +259,17 @@ public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTa
     @Override
 //    protected void keyTyped(char typedChar, int keyCode) throws IOException
     public boolean keyPressed(int typedChar, int keyCode, int modifiers) {
-//        if (recipeBook == null)
-//        {
+//        if (recipeBook == null) {
 ////            super.keyTyped(typedChar, keyCode);
 ////            return;
 ////            return super.charTyped(typedChar, keyCode);
 //            return super.keyPressed(typedChar, keyCode, modifiers);
 //        }
-//        if (!recipeBook.keyPressed(typedChar, keyCode, modifiers)) //Calen: (int keyCode, int scanCode, int modifiers)
-//        {
+//        if (!recipeBook.keyPressed(typedChar, keyCode, modifiers)) //Calen: (int keyCode, int scanCode, int modifiers) {
 ////            super.keyTyped(typedChar, keyCode);
 ////            return super.charTyped(typedChar, keyCode);
 //            return super.keyPressed(typedChar, keyCode, modifiers);
-//        }
-//        else
-//        {
+//        } else {
 //            return true;
 //        }
 

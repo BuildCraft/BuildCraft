@@ -9,6 +9,7 @@ import buildcraft.builders.client.render.*;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.RulesLoader;
 import buildcraft.core.BCCore;
+import buildcraft.lib.BCLibRegistries;
 import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
@@ -51,6 +52,8 @@ public class BCBuilders {
     @SubscribeEvent
 //    public static void preInit(FMLPreInitializationEvent evt)
     public static void preInit(FMLConstructModEvent evt) {
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCBuildersConfig.preInit();
