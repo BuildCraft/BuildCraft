@@ -6,16 +6,15 @@
 
 package buildcraft.lib.client.guide.world;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 import javax.vecmath.Vector3f;
-
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class WorldState {
     private final Vector3f cameraPos;
     private final double cameraYaw, cameraPitch;
-    // private final Vec3i size;
+    // private final Vector3i size;
     // private final FakeWorld world;
     private final List<WorldLabel> labels;
 

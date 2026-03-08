@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_fluids_quartz_light_blue"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_quartz_light_blue"
+  }
+}

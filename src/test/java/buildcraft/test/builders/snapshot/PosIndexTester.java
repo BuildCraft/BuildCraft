@@ -10,13 +10,12 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.util.math.BlockPos;
 import org.junit.Assert;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-
-import net.minecraft.util.math.BlockPos;
 
 import buildcraft.builders.snapshot.Snapshot;
 

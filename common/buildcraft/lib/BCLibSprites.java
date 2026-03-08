@@ -7,7 +7,6 @@
 package buildcraft.lib;
 
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 
 public class BCLibSprites {

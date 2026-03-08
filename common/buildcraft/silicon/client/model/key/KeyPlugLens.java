@@ -6,20 +6,19 @@
 
 package buildcraft.silicon.client.model.key;
 
+import buildcraft.api.transport.pluggable.PluggableModelKey;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.Direction;
+
 import java.util.Objects;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 public class KeyPlugLens extends PluggableModelKey {
-    public final EnumDyeColor colour;
+    public final DyeColor colour;
     public final boolean isFilter;
     private final int hash;
 
-    public KeyPlugLens(BlockRenderLayer layer, EnumFacing side, EnumDyeColor colour, boolean isFilter) {
+    public KeyPlugLens(RenderType layer, Direction side, DyeColor colour, boolean isFilter) {
         super(layer, side);
         this.colour = colour;
         this.isFilter = isFilter;
@@ -38,8 +37,8 @@ public class KeyPlugLens extends PluggableModelKey {
         if (obj.getClass() != getClass()) return false;
         KeyPlugLens other = (KeyPlugLens) obj;
         return other.isFilter == isFilter//
-            && other.layer == layer//
-            && other.colour == colour//
-            && other.side == side;
+                && other.layer == layer//
+                && other.colour == colour//
+                && other.side == side;
     }
 }

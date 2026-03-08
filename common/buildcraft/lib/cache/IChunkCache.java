@@ -1,9 +1,9 @@
 package buildcraft.lib.cache;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
+
+import javax.annotation.Nullable;
 
 public interface IChunkCache {
 

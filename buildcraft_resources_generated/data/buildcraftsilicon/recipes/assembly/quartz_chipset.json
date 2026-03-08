@@ -1,0 +1,22 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "subType": "BASIC",
+  "requiredMicroJoules": 60000000000,
+  "requiredStacks": [
+    {
+      "ingredient": {
+        "tag": "forge:dusts/redstone"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "tag": "forge:gems/quartz"
+      },
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "buildcraftsilicon:chipset_quartz"
+  }
+}

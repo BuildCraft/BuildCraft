@@ -6,31 +6,32 @@
 
 package buildcraft.silicon.container;
 
-import java.util.ArrayList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotDisplay;
-
 import buildcraft.silicon.tile.TileAssemblyTable;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
 
 public class ContainerAssemblyTable extends ContainerBCTile<TileAssemblyTable> {
-    public ContainerAssemblyTable(EntityPlayer player, TileAssemblyTable tile) {
-        super(player, tile);
+    public ContainerAssemblyTable(ContainerType menuType, int id, PlayerEntity player, TileAssemblyTable tile) {
+        super(menuType, id, player, tile);
         addFullPlayerInventory(123);
 
-        for(int y = 0; y < 4; y++) {
-            for(int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotBase(tile.inv, x + y * 3, 8 + x * 18, 36 + y * 18));
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 3; x++) {
+//                addSlotToContainer(new SlotBase(tile.inv, x + y * 3, 8 + x * 18, 36 + y * 18));
+                addSlot(new SlotBase(tile.inv, x + y * 3, 8 + x * 18, 36 + y * 18));
             }
         }
 
-        for(int y = 0; y < 4; y++) {
-            for(int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotDisplay(this::getDisplay, x + y * 3, 116 + x * 18, 36 + y * 18));
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 3; x++) {
+//                addSlotToContainer(new SlotDisplay(this::getDisplay, x + y * 3, 116 + x * 18, 36 + y * 18));
+                addSlot(new SlotDisplay(this::getDisplay, x + y * 3, 116 + x * 18, 36 + y * 18));
             }
         }
     }

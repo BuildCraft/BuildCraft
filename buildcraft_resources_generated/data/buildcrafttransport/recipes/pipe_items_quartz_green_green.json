@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:storage_blocks/quartz"
+    },
+    "g": {
+      "tag": "forge:glass/green"
+    },
+    "r": {
+      "tag": "forge:storage_blocks/quartz"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_quartz_green",
+    "count": 8
+  }
+}

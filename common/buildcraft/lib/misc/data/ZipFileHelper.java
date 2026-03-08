@@ -6,6 +6,12 @@
 
 package buildcraft.lib.misc.data;
 
+import buildcraft.lib.nbt.NbtSquisher;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.nbt.CompoundNBT;
+import org.apache.commons.io.IOUtils;
+
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,21 +21,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableSet;
-
-import org.apache.commons.io.IOUtils;
-
-import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.lib.nbt.NbtSquisher;
-
 public class ZipFileHelper {
     private final Map<String, byte[]> entries = new HashMap<>();
     private final Map<String, String> comments = new HashMap<>();
 
-    public ZipFileHelper() {}
+    public ZipFileHelper() {
+    }
 
     public ZipFileHelper(ZipInputStream zis) throws IOException {
         ZipEntry entry;
@@ -60,7 +57,7 @@ public class ZipFileHelper {
         return ImmutableSet.copyOf(entries.keySet());
     }
 
-    public void addNbtEntry(String name, String comment, NBTTagCompound nbt, int type) {
+    public void addNbtEntry(String name, String comment, CompoundNBT nbt, int type) {
         comments.put(name, comment);
         entries.put(name, NbtSquisher.squish(nbt, type));
     }
@@ -70,7 +67,7 @@ public class ZipFileHelper {
         entries.put(name, text.getBytes(StandardCharsets.UTF_8));
     }
 
-    public NBTTagCompound getNbtEntry(String name) throws IOException {
+    public CompoundNBT getNbtEntry(String name) throws IOException {
         byte[] bytes = entries.get(name);
         if (bytes == null) {
             throw new IOException("No bytes for entry " + name);

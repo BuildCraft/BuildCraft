@@ -1,7 +1,6 @@
 package buildcraft.builders.snapshot.pattern;
 
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.builders.BCBuildersSprites;
 
 public class PatternShape2dSquare extends PatternShape2d {

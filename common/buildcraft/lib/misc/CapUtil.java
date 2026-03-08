@@ -1,34 +1,25 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
 package buildcraft.lib.misc;
 
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
-
+import buildcraft.api.inventory.IItemTransactor;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import buildcraft.api.inventory.IItemTransactor;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
-/** Provides various @Nonnull static final fields storing various capabilities. */
 public class CapUtil {
     @Nonnull
     public static final Capability<IItemHandler> CAP_ITEMS;
@@ -43,7 +34,8 @@ public class CapUtil {
     private static Capability<IItemTransactor> capTransactor;
 
     static {
-        if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
+//        if (!ModLoader.get().hasReachedState(LoaderState.INITIALIZATION)) {
+        if (ModLoadingContext.get().getActiveContainer().getCurrentState().ordinal() < ModLoadingStage.CONSTRUCT.ordinal()) {
             throw new IllegalStateException("Used CapUtil too early, you must wait until init or later!");
         }
 
@@ -68,16 +60,17 @@ public class CapUtil {
         // By default storing and creating are illegal operations, as we don't necessarily have good default impl's
         IStorage<T> ourStorage = new IStorage<T>() {
             @Override
-            public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
+            public INBT writeNBT(Capability<T> capability, T instance, Direction side) {
                 throw new IllegalStateException("You must provide your own implementations of " + clazz);
             }
 
             @Override
-            public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt) {
                 throw new IllegalStateException("You must provide your own implementations of " + clazz);
             }
         };
-        Callable<T> factory = () -> {
+        Callable<T> factory = () ->
+        {
             throw new IllegalStateException("You must provide your own instances of " + clazz);
         };
         CapabilityManager.INSTANCE.register(clazz, ourStorage, factory);
@@ -86,9 +79,10 @@ public class CapUtil {
     /** Attempts to fetch the given capability from the given provider, or returns null if either of those two are
      * null. */
     @Nullable
-    public static <T> T getCapability(ICapabilityProvider provider, Capability<T> capability, EnumFacing facing) {
+    public static <T> LazyOptional<T> getCapability(ICapabilityProvider provider, Capability<T> capability, Direction facing) {
         if (provider == null || capability == null) {
-            return null;
+//            return null;
+            return LazyOptional.empty();
         }
         return provider.getCapability(capability, facing);
     }

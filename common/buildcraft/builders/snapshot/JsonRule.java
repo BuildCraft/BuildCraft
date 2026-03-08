@@ -6,10 +6,10 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 public class JsonRule {
@@ -20,7 +20,7 @@ public class JsonRule {
     public List<BlockPos> updateBlockOffsets = null;
     public String placeBlock = null;
     public List<String> canBeReplacedWithBlocks = null;
-    public NBTTagCompound replaceNbt = null;
+    public CompoundNBT replaceNbt = null;
     public boolean ignore = false; // blacklist for blocks
     public boolean capture = false; // whitelist for entities
 }

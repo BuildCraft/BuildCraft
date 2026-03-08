@@ -6,53 +6,78 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.io.IOException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.PngSizeInfo;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.sprite.SpriteAtlas;
 import buildcraft.lib.client.sprite.SpriteRaw;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.texture.PngSizeInfo;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.IResource;
+import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
+import java.util.function.Function;
 
 public class GuideImageFactory implements GuidePartFactory {
-    private final ISprite sprite;
-    private final int srcWidth, srcHeight;
-    private final int width, height;
+    // private final ISprite sprite;
+    private ISprite sprite;
+    // private final int srcWidth, srcHeight;
+    private int srcWidth, srcHeight;
+    // private final int width, height;
+    private int width, height;
 
     public GuideImageFactory(String location) {
         this(location, -1, -1);
     }
 
+    // Calen: fmlPostInit -> RuntimeException: getAtlasTexture called too early!
+    // delay load sprite
+    private String locationRaw;
+    private int widthRaw, heightRaw;
+
     public GuideImageFactory(String location, int width, int height) {
-        TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
-        TextureAtlasSprite stitched = textureMap.getAtlasSprite(location);
-        if (stitched != textureMap.getMissingSprite()) {
+        this.locationRaw = location;
+        this.widthRaw = width;
+        this.heightRaw = height;
+    }
+
+    private void load() {
+        String location = this.locationRaw;
+        int width = this.widthRaw;
+        int height = this.heightRaw;
+
+//        TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
+        Function<ResourceLocation, TextureAtlasSprite> textureMap = Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS);
+//        TextureAtlasSprite stitched = textureMap.getAtlasSprite(location);
+        TextureAtlasSprite stitched = textureMap.apply(new ResourceLocation(location));
+//        if (stitched != textureMap.getSprite(MissingTextureSprite.getLocation()))
+        if (stitched != textureMap.apply(MissingTextureSprite.getLocation())) {
             this.sprite = new SpriteAtlas(stitched);
-            this.srcWidth = stitched.getIconWidth();
-            this.srcHeight = stitched.getIconHeight();
+            this.srcWidth = stitched.getWidth();
+            this.srcHeight = stitched.getHeight();
         } else {
             ISprite s;
             int sw, sh;
             ResourceLocation resLoc = new ResourceLocation(location);
-            try (IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(resLoc)) {
-                PngSizeInfo size = PngSizeInfo.makeFromResource(resource);
+            try (IResource resource = Minecraft.getInstance().getResourceManager().getResource(resLoc)) {
+//                PngSizeInfo size = PngSizeInfo.makeFromResource(resource);
+                PngSizeInfo png = new PngSizeInfo(resource.getSourceName(), resource.getInputStream());
                 s = new SpriteRaw(resLoc, 0, 0, 1, 1);
-                sw = size.pngWidth;
-                sh = size.pngHeight;
+//                sw = size.pngWidth;
+                sw = png.width;
+//                sh = size.pndgHeight;
+                sh = png.height;
             } catch (IOException io) {
                 BCLog.logger.warn("[lib.guide.loader.image] Couldn't load image '" + resLoc + "' because " + io.getMessage());
-                stitched = textureMap.getMissingSprite();
+//                stitched = textureMap.getMissingSprite();
+                stitched = textureMap.apply(MissingTextureSprite.getLocation());
                 s = new SpriteAtlas(stitched);
-                sw = stitched.getIconWidth();
-                sh = stitched.getIconHeight();
+                sw = stitched.getWidth();
+                sh = stitched.getHeight();
             }
             this.sprite = s;
             this.srcWidth = sw;
@@ -62,8 +87,14 @@ public class GuideImageFactory implements GuidePartFactory {
         this.height = height <= 0 ? srcHeight : height;
     }
 
+
     @Override
     public GuideImage createNew(GuiGuide gui) {
+        // Calen
+        if (this.sprite == null) {
+            load();
+        }
         return new GuideImage(gui, sprite, srcWidth, srcHeight, width, height);
+//        return new GuideImage(gui, new SpriteAtlas(new AtlasTexture(new ResourceLocation("")).getSprite(MissingTextureSprite.getLocation())), 0, 0, 0, 0);
     }
 }

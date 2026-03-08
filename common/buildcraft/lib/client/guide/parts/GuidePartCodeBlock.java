@@ -1,15 +1,14 @@
 package buildcraft.lib.client.guide.parts;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
-
-import net.minecraft.client.gui.Gui;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+import net.minecraft.client.gui.AbstractGui;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuidePartCodeBlock extends GuidePart {
 
@@ -21,7 +20,7 @@ public class GuidePartCodeBlock extends GuidePart {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+    public PagePosition renderIntoArea(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
         IFontRenderer font = gui.getCurrentFont();
 
         List<String> wrappedLines = new ArrayList<>();
@@ -49,7 +48,7 @@ public class GuidePartCodeBlock extends GuidePart {
 
             // FIXME: this displays too low! (or maybe text is too high?)
             int _y = y + current.pixel;
-            GuiGuide.BOX_CODE_SLICED.draw(x + lineNumberWidth + 5, _y, outerWidth, outerHeight);
+            GuiGuide.BOX_CODE_SLICED.draw(poseStack, x + lineNumberWidth + 5, _y, outerWidth, outerHeight);
             _y += 4;
             // try (AutoGlScissor scissor = GuiUtil.scissor(x, _y, width, height)) {
             boolean darken = true;
@@ -61,15 +60,15 @@ public class GuidePartCodeBlock extends GuidePart {
                     if (wrappedLines.size() > 1) {
                         String ns = Integer.toString(number);
                         int addX = lineNumberWidth - font.getStringWidth(ns);
-                        font.drawString(ns, x + 4 + addX, _y, 0);
+                        font.drawString(poseStack, ns, x + 4 + addX, _y, 0);
                     }
                 }
                 int _x = x + 8 + lineNumberWidth;
                 if (darken) {
-                    Gui.drawRect(_x - 2, _y - 1, _x + innerMaxWidth + 4, _y + font.getMaxFontHeight() + 1,
-                        0xFF_F0_F0_F0);
+                    AbstractGui.fill(poseStack, _x - 2, _y - 1, _x + innerMaxWidth + 4, _y + font.getMaxFontHeight() + 1,
+                            0xFF_F0_F0_F0);
                 }
-                font.drawString(line, _x, _y, 0);
+                font.drawString(poseStack, line, _x, _y, 0);
                 _y += font.getMaxFontHeight() + 2;
             }
 
@@ -80,8 +79,8 @@ public class GuidePartCodeBlock extends GuidePart {
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
-        return renderIntoArea(x, y, width, height, current, -1);
+    public PagePosition handleMouseClick(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index,
+                                         double mouseX, double mouseY) {
+        return renderIntoArea(poseStack, x, y, width, height, current, -1);
     }
 }

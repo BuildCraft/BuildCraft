@@ -6,10 +6,10 @@
 
 package buildcraft.lib.gui;
 
-import java.util.List;
-
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
+
+import java.util.List;
 
 public class GuiElementToolTip extends GuiElementSimple {
     public final ITooltipElement source;

@@ -6,17 +6,18 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 public class ModelPluggableItem implements IBakedModel {
 
@@ -33,12 +34,14 @@ public class ModelPluggableItem implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+//    public List<BakedQuad> getQuads(BlockState state, Direction side, long rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
         return side == null ? quads : ImmutableList.of();
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+//    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
@@ -48,22 +51,33 @@ public class ModelPluggableItem implements IBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+//    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+//    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon() {
         return null;
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+//    public ItemCameraTransforms getItemCameraTransforms()
+    public ItemCameraTransforms getTransforms() {
         return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM;
     }
 
     @Override
+//    public ItemOverrideList getOverrides()
     public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
+//        return ItemOverrideList.NONE;
+        return ItemOverrideList.EMPTY;
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
     }
 }
+

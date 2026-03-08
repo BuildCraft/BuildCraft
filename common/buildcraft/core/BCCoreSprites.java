@@ -6,20 +6,18 @@
 
 package buildcraft.core;
 
-import java.util.EnumMap;
-import java.util.Locale;
-import java.util.Map;
-
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class BCCoreSprites {
     public static final SpriteHolder MARKER_VOLUME_CONNECTED;
@@ -76,7 +74,7 @@ public class BCCoreSprites {
         LASER_POWER_MED = getHolder("lasers/power_med");
         LASER_POWER_HIGH = getHolder("lasers/power_high");
         LASER_POWER_FULL = getHolder("lasers/power_full");
-        
+
         TRIGGER_TRUE = getHolder("triggers/trigger_true");
         PARAM_GATE_SIDE_ONLY = getHolder("triggers/redstone_gate_side_only");
 
@@ -128,7 +126,7 @@ public class BCCoreSprites {
         TRIGGER_POWER_STAGE = new EnumMap<>(EnumPowerStage.class);
         for (EnumPowerStage stage : EnumPowerStage.values()) {
             if (stage == EnumPowerStage.BLACK) continue;
-            String tex = "triggers/trigger_engineheat_" + stage.getName();
+            String tex = "triggers/trigger_engineheat_" + stage.getSerializedName();
             TRIGGER_POWER_STAGE.put(stage, getHolder(tex));
         }
     }

@@ -1,23 +1,25 @@
 package buildcraft.lib.gui.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InventorySlotHolder {
 
     public final Slot[] slots;
 
+    // public InventorySlotHolder(IInventory container, IInventory inventory)
     public InventorySlotHolder(Container container, IInventory inventory) {
         List<Slot> list = new ArrayList<>();
-        for (Slot s : container.inventorySlots) {
-            if (s.inventory == inventory) {
+//        for (Slot s : container.inventorySlots)
+        for (Slot s : container.slots) {
+//            if (s.inventory == inventory)
+            if (s.container == inventory) {
                 list.add(s);
             }
         }
@@ -26,7 +28,8 @@ public class InventorySlotHolder {
 
     public InventorySlotHolder(Container container, IItemHandler inventory) {
         List<Slot> list = new ArrayList<>();
-        for (Slot s : container.inventorySlots) {
+//        for (Slot s : container.inventorySlots)
+        for (Slot s : container.slots) {
             if (s instanceof SlotItemHandler && ((SlotItemHandler) s).getItemHandler() == inventory) {
                 list.add(s);
             }

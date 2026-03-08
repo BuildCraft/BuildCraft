@@ -1,18 +1,17 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.delta;
+
+import buildcraft.lib.net.IPayloadWriter;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-
-import buildcraft.lib.net.IPayloadWriter;
 
 public class DeltaManager {
     public enum EnumDeltaMessage {
@@ -77,7 +76,8 @@ public class DeltaManager {
         final int index = deltas.get(from.visibility).indexOf(from);
         if (index == -1) throw new IllegalArgumentException("Unknown delta!");
 
-        sender.sendDeltaMessage(gui, type, (buffer) -> {
+        sender.sendDeltaMessage(gui, type, (buffer) ->
+        {
             buffer.writeByte(index);
             writer.write(buffer);
         });
@@ -90,19 +90,19 @@ public class DeltaManager {
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(CompoundNBT nbt) {
         for (List<DeltaInt> innerList : deltas.values()) {
             for (DeltaInt delta : innerList) {
-                delta.readFromNBT(nbt.getCompoundTag(delta.name));
+                delta.readFromNBT(nbt.getCompound(delta.name));
             }
         }
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundNBT writeToNBT() {
+        CompoundNBT nbt = new CompoundNBT();
         for (List<DeltaInt> innerList : deltas.values()) {
             for (DeltaInt delta : innerList) {
-                nbt.setTag(delta.name, delta.writeToNBT());
+                nbt.put(delta.name, delta.writeToNBT());
             }
         }
         return nbt;

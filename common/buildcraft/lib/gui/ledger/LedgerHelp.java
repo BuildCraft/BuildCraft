@@ -6,14 +6,7 @@
 
 package buildcraft.lib.gui.ledger;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.BuildCraftGui;
@@ -26,6 +19,11 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.RenderUtil;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LedgerHelp extends Ledger_Neptune {
 
@@ -33,13 +31,13 @@ public class LedgerHelp extends Ledger_Neptune {
 
     static {
         SPRITE_HELP_SPLIT[0][0] =
-            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 0, 8, 8, 16), 2, 2, 6, 6, 8);
+                GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 0, 8, 8, 16), 2, 2, 6, 6, 8);
         SPRITE_HELP_SPLIT[0][1] =
-            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 8, 8, 8, 16), 2, 2, 6, 6, 8);
+                GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 0, 8, 8, 8, 16), 2, 2, 6, 6, 8);
         SPRITE_HELP_SPLIT[1][0] =
-            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 0, 8, 8, 16), 2, 2, 6, 6, 8);
+                GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 0, 8, 8, 16), 2, 2, 6, 6, 8);
         SPRITE_HELP_SPLIT[1][1] =
-            GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 8, 8, 8, 16), 2, 2, 6, 6, 8);
+                GuiUtil.slice(GuiUtil.subRelative(BCLibSprites.HELP_SPLIT, 8, 8, 8, 8, 16), 2, 2, 6, 6, 8);
     }
 
     private IGuiElement selected = null;
@@ -68,7 +66,7 @@ public class LedgerHelp extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(double x, double y) {
+    protected void drawIcon(MatrixStack poseStack, double x, double y) {
         if (!init) {
             init = true;
             List<HelpPosition> elements = new ArrayList<>();
@@ -78,12 +76,12 @@ public class LedgerHelp extends Ledger_Neptune {
             foundAny = elements.size() > 0;
         }
         ISprite sprite = foundAny ? BCLibSprites.HELP : BCLibSprites.WARNING_MINOR;
-        GuiIcon.draw(sprite, x, y, x + 16, y + 16);
+        GuiIcon.draw(sprite, poseStack, x, y, x + 16, y + 16);
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
-        super.drawForeground(partialTicks);
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
+        super.drawForeground(poseStack, partialTicks);
         if (!shouldDrawOpen()) {
             return;
         }
@@ -112,10 +110,11 @@ public class LedgerHelp extends Ledger_Neptune {
                 boolean isSelected = selected == element;
                 SpriteNineSliced split = SPRITE_HELP_SPLIT[isHovered ? 1 : 0][isSelected ? 1 : 0];
                 RenderUtil.setGLColorFromInt(info.info.colour);
-                split.draw(rect);
+                split.draw(rect, poseStack);
             }
             elements.clear();
         }
-        GlStateManager.color(1, 1, 1);
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
     }
 }

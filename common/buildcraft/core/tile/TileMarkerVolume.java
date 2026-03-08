@@ -1,32 +1,16 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.tiles.TilesAPI;
-
+import buildcraft.core.BCCoreBlocks;
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.marker.VolumeCache;
+import buildcraft.core.marker.VolumeConnection;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
@@ -34,10 +18,25 @@ import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.TileMarker;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.marker.VolumeCache;
-import buildcraft.core.marker.VolumeConnection;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.List;
 
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("marker_volume");
@@ -47,6 +46,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     private boolean showSignals = false;
 
     public TileMarkerVolume() {
+        super(BCCoreBlocks.markerVolumeTile.get());
         caps.addCapabilityInstance(TilesAPI.CAP_TILE_AREA_PROVIDER, this, EnumPipePart.VALUES);
     }
 
@@ -70,22 +70,23 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setBoolean("showSignals", showSignals);
+    public CompoundNBT save(CompoundNBT nbt) {
+        super.save(nbt);
+        nbt.putBoolean("showSignals", showSignals);
         return nbt;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         showSignals = nbt.getBoolean("showSignals");
     }
 
     public void switchSignals() {
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             showSignals = !showSignals;
-            markDirty();
+//            markDirty();
+            this.setChanged();
             sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
         }
     }
@@ -99,9 +100,9 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Dist side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(showSignals);
             }
@@ -109,9 +110,9 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_SIGNALS_ON) {
                 readNewSignalState(true);
             } else if (id == NET_SIGNALS_OFF) {
@@ -124,21 +125,24 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
 
     @Nonnull
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public double getMaxRenderDistanceSquared() {
-        return BCCoreConfig.markerMaxDistance * 4 * BCCoreConfig.markerMaxDistance;
+    @OnlyIn(Dist.CLIENT)
+//    public double getMaxRenderDistanceSquared()
+    public double getViewDistance() {
+//        return BCCoreConfig.markerMaxDistance * 4 * BCCoreConfig.markerMaxDistance;
+        // Calen: as beacon and endGateway
+        return BCCoreConfig.markerMaxDistance * 2;
     }
 
-    public void onManualConnectionAttempt(EntityPlayer player) {
+    public void onManualConnectionAttempt(PlayerEntity player) {
         MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
-        for (BlockPos other : cache.getValidConnections(getPos())) {
-            cache.tryConnect(getPos(), other);
+        for (BlockPos other : cache.getValidConnections(getBlockPos())) {
+            cache.tryConnect(getBlockPos(), other);
         }
         VolumeConnection c = getCurrentConnection();
         if (c != null) {
@@ -151,14 +155,14 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+    public void onPlacedBy(LivingEntity placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         // Check if we are the corner of an existing box
         MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
-        for (BlockPos other : cache.getValidConnections(getPos())) {
+        for (BlockPos other : cache.getValidConnections(getBlockPos())) {
             VolumeConnection c = cache.getConnection(other);
-            if (c != null && c.getBox().isCorner(pos)) {
-                if (c.addMarker(pos)) {
+            if (c != null && c.getBox().isCorner(worldPosition)) {
+                if (c.addMarker(worldPosition)) {
                     // In theory we can't be the corner for multiple boxes
                     break;
                 }
@@ -167,11 +171,15 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
         super.getDebugInfo(left, right, side);
-        left.add("Min = " + min());
-        left.add("Max = " + max());
-        left.add("Signals = " + showSignals);
+//        left.add("Min = " + min());
+//        left.add("Max = " + max());
+//        left.add("Signals = " + showSignals);
+        left.add(new StringTextComponent("Min = " + min()));
+        left.add(new StringTextComponent("Max = " + max()));
+        left.add(new StringTextComponent("Signals = " + showSignals));
     }
 
     // ITileAreaProvider
@@ -179,18 +187,18 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     @Override
     public BlockPos min() {
         VolumeConnection connection = getCurrentConnection();
-        return connection == null ? getPos() : connection.getBox().min();
+        return connection == null ? getBlockPos() : connection.getBox().min();
     }
 
     @Override
     public BlockPos max() {
         VolumeConnection connection = getCurrentConnection();
-        return connection == null ? getPos() : connection.getBox().max();
+        return connection == null ? getBlockPos() : connection.getBox().max();
     }
 
     @Override
     public void removeFromWorld() {
-        if (world.isRemote) {
+        if (level.isClientSide) {
             return;
         }
         VolumeConnection connection = getCurrentConnection();
@@ -198,7 +206,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
             // Copy the list over because the iterator doesn't like it if you change the connection while using it
             List<BlockPos> allPositions = ImmutableList.copyOf(connection.getMarkerPositions());
             for (BlockPos p : allPositions) {
-                world.destroyBlock(p, true);
+                level.destroyBlock(p, true);
             }
         }
     }

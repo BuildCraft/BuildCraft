@@ -6,29 +6,27 @@
 
 package buildcraft.core.marker.volume;
 
-import java.io.IOException;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.AxisAlignedBB;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.io.IOException;
 
 public abstract class Addon {
     public VolumeBox volumeBox;
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public abstract IFastAddonRenderer<? extends Addon> getRenderer();
 
     public EnumAddonSlot getSlot() {
         return volumeBox.addons.entrySet().stream()
-            .filter(slotAddon -> slotAddon.getValue() == this)
-            .findFirst()
-            .orElseThrow(IllegalStateException::new)
-            .getKey();
+                .filter(slotAddon -> slotAddon.getValue() == this)
+                .findFirst()
+                .orElseThrow(IllegalStateException::new)
+                .getKey();
     }
 
     public AxisAlignedBB getBoundingBox() {
@@ -38,7 +36,7 @@ public abstract class Addon {
     @SuppressWarnings("WeakerAccess")
     public boolean canBePlaceInto(VolumeBox volumeBox) {
         return !(this instanceof ISingleAddon &&
-            volumeBox.addons.values().stream().anyMatch(addon -> addon.getClass() == getClass()));
+                volumeBox.addons.values().stream().anyMatch(addon -> addon.getClass() == getClass()));
     }
 
     public void onAdded() {
@@ -50,12 +48,12 @@ public abstract class Addon {
     public void onVolumeBoxSizeChange() {
     }
 
-    public void onPlayerRightClick(EntityPlayer player) {
+    public void onPlayerRightClick(PlayerEntity player) {
     }
 
-    public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
+    public abstract CompoundNBT writeToNBT(CompoundNBT nbt);
 
-    public abstract void readFromNBT(NBTTagCompound nbt);
+    public abstract void readFromNBT(CompoundNBT nbt);
 
     public void postReadFromNbt() {
     }

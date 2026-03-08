@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:storage_blocks/lapis"
+    },
+    "g": {
+      "tag": "forge:glass/blue"
+    },
+    "r": {
+      "tag": "forge:storage_blocks/lapis"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_lapis_blue",
+    "count": 8
+  }
+}

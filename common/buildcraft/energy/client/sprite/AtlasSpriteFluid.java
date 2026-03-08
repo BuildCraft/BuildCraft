@@ -6,56 +6,51 @@
 
 package buildcraft.energy.client.sprite;
 
-import java.util.function.Function;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.sprite.AtlasSpriteSwappable;
 import buildcraft.lib.fluid.BCFluid;
-import buildcraft.lib.misc.SpriteUtil;
+import net.minecraft.util.ResourceLocation;
 
+@Deprecated()
 public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     final ResourceLocation fromName;
     final BCFluid fluid;
     final int colourLight, colourDark;
 
     public AtlasSpriteFluid(String baseName, ResourceLocation fromName, BCFluid fluid) {
-        super(baseName);
-        this.fromName = fromName;
-        this.fluid = fluid;
-        colourLight = fluid.getLightColour();
-        colourDark = fluid.getDarkColour();
+//        super(baseName);
+        super(null, null, 0, 0, 0, 0, 0, null);
+        throw new RuntimeException("");
+//        this.fromName = fromName;
+//        this.fluid = fluid;
+//        colourLight = fluid.getLightColour();
+//        colourDark = fluid.getDarkColour();
     }
 
-    @Override
-    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
-        ResourceLocation from = SpriteUtil.transformLocation(fromName);
-        TextureAtlasSprite sprite = loadSprite(manager, from.toString(), from, true);
-        if (sprite == null) {
-            BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
-            return true;
-        }
-        for (int f = 0; f < sprite.getFrameCount(); f++) {
-            recolourFrame(sprite, f);
-        }
-        swapWith(sprite);
-        return false;
-    }
+//    @Override
+//    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
+//        ResourceLocation from = SpriteUtil.transformLocation(fromName);
+//        TextureAtlasSprite sprite = loadSprite(manager, from.toString(), from, true);
+//        if (sprite == null) {
+//            BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
+//            return true;
+//        }
+//        for (int f = 0; f < sprite.getFrameCount(); f++) {
+//            recolourFrame(sprite, f);
+//        }
+//        swapWith(sprite);
+//        return false;
+//    }
 
-    private void recolourFrame(TextureAtlasSprite sprite, int f) {
-        int[][] frameData = sprite.getFrameTextureData(f);
-        if (frameData != null) {
-            // frameData[0] is mipmap 0
-            int[] pixels = frameData[0];
-            for (int i = 0; i < pixels.length; i++) {
-                recolourPixel(pixels, i);
-            }
-        }
-    }
+//    private void recolourFrame(TextureAtlasSprite sprite, int f) {
+//        int[][] frameData = sprite.getFrameTextureData(f);
+//        if (frameData != null) {
+//            // frameData[0] is mipmap 0
+//            int[] pixels = frameData[0];
+//            for (int i = 0; i < pixels.length; i++) {
+//                recolourPixel(pixels, i);
+//            }
+//        }
+//    }
 
     private void recolourPixel(int[] pixels, int i) {
         int rgba = pixels[i];

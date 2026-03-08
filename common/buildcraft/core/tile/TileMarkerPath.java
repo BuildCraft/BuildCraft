@@ -1,21 +1,22 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.api.core.IPathProvider;
-
-import buildcraft.lib.tile.TileMarker;
-
+import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.PathConnection;
+import buildcraft.lib.tile.TileMarker;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.util.math.BlockPos;
 
 public class TileMarkerPath extends TileMarker<PathConnection> implements IPathProvider {
+
+    public TileMarkerPath() {
+        super(BCCoreBlocks.markerPathTile.get());
+    }
 
     @Override
     public ImmutableList<BlockPos> getPath() {
@@ -29,7 +30,8 @@ public class TileMarkerPath extends TileMarker<PathConnection> implements IPathP
     @Override
     public void removeFromWorld() {
         for (BlockPos pos : getPath()) {
-            world.destroyBlock(pos, true);
+//            world.destroyBlock(pos, true);
+            level.destroyBlock(pos, /*pDropBlock*/ true);
         }
     }
 
@@ -45,7 +47,7 @@ public class TileMarkerPath extends TileMarker<PathConnection> implements IPathP
     }
 
     public void reverseDirection() {
-        if (world.isRemote) {
+        if (level.isClientSide) {
             return;
         }
         PathConnection connection = getCurrentConnection();

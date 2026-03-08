@@ -6,21 +6,20 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerItem;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerItem;
+import java.util.Collections;
+import java.util.List;
 
 public enum StripesHandlerEntityInteract implements IStripesHandlerItem {
     INSTANCE;
@@ -28,17 +27,17 @@ public enum StripesHandlerEntityInteract implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
-        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(
-            EntityLivingBase.class,
-            new AxisAlignedBB(pos.offset(direction))
+        List<LivingEntity> entities = world.getEntitiesOfClass(
+                LivingEntity.class,
+                new AxisAlignedBB(pos.relative(direction))
         );
         Collections.shuffle(entities);
-        for (EntityLivingBase entity : entities) {
-            if (player.interactOn(entity, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS) {
+        for (LivingEntity entity : entities) {
+            if (player.interactOn(entity, Hand.MAIN_HAND) == ActionResultType.SUCCESS) {
                 return true;
             }
         }

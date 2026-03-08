@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "minecraft:crafting_table",
+      "required": false
+    }
+  ]
+}

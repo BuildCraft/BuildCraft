@@ -1,11 +1,10 @@
 package buildcraft.lib.misc.collect;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
 
 public class TypedKeyMap<K, V> {
     private final Supplier<TypedMap<V>> mapType;

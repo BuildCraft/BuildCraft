@@ -6,40 +6,34 @@
 
 package buildcraft.lib.gui.widget;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.api.net.IMessage;
 import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.gui.BuildCraftGui;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.IInteractionElement;
-import buildcraft.lib.gui.Widget_Neptune;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
+import java.io.IOException;
+import java.util.List;
+
+public class WidgetFluidTank<C extends ContainerBC_Neptune<?>> extends Widget_Neptune<C> {
     private static final byte NET_CLICK = 0;
 
     private final Tank tank;
 
-    public WidgetFluidTank(ContainerBC_Neptune container, Tank tank) {
+    public WidgetFluidTank(C container, Tank tank) {
         super(container);
         this.tank = tank;
     }
 
     @Override
-    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataServer(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLICK) {
             tank.onGuiClicked(container);
@@ -47,7 +41,7 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         return null;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public IGuiElement createGuiElement(BuildCraftGui gui, IGuiArea area, GuiIcon overlay) {
         return new GuiElementFluidTank(gui, area, overlay);
     }
@@ -61,10 +55,10 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         }
 
         @Override
-        public void drawBackground(float partialTicks) {
-            GuiUtil.drawFluid(this, tank);
+        public void drawBackground(float partialTicks, MatrixStack poseStack) {
+            GuiUtil.drawFluid(this, tank, poseStack);
             if (overlay != null) {
-                overlay.drawCutInside(this);
+                overlay.drawCutInside(this, poseStack);
             }
         }
 

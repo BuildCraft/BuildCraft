@@ -6,24 +6,14 @@
 
 package buildcraft.lib.statement;
 
-import java.util.ArrayList;
-import java.util.List;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.statements.*;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.statements.IAction;
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IActionInternalSided;
-import buildcraft.api.statements.IActionReceptor;
-import buildcraft.api.statements.IActionSingle;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ActionWrapper extends StatementWrapper implements IActionInternal {
 
@@ -37,7 +27,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
         return (IAction) delegate;
     }
 
-    public static ActionWrapper wrap(IStatement statement, EnumFacing side) {
+    public static ActionWrapper wrap(IStatement statement, Direction side) {
         if (statement == null) {
             return null;
         } else if (statement instanceof ActionWrapper) {
@@ -109,7 +99,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
     public static class ActionWrapperInternalSided extends ActionWrapper {
         public final IActionInternalSided action;
 
-        public ActionWrapperInternalSided(IActionInternalSided action, @Nonnull EnumFacing side) {
+        public ActionWrapperInternalSided(IActionInternalSided action, @Nonnull Direction side) {
             super(action, EnumPipePart.fromFacing(side));
             this.action = action;
         }
@@ -129,7 +119,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
     public static class ActionWrapperExternal extends ActionWrapper {
         public final IActionExternal action;
 
-        public ActionWrapperExternal(IActionExternal action, @Nonnull EnumFacing side) {
+        public ActionWrapperExternal(IActionExternal action, @Nonnull Direction side) {
             super(action, EnumPipePart.fromFacing(side));
             this.action = action;
         }

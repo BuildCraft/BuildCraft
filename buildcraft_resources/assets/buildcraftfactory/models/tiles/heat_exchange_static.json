@@ -85,6 +85,28 @@
                 "down":  { "uv": [ 0, 0, 12, 12 ], "texture": "#sprite_e", "rotation": 3 },
                 "south": { "uv": [ 0, 0, 12, 12 ], "texture": "#sprite_e", "rotation": 1 }
             }
+        },
+        {
+            "comment": "Start outer pipe - corner",
+            "visible": "part == START",
+            "both_sides": "true",
+            "from": [ 2, 0, 14 ],
+            "to": [ 14, 2, 16 ],
+            "faces": {
+                "up":   { "uv": [ 0, 0, 2, 12 ], "texture": "#sprite_d", "rotation": 1 },
+                "north": { "uv": [ 0, 0, 2, 12 ], "texture": "#sprite_d", "rotation": 1 }
+            }
+        },
+        {
+            "comment": "End outer pipe - corner",
+            "visible": "part == END",
+            "both_sides": "true",
+            "from": [ 2, 14, 0 ],
+            "to": [ 14, 16, 2 ],
+            "faces": {
+                "down":   { "uv": [ 0, 0, 2, 12 ], "texture": "#sprite_d", "rotation": 1 },
+                "south": { "uv": [ 0, 0, 2, 12 ], "texture": "#sprite_d", "rotation": 1 }
+            }
         }
     ]
 }

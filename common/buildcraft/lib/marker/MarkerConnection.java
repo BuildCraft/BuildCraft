@@ -6,21 +6,17 @@
 
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import buildcraft.lib.tile.TileMarker;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.tile.TileMarker;
+import java.util.*;
 
 public abstract class MarkerConnection<C extends MarkerConnection<C>> {
     public final MarkerSubCache<C> subCache;
@@ -36,10 +32,11 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
 
     public abstract Collection<BlockPos> getMarkerPositions();
 
-    @SideOnly(Side.CLIENT)
-    public abstract void renderInWorld();
+    @OnlyIn(Dist.CLIENT)
+    public abstract void renderInWorld(MatrixStack poseStack);
 
-    public void getDebugInfo(BlockPos caller, List<String> left) {
+    // public void getDebugInfo(BlockPos caller, List<String> left)
+    public void getDebugInfo(BlockPos caller, List<ITextComponent> left) {
         Collection<BlockPos> positions = getMarkerPositions();
         List<BlockPos> list = new ArrayList<>(positions);
         if (positions instanceof Set) {
@@ -60,7 +57,8 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
             }
             s += getTypeInfo(pos, marker);
             s += TextFormatting.RESET + "]";
-            left.add(s);
+//            left.add(s);
+            left.add(new StringTextComponent(s));
         }
     }
 

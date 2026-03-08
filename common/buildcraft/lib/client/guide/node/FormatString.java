@@ -1,17 +1,15 @@
 package buildcraft.lib.client.guide.node;
 
+import buildcraft.lib.client.guide.font.IFontRenderer;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.util.text.TextFormatting;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.ImmutableSet;
-
-import net.minecraft.util.text.TextFormatting;
-
-import buildcraft.lib.client.guide.font.IFontRenderer;
 
 public class FormatString {
     private static final String WORD_GAP = " \n\t";
@@ -108,7 +106,8 @@ public class FormatString {
                 String text = segment.toFormatString();
                 int allowedLength = 1;
                 boolean words = onWords;
-                outer: while(true) {
+                outer:
+                while (true) {
                     for (int i = text.length(); i > 1; i--) {
                         String c = text.substring(i - 1, i);
                         if (words && !WORD_GAP.contains(c)) {
@@ -138,8 +137,8 @@ public class FormatString {
                         next[j] = segments[segmentIndex + j];
                     }
                     return new FormatString[] { //
-                        new FormatString(thisLine.toArray(new FormatSegment[0])), //
-                        new FormatString(next)//
+                            new FormatString(thisLine.toArray(new FormatSegment[0])), //
+                            new FormatString(next)//
                     };
                 } else {
                     int left = segments.length - segmentIndex;
@@ -148,8 +147,8 @@ public class FormatString {
                         next[j] = segments[j + 1];
                     }
                     return new FormatString[] { //
-                        new FormatString(thisLine.toArray(new FormatSegment[0])), //
-                        new FormatString(next)//
+                            new FormatString(thisLine.toArray(new FormatSegment[0])), //
+                            new FormatString(next)//
                     };
                 }
             }

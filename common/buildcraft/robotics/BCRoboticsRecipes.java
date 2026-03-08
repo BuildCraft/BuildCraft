@@ -6,6 +6,8 @@
 
 package buildcraft.robotics;
 
+// 1.18.2: use datagen
+@Deprecated()
 public class BCRoboticsRecipes {
     public static void init() {
 //        if (Utils.isRegistered(BCRoboticsBlocks.zonePlanner)) {

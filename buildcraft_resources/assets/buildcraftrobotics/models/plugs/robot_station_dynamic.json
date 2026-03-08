@@ -1,0 +1,38 @@
+{
+    "textures": {
+        "#none":"buildcraftrobotics:station/state_none",
+        "#none_cb":"buildcraftrobotics:station/state_none_cb",
+        "#available":"buildcraftrobotics:station/state_available",
+        "#available_cb":"buildcraftrobotics:station/state_available_cb",
+        "#reserved":"buildcraftrobotics:station/state_reserved",
+        "#reserved_cb":"buildcraftrobotics:station/state_reserved_cb",
+        "#linked":"buildcraftrobotics:station/state_linked",
+        "#linked_cb":"buildcraftrobotics:station/state_linked_cb",
+
+        "particle":"#none"
+    },
+    "rules": [
+        {
+            "when": "side != Facing.west",
+            "type": "builtin:rotate_facing",
+            "from": "Facing.west",
+            "to": "side"
+        }
+    ],
+    "elements": [
+        {
+            "from": [ 2.99, 5, 5 ],
+            "to": [ 3, 11, 11 ],
+            "shade": false,
+            "light": 15,
+            "faces": {
+                "down":  { "uv": [ 5, 5, 6, 11 ], "texture": "(cb) ? ('#' + state + '_cb') : ('#' + state)" },
+                "up":    { "uv": [ 5, 5, 6, 11 ], "texture": "(cb) ? ('#' + state + '_cb') : ('#' + state)" },
+                "north": { "uv": [ 5, 5, 6, 11 ], "texture": "(cb) ? ('#' + state + '_cb') : ('#' + state)" },
+                "south": { "uv": [ 5, 5, 6, 11 ], "texture": "(cb) ? ('#' + state + '_cb') : ('#' + state)" },
+                "west":  { "uv": [ 5, 5, 11, 11 ], "texture": "(cb) ? ('#' + state + '_cb') : ('#' + state)" },
+                "east":  { "uv": [ 5, 5, 11, 11 ], "texture": "(cb) ? ('#' + state + '_cb') : ('#' + state)" }
+            }
+        }
+    ]
+}

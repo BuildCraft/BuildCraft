@@ -1,9 +1,6 @@
 package buildcraft.lib.gui.json;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.client.sprite.SubSpriteChanging;
 import buildcraft.lib.expression.FunctionContext;
@@ -19,6 +16,7 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionAbsolute;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.SpriteUtil;
+import net.minecraft.util.ResourceLocation;
 
 public class ElementTypeSprite extends ElementType {
     public static final String NAME = "buildcraftlib:drawable";
@@ -67,8 +65,9 @@ public class ElementTypeSprite extends ElementType {
         int texSize = tex.texSize;
 
         if (!json.properties.containsKey("source.area[2]")//
-            && !json.properties.containsKey("source.area[3]")//
-            && !json.properties.containsKey("source.area")) {
+                && !json.properties.containsKey("source.area[3]")//
+                && !json.properties.containsKey("source.area"))
+        {
             srcArea = new GuiRectangle(texSize, texSize);
         }
 

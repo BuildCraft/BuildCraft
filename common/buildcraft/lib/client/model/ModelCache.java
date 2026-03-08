@@ -6,14 +6,13 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import net.minecraft.client.renderer.model.BakedQuad;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /** Implements a caching system for models with potentially infinite variants. Automatically expires entries after a
  * configurable time period, and up to a maximum number. */

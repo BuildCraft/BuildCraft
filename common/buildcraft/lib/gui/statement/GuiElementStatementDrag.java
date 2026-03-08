@@ -1,22 +1,21 @@
 package buildcraft.lib.gui.statement;
 
-import javax.annotation.Nullable;
-
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 import buildcraft.api.statements.IStatementParameter;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.IMenuElement;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.StatementWrapper;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nullable;
 
 public class GuiElementStatementDrag implements IMenuElement {
 
@@ -62,7 +61,7 @@ public class GuiElementStatementDrag implements IMenuElement {
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
         if (isDragging) {
             boolean canPlace = false;
             for (IGuiElement element : gui.getElementsAt(gui.mouse.getX(), gui.mouse.getY())) {
@@ -73,14 +72,16 @@ public class GuiElementStatementDrag implements IMenuElement {
                     }
                 }
             }
-            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+            RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, false);
             if (!canPlace) {
-                GlStateManager.color(1.0f, 0.7f, 0.7f);
+//                GlStateManager.color(1.0f, 0.7f, 0.7f);
+                RenderUtil.color(1.0f, 0.7f, 0.7f);
             }
             double x = gui.mouse.getX() - 9;
             double y = gui.mouse.getY() - 9;
             if (dragging instanceof IStatementParameter) {
-                ParameterRenderer.draw((IStatementParameter) dragging, x, y);
+                ParameterRenderer.draw((IStatementParameter) dragging, poseStack, x, y);
             } else {
                 GuiIcon background = GuiElementStatement.SLOT_COLOUR;
                 if (dragging instanceof StatementWrapper) {
@@ -89,15 +90,16 @@ public class GuiElementStatementDrag implements IMenuElement {
                         background = background.offset(0, (1 + part.getIndex()) * 18);
                     }
                 }
-                background.drawAt(x, y);
+                background.drawAt(poseStack, x, y);
                 if (dragging != null) {
                     ISprite sprite = dragging.getSprite();
                     if (sprite != null) {
-                        GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+                        GuiIcon.drawAt(sprite, poseStack, x + 1, y + 1, 16);
                     }
                 }
             }
-            GlStateManager.color(1, 1, 1);
+//            GlStateManager.color(1, 1, 1);
+            RenderUtil.color(1, 1, 1);
         }
     }
 

@@ -6,36 +6,43 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
 
-import buildcraft.lib.client.sprite.AtlasSpriteVariants;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ModelHolderRegistry {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.model.holder");
 
-    static final List<ModelHolder> HOLDERS = new ArrayList<>();
+    // Calen: Thread Safety
+//    static final List<ModelHolder> HOLDERS = new ArrayList<>();
+    static final List<ModelHolder> HOLDERS = new CopyOnWriteArrayList<>();
 
-    public static void onTextureStitchPre(TextureMap map) {
-        Set<ResourceLocation> toStitch = new HashSet<>();
+    // public static void onTextureStitchPre(TextureMap map)
+    public static void onTextureStitchPre(AtlasTexture map, TextureStitchEvent.Pre event) {
+        // Calen test
+        if (!map.location().equals(AtlasTexture.LOCATION_BLOCKS)) {
+            return;
+        }
+        // Calen: Thread Safety
+//        Set<ResourceLocation> toStitch = new HashSet<>();
+        CopyOnWriteArraySet<ResourceLocation> toStitch = new CopyOnWriteArraySet<>();
         for (ModelHolder holder : HOLDERS) {
             holder.onTextureStitchPre(toStitch);
         }
 
         for (ResourceLocation res : toStitch) {
-            map.setTextureEntry(AtlasSpriteVariants.createForConfig(res));
+//            map.setTextureEntry(AtlasSpriteVariants.createForConfig(res));
+            event.addSprite(res);
         }
     }
 
@@ -43,7 +50,8 @@ public class ModelHolderRegistry {
         for (ModelHolder holder : HOLDERS) {
             holder.onModelBake();
         }
-        if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE)) {
+//        if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE))
+        if (DEBUG && ModLoadingContext.get().getActiveContainer().getCurrentState() == ModLoadingStage.COMPLETE) {
             BCLog.logger.info("[lib.model.holder] List of registered Models:");
             List<ModelHolder> holders = new ArrayList<>();
             holders.addAll(HOLDERS);

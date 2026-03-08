@@ -1,15 +1,12 @@
 package buildcraft.lib.guide;
 
+import buildcraft.api.registry.IScriptableRegistry.ISimpleEntryDeserializer;
+import buildcraft.lib.misc.JsonUtil;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-
-import net.minecraft.util.JsonUtils;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-
-import buildcraft.api.registry.IScriptableRegistry.ISimpleEntryDeserializer;
-
-import buildcraft.lib.misc.JsonUtil;
+import net.minecraft.util.text.IFormattableTextComponent;
 
 public final class GuideBook {
 
@@ -17,19 +14,20 @@ public final class GuideBook {
 
     public final ResourceLocation name;
     public final ResourceLocation itemIcon;
-    public final ITextComponent title;
+    public final IFormattableTextComponent title;
     public final boolean appendAllEntries;
     // TODO: Mod/resource pack display options!
     public final GuideContentsData data = new GuideContentsData(this);
 
     private static GuideBook deserialize(ResourceLocation name, JsonObject json, JsonDeserializationContext ctx) {
         ResourceLocation itemIcon = new ResourceLocation("buildcraftcore:guide_main");
-        ITextComponent title = JsonUtil.getTextComponent(json, "title", "");
-        boolean addAll = JsonUtils.getBoolean(json, "all_entries", true);
+        IFormattableTextComponent title = JsonUtil.getTextComponent(json, "title", "");
+//        boolean addAll = JsonUtils.getBoolean(json, "all_entries", true);
+        boolean addAll = JSONUtils.getAsBoolean(json, "all_entries", true);
         return new GuideBook(name, itemIcon, title, addAll);
     }
 
-    public GuideBook(ResourceLocation name, ResourceLocation itemIcon, ITextComponent title, boolean appendAllEntries) {
+    public GuideBook(ResourceLocation name, ResourceLocation itemIcon, IFormattableTextComponent title, boolean appendAllEntries) {
         this.name = name;
         this.itemIcon = itemIcon;
         this.title = title;

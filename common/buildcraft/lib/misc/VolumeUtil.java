@@ -6,25 +6,25 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Direction.AxisDirection;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 /** Provides methods for iterating over a specific volume in a world. */
 public class VolumeUtil {
-    public static void iterateCone(World world, BlockPos start, EnumFacing direction, int distance, boolean edges, VolumeIterator iter) {
+    public static void iterateCone(World world, BlockPos start, Direction direction, int distance, boolean edges, VolumeIterator iter) {
         Cone cone = edges ? Cone.SQUARE : Cone.SQUARE;
         iterateVolume(world, start, direction, distance, cone, iter);
     }
 
-    public static void iterateVolume(World world, BlockPos start, EnumFacing direction, int distance, VolumeProducer producer, VolumeIterator iter) {
+    public static void iterateVolume(World world, BlockPos start, Direction direction, int distance, VolumeProducer producer, VolumeIterator iter) {
         List<VisiblePos> volume = producer.getVolume(world, start, direction, distance);
         Set<BlockPos> allVisible = new HashSet<>();
         allVisible.add(start);
@@ -33,7 +33,7 @@ public class VolumeUtil {
             unknown.removeAll(allVisible);
             boolean visible = true;
             for (BlockPos p : unknown) {
-                if (world.isAirBlock(p)) {
+                if (world.isEmptyBlock(p)) {
                     allVisible.add(p);
                 } else {
                     visible = false;
@@ -55,7 +55,7 @@ public class VolumeUtil {
     }
 
     public interface VolumeProducer {
-        List<VisiblePos> getVolume(World world, BlockPos start, EnumFacing direction, int distance);
+        List<VisiblePos> getVolume(World world, BlockPos start, Direction direction, int distance);
     }
 
     public enum Cone implements VolumeProducer {
@@ -69,7 +69,7 @@ public class VolumeUtil {
         }
 
         @Override
-        public List<VisiblePos> getVolume(World world, BlockPos start, EnumFacing direction, int distance) {
+        public List<VisiblePos> getVolume(World world, BlockPos start, Direction direction, int distance) {
             List<VisiblePos> list = new ArrayList<>();
             final Axis axisI, axisJ;
             switch (direction.getAxis()) {
@@ -87,13 +87,13 @@ public class VolumeUtil {
                     axisJ = Axis.Y;
                     break;
             }
-            EnumFacing faceI = EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axisI);
-            EnumFacing faceJ = EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axisJ);
+            Direction faceI = Direction.get(AxisDirection.POSITIVE, axisI);
+            Direction faceJ = Direction.get(AxisDirection.POSITIVE, axisJ);
 
             BlockPos coneCenter = start;
             for (int d = 0; d < distance; d++) {
                 // Firstly expand the visGraph
-                coneCenter = coneCenter.offset(direction);
+                coneCenter = coneCenter.relative(direction);
                 for (int i = -d; i <= d; i++) {
                     for (int j = -d; j <= d; j++) {
                         if (!edges) {
@@ -102,7 +102,7 @@ public class VolumeUtil {
                                 continue;
                             }
                         }
-                        BlockPos posAt = coneCenter.offset(faceI, i).offset(faceJ, j);
+                        BlockPos posAt = coneCenter.relative(faceI, i).relative(faceJ, j);
                         list.add(new VisiblePos(posAt, start));
                     }
                 }

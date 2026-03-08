@@ -6,19 +6,18 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
-    public PipeBehaviourDiamondFluid(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourDiamondFluid(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
     }
 
@@ -29,7 +28,7 @@ public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
     @PipeEventHandler
     public void sideCheck(PipeEventFluid.SideCheck sideCheck) {
         FluidStack toCompare = sideCheck.fluid;
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             if (sideCheck.isAllowed(face) && pipe.isConnected(face)) {
                 int offset = FILTERS_PER_SIDE * face.ordinal();
                 boolean sideAllowed = false;
@@ -37,8 +36,8 @@ public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
                     if (compareTo.isEmpty()) continue;
-                    FluidStack target = FluidUtil.getFluidContained(compareTo);
-                    if (target == null || target.amount <= 0) {
+                    FluidStack target = FluidUtil.getFluidContained(compareTo).orElse(StackUtil.EMPTY_FLUID);
+                    if (target.isEmpty() || target.getAmount() <= 0) {
                         continue;
                     }
                     foundItem = true;

@@ -6,28 +6,21 @@
 
 package buildcraft.core.marker.volume;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.PacketBufferBC;
 import io.netty.buffer.Unpooled;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.net.PacketBufferBC;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class VolumeBox {
     public final World world;
@@ -48,39 +41,41 @@ public class VolumeBox {
         box = new Box(at, at);
     }
 
-    public VolumeBox(World world, NBTTagCompound nbt) {
+    public VolumeBox(World world, CompoundNBT nbt) {
         if (world == null) throw new NullPointerException("world");
         this.world = world;
-        id = nbt.getUniqueId("id");
+        id = nbt.getUUID("id");
         box = new Box();
-        box.initialize(nbt.getCompoundTag("box"));
-        player = nbt.hasKey("player") ? NBTUtil.getUUIDFromTag(nbt.getCompoundTag("player")) : null;
-        oldPlayer = nbt.hasKey("oldPlayer") ? NBTUtil.getUUIDFromTag(nbt.getCompoundTag("oldPlayer")) : null;
-        if (nbt.hasKey("held")) {
-            held = NBTUtil.getPosFromTag(nbt.getCompoundTag("held"));
+        box.initialize(nbt.getCompound("box"));
+        player = nbt.contains("player") ? NBTUtil.loadUUID(nbt.getCompound("player")) : null;
+        oldPlayer = nbt.contains("oldPlayer") ? NBTUtil.loadUUID(nbt.getCompound("oldPlayer")) : null;
+        if (nbt.contains("held")) {
+            held = NBTUtil.readBlockPos(nbt.getCompound("held"));
         }
         dist = nbt.getDouble("dist");
-        if (nbt.hasKey("oldMin")) {
-            oldMin = NBTUtil.getPosFromTag(nbt.getCompoundTag("oldMin"));
+        if (nbt.contains("oldMin")) {
+            oldMin = NBTUtil.readBlockPos(nbt.getCompound("oldMin"));
         }
-        if (nbt.hasKey("oldMax")) {
-            oldMax = NBTUtil.getPosFromTag(nbt.getCompoundTag("oldMax"));
+        if (nbt.contains("oldMax")) {
+            oldMax = NBTUtil.readBlockPos(nbt.getCompound("oldMax"));
         }
-        NBTUtilBC.readCompoundList(nbt.getTag("addons")).forEach(addonsEntryTag -> {
+        NBTUtilBC.readCompoundList(nbt.get("addons")).forEach(addonsEntryTag ->
+        {
             Class<? extends Addon> addonClass =
-                AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(addonsEntryTag.getString("addonClass")));
+                    AddonsRegistry.INSTANCE.getClassByName(new ResourceLocation(addonsEntryTag.getString("addonClass")));
             try {
                 Addon addon = addonClass.newInstance();
                 addon.volumeBox = this;
-                addon.readFromNBT(addonsEntryTag.getCompoundTag("addonData"));
-                EnumAddonSlot slot = NBTUtilBC.readEnum(addonsEntryTag.getTag("slot"), EnumAddonSlot.class);
+                addon.readFromNBT(addonsEntryTag.getCompound("addonData"));
+                EnumAddonSlot slot = NBTUtilBC.readEnum(addonsEntryTag.get("slot"), EnumAddonSlot.class);
                 addons.put(slot, addon);
                 addon.postReadFromNbt();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        NBTUtilBC.readCompoundList(nbt.getTag("locks")).map(lockTag -> {
+        NBTUtilBC.readCompoundList(nbt.get("locks")).map(lockTag ->
+        {
             Lock lock = new Lock();
             lock.readFromNBT(lockTag);
             return lock;
@@ -129,21 +124,22 @@ public class VolumeBox {
         oldPlayer = null;
     }
 
-    public void setPlayer(EntityPlayer player) {
+    public void setPlayer(PlayerEntity player) {
         this.player = player.getGameProfile().getId();
     }
 
-    public boolean isEditingBy(EntityPlayer player) {
+    public boolean isEditingBy(PlayerEntity player) {
         return player != null && Objects.equals(this.player, player.getGameProfile().getId());
     }
 
-    public boolean isPausedEditingBy(EntityPlayer player) {
+    public boolean isPausedEditingBy(PlayerEntity player) {
         return oldPlayer != null && Objects.equals(oldPlayer, player.getGameProfile().getId());
     }
 
     @SuppressWarnings("WeakerAccess")
-    public EntityPlayer getPlayer(World world) {
-        return world.getPlayerEntityByUUID(player);
+    public PlayerEntity getPlayer(World world) {
+//        return world.getPlayerEntityByUUID(player);
+        return world.getPlayerByUUID(player);
     }
 
     public void setHeldDistOldMinOldMax(BlockPos held, double dist, BlockPos oldMin, BlockPos oldMax) {
@@ -167,55 +163,57 @@ public class VolumeBox {
         return locks.stream().flatMap(lock -> lock.targets.stream());
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setUniqueId("id", id);
-        nbt.setTag("box", this.box.writeToNBT());
+    public CompoundNBT writeToNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putUUID("id", id);
+        nbt.put("box", this.box.writeToNBT());
         if (player != null) {
-            nbt.setTag("player", NBTUtil.createUUIDTag(player));
+            nbt.put("player", NBTUtil.createUUID(player));
         }
         if (oldPlayer != null) {
-            nbt.setTag("oldPlayer", NBTUtil.createUUIDTag(oldPlayer));
+            nbt.put("oldPlayer", NBTUtil.createUUID(oldPlayer));
         }
         if (held != null) {
-            nbt.setTag("held", NBTUtil.createPosTag(held));
+            nbt.put("held", NBTUtil.writeBlockPos(held));
         }
-        nbt.setDouble("dist", dist);
+        nbt.putDouble("dist", dist);
         if (oldMin != null) {
-            nbt.setTag("oldMin", NBTUtil.createPosTag(oldMin));
+            nbt.put("oldMin", NBTUtil.writeBlockPos(oldMin));
         }
         if (oldMax != null) {
-            nbt.setTag("oldMax", NBTUtil.createPosTag(oldMax));
+            nbt.put("oldMax", NBTUtil.writeBlockPos(oldMax));
         }
-        nbt.setTag(
-            "addons",
-            NBTUtilBC.writeCompoundList(
-                addons.entrySet().stream().map(entry -> {
-                    NBTTagCompound addonsEntryTag = new NBTTagCompound();
-                    addonsEntryTag.setTag("slot", NBTUtilBC.writeEnum(entry.getKey()));
-                    addonsEntryTag.setString(
-                        "addonClass",
-                        AddonsRegistry.INSTANCE.getNameByClass(entry.getValue().getClass()).toString()
-                    );
-                    addonsEntryTag.setTag("addonData", entry.getValue().writeToNBT(new NBTTagCompound()));
-                    return addonsEntryTag;
-                })
-            ));
-        nbt.setTag("locks", NBTUtilBC.writeCompoundList(locks.stream().map(Lock::writeToNBT)));
+        nbt.put(
+                "addons",
+                NBTUtilBC.writeCompoundList(
+                        addons.entrySet().stream().map(entry ->
+                        {
+                            CompoundNBT addonsEntryTag = new CompoundNBT();
+                            addonsEntryTag.put("slot", NBTUtilBC.writeEnum(entry.getKey()));
+                            addonsEntryTag.putString(
+                                    "addonClass",
+                                    AddonsRegistry.INSTANCE.getNameByClass(entry.getValue().getClass()).toString()
+                            );
+                            addonsEntryTag.put("addonData", entry.getValue().writeToNBT(new CompoundNBT()));
+                            return addonsEntryTag;
+                        })
+                ));
+        nbt.put("locks", NBTUtilBC.writeCompoundList(locks.stream().map(Lock::writeToNBT)));
         return nbt;
     }
 
     public void toBytes(PacketBufferBC buf) {
-        buf.writeUniqueId(id);
+        buf.writeUUID(id);
         box.writeData(buf);
         buf.writeBoolean(player != null);
         if (player != null) {
-            buf.writeUniqueId(player);
+            buf.writeUUID(player);
         }
         buf.writeInt(addons.size());
-        addons.forEach((slot, addon) -> {
-            buf.writeEnumValue(slot);
-            buf.writeString(AddonsRegistry.INSTANCE.getNameByClass(addon.getClass()).toString());
+        addons.forEach((slot, addon) ->
+        {
+            buf.writeEnum(slot);
+            buf.writeUtf(AddonsRegistry.INSTANCE.getNameByClass(addon.getClass()).toString());
             addon.toBytes(buf);
         });
         buf.writeInt(locks.size());
@@ -223,15 +221,15 @@ public class VolumeBox {
     }
 
     public void fromBytes(PacketBufferBC buf) throws IOException {
-        id = buf.readUniqueId();
+        id = buf.readUUID();
         box = new Box();
         box.readData(buf);
-        player = buf.readBoolean() ? buf.readUniqueId() : null;
+        player = buf.readBoolean() ? buf.readUUID() : null;
         Map<EnumAddonSlot, Addon> newAddons = new EnumMap<>(EnumAddonSlot.class);
         int count = buf.readInt();
         for (int i = 0; i < count; i++) {
-            EnumAddonSlot slot = buf.readEnumValue(EnumAddonSlot.class);
-            ResourceLocation rl = new ResourceLocation(buf.readString(1024));
+            EnumAddonSlot slot = buf.readEnum(EnumAddonSlot.class);
+            ResourceLocation rl = new ResourceLocation(buf.readUtf(1024));
             Class<? extends Addon> addonClass = AddonsRegistry.INSTANCE.getClassByName(rl);
             try {
                 if (addonClass == null) {
@@ -248,14 +246,15 @@ public class VolumeBox {
         }
         addons.keySet().removeIf(slot -> !newAddons.containsKey(slot));
         newAddons.entrySet().stream().filter(slotAddon -> !addons.containsKey(slotAddon.getKey()))
-            .forEach(slotAddon -> addons.put(slotAddon.getKey(), slotAddon.getValue()));
+                .forEach(slotAddon -> addons.put(slotAddon.getKey(), slotAddon.getValue()));
         for (Map.Entry<EnumAddonSlot, Addon> slotAddon : newAddons.entrySet()) {
             PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
             slotAddon.getValue().toBytes(buffer);
             addons.get(slotAddon.getKey()).fromBytes(buffer);
         }
         locks.clear();
-        IntStream.range(0, buf.readInt()).mapToObj(i -> {
+        IntStream.range(0, buf.readInt()).mapToObj(i ->
+        {
             Lock lock = new Lock();
             lock.fromBytes(buf);
             return lock;

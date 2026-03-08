@@ -1,12 +1,5 @@
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
@@ -15,6 +8,13 @@ import buildcraft.lib.client.guide.parts.GuidePageFactory;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePart.PagePosition;
 import buildcraft.lib.misc.ArrayUtil;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import javax.annotation.Nullable;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 public class ContentsNodeGui {
     public final GuiGuide gui;
@@ -86,15 +86,17 @@ public class ContentsNodeGui {
         return false;
     }
 
-    public PagePosition render(int x, int y, int width, int height, PagePosition current, int index) {
-        return iterate(current, height, (pos, part, link) -> {
-            return part.renderIntoArea(x, y, width, height, pos, index);
+    public PagePosition render(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
+        return iterate(current, height, (pos, part, link) ->
+        {
+            return part.renderIntoArea(poseStack, x, y, width, height, pos, index);
         });
     }
 
-    public void onClicked(int x, int y, int width, int height, PagePosition current, int index) {
-        iterate(current, height, (pos, part, link) -> {
-            pos = part.renderIntoArea(x, y, width, height, pos, -1);
+    public void onClicked(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
+        iterate(current, height, (pos, part, link) ->
+        {
+            pos = part.renderIntoArea(poseStack, x, y, width, height, pos, -1);
             if (pos.page == index && part.wasHovered()) {
                 if (link != null) {
                     GuidePageFactory factory = link.getFactoryLink();

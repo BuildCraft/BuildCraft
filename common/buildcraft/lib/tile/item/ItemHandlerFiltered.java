@@ -1,12 +1,9 @@
 package buildcraft.lib.tile.item;
 
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.items.IItemHandler;
-
 import buildcraft.api.inventory.IItemHandlerFiltered;
-
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 /** A type of {@link ItemHandlerSimple} that gets it's {@link IItemHandlerFiltered#getFilter(int)} from a given
  * {@link IItemHandler} instance. This currently instantiates to having the same {@link IItemHandler#getSlots() slot
@@ -19,7 +16,8 @@ public class ItemHandlerFiltered extends ItemHandlerSimple implements IItemHandl
         super(filter.getSlots());
         this.emptyIsAnything = emptyIsAnything;
         this.filter = filter;
-        setChecker((slot, stack) -> {
+        setChecker((slot, stack) ->
+        {
             ItemStack inSlot = filter.getStackInSlot(slot);
             if (inSlot.isEmpty()) {
                 return emptyIsAnything;

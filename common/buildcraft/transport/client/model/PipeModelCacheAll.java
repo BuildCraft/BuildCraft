@@ -6,22 +6,23 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.util.BlockRenderLayer;
-
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCacheJoiner;
 import buildcraft.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
-
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTranslucentKey;
 import buildcraft.transport.client.model.PipeModelCachePluggable.PluggableKey;
 import buildcraft.transport.tile.TilePipeHolder;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@OnlyIn(Dist.CLIENT)
 public class PipeModelCacheAll {
     static final IModelCache<PipeAllCutoutKey> cacheCutout;
     static final IModelCache<PipeAllTranslucentKey> cacheTranslucent;
@@ -58,7 +59,8 @@ public class PipeModelCacheAll {
 
         public PipeAllCutoutKey(TilePipeHolder tile) {
             cutout = new PipeBaseCutoutKey(tile.getPipe().getModel());
-            this.pluggable = new PluggableKey(BlockRenderLayer.CUTOUT, tile);
+//            this.pluggable = new PluggableKey(BlockRenderLayer.CUTOUT, tile);
+            this.pluggable = new PluggableKey(RenderType.cutout(), tile);
             hash = Objects.hash(cutout, pluggable);
         }
 
@@ -99,7 +101,7 @@ public class PipeModelCacheAll {
 
         public PipeAllTranslucentKey(TilePipeHolder tile) {
             translucent = new PipeBaseTranslucentKey(tile.getPipe().getModel());
-            this.pluggable = new PluggableKey(BlockRenderLayer.TRANSLUCENT, tile);
+            this.pluggable = new PluggableKey(RenderType.translucent(), tile);
             hash = Objects.hash(translucent, pluggable);
         }
 

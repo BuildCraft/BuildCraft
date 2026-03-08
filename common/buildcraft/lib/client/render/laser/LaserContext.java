@@ -6,17 +6,17 @@
 
 package buildcraft.lib.client.render.laser;
 
+
+import buildcraft.lib.client.model.MutableQuad;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.client.model.MutableQuad;
 
 public class LaserContext {
     public final Matrix4f matrix = new Matrix4f();
@@ -32,14 +32,14 @@ public class LaserContext {
         this.useNormalColour = useNormalColour;
         this.drawBothSides = isCullEnabled;
         this.minBlockLight = data.minBlockLight;
-        Vec3d delta = data.start.subtract(data.end);
+        Vector3d delta = data.startWorldPos.subtract(data.endWorldPos);
         double dx = delta.x;
         double dy = delta.y;
         double dz = delta.z;
 
         final double angleY, angleZ;
 
-        double realLength = delta.lengthVector();
+        double realLength = delta.length();
         length = realLength / data.scale;
         angleZ = Math.PI - Math.atan2(dz, dx);
         double rl_squared = realLength * realLength;
@@ -68,9 +68,9 @@ public class LaserContext {
 
         // // Step 4
         Vector3f translation = new Vector3f();
-        translation.x = (float) data.start.x;
-        translation.y = (float) data.start.y;
-        translation.z = (float) data.start.z;
+        translation.x = (float) data.startWorldPos.x;
+        translation.y = (float) data.startWorldPos.y;
+        translation.z = (float) data.startWorldPos.z;
         holding.setTranslation(translation);
         matrix.mul(holding);
         holding.setIdentity();
@@ -93,7 +93,7 @@ public class LaserContext {
         holding.setIdentity();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setFaceNormal(double nx, double ny, double nz) {
         if (useNormalColour) {
             normal.x = (float) nx;
@@ -115,10 +115,12 @@ public class LaserContext {
     private final double[] u = { 0, 0, 0, 0 };
     private final double[] v = { 0, 0, 0, 0 };
     private final int[] l = { 0, 0, 0, 0 };
+    // Calen BeaconRenderer.class
+    private final int overlay = OverlayTexture.NO_OVERLAY;
     private final float[] n = { 0, 1, 0 };
     private float diffuse;
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void addPoint(double xIn, double yIn, double zIn, double uIn, double vIn) {
         point.x = (float) xIn;
         point.y = (float) yIn;
@@ -156,9 +158,9 @@ public class LaserContext {
 
     private void vertex(int i) {
         if (useNormalColour) {
-            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], n[0], n[1], n[2], diffuse);
+            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], overlay, n[0], n[1], n[2], diffuse);
         } else {
-            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], 0, 1, 0, 1);
+            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], overlay, 0, 1, 0, 1);
         }
     }
 }

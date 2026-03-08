@@ -6,32 +6,27 @@
 
 package buildcraft.lib.list;
 
-import java.util.EnumSet;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import buildcraft.api.lists.ListMatchHandler;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.DimensionManager;
-
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.lists.ListMatchHandler;
-
-import buildcraft.lib.BCLibProxy;
+import javax.annotation.Nonnull;
+import java.util.EnumSet;
 
 public class ListMatchHandlerArmor extends ListMatchHandler {
-    private static EnumSet<EntityEquipmentSlot> getArmorTypes(ItemStack stack) {
-        EntityPlayer player = BCLibProxy.getProxy().getClientPlayer();
-        if (player == null) {
-            player = BuildCraftAPI.fakePlayerProvider.getBuildCraftPlayer(DimensionManager.getWorld(0));
-        }
-        EnumSet<EntityEquipmentSlot> types = EnumSet.noneOf(EntityEquipmentSlot.class);
+    private static EnumSet<EquipmentSlotType> getArmorTypes(ItemStack stack) {
+//        EntityPlayer player = BCLibProxy.getProxy().getClientPlayer();
+//        if (player == null) {
+//            player = BuildCraftAPI.fakePlayerProvider.getBuildCraftPlayer(DimensionManager.getWorld(0));
+//        }
+        EnumSet<EquipmentSlotType> types = EnumSet.noneOf(EquipmentSlotType.class);
 
-        for (EntityEquipmentSlot e : EntityEquipmentSlot.values()) {
-            if (e.getSlotType() == EntityEquipmentSlot.Type.ARMOR) {
-                if (stack.getItem().isValidArmor(stack, e, player)) {
+        for (EquipmentSlotType e : EquipmentSlotType.values()) {
+            if (e.getType() == EquipmentSlotType.Group.ARMOR) {
+                // Calen: IForgeItem#canEquip
+//                if (stack.getItem().canEquip(stack, e, player))
+                if (MobEntity.getEquipmentSlotForItem(stack) == e) {
                     types.add(e);
                 }
             }
@@ -43,9 +38,9 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
     @Override
     public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
-            EnumSet<EntityEquipmentSlot> armorTypeIDSource = getArmorTypes(stack);
+            EnumSet<EquipmentSlotType> armorTypeIDSource = getArmorTypes(stack);
             if (armorTypeIDSource.size() > 0) {
-                EnumSet<EntityEquipmentSlot> armorTypeIDTarget = getArmorTypes(target);
+                EnumSet<EquipmentSlotType> armorTypeIDTarget = getArmorTypes(target);
                 if (precise) {
                     return armorTypeIDSource.equals(armorTypeIDTarget);
                 } else {

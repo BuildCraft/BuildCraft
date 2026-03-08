@@ -6,15 +6,17 @@
 
 package buildcraft.energy.client.gui;
 
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.energy.BCEnergyBlocks;
+import buildcraft.energy.container.ContainerEngineIron_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.ledger.LedgerEngine;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.energy.container.ContainerEngineIron_BC8;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
 public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
@@ -22,37 +24,42 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 60);
 
-    public GuiEngineIron_BC8(ContainerEngineIron_BC8 container) {
-        super(container);
-        xSize = SIZE_X;
-        ySize = SIZE_Y;
+    public GuiEngineIron_BC8(ContainerEngineIron_BC8 container, PlayerInventory inventory, ITextComponent component) {
+        super(container, inventory, component);
+//        xSize = SIZE_X;
+        imageWidth = SIZE_X;
+//        ySize = SIZE_Y;
+        imageHeight = SIZE_Y;
         mainGui.shownElements.add(new LedgerEngine(mainGui, container.tile, true));
     }
 
     @Override
     public void initGui() {
-        super.initGui();
-
         mainGui.shownElements.add(container.widgetTankFuel.createGuiElement(mainGui, new GuiRectangle(26, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
         mainGui.shownElements.add(container.widgetTankCoolant.createGuiElement(mainGui, new GuiRectangle(80, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
         mainGui.shownElements.add(container.widgetTankResidue.createGuiElement(mainGui, new GuiRectangle(134, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(mainGui.rootElement);
+    protected void drawBackgroundLayer(float partialTicks, MatrixStack poseStack) {
+        ICON_GUI.drawAt(mainGui.rootElement, poseStack);
     }
 
     @Override
-    protected void drawForegroundLayer() {
-        String str = LocaleUtil.localize("tile.engineIron.name");
-        int strWidth = fontRenderer.getStringWidth(str);
+//    protected void drawForegroundLayer()
+    protected void drawForegroundLayer(MatrixStack poseStack) {
+//        String str = LocaleUtil.localize("tile.engineIron.name");
+        String str = LocaleUtil.localize(BCEnergyBlocks.engineIron.get().getDescriptionId());
+//        int strWidth = fontRenderer.getStringWidth(str);
+        int strWidth = font.width(str);
         double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
         double titleY = mainGui.rootElement.getY() + 6;
-        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+//        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+        font.draw(poseStack, str, (int) titleX, (int) titleY, 0x404040);
 
         double invX = mainGui.rootElement.getX() + 8;
         double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
+//        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
+        font.draw(poseStack, LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
     }
 }

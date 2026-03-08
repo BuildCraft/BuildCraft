@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:clay"
+    },
+    "g": {
+      "tag": "forge:glass/light_gray"
+    },
+    "r": {
+      "tag": "forge:clay"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_clay_light_gray",
+    "count": 8
+  }
+}

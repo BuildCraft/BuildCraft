@@ -1,15 +1,13 @@
 package buildcraft.lib.statement;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.nbt.CompoundNBT;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /** Util class for holding, saving, loading and networking {@link StatementWrapper} and its
  * {@link IStatementParameter}'s. */
@@ -28,7 +26,7 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         this.listener = listener;
         this.maxParams = maxParams;
         this.params = new IStatementParameter[maxParams];
-        this.paramRefs = new FullStatement.ParamRef[maxParams];
+        this.paramRefs = new ParamRef[maxParams];
         for (int i = 0; i < maxParams; i++) {
             paramRefs[i] = new ParamRef(this, i);
         }
@@ -36,26 +34,26 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
 
     // NBT
 
-    public void readFromNbt(NBTTagCompound nbt) {
-        statement = type.readFromNbt(nbt.getCompoundTag("s"));
+    public void readFromNbt(CompoundNBT nbt) {
+        statement = type.readFromNbt(nbt.getCompound("s"));
         if (statement == null) {
             Arrays.fill(params, null);
         } else {
             for (int p = 0; p < params.length; p++) {
-                NBTTagCompound pNbt = nbt.getCompoundTag(Integer.toString(p));
+                CompoundNBT pNbt = nbt.getCompound(Integer.toString(p));
                 params[p] = StatementTypeParam.INSTANCE.readFromNbt(pNbt);
             }
         }
     }
 
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundNBT writeToNbt() {
+        CompoundNBT nbt = new CompoundNBT();
         if (statement != null) {
-            nbt.setTag("s", type.writeToNbt(statement));
+            nbt.put("s", type.writeToNbt(statement));
             for (int p = 0; p < params.length; p++) {
                 IStatementParameter param = params[p];
                 if (param != null) {
-                    nbt.setTag(Integer.toString(p), StatementTypeParam.INSTANCE.writeToNbt(param));
+                    nbt.put(Integer.toString(p), StatementTypeParam.INSTANCE.writeToNbt(param));
                 }
             }
         }
@@ -203,9 +201,9 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
         return params;
     }
 
-    // Gui change listeners
+    // AbstractGui change listeners
 
-    /** Gui elements should call this after calling {@link #set(IStatement)} or {@link #set(int, IStatementParameter)},
+    /** AbstractGui elements should call this after calling {@link #set(IStatement)} or {@link #set(int, IStatementParameter)},
      * with either -1 or the param index respectively. */
     public void postSetFromGui(int paramIndex) {
         if (listener != null) {

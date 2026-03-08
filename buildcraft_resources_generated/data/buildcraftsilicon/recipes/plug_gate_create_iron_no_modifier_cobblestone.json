@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftsilicon",
+  "pattern": [
+    " m ",
+    "mrm",
+    " b "
+  ],
+  "key": {
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "b": {
+      "tag": "forge:cobblestone"
+    },
+    "m": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "buildcraftsilicon:plug_gate_iron_and_no_modifier"
+  }
+}

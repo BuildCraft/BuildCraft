@@ -6,25 +6,26 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePartItem;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class GuideSmelting extends GuidePartItem {
     public static final GuiIcon SMELTING_ICON = new GuiIcon(GuiGuide.ICONS_2, 119, 54, 80, 54);
     public static final GuiRectangle OFFSET = new GuiRectangle(
-        (GuiGuide.PAGE_LEFT_TEXT.width - SMELTING_ICON.width) / 2, 0, SMELTING_ICON.width, SMELTING_ICON.height);
+            (GuiGuide.PAGE_LEFT_TEXT.width - SMELTING_ICON.width) / 2, 0, SMELTING_ICON.width, SMELTING_ICON.height);
     public static final GuiRectangle IN_POS = new GuiRectangle(1, 1, 16, 16);
     public static final GuiRectangle OUT_POS = new GuiRectangle(59, 19, 16, 16);
     public static final GuiRectangle FURNACE_POS = new GuiRectangle(1, 37, 16, 16);
@@ -34,7 +35,8 @@ public class GuideSmelting extends GuidePartItem {
     private final ItemStack furnace;
     private final int hash;
 
-    public GuideSmelting(GuiGuide gui, @Nonnull ItemStack input, @Nonnull ItemStack output) {
+    // public GuideSmelting(GuiGuide gui, @Nonnull ItemStack input, @Nonnull ItemStack output)
+    public GuideSmelting(GuiGuide gui, @Nonnull NonNullList<Ingredient> input, @Nonnull ItemStack output) {
         super(gui);
         this.input = new ChangingItemStack(input);
         this.output = new ChangingItemStack(output);
@@ -59,32 +61,36 @@ public class GuideSmelting extends GuidePartItem {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+//    public GuidePart.PagePosition renderIntoArea(int x, int y, int width, int height, GuidePart.PagePosition current, int index)
+    public GuidePart.PagePosition renderIntoArea(MatrixStack poseStack, int x, int y, int width, int height, GuidePart.PagePosition current, int index) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
         x += OFFSET.x;
         y += OFFSET.y + current.pixel;
         if (current.page == index) {
-            SMELTING_ICON.drawAt(x, y);
+//            SMELTING_ICON.drawAt(x, y);
+            SMELTING_ICON.drawAt(poseStack, x, y);
             // Render the item
-            GlStateManager.enableRescaleNormal();
-            RenderHelper.enableGUIStandardItemLighting();
+//            GlStateManager.enableRescaleNormal();
+//            RenderHelper.enableGUIStandardItemLighting();
+            RenderUtil.enableGUIStandardItemLighting();
 
             drawItemStack(input.get(), x + (int) IN_POS.x, y + (int) IN_POS.y);
             drawItemStack(output.get(), x + (int) OUT_POS.x, y + (int) OUT_POS.y);
             drawItemStack(furnace, x + (int) FURNACE_POS.x, y + (int) FURNACE_POS.y);
 
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableRescaleNormal();
+//            RenderHelper.disableStandardItemLighting();
+            RenderUtil.disableStandardItemLighting();
+//            GlStateManager.disableRescaleNormal();
         }
         current = current.nextLine(PIXEL_HEIGHT, height);
         return current;
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
+//    public GuidePart.PagePosition handleMouseClick(int x, int y, int width, int height, GuidePart.PagePosition current, int index, int mouseX, int mouseY)
+    public PagePosition handleMouseClick(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index, double mouseX, double mouseY) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }

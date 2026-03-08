@@ -6,19 +6,16 @@
 
 package buildcraft.silicon.client.model.plug;
 
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.silicon.BCSiliconModels;
+import buildcraft.silicon.client.model.key.KeyPlugGate;
+import net.minecraft.client.renderer.model.BakedQuad;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-
-import buildcraft.lib.client.model.MutableQuad;
-
-import buildcraft.silicon.BCSiliconModels;
-import buildcraft.silicon.client.model.key.KeyPlugGate;
 
 public enum PlugGateBaker implements IPluggableStaticBaker<KeyPlugGate> {
     INSTANCE;

@@ -1,23 +1,17 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.registry;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /** Stores several types of "tag" (strings) for BuildCraft. A central place for all of them to init in. Refer to the
  * "static" block for all of the tag ID's
@@ -26,7 +20,9 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
  * near the start - we don't want name clashes between addons or an addon and BC itself. If you want more types of tags
  * keys then just make an issue for it, and it will probably be added. */
 public class TagManager {
-    private static final Map<String, TagEntry> idsToEntry = new HashMap<>();
+    // Calen: thread safety
+//    private static final Map<String, TagEntry> idsToEntry = new HashMap<>();
+    private static final Map<String, TagEntry> idsToEntry = new ConcurrentHashMap<>();
 
     public static Item getItem(String id) {
         String regTag = getTag(id, EnumTagType.REGISTRY_NAME);
@@ -74,7 +70,8 @@ public class TagManager {
         OREDICT_NAME,
         REGISTRY_NAME,
         CREATIVE_TAB,
-        MODEL_LOCATION,
+        // Calen: not still used in 1.18.2
+//        MODEL_LOCATION,
     }
 
     public enum EnumTagTypeMulti {
@@ -130,9 +127,10 @@ public class TagManager {
             return setSingleTag(EnumTagType.CREATIVE_TAB, creativeTab);
         }
 
-        public TagEntry model(String modelLocation) {
-            return setSingleTag(EnumTagType.MODEL_LOCATION, modelLocation);
-        }
+        // Calen: not still used in 1.18.2
+//        public TagEntry model(String modelLocation) {
+//            return setSingleTag(EnumTagType.MODEL_LOCATION, modelLocation);
+//        }
 
         public TagEntry addMultiTag(EnumTagTypeMulti type, String... tags) {
             if (!this.multiTags.containsKey(type)) {
@@ -144,16 +142,17 @@ public class TagManager {
             return this;
         }
 
-        public TagEntry oldReg(String... tags) {
-            return addMultiTag(EnumTagTypeMulti.OLD_REGISTRY_NAME, tags);
-        }
+//        public TagEntry oldReg(String... tags) {
+//            return addMultiTag(EnumTagTypeMulti.OLD_REGISTRY_NAME, tags);
+//        }
     }
 
     public static TagEntry getTag(String id) {
         return idsToEntry.get(id);
     }
 
-    public static TagEntry registerTag(String id) {
+    // public static TagEntry registerTag(String id)
+    public TagEntry registerTag(String id) {
         TagEntry entry = new TagEntry(id);
         idsToEntry.put(id, entry);
         for (List<TagEntry> list : batchTasks) {
@@ -168,18 +167,25 @@ public class TagManager {
     //
     // #########################
 
-    private static final Deque<List<TagEntry>> batchTasks = new ArrayDeque<>();
+    // private static final Deque<List<TagEntry>> batchTasks = new ArrayDeque<>();
+    private final Deque<List<TagEntry>> batchTasks = new ArrayDeque<>();
 
-    public static void startBatch() {
+    // public static void startBatch()
+    public void startBatch() {
         batchTasks.push(new ArrayList<>());
     }
 
-    public static void endBatch(Consumer<TagEntry> consumer) {
+    // public static void endBatch(Consumer<TagEntry> consumer)
+    public void endBatch(Consumer<TagEntry> consumer) {
         batchTasks.pop().forEach(consumer);
     }
 
     public static Consumer<TagEntry> prependTag(EnumTagType type, String prefix) {
-        return tag -> {
+        return tag ->
+        {
+            if (tag == null) {
+                throw new RuntimeException("[lib.tagmanager.prepend] Tag is null!");
+            }
             if (tag.hasSingleTag(type)) {
                 tag.setSingleTag(type, prefix + tag.getSingleTag(type));
             }
@@ -187,7 +193,9 @@ public class TagManager {
     }
 
     public static Consumer<TagEntry> prependTags(String prefix, EnumTagType... tags) {
-        Consumer<TagEntry> consumer = tag -> {};
+        Consumer<TagEntry> consumer = tag ->
+        {
+        };
         for (EnumTagType type : tags) {
             consumer = consumer.andThen(prependTag(type, prefix));
         }
@@ -199,7 +207,8 @@ public class TagManager {
     }
 
     public static Consumer<TagEntry> setTab(String creativeTab) {
-        return tag -> {
+        return tag ->
+        {
             if (tag.hasSingleTag(EnumTagType.REGISTRY_NAME) && !tag.hasSingleTag(EnumTagType.CREATIVE_TAB)) {
                 tag.tab(creativeTab);
             }

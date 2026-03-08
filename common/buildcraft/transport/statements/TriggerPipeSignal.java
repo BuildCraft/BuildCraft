@@ -6,42 +6,43 @@
 
 package buildcraft.transport.statements;
 
-import java.util.Locale;
-
-import net.minecraft.item.EnumDyeColor;
-
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IWireManager;
-
+import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.Locale;
 
 public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     private final boolean active;
-    private final EnumDyeColor colour;
+    private final DyeColor colour;
 
-    public TriggerPipeSignal(boolean active, EnumDyeColor colour) {
+    public TriggerPipeSignal(boolean active, DyeColor colour) {
         super(
-            "buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
-                + (active ? ".active" : ".inactive"), //
-            "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
-                + (active ? ".active" : ".inactive"));
+
+                "buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
+                        + (active ? ".active" : ".inactive"), //
+                "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
+                        + (active ? ".active" : ".inactive")
+
+        );
 
         this.active = active;
         this.colour = colour;
     }
 
-    public static boolean doesGateHaveColour(IGate gate, EnumDyeColor c) {
+    public static boolean doesGateHaveColour(IGate gate, DyeColor c) {
         // FIXME: replace with a check to wires.hasWire(colour)!
         return gate.getPipeHolder().getWireManager().hasPartOfColor(c);
     }
@@ -52,9 +53,16 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     }
 
     @Override
-    public String getDescription() {
-        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")),
-            ColourUtil.getTextFullTooltip(colour));
+    public ITextComponent getDescription() {
+//        return String.format(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")),
+//                ColourUtil.getTextFullTooltip(colour));
+        return new TranslationTextComponent("gate.trigger.pipe.wire." + (active ? "active" : "inactive"),
+                ColourUtil.getTextFullTooltipComponent(colour));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.trigger.pipe.wire." + (active ? "active." : "inactive.") + colour.getName();
     }
 
     @Override

@@ -6,15 +6,14 @@
 
 package buildcraft.transport.stripes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public enum StripesHandlerPlant implements IStripesHandlerItem {
     INSTANCE;
@@ -22,11 +21,11 @@ public enum StripesHandlerPlant implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
-        return CropManager.plantCrop(world, player, stack, pos.offset(direction).down())
-            || CropManager.plantCrop(world, player, stack, pos.offset(direction));
+        return CropManager.plantCrop(world, player, stack, pos.relative(direction).below())
+                || CropManager.plantCrop(world, player, stack, pos.relative(direction));
     }
 }

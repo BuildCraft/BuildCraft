@@ -1,11 +1,10 @@
 package buildcraft.lib.script;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.gson.JsonSyntaxException;
 
 import javax.annotation.Nullable;
-
-import com.google.gson.JsonSyntaxException;
+import java.util.Collection;
+import java.util.List;
 
 /** Provides logging and error feedback for a single script file. */
 public interface IScriptFileLog {
@@ -24,14 +23,14 @@ public interface IScriptFileLog {
     // General
 
     /** Called at the very start
-     * 
+     *
      * @param file The file that is being loaded, or null if this is the main file.
      * @param lines The raw, original, contents of the file. */
     void populateFile(@Nullable SourceFile file, List<String> lines);
 
     /** Called when any function is missing a mandatory argument. If a method requires 6 arguments and only 2 are given
      * then this will be called 4 times.
-     * 
+     *
      * @param argDesc The documentation given for the argument index. */
     void errorMissingArgument(int line, int argIndex, String argDesc);
 
@@ -93,7 +92,7 @@ public interface IScriptFileLog {
 
     default void errorAliasMissingReplacement(int line) {
         errorMissingArgument(line, 2,
-            "The replacement for the alias. This can include ${1} and ${2} etc for the aliased arguments.");
+                "The replacement for the alias. This can include ${1} and ${2} etc for the aliased arguments.");
     }
 
     // Replacement

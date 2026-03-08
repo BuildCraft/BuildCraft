@@ -1,13 +1,12 @@
 package buildcraft.lib.client.guide.ref;
 
+import buildcraft.lib.client.guide.entry.PageValue;
+import buildcraft.lib.misc.LocaleUtil;
+import net.minecraft.util.ResourceLocation;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.client.guide.entry.PageValue;
-import buildcraft.lib.misc.LocaleUtil;
 
 public final class GuideGroupSet {
 
@@ -37,7 +36,7 @@ public final class GuideGroupSet {
     }
 
     public String getTitle(GroupDirection dir) {
-        String post = group.getResourceDomain() + "." + group.getResourcePath();
+        String post = group.getNamespace() + "." + group.getPath();
         return LocaleUtil.localize(dir.localePrefix + post);
     }
 

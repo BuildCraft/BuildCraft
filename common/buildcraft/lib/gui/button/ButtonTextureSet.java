@@ -8,6 +8,7 @@ package buildcraft.lib.gui.button;
 
 import net.minecraft.util.ResourceLocation;
 
+@Deprecated()
 public class ButtonTextureSet implements IButtonTextureSet {
     private final ResourceLocation texture;
     private final int x, y, height, width;

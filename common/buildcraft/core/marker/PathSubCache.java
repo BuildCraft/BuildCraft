@@ -1,33 +1,39 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.marker;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.MessageMarker;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.client.BuildCraftLaserManager;
+import java.util.List;
 
 public class PathSubCache extends MarkerSubCache<PathConnection> {
     public PathSubCache(World world) {
         super(world, MarkerCache.CACHES.indexOf(PathCache.INSTANCE));
-        PathSavedData data = (PathSavedData) world.getPerWorldStorage().getOrLoadData(PathSavedData.class, PathSavedData.NAME);
-        if (data == null) {
-            data = new PathSavedData();
-            world.getPerWorldStorage().setData(PathSavedData.NAME, data);
+        if (world instanceof ServerWorld) {
+            ServerWorld serverLevel = (ServerWorld) world;
+//            PathSavedData data = (PathSavedData) world.getPerWorldStorage().getOrLoadData(PathSavedData.class, PathSavedData.NAME);
+            PathSavedData data = serverLevel.getDataStorage().get(
+                    PathSavedData::new,
+                    PathSavedData.NAME
+            );
+            if (data == null) {
+                data = new PathSavedData();
+                serverLevel.getDataStorage().set(data);
+            }
+            data.loadInto(this);
         }
-        data.loadInto(this);
     }
 
     @Override
@@ -76,7 +82,7 @@ public class PathSubCache extends MarkerSubCache<PathConnection> {
             if (pos.equals(from)) {
                 continue;
             }
-            if (pos.distanceSq(from) > maxLengthSquared) {
+            if (VecUtil.distanceSq(pos, from) > maxLengthSquared) {
                 continue;
             }
             if (canConnect(from, pos) || canConnect(pos, from)) {

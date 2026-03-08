@@ -6,9 +6,9 @@
 
 package buildcraft.lib.misc.data;
 
-import javax.annotation.Nullable;
-
 import buildcraft.api.core.IConvertable;
+
+import javax.annotation.Nullable;
 
 /** Defines a simple reference to an object, that can be retrieved or changed at any time. */
 public interface IReference<T> {

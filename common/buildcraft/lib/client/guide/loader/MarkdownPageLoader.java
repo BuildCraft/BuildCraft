@@ -6,25 +6,22 @@
 
 package buildcraft.lib.client.guide.loader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
-
 import buildcraft.lib.client.guide.entry.PageEntry;
 import buildcraft.lib.client.guide.parts.GuidePageFactory;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 
 public enum MarkdownPageLoader implements IPageLoaderText {
     INSTANCE;
@@ -46,7 +43,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             return new OptionallyDisabled<>(line + " was not a valid complex item string!");
         }
         ItemStack stack = null;
-        Item item = Item.getByNameOrId(args[0].trim());
+//        Item item = Item.getByNameOrId(args[0].trim());
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(args[0].trim()));
         if (item != null) {
             stack = new ItemStack(item);
         } else {
@@ -69,15 +67,21 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             return new OptionallyDisabled<>(stack);
         }
 
-        try {
-            int meta = Integer.parseInt(args[2].trim());
-            if (meta == -1) {
-                // Use oredict
-                meta = OreDictionary.WILDCARD_VALUE;
-            }
-            stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
-        } catch (NumberFormatException nfe) {
-            return new OptionallyDisabled<>(args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
+//        try {
+//            int meta = Integer.parseInt(args[2].trim());
+//            if (meta == -1) {
+//                // Use oredict
+//                meta = OreDictionary.WILDCARD_VALUE;
+//            }
+//            stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
+//            stack = new ItemStack(stack.getItem(), stack.getCount());
+//        } catch (NumberFormatException nfe) {
+//            return new OptionallyDisabled<>(args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
+//        }
+        // Calen
+        int meta = Integer.parseInt(args[2].trim());
+        if (meta != -1) {
+            throw new RuntimeException("[lib.guide.loader.xml] Found meta data [" + meta + "] in line [" + line + "] but meta data is not supported in this ms version.");
         }
 
         if (args.length == 3) {
@@ -86,17 +90,20 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
         String nbtString = args[3];
         try {
-            stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
-        } catch (NBTException e) {
+//            stack.setTag(JsonToNBT.getTagFromJson(nbtString));
+            stack.setTag(JsonToNBT.parseTag(nbtString));
+        }
+//        catch (NBTException e)
+        catch (CommandSyntaxException e) {
             return new OptionallyDisabled<>(nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }
         return new OptionallyDisabled<>(stack);
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry, Profiler prof)
-        throws IOException {
-        prof.startSection("md");
+    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry, IProfiler prof)
+            throws IOException {
+        prof.push("md");
         StringBuilder replaced = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -107,7 +114,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         }
 
         BufferedReader nReader = new BufferedReader(new StringReader(replaced.toString()));
-        prof.endSection();
+        prof.pop();
         return XmlPageLoader.INSTANCE.loadPage(nReader, name, entry, prof);
     }
 
@@ -118,8 +125,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             switch (post) {
                 case "new_page": {
                     BCLog.logger.warn(
-                        "[lib.guide.markdown] Found deprecated element '" + line
-                            + "', it should be replaced with '<new_page/>'"
+                            "[lib.guide.markdown] Found deprecated element '" + line
+                                    + "', it should be replaced with '<new_page/>'"
                     );
                     return "<new_page/>";
                 }
@@ -147,8 +154,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
                     }
                     String str = "<recipes_usages stack=\"" + stack + "\"" + additional + "/>";
                     BCLog.logger.warn(
-                        "[lib.guide.markdown] Found deprecated element '" + line + "', it should be replaced with '"
-                            + str + "'"
+                            "[lib.guide.markdown] Found deprecated element '" + line + "', it should be replaced with '"
+                                    + str + "'"
                     );
                     return str;
                 }

@@ -1,29 +1,27 @@
 package buildcraft.lib.client.guide.entry;
 
-import java.util.List;
-import java.util.TreeMap;
-
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 import buildcraft.api.statements.IAction;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.ITrigger;
 import buildcraft.api.statements.StatementManager;
-
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.parts.contents.PageLinkStatement;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.statement.GuiElementStatementSource;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.TreeMap;
 
 public class PageEntryStatement extends PageValueType<IStatement> {
 
@@ -38,7 +36,7 @@ public class PageEntryStatement extends PageValueType<IStatement> {
     }
 
     @Override
-    public void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof) {
+    public void iterateAllDefault(IEntryLinkConsumer consumer, IProfiler prof) {
         for (IStatement statement : new TreeMap<>(StatementManager.statements).values()) {
             if (!GuideManager.INSTANCE.objectsAdded.add(statement)) {
                 continue;
@@ -59,9 +57,9 @@ public class PageEntryStatement extends PageValueType<IStatement> {
     }
 
     @Override
-    public OptionallyDisabled<PageEntry<IStatement>> deserialize(ResourceLocation name, JsonObject json,
-        JsonDeserializationContext ctx) {
-        String stmntName = JsonUtils.getString(json, "statement");
+    public OptionallyDisabled<PageEntry<IStatement>> deserialize(ResourceLocation name, JsonObject json, JsonDeserializationContext ctx) {
+//        String stmntName = JsonUtils.getString(json, "statement");
+        String stmntName = JSONUtils.getAsString(json, "statement");
         IStatement stmnt = StatementManager.statements.get(stmntName);
         if (stmnt == null) {
             throw new JsonSyntaxException("Unknown statement '" + stmntName + "'");
@@ -70,13 +68,24 @@ public class PageEntryStatement extends PageValueType<IStatement> {
     }
 
     @Override
-    public List<String> getTooltip(IStatement value) {
+    public List<ITextComponent> getTooltip(IStatement value) {
         return value.getTooltip();
     }
 
     @Override
-    public String getTitle(IStatement value) {
-        List<String> tooltip = value.getTooltip();
+    public ITextComponent getTitle(IStatement value) {
+        List<ITextComponent> tooltip = value.getTooltip();
+        if (tooltip.isEmpty()) {
+            return new StringTextComponent(value.getClass().toString());
+        } else {
+            return tooltip.get(0);
+        }
+    }
+
+    // Calen
+    @Override
+    public String getTitleKey(IStatement value) {
+        List<String> tooltip = value.getTooltipKey();
         if (tooltip.isEmpty()) {
             return value.getClass().toString();
         } else {
@@ -87,6 +96,6 @@ public class PageEntryStatement extends PageValueType<IStatement> {
     @Override
     @Nullable
     public ISimpleDrawable createDrawable(IStatement value) {
-        return (x, y) -> GuiElementStatementSource.drawGuiSlot(value, x, y);
+        return (p, x, y) -> GuiElementStatementSource.drawGuiSlot(value, p, x, y);
     }
 }

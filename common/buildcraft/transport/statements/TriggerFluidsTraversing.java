@@ -6,12 +6,11 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.pipe.PipeFlow;
-
-import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class TriggerFluidsTraversing extends BCStatement implements ITriggerInternal {
 
@@ -20,8 +19,14 @@ public class TriggerFluidsTraversing extends BCStatement implements ITriggerInte
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.pipe.containsFluids");
+    public ITextComponent getDescription() {
+//        return LocaleUtil.localize("gate.trigger.pipe.containsFluids");
+        return new TranslationTextComponent("gate.trigger.pipe.containsFluids");
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.trigger.pipe.containsFluids";
     }
 
     @Override

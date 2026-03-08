@@ -6,14 +6,13 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 
 public class PipeBehaviourSandstone extends PipeBehaviour {
     private static final double SPEED_DELTA = PipeBehaviourStone.SPEED_DELTA;
@@ -23,17 +22,17 @@ public class PipeBehaviourSandstone extends PipeBehaviour {
         super(pipe);
     }
 
-    public PipeBehaviourSandstone(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourSandstone(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+    public boolean canConnect(Direction face, PipeBehaviour other) {
         return true;
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, TileEntity oTile) {
+    public boolean canConnect(Direction face, TileEntity oTile) {
         return false;
     }
 

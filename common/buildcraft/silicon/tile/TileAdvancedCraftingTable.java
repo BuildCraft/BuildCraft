@@ -6,25 +6,30 @@
 
 package buildcraft.silicon.tile;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
-
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.craft.IAutoCraft;
 import buildcraft.lib.tile.craft.WorkbenchCrafting;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.BCSiliconMenuTypes;
+import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAutoCraft {
     private static final long POWER_REQ = 500 * MjAPI.MJ;
@@ -37,6 +42,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     public ItemStack resultClient = ItemStack.EMPTY;
 
     public TileAdvancedCraftingTable() {
+        super(BCSiliconBlocks.advancedCraftingTableTile.get());
         invBlueprint = itemManager.addInvHandler("blueprint", 3 * 3, EnumAccess.PHANTOM);
         invMaterials = itemManager.addInvHandler("materials", 5 * 3, EnumAccess.INSERT, EnumPipePart.VALUES);
         invResults = itemManager.addInvHandler("result", 3 * 3, EnumAccess.EXTRACT, EnumPipePart.VALUES);
@@ -44,23 +50,23 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
-        if (!ItemStack.areItemStacksEqual(before, after)) {
+        // if (!ItemStack.matches(before, after))
+        if (!StackUtil.isSameItemSameDamageSameTagSameCount(before, after) && !ItemStack.matches(before, after)) {
             crafting.onInventoryChange(handler);
         }
     }
 
     @Override
     public long getTarget() {
-        return world.isRemote ? POWER_REQ : crafting.canCraft() ? POWER_REQ : 0;
+        return level.isClientSide ? POWER_REQ : crafting.canCraft() ? POWER_REQ : 0;
     }
 
     @Override
     public void update() {
         super.update();
-        if (world.isRemote) {
+        if (level.isClientSide) {
             return;
         }
         boolean didChange = crafting.tick();
@@ -79,27 +85,27 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+//    public void readPayload(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_GUI_DATA) {
-                resultClient = buffer.readItemStack();
+                resultClient = buffer.readItem();
             }
         }
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Dist side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == NET_GUI_DATA) {
-                buffer.writeItemStack(crafting.getAssumedResult());
+                buffer.writeItemStack(crafting.getAssumedResult(), false);
             }
         }
-
     }
 
-    public InventoryCrafting getWorkbenchCrafting() {
+    public CraftingInventory getWorkbenchCrafting() {
         return crafting;
     }
 
@@ -113,5 +119,12 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IAu
     @Override
     public ItemHandlerSimple getInvBlueprint() {
         return invBlueprint;
+    }
+
+    // Calen added from INamedContainerProvider
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory inventory, PlayerEntity player) {
+        return new ContainerAdvancedCraftingTable(BCSiliconMenuTypes.ADVANCED_CRAFTING_TABLE, id, player, this);
     }
 }

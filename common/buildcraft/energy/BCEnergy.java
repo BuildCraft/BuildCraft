@@ -1,107 +1,193 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy;
+
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLibRegistries;
+import buildcraft.lib.fluid.BCFluid;
+import buildcraft.lib.recipe.coolant.CoolantRecipeSerializer;
+import buildcraft.lib.recipe.fuel.FuelRecipeSerializer;
+import buildcraft.lib.registry.RegistryConfig;
+import buildcraft.lib.registry.TagManager;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.function.Consumer;
 
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.MigrationManager;
-import buildcraft.lib.registry.RegistryConfig;
-import buildcraft.lib.registry.TagManager;
-import buildcraft.lib.registry.TagManager.EnumTagType;
-import buildcraft.lib.registry.TagManager.TagEntry;
-
-import buildcraft.core.BCCore;
-
 //@formatter:off
-@Mod(
-    modid = BCEnergy.MODID,
-    name = "BuildCraft Energy",
-    version = BCLib.VERSION,
-    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
-)
+//@Mod(
+//        modid = BCEnergy.MODID,
+//        name = "BuildCraft Energy",
+//        version = BCLib.VERSION,
+//        dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "]"
+//)
 //@formatter:on
+@Mod(BCEnergy.MODID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
 
-    static {
-        FluidRegistry.enableUniversalBucket();
-    }
+//    static {
+//        FluidRegistry.enableUniversalBucket();
+//    }
 
-    @Mod.Instance(MODID)
+    // @Mod.Instance(MODID)
     public static BCEnergy INSTANCE;
 
-    @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent evt) {
+    public BCEnergy() {
+        INSTANCE = this;
+    }
+
+    @SubscribeEvent
+    public static void preInit(FMLConstructModEvent event) {
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
+
         BCEnergyConfig.preInit();
         BCEnergyEntities.preInit();
+        BCEnergyWorldGen.preInit();
+        // Calen: BCEnergyProxy.getProxy().fmlPreInit() Should before BCEnergyFluids.preInit() and BCEnergyBlocks.preInit() to set christmas special fluid data
+        BCEnergyProxy.getProxy().fmlPreInit();
+
         BCEnergyFluids.preInit();
         BCEnergyBlocks.preInit();
         BCEnergyItems.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
+//        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCEnergyProxy.getProxy());
 
-        BCEnergyProxy.getProxy().fmlPreInit();
+        MinecraftForge.EVENT_BUS.register(BCEnergyEventDist.INSTANCE);
     }
 
-    @Mod.EventHandler
-    public static void init(FMLInitializationEvent evt) {
-        BCEnergyRecipes.init();
-        BCEnergyWorldGen.init();
+    @SubscribeEvent
+//    public static void init(FMLInitializationEvent evt)
+    public static void init(FMLCommonSetupEvent event) {
+        BCEnergyFluids.registerBucketDispenserBehavior();
+//        BCEnergyRecipes.init(); // 1.18.2: use datagen
+//        BCEnergyWorldGen.init(); // 1.18.2: moved to #preInit
         BCEnergyProxy.getProxy().fmlInit();
     }
 
-    @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent evt) {
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void clientInit(FMLClientSetupEvent event) {
+        // Calen: from BCFluidBlock#<init>
+        for (RegistryObject<BCFluid.Source> fluid : BCEnergyFluids.allStill) {
+            RenderTypeLookup.setRenderLayer(fluid.get().getSource(), RenderType.solid());
+            RenderTypeLookup.setRenderLayer(fluid.get().getFlowing(), RenderType.solid());
+        }
+    }
+
+    @SubscribeEvent
+    public static void postInit(FMLLoadCompleteEvent event) {
         BCEnergyProxy.getProxy().fmlPostInit();
         BCEnergyConfig.validateBiomeNames();
-        registerMigrations();
+//        registerMigrations();
+        EnumSpring.OIL.liquidBlock = BCEnergyFluids.crudeOil[0].get().defaultFluidState().createLegacyBlock();
     }
 
-    private static void registerMigrations() {
-        /** 7.99.0 */
-        // Fluid registration changed from "fluid_block_[FLUID]" to "fluid_block_heat_[HEAT]_[FLUID]"
-        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.crudeOil[0].getBlock(), "fluid_block_oil");
-        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.fuelLight[0].getBlock(), "fluid_block_fuel");
+    @SubscribeEvent
+    public static void registerGui(RegistryEvent.Register<ContainerType<?>> event) {
+        BCEnergyMenuTypes.registerAll(event);
     }
+
+    @SubscribeEvent
+    public static void registerRecipeSerializers(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+        IForgeRegistry<IRecipeSerializer<?>> registry = event.getRegistry();
+        registry.register(FuelRecipeSerializer.INSTANCE);
+        registry.register(CoolantRecipeSerializer.INSTANCE);
+    }
+
+    // TODO Calen biome???
+//    @SubscribeEvent
+//    public static void registerSerializers(RegistryEvent.Register<IRecipeSerializer<?>> evt) {
+////        Registry.register(Registry.BIOME_SOURCE, ">>>", BCBiomeProvider.TF_CODEC);
+////        Registry.register(Registry.CHUNK_GENERATOR, ">>>", BCChunkGenerator.CODEC);
+//    }
+
+    private static final TagManager tagManager = new TagManager();
 
     static {
+        // Calen: in namespace Energy
         startBatch();
         // Items
-        registerTag("item.glob.oil").reg("glob_of_oil").oldReg("glob_oil").locale("globOil").model("glob_oil");
+//        registerTag("item.glob.oil").reg("glob_of_oil").oldReg("glob_oil").locale("globOil").model("glob_oil");
+//        registerTag("item.glob_oil").reg("glob_oil").locale("globOil").model("glob_oil");
+        registerTag("item.glob_oil").reg("glob_oil").locale("globOil");
+//        registerTag("item.oil_placer").reg("oil_placer").locale("oilPlacer").model("glob_oil");
+        registerTag("item.oil_placer").reg("oil_placer").locale("oilPlacer");
 
         // Item Blocks
+//        registerTag("item.block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo").model("mj_dynamo");
+        registerTag("item.block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo");
+
+        // Tiles
+        registerTag("tile.mj_dynamo").reg("mj_dynamo");
+
+//        endBatch(TagManager.prependTags("buildcraftenergy:", TagManager.EnumTagType.REGISTRY_NAME, TagManager.EnumTagType.MODEL_LOCATION)
+        endBatch(TagManager.prependTags("buildcraftenergy:", TagManager.EnumTagType.REGISTRY_NAME)
+                .andThen(TagManager.setTab("buildcraft.main"))
+        );
 
         // Blocks
 
-        // Tiles
-        registerTag("tile.engine.stone").reg("engine.stone");
-        registerTag("tile.engine.iron").reg("engine.iron");
-        registerTag("tile.spring.oil").reg("spring.oil");
+//        registerTag("block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo").model("mj_dynamo");
+        registerTag("block.mj_dynamo").reg("mj_dynamo").locale("mjDynamo");
 
-        endBatch(TagManager.prependTags("buildcraftenergy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION)
-            .andThen(TagManager.setTab("buildcraft.main")));
+        // Calen: in namespace Core
+        startBatch();
+        // Item Blocks
+//        registerTag("item.block.engine.bc.stone").reg("engine_stone").locale("engineStone").model("");
+        registerTag("item.block.engine.bc.stone").reg("engine_stone").locale("engineStone");
+//        registerTag("item.block.engine.bc.iron").reg("engine_iron").locale("engineIron").model("");
+        registerTag("item.block.engine.bc.iron").reg("engine_iron").locale("engineIron");
+        registerTag("item.block.engine.bc.rf").reg("engine_rf").locale("engineRf");
+
+        // Blocks
+        registerTag("block.engine.bc.stone").reg("engine_stone").locale("engineStone");
+//        registerTag("block.engine.bc.stone").locale("engine_stone");
+        registerTag("block.engine.bc.iron").reg("engine_iron").locale("engineIron");
+//        registerTag("block.engine.bc.iron").locale("engine_iron");
+        registerTag("block.engine.bc.rf").reg("engine_rf").locale("engineRf");
+
+        // Tiles
+        registerTag("tile.engine.stone").reg("engine_stone");
+        registerTag("tile.engine.iron").reg("engine_iron");
+        registerTag("tile.engine.rf").reg("engine_rf");
+
+        registerTag("tile.spring.oil").reg("spring_oil");
+
+//        endBatch(TagManager.prependTags("buildcraftcore:", TagManager.EnumTagType.REGISTRY_NAME, TagManager.EnumTagType.MODEL_LOCATION)
+        endBatch(TagManager.prependTags("buildcraftcore:", TagManager.EnumTagType.REGISTRY_NAME)
+                .andThen(TagManager.setTab("buildcraft.main"))
+        );
     }
 
-    private static TagEntry registerTag(String id) {
-        return TagManager.registerTag(id);
+    private static TagManager.TagEntry registerTag(String id) {
+//        return TagManager.registerTag(id);
+        return tagManager.registerTag(id);
     }
 
     private static void startBatch() {
-        TagManager.startBatch();
+//        TagManager.startBatch();
+        tagManager.startBatch();
     }
 
-    private static void endBatch(Consumer<TagEntry> consumer) {
-        TagManager.endBatch(consumer);
+    private static void endBatch(Consumer<TagManager.TagEntry> consumer) {
+//        TagManager.endBatch(consumer);
+        tagManager.endBatch(consumer);
     }
 }

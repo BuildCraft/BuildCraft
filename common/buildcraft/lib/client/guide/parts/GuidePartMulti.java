@@ -1,10 +1,11 @@
 package buildcraft.lib.client.guide.parts;
 
-import java.util.List;
-import java.util.function.BooleanSupplier;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import java.util.List;
+import java.util.function.BooleanSupplier;
 
 @Deprecated
 public class GuidePartMulti extends GuidePart {
@@ -39,21 +40,20 @@ public class GuidePartMulti extends GuidePart {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+    public PagePosition renderIntoArea(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
         if (isVisible()) {
             for (GuidePart part : parts) {
-                current = part.renderIntoArea(x, y, width, height, current, index);
+                current = part.renderIntoArea(poseStack, x, y, width, height, current, index);
             }
         }
         return current;
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index, double mouseX, double mouseY) {
         if (isVisible()) {
             for (GuidePart part : parts) {
-                current = part.handleMouseClick(x, y, width, height, current, index, mouseX, mouseY);
+                current = part.handleMouseClick(poseStack, x, y, width, height, current, index, mouseX, mouseY);
             }
         }
         return current;

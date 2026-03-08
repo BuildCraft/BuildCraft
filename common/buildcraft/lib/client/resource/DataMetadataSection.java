@@ -1,17 +1,15 @@
 package buildcraft.lib.client.resource;
 
-import java.lang.reflect.Type;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.resources.data.IMetadataSectionSerializer;
+import net.minecraft.util.JSONUtils;
 
-import net.minecraft.client.resources.data.IMetadataSection;
-import net.minecraft.client.resources.data.IMetadataSectionSerializer;
-import net.minecraft.util.JsonUtils;
+// Calen: never used in 1.12.2
 
 /** Generic metadata section, containing any types of data. */
-public class DataMetadataSection implements IMetadataSection {
+@Deprecated()
+//public class DataMetadataSection implements MetadataSection {
+public class DataMetadataSection {
     public static final String SECTION_NAME = "buildcraft_data";
 
     public final JsonObject data;
@@ -21,15 +19,17 @@ public class DataMetadataSection implements IMetadataSection {
     }
 
     public static final IMetadataSectionSerializer<DataMetadataSection> DESERIALISER =
-        new IMetadataSectionSerializer<DataMetadataSection>() {
-            @Override
-            public DataMetadataSection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-                return new DataMetadataSection(JsonUtils.getJsonObject(json, SECTION_NAME));
-            }
+            new IMetadataSectionSerializer<DataMetadataSection>() {
+                @Override
+//            public DataMetadataSection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                public DataMetadataSection fromJson(JsonObject json) {
+                    return new DataMetadataSection(JSONUtils.getAsJsonObject(json, SECTION_NAME));
+                }
 
-            @Override
-            public String getSectionName() {
-                return SECTION_NAME;
-            }
-        };
+                @Override
+//            public String getSectionName()
+                public String getMetadataSectionName() {
+                    return SECTION_NAME;
+                }
+            };
 }

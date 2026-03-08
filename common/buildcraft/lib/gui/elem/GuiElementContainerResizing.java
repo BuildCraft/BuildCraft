@@ -1,10 +1,11 @@
 package buildcraft.lib.gui.elem;
 
-import java.util.List;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import java.util.List;
 
 public class GuiElementContainerResizing extends GuiElementContainer2 {
 
@@ -65,16 +66,16 @@ public class GuiElementContainerResizing extends GuiElementContainer2 {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         for (IGuiElement elem : getChildElements()) {
-            elem.drawBackground(partialTicks);
+            elem.drawBackground(partialTicks, poseStack);
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
         for (IGuiElement elem : getChildElements()) {
-            elem.drawForeground(partialTicks);
+            elem.drawForeground(poseStack, partialTicks);
         }
     }
 

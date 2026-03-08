@@ -6,16 +6,6 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.List;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.math.MathHelper;
-
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.expression.FunctionContext;
@@ -24,6 +14,14 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeObject;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.misc.ExpressionCompat;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.Direction;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.math.MathHelper;
+
+import java.util.List;
 
 /** A rule for changing a model's elements. The most basic example is rotating an entire model based of a single
  * property. */
@@ -40,19 +38,23 @@ public abstract class JsonModelRule {
             throw new JsonSyntaxException("Expected an object, got " + json);
         }
         JsonObject obj = json.getAsJsonObject();
-        String when = JsonUtils.getString(obj, "when");
+//        String when = JsonUtils.getString(obj, "when");
+        String when = JSONUtils.getAsString(obj, "when");
         INodeBoolean nodeWhen = JsonVariableModelPart.convertStringToBooleanNode(when, fnCtx);
 
-        String type = JsonUtils.getString(obj, "type");
+//        String type = JsonUtils.getString(obj, "type");
+        String type = JSONUtils.getAsString(obj, "type");
         if (type.startsWith("builtin:")) {
             String builtin = type.substring("builtin:".length());
             if ("rotate_facing".equals(builtin)) {
                 fnCtx = new FunctionContext(fnCtx, ExpressionCompat.ENUM_FACING);
-                String from = JsonUtils.getString(obj, "from");
-                INodeObject<EnumFacing> nodeFrom = JsonVariableModelPart.convertStringToObjectNode(from, fnCtx, EnumFacing.class);
+//                String from = JsonUtils.getString(obj, "from");
+                String from = JSONUtils.getAsString(obj, "from");
+                INodeObject<Direction> nodeFrom = JsonVariableModelPart.convertStringToObjectNode(from, fnCtx, Direction.class);
 
-                String to = JsonUtils.getString(obj, "to");
-                INodeObject<EnumFacing> nodeTo = JsonVariableModelPart.convertStringToObjectNode(to, fnCtx, EnumFacing.class);
+//                String to = JsonUtils.getString(obj, "to");
+                String to = JSONUtils.getAsString(obj, "to");
+                INodeObject<Direction> nodeTo = JsonVariableModelPart.convertStringToObjectNode(to, fnCtx, Direction.class);
 
                 INodeDouble[] origin;
                 if (obj.has("origin")) {
@@ -95,11 +97,11 @@ public abstract class JsonModelRule {
         private static final NodeConstantDouble CONST_ORIGIN = new NodeConstantDouble(8);
         public static final INodeDouble[] DEFAULT_ORIGIN = { CONST_ORIGIN, CONST_ORIGIN, CONST_ORIGIN };
 
-        public final INodeObject<EnumFacing> from, to;
+        public final INodeObject<Direction> from, to;
         public final INodeDouble[] origin;
 
-        public RuleRotateFacing(INodeBoolean when, INodeObject<EnumFacing> from, INodeObject<EnumFacing> to,
-            INodeDouble[] origin) {
+        public RuleRotateFacing(INodeBoolean when, INodeObject<Direction> from, INodeObject<Direction> to,
+                                INodeDouble[] origin) {
             super(when);
             this.from = from;
             this.to = to;
@@ -108,8 +110,8 @@ public abstract class JsonModelRule {
 
         @Override
         public void apply(List<MutableQuad> quads) {
-            EnumFacing faceFrom = from.evaluate();
-            EnumFacing faceTo = to.evaluate();
+            Direction faceFrom = from.evaluate();
+            Direction faceTo = to.evaluate();
             if (faceFrom == faceTo) {
                 // don't bother rotating: there is nothing to rotate!
                 return;
@@ -149,12 +151,18 @@ public abstract class JsonModelRule {
                 return;
             }
 
+//            float cx = MathHelper.cos(ax);
             float cx = MathHelper.cos(ax);
+//            float cy = MathHelper.cos(ay);
             float cy = MathHelper.cos(ay);
+//            float cz = MathHelper.cos(az);
             float cz = MathHelper.cos(az);
 
+//            float sx = MathHelper.sin(ax);
             float sx = MathHelper.sin(ax);
+//            float sy = MathHelper.sin(ay);
             float sy = MathHelper.sin(ay);
+//            float sz = MathHelper.sin(az);
             float sz = MathHelper.sin(az);
 
             for (MutableQuad q : quads) {

@@ -6,19 +6,20 @@
 
 package buildcraft.lib.misc;
 
+import com.google.common.base.Splitter;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
+
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
-
-import com.google.common.base.Splitter;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.text.TextFormatting;
-
-import net.minecraftforge.fluids.FluidStack;
+import java.util.stream.Collectors;
 
 public final class StringUtilBC {
 
@@ -27,10 +28,14 @@ public final class StringUtilBC {
     private static final DecimalFormat displayDecimalFormat = new DecimalFormat("#####0.00");
 
     /** Deactivate constructor */
-    private StringUtilBC() {}
+    private StringUtilBC() {
+    }
 
-    public static List<String> splitIntoLines(String string) {
-        return newLineSplitter.splitToList(string.replaceAll("\\n", "\n"));
+    public static List<ITextComponent> splitIntoLines(String string) {
+        return newLineSplitter
+                .splitToList(string.replaceAll("\\n", "\n"))
+                .stream().map(s -> (ITextComponent) new StringTextComponent(s))
+                .collect(Collectors.toList());
     }
 
     /** Formats a string to be displayed on a white background (for example a book background), replacing any
@@ -61,9 +66,9 @@ public final class StringUtilBC {
                 char after = string.charAt(i);
                 TextFormatting colour = null;
                 if (after >= '0' & after <= '9') {
-                    colour = TextFormatting.fromColorIndex(after - '0');
+                    colour = TextFormatting.getById(after - '0');
                 } else if (after >= 'a' & after <= 'f') {
-                    colour = TextFormatting.fromColorIndex(after - 'a' + 10);
+                    colour = TextFormatting.getById(after - 'a' + 10);
                 }
                 if (colour == null) {
                     out.append(c);
@@ -96,19 +101,19 @@ public final class StringUtilBC {
         if (fluid == null) {
             return "null";
         }
-        return fluid.amount + "mb " + fluid.getFluid().getName();
+        return fluid.getAmount() + "mb " + fluid.getRawFluid().getRegistryName().getPath();
     }
 
     // Displaying objects
-    public static String vec3ToDispString(Vec3d vec) {
+    public static String vec3ToDispString(Vector3d vec) {
         if (vec == null) {
             return "null";
         }
         return displayDecimalFormat.format(vec.x) + ", " + displayDecimalFormat.format(vec.y) + ", "
-            + displayDecimalFormat.format(vec.z);
+                + displayDecimalFormat.format(vec.z);
     }
 
-    public static String vec3ToDispString(Vec3i vec) {
+    public static String vec3ToDispString(Vector3i vec) {
         if (vec == null) {
             return "null";
         }

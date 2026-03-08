@@ -1,12 +1,6 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.client.renderer.GlStateManager;
-
 import buildcraft.api.statements.IGuiSlot;
-
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
@@ -14,37 +8,40 @@ import buildcraft.lib.gui.IMenuElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.IReference;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class GuiElementStatementVariant extends GuiElementSimple implements IMenuElement {
     public static final SpriteNineSliced SELECTION_HOVER = GuiElementStatement.SELECTION_HOVER;
 
     /** An array containing [offset][X,Y] */
     private static final int[][] OFFSET_HOVER = {
-        // Centre
-        { 0, 0 },
-        // First 8
-        { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 },
-        // Top row + going down
-        { -2, -2 }, { -1, -2 }, { 0, -2 }, { 1, -2 }, { 2, -2 }, { 2, -1 }, { 2, 0 }, { 2, 1 },
-        // Bottom row + going up
-        { 2, 2 }, { 1, 2 }, { 0, 2 }, { -1, 2 }, { -2, 2 }, { -2, 1 }, { -2, 0 }, { -2, -1 } //
+            // Centre
+            { 0, 0 },
+            // First 8
+            { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 },
+            // Top row + going down
+            { -2, -2 }, { -1, -2 }, { 0, -2 }, { 1, -2 }, { 2, -2 }, { 2, -1 }, { 2, 0 }, { 2, 1 },
+            // Bottom row + going up
+            { 2, 2 }, { 1, 2 }, { 0, 2 }, { -1, 2 }, { -2, 2 }, { -2, 1 }, { -2, 0 }, { -2, -1 } //
     };
 
     private final IReference<? extends IGuiSlot> ref;
     private final IGuiSlot[] possible;
     private final IGuiArea[] posPossible;
 
-    public GuiElementStatementVariant(BuildCraftGui gui, IGuiArea element, IReference<? extends IGuiSlot> ref,
-        IGuiSlot[] possible, IGuiArea[] posPossible) {
+    public GuiElementStatementVariant(BuildCraftGui gui, IGuiArea element, IReference<? extends IGuiSlot> ref, IGuiSlot[] possible, IGuiArea[] posPossible) {
         super(gui, element);
         this.ref = ref;
         this.possible = possible;
         this.posPossible = posPossible;
     }
 
-    public static GuiElementStatementVariant create(BuildCraftGui gui, IGuiArea parent,
-        IReference<? extends IGuiSlot> ref, IGuiSlot[] possible) {
+    public static GuiElementStatementVariant create(BuildCraftGui gui, IGuiArea parent, IReference<? extends IGuiSlot> ref, IGuiSlot[] possible) {
         int count = Math.min(OFFSET_HOVER.length, possible.length);
         possible = possible.length == count ? possible : Arrays.copyOf(possible, count);
         IGuiArea[] posPossible = new IGuiArea[count];
@@ -76,22 +73,27 @@ public class GuiElementStatementVariant extends GuiElementSimple implements IMen
     // IGuiElement
 
     @Override
-    public void drawBackground(float partialTicks) {
-        GlStateManager.pushMatrix();
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
+//        GlStateManager.pushMatrix();
+        poseStack.pushPose();
         // Render above items in the players inventory
-        GlStateManager.translate(0, 0, 1000);
-        GlStateManager.color(1, 1, 1);
-        SELECTION_HOVER.draw(this);
-        iteratePossible((pos, slot) -> {
+//        GlStateManager.translate(0, 0, 1000);
+        poseStack.translate(0, 0, 1000);
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
+        SELECTION_HOVER.draw(this, poseStack);
+        iteratePossible((pos, slot) ->
+        {
             double x = pos.getX();
             double y = pos.getY();
-            GuiElementStatementSource.drawGuiSlot(slot, x, y);
+            GuiElementStatementSource.drawGuiSlot(slot, poseStack, x, y);
         });
-        GlStateManager.popMatrix();
+//        GlStateManager.popMatrix();
+        poseStack.popPose();
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
 
     }
 
@@ -99,7 +101,8 @@ public class GuiElementStatementVariant extends GuiElementSimple implements IMen
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
-        iteratePossible((pos, slot) -> {
+        iteratePossible((pos, slot) ->
+        {
             if (pos.contains(gui.mouse)) {
                 tooltips.add(new ToolTip(slot.getTooltip()));
             }
@@ -111,7 +114,8 @@ public class GuiElementStatementVariant extends GuiElementSimple implements IMen
     @Override
     public void onMouseReleased(int button) {
         gui.currentMenu = null;
-        iteratePossible((pos, slot) -> {
+        iteratePossible((pos, slot) ->
+        {
             if (pos.contains(gui.mouse)) {
                 ref.setIfCan(slot);
             }

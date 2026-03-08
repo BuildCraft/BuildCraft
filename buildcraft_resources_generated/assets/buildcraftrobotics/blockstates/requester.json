@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "buildcraftrobotics:block/requester"
+    },
+    "facing=south": {
+      "model": "buildcraftrobotics:block/requester",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "buildcraftrobotics:block/requester",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "buildcraftrobotics:block/requester",
+      "y": 90
+    }
+  }
+}

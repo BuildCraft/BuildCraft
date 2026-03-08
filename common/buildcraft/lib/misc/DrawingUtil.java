@@ -6,14 +6,13 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.util.math.BlockPos;
+
+import javax.vecmath.Point2i;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
-import javax.vecmath.Point2i;
-
-import net.minecraft.util.math.BlockPos;
 
 public class DrawingUtil {
     @SuppressWarnings("Duplicates")
@@ -85,8 +84,9 @@ public class DrawingUtil {
         while (true) {
             drawPixel.accept(currentX, currentY);
             if (currentX == x2 && currentY == y2 ||
-                Math.abs(currentX - x1) > Math.abs(x2 - x1) ||
-                Math.abs(currentY - y1) > Math.abs(y2 - y1)) {
+                    Math.abs(currentX - x1) > Math.abs(x2 - x1) ||
+                    Math.abs(currentY - y1) > Math.abs(y2 - y1))
+            {
                 break;
             }
             if (error * 2 > -dx) {
@@ -136,20 +136,21 @@ public class DrawingUtil {
 
                     if (!filled) {
                         if ((nextNx * nextNx) + (ny * ny) + (nz * nz) <= 1 &&
-                            (nx * nx) + (nextNy * nextNy) + (nz * nz) <= 1 &&
-                            (nx * nx) + (ny * ny) + (nextNz * nextNz) <= 1) {
+                                (nx * nx) + (nextNy * nextNy) + (nz * nz) <= 1 &&
+                                (nx * nx) + (ny * ny) + (nextNz * nextNz) <= 1)
+                        {
                             continue;
                         }
                     }
 
-                    drawPixel.accept(center.add(-x, -y, -z));
-                    drawPixel.accept(center.add(-x, -y, z));
-                    drawPixel.accept(center.add(-x, y, -z));
-                    drawPixel.accept(center.add(-x, y, z));
-                    drawPixel.accept(center.add(x, -y, -z));
-                    drawPixel.accept(center.add(x, -y, z));
-                    drawPixel.accept(center.add(x, y, -z));
-                    drawPixel.accept(center.add(x, y, z));
+                    drawPixel.accept(center.offset(-x, -y, -z));
+                    drawPixel.accept(center.offset(-x, -y, z));
+                    drawPixel.accept(center.offset(-x, y, -z));
+                    drawPixel.accept(center.offset(-x, y, z));
+                    drawPixel.accept(center.offset(x, -y, -z));
+                    drawPixel.accept(center.offset(x, -y, z));
+                    drawPixel.accept(center.offset(x, y, -z));
+                    drawPixel.accept(center.offset(x, y, z));
                 }
             }
         }

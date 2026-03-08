@@ -6,19 +6,17 @@
 
 package buildcraft.lib.path;
 
+import buildcraft.lib.path.task.TaskMiniChunkAnalyser;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import buildcraft.lib.path.task.TaskMiniChunkAnalyser;
 
 public class MiniChunkGraph {
     public enum ChunkType {
@@ -30,7 +28,7 @@ public class MiniChunkGraph {
 
     public final BlockPos min;
     public final ChunkType type;
-    public final Map<EnumFacing, MiniChunkGraph> neighbours = new EnumMap<>(EnumFacing.class);
+    public final Map<Direction, MiniChunkGraph> neighbours = new EnumMap<>(Direction.class);
     public final ImmutableList<MiniChunkNode> nodes;
     final byte[][][] expenseArray, graphArray;
 
@@ -48,7 +46,8 @@ public class MiniChunkGraph {
 
     public MiniChunkNode getFor(BlockPos pos) {
         BlockPos normalised = pos.subtract(min);
-        if (!TaskMiniChunkAnalyser.isValid(normalised)) throw new IllegalArgumentException("The position " + normalised + " was invalid! (from " + pos + ")");
+        if (!TaskMiniChunkAnalyser.isValid(normalised))
+            throw new IllegalArgumentException("The position " + normalised + " was invalid! (from " + pos + ")");
         int id = graphArray[normalised.getX()][normalised.getY()][normalised.getZ()];
         if (id >= 0) return nodes.get(id);
         throw new IllegalArgumentException("The position " + normalised + " had no graph! (gId = " + id + ")");
@@ -87,14 +86,14 @@ public class MiniChunkGraph {
 
         public void requestAllConnected(World world) {
             // Request all first, and THEN wait for all of them.
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (!neighbours.containsKey(face)) {
-                    MiniChunkCache.requestGraph(world, min.offset(face, 16));
+                    MiniChunkCache.requestGraph(world, min.relative(face, 16));
                 }
             }
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (!neighbours.containsKey(face)) {
-                    MiniChunkCache.requestAndWait(world, min.offset(face, 16));
+                    MiniChunkCache.requestAndWait(world, min.relative(face, 16));
                 }
             }
         }

@@ -6,9 +6,9 @@
 
 package buildcraft.lib.gui;
 
+import buildcraft.lib.misc.RenderUtil;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
 public class GuiStack implements ISimpleDrawable {
@@ -19,11 +19,15 @@ public class GuiStack implements ISimpleDrawable {
     }
 
     @Override
-    public void drawAt(double x, double y) {
-        GlStateManager.color(1, 1, 1);
-        RenderHelper.enableGUIStandardItemLighting();
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, (int) x, (int) y);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.color(1, 1, 1);
+    public void drawAt(MatrixStack poseStack, double x, double y) {
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
+//        RenderHelper.enableGUIStandardItemLighting();
+        RenderUtil.enableGUIStandardItemLighting();
+        Minecraft.getInstance().getItemRenderer().renderGuiItem(stack, (int) x, (int) y);
+//        RenderHelper.disableStandardItemLighting();
+        RenderUtil.disableStandardItemLighting();
+//        GlStateManager.color(1, 1, 1);
+        RenderUtil.color(1, 1, 1);
     }
 }

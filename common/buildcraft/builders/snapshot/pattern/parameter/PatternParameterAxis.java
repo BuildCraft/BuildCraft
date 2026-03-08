@@ -6,38 +6,34 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.builders.BCBuildersSprites;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import javax.annotation.Nonnull;
+import java.util.Locale;
 
 public enum PatternParameterAxis implements IStatementParameter {
     X(Axis.X),
     Y(Axis.Y),
     Z(Axis.Z);
 
-    public final EnumFacing.Axis axis;
+    public final Axis axis;
 
     PatternParameterAxis(Axis axis) {
         this.axis = axis;
     }
 
-    public static PatternParameterAxis readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterAxis readFromNbt(CompoundNBT nbt) {
         byte ord = nbt.getByte("a");
         if (ord <= 0) {
             return X;
@@ -54,8 +50,14 @@ public enum PatternParameterAxis implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("buildcraft.param.axis." + name().toLowerCase(Locale.ROOT));
+    public ITextComponent getDescription() {
+//        return LocaleUtil.localize("buildcraft.param.axis." + name().toLowerCase(Locale.ROOT));
+        return new TranslationTextComponent("buildcraft.param.axis." + name().toLowerCase(Locale.ROOT));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "buildcraft.param.axis." + name().toLowerCase(Locale.ROOT);
     }
 
     @Override
@@ -71,13 +73,13 @@ public enum PatternParameterAxis implements IStatementParameter {
 
     @Override
     public IStatementParameter onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
-        StatementMouseClick mouse) {
+                                       StatementMouseClick mouse) {
         return null;
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("a", (byte) ordinal());
+    public void writeToNbt(CompoundNBT nbt) {
+        nbt.putByte("a", (byte) ordinal());
     }
 
     @SuppressWarnings("SuspiciousNameCombination")

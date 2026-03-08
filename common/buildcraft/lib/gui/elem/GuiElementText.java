@@ -6,14 +6,6 @@
 
 package buildcraft.lib.gui.elem;
 
-import java.util.List;
-import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-
 import buildcraft.lib.client.guide.font.MinecraftFont;
 import buildcraft.lib.expression.node.value.NodeConstantDouble;
 import buildcraft.lib.expression.node.value.NodeConstantObject;
@@ -21,6 +13,14 @@ import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+
+import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class GuiElementText extends GuiElementSimple {
     public boolean dropShadow = false;
@@ -36,7 +36,7 @@ public class GuiElementText extends GuiElementSimple {
     }
 
     public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour,
-        DoubleSupplier scale) {
+                          DoubleSupplier scale) {
         super(gui, GuiRectangle.ZERO.offset(parent));// TODO: link this up like in GuidePageContents!
         this.text = text;
         this.colour = colour;
@@ -68,36 +68,37 @@ public class GuiElementText extends GuiElementSimple {
 
     @Override
     public double getWidth() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        return fr.getStringWidth(text.get());
+        FontRenderer fr = Minecraft.getInstance().font;
+        return fr.width(text.get());
     }
 
     @Override
     public double getHeight() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        return fr.FONT_HEIGHT;
+        FontRenderer fr = Minecraft.getInstance().font;
+        return fr.lineHeight;
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         if (!foreground) {
-            draw();
+            draw(poseStack);
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
         if (foreground) {
-            draw();
+            draw(poseStack);
         }
     }
 
-    private void draw() {
-        MinecraftFont.INSTANCE.drawString(text.get(), (int) getX(), (int) getY(), colour.getAsInt(), dropShadow,
-            centered, (float) scale.getAsDouble());
+    private void draw(MatrixStack poseStack) {
+        MinecraftFont.INSTANCE.drawString(poseStack, text.get(), (int) getX(), (int) getY(), colour.getAsInt(), dropShadow,
+                centered, (float) scale.getAsDouble());
+        // Calen: 原来就是注释
         // final double s = scale.getAsDouble();
         // final boolean needsScaling = s != 1;
-        // FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+        // Font fr = Minecraft.getMinecraft().fontRenderer;
         // if (needsScaling) {
         // GuiUtil.drawScaledText(fr, text.get(), getX(), getY(), colour.getAsInt(), dropShadow, centered, s);
         // return;

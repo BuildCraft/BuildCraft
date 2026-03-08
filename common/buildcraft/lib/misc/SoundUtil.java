@@ -6,26 +6,25 @@
 
 package buildcraft.lib.misc;
 
-import javax.annotation.Nullable;
-
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.FluidStack;
+
+import javax.annotation.Nullable;
 
 public class SoundUtil {
     public static void playBlockPlace(World world, BlockPos pos) {
         playBlockPlace(world, pos, world.getBlockState(pos));
     }
 
-    public static void playBlockPlace(World world, BlockPos pos, IBlockState state) {
+    public static void playBlockPlace(World world, BlockPos pos, BlockState state) {
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
@@ -36,7 +35,7 @@ public class SoundUtil {
         playBlockBreak(world, pos, world.getBlockState(pos));
     }
 
-    public static void playBlockBreak(World world, BlockPos pos, IBlockState state) {
+    public static void playBlockBreak(World world, BlockPos pos, BlockState state) {
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
@@ -45,19 +44,19 @@ public class SoundUtil {
 
     public static void playLeverSwitch(World world, BlockPos pos, boolean isNowOn) {
         float pitch = isNowOn ? 0.6f : 0.5f;
-        SoundEvent soundEvent = SoundEvents.BLOCK_LEVER_CLICK;
+        SoundEvent soundEvent = SoundEvents.LEVER_CLICK;
         world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 0.2f, pitch);
     }
 
-    public static void playChangeColour(World world, BlockPos pos, @Nullable EnumDyeColor colour) {
-        SoundType soundType = SoundType.SLIME;
+    public static void playChangeColour(World world, BlockPos pos, @Nullable DyeColor colour) {
+        SoundType soundType = SoundType.SLIME_BLOCK;
         final SoundEvent soundEvent;
         if (colour == null) {
-            soundEvent = SoundEvents.ITEM_BUCKET_EMPTY;
+            soundEvent = SoundEvents.BUCKET_EMPTY;
         } else {
             // FIXME: is this a good sound? Idk tbh.
             // TODO: Look into configuring this kind of stuff.
-            soundEvent = SoundEvents.ENTITY_SLIME_SQUISH;
+            soundEvent = SoundEvents.SLIME_SQUISH;
         }
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
@@ -68,22 +67,22 @@ public class SoundUtil {
         playSlideSound(world, pos, world.getBlockState(pos));
     }
 
-    public static void playSlideSound(World world, BlockPos pos, EnumActionResult result) {
+    public static void playSlideSound(World world, BlockPos pos, ActionResultType result) {
         playSlideSound(world, pos, world.getBlockState(pos), result);
     }
 
-    public static void playSlideSound(World world, BlockPos pos, IBlockState state) {
-        playSlideSound(world, pos, state, EnumActionResult.SUCCESS);
+    public static void playSlideSound(World world, BlockPos pos, BlockState state) {
+        playSlideSound(world, pos, state, ActionResultType.SUCCESS);
     }
 
-    public static void playSlideSound(World world, BlockPos pos, IBlockState state, EnumActionResult result) {
-        if (result == EnumActionResult.PASS) return;
+    public static void playSlideSound(World world, BlockPos pos, BlockState state, ActionResultType result) {
+        if (result == ActionResultType.PASS) return;
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         SoundEvent event;
-        if (result == EnumActionResult.SUCCESS) {
-            event = SoundEvents.BLOCK_PISTON_CONTRACT;
+        if (result == ActionResultType.SUCCESS) {
+            event = SoundEvents.PISTON_CONTRACT;
         } else {
-            event = SoundEvents.BLOCK_PISTON_EXTEND;
+            event = SoundEvents.PISTON_EXTEND;
         }
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
@@ -91,12 +90,12 @@ public class SoundUtil {
     }
 
     public static void playBucketEmpty(World world, BlockPos pos, FluidStack moved) {
-        SoundEvent sound = moved.getFluid().getEmptySound(moved);
+        SoundEvent sound = moved.getRawFluid().getAttributes().getEmptySound(moved);
         world.playSound(null, pos, sound, SoundCategory.PLAYERS, 1, 1);
     }
 
     public static void playBucketFill(World world, BlockPos pos, FluidStack moved) {
-        SoundEvent sound = moved.getFluid().getFillSound(moved);
+        SoundEvent sound = moved.getRawFluid().getAttributes().getFillSound(moved);
         world.playSound(null, pos, sound, SoundCategory.PLAYERS, 1, 1);
     }
 }

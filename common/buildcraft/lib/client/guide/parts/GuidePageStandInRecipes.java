@@ -6,21 +6,19 @@
 
 package buildcraft.lib.client.guide.parts;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.entry.ItemStackValueFilter;
 import buildcraft.lib.client.guide.entry.PageEntryItemStack;
 import buildcraft.lib.client.guide.entry.PageValue;
 import buildcraft.lib.client.guide.loader.XmlPageLoader;
+import buildcraft.lib.misc.ProfilerUtil;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Deprecated
 public class GuidePageStandInRecipes extends GuidePage {
@@ -30,13 +28,17 @@ public class GuidePageStandInRecipes extends GuidePage {
 
     @Nonnull
     public static GuidePageFactory createFactory(@Nonnull ItemStack stack) {
-        List<GuidePartFactory> factories = XmlPageLoader.loadAllCrafting(stack, new Profiler(), 0);
+//        List<GuidePartFactory> factories = XmlPageLoader.loadAllCrafting(stack, new Profiler(), 0);
+        List<GuidePartFactory> factories = XmlPageLoader.loadAllCrafting(stack, ProfilerUtil.newProfiler(), 0);
         if (factories.isEmpty()) {
-            return (gui) -> {
-                return new GuidePageStandInRecipes(gui, ImmutableList.of(new GuideText(gui, "No recipes!")), stack);
+            return (gui) ->
+            {
+//                return new GuidePageStandInRecipes(gui, ImmutableList.of(new GuideText(gui, "No recipes!")), stack);
+                return new GuidePageStandInRecipes(gui, ImmutableList.of(new GuideText(gui, "No recipes!", ITextComponent.nullToEmpty("No recipes!"))), stack);
             };
         }
-        return (gui) -> {
+        return (gui) ->
+        {
             List<GuidePart> parts = new ArrayList<>();
             for (GuidePartFactory factory : factories) {
                 parts.add(factory.createNew(gui));

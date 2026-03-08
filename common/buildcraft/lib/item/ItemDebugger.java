@@ -6,41 +6,46 @@
 
 package buildcraft.lib.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.IAdvDebugTarget;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.debug.BCAdvDebugging;
-import buildcraft.lib.debug.IAdvDebugTarget;
-
 public class ItemDebugger extends ItemBC_Neptune {
-    public ItemDebugger(String id) {
-        super(id);
+    public ItemDebugger(String idBC, Item.Properties properties) {
+        super(idBC, properties);
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        if (world.isRemote) {
-            return EnumActionResult.PASS;
+//    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
+    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext ctx) {
+        World world = ctx.getLevel();
+        BlockPos pos = ctx.getClickedPos();
+
+        if (world.isClientSide()) {
+            return ActionResultType.PASS;
         }
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile == null) {
-            return EnumActionResult.FAIL;
+            return ActionResultType.FAIL;
         }
         if (tile instanceof IAdvDebugTarget) {
             BCAdvDebugging.setCurrentDebugTarget((IAdvDebugTarget) tile);
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
-    public static boolean isShowDebugInfo(EntityPlayer player) {
-        return player.capabilities.isCreativeMode ||
-            player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger ||
-            player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger;
+    public static boolean isShowDebugInfo(PlayerEntity player) {
+        return player.abilities.instabuild ||
+                player.getItemInHand(Hand.MAIN_HAND).getItem() instanceof ItemDebugger ||
+                player.getItemInHand(Hand.OFF_HAND).getItem() instanceof ItemDebugger;
     }
 }

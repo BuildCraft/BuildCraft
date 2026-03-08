@@ -1,0 +1,6 @@
+{
+  "parent": "forge:item/bucket_drip",
+  "loader": "forge:bucket",
+  "fluid": "buildcraftenergy:fuel_gaseous_heat_2",
+  "flipGas": false
+}

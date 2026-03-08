@@ -6,21 +6,19 @@
 
 package buildcraft.silicon.client.model.plug;
 
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.silicon.BCSiliconModels;
+import buildcraft.silicon.client.model.key.KeyPlugLens;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.Direction;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-
-import buildcraft.lib.client.model.MutableQuad;
-
-import buildcraft.silicon.BCSiliconModels;
-import buildcraft.silicon.client.model.key.KeyPlugLens;
 
 public enum PlugBakerLens implements IPluggableStaticBaker<KeyPlugLens> {
     INSTANCE;
@@ -37,16 +35,23 @@ public enum PlugBakerLens implements IPluggableStaticBaker<KeyPlugLens> {
     }
 
     private static IQuadGetter getGetter(KeyPlugLens key) {
-        switch (key.layer) {
-            case CUTOUT: {
-                return key.isFilter ? filterCutout : lensCutout;
-            }
-            case TRANSLUCENT: {
-                return key.isFilter ? filterTranslucent : lensTranslucent;
-            }
-            default: {
-                throw new IllegalArgumentException("Unknown layer " + key.layer);
-            }
+//        switch (key.layer) {
+//            case CUTOUT: {
+//                return key.isFilter ? filterCutout : lensCutout;
+//            }
+//            case TRANSLUCENT: {
+//                return key.isFilter ? filterTranslucent : lensTranslucent;
+//            }
+//            default: {
+//                throw new IllegalArgumentException("Unknown layer " + key.layer);
+//            }
+//        }
+        if (key.layer == RenderType.cutout()) {
+            return key.isFilter ? filterCutout : lensCutout;
+        } else if (key.layer == RenderType.translucent()) {
+            return key.isFilter ? filterTranslucent : lensTranslucent;
+        } else {
+            throw new IllegalArgumentException("Unknown layer " + key.layer);
         }
     }
 
@@ -67,6 +72,6 @@ public enum PlugBakerLens implements IPluggableStaticBaker<KeyPlugLens> {
     }
 
     interface IQuadGetter {
-        MutableQuad[] get(EnumFacing side, EnumDyeColor colour);
+        MutableQuad[] get(Direction side, DyeColor colour);
     }
 }

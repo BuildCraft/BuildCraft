@@ -6,35 +6,36 @@
 
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.lib.inventory.InventoryIterator;
+import buildcraft.lib.inventory.ItemTransactorHelper;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.DoubleSidedInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.transport.IInjectable;
-
-import buildcraft.lib.inventory.ItemTransactorHelper;
-
 public class InventoryUtil {
     // Drops
 
-    public static void dropAll(World world, Vec3d vec, IItemHandlerModifiable handler) {
+    public static void dropAll(World world, Vector3d vec, IItemHandlerModifiable handler) {
         dropAll(world, vec.x, vec.y, vec.z, handler);
     }
 
@@ -58,10 +59,10 @@ public class InventoryUtil {
     }
 
     public static void drop(World world, BlockPos pos, @Nonnull ItemStack stack) {
-        Block.spawnAsEntity(world, pos, stack);
+        world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack));
     }
 
-    public static void drop(World world, Vec3d vec, @Nonnull ItemStack stack) {
+    public static void drop(World world, Vector3d vec, @Nonnull ItemStack stack) {
         drop(world, vec.x, vec.y, vec.z, stack);
     }
 
@@ -69,8 +70,8 @@ public class InventoryUtil {
         if (stack.isEmpty()) {
             return;
         }
-        EntityItem entity = new EntityItem(world, x, y, z, stack);
-        world.spawnEntity(entity);
+        ItemEntity entity = new ItemEntity(world, x, y, z, stack);
+        world.addFreshEntity(entity);
     }
 
     // Sending items around
@@ -81,11 +82,11 @@ public class InventoryUtil {
         if (stack.isEmpty()) {
             return StackUtil.EMPTY;
         }
-        List<EnumFacing> toTry = new ArrayList<>(6);
-        Collections.addAll(toTry, EnumFacing.VALUES);
+        List<Direction> toTry = new ArrayList<>(6);
+        Collections.addAll(toTry, Direction.values());
         Collections.shuffle(toTry);
-        for (EnumFacing face : toTry) {
-            TileEntity tile = world.getTileEntity(pos.offset(face));
+        for (Direction face : toTry) {
+            TileEntity tile = world.getBlockEntity(pos.relative(face));
             IItemTransactor transactor = ItemTransactorHelper.getTransactor(tile, face.getOpposite());
             stack = transactor.insert(stack, false, false);
             if (stack.isEmpty()) {
@@ -99,17 +100,16 @@ public class InventoryUtil {
      * around. Will make sure that the location from which the items are coming from (identified by the from parameter)
      * isn't used again so that entities doesn't go backwards. Returns true if successful, false otherwise. */
     @Nonnull
-    public static ItemStack addToRandomInjectable(World world, BlockPos pos, EnumFacing ignore,
-        @Nonnull ItemStack stack) {
+    public static ItemStack addToRandomInjectable(World world, BlockPos pos, Direction ignore, @Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
             return StackUtil.EMPTY;
         }
-        List<EnumFacing> toTry = new ArrayList<>(6);
-        Collections.addAll(toTry, EnumFacing.VALUES);
+        List<Direction> toTry = new ArrayList<>(6);
+        Collections.addAll(toTry, Direction.values());
         Collections.shuffle(toTry);
-        for (EnumFacing face : toTry) {
+        for (Direction face : toTry) {
             if (face == ignore) continue;
-            TileEntity tile = world.getTileEntity(pos.offset(face));
+            TileEntity tile = world.getBlockEntity(pos.relative(face));
             IInjectable injectable = ItemTransactorHelper.getInjectable(tile, face.getOpposite());
             stack = injectable.injectItem(stack, true, face.getOpposite(), null, 0);
             if (stack.isEmpty()) {
@@ -121,7 +121,7 @@ public class InventoryUtil {
 
     /** Attempts to add the given stack to the best acceptor, in this order: {@link IItemHandler} instances,
      * {@link IInjectable} instances, and finally dropping it down on the ground. */
-    public static void addToBestAcceptor(World world, BlockPos pos, EnumFacing ignore, @Nonnull ItemStack stack) {
+    public static void addToBestAcceptor(World world, BlockPos pos, Direction ignore, @Nonnull ItemStack stack) {
         stack = addToRandomInjectable(world, pos, ignore, stack);
         stack = addToRandomInventory(world, pos, stack);
         drop(world, pos, stack);
@@ -139,13 +139,55 @@ public class InventoryUtil {
 
     /** Adds the given {@link ItemStack} to the player's inventory, or drops it in front of them if their was not enough
      * room. */
-    public static void addToPlayer(EntityPlayer player, ItemStack stack) {
-        if (player.inventory.addItemStackToInventory(stack)) {
-            player.inventoryContainer.detectAndSendChanges();
+    public static void addToPlayer(PlayerEntity player, ItemStack stack) {
+//        if (player.inventory.addItemStackToInventory(stack))
+        if (player.inventory.add(stack)) {
+//            player.inventoryContainer.detectAndSendChanges();
+            player.containerMenu.broadcastChanges();
         } else {
-            player.dropItem(stack, false, false);
+            player.drop(stack, false, false);
         }
     }
 
     // NBT migration
+
+    // Calen: from 1.8.9
+
+    public static IInvSlot getItem(IItemHandler inv, IStackFilter filter) {
+        for (IInvSlot s : InventoryIterator.getIterable(inv)) {
+            // if (s.getStackInSlot() != null && filter.matches(s.getStackInSlot()))
+            if (!s.getStackInSlot().isEmpty() && filter.matches(s.getStackInSlot())) {
+                return s;
+            }
+        }
+
+        return null;
+    }
+
+    /** Ensures that the given inventory is the full inventory, i.e. takes double chests into account.
+     *
+     * @param inv
+     * @return Modified inventory if double chest, unmodified otherwise. */
+    public static IInventory getInventory(IInventory inv) {
+        if (inv instanceof ChestTileEntity) {
+            ChestTileEntity adjacent = BlockUtil.getOtherDoubleChest((ChestTileEntity) inv);
+            if (adjacent != null) {
+                // return new InventoryLargeChest("", (TileEntityChest) inv, adjacent);
+                return new DoubleSidedInventory(inv, adjacent);
+            }
+            return inv;
+        }
+        return inv;
+    }
+
+    public static ItemStack insert(IItemHandler itemHandler, ItemStack stack, boolean simulate) {
+        ItemStack overflow = stack.copy();
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            overflow = itemHandler.insertItem(i, overflow, simulate);
+            if (overflow.isEmpty()) {
+                break;
+            }
+        }
+        return overflow;
+    }
 }

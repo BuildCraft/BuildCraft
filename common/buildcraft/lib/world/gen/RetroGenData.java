@@ -6,28 +6,21 @@
 
 package buildcraft.lib.world.gen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.map.hash.TObjectByteHashMap;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.storage.WorldSavedData;
-
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.map.hash.TObjectByteHashMap;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
 
+import java.util.*;
+import java.util.Map.Entry;
+
+//public class RetroGenData extends WorldSavedData
 public class RetroGenData extends WorldSavedData {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.gen.retro");
     public static final String NAME = "buildcraft_world_gen";
@@ -42,13 +35,13 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void load(CompoundNBT nbt) {
         gennedChunks.clear();
 
-        NBTTagList registry = nbt.getTagList("registry", Constants.NBT.TAG_STRING);
-        String[] names = new String[registry.tagCount()];
-        for (int i = 0; i < registry.tagCount(); i++) {
-            names[i] = registry.getStringTagAt(i);
+        ListNBT registry = nbt.getList("registry", Constants.NBT.TAG_STRING);
+        String[] names = new String[registry.size()];
+        for (int i = 0; i < registry.size(); i++) {
+            names[i] = registry.getString(i);
         }
 
         if (DEBUG) {
@@ -58,8 +51,8 @@ public class RetroGenData extends WorldSavedData {
             }
         }
 
-        NBTTagCompound data = nbt.getCompoundTag("data");
-        for (String key : data.getKeySet()) {
+        CompoundNBT data = nbt.getCompound("data");
+        for (String key : data.getAllKeys()) {
             ChunkPos pos = deserializeChunkPos(key);
             if (pos == null) {
                 continue;
@@ -105,22 +98,23 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+//    public CompoundNBT writeToNBT(CompoundNBT nbt)
+    public CompoundNBT save(CompoundNBT nbt) {
         Set<String> allNames = new HashSet<>();
         for (Set<String> used : gennedChunks.values()) {
             allNames.addAll(used);
         }
         TObjectByteHashMap<String> map = new TObjectByteHashMap<>();
         List<String> list = new ArrayList<>(allNames);
-        NBTTagList registry = new NBTTagList();
+        ListNBT registry = new ListNBT();
         for (int i = 0; i < list.size(); i++) {
             String name = list.get(i);
             map.put(name, (byte) i);
-            registry.appendTag(new NBTTagString(name));
+            registry.add(StringNBT.valueOf(name));
         }
-        nbt.setTag("registry", registry);
+        nbt.put("registry", registry);
 
-        NBTTagCompound data = new NBTTagCompound();
+        CompoundNBT data = new CompoundNBT();
         for (Entry<ChunkPos, Set<String>> entry : gennedChunks.entrySet()) {
             String key = serializeChunkPos(entry.getKey());
             Set<String> names = entry.getValue();
@@ -129,9 +123,9 @@ public class RetroGenData extends WorldSavedData {
                 byte b = map.get(s);
                 ids.add(b);
             }
-            data.setByteArray(key, ids.toArray());
+            data.putByteArray(key, ids.toArray());
         }
-        nbt.setTag("data", data);
+        nbt.put("data", data);
 
         return nbt;
     }

@@ -1,13 +1,13 @@
 package buildcraft.lib.misc;
 
-import java.util.Random;
+import net.minecraft.world.server.ServerWorld;
 
-import net.minecraft.world.World;
+import java.util.Random;
 
 /** Utilities based around more complex (but common) usages of {@link Random}. */
 public class RandUtil {
     /** Creates a {@link Random} instance for a specific generator, for the specified chunk, in the specified world.
-     * 
+     *
      * @param world The world to generate for.
      * @param chunkX The chunk X co-ord to generate for.
      * @param chunkY The chunk X co-ord to generate for.
@@ -16,13 +16,13 @@ public class RandUtil {
      *            place. It is recommended that you generate a random number once, and place it statically in the
      *            generator class (Perhaps by using <code>new SecureRandom().nextLong()</code>).
      * @return A {@link Random} instance that starts off with the same seed given the same arguments. */
-    public static Random createRandomForChunk(World world, int chunkX, int chunkY, long magicNumber) {
+    public static Random createRandomForChunk(ServerWorld world, int chunkX, int chunkY, long magicNumber) {
         long worldSeed = world.getSeed();
         return createRandomForChunk(worldSeed, chunkX, chunkY, magicNumber);
     }
 
     /** Creates a {@link Random} instance for a specific generator, for the specified chunk, for a given world seed
-     * 
+     *
      * @param worldSeed The seed of a world to generate for.
      * @param chunkX The chunk X co-ord to generate for.
      * @param chunkY The chunk X co-ord to generate for.

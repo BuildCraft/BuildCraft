@@ -6,11 +6,9 @@
 
 package buildcraft.lib.list;
 
-import net.minecraft.item.ItemFood;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.lists.ListRegistry;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 
 public class VanillaListHandlers {
     public static void fmlInit() {
@@ -18,11 +16,13 @@ public class VanillaListHandlers {
         ListRegistry.registerHandler(new ListMatchHandlerFluid());
         ListRegistry.registerHandler(new ListMatchHandlerTools());
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
-        ListRegistry.itemClassAsType.add(ItemFood.class);
+//        ListRegistry.itemClassAsType.add(Foods.class);
+        ListRegistry.registerHandler(new ListMatchHandlerFood());
     }
 
     public static void fmlPostInit() {
-        for (String s : OreDictionary.getOreNames()) {
+//        for (String s : OreDictionary.getOreNames())
+        for (ResourceLocation s : ItemTags.getAllTags().getAvailableTags()) {
             ListOreDictionaryCache.INSTANCE.registerName(s);
         }
         ListRegistry.registerHandler(new ListMatchHandlerOreDictionary());

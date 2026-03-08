@@ -6,17 +6,15 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.profiler.IProfiler;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-
-import buildcraft.lib.client.guide.parts.GuidePartFactory;
 
 public class RecipeLookupHelper {
     public static final Map<String, IStackRecipes> handlerTypes = new HashMap<>();
@@ -27,28 +25,28 @@ public class RecipeLookupHelper {
         handlerTypes.put("assembling", GuideAssemblyRecipes.INSTANCE);
     }
 
-    public static List<GuidePartFactory> getAllUsages(@Nonnull ItemStack stack, Profiler prof) {
+    public static List<GuidePartFactory> getAllUsages(@Nonnull ItemStack stack, IProfiler prof) {
         List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : handlerTypes.values()) {
-            prof.startSection(handler.getClass().getName().replace('.', '/'));
+            prof.push(handler.getClass().getName().replace('.', '/'));
             List<GuidePartFactory> recipes = handler.getUsages(stack);
             if (recipes != null) {
                 list.addAll(recipes);
             }
-            prof.endSection();
+            prof.pop();
         }
         return list;
     }
 
-    public static List<GuidePartFactory> getAllRecipes(@Nonnull ItemStack stack, Profiler prof) {
+    public static List<GuidePartFactory> getAllRecipes(@Nonnull ItemStack stack, IProfiler prof) {
         List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : handlerTypes.values()) {
-            prof.startSection(handler.getClass().getName().replace('.', '/'));
+            prof.push(handler.getClass().getName().replace('.', '/'));
             List<GuidePartFactory> recipes = handler.getRecipes(stack);
             if (recipes != null) {
                 list.addAll(recipes);
             }
-            prof.endSection();
+            prof.pop();
         }
         return list;
     }

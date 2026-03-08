@@ -1,0 +1,73 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "buildcraftcore:paintbrush_clean",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_brown",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_black",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_gray",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_green",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_white",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_pink",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_purple",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_red",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_lime",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_orange",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_blue",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcraftcore:paintbrush_light_gray",
+      "required": false
+    }
+  ]
+}

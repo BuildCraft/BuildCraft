@@ -6,14 +6,21 @@
 
 package buildcraft.core.client.render;
 
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.render.tile.RenderEngine_BC8;
-
 import buildcraft.core.BCCoreModels;
 import buildcraft.core.tile.TileEngineRedstone_BC8;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.render.tile.RenderEngine_BC8;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class RenderEngineWood extends RenderEngine_BC8<TileEngineRedstone_BC8> {
-    public static final RenderEngineWood INSTANCE = new RenderEngineWood();
+@OnlyIn(Dist.CLIENT)
+public class RenderEngineWood<T extends TileEngineRedstone_BC8> extends RenderEngine_BC8<TileEngineRedstone_BC8> {
+//    public static final RenderEngineWood INSTANCE = new RenderEngineWood();
+
+    public RenderEngineWood(TileEntityRendererDispatcher context) {
+        super(context);
+    }
 
     @Override
     protected MutableQuad[] getEngineModel(TileEngineRedstone_BC8 engine, float partialTicks) {

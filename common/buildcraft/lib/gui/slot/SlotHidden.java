@@ -7,7 +7,7 @@
 package buildcraft.lib.gui.slot;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 
 public class SlotHidden extends Slot {
 
@@ -22,12 +22,16 @@ public class SlotHidden extends Slot {
     }
 
     public void show() {
-        xPos = saveX;
-        yPos = saveY;
+//        xPos = saveX;
+        x = saveX;
+//        yPos = saveY;
+        y = saveY;
     }
 
     public void hide() {
-        xPos = 9999;
-        yPos = 9999;
+//        xPos = 9999;
+        x = 9999;
+//        yPos = 9999;
+        y = 9999;
     }
 }

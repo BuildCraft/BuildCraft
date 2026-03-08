@@ -6,20 +6,18 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandlerItem;
+import buildcraft.lib.misc.BlockUtil;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandlerItem;
-
-import buildcraft.lib.misc.BlockUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum StripesHandlerUse implements IStripesHandlerItem {
     INSTANCE;
@@ -29,17 +27,17 @@ public enum StripesHandlerUse implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
         return ITEMS.contains(stack.getItem()) &&
-            BlockUtil.useItemOnBlock(
-                world,
-                player,
-                stack,
-                pos.offset(direction),
-                direction.getOpposite()
-            );
+                BlockUtil.useItemOnBlock(
+                        world,
+                        player,
+                        stack,
+                        pos.relative(direction),
+                        direction.getOpposite()
+                );
     }
 }

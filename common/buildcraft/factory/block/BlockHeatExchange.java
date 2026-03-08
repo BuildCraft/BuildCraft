@@ -6,36 +6,37 @@
 
 package buildcraft.factory.block;
 
+import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.factory.tile.TileHeatExchange;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.lib.block.IBlockWithTickableTE;
+import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.Property;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.transport.pipe.ICustomPipeConnection;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.tile.TileBC_Neptune;
-
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.factory.tile.TileHeatExchange;
-
-public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection, IBlockWithFacing {
+public class BlockHeatExchange extends BlockBCTile_Neptune<TileHeatExchange> implements ICustomPipeConnection, IBlockWithFacing, IBlockWithTickableTE<TileHeatExchange> {
 
     public enum EnumExchangePart implements IStringSerializable {
         START,
@@ -45,22 +46,29 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
         private final String lowerCaseName = name().toLowerCase(Locale.ROOT);
 
         @Override
-        public String getName() {
+        public String getSerializedName() {
             return lowerCaseName;
         }
     }
 
-    public static final IProperty<EnumExchangePart> PROP_PART = PropertyEnum.create("part", EnumExchangePart.class);
-    public static final IProperty<Boolean> PROP_CONNECTED_Y = PropertyBool.create("connected_y");
-    public static final IProperty<Boolean> PROP_CONNECTED_LEFT = PropertyBool.create("connected_left");
-    public static final IProperty<Boolean> PROP_CONNECTED_RIGHT = PropertyBool.create("connected_right");
+    public static final EnumProperty<EnumExchangePart> PROP_PART = EnumProperty.create("part", EnumExchangePart.class);
+    public static final Property<Boolean> PROP_CONNECTED_Y = BooleanProperty.create("connected_y");
+    public static final Property<Boolean> PROP_CONNECTED_LEFT = BooleanProperty.create("connected_left");
+    public static final Property<Boolean> PROP_CONNECTED_RIGHT = BooleanProperty.create("connected_right");
 
-    public BlockHeatExchange(Material material, String id) {
-        super(material, id);
+    public BlockHeatExchange(String idBC, AbstractBlock.Properties props) {
+        super(idBC, props);
+        this.registerDefaultState(
+                this.getStateDefinition().any()
+                        .setValue(PROP_PART, EnumExchangePart.MIDDLE)
+                        .setValue(PROP_CONNECTED_Y, false)
+                        .setValue(PROP_CONNECTED_LEFT, false)
+                        .setValue(PROP_CONNECTED_RIGHT, false)
+        );
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.add(PROP_PART);
         properties.add(PROP_CONNECTED_Y);
@@ -69,10 +77,18 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+    public BlockState getActualState(BlockState state, IWorld world, BlockPos pos, TileEntity tile) {
         if (tile instanceof TileHeatExchange) {
             TileHeatExchange exchange = (TileHeatExchange) tile;
+            Direction thisFacing = state.getValue(PROP_FACING);
+//            boolean connectLeft = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateY());
+            boolean connectLeft = doesNeighbourConnect(world, pos, thisFacing, thisFacing.getClockWise());
+            state = state.setValue(PROP_CONNECTED_LEFT, connectLeft);
+
+//            boolean connectRight = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateYCCW());
+            boolean connectRight = doesNeighbourConnect(world, pos, thisFacing, thisFacing.getCounterClockWise());
+            state = state.setValue(PROP_CONNECTED_RIGHT, connectRight);
+
             EnumExchangePart part;
             if (exchange.isStart()) {
                 part = EnumExchangePart.START;
@@ -81,72 +97,145 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
             } else {
                 part = EnumExchangePart.MIDDLE;
             }
-            EnumFacing thisFacing = state.getValue(PROP_FACING);
-            state = state.withProperty(PROP_PART, part);
-            state = state.withProperty(PROP_CONNECTED_Y, false);
-
-            boolean connectLeft = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateY());
-            state = state.withProperty(PROP_CONNECTED_LEFT, connectLeft);
-
-            boolean connectRight = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateYCCW());
-            state = state.withProperty(PROP_CONNECTED_RIGHT, connectRight);
+            state = state.setValue(PROP_PART, part);
+            state = state.setValue(PROP_CONNECTED_Y, false);
         }
-        state = state.withProperty(PROP_CONNECTED_Y, false);
+        state = state.setValue(PROP_CONNECTED_Y, false);
         return state;
     }
 
-    private static boolean doesNeighbourConnect(IBlockAccess world, BlockPos pos, EnumFacing thisFacing,
-        EnumFacing dir) {
-        IBlockState neighbour = world.getBlockState(pos.offset(dir));
-        if (neighbour.getBlock() == BCFactoryBlocks.heatExchange) {
+    @Override
+    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld world, BlockPos pos, BlockPos facingPos) {
+        TileEntity tile = world.getBlockEntity(pos);
+        return getActualState(state, world, pos, tile);
+    }
+
+    // Middle
+    private static final VoxelShape MIDDLE_X = Block.box(2, 2, 0, 14, 14, 16);
+    private static final VoxelShape MIDDLE_Z = Block.box(0, 2, 2, 16, 14, 14);
+
+    // START/END
+    private static final VoxelShape INNER_TUBE_X = Block.box(4, 4, 0, 12, 12, 16);
+    private static final VoxelShape INNER_TUBE_Z = Block.box(0, 4, 4, 16, 12, 12);
+
+    private static final VoxelShape START_W_END_E = Block.box(2, 2, 2, 14, 14, 16);
+    private static final VoxelShape START_E_END_W = Block.box(2, 2, 0, 14, 14, 14);
+    private static final VoxelShape START_S_END_N = Block.box(2, 2, 2, 16, 14, 14);
+    private static final VoxelShape START_N_END_S = Block.box(0, 2, 2, 14, 14, 14);
+
+    private static final VoxelShape START_DOWN = Block.box(2, 0, 2, 14, 2, 14);
+    private static final VoxelShape END_UP = Block.box(2, 14, 2, 14, 16, 14);
+
+    // Calen: if ret full box, the inner quads will be dark
+    @Nonnull
+    @Override
+    public VoxelShape getShape(BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+        switch (state.getValue(PROP_PART)) {
+            case MIDDLE:
+                switch (state.getValue(getFacingProperty()).getAxis()) {
+                    case X:
+                        return MIDDLE_X;
+                    case Z:
+                        return MIDDLE_Z;
+                    case Y:
+                        throw new RuntimeException("[factory.heat_exchange] HeatExchange block [middle] part never has Y axis!");
+                }
+            case START:
+                switch (state.getValue(getFacingProperty())) {
+                    case NORTH:
+                        return VoxelShapes.or(START_N_END_S, INNER_TUBE_Z, START_DOWN);
+                    case SOUTH:
+                        return VoxelShapes.or(START_S_END_N, INNER_TUBE_Z, START_DOWN);
+                    case WEST:
+                        return VoxelShapes.or(START_W_END_E, INNER_TUBE_X, START_DOWN);
+                    case EAST:
+                        return VoxelShapes.or(START_E_END_W, INNER_TUBE_X, START_DOWN);
+                    default:
+                        throw new RuntimeException("[factory.heat_exchange] HeatExchange block [start] part never has " + state.getValue(getFacingProperty()) + " direction!");
+                }
+            case END:
+                switch (state.getValue(getFacingProperty())) {
+                    case NORTH:
+                        return VoxelShapes.or(START_S_END_N, INNER_TUBE_Z, END_UP);
+                    case SOUTH:
+                        return VoxelShapes.or(START_N_END_S, INNER_TUBE_Z, END_UP);
+                    case WEST:
+                        return VoxelShapes.or(START_E_END_W, INNER_TUBE_X, END_UP);
+                    case EAST:
+                        return VoxelShapes.or(START_W_END_E, INNER_TUBE_X, END_UP);
+                    default:
+                        throw new RuntimeException("[factory.heat_exchange] HeatExchange block [end] part never has " + state.getValue(getFacingProperty()) + " direction!");
+                }
+            default:
+                throw new RuntimeException("[factory.heat_exchange] Unexpected HeatExchange block part: [" + state.getValue(PROP_PART) + "]");
+        }
+    }
+
+    private static boolean doesNeighbourConnect(IWorld world, BlockPos pos, Direction thisFacing, Direction dir) {
+        BlockState neighbour = world.getBlockState(pos.relative(dir));
+        if (neighbour.getBlock() == BCFactoryBlocks.heatExchange.get()) {
             return neighbour.getValue(PROP_FACING) == thisFacing;
         }
         return false;
     }
 
     @Override
-    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-        TileEntity tile = world.getTileEntity(pos);
+    public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction) {
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileHeatExchange) {
             TileHeatExchange exchange = (TileHeatExchange) tile;
-            return exchange.rotate();
+//            return exchange.rotate();
+            exchange.rotate();
         }
-        return false;
+//        return false;
+        return state;
     }
 
     @Override
-    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        TileEntity tile = world.getTileEntity(pos);
+    public ActionResultType attemptRotation(World world, BlockPos pos, BlockState state, Direction sideWrenched) {
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileHeatExchange) {
             TileHeatExchange exchange = (TileHeatExchange) tile;
-            return exchange.rotate() ? EnumActionResult.PASS : EnumActionResult.FAIL;
+            return exchange.rotate() ? ActionResultType.PASS : ActionResultType.FAIL;
         }
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+//    public TileBC_Neptune createTileEntity(World world, BlockState state)
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
         return new TileHeatExchange();
     }
 
+//    @Override
+//    public boolean isOpaqueCube(IBlockState state) {
+//        return false;
+//    }
+
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
+    public boolean propagatesSkylightDown(BlockState state, IBlockReader world, BlockPos pos) {
+        return true;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
+    public float getShadeBrightness(BlockState state, IBlockReader world, BlockPos pos) {
+        return 1.0F;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
+//    @Override
+//    public boolean isFullCube(IBlockState state) {
+//        return false;
+//    }
+
+    // 1.18.2: moved to BCFactory#clientSetup
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public BlockRenderLayer getBlockLayer() {
+//        return BlockRenderLayer.CUTOUT;
+//    }
 
     @Override
-    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+    public float getExtension(World world, BlockPos pos, Direction face, BlockState state) {
         return 0;
     }
 }

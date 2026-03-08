@@ -1,15 +1,15 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.client;
 
+
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-
-import buildcraft.core.BCCoreSprites;
 
 public class BuildCraftLaserManager {
 
@@ -86,6 +86,6 @@ public class BuildCraftLaserManager {
         POWER_MED = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_MED);
         POWER_HIGH = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_HIGH);
         POWER_FULL = new LaserType(MARKER_VOLUME_POSSIBLE, BCCoreSprites.LASER_POWER_FULL);
-        POWERS = new LaserType[] {POWER_LOW, POWER_MED, POWER_HIGH, POWER_FULL};
+        POWERS = new LaserType[] { POWER_LOW, POWER_MED, POWER_HIGH, POWER_FULL };
     }
 }

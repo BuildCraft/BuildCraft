@@ -6,11 +6,11 @@
 
 package buildcraft.lib.particle;
 
+import net.minecraft.client.GameSettings;
+import net.minecraft.client.Minecraft;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 
 public enum ParticleCountMultiplier implements IParticlePositionPipe {
     MINIMAL(2),
@@ -18,8 +18,8 @@ public enum ParticleCountMultiplier implements IParticlePositionPipe {
     ALL(13);
 
     public static ParticleCountMultiplier getForOption() {
-        GameSettings gs = Minecraft.getMinecraft().gameSettings;
-        int count = gs.particleSetting % 3;
+        GameSettings gs = Minecraft.getInstance().options;
+        int count = gs.particles.getId() % 3;
         if (count == 0) {
             return ALL;
         } else if (count == 1) {
@@ -48,5 +48,4 @@ public enum ParticleCountMultiplier implements IParticlePositionPipe {
 
         return list;
     }
-
 }

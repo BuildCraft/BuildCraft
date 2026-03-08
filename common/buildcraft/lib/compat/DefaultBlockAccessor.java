@@ -1,16 +1,14 @@
 package buildcraft.lib.compat;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import buildcraft.lib.misc.ChunkUtil;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
-import buildcraft.lib.misc.ChunkUtil;
+import javax.annotation.Nullable;
 
 public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     DIRECT(true),
@@ -26,8 +24,8 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     @Nullable
     public TileEntity getTile(World world, BlockPos pos, boolean force) {
         if (direct | force) {
-            if (force || world.isBlockLoaded(pos)) {
-                return world.getTileEntity(pos);
+            if (force || world.isLoaded(pos)) {
+                return world.getBlockEntity(pos);
             }
             return null;
         } else {
@@ -35,21 +33,21 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
             if (chunk == null) {
                 return null;
             }
-            return chunk.getTileEntity(pos, force ? EnumCreateEntityType.IMMEDIATE : EnumCreateEntityType.CHECK);
+            return chunk.getBlockEntity(pos, force ? Chunk.CreateEntityType.IMMEDIATE : Chunk.CreateEntityType.CHECK);
         }
     }
 
     @Override
-    public IBlockState getState(World world, BlockPos pos, boolean force) {
+    public BlockState getState(World world, BlockPos pos, boolean force) {
         if (direct | force) {
-            if (force || world.isBlockLoaded(pos)) {
+            if (force || world.isLoaded(pos)) {
                 return world.getBlockState(pos);
             }
-            return Blocks.AIR.getDefaultState();
+            return Blocks.AIR.defaultBlockState();
         } else {
             Chunk chunk = ChunkUtil.getChunk(world, pos, force);
             if (chunk == null) {
-                return Blocks.AIR.getDefaultState();
+                return Blocks.AIR.defaultBlockState();
             }
             return chunk.getBlockState(pos);
         }

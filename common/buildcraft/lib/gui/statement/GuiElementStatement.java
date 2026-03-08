@@ -1,14 +1,6 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IStatement;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.client.sprite.SpriteRaw;
@@ -22,9 +14,16 @@ import buildcraft.lib.misc.data.IReference;
 import buildcraft.lib.statement.FullStatement;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
-    implements IInteractionElement, IReference<S> {
+        implements IInteractionElement, IReference<S> {
 
     public static final ResourceLocation TEXTURE_SELECTOR;
 
@@ -49,7 +48,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
     private final boolean draw;
 
     public GuiElementStatement(BuildCraftGui gui, IGuiArea element, FullStatement<S> ref, StatementContext<?> ctx,
-        boolean draw) {
+                               boolean draw) {
         super(gui, element);
         this.ref = ref;
         this.ctx = ctx;
@@ -99,14 +98,14 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
     // IGuiElement
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         if (draw) {
             S statement = ref.get();
             double x = getX();
             double y = getY();
-            GuiElementStatementSource.drawGuiSlot(statement, x, y);
+            GuiElementStatementSource.drawGuiSlot(statement, poseStack, x, y);
             if (!ref.canInteract) {
-                GuiIcon.drawAt(BCLibSprites.LOCK, x + 1, y + 1, 16);
+                GuiIcon.drawAt(BCLibSprites.LOCK, poseStack, x + 1, y + 1, 16);
             }
         }
     }
@@ -119,7 +118,7 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
             return;
         }
         if (ref.canInteract && button == 0) {
-            if (GuiScreen.isShiftKeyDown()) {
+            if (Screen.hasShiftDown()) {
                 set(null);
                 return;
             }
@@ -140,7 +139,8 @@ public class GuiElementStatement<S extends IStatement> extends GuiElementSimple
                 possible = list;
             }
             if (ctx != null) {
-                possible.removeIf(f -> {
+                possible.removeIf(f ->
+                {
                     for (StatementGroup<?> group : ctx.getAllPossible()) {
                         if (group.getValues().contains(f)) {
                             return false;

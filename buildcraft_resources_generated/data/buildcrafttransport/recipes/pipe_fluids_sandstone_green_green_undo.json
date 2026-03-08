@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_fluids_sandstone_green"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_sandstone_green"
+  }
+}

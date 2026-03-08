@@ -6,21 +6,10 @@
 
 package buildcraft.transport.gui;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.BCLibSprites;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiElementToolTip;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.gui.ITooltipElement;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.button.GuiButtonDrawable;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -29,16 +18,23 @@ import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.BCCoreSprites;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.container.ContainerEmzuliPipe_BC8;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+//public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8>
 public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
     private static final ResourceLocation TEXTURE =
-        new ResourceLocation("buildcrafttransport:textures/gui/pipe_emzuli.png");
+            new ResourceLocation("buildcrafttransport:textures/gui/pipe_emzuli.png");
     private static final int SIZE_X = 176, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_NO_PAINT = new GuiIcon(TEXTURE, SIZE_X, 40, 16, 16);
@@ -51,10 +47,12 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
         PAINT_BUTTON_BUILDER.active = enabled.offset(0, 20);
     }
 
-    public GuiEmzuliPipe_BC8(EntityPlayer player, PipeBehaviourEmzuli behaviour) {
-        super(new ContainerEmzuliPipe_BC8(player, behaviour));
-        xSize = SIZE_X;
-        ySize = SIZE_Y;
+    public GuiEmzuliPipe_BC8(ContainerEmzuliPipe_BC8 container, PlayerInventory inventory, ITextComponent component) {
+        super(container, inventory, component);
+//        xSize = SIZE_X;
+        imageWidth = SIZE_X;
+//        ySize = SIZE_Y;
+        imageHeight = SIZE_Y;
     }
 
     @Override
@@ -67,14 +65,15 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
     }
 
     private void addButton(SlotIndex index, int x, int y) {
-        Supplier<EnumDyeColor> getter = () -> container.behaviour.slotColours.get(index);
-        Consumer<EnumDyeColor> setter = c -> container.paintWidgets.get(index).setColour(c);
+        Supplier<DyeColor> getter = () -> container.behaviour.slotColours.get(index);
+        Consumer<DyeColor> setter = c -> container.paintWidgets.get(index).setColour(c);
 
         IGuiPosition elem = mainGui.rootElement.offset(x, y);
         GuiButtonDrawable button = new GuiButtonDrawable(mainGui, index.name(), elem, PAINT_BUTTON_BUILDER);
-        button.registerListener((b, key) -> {
-            final EnumDyeColor old = getter.get();
-            EnumDyeColor nColour;
+        button.registerListener((b, key) ->
+        {
+            final DyeColor old = getter.get();
+            DyeColor nColour;
             switch (key) {
                 case 0: {
                     nColour = ColourUtil.getNextOrNull(old);
@@ -98,32 +97,39 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
 
         // Button paintbrush
         IGuiArea area = new GuiRectangle(20, 20).offset(elem);
-        ISimpleDrawable paintIcon = (px, py) -> {
-            EnumDyeColor colour = getter.get();
+        ISimpleDrawable paintIcon = (poseStack, px, py) ->
+        {
+            DyeColor colour = getter.get();
             if (colour == null) {
-                ICON_NO_PAINT.drawAt(px + 2, py + 2);
+//                ICON_NO_PAINT.drawAt(px + 2, py + 2);
+                ICON_NO_PAINT.drawAt(poseStack, px + 2, py + 2);
             } else {
                 ISprite sprite = BCTransportSprites.ACTION_PIPE_COLOUR[colour.ordinal()];
-                GuiIcon.drawAt(sprite, px + 2, py + 2, 16);
+                GuiIcon.drawAt(sprite, poseStack, px + 2, py + 2, 16);
             }
         };
         mainGui.shownElements.add(new GuiElementDrawable(mainGui, area, paintIcon, false));
-        ITooltipElement tooltips = list -> {
-            EnumDyeColor colour = getter.get();
-            String line;
+        ITooltipElement tooltips = list ->
+        {
+            DyeColor colour = getter.get();
+//            String line;
+            ITextComponent line;
             if (colour == null) {
-                line = LocaleUtil.localize("gui.pipes.emzuli.nopaint");
+//                line = LocaleUtil.localize("gui.pipes.emzuli.nopaint");
+                line = new TranslationTextComponent("gui.pipes.emzuli.nopaint");
             } else {
-                line = LocaleUtil.localize("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(colour));
+//                line = LocaleUtil.localize("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(colour));
+                line = new TranslationTextComponent("gui.pipes.emzuli.paint", ColourUtil.getTextFullTooltip(colour));
             }
+//            list.add(new ToolTip(line));
             list.add(new ToolTip(line));
         };
         mainGui.shownElements.add(new GuiElementToolTip(mainGui, area, tooltips));
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(mainGui.rootElement);
+    protected void drawBackgroundLayer(float partialTicks, MatrixStack poseStack) {
+        ICON_GUI.drawAt(mainGui.rootElement, poseStack);
 
         SlotIndex currentSlot = container.behaviour.getCurrentSlot();
         for (SlotIndex index : container.behaviour.getActiveSlots()) {
@@ -131,18 +137,22 @@ public class GuiEmzuliPipe_BC8 extends GuiBC8<ContainerEmzuliPipe_BC8> {
             int x = (index.ordinal() < 2 ? 4 : 155);
             int y = (index.ordinal() % 2 == 0 ? 21 : 49);
             ISprite sprite = current ? BCCoreSprites.TRIGGER_TRUE : BCLibSprites.LOCK;
-            GuiIcon.drawAt(sprite, mainGui.rootElement.getX() + x, mainGui.rootElement.getY() + y, 16);
+            GuiIcon.drawAt(sprite, poseStack, mainGui.rootElement.getX() + x, mainGui.rootElement.getY() + y, 16);
         }
     }
 
     @Override
-    protected void drawForegroundLayer() {
+    protected void drawForegroundLayer(MatrixStack poseStack) {
         String title = LocaleUtil.localize("gui.pipes.emzuli.title");
-        double titleX = mainGui.rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
-        fontRenderer.drawString(title, (int) titleX, (int) mainGui.rootElement.getY() + 6, 0x404040);
+//        double titleX = mainGui.rootElement.getX() + (xSize - fontRenderer.getStringWidth(title)) / 2;
+        double titleX = mainGui.rootElement.getX() + (imageWidth - font.width(title)) / 2;
+//        fontRenderer.drawString(title, (int) titleX, (int) mainGui.rootElement.getY() + 6, 0x404040);
+        font.draw(poseStack, title, (int) titleX, (int) mainGui.rootElement.getY() + 6, 0x404040);
 
         int invX = (int) mainGui.rootElement.getX() + 8;
-        int invY = (int) mainGui.rootElement.getY() + ySize - 93;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), invX, invY, 0x404040);
+//        int invY = (int) mainGui.rootElement.getY() + ySize - 93;
+        int invY = (int) mainGui.rootElement.getY() + imageHeight - 93;
+//        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), invX, invY, 0x404040);
+        font.draw(poseStack, LocaleUtil.localize("gui.inventory"), invX, invY, 0x404040);
     }
 }

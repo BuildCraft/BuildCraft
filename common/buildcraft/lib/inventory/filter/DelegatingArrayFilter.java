@@ -6,12 +6,11 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import buildcraft.api.core.IStackFilter;
+import javax.annotation.Nonnull;
 
 public class DelegatingArrayFilter implements IStackFilter {
     private final ISingleStackFilter perStackFilter;

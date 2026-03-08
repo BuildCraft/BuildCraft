@@ -1,14 +1,14 @@
 package buildcraft.lib.gui.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.help.DummyHelpElement;
 import buildcraft.lib.gui.help.ElementHelpInfo;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ElementTypeHelp extends ElementType {
     public static final String NAME = "buildcraftlib:help";

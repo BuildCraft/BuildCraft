@@ -6,13 +6,11 @@
 
 package buildcraft.builders.snapshot;
 
-import io.netty.buffer.ByteBuf;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.relauncher.Side;
-
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
 
 public class MessageSnapshotRequest implements IMessage {
     private Snapshot.Key key;
@@ -26,17 +24,18 @@ public class MessageSnapshotRequest implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         key.writeToByteBuf(new PacketBufferBC(buf));
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(PacketBuffer buf) {
         key = new Snapshot.Key(new PacketBufferBC(buf));
     }
 
-    public static final IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> HANDLER = (message, ctx) -> {
-        Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshot(message.key);
+    public static final IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> HANDLER = (message, ctx) ->
+    {
+        Snapshot snapshot = GlobalSavedDataSnapshots.get(Dist.DEDICATED_SERVER).getSnapshot(message.key);
         return snapshot != null ? new MessageSnapshotResponse(snapshot) : null;
     };
 }

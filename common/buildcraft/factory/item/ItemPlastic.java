@@ -1,29 +1,22 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.item;
 
-import java.util.Locale;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
-
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.EnumDyeColor;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.factory.block.BlockPlastic;
 import buildcraft.lib.item.ItemBlockBCMulti;
 import buildcraft.lib.misc.ColourUtil;
+import net.minecraft.item.Item;
 
-import buildcraft.factory.block.BlockPlastic;
+import java.util.Locale;
 
 public class ItemPlastic extends ItemBlockBCMulti {
-    public ItemPlastic(BlockPlastic block) {
-        super(block, createNameArray());
-        this.setMaxDamage(0);
-        this.setHasSubtypes(true);
+    public ItemPlastic(BlockPlastic block, Item.Properties properties) {
+//        super(block, createNameArray());
+        super(block, properties);
+//        this.setMaxDamage(0);
+//        this.setHasSubtypes(true);
     }
 
     private static String[] createNameArray() {
@@ -35,11 +28,11 @@ public class ItemPlastic extends ItemBlockBCMulti {
         return switched;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
-        for (EnumDyeColor colour : EnumDyeColor.values()) {
-            addVariant(variants, colour.getMetadata(), colour.getName());
-        }
-    }
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+//        for (EnumDyeColor colour : EnumDyeColor.values()) {
+//            addVariant(variants, colour.getMetadata(), colour.getName());
+//        }
+//    }
 }

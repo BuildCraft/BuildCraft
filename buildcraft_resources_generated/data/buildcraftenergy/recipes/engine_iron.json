@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftenergy",
+  "pattern": [
+    "www",
+    " g ",
+    "GpG"
+  ],
+  "key": {
+    "w": {
+      "tag": "forge:ingots/iron"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "G": {
+      "tag": "forge:gears/iron"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "buildcraftcore:engine_iron"
+  }
+}

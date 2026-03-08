@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcraftsilicon",
+  "ingredients": [
+    {
+      "item": "buildcraftsilicon:plug_gate_iron_or_quartz"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug_gate_iron_and_quartz"
+  }
+}

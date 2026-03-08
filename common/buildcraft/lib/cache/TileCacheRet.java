@@ -1,8 +1,8 @@
 package buildcraft.lib.cache;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.tileentity.TileEntity;
+
+import javax.annotation.Nullable;
 
 public final class TileCacheRet {
 

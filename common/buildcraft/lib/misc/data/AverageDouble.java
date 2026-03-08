@@ -6,14 +6,12 @@
 
 package buildcraft.lib.misc.data;
 
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.common.util.INBTSerializable;
-
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class AverageDouble implements INBTSerializable<NBTTagCompound> {
+public class AverageDouble implements INBTSerializable<CompoundNBT> {
     private double[] data;
     private int pos, precise;
     private double averageRaw, tickValue;
@@ -57,22 +55,22 @@ public class AverageDouble implements INBTSerializable<NBTTagCompound> {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("pos", pos);
-        nbt.setInteger("precise", precise);
-        nbt.setDouble("averageRaw", averageRaw);
-        nbt.setDouble("tickValue", tickValue);
-        nbt.setTag("data", NBTUtilBC.writeDoubleArray(data));
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putInt("pos", pos);
+        nbt.putInt("precise", precise);
+        nbt.putDouble("averageRaw", averageRaw);
+        nbt.putDouble("tickValue", tickValue);
+        nbt.put("data", NBTUtilBC.writeDoubleArray(data));
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        precise = MathUtil.clamp(nbt.getInteger("precise"), 1, Short.MAX_VALUE);
-        pos = MathUtil.clamp(nbt.getInteger("pos"), 0, precise);
+    public void deserializeNBT(CompoundNBT nbt) {
+        precise = MathUtil.clamp(nbt.getInt("precise"), 1, Short.MAX_VALUE);
+        pos = MathUtil.clamp(nbt.getInt("pos"), 0, precise);
         averageRaw = nbt.getDouble("averageRaw");
         tickValue = nbt.getDouble("tickValue");
-        data = NBTUtilBC.readDoubleArray(nbt.getTag("data"), precise);
+        data = NBTUtilBC.readDoubleArray(nbt.get("data"), precise);
     }
 }

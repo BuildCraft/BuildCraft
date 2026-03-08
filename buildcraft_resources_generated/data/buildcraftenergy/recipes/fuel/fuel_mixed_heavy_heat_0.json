@@ -1,0 +1,10 @@
+{
+  "type": "buildcraftenergy:fuel",
+  "fluid": {
+    "fluid": "buildcraftenergy:fuel_mixed_heavy_heat_0",
+    "amount": 1
+  },
+  "powerPerCycle": 5000000,
+  "totalBurningTime": 19200,
+  "dirty": false
+}

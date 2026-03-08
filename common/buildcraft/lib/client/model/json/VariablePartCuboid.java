@@ -6,21 +6,19 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.Direction;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VariablePartCuboid extends VariablePartCuboidBase {
-    public final Map<EnumFacing, JsonVariableFaceUV> faces = new HashMap<>();
+    public final Map<Direction, JsonVariableFaceUV> faces = new HashMap<>();
 
     public VariablePartCuboid(JsonObject obj, FunctionContext fnCtx) {
         super(obj, fnCtx);
@@ -40,7 +38,7 @@ public class VariablePartCuboid extends VariablePartCuboidBase {
             throw new JsonSyntaxException("Expected between 1 and 6 faces, got '" + elem + "'");
         }
         JsonObject jFaces = elem.getAsJsonObject();
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             if (jFaces.has(face.getName())) {
                 JsonElement jFace = jFaces.get(face.getName());
                 if (!jFace.isJsonObject()) {
@@ -62,7 +60,7 @@ public class VariablePartCuboid extends VariablePartCuboidBase {
     }
 
     @Override
-    protected VariableFaceData getFaceData(EnumFacing side, ITextureGetter spriteLookup) {
+    protected VariableFaceData getFaceData(Direction side, ITextureGetter spriteLookup) {
         JsonVariableFaceUV var = faces.get(side);
         if (var == null || !var.visible.evaluate()) {
             return null;

@@ -6,9 +6,8 @@
 
 package buildcraft.lib.misc.data;
 
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.api.core.IBox;
+import net.minecraft.util.math.BlockPos;
 
 public class BoxIterable implements Iterable<BlockPos> {
     private final BlockPos min, max;

@@ -6,27 +6,11 @@
 
 package buildcraft.lib.gui.ledger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.math.MathHelper;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
 import buildcraft.lib.client.sprite.SpriteNineSliced;
 import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
-import buildcraft.lib.gui.BuildCraftGui;
-import buildcraft.lib.gui.IContainingElement;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.IInteractionElement;
-import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
@@ -36,6 +20,16 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
 import buildcraft.lib.misc.RenderUtil;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.StringTextComponent;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     public static final ISprite SPRITE_EXP_NEG = BCLibSprites.LEDGER_LEFT;
@@ -179,6 +173,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         }
 
         double maxDiff = Math.max(maxWidth - CLOSED_WIDTH, maxHeight - CLOSED_HEIGHT);
+//        double ldgDiff = MathHelper.clamp(maxDiff / 5, 1, 15);
         double ldgDiff = MathHelper.clamp(maxDiff / 5, 1, 15);
 
         // TODO: extract a method
@@ -245,7 +240,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         double startX = getX();
         double startY = getY();
         final SpriteNineSliced split;
@@ -258,10 +253,11 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         } else {
             split = SPRITE_SPLIT_NEG;
         }
-
+//
         RenderUtil.setGLColorFromIntPlusAlpha(colour);
-        split.draw(startX, startY, interpWidth, interpHeight);
-        GlStateManager.color(1, 1, 1, 1);
+        split.draw(poseStack, startX, startY, interpWidth, interpHeight);
+//        GlStateManager.color(1, 1, 1, 1);
+        RenderUtil.color(1, 1, 1, 1);
 
         IGuiPosition pos2;
 
@@ -274,18 +270,18 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         try (AutoGlScissor a = GuiUtil.scissor(pos2.getX(), pos2.getY(), interpWidth - 4, interpHeight - 8)) {
 
             for (IGuiElement element : closedElements) {
-                element.drawBackground(partialTicks);
+                element.drawBackground(partialTicks, poseStack);
             }
             if (shouldDrawOpen()) {
                 for (IGuiElement element : openElements) {
-                    element.drawBackground(partialTicks);
+                    element.drawBackground(partialTicks, poseStack);
                 }
             }
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
         double scissorX = positionLedgerIconStart.getX();
         double scissorY = positionLedgerIconStart.getY();
         double scissorWidth = interpWidth - 8;
@@ -293,11 +289,11 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         try (AutoGlScissor a = GuiUtil.scissor(scissorX, scissorY, scissorWidth, scissorHeight)) {
 
             for (IGuiElement element : closedElements) {
-                element.drawForeground(partialTicks);
+                element.drawForeground(poseStack, partialTicks);
             }
             if (shouldDrawOpen()) {
                 for (IGuiElement element : openElements) {
-                    element.drawForeground(partialTicks);
+                    element.drawForeground(poseStack, partialTicks);
                 }
             }
         }
@@ -333,15 +329,18 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     }
 
     @Override
-    public void onMouseDragged(int button, long ticksSinceClick) {
+//    public void onMouseDragged(int button, long ticksSinceClick)
+    public void onMouseDragged(int button) {
         for (IGuiElement elem : openElements) {
             if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+//                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+                ((IInteractionElement) elem).onMouseDragged(button);
             }
         }
         for (IGuiElement elem : closedElements) {
             if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+//                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
+                ((IInteractionElement) elem).onMouseDragged(button);
             }
         }
     }
@@ -360,7 +359,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         }
     }
 
-    protected void drawIcon(double x, double y) {
+    protected void drawIcon(MatrixStack poseStack, double x, double y) {
 
     }
 
@@ -393,7 +392,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
     }
 
     public String getTitle() {
-        return I18n.format(title);
+        return I18n.get(title);
     }
 
     public int getTitleColour() {
@@ -412,7 +411,7 @@ public class Ledger_Neptune implements IInteractionElement, IContainingElement {
         }
         if (currentWidth != maxWidth || currentHeight != maxHeight) {
             if (contains(gui.mouse)) {
-                tooltips.add(new ToolTip(getTitle()));
+                tooltips.add(new ToolTip(new StringTextComponent(getTitle())));
             }
         }
     }

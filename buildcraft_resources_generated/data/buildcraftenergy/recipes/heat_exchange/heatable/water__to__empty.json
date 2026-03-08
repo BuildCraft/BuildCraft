@@ -1,0 +1,13 @@
+{
+  "type": "buildcraftfactory:heat_exchange/heatable",
+  "in": {
+    "fluid": "minecraft:water",
+    "amount": 10
+  },
+  "out": {
+    "fluid": "minecraft:empty",
+    "amount": 0
+  },
+  "heatFrom": 0,
+  "heatTo": 1
+}

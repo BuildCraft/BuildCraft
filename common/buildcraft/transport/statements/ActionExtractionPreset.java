@@ -6,36 +6,43 @@
 
 package buildcraft.transport.statements;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-
+import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-
-import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ActionExtractionPreset extends BCStatement implements IActionInternal {
 
     public final SlotIndex index;
 
     public ActionExtractionPreset(SlotIndex index) {
-        super("buildcraft:extraction.preset." + index.colour.getName(), "buildcraft.extraction.preset." + index.colour.getName());
+        super(
+                "buildcraft:extraction.preset." + index.colour.getName(),
+                "buildcraft.extraction.preset." + index.colour.getName()
+        );
 
         this.index = index;
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.action.extraction", ColourUtil.getTextFullTooltip(index.colour));
+    public ITextComponent getDescription() {
+//        return LocaleUtil.localize("gate.action.extraction", ColourUtil.getTextFullTooltip(index.colour));
+        return new TranslationTextComponent("gate.action.extraction", ColourUtil.getTextFullTooltipComponent(index.colour));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.action.extraction." + index.colour.getName();
     }
 
     @Override
@@ -49,7 +56,7 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public SpriteHolder getSprite() {
         return BCTransportSprites.ACTION_EXTRACTION_PRESET.get(index);
     }

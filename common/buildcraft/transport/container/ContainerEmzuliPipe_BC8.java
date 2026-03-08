@@ -6,44 +6,42 @@
 
 package buildcraft.transport.container;
 
-import java.io.IOException;
-import java.util.EnumMap;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
+import buildcraft.api.net.IMessage;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-
 import buildcraft.lib.gui.ContainerPipe;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.DyeColor;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.io.IOException;
+import java.util.EnumMap;
 
 public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
     public final PipeBehaviourEmzuli behaviour;
     public final EnumMap<SlotIndex, PaintWidget> paintWidgets = new EnumMap<>(SlotIndex.class);
     private final ItemHandlerSimple filterInv;
 
-    public ContainerEmzuliPipe_BC8(EntityPlayer player, PipeBehaviourEmzuli behaviour) {
-        super(player, behaviour.pipe.getHolder());
+    public ContainerEmzuliPipe_BC8(ContainerType menuType, int id, PlayerEntity player, PipeBehaviourEmzuli behaviour) {
+        super(menuType, id, player, behaviour.pipe.getHolder());
         this.behaviour = behaviour;
         this.filterInv = behaviour.invFilters;
-        behaviour.pipe.getHolder().onPlayerOpen(player);
+        // Calen: moved to BCTransportGuis#openPipeGui and BCTransportMenuTypes
+//        behaviour.pipe.getHolder().onPlayerOpen(player);
 
         addFullPlayerInventory(84);
 
-        addSlotToContainer(new SlotPhantom(filterInv, 0, 25, 21));
-        addSlotToContainer(new SlotPhantom(filterInv, 1, 25, 49));
-        addSlotToContainer(new SlotPhantom(filterInv, 2, 134, 21));
-        addSlotToContainer(new SlotPhantom(filterInv, 3, 134, 49));
+        addSlot(new SlotPhantom(filterInv, 0, 25, 21));
+        addSlot(new SlotPhantom(filterInv, 1, 25, 49));
+        addSlot(new SlotPhantom(filterInv, 2, 134, 21));
+        addSlot(new SlotPhantom(filterInv, 3, 134, 49));
 
         for (SlotIndex index : SlotIndex.VALUES) {
             createPaintWidget(index);
@@ -57,8 +55,10 @@ public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
+//    public void onContainerClosed(PlayerEntity player)
+    public void removed(PlayerEntity player) {
+//        super.onContainerClosed(player);
+        super.removed(player);
         behaviour.pipe.getHolder().onPlayerClose(player);
     }
 
@@ -70,13 +70,13 @@ public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
             this.index = index;
         }
 
-        public void setColour(EnumDyeColor colour) {
+        public void setColour(DyeColor colour) {
             sendWidgetData((buffer) -> MessageUtil.writeEnumOrNull(buffer, colour));
         }
 
         @Override
-        public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
-            EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
+        public IMessage handleWidgetDataServer(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
+            DyeColor colour = MessageUtil.readEnumOrNull(buffer, DyeColor.class);
             if (colour == null) {
                 container.behaviour.slotColours.remove(index);
             } else {

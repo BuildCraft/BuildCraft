@@ -6,33 +6,34 @@
 
 package buildcraft.lib.prop;
 
-import net.minecraftforge.common.property.IUnlistedProperty;
-
-public class UnlistedNonNullProperty<V> implements IUnlistedProperty<V> {
+// 1.18.2: use ModelProperty
+@Deprecated()
+//public class UnlistedNonNullProperty<V> implements IUnlistedProperty<V>
+public class UnlistedNonNullProperty<V> {
     public final String name;
 
     public UnlistedNonNullProperty(String name) {
         this.name = name;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean isValid(V value) {
-        return value != null;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class getType() {
-        return Object.class;
-    }
-
-    @Override
-    public String valueToString(V value) {
-        return value.toString();
-    }
+//    @Override
+//    public String getName() {
+//        return name;
+//    }
+//
+//    @Override
+//    public boolean isValid(V value) {
+//        return value != null;
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public Class getType() {
+//        return Object.class;
+//    }
+//
+//    @Override
+//    public String valueToString(V value) {
+//        return value.toString();
+//    }
 }

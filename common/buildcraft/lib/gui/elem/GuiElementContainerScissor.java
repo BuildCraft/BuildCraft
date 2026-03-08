@@ -5,6 +5,7 @@ import buildcraft.lib.gui.json.BuildCraftJsonGui;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.GuiUtil.AutoGlScissor;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 /** A type of {@link GuiElementContainer2} that restricts the visible size of elements contained within. */
 public class GuiElementContainerScissor extends GuiElementContainer2 {
@@ -37,19 +38,19 @@ public class GuiElementContainerScissor extends GuiElementContainer2 {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement elem : getChildElements()) {
-                elem.drawBackground(partialTicks);
+                elem.drawBackground(partialTicks, poseStack);
             }
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
         try (AutoGlScissor s = GuiUtil.scissor(area)) {
             for (IGuiElement elem : getChildElements()) {
-                elem.drawForeground(partialTicks);
+                elem.drawForeground(poseStack, partialTicks);
             }
         }
     }

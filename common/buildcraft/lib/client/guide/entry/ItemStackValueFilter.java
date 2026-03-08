@@ -1,10 +1,9 @@
 package buildcraft.lib.client.guide.entry;
 
-import java.util.Objects;
-
+import buildcraft.lib.misc.ItemStackKey;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.misc.ItemStackKey;
+import java.util.Objects;
 
 public class ItemStackValueFilter {
     public final ItemStackKey stack;
@@ -13,7 +12,8 @@ public class ItemStackValueFilter {
     public final boolean matchMeta;
 
     public ItemStackValueFilter(ItemStack stack) {
-        this(new ItemStackKey(stack), stack.getHasSubtypes(), false);
+//        this(new ItemStackKey(stack), stack.getHasSubtypes(), false);
+        this(new ItemStackKey(stack), false, false);
     }
 
     public ItemStackValueFilter(ItemStackKey stack, boolean matchMeta, boolean matchNbt) {

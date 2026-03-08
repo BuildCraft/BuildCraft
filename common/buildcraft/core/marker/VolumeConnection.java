@@ -1,28 +1,32 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.marker;
+
+
+import buildcraft.core.BCCoreConfig;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.marker.MarkerConnection;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.data.Box;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Atlases;
+import net.minecraft.client.renderer.IRenderTypeBuffer.Impl;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
-import buildcraft.lib.marker.MarkerConnection;
-import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.data.Box;
-
-import buildcraft.core.BCCoreConfig;
-import buildcraft.core.client.BuildCraftLaserManager;
 
 public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;
@@ -43,10 +47,10 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     }
 
     public static boolean canCreateConnection(VolumeSubCache subCache, BlockPos from, BlockPos to) {
-        EnumFacing directOffset = PositionUtil.getDirectFacingOffset(from, to);
+        Direction directOffset = PositionUtil.getDirectFacingOffset(from, to);
         if (directOffset == null) return false;
         for (int i = 1; i <= BCCoreConfig.markerMaxDistance; i++) {
-            BlockPos offset = from.offset(directOffset, i);
+            BlockPos offset = from.relative(directOffset, i);
             if (offset.equals(to)) return true;
             if (subCache.hasLoadedOrUnloadedMarker(offset)) return false;
         }
@@ -86,7 +90,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     public boolean canAddMarker(BlockPos to) {
         Set<Axis> taken = getConnectedAxis();
         for (BlockPos from : makeup) {
-            EnumFacing direct = PositionUtil.getDirectFacingOffset(from, to);
+            Direction direct = PositionUtil.getDirectFacingOffset(from, to);
             if (direct != null && !taken.contains(direct.getAxis())) {
                 return true;
             }
@@ -119,7 +123,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         blacklisted.addAll(them);
         for (BlockPos from : makeup) {
             for (BlockPos to : other.makeup) {
-                EnumFacing offset = PositionUtil.getDirectFacingOffset(from, to);
+                Direction offset = PositionUtil.getDirectFacingOffset(from, to);
                 if (offset != null && !blacklisted.contains(offset.getAxis())) {
                     return true;
                 }
@@ -128,11 +132,11 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         return false;
     }
 
-    public EnumSet<Axis> getConnectedAxis() {
-        EnumSet<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
+    public EnumSet<Direction.Axis> getConnectedAxis() {
+        EnumSet<Direction.Axis> taken = EnumSet.noneOf(Direction.Axis.class);
         for (BlockPos a : getMarkerPositions()) {
             for (BlockPos b : getMarkerPositions()) {
-                EnumFacing offset = PositionUtil.getDirectFacingOffset(a, b);
+                Direction offset = PositionUtil.getDirectFacingOffset(a, b);
                 if (offset != null) {
                     taken.add(offset.getAxis());
                 }
@@ -163,9 +167,11 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     //
     // ###########
 
+    /** Wes should call {@link Impl#endBatch()} in 1.16.5 after our rendering, or the data be rendered as handheld item, above the layer of world blocks. */
     @Override
-    @SideOnly(Side.CLIENT)
-    public void renderInWorld() {
-        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
+    @OnlyIn(Dist.CLIENT)
+    public void renderInWorld(MatrixStack poseStack) {
+//        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
+        LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, poseStack.last(), true);
     }
 }

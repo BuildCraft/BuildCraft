@@ -1,35 +1,45 @@
 package buildcraft.lib.client.render.font;
 
-import java.util.List;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.ColourUtil;
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.client.gui.fonts.Font;
+import net.minecraft.client.gui.fonts.providers.DefaultGlyphProvider;
+import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.TextFormatting;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.ColourUtil;
-
+// TODO Calen: ItemPluggableLens ItemPaintbrush_BC8 ItemPipeHolder ItemWire
 public class SpecialColourFontRenderer extends FontRenderer {
     public static final SpecialColourFontRenderer INSTANCE = new SpecialColourFontRenderer();
 
     private SpecialColourFontRenderer() {
-        super(Minecraft.getMinecraft().gameSettings, new ResourceLocation("textures/font/ascii.png"),
-            Minecraft.getMinecraft().renderEngine, false);
+        // TODO Calen textureManager?
+        super((resourceLocation ->
+        {
+            Font ret = new Font(Minecraft.getInstance().fontManager.textureManager, new ResourceLocation("textures/font/ascii.png"));
+            ret.reload(Lists.reverse(Lists.newArrayList(new DefaultGlyphProvider())));
+            return ret;
+        }));
+//        super(Minecraft.getInstance().gameSettings, new ResourceLocation("textures/font/ascii.png"),
+//            Minecraft.getInstance().renderEngine, false);
     }
 
+    // TODO Calen dropShadow???
     @Override
-    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+    public int draw(MatrixStack poseStack, String text, float x, float y, int color) {
 
         int next = text.indexOf(ColourUtil.COLOUR_SPECIAL_START);
         int taken = 0;
 
         if (next > 0) {
             // Render some of it normally
-            x = getRealRenderer().drawString(text.substring(0, next), x, y, color, dropShadow);
+            // TODO Calen dropShadow???
+            x = getRealRenderer().draw(poseStack, text.substring(0, next), x, y, color);
             taken = next;
         }
 
@@ -49,87 +59,113 @@ public class SpecialColourFontRenderer extends FontRenderer {
             int thisColour = color;
             try {
                 int ord = Integer.parseInt(Character.toString(c), 16);
-                thisColour = ColourUtil.getLightHex(EnumDyeColor.byMetadata(ord));
+                thisColour = ColourUtil.getLightHex(DyeColor.byId(ord));
             } catch (NumberFormatException nfe) {
                 BCLog.logger
-                    .warn("[lib.font] Invalid colour string for SpecialColourFontRenderer! " + nfe.getMessage());
+                        .warn("[lib.font] Invalid colour string for SpecialColourFontRenderer! " + nfe.getMessage());
             }
 
-            x = getRealRenderer().drawString(sub, x, y, thisColour, dropShadow);
+            // TODO Calen dropShadow???
+            // 似乎drawShaw是文字+shadow 不是纯shadow
+//            x = getRealRenderer().draw(sub, x, y, thisColour, dropShadow);
+            x = getRealRenderer().draw(poseStack, sub, x, y, thisColour);
 
             next = text.indexOf(ColourUtil.COLOUR_SPECIAL_START, end);
         }
 
         if (taken < text.length()) {
-            x = getRealRenderer().drawString(text.substring(taken), x, y, color, dropShadow);
+//            x = getRealRenderer().drawString(text.substring(taken), x, y, color, dropShadow);
+            x = getRealRenderer().draw(poseStack, text.substring(taken), x, y, color);
         }
 
         return (int) x;
     }
 
     private static FontRenderer getRealRenderer() {
-        return Minecraft.getMinecraft().fontRenderer;
+        return Minecraft.getInstance().font;
     }
 
+    // TODO Calen ???
     // Delegate methods (To ensure we have the exact same behaviour as the normal font renderer)
 
+//    @Override
+//    public void onResourceManagerReload(IResourceManager resourceManager)
+//    {
+//        // NO-OP
+//    }
+
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
-        // NO-OP
+//    public int getStringWidth(String text)
+    public int width(String text) {
+//        return getRealRenderer().getStringWidth(text);
+        return getRealRenderer().width(text);
+    }
+
+//    @Override
+//    public int getCharWidth(char character)
+//    {
+//        return getRealRenderer().getCharWidth(character);
+//    }
+
+    @Override
+//    public String trimStringToWidth(String text, int width)
+    public String plainSubstrByWidth(String text, int width) {
+//        return getRealRenderer().trimStringToWidth(text, width);
+        return getRealRenderer().plainSubstrByWidth(text, width);
     }
 
     @Override
-    public int getStringWidth(String text) {
-        return getRealRenderer().getStringWidth(text);
+//    public String trimStringToWidth(String text, int width, boolean reverse)
+    public String plainSubstrByWidth(String text, int width, boolean reverse) {
+//        return getRealRenderer().trimStringToWidth(text, width, reverse);
+        return getRealRenderer().plainSubstrByWidth(text, width, reverse);
     }
 
     @Override
-    public int getCharWidth(char character) {
-        return getRealRenderer().getCharWidth(character);
+//    public int getWordWrappedHeight(String str, int maxLength)
+    public int wordWrapHeight(String str, int maxLength) {
+//        return getRealRenderer().getWordWrappedHeight(str, maxLength);
+        return getRealRenderer().wordWrapHeight(str, maxLength);
+    }
+
+    // TODO Calen ???
+//    @Override
+//    public void setUnicodeFlag(boolean unicodeFlagIn)
+//    {
+//        getRealRenderer().setUnicodeFlag(unicodeFlagIn);
+//    }
+
+    // TODO Calen ???
+//    @Override
+//    public boolean getUnicodeFlag()
+//    {
+//        return getRealRenderer().getUnicodeFlag();
+//    }
+
+//    @Override
+//    public void setBidiFlag(boolean bidiFlagIn)
+//    {
+//        getRealRenderer().setBidiFlag(bidiFlagIn);
+//    }
+
+    @Override
+//    public List<String> listFormattedStringToWidth(String str, int wrapWidth)
+    public ITextProperties substrByWidth(ITextProperties str, int wrapWidth) {
+//        return getRealRenderer().listFormattedStringToWidth(str, wrapWidth);
+        return getRealRenderer().substrByWidth(str, wrapWidth);
     }
 
     @Override
-    public String trimStringToWidth(String text, int width) {
-        return getRealRenderer().trimStringToWidth(text, width);
+//    public boolean getBidiFlag()
+    public boolean isBidirectional() {
+//        return getRealRenderer().getBidiFlag();
+        return getRealRenderer().isBidirectional();
     }
 
-    @Override
-    public String trimStringToWidth(String text, int width, boolean reverse) {
-        return getRealRenderer().trimStringToWidth(text, width, reverse);
-    }
-
-    @Override
-    public int getWordWrappedHeight(String str, int maxLength) {
-        return getRealRenderer().getWordWrappedHeight(str, maxLength);
-    }
-
-    @Override
-    public void setUnicodeFlag(boolean unicodeFlagIn) {
-        getRealRenderer().setUnicodeFlag(unicodeFlagIn);
-    }
-
-    @Override
-    public boolean getUnicodeFlag() {
-        return getRealRenderer().getUnicodeFlag();
-    }
-
-    @Override
-    public void setBidiFlag(boolean bidiFlagIn) {
-        getRealRenderer().setBidiFlag(bidiFlagIn);
-    }
-
-    @Override
-    public List<String> listFormattedStringToWidth(String str, int wrapWidth) {
-        return getRealRenderer().listFormattedStringToWidth(str, wrapWidth);
-    }
-
-    @Override
-    public boolean getBidiFlag() {
-        return getRealRenderer().getBidiFlag();
-    }
-
-    @Override
-    public int getColorCode(char character) {
-        return getRealRenderer().getColorCode(character);
-    }
+    // TODO Calen ???
+//    @Override
+//    public int getColorCode(char character)
+//    {
+//        return getRealRenderer().getColorCode(character);
+//    }
 }

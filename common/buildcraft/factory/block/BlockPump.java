@@ -6,22 +6,20 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.world.World;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.tile.TileBC_Neptune;
-
+import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.tile.TilePump;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithTickableTE;
+import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.world.IBlockReader;
 
-public class BlockPump extends BlockBCTile_Neptune {
-    public BlockPump(Material material, String id) {
-        super(material, id);
+public class BlockPump extends BlockBCTile_Neptune<TilePump> implements IBlockWithTickableTE<TilePump> {
+    public BlockPump(String idBC, Properties props) {
+        super(idBC, props);
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
-        return new TilePump();
+    public TileBC_Neptune newBlockEntity(IBlockReader world) {
+        return BCFactoryBlocks.pumpTile.get().create();
     }
 }

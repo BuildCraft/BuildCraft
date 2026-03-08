@@ -6,26 +6,22 @@
 
 package buildcraft.builders.container;
 
-import java.io.IOException;
-import java.util.stream.IntStream;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.filler.IFillerPattern;
-
+import buildcraft.builders.filler.FillerType;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import buildcraft.builders.filler.FillerType;
+import java.io.IOException;
+import java.util.stream.IntStream;
 
 public interface IContainerFilling {
-    EntityPlayer getPlayer();
+    PlayerEntity getPlayer();
 
     void sendMessage(int id, IPayloadWriter writer);
 
@@ -44,16 +40,17 @@ public interface IContainerFilling {
     void valuesChanged();
 
     default void init() {
-        if (!getPlayer().world.isRemote) {
+        if (!getPlayer().level.isClientSide) {
             MessageUtil.doDelayedServer(this::sendData);
         }
     }
 
     default void sendData() {
-        sendMessage(ContainerBC_Neptune.NET_DATA, buffer -> {
-            (getPlayer().world.isRemote
-                ? getPatternStatementClient()
-                : getPatternStatement()).writeToBuffer(buffer);
+        sendMessage(ContainerBC_Neptune.NET_DATA, buffer ->
+        {
+            (getPlayer().level.isClientSide
+                    ? getPatternStatementClient()
+                    : getPatternStatement()).writeToBuffer(buffer);
             buffer.writeBoolean(isInverted());
         });
     }
@@ -67,15 +64,17 @@ public interface IContainerFilling {
         sendData();
     }
 
-    default void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        if (side == Side.SERVER) {
+    // default void readMessage(int id, PacketBufferBC buffer, Dist side, MessageContext ctx) throws IOException
+    default void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
+        if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ContainerBC_Neptune.NET_DATA) {
                 if (isLocked()) {
                     new FullStatement<>(
-                        FillerType.INSTANCE,
-                        4,
-                        (a, b) -> {
-                        }
+                            FillerType.INSTANCE,
+                            4,
+                            (a, b) ->
+                            {
+                            }
                     ).readFromBuffer(buffer);
                 } else {
                     getPatternStatement().readFromBuffer(buffer);
@@ -84,13 +83,13 @@ public interface IContainerFilling {
                 valuesChanged();
                 sendData();
             }
-        } else if (side == Side.CLIENT) {
+        } else if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == ContainerBC_Neptune.NET_DATA) {
                 getPatternStatement().readFromBuffer(buffer);
                 setInverted(buffer.readBoolean());
                 getPatternStatementClient().set(getPatternStatement().get());
                 IntStream.range(0, 4).forEach(i ->
-                    getPatternStatementClient().getParamRef(i).set(getPatternStatement().getParamRef(i).get())
+                        getPatternStatementClient().getParamRef(i).set(getPatternStatement().getParamRef(i).get())
                 );
                 valuesChanged();
             }

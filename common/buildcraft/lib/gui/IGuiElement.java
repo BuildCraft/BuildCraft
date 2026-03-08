@@ -6,34 +6,38 @@
 
 package buildcraft.lib.gui;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.List;
 
 /** Defines an element that can be irendered, that exists inside of a rectangle. */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
-    default void drawBackground(float partialTicks) {}
+    default void drawBackground(float partialTicks, MatrixStack poseStack) {
+    }
 
-    default void drawForeground(float partialTicks) {}
+    default void drawForeground(MatrixStack poseStack, float partialTicks) {
+    }
 
-    default void tick() {}
+    default void tick() {
+    }
 
     /** {@inheritDoc}
      * <p>
      * This is called EVEN IF the mouse is not inside your width and height! */
     @Override
-    default void addToolTips(List<ToolTip> tooltips) {}
+    default void addToolTips(List<ToolTip> tooltips) {
+    }
 
     @Override
-    default void addHelpElements(List<HelpPosition> elements) {}
+    default void addHelpElements(List<HelpPosition> elements) {
+    }
 
     default List<IGuiElement> getThisAndChildrenAt(double x, double y) {
         if (contains(x, y)) {
@@ -45,7 +49,7 @@ public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
 
     /** Add debugging information to the list. Note that a lot of elements will be called for this, so keep the amount
      * of information minimal.
-     * 
+     *
      * @return An identifier for this element (usually a name) */
     default String getDebugInfo(List<String> info) {
         return toString();

@@ -1,0 +1,24 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "subType": "BASIC",
+  "requiredMicroJoules": 10000000000,
+  "requiredStacks": [
+    {
+      "ingredient": {
+        "tag": "forge:dusts/redstone"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "tag": "forge:dyes/pink"
+      },
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "buildcrafttransport:wire",
+    "count": 8,
+    "nbt": "{colour:\"pink\"}"
+  }
+}

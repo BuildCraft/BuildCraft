@@ -6,98 +6,94 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.pipe.*;
+import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
+import buildcraft.lib.misc.EntityUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.transport.BCTransportConfig;
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.ActionPipeColor;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+
 import java.io.IOException;
 import java.util.Collections;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.RayTraceResult;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-
-import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.statements.ActionPipeColor;
-
 public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
-    private EnumDyeColor colour = EnumDyeColor.WHITE;
+    private DyeColor colour = DyeColor.WHITE;
 
     public PipeBehaviourDaizuli(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourDaizuli(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourDaizuli(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
-        colour = NBTUtilBC.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
+        colour = NBTUtilBC.readEnum(nbt.get("colour"), DyeColor.class);
         if (colour == null) {
-            colour = EnumDyeColor.WHITE;
+            colour = DyeColor.WHITE;
         }
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("colour", NBTUtilBC.writeEnum(colour));
+    public CompoundNBT writeToNbt() {
+        CompoundNBT nbt = super.writeToNbt();
+        nbt.put("colour", NBTUtilBC.writeEnum(colour));
         return nbt;
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketBuffer buffer, Dist side) {
         super.writePayload(buffer, side);
-        if (side == Side.SERVER) {
-            buffer.writeByte(colour.getMetadata());
+        if (side == Dist.DEDICATED_SERVER) {
+            buffer.writeByte(colour.getId());
         }
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+//    public void readPayload(PacketBuffer buffer, Dist side, MessageContext ctx) throws IOException
+    public void readPayload(PacketBuffer buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
-        if (side == Side.CLIENT) {
-            colour = EnumDyeColor.byMetadata(buffer.readUnsignedByte());
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
+            colour = DyeColor.byId(buffer.readUnsignedByte());
         }
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
+    public int getTextureIndex(Direction face) {
         if (face != currentDir.face && face != null) {
             return 16;
         }
-        return colour.getMetadata();
+        return colour.getId();
     }
 
     @Override
-    protected boolean canFaceDirection(EnumFacing dir) {
+    protected boolean canFaceDirection(Direction dir) {
         return true;
     }
 
     @Override
-    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+    public boolean onPipeActivate(PlayerEntity player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
         if (part != EnumPipePart.CENTER && part != currentDir) {
             // Activating the centre of a pipe always falls back to changing the colour
             // And so does clicking on the current facing side
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
-        if (player.world.isRemote) {
+        if (player.level.isClientSide) {
             return EntityUtil.getWrenchHand(player) != null;
         }
         if (EntityUtil.getWrenchHand(player) != null) {
             EntityUtil.activateWrench(player, trace);
-            int n = colour.getMetadata() + (player.isSneaking() ? 15 : 1);
-            colour = EnumDyeColor.byMetadata(n & 15);
+//            int n = colour.getMetadata() + (player.isSneaking() ? 15 : 1);
+            int n = colour.getId() + (player.isShiftKeyDown() ? 15 : 1);
+            colour = DyeColor.byId(n & 15);
             pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
             return true;
         }
@@ -106,11 +102,29 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
 
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck sideCheck) {
+        if (BCTransportConfig.disableStrictDaizuliItemPipeLogic) {
+            // Calen 1.20.1: daizuli logic from BC7
+            if (currentDir != EnumPipePart.CENTER) {
+                if (colour == sideCheck.colour) {
+                    sideCheck.increasePriority(currentDir.face, 100);
+                } else {
+                    sideCheck.decreasePriority(currentDir.face, 100);
+                }
+            }
+            return;
+        }
         if (colour == sideCheck.colour) {
+            // Calen 1.20.1: strict logic of daizuli item pipe
             sideCheck.disallowAllExcept(currentDir.face);
         } else {
             sideCheck.disallow(currentDir.face);
         }
+    }
+
+    // Calen 1.20.1 from PipeBehaviourIron
+    @PipeEventHandler
+    public static void tryBounce(PipeEventItem.TryBounce tryBounce) {
+        tryBounce.canBounce = true;
     }
 
     @Override

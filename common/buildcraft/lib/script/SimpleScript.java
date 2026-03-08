@@ -1,42 +1,26 @@
 package buildcraft.lib.script;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.Loader;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.script.ScriptAliasFunction.AliasBuilder;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModList;
+
+import javax.annotation.Nullable;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Function;
 
 public class SimpleScript {
 
@@ -48,7 +32,7 @@ public class SimpleScript {
     static BufferedWriter logWriter;
 
     static {
-        CONTEXT.put_s_b("is_mod_loaded", Loader::isModLoaded);
+        CONTEXT.put_s_b("is_mod_loaded", (modid) -> ModList.get().isLoaded(modid));
         // Functions:
 
         // Debug: turns on script debugging
@@ -71,7 +55,8 @@ public class SimpleScript {
         // - replace <old> <new>
         // except that <new> inherits tags from <old>
 
-        functions.put("add", script -> {
+        functions.put("add", script ->
+        {
             String name = script.nextQuotedArg();
             if (name == null) {
                 script.log("Missing name!");
@@ -84,7 +69,8 @@ public class SimpleScript {
             ResourceLocation id = new ResourceLocation(script.domain, name);
             return ImmutableList.of(new ScriptActionAdd(id, json));
         });
-        functions.put("remove", script -> {
+        functions.put("remove", script ->
+        {
             String name = script.nextQuotedArg();
             if (name == null) {
                 script.log("Missing name!");
@@ -92,7 +78,8 @@ public class SimpleScript {
             }
             return ImmutableList.of(new ScriptActionRemove(name));
         });
-        functions.put("replace", script -> {
+        functions.put("replace", script ->
+        {
             String toRemove = script.nextQuotedArg();
             String toAdd = script.nextQuotedArg();
             if (toRemove == null) {
@@ -110,7 +97,8 @@ public class SimpleScript {
             ResourceLocation id = new ResourceLocation(script.domain, toAdd);
             return ImmutableList.of(new ScriptActionReplace(toRemove, id, json, false));
         });
-        functions.put("modify", script -> {
+        functions.put("modify", script ->
+        {
             String toRemove = script.nextQuotedArg();
             String toAdd = script.nextQuotedArg();
             if (toRemove == null) {
@@ -145,8 +133,15 @@ public class SimpleScript {
 
     private static File logDir;
 
-    public SimpleScript(ScriptableRegistry<?> registry, Path scriptDirRoot, String scriptDomain, Path scriptFolder,
-        Path scriptFile, List<Path> roots, List<String> scriptContents) {
+    public SimpleScript(
+            ScriptableRegistry<?> registry,
+            Path scriptDirRoot,
+            String scriptDomain,
+            Path scriptFolder,
+            Path scriptFile,
+            List<Path> roots,
+            List<String> scriptContents
+    ) {
         this.scriptDirRoot = scriptDirRoot;
         this.domain = scriptDomain;
         this.scriptFolder = scriptFolder;
@@ -210,7 +205,7 @@ public class SimpleScript {
                     }
                     if (!conditional.isValid || !conditional.type.isString) {
                         log("Found a token that wasn't a string! (or was invalid) '"
-                            + Arrays.toString(conditional.lines));
+                                + Arrays.toString(conditional.lines));
                         continue;
                     }
                     String func = conditional.joinLines(false);
@@ -238,8 +233,9 @@ public class SimpleScript {
                 case "import": {
                     LineToken srcToken = lines.nextToken(false);
                     if (srcToken == null || !srcToken.isValid
-                    // Don't allow multi-line strings explicitly - this is just a file name
-                        || srcToken.type != TokenType.QUOTED_STRING) {
+                            // Don't allow multi-line strings explicitly - this is just a file name
+                            || srcToken.type != TokenType.QUOTED_STRING)
+                    {
                         log("Unknown/invalid import statement!");
                         break;
                     }
@@ -357,7 +353,8 @@ public class SimpleScript {
             case 3:
                 return s -> s.replace("%0", values[0]).replace("%1", values[1]).replace("%2", values[2]);
             default: {
-                return s -> {
+                return s ->
+                {
                     for (int i = values.length - 1; i >= 0; i--) {
                         s = s.replace("%" + i, values[i]);
                     }
@@ -377,7 +374,8 @@ public class SimpleScript {
         String libDomain = from.substring(0, colonIndex);
         String path = from.substring(colonIndex + 1);
         String fullPath = libDomain + "/compat/" + registry.getEntryType() + "/" + path + ".txt";
-        path_loop: for (Path root : roots) {
+        path_loop:
+        for (Path root : roots) {
             Path full = root.resolve(fullPath);
             if (!Files.exists(full)) {
                 continue;
@@ -390,7 +388,7 @@ public class SimpleScript {
                 }
                 if (!"~{buildcraft/json/lib}".equals(list.get(0))) {
                     log("Found a library that isn't declared as '~{buildcraft/json/lib}'! We can't load from this! ("
-                        + root + ")");
+                            + root + ")");
                     continue;
                 }
                 list.set(0, "// Valid library declaration was here");
@@ -409,7 +407,8 @@ public class SimpleScript {
                             i++;
                             break;
                         }
-                    } while (next.startsWith("*"));
+                    }
+                    while (next.startsWith("*"));
                 }
                 next = list.get(i);
                 String[] argValues = null;
@@ -465,7 +464,7 @@ public class SimpleScript {
                 args[i] = "";
             } else if (!next.isValid) {
                 log("Expected a value, got an invalid token (" + next + ") for the " + toIndexStr(i + 1)
-                    + " argument!");
+                        + " argument!");
                 invalid = true;
                 args[i] = "";
             } else {
@@ -546,7 +545,9 @@ public class SimpleScript {
         } catch (IOException io) {
             BCLog.logger.warn("[lib.script] Failed to open the log file! (" + logDir + ")", io);
             closeLog();
-            return () -> {};
+            return () ->
+            {
+            };
         }
     }
 
@@ -561,7 +562,7 @@ public class SimpleScript {
                 }
             } catch (IOException io) {
                 BCLog.logger.warn(
-                    "[lib.script] Failed to close the log file, so it might not be complete! (" + logDir + ")", io);
+                        "[lib.script] Failed to close the log file, so it might not be complete! (" + logDir + ")", io);
             }
         }
     }
@@ -665,7 +666,7 @@ public class SimpleScript {
         public final int startIndex, endIndex;
 
         public LineToken(String singleLine, LineData data, TokenType type, boolean isValid, int startIndex,
-            int endIndex) {
+                         int endIndex) {
             this(new String[] { singleLine }, new LineData[] { data }, type, isValid, startIndex, endIndex);
         }
 
@@ -690,7 +691,7 @@ public class SimpleScript {
         }
 
         public LineToken(String[] lines, LineData[] datas, TokenType type, boolean isValid, int startIndex,
-            int endIndex) {
+                         int endIndex) {
             if (type == TokenType.BACKTICK_STRING || type == TokenType.QUOTED_STRING) {
                 char ctype = type == TokenType.BACKTICK_STRING ? '`' : '"';
                 StringBuilder sb = new StringBuilder();
@@ -748,7 +749,8 @@ public class SimpleScript {
             LineData data;
             String line;
             boolean foundNextLineSymbol = false;
-            start_search_line: do {
+            start_search_line:
+            do {
                 foundNextLineSymbol = false;
                 if (!lineIterator.hasNext()) {
                     return null;
@@ -756,9 +758,11 @@ public class SimpleScript {
                 line = (data = lineIterator.next()).text;
                 boolean isMultiLine = false;
                 char end = ' ';
-                start_search: for (int i = Math.max(0, currentIndexInLine); i < line.length(); i++) {
+                start_search:
+                for (int i = Math.max(0, currentIndexInLine); i < line.length(); i++) {
                     char c = line.charAt(i);
-                    known_char: {
+                    known_char:
+                    {
                         switch (c) {
                             case ' ': {
                                 continue;
@@ -766,7 +770,7 @@ public class SimpleScript {
                             case '/': {
                                 if (i + 1 == line.length()) {
                                     return new LineToken(line.substring(i), data, TokenType.COMMENT, false, i,
-                                        line.length());
+                                            line.length());
                                 }
                                 isComment = true;
                                 if (!line.startsWith("/**", i)) {
@@ -774,7 +778,7 @@ public class SimpleScript {
                                     currentIndexInLine = -1;
                                     // Don't go to the previous() element
                                     return new LineToken(line.substring(i), data, TokenType.COMMENT,
-                                        line.startsWith("//", i), i, line.length());
+                                            line.startsWith("//", i), i, line.length());
                                 }
                                 start = i + 3;
                                 break start_search;
@@ -841,7 +845,8 @@ public class SimpleScript {
                     return stringToken;
                 }
                 break start_search_line;
-            } while (jumpToNextLine || foundNextLineSymbol);
+            }
+            while (jumpToNextLine || foundNextLineSymbol);
             if (start < 0) {
                 return null;
             }
@@ -858,7 +863,8 @@ public class SimpleScript {
             List<LineData> tokenData = new ArrayList<>();
             tokenLines.add(line.substring(start));
             tokenData.add(data);
-            line_loop: while (true) {
+            line_loop:
+            while (true) {
                 if (!lineIterator.hasNext()) {
                     return null;
                 }
@@ -899,12 +905,11 @@ public class SimpleScript {
                 tokenData.add(data);
             }
             return new LineToken(tokenLines.toArray(new String[0]), tokenData.toArray(new LineData[0]),
-                isComment ? TokenType.FUNC_DOCS : TokenType.BACKTICK_STRING, true, start, currentIndexInLine);
+                    isComment ? TokenType.FUNC_DOCS : TokenType.BACKTICK_STRING, true, start, currentIndexInLine);
         }
 
         @Nullable
-        private LineToken checkForString(boolean isComment, int start, LineData data, String line, boolean isMultiLine,
-            char end) {
+        private LineToken checkForString(boolean isComment, int start, LineData data, String line, boolean isMultiLine, char end) {
             if (isComment) {
                 for (int i = start; i < line.length(); i++) {
                     if (line.startsWith("*/", i)) {
@@ -912,7 +917,7 @@ public class SimpleScript {
                         // Ensure that the next iteration will take the line
                         lineIterator.previous();
                         return new LineToken(line.substring(start, i + 3), data, TokenType.FUNC_DOCS, true, start,
-                            i + 3);
+                                i + 3);
                     }
                 }
             } else {
@@ -937,7 +942,7 @@ public class SimpleScript {
                     // Invalid token - we found the start but not the end
                     // so we'll return the invalid part
                     return new LineToken(line.substring(start + 1), data, TokenType.BACKTICK_STRING, false, start + 1,
-                        line.length());
+                            line.length());
                 }
             }
             return null;

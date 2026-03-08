@@ -6,23 +6,16 @@
 
 package buildcraft.core.statements;
 
-import java.util.Collection;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IActionInternalSided;
-import buildcraft.api.statements.IActionProvider;
-import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.TilesAPI;
-
 import buildcraft.core.BCCoreStatements;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public enum CoreActionProvider implements IActionProvider {
     INSTANCE;
@@ -35,11 +28,12 @@ public enum CoreActionProvider implements IActionProvider {
     }
 
     @Override
-    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull EnumFacing side) { }
+    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull Direction side) {
+    }
 
     @Override
-    public void addExternalActions(Collection<IActionExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
-        IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
+    public void addExternalActions(Collection<IActionExternal> res, @Nonnull Direction side, TileEntity tile) {
+        IControllable controllable = tile.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite()).orElse(null);
         if (controllable != null) {
             for (ActionMachineControl action : BCCoreStatements.ACTION_MACHINE_CONTROL) {
                 if (controllable.acceptsControlMode(action.mode)) {

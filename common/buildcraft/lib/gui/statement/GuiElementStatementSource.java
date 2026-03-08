@@ -1,14 +1,9 @@
 package buildcraft.lib.gui.statement;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IGuiSlot;
 import buildcraft.api.statements.IStatementParameter;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IGuiElement;
@@ -19,6 +14,10 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.statement.StatementContext;
 import buildcraft.lib.statement.StatementContext.StatementGroup;
 import buildcraft.lib.statement.StatementWrapper;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class GuiElementStatementSource<S extends IGuiSlot> implements IInteractionElement {
     public final BuildCraftGui gui;
@@ -115,20 +114,21 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
-        iterateSlots((s, area) -> {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
+        iterateSlots((s, area) ->
+        {
             // ...oh. We need a way of drawing arbitrary slots from the API. Great :/
-            drawAt(s, area.x, area.y);
+            drawAt(s, poseStack, area.x, area.y);
         });
     }
 
-    private void drawAt(@Nullable S slot, double x, double y) {
-        drawGuiSlot(slot, x, y);
+    private void drawAt(@Nullable S slot, MatrixStack poseStack, double x, double y) {
+        drawGuiSlot(slot, poseStack, x, y);
     }
 
-    public static void drawGuiSlot(@Nullable IGuiSlot guiSlot, double x, double y) {
+    public static void drawGuiSlot(@Nullable IGuiSlot guiSlot, MatrixStack poseStack, double x, double y) {
         if (guiSlot instanceof IStatementParameter) {
-            ParameterRenderer.draw((IStatementParameter) guiSlot, x, y);
+            ParameterRenderer.draw((IStatementParameter) guiSlot, poseStack, x, y);
             return;
         }
         GuiIcon background = GuiElementStatement.SLOT_COLOUR;
@@ -138,18 +138,19 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
                 background = background.offset(0, (1 + part.getIndex()) * 18);
             }
         }
-        background.drawAt(x, y);
+        background.drawAt(poseStack, x, y);
         if (guiSlot != null) {
             ISprite sprite = guiSlot.getSprite();
             if (sprite != null) {
-                GuiIcon.drawAt(sprite, x + 1, y + 1, 16);
+                GuiIcon.drawAt(sprite, poseStack, x + 1, y + 1, 16);
             }
         }
     }
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
-        iterateSlots((slot, area) -> {
+        iterateSlots((slot, area) ->
+        {
             if (slot == null) return;
             if (area.contains(gui.mouse)) {
                 tooltips.add(new ToolTip(slot.getTooltip()));
@@ -160,7 +161,8 @@ public class GuiElementStatementSource<S extends IGuiSlot> implements IInteracti
     @Override
     public void onMouseClicked(int button) {
         if (button == 0) {
-            iterateSlots((slot, area) -> {
+            iterateSlots((slot, area) ->
+            {
                 if (area.contains(gui.mouse)) {
                     dragger.startDragging(slot);
                 }

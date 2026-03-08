@@ -1,10 +1,40 @@
 /*
  * Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 package buildcraft.lib;
+
+import buildcraft.api.BCModules;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.registry.BuildCraftRegistryManager;
+import buildcraft.api.tiles.TilesAPI;
+import buildcraft.api.transport.pipe.PipeApi;
+import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.guide.GuidePageRegistry;
+import buildcraft.lib.client.reload.LibConfigChangeListener;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
+import buildcraft.lib.client.render.MarkerRenderer;
+import buildcraft.lib.debug.DebugRenderHelper;
+import buildcraft.lib.net.*;
+import buildcraft.lib.net.cache.MessageObjectCacheRequest;
+import buildcraft.lib.net.cache.MessageObjectCacheResponse;
+import buildcraft.lib.script.ReloadableRegistryManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.resources.*;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,93 +43,60 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.resources.AbstractResourcePack;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.resources.ResourcePackRepository;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fml.server.FMLServerHandler;
-
-import buildcraft.api.BCModules;
-import buildcraft.api.registry.BuildCraftRegistryManager;
-
-import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.GuideManager;
-import buildcraft.lib.client.guide.GuidePageRegistry;
-import buildcraft.lib.client.reload.LibConfigChangeListener;
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.DetachedRenderer.RenderMatrixType;
-import buildcraft.lib.client.render.MarkerRenderer;
-import buildcraft.lib.debug.DebugRenderHelper;
-import buildcraft.lib.gui.config.GuiConfigManager;
-import buildcraft.lib.item.ItemGuide;
-import buildcraft.lib.net.MessageContainer;
-import buildcraft.lib.net.MessageDebugRequest;
-import buildcraft.lib.net.MessageDebugResponse;
-import buildcraft.lib.net.MessageManager;
-import buildcraft.lib.net.MessageMarker;
-import buildcraft.lib.net.MessageUpdateTile;
-import buildcraft.lib.net.cache.MessageObjectCacheRequest;
-import buildcraft.lib.net.cache.MessageObjectCacheResponse;
-import buildcraft.lib.script.ReloadableRegistryManager;
-
-public abstract class BCLibProxy implements IGuiHandler {
-    @SidedProxy(modId = BCLib.MODID)
+//public abstract class BCLibProxy implements IGuiHandler
+public abstract class BCLibProxy {
+    // @SidedProxy(modId = BCLib.MODID)
     private static BCLibProxy proxy;
 
     public static BCLibProxy getProxy() {
+        if (proxy == null) {
+            switch (FMLLoader.getDist()) {
+                case CLIENT:
+                    proxy = new ClientProxy();
+                    break;
+                case DEDICATED_SERVER:
+                    proxy = new ServerProxy();
+                    break;
+            }
+        }
         return proxy;
     }
 
     void fmlPreInit() {
         MessageManager.registerMessageClass(BCModules.LIB, MessageUpdateTile.class, MessageUpdateTile.HANDLER);
         MessageManager.registerMessageClass(BCModules.LIB, MessageContainer.class, MessageContainer.HANDLER);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageMarker.class, Side.CLIENT);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheRequest.class,
-            MessageObjectCacheRequest.HANDLER, Side.SERVER);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheResponse.class, Side.CLIENT);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugRequest.class, MessageDebugRequest.HANDLER,
-            Side.SERVER);
-        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugResponse.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageMarker.class, Dist.CLIENT);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheRequest.class, MessageObjectCacheRequest.HANDLER, Dist.DEDICATED_SERVER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageObjectCacheResponse.class, Dist.CLIENT);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugRequest.class, MessageDebugRequest.HANDLER, Dist.DEDICATED_SERVER);
+        MessageManager.registerMessageClass(BCModules.LIB, MessageDebugResponse.class, Dist.CLIENT);
     }
 
-    void fmlInit() {}
+    void fmlInit() {
+        MjAPI.regCaps();
+        PipeApi.regCaps();
+        TilesAPI.regCaps();
+    }
 
-    void fmlPostInit() {}
+    void fmlPostInit() {
+    }
 
     public World getClientWorld() {
         return null;
     }
 
-    public EntityPlayer getClientPlayer() {
+    public PlayerEntity getClientPlayer() {
         return null;
     }
 
-    public EntityPlayer getPlayerForContext(MessageContext ctx) {
-        return ctx.getServerHandler().player;
+    public PlayerEntity getPlayerForContext(NetworkEvent.Context ctx) {
+        return ctx.getSender();
     }
 
     public void addScheduledTask(World world, Runnable task) {
-        if (world instanceof WorldServer) {
-            WorldServer server = (WorldServer) world;
-            server.addScheduledTask(task);
+        if (world instanceof ServerWorld) {
+            ServerWorld server = (ServerWorld) world;
+            server.getServer().execute(task);
         }
     }
 
@@ -117,27 +114,27 @@ public abstract class BCLibProxy implements IGuiHandler {
         return Collections.emptySet();
     }
 
-    @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        return null;
-    }
+//    @Override
+//    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+//        return null;
+//    }
 
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        return null;
-    }
+//    @Override
+//    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+//        return null;
+//    }
 
     @SuppressWarnings("unused")
-    @SideOnly(Side.SERVER)
+//    @OnlyIn(Dist.DEDICATED_SERVER)
     public static class ServerProxy extends BCLibProxy {
         @Override
         public File getGameDirectory() {
-            return FMLServerHandler.instance().getServer().getDataDirectory();
+            return FMLPaths.GAMEDIR.get().toFile();
         }
     }
 
     @SuppressWarnings("unused")
-    @SideOnly(Side.CLIENT)
+//    @OnlyIn(Dist.CLIENT)
     public static class ClientProxy extends BCLibProxy {
         @Override
         void fmlPreInit() {
@@ -153,10 +150,9 @@ public abstract class BCLibProxy implements IGuiHandler {
             BCLibSprites.fmlPreInitClient();
             BCLibConfig.configChangeListeners.add(LibConfigChangeListener.INSTANCE);
 
-            MessageManager.setHandler(MessageMarker.class, MessageMarker.HANDLER, Side.CLIENT);
-            MessageManager.setHandler(MessageObjectCacheResponse.class, MessageObjectCacheResponse.HANDLER,
-                Side.CLIENT);
-            MessageManager.setHandler(MessageDebugResponse.class, MessageDebugResponse.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageMarker.class, MessageMarker.HANDLER, Dist.CLIENT);
+            MessageManager.setHandler(MessageObjectCacheResponse.class, MessageObjectCacheResponse.HANDLER, Dist.CLIENT);
+            MessageManager.setHandler(MessageDebugResponse.class, MessageDebugResponse.HANDLER, Dist.CLIENT);
         }
 
         @Override
@@ -168,26 +164,39 @@ public abstract class BCLibProxy implements IGuiHandler {
         void fmlPostInit() {
             super.fmlPostInit();
             if (BCLibItems.isGuideEnabled()) {
-                IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+                IResourceManager manager = Minecraft.getInstance().getResourceManager();
+//                IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
                 IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
-                reloadable.registerReloadListener(GuideManager.INSTANCE);
+//                reloadable.registerReloadListener(GuideManager.INSTANCE);
+                this.registerReloadListener(reloadable, GuideManager.INSTANCE);
             }
-            GuiConfigManager.loadFromConfigFile();
+//            GuiConfigManager.loadFromConfigFile(); // Calen: moved to BCLibEventDist#reload
+        }
+
+        // Calen: ReloadableResourceManager#registerReloadListener in 1.18.2 lacks something, here is what there should be in 1.12.2
+        private void registerReloadListener(IReloadableResourceManager reloadable, IResourceManagerReloadListener reloadListener) {
+            /* Calen: Don't call reloadable.registerReloadListener(reloadListener).
+             * Load everything at RecipesUpdatedEvent.
+             * When switching language before joining a world, Minecraft.getInstance().level is null, and recipes will not be loaded. */
+//            reloadable.registerReloadListener(reloadListener);
+            // Calen: moved to BCLibEventDistForgeBus#onTextureStitchPost
+//            reloadListener.onResourceManagerReload(reloadable);
+            BCLibEventDist.INSTANCE.addReloadListeners(reloadListener);
         }
 
         @Override
         public World getClientWorld() {
-            return Minecraft.getMinecraft().world;
+            return Minecraft.getInstance().level;
         }
 
         @Override
-        public EntityPlayer getClientPlayer() {
-            return Minecraft.getMinecraft().player;
+        public PlayerEntity getClientPlayer() {
+            return Minecraft.getInstance().player;
         }
 
         @Override
-        public EntityPlayer getPlayerForContext(MessageContext ctx) {
-            if (ctx.side == Side.SERVER) {
+        public PlayerEntity getPlayerForContext(NetworkEvent.Context ctx) {
+            if (ctx.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
                 return super.getPlayerForContext(ctx);
             }
             return getClientPlayer();
@@ -195,8 +204,8 @@ public abstract class BCLibProxy implements IGuiHandler {
 
         @Override
         public void addScheduledTask(World world, Runnable task) {
-            if (world instanceof WorldClient) {
-                Minecraft.getMinecraft().addScheduledTask(task);
+            if (world instanceof ClientWorld) {
+                Minecraft.getInstance().execute(task);
             } else {
                 super.addScheduledTask(world, task);
             }
@@ -205,12 +214,13 @@ public abstract class BCLibProxy implements IGuiHandler {
         @SuppressWarnings("unchecked")
         @Override
         public <T extends TileEntity> T getServerTile(T tile) {
-            if (tile != null && tile.hasWorld()) {
-                World world = tile.getWorld();
-                if (world.isRemote && Minecraft.getMinecraft().isSingleplayer()) {
-                    WorldServer server = DimensionManager.getWorld(world.provider.getDimension());
+            if (tile != null && tile.hasLevel()) {
+                World world = tile.getLevel();
+                if (world.isClientSide && Minecraft.getInstance().hasSingleplayerServer()) {
+//                    ServerWorld server = DimensionManager.getWorld(world.provider.getDimension());
+                    ServerWorld server = world.getServer().getLevel(world.dimension());
                     if (server == null) return tile;
-                    TileEntity atServer = server.getTileEntity(tile.getPos());
+                    TileEntity atServer = server.getBlockEntity(tile.getBlockPos());
                     if (atServer == null) return tile;
                     if (atServer.getClass() == tile.getClass()) {
                         return (T) atServer;
@@ -222,45 +232,52 @@ public abstract class BCLibProxy implements IGuiHandler {
 
         @Override
         public File getGameDirectory() {
-            return Minecraft.getMinecraft().mcDataDir;
+            return Minecraft.getInstance().gameDirectory;
         }
 
         @Override
         public Iterable<File> getLoadedResourcePackFiles() {
             List<File> files = new ArrayList<>();
-            for (ResourcePackRepository.Entry entry : Minecraft.getMinecraft().getResourcePackRepository()
-                .getRepositoryEntries()) {
-                IResourcePack pack = entry.getResourcePack();
-                if (pack instanceof AbstractResourcePack) {
-                    AbstractResourcePack p = (AbstractResourcePack) pack;
-                    Object f = ObfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, p, 1);
-                    if (!(f instanceof File)) {
-                        throw new Error("We've got the wrong field! (Expected a file but got " + f + ")");
+//            for (ResourcePackRepository.Entry entry : Minecraft.getInstance().getResourcePackRepository().getRepositoryEntries())
+            for (ResourcePackInfo pack : Minecraft.getInstance().getResourcePackRepository().getAvailablePacks()) {
+//                IResourcePack pack = entry.getResourcePack();
+//                if (pack instanceof AbstractResourcePack)
+                IResourcePack opened = pack.open();
+                if (opened instanceof ResourcePack) {
+//                    AbstractResourcePack p = (AbstractResourcePack) pack;
+                    ResourcePack p = (ResourcePack) opened;
+//                    Object f = ObfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, p, 1);
+//                    if (!(f instanceof File)) {
+//                        throw new Error("We've got the wrong field! (Expected a file but got " + f + ")");
+//                    }
+//                    files.add((File) f);
+                    if (p.file.exists()) {
+                        files.add(p.file);
                     }
-                    files.add((File) f);
                 }
+                opened.close();
             }
             return files;
         }
 
-        @Override
-        public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-            if (id == 0) {
-                EnumHand hand = x == 0 ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
-                ItemStack stack = player.getHeldItem(hand);
-                String name = ItemGuide.getBookName(stack);
-                if (name == null) {
-                    return new GuiGuide();
-                } else {
-                    return new GuiGuide(name);
-                }
-            }
-            return null;
-        }
+//        @Override
+//        public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+//            if (id == 0) {
+//                EnumHand hand = x == 0 ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+//                ItemStack stack = player.getHeldItem(hand);
+//                String name = ItemGuide.getBookName(stack);
+//                if (name == null) {
+//                    return new GuiGuide();
+//                } else {
+//                    return new GuiGuide(name);
+//                }
+//            }
+//            return null;
+//        }
 
         @Override
         public InputStream getStreamForIdentifier(ResourceLocation identifier) throws IOException {
-            return Minecraft.getMinecraft().getResourceManager().getResource(identifier).getInputStream();
+            return Minecraft.getInstance().getResourceManager().getResource(identifier).getInputStream();
         }
     }
 }

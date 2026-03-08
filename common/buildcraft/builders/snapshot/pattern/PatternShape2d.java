@@ -1,20 +1,18 @@
 package buildcraft.builders.snapshot.pattern;
 
+import buildcraft.api.filler.IFilledTemplate;
+import buildcraft.api.filler.IFillerPatternShape;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
+import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.PositionUtil.PathIterator2d;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import buildcraft.api.filler.IFilledTemplate;
-import buildcraft.api.filler.IFillerPatternShape;
-import buildcraft.api.statements.IStatementParameter;
-
-import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.PositionUtil.PathIterator2d;
-
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
 
 public abstract class PatternShape2d extends Pattern implements IFillerPatternShape {
     public PatternShape2d(String tag) {
@@ -63,7 +61,7 @@ public abstract class PatternShape2d extends Pattern implements IFillerPatternSh
             maxB = maxT;
             final int max_b = maxB;
             final PathIterator2d old = iterator;
-            iterator = (a, b) -> old.iterate(max_b - b,  a);
+            iterator = (a, b) -> old.iterate(max_b - b, a);
         }
         if (dir.rotationCount > 1) {
             final PathIterator2d old = iterator;
@@ -98,7 +96,9 @@ public abstract class PatternShape2d extends Pattern implements IFillerPatternSh
                 PositionGetter getter = getFillGetter(filledTemplate, axis);
 
                 if (filled.outerFilled) {
-                    iterator = (a, b) -> {};
+                    iterator = (a, b) ->
+                    {
+                    };
                 }
 
                 // Expand outwards from the point

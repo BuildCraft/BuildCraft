@@ -6,30 +6,18 @@
 
 package buildcraft.lib.client.model;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Point4f;
-import javax.vecmath.Tuple2f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Tuple4f;
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.core.render.ISprite;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.core.render.ISprite;
+import net.minecraft.util.math.vector.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Holds all of the information necessary to make one of the verticies in a {@link BakedQuad}. This provides a variety
@@ -42,7 +30,7 @@ import buildcraft.api.core.render.ISprite;
  * will take in 3 doubles and set them to the position element, and {@link #colouri(int, int, int, int)} will take in 4
  * int's and set them to the colour elements.
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class MutableVertex {
     /** The position of this vertex. */
     public float position_x, position_y, position_z;
@@ -54,6 +42,8 @@ public class MutableVertex {
     public float tex_u, tex_v;
     /** The light of this vertex. Should be in the range 0-15. */
     public byte light_block, light_sky;
+    // Calen
+    public int overlay;
 
     public MutableVertex() {
         normal_x = 0;
@@ -73,10 +63,10 @@ public class MutableVertex {
     @Override
     public String toString() {
         return "{ pos = [ " + position_x + ", " + position_y + ", " + position_z //
-            + " ], norm = [ " + normal_x + ", " + normal_y + ", " + normal_z//
-            + " ], colour = [ " + colour_r + ", " + colour_g + ", " + colour_b + ", " + colour_a//
-            + " ], tex = [ " + tex_u + ", " + tex_v //
-            + " ], light_block = " + light_block + ", light_sky = " + light_sky + " }";
+                + " ], norm = [ " + normal_x + ", " + normal_y + ", " + normal_z//
+                + " ], colour = [ " + colour_r + ", " + colour_g + ", " + colour_b + ", " + colour_a//
+                + " ], tex = [ " + tex_u + ", " + tex_v //
+                + " ], light_block = " + light_block + ", light_sky = " + light_sky + " }";
     }
 
     public MutableVertex copyFrom(MutableVertex from) {
@@ -113,6 +103,8 @@ public class MutableVertex {
         data[offset + 5] = Float.floatToRawIntBits(tex_v);
         // TEX_2S
         data[offset + 6] = lightc();
+        // Calen: NORMAL_3B + ELEMENT_PADDING 1B -> 1 Int
+        data[offset + 7] = normalToPackedInt();
     }
 
     public void toBakedItem(int[] data, int offset) {
@@ -120,13 +112,15 @@ public class MutableVertex {
         data[offset + 0] = Float.floatToRawIntBits(position_x);
         data[offset + 1] = Float.floatToRawIntBits(position_y);
         data[offset + 2] = Float.floatToRawIntBits(position_z);
-        // COLOR_4UB
+        // COLOR_4UB -> 1 int
         data[offset + 3] = colourRGBA();
         // TEX_2F
         data[offset + 4] = Float.floatToRawIntBits(tex_u);
         data[offset + 5] = Float.floatToRawIntBits(tex_v);
-        // NORMAL_3B
-        data[offset + 6] = normalToPackedInt();
+        // ELEMENT_UV2 Light 2 Short -> 1 int
+        data[offset + 6] = lightc();
+        // Calen: NORMAL_3B + ELEMENT_PADDING 1B -> 1 Int
+        data[offset + 7] = normalToPackedInt();
     }
 
     public void fromBakedBlock(int[] data, int offset) {
@@ -141,7 +135,9 @@ public class MutableVertex {
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // TEX_2S
         lighti(data[offset + 6]);
-        normalf(0, 1, 0);
+//        normalf(0, 1, 0);
+        // NORMAL_3B
+        normali(data[offset + 7]);
     }
 
     public void fromBakedItem(int[] data, int offset) {
@@ -154,71 +150,110 @@ public class MutableVertex {
         // TEX_2F
         tex_u = Float.intBitsToFloat(data[offset + 4]);
         tex_v = Float.intBitsToFloat(data[offset + 5]);
+        // TEX_2S
+//        lightf(1, 1);
+        lighti(data[offset + 6]);
         // NORMAL_3B
-        normali(data[offset + 6]);
-        lightf(1, 1);
+        normali(data[offset + 7]);
     }
 
     // Rendering
 
-    public void render(BufferBuilder bb) {
-        VertexFormat vf = bb.getVertexFormat();
-        if (vf == DefaultVertexFormats.BLOCK) {
-            renderAsBlock(bb);
-        } else {
-            for (VertexFormatElement vfe : vf.getElements()) {
-                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(bb);
-                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(bb);
-                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(bb);
-                else if (vfe.getUsage() == EnumUsage.UV) {
-                    if (vfe.getIndex() == 0) renderTex(bb);
-                    else if (vfe.getIndex() == 1) renderLightMap(bb);
-                }
-            }
-            bb.endVertex();
-        }
+    // public void render(BufferBuilder bb)
+    public void render(MatrixStack.Entry pose, IVertexBuilder vertexConsumer) {
+//        VertexFormat vf = bb.getVertexFormat();
+//        if (vf == DefaultVertexFormats.BLOCK) {
+//            renderAsBlock(bb);
+//        } else {
+//            for (VertexFormatElement vfe : vf.getElements()) {
+//                if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(bb);
+//                else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(bb);
+//                else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(bb);
+//                else if (vfe.getUsage() == EnumUsage.UV) {
+//                    if (vfe.getIndex() == 0) renderTex(bb);
+//                    else if (vfe.getIndex() == 1) renderLightMap(bb);
+//                }
+//            }
+//            bb.endVertex();
+//        }
+        renderAsBlock(pose, vertexConsumer);
+    }
+
+    // Calen
+    public void renderPositionColour(IVertexBuilder vertexConsumer) {
+//        renderPosition(vertexConsumer, pose.pose());
+        renderPositionWithoutPose(vertexConsumer);
+        renderColour(vertexConsumer);
+//        renderNormal(pose.normal(), vertexConsumer);
+        renderNormalWithoutPose(vertexConsumer);
+        vertexConsumer.endVertex();
     }
 
     /** Renders this vertex into the given {@link BufferBuilder}, assuming that the {@link VertexFormat} is
      * {@link DefaultVertexFormats#BLOCK}.
      * <p>
-     * Slight performance increase over {@link #render(BufferBuilder)}. */
-    public void renderAsBlock(BufferBuilder bb) {
-        renderPosition(bb);
-        renderColour(bb);
-        renderTex(bb);
-        renderLightMap(bb);
-        bb.endVertex();
+     * Slight performance increase over {@link #render(MatrixStack.Entry, IVertexBuilder)}. */
+//    public void renderAsBlock(BufferBuilder bb)
+    public void renderAsBlock(MatrixStack.Entry lastMatrix, IVertexBuilder buffer) {
+//        buffer.vertex(poseStack.last().pose(), position_x, position_y, position_z); // Calen test
+
+        renderPosition(buffer, lastMatrix.pose());
+        renderColour(buffer);
+        renderTex(buffer);
+        renderOverlay(buffer);
+        renderLightMap(buffer);
+        renderNormal(lastMatrix.normal(), buffer);
+        buffer.endVertex();
     }
 
-    public void renderPosition(BufferBuilder bb) {
-        bb.pos(position_x, position_y, position_z);
+    // public void renderPosition(BufferBuilder bb)
+    public void renderPosition(IVertexBuilder bb, net.minecraft.util.math.vector.Matrix4f matrix4f) {
+//        bb.pos(position_x, position_y, position_z);
+        bb.vertex(matrix4f, position_x, position_y, position_z);
     }
 
-    public void renderNormal(BufferBuilder bb) {
+    // Calen 1.20.1
+    public void renderPositionWithoutPose(IVertexBuilder bb) {
+//        bb.pos(position_x, position_y, position_z);
+        bb.vertex(position_x, position_y, position_z);
+    }
+
+    public void renderNormal(net.minecraft.util.math.vector.Matrix3f normal, IVertexBuilder bb) {
+        bb.normal(normal, normal_x, normal_y, normal_z);
+    }
+
+    // Calen 1.20.1
+    public void renderNormalWithoutPose(IVertexBuilder bb) {
         bb.normal(normal_x, normal_y, normal_z);
     }
 
-    public void renderColour(BufferBuilder bb) {
+    // public void renderColour(BufferBuilder bb)
+    public void renderColour(IVertexBuilder bb) {
         bb.color(colour_r, colour_g, colour_b, colour_a);
     }
 
-    public void renderTex(BufferBuilder bb) {
-        bb.tex(tex_u, tex_v);
+    public void renderTex(IVertexBuilder bb) {
+        bb.uv(tex_u, tex_v);
     }
 
     public void renderTex(BufferBuilder bb, ISprite sprite) {
-        bb.tex(sprite.getInterpU(tex_u), sprite.getInterpV(tex_v));
+        bb.uv((float) sprite.getInterpU(tex_u), (float) sprite.getInterpV(tex_v));
     }
 
-    public void renderLightMap(BufferBuilder bb) {
-        bb.lightmap(light_sky << 4, light_block << 4);
+    public void renderLightMap(IVertexBuilder bb) {
+//        bb.lightmap(light_sky << 4, light_block << 4);
+        bb.uv2(lightc());
+    }
+
+    // Calen add
+    public void renderOverlay(IVertexBuilder bb) {
+        bb.overlayCoords(overlay);
     }
 
     // Mutating
 
-    public MutableVertex positionv(Tuple3f vec) {
-        return positionf(vec.x, vec.y, vec.z);
+    public MutableVertex positionv(Vector3f vec) {
+        return positionf(vec.x(), vec.y(), vec.z());
     }
 
     public MutableVertex positiond(double x, double y, double z) {
@@ -232,16 +267,16 @@ public class MutableVertex {
         return this;
     }
 
-    public Point3f positionvf() {
-        return new Point3f(position_x, position_y, position_z);
+    public Vector3f positionvf() {
+        return new Vector3f(position_x, position_y, position_z);
     }
 
     /** Sets the current normal for this vertex based off the given vector.<br>
      * Note: This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings.
-     * 
+     *
      * @see #normalf(float, float, float) */
-    public MutableVertex normalv(Tuple3f vec) {
-        return normalf(vec.x, vec.y, vec.z);
+    public MutableVertex normalv(Vector3f vec) {
+        return normalf(vec.x(), vec.y(), vec.z());
     }
 
     /** Sets the current normal given the x, y, and z coordinates. These are NOT normalised or checked. */
@@ -270,8 +305,8 @@ public class MutableVertex {
 
     public int normalToPackedInt() {
         return normalAsByte(normal_x, 0) //
-            | normalAsByte(normal_y, 8) //
-            | normalAsByte(normal_z, 16);
+                | normalAsByte(normal_y, 8) //
+                | normalAsByte(normal_z, 16);
     }
 
     private static int normalAsByte(float norm, int offset) {
@@ -279,8 +314,8 @@ public class MutableVertex {
         return as << offset;
     }
 
-    public MutableVertex colourv(Tuple4f vec) {
-        return colourf(vec.x, vec.y, vec.z, vec.w);
+    public MutableVertex colourv(Vector4f vec) {
+        return colourf(vec.x(), vec.y(), vec.z(), vec.w());
     }
 
     public MutableVertex colourf(float r, float g, float b, float a) {
@@ -299,8 +334,8 @@ public class MutableVertex {
         return this;
     }
 
-    public Point4f colourv() {
-        return new Point4f(colour_r / 255f, colour_g / 255f, colour_b / 255f, colour_a / 255f);
+    public Vector4f colourv() {
+        return new Vector4f(colour_r / 255f, colour_g / 255f, colour_b / 255f, colour_a / 255f);
     }
 
     public int colourRGBA() {
@@ -348,12 +383,12 @@ public class MutableVertex {
     }
 
     public MutableVertex texFromSprite(TextureAtlasSprite sprite) {
-        tex_u = sprite.getInterpolatedU(tex_u * 16);
-        tex_v = sprite.getInterpolatedV(tex_v * 16);
+        tex_u = sprite.getU(tex_u * 16);
+        tex_v = sprite.getV(tex_v * 16);
         return this;
     }
 
-    public MutableVertex texv(Tuple2f vec) {
+    public MutableVertex texv(Vector2f vec) {
         return texf(vec.x, vec.y);
     }
 
@@ -363,38 +398,49 @@ public class MutableVertex {
         return this;
     }
 
-    public Point2f tex() {
-        return new Point2f(tex_u, tex_v);
+    public Vector2f tex() {
+        return new Vector2f(tex_u, tex_v);
     }
 
-    public MutableVertex lightv(Tuple2f vec) {
+    public MutableVertex lightv(Vector2f vec) {
         return lightf(vec.x, vec.y);
     }
 
     public MutableVertex lightf(float block, float sky) {
-        return lighti((int) (block * 0xF), (int) (sky * 0xF));
+        return lighti((byte) (block * 0xF), (byte) (sky * 0xF));
+//        return lighti((short) (((int) (block * 0xF)) << 4), (short) (((int) (sky * 0xF)) << 4));
     }
 
     public MutableVertex lighti(int combined) {
-        return lighti(combined >> 4, combined >> 20);
+        return lighti((byte) (combined >> 4), (byte) (combined >> 20));
     }
 
-    public MutableVertex lighti(int block, int sky) {
+    // Calen add
+    public MutableVertex overlay(int overlayIn) {
+        overlay = overlayIn;
+        return this;
+    }
+
+    // public MutableVertex maxLighti(int block, int sky)
+    public MutableVertex lighti(byte block, byte sky) {
         light_block = (byte) block;
         light_sky = (byte) sky;
         return this;
     }
 
-    public MutableVertex maxLighti(int block, int sky) {
-        return lighti(Math.max(block, light_block), Math.max(sky, light_sky));
+    public MutableVertex maxLighti(byte block, byte sky) {
+//        return lighti(Math.max(block, light_block), Math.max(sky, light_sky));
+        return lighti((byte) Math.max(block, light_block), (byte) Math.max(sky, light_sky));
     }
 
-    public Point2f lightvf() {
-        return new Point2f(light_block * 15f, light_sky * 15f);
+    public Vector2f lightvf() {
+        return new Vector2f(light_block * 15f, light_sky * 15f);
     }
 
     public int lightc() {
-        return light_block << 4 + light_sky << 20;
+        // Calen FIX: BC 1.12.2 made a mistake!
+        // without (), + will be calculated before <<
+        return (light_block << 4) + (light_sky << 20);
     }
 
     public int[] lighti() {
@@ -402,12 +448,16 @@ public class MutableVertex {
     }
 
     public MutableVertex transform(Matrix4f matrix) {
-        Point3f point = positionvf();
-        matrix.transform(point);
+        Vector3f point = positionvf();
+        Vector4f point4f = new Vector4f(point);
+        point4f.transform(matrix);
+        point.set(point4f.x(), point4f.y(), point4f.z());
         positionv(point);
 
         Vector3f normal = normal();
-        matrix.transform(normal);
+        Vector4f normal4f = new Vector4f(normal);
+        normal4f.transform(matrix);
+        normal.set(normal4f.x(), normal4f.y(), normal4f.z());
         normalv(normal);
         return this;
     }
@@ -433,11 +483,11 @@ public class MutableVertex {
         return this;
     }
 
-    public MutableVertex translatevi(Vec3i vec) {
+    public MutableVertex translatevi(Vector3i vec) {
         return translatei(vec.getX(), vec.getY(), vec.getZ());
     }
 
-    public MutableVertex translatevd(Vec3d vec) {
+    public MutableVertex translatevd(Vector3d vec) {
         return translated(vec.x, vec.y, vec.z);
     }
 
@@ -466,21 +516,27 @@ public class MutableVertex {
 
     /** Rotates around the X axis by angle. */
     public void rotateX(float angle) {
+//        float cos = MathHelper.cos(angle);
         float cos = MathHelper.cos(angle);
+//        float sin = MathHelper.sin(angle);
         float sin = MathHelper.sin(angle);
         rotateDirectlyX(cos, sin);
     }
 
     /** Rotates around the Y axis by angle. */
     public void rotateY(float angle) {
+//        float cos = MathHelper.cos(angle);
         float cos = MathHelper.cos(angle);
+//        float sin = MathHelper.sin(angle);
         float sin = MathHelper.sin(angle);
         rotateDirectlyY(cos, sin);
     }
 
     /** Rotates around the Z axis by angle. */
     public void rotateZ(float angle) {
+//        float cos = MathHelper.cos(angle);
         float cos = MathHelper.cos(angle);
+//        float sin = MathHelper.sin(angle);
         float sin = MathHelper.sin(angle);
         rotateDirectlyZ(cos, sin);
     }
@@ -507,7 +563,7 @@ public class MutableVertex {
     }
 
     /** Rotates this vertex around the X axis 90 degrees.
-     * 
+     *
      * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
      *            anti-clockwise. */
     public MutableVertex rotateX_90(float scale) {
@@ -525,7 +581,7 @@ public class MutableVertex {
     }
 
     /** Rotates this vertex around the Y axis 90 degrees.
-     * 
+     *
      * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
      *            anti-clockwise. */
     public MutableVertex rotateY_90(float scale) {
@@ -543,7 +599,7 @@ public class MutableVertex {
     }
 
     /** Rotates this vertex around the Z axis 90 degrees.
-     * 
+     *
      * @param scale The multiplier for scaling. Positive values will rotate clockwise, negative values rotate
      *            anti-clockwise. */
     public MutableVertex rotateZ_90(float scale) {

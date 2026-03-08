@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "tag": "buildcraft:sealant"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:waterproof"
+  }
+}

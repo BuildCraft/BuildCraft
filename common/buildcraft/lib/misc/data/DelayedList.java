@@ -6,12 +6,12 @@
 
 package buildcraft.lib.misc.data;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-
-import com.google.common.collect.ImmutableList;
 
 /** Implements a delayed list of something- stuff that can be postponed for later retrieval. A specialised ordered queue
  * really. */
@@ -25,8 +25,8 @@ public class DelayedList<E> {
 
     public static <E> DelayedList<E> createConcurrent() {
         return new DelayedList<E>(
-            Collections.synchronizedList(new ArrayList<>()),
-            () -> Collections.synchronizedList(new ArrayList<>())
+                Collections.synchronizedList(new ArrayList<>()),
+                () -> Collections.synchronizedList(new ArrayList<>())
         ) {
             @Override
             public List<E> advance() {
@@ -49,7 +49,7 @@ public class DelayedList<E> {
 
     /** Advances this list by one, effectively decrementing the delays of every element by one and returning all
      * elements that have a delay of 0.
-     * 
+     *
      * @return The elements that are no longer on a delay. */
     public List<E> advance() {
         if (elements.isEmpty()) {
@@ -59,7 +59,7 @@ public class DelayedList<E> {
     }
 
     /** Adds an element that will by returned by {@link #advance()} after it has been called delay times.
-     * 
+     *
      * @param delay The number of times that advance needs to be called for the *next* advance to return this element.
      *            Negative numbers default up to 0. */
     public void add(int delay, E element) {

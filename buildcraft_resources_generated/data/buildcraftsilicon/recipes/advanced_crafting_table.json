@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftsilicon",
+  "pattern": [
+    "OtO",
+    "OcO",
+    "OrO"
+  ],
+  "key": {
+    "r": {
+      "item": "buildcraftsilicon:chipset_redstone"
+    },
+    "c": {
+      "tag": "forge:chests/wooden"
+    },
+    "t": {
+      "tag": "forge:workbenches"
+    },
+    "O": {
+      "tag": "forge:obsidian"
+    }
+  },
+  "result": {
+    "item": "buildcraftsilicon:advanced_crafting_table"
+  }
+}

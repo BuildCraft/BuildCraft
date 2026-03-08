@@ -6,42 +6,36 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-
+import buildcraft.api.blocks.BlockConstants;
+import buildcraft.api.core.IFakeWorld;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.SchematicBlockContext;
-
 import buildcraft.lib.misc.BlockUtil;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
+
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SchematicBlockFluid implements ISchematicBlock {
-    private IBlockState blockState;
+    private BlockState blockState;
     private boolean isFlowing;
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
         return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null &&
-            (BlockUtil.getFluid(context.world, context.pos) == null ||
-                BlockUtil.getFluidWithoutFlowing(context.world.getBlockState(context.pos)) != null);
+                (BlockUtil.getFluid(context.world, context.pos) == null ||
+                        BlockUtil.getFluidWithoutFlowing(context.world.getBlockState(context.pos)) != null);
     }
 
     @Override
@@ -53,19 +47,22 @@ public class SchematicBlockFluid implements ISchematicBlock {
     @Nonnull
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
-        return Stream.concat(Arrays.stream(EnumFacing.HORIZONTALS), Stream.of(EnumFacing.DOWN))
-            .map(EnumFacing::getDirectionVec)
-            .map(BlockPos::new)
-            .collect(Collectors.toSet());
+//        return Stream.concat(Arrays.stream(Direction.HORIZONTALS), Stream.of(Direction.DOWN))
+        return Stream.concat(Arrays.stream(Direction.BY_2D_DATA), Stream.of(Direction.DOWN))
+//                .map(Direction::getDirectionVec)
+                .map(Direction::getNormal)
+                .map(BlockPos::new)
+                .collect(Collectors.toSet());
     }
 
     @Nonnull
     @Override
     public List<FluidStack> computeRequiredFluids() {
         return Optional.ofNullable(BlockUtil.getFluidWithoutFlowing(blockState))
-            .map(fluid -> new FluidStack(fluid, Fluid.BUCKET_VOLUME))
-            .map(Collections::singletonList)
-            .orElseGet(Collections::emptyList);
+//                .map(fluid -> new FluidStack(fluid, Fluid.BUCKET_VOLUME))
+                .map(fluid -> new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME))
+                .map(Collections::singletonList)
+                .orElseGet(Collections::emptyList);
     }
 
     @Override
@@ -78,9 +75,9 @@ public class SchematicBlockFluid implements ISchematicBlock {
 
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
-        return world.isAirBlock(blockPos) ||
-            BlockUtil.getFluidWithFlowing(world, blockPos) == BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
-                BlockUtil.getFluid(world, blockPos) == null;
+        return world.isEmptyBlock(blockPos) ||
+                BlockUtil.getFluidWithFlowing(world, blockPos) == BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
+                        BlockUtil.getFluid(world, blockPos) == null;
     }
 
     @Override
@@ -88,23 +85,28 @@ public class SchematicBlockFluid implements ISchematicBlock {
         if (isFlowing) {
             return true;
         }
-        if (world.setBlockState(blockPos, blockState, 11)) {
+        if (world.setBlock(blockPos, blockState, BlockConstants.UPDATE_ALL_IMMEDIATE)) {
             Stream.concat(
-                Stream.of(EnumFacing.VALUES)
-                    .map(EnumFacing::getDirectionVec)
-                    .map(BlockPos::new),
-                Stream.of(BlockPos.ORIGIN)
-            )
-                .map(blockPos::add)
-                .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
+                            Stream.of(Direction.values())
+//                                    .map(Direction::getDirectionVec)
+                                    .map(Direction::getNormal)
+                                    .map(BlockPos::new),
+//                            Stream.of(BlockPos.ORIGIN)
+                            Stream.of(BlockPos.ZERO)
+                    )
+//                    .map(blockPos::add)
+                    .map(blockPos::offset)
+//                    .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, blockState.getBlock(), false));
+                    .forEach(updatePos -> world.updateNeighborsAt(updatePos, blockState.getBlock()));
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean buildWithoutChecks(World world, BlockPos blockPos) {
-        return world.setBlockState(blockPos, blockState, 0);
+//    public boolean buildWithoutChecks(World world, BlockPos blockPos)
+    public boolean buildWithoutChecks(IFakeWorld world, BlockPos blockPos) {
+        return world.setBlock(blockPos, blockState, 0);
     }
 
     @Override
@@ -113,16 +115,17 @@ public class SchematicBlockFluid implements ISchematicBlock {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("blockState", NBTUtil.writeBlockState(new NBTTagCompound(), blockState));
-        nbt.setBoolean("isFlowing", isFlowing);
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+//        nbt.put("blockState", NBTUtil.writeBlockState(new CompoundNBT(), blockState));
+        nbt.put("blockState", NBTUtil.writeBlockState(blockState));
+        nbt.putBoolean("isFlowing", isFlowing);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
+    public void deserializeNBT(CompoundNBT nbt) throws InvalidInputDataException {
+        blockState = NBTUtil.readBlockState(nbt.getCompound("blockState"));
         isFlowing = nbt.getBoolean("isFlowing");
     }
 

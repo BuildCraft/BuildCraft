@@ -6,14 +6,12 @@
 
 package buildcraft.lib.client.model;
 
+import buildcraft.lib.client.model.ModelCache.IModelGenerator;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.client.renderer.model.BakedQuad;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-
-import buildcraft.lib.client.model.ModelCache.IModelGenerator;
 
 public class ModelCacheJoiner<K> implements IModelCache<K> {
     private final IModelCache<K> mainCache;

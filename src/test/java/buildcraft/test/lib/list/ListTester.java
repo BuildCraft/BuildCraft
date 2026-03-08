@@ -1,10 +1,9 @@
 package buildcraft.test.lib.list;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import org.junit.Assert;
 import org.junit.Test;
-
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.api.lists.ListMatchHandler.Type;
 
@@ -19,7 +18,8 @@ public class ListTester extends VanillaSetupBaseTester {
         ItemStack ironAxe = new ItemStack(Items.IRON_AXE);
         ItemStack woodenShovel = new ItemStack(Items.WOODEN_SHOVEL);
         ItemStack woodenAxeDamaged = new ItemStack(Items.WOODEN_AXE);
-        woodenAxeDamaged.setItemDamage(26);
+//        woodenAxeDamaged.setItemDamage(26);
+        woodenAxeDamaged.setDamageValue(26);
         ItemStack apple = new ItemStack(Items.APPLE);
 
         Assert.assertTrue(matcher.isValidSource(Type.TYPE, woodenAxe));

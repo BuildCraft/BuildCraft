@@ -1,18 +1,20 @@
 package buildcraft.lib.client.resource;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.data.IMetadataSectionSerializer;
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Nullable;
+// Calen: never used in 1.12.2
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.data.MetadataSerializer;
-import net.minecraft.util.ResourceLocation;
-
-/** Alternate metadata loader for {@link IResource#getMetadata(String)} */
+/** Alternate metadata loader for {@link IResource#getMetadata(IMetadataSectionSerializer)} */
+@Deprecated()
 public class MetadataLoader {
 
     private static boolean hasRegistered = false;
@@ -20,21 +22,23 @@ public class MetadataLoader {
     private static void register() {
         if (!hasRegistered) {
             hasRegistered = true;
-            MetadataSerializer metaReg = Minecraft.getMinecraft().getResourcePackRepository().rprMetadataSerializer;
-            metaReg.registerMetadataSectionType(DataMetadataSection.DESERIALISER, DataMetadataSection.class);
+//            MetadataSerializer metaReg = Minecraft.getInstance().getResourcePackRepository().rprMetadataSerializer;
+//            metaReg.registerMetadataSectionType(DataMetadataSection.DESERIALISER, DataMetadataSection.class);
         }
     }
 
     /** @param samePack If true, then only the data in the same resource pack will be returned. */
     @Nullable
     public static DataMetadataSection getData(ResourceLocation location, boolean samePack) {
-        IResourceManager resManager = Minecraft.getMinecraft().getResourceManager();
+        IResourceManager resManager = Minecraft.getInstance().getResourceManager();
         register();
         try {
-            List<IResource> resources = resManager.getAllResources(location);
+//            List<IResource> resources = resManager.getAllResources(location);
+            List<IResource> resources = resManager.getResources(location);
             DataMetadataSection section = null;
             for (IResource resource : resources) {
-                section = resource.getMetadata(DataMetadataSection.SECTION_NAME);
+//                section = resource.getMetadata(DataMetadataSection.SECTION_NAME);
+                section = resource.getMetadata(DataMetadataSection.DESERIALISER);
                 if (section != null || samePack) {
                     break;
                 }

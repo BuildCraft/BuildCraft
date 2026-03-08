@@ -6,52 +6,73 @@
 
 package buildcraft.factory.tile;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldEventListener;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.fluids.Fluid;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjReceiver;
-
+import buildcraft.core.BCCoreConfig;
+import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.lib.block.ILocalBlockUpdateSubscriber;
+import buildcraft.lib.block.LocalBlockUpdateNotifier;
 import buildcraft.lib.inventory.AutomaticProvidingTransactor;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
-import buildcraft.lib.world.WorldEventListenerAdapter;
-
-import buildcraft.core.BCCoreConfig;
-import buildcraft.factory.BCFactoryBlocks;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.server.ServerWorld;
 
 public class TileMiningWell extends TileMiner {
     private boolean shouldCheck = true;
     private final SafeTimeTracker tracker = new SafeTimeTracker(256);
-    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
+
+    // Calen: use LocalBlockUpdateNotifier.instance(level).remove/registerSubscriberFromUpdateNotifications()
+    // just like TileLaser
+//    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter()
+//    {
+//        @Override
+//        public void notifyBlockUpdate(@Nonnull World world,
+//                                      @Nonnull BlockPos pos,
+//                                      @Nonnull IBlockState oldState,
+//                                      @Nonnull IBlockState newState,
+//                                      int flags)
+//        {
+//            if (pos.getX() == TileMiningWell.this.pos.getX() &&
+//                    pos.getY() <= TileMiningWell.this.pos.getY() &&
+//                    pos.getZ() == TileMiningWell.this.pos.getZ())
+//            {
+//                shouldCheck = true;
+//            }
+//        }
+//    };
+    ILocalBlockUpdateSubscriber subscriber = new ILocalBlockUpdateSubscriber() {
         @Override
-        public void notifyBlockUpdate(@Nonnull World world,
-                                      @Nonnull BlockPos pos,
-                                      @Nonnull IBlockState oldState,
-                                      @Nonnull IBlockState newState,
-                                      int flags) {
-            if (pos.getX() == TileMiningWell.this.pos.getX() &&
-                pos.getY() <= TileMiningWell.this.pos.getY() &&
-                pos.getZ() == TileMiningWell.this.pos.getZ()) {
+        public BlockPos getSubscriberPos() {
+            return TileMiningWell.this.worldPosition;
+        }
+
+        @Override
+        public int getUpdateRange() {
+            return level.getMaxBuildHeight() - 0;
+//            return level.getMaxBuildHeight() - level.getMinBuildHeight();
+        }
+
+        @Override
+        public void setWorldUpdated(IWorld world, BlockPos pos) {
+            if (pos.getX() == TileMiningWell.this.worldPosition.getX() &&
+                    pos.getY() <= TileMiningWell.this.worldPosition.getY() &&
+                    pos.getZ() == TileMiningWell.this.worldPosition.getZ())
+            {
                 shouldCheck = true;
             }
         }
     };
 
     public TileMiningWell() {
-        super();
+        super(BCFactoryBlocks.miningWellTile.get());
         caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
     }
 
@@ -59,26 +80,28 @@ public class TileMiningWell extends TileMiner {
     protected void mine() {
         if (currentPos != null && canBreak()) {
             shouldCheck = true;
-            long target = BlockUtil.computeBlockBreakPower(world, currentPos);
+            long target = BlockUtil.computeBlockBreakPower(level, currentPos);
             progress += battery.extractPower(0, target - progress);
             if (progress >= target) {
                 progress = 0;
-                world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+//                level.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+                level.destroyBlockProgress(currentPos.hashCode(), currentPos, -1);
                 BlockUtil.breakBlockAndGetDrops(
-                    (WorldServer) world,
-                    currentPos,
-                    new ItemStack(Items.DIAMOND_PICKAXE),
-                    getOwner()
+                        (ServerWorld) level,
+                        currentPos,
+                        new ItemStack(Items.DIAMOND_PICKAXE),
+                        getOwner()
                 ).ifPresent(stacks ->
-                    stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack))
+                        stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(level, worldPosition, null, stack))
                 );
                 nextPos();
             } else {
-                if (!world.isAirBlock(currentPos)) {
-                    world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
+                if (!level.isEmptyBlock(currentPos)) {
+//                    level.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
+                    level.destroyBlockProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
                 }
             }
-        } else if (shouldCheck || tracker.markTimeIfDelay(world)) {
+        } else if (shouldCheck || tracker.markTimeIfDelay(level)) {
             nextPos();
             if (currentPos == null) {
                 shouldCheck = false;
@@ -87,28 +110,28 @@ public class TileMiningWell extends TileMiner {
     }
 
     private boolean canBreak() {
-        if (world.isAirBlock(currentPos) || BlockUtil.isUnbreakableBlock(world, currentPos, getOwner())) {
+        if (level.isEmptyBlock(currentPos) || BlockUtil.isUnbreakableBlock(level, currentPos, getOwner())) {
             return false;
         }
 
-        Fluid fluid = BlockUtil.getFluidWithFlowing(world, currentPos);
-        return fluid == null || fluid.getViscosity() <= 1000;
+        Fluid fluid = BlockUtil.getFluidWithFlowing(level, currentPos);
+        return fluid == null || fluid.getAttributes().getViscosity() <= 1000;
     }
 
     private void nextPos() {
-        currentPos = pos;
+        currentPos = worldPosition;
         while (true) {
-            currentPos = currentPos.down();
-            if (world.isOutsideBuildHeight(currentPos)) {
+            currentPos = currentPos.below();
+            if (level.isOutsideBuildHeight(currentPos)) {
                 break;
             }
-            if (pos.getY() - currentPos.getY() > BCCoreConfig.miningMaxDepth) {
+            if (worldPosition.getY() - currentPos.getY() > BCCoreConfig.miningMaxDepth) {
                 break;
             }
             if (canBreak()) {
                 updateLength();
                 return;
-            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!level.isEmptyBlock(currentPos) && level.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube.get()) {
                 break;
             }
         }
@@ -117,20 +140,27 @@ public class TileMiningWell extends TileMiner {
     }
 
     @Override
-    public void validate() {
-        super.validate();
-        if (!world.isRemote) {
-            world.addEventListener(worldEventListener);
+//    public void validate()
+    public void clearRemoved() {
+//        super.validate();
+        super.clearRemoved();
+        if (!level.isClientSide) {
+//            level.addEventListener(worldEventListener);
+            LocalBlockUpdateNotifier.instance(level).registerSubscriberForUpdateNotifications(this.subscriber);
         }
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
-        if (!world.isRemote) {
-            world.removeEventListener(worldEventListener);
+//    public void invalidate()
+    public void setRemoved() {
+//        super.invalidate();
+        super.setRemoved();
+        if (!level.isClientSide) {
+//            level.removeEventListener(worldEventListener);
+            LocalBlockUpdateNotifier.instance(level).removeSubscriberFromUpdateNotifications(this.subscriber);
             if (currentPos != null) {
-                world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+//                level.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+                level.destroyBlockProgress(currentPos.hashCode(), currentPos, -1);
             }
         }
     }

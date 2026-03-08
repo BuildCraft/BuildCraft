@@ -6,14 +6,12 @@
 
 package buildcraft.lib.gui.slot;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.items.SlotItemHandler;
-
 import buildcraft.lib.tile.item.IItemHandlerAdv;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.SlotItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class SlotBase extends SlotItemHandler {
     public final int handlerIndex;
@@ -30,7 +28,7 @@ public class SlotBase extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@Nonnull ItemStack stack) {
         return itemHandler.canSet(handlerIndex, stack);
     }
 
@@ -42,10 +40,10 @@ public class SlotBase extends SlotItemHandler {
     }
 
     @Override
-    public void onSlotChanged() {
-        super.onSlotChanged();
+    public void setChanged() {
+        super.setChanged();
         if (itemHandler instanceof ItemHandlerSimple) {
-            ((ItemHandlerSimple) itemHandler).setStackInSlot(handlerIndex, getStack());
+            ((ItemHandlerSimple) itemHandler).setStackInSlot(handlerIndex, getItem());
         }
     }
 }

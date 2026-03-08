@@ -3,9 +3,8 @@ package buildcraft.test;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import net.minecraft.util.registry.Bootstrap;
 import org.junit.BeforeClass;
-
-import net.minecraft.init.Bootstrap;
 
 public class VanillaSetupBaseTester {
     @BeforeClass
@@ -14,7 +13,8 @@ public class VanillaSetupBaseTester {
         PrintStream sysOut = System.out;
         InputStream sysIn = System.in;
 
-        Bootstrap.register();
+//        Bootstrap.register();
+        Bootstrap.bootStrap();
 
         System.setIn(sysIn);
         System.setOut(sysOut);

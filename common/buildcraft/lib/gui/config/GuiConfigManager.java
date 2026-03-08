@@ -1,5 +1,16 @@
 package buildcraft.lib.gui.config;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.IVariableNode;
+import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
+import buildcraft.lib.expression.api.NodeTypes;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.misc.MessageUtil;
+import com.google.gson.*;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,24 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IVariableNode;
-import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
-import buildcraft.lib.expression.api.NodeTypes;
-import buildcraft.lib.expression.node.value.NodeConstantBoolean;
-import buildcraft.lib.misc.MessageUtil;
 
 /** Stores configuration values about GUI elements. Primarily which ledger is open, however json based gui's may add
  * config options per-gui. */
@@ -55,13 +48,16 @@ public class GuiConfigManager {
     }
 
     public static void markDirty() {
-        if (!isDirty && BCLibConfig.guiConfigFile != null) {
+//        if (!isDirty && BCLibConfig.guiConfigFile != null)
+        if (!isDirty && BCLibConfig.getGuiConfigFileAndEnsureCreated() != null) {
             // Minimise successive file writes -- add a little bit of a delay
-            MessageUtil.doDelayedClient(10, () -> {
+            MessageUtil.doDelayedClient(10, () ->
+            {
                 if (!isDirty) {
                     return;
                 }
-                try (FileWriter fw = new FileWriter(BCLibConfig.guiConfigFile)) {
+//                try (FileWriter fw = new FileWriter(BCLibConfig.guiConfigFile))
+                try (FileWriter fw = new FileWriter(BCLibConfig.getGuiConfigFileAndEnsureCreated())) {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     try (BufferedWriter bw = new BufferedWriter(fw)) {
                         JsonObject json = writeToJson();
@@ -80,11 +76,13 @@ public class GuiConfigManager {
     }
 
     public static void loadFromConfigFile() {
-        if (BCLibConfig.guiConfigFile != null) {
+//        if (BCLibConfig.guiConfigFile != null)
+        if (BCLibConfig.getGuiConfigFileAndEnsureCreated() != null) {
             Gson gson = new Gson();
             List<String> lines;
             try {
-                lines = Files.readAllLines(BCLibConfig.guiConfigFile.toPath());
+//                lines = Files.readAllLines(BCLibConfig.guiConfigFile.toPath());
+                lines = Files.readAllLines(BCLibConfig.getGuiConfigFileAndEnsureCreated().toPath());
             } catch (IOException io) {
                 BCLog.logger.warn("[lib.gui.cfg] Failed to read the config file! " + io.getMessage());
                 return;
@@ -99,11 +97,11 @@ public class GuiConfigManager {
                 return;
             } catch (JsonSyntaxException jse) {
                 BCLog.logger.warn("[lib.gui.cfg] There's a problem with the config file: try fixing it manually, "
-                    + "or deleting it to let buildcraft overwrite it on save." + jse.getMessage());
+                        + "or deleting it to let buildcraft overwrite it on save." + jse.getMessage());
             } catch (ClassCastException cce) {
                 // This happens occasionally, and its a bit wierd
                 BCLog.logger.warn("[lib.gui.cfg] There's a major problem with the config file: try fixing it manually, "
-                    + "or deleting it to let buildcraft overwrite it on save." + cce.getMessage());
+                        + "or deleting it to let buildcraft overwrite it on save." + cce.getMessage());
 
             }
             BCLog.logger.info("File contents:");

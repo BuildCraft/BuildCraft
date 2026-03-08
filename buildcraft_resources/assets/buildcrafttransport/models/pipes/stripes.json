@@ -1,6 +1,6 @@
 {
     "textures": {
-        "#all":"minecraft:blocks/gold_block",
+        "#all":"minecraft:block/gold_block",
         "particle":"#all"
     },
     "shade": true,

@@ -1,10 +1,10 @@
 package buildcraft.lib.client.guide.node;
 
-import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.util.text.TextFormatting;
+
+import javax.annotation.Nullable;
+import java.util.Set;
 
 /** A segment of a larger text */
 public final class FormatSegment {
@@ -38,10 +38,10 @@ public final class FormatSegment {
     public String toString() {
         StringBuilder miscStr = new StringBuilder();
         for (TextFormatting format : misc) {
-            miscStr.append(format.getFriendlyName());
+            miscStr.append(format.getName());
             miscStr.append(' ');
         }
-        return (colour == null ? "" : (colour.getFriendlyName() + ""))//
-            + miscStr + text;
+        return (colour == null ? "" : (colour.getName() + ""))//
+                + miscStr + text;
     }
 }

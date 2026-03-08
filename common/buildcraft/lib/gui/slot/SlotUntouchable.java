@@ -6,12 +6,11 @@
 
 package buildcraft.lib.gui.slot;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.lib.tile.item.IItemHandlerAdv;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.tile.item.IItemHandlerAdv;
+import javax.annotation.Nonnull;
 
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
@@ -20,12 +19,14 @@ public class SlotUntouchable extends SlotBase implements IPhantomSlot {
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack itemstack) {
+//    public boolean isItemValid(@Nonnull ItemStack itemstack)
+    public boolean mayPlace(@Nonnull ItemStack itemstack) {
         return false;
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
+//    public boolean canTakeStack(PlayerEntity par1EntityPlayer)
+    public boolean mayPickup(PlayerEntity par1EntityPlayer) {
         return false;
     }
 

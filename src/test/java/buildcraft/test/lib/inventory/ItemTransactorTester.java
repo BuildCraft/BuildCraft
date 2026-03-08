@@ -1,10 +1,9 @@
 package buildcraft.test.lib.inventory;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import org.junit.Assert;
 import org.junit.Test;
-
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.api.inventory.IItemTransactor;
 
@@ -27,7 +26,8 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
 
         ItemStack extracted = trans.extract(null, 1, 1, false);
 
-        Assert.assertTrue(ItemStack.areItemStacksEqual(insert, extracted));
+//        Assert.assertTrue(ItemStack.areItemStacksEqual(insert, extracted));
+        Assert.assertTrue(ItemStack.matches(insert, extracted));
 
         extracted = trans.extract(null, 1, 1, false);
 
@@ -44,7 +44,9 @@ public class ItemTransactorTester extends VanillaSetupBaseTester {
 
         ItemStack actuallyLeftOver = limited.insert(toInsert, false, false);
 
-        Assert.assertTrue(ItemStack.areItemStacksEqual(toInsert, toInsertCopy));
-        Assert.assertTrue(ItemStack.areItemStacksEqual(supposedLeftOver, actuallyLeftOver));
+//        Assert.assertTrue(ItemStack.areItemStacksEqual(toInsert, toInsertCopy));
+        Assert.assertTrue(ItemStack.matches(toInsert, toInsertCopy));
+//        Assert.assertTrue(ItemStack.areItemStacksEqual(supposedLeftOver, actuallyLeftOver));
+        Assert.assertTrue(ItemStack.matches(supposedLeftOver, actuallyLeftOver));
     }
 }

@@ -1,22 +1,20 @@
 package buildcraft.lib.fluid;
 
-import java.util.List;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.IPayloadWriter;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
+import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.BCCoreConfig;
+import java.util.List;
 
 public class FluidSmoother implements IDebuggable {
     final IFluidDataSender sender;
@@ -33,7 +31,7 @@ public class FluidSmoother implements IDebuggable {
             if (world == null) {
                 return;
             }
-            data = world.isRemote ? new _Client() : new _Server();
+            data = world.isClientSide ? new _Client() : new _Server();
         }
         data.tick(world);
     }
@@ -61,7 +59,7 @@ public class FluidSmoother implements IDebuggable {
     }
 
     public void resetSmoothing(World world) {
-        if (data == null && world.isRemote) {
+        if (data == null && world.isClientSide) {
             data = new _Client();
         }
         if (data instanceof _Client) {
@@ -109,7 +107,8 @@ public class FluidSmoother implements IDebuggable {
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
         if (data != null) {
             data.getDebugInfo(left, right, side);
         }
@@ -170,10 +169,14 @@ public class FluidSmoother implements IDebuggable {
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//        public void getDebugInfo(List<String> left, List<String> right, Direction side)
+        public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//            String contents = (tank.getFluid() != null) ? "Something" : "Nothing";
+//            left.add("current = " + tank.getFluidAmount() + " of " + contents);
+//            left.add("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing"));
             String contents = (tank.getFluid() != null) ? "Something" : "Nothing";
-            left.add("current = " + tank.getFluidAmount() + " of " + contents);
-            left.add("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing"));
+            left.add(new StringTextComponent("current = " + tank.getFluidAmount() + " of " + contents));
+            left.add(new StringTextComponent("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing")));
         }
     }
 
@@ -204,19 +207,21 @@ public class FluidSmoother implements IDebuggable {
                 link = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
             }
             lastMessageMinus1 = lastMessage;
-            lastMessage = world.getTotalWorldTime();
+            lastMessage = world.getGameTime();
         }
 
         void resetSmoothing(World world) {
-            lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
+            lastMessageMinus1 = lastMessage = world.getGameTime();
             lastMessageMinus1 -= 1;
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-            left.add("shown = " + amount + ", target = " + target);
-            left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = "
-                + (lastMessage - lastMessageMinus1));
+//        public void getDebugInfo(List<String> left, List<String> right, Direction side)
+        public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//            left.add("shown = " + amount + ", target = " + target);
+//            left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = " + (lastMessage - lastMessageMinus1));
+            left.add(new StringTextComponent("shown = " + amount + ", target = " + target));
+            left.add(new StringTextComponent("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = " + (lastMessage - lastMessageMinus1)));
         }
     }
 }

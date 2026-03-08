@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftsilicon",
+  "pattern": [
+    "rro",
+    "rdd",
+    "rro"
+  ],
+  "key": {
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "d": {
+      "tag": "forge:gems/diamond"
+    },
+    "o": {
+      "tag": "forge:obsidian"
+    }
+  },
+  "result": {
+    "item": "buildcraftsilicon:laser"
+  }
+}

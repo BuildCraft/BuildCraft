@@ -1,32 +1,31 @@
 package buildcraft.energy.tile;
 
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.core.tile.ITileOilSpring;
+import buildcraft.energy.BCEnergyBlocks;
+import buildcraft.lib.misc.AdvancementUtil;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.Constants;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-
-import net.minecraftforge.common.util.Constants;
-
-import buildcraft.api.tiles.IDebuggable;
-
-import buildcraft.lib.misc.AdvancementUtil;
-
-import buildcraft.core.tile.ITileOilSpring;
 
 // We don't extend TileBC here because we have no need of any of its functions.
 public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSpring {
 
     private static final ResourceLocation ADVANCEMENT_PUMP_LARGE_OIL_WELL = new ResourceLocation(
-        "buildcraftfactory:black_gold"
+            "buildcraftfactory:black_gold"
     );
 
     private final Map<GameProfile, PlayerPumpInfo> pumpProgress = new ConcurrentHashMap<>();
@@ -37,6 +36,10 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
      * Note that this SHOULD NEVER be set! (Except by the generator, and readFromNbt) */
     public int totalSources;
 
+    public TileSpringOil() {
+        super(BCEnergyBlocks.springTile.get());
+    }
+
     @Override
     public void onPumpOil(GameProfile profile, BlockPos oilPos) {
         if (profile == null) {
@@ -44,52 +47,56 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
             return;
         }
         PlayerPumpInfo info = pumpProgress.computeIfAbsent(profile, PlayerPumpInfo::new);
-        info.lastPumpTick = world.getTotalWorldTime();
+        info.lastPumpTick = level.getGameTime();
         info.sourcesPumped++;
 
         // BCLog.logger.info("Pumped " + info.sourcesPumped + " / " + totalSources + " at " + oilPos + " (for " +
         // System.identityHashCode(this) + ", "+getPos()+")");
         if (info.sourcesPumped >= totalSources * 7 / 8) {
             // BCLog.logger.info("Pumped nearly all oil blocks!");
-            if (oilPos.equals(getPos().up())) {
+            if (oilPos.equals(getBlockPos().above())) {
                 AdvancementUtil.unlockAdvancement(profile.getId(), ADVANCEMENT_PUMP_LARGE_OIL_WELL);
             }
         }
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        NBTTagList list = nbt.getTagList("pumpProgress", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < list.tagCount(); i++) {
-            PlayerPumpInfo info = new PlayerPumpInfo(list.getCompoundTagAt(i));
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
+        ListNBT list = nbt.getList("pumpProgress", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            PlayerPumpInfo info = new PlayerPumpInfo(list.getCompound(i));
             pumpProgress.put(info.profile, info);
         }
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setInteger("totalSources", totalSources);
-        NBTTagList list = new NBTTagList();
+//    public CompoundNBT writeToNBT(CompoundNBT nbt) {
+    public CompoundNBT save(CompoundNBT nbt) {
+        super.save(nbt);
+        nbt.putInt("totalSources", totalSources);
+        ListNBT list = new ListNBT();
         for (PlayerPumpInfo info : pumpProgress.values()) {
-            list.appendTag(info.writeToNbt());
+            list.add(info.writeToNbt());
         }
-        nbt.setTag("pumpProgress", list);
+        nbt.put("pumpProgress", list);
         return nbt;
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("totalSources = " + totalSources);
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//        left.add("totalSources = " + totalSources);
+        left.add(new StringTextComponent("totalSources = " + totalSources));
         boolean added = false;
         for (PlayerPumpInfo info : pumpProgress.values()) {
             if (!added) {
-                left.add("Player Progress:");
+//                left.add("PlayerEntity Progress:");
+                left.add(new StringTextComponent("PlayerEntity Progress:"));
                 added = true;
             }
-            left.add("  " + info.profile.getName() + " = " + info.sourcesPumped + " ( "
-                + (world.getTotalWorldTime() - info.lastPumpTick) / 20 + "s )");
+//            left.add("  " + info.profile.getName() + " = " + info.sourcesPumped + " ( " + (level.getGameTime() - info.lastPumpTick) / 20 + "s )");
+            left.add(new StringTextComponent("  " + info.profile.getName() + " = " + info.sourcesPumped + " ( " + (level.getGameTime() - info.lastPumpTick) / 20 + "s )"));
         }
     }
 
@@ -102,17 +109,17 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
             this.profile = profile;
         }
 
-        public PlayerPumpInfo(NBTTagCompound nbt) {
-            profile = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("profile"));
+        public PlayerPumpInfo(CompoundNBT nbt) {
+            profile = NBTUtil.readGameProfile(nbt.getCompound("profile"));
             lastPumpTick = nbt.getLong("lastPumpTick");
-            sourcesPumped = nbt.getInteger("sourcesPumped");
+            sourcesPumped = nbt.getInt("sourcesPumped");
         }
 
-        public NBTTagCompound writeToNbt() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setTag("profile", NBTUtil.writeGameProfile(new NBTTagCompound(), profile));
-            nbt.setLong("lastPumpTick", lastPumpTick);
-            nbt.setInteger("sourcesPumped", sourcesPumped);
+        public CompoundNBT writeToNbt() {
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.put("profile", NBTUtil.writeGameProfile(new CompoundNBT(), profile));
+            nbt.putLong("lastPumpTick", lastPumpTick);
+            nbt.putInt("sourcesPumped", sourcesPumped);
             return nbt;
         }
     }

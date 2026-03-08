@@ -6,24 +6,21 @@
 
 package buildcraft.builders.snapshot.pattern.parameter;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.builders.BCBuildersSprites;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 public enum PatternParameterYDir implements IStatementParameter {
     UP(true),
@@ -37,7 +34,7 @@ public enum PatternParameterYDir implements IStatementParameter {
         this.up = up;
     }
 
-    public static PatternParameterYDir readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterYDir readFromNbt(CompoundNBT nbt) {
         if (nbt.getBoolean("up")) {
             return UP;
         }
@@ -45,8 +42,8 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setBoolean("up", up);
+    public void writeToNbt(CompoundNBT nbt) {
+        nbt.putBoolean("up", up);
     }
 
     @Override
@@ -61,13 +58,18 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("direction." + (up ? "up" : "down"));
+    public ITextComponent getDescription() {
+//        return LocaleUtil.localize("direction." + (up ? "up" : "down"));
+        return new TranslationTextComponent("direction." + (up ? "up" : "down"));
     }
 
     @Override
-    public PatternParameterYDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
-        StatementMouseClick mouse) {
+    public String getDescriptionKey() {
+        return "direction." + (up ? "up" : "down");
+    }
+
+    @Override
+    public PatternParameterYDir onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         return null;
     }
 
@@ -87,7 +89,7 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         return up ? BCBuildersSprites.PARAM_STAIRS_UP : BCBuildersSprites.PARAM_STAIRS_DOWN;
     }

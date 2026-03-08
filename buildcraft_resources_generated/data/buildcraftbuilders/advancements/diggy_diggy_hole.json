@@ -1,0 +1,28 @@
+{
+  "parent": "buildcraftbuilders:shaping_the_world",
+  "display": {
+    "icon": {
+      "item": "buildcraftbuilders:quarry"
+    },
+    "title": {
+      "translate": "advancements.buildcraftbuilders.diggy.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftbuilders.diggy.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

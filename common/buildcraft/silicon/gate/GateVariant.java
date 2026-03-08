@@ -6,12 +6,12 @@
 
 package buildcraft.silicon.gate;
 
-import java.util.Objects;
-
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
-import buildcraft.lib.misc.LocaleUtil;
+import java.util.Objects;
 
 public class GateVariant {
     public final EnumGateLogic logic;
@@ -31,7 +31,7 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public GateVariant(NBTTagCompound nbt) {
+    public GateVariant(CompoundNBT nbt) {
         this.logic = EnumGateLogic.getByOrdinal(nbt.getByte("logic"));
         this.material = EnumGateMaterial.getByOrdinal(nbt.getByte("material"));
         this.modifier = EnumGateModifier.getByOrdinal(nbt.getByte("modifier"));
@@ -41,11 +41,11 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("logic", (byte) logic.ordinal());
-        nbt.setByte("material", (byte) material.ordinal());
-        nbt.setByte("modifier", (byte) modifier.ordinal());
+    public CompoundNBT writeToNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putByte("logic", (byte) logic.ordinal());
+        nbt.putByte("material", (byte) material.ordinal());
+        nbt.putByte("modifier", (byte) modifier.ordinal());
         return nbt;
     }
 
@@ -73,14 +73,14 @@ public class GateVariant {
         }
     }
 
-    public String getLocalizedName() {
+    public IFormattableTextComponent getLocalizedName() {
         if (material == EnumGateMaterial.CLAY_BRICK) {
-            return LocaleUtil.localize("gate.name.basic");
+            return new TranslationTextComponent("gate.name.basic");
         } else {
-            String gateName = LocaleUtil.localize("gate.name");
-            String materialName = LocaleUtil.localize("gate.material." + material.tag);
-            Object logicName = LocaleUtil.localize("gate.logic." + logic.tag);
-            return String.format(gateName, materialName, logicName);
+            String gateKey = "gate.name";
+            String materialKey = "gate.material." + material.tag;
+            String logicKey = "gate.logic." + logic.tag;
+            return new TranslationTextComponent(gateKey, new TranslationTextComponent(materialKey), new TranslationTextComponent(logicKey));
         }
     }
 
@@ -91,8 +91,8 @@ public class GateVariant {
         if (obj.getClass() != getClass()) return false;
         GateVariant other = (GateVariant) obj;
         return other.logic == logic//
-            && other.material == material//
-            && other.modifier == modifier;
+                && other.material == material//
+                && other.modifier == modifier;
     }
 
     @Override

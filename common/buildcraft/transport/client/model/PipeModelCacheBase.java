@@ -6,21 +6,18 @@
 
 package buildcraft.transport.client.model;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.item.EnumDyeColor;
-
 import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeFaceTex;
-
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
-
 import buildcraft.transport.client.model.key.PipeModelKey;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.item.DyeColor;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class PipeModelCacheBase {
     public static IPipeBaseModelGen generator = PipeBaseModelGenStandard.INSTANCE;
@@ -46,7 +43,7 @@ public class PipeModelCacheBase {
         public final PipeFaceTex centerSprite;
         public final PipeFaceTex[] sideSprites;
         public final float[] connections;
-        public final EnumDyeColor colour;
+        public final DyeColor colour;
         public final EnumPipeColourType colourType;
         private final int hashCode;
 
@@ -64,7 +61,7 @@ public class PipeModelCacheBase {
                 this.colourType = null;
             }
             hashCode = Objects.hash(System.identityHashCode(definition), centerSprite, Arrays.hashCode(sideSprites),
-                Arrays.hashCode(connections), colour, colourType);
+                    Arrays.hashCode(connections), colour, colourType);
         }
 
         private static boolean canBakeCutoutColour(EnumPipeColourType type) {
@@ -94,12 +91,12 @@ public class PipeModelCacheBase {
         @Override
         public String toString() {
             return "PipeBaseCutoutKey [center=" + centerSprite + ", sides=" + Arrays.toString(sideSprites)
-                + ", connections=" + Arrays.toString(connections) + "]";
+                    + ", connections=" + Arrays.toString(connections) + "]";
         }
     }
 
     public static final class PipeBaseTranslucentKey {
-        public final EnumDyeColor colour;
+        public final DyeColor colour;
         public final float[] connections;
         private final int hashCode;
 

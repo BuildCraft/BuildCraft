@@ -6,29 +6,26 @@
 
 package buildcraft.lib.net;
 
-import java.io.IOException;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.misc.MessageUtil;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.misc.MessageUtil;
+import java.io.IOException;
 
 public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
-    private PacketBufferBC payload;
+    // private PacketBufferBC payload;
+    public PacketBufferBC payload;
 
     @SuppressWarnings("unused")
-    public MessageUpdateTile() {}
+    public MessageUpdateTile() {
+    }
 
     public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;
@@ -43,32 +40,33 @@ public class MessageUpdateTile implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(PacketBuffer buf) {
         this.pos = MessageUtil.readBlockPos(new PacketBuffer(buf));
         int size = buf.readUnsignedMedium();
         payload = new PacketBufferBC(buf.readBytes(size));
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         MessageUtil.writeBlockPos(new PacketBuffer(buf), pos);
         int length = payload.readableBytes();
         buf.writeMedium(length);
         buf.writeBytes(payload, 0, length);
     }
 
-    public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER = (message, ctx) ->
+    {
         try {
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player == null || player.world == null) {
+            PlayerEntity player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+            if (player == null || player.level == null) {
                 return null;
             }
-            TileEntity tile = player.world.getTileEntity(message.pos);
+            TileEntity tile = player.level.getBlockEntity(message.pos);
             if (tile instanceof IPayloadReceiver) {
                 return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
             } else {
-                BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos
-                    + " (found " + tile + ")");
+                BCLog.logger.warn("Dropped message for player " + player.getName().getString() + " for tile at " + message.pos
+                        + " (found " + tile + ")");
             }
             return null;
         } catch (IOException io) {

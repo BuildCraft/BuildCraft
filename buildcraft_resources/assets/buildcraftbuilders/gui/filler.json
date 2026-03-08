@@ -37,7 +37,7 @@
                 "icon": {
                     "type":"buildcraftlib:drawable",
                     "source": {
-                        "sprite": "minecraft:items/iron_ingot",
+                        "sprite": "minecraft:item/iron_ingot",
                         "area": [0, 0, 16, 16]
                     },
                     "area": [0, 0, 16, 16]
@@ -54,7 +54,7 @@
                         "icon": {
                             "type": "buildcraftlib:drawable",
                             "size": [ 16, 16 ],
-                            "source.sprite": "minecraft:items/iron_pickaxe"
+                            "source.sprite": "minecraft:item/iron_pickaxe"
                         },
                         "text": {
                             "type": "buildcraftlib:text",
@@ -74,7 +74,7 @@
                         "icon": {
                             "type": "buildcraftlib:drawable/stack",
                             "size": [ 16, 16 ],
-                            "id": "minecraft:brick_block"
+                            "id": "minecraft:bricks"
                         },
                         "text": {
                             "type": "buildcraftlib:text",

@@ -6,23 +6,21 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
-
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+
+import javax.annotation.Nonnull;
 
 public class InjectableWrapper implements IItemTransactor {
     private final IInjectable injectable;
-    private final EnumFacing from;
+    private final Direction from;
 
-    public InjectableWrapper(IInjectable injectable, EnumFacing facing) {
+    public InjectableWrapper(IInjectable injectable, Direction facing) {
         this.injectable = injectable;
         this.from = facing;
     }
@@ -38,7 +36,7 @@ public class InjectableWrapper implements IItemTransactor {
                 // sanity check: it really helps debugging
                 if (!reallyLeftOver.isEmpty()) {
                     throw new IllegalStateException("Found an invalid IInjectable instance! (leftOver = "//
-                        + leftOver + ", reallyLeftOver = " + reallyLeftOver + ", " + injectable.getClass() + ")");
+                            + leftOver + ", reallyLeftOver = " + reallyLeftOver + ", " + injectable.getClass() + ")");
                 } else {
                     return StackUtil.EMPTY;
                 }

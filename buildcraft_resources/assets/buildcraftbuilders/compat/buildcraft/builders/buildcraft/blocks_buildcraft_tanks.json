@@ -91,7 +91,7 @@
     },
     {
         "selectors": [
-            "buildcraftcore:engine[type=iron]"
+            "buildcraftcore:engine_iron"
         ],
         "requiredExtractors": [
             {

@@ -2,10 +2,9 @@ package buildcraft.test.lib.misc;
 
 import io.netty.buffer.Unpooled;
 
+import net.minecraft.network.PacketBuffer;
 import org.junit.Assert;
 import org.junit.Test;
-
-import net.minecraft.network.PacketBuffer;
 
 import buildcraft.lib.misc.MessageUtil;
 
@@ -14,6 +13,7 @@ public class MessageUtilTester {
     public void testBooleanArraySmall() {
         boolean[] expected = { false, true, false };
 
+//        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         MessageUtil.writeBooleanArray(buffer, expected);
         boolean[] got = MessageUtil.readBooleanArray(buffer, expected.length);
@@ -24,6 +24,7 @@ public class MessageUtilTester {
     public void testBooleanArrayLarge() {
         boolean[] expected = { false, true, false, false, false, true, true, true, true, true, true, true, false };
 
+//        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         MessageUtil.writeBooleanArray(buffer, expected);
         boolean[] got = MessageUtil.readBooleanArray(buffer, expected.length);
@@ -34,6 +35,7 @@ public class MessageUtilTester {
     public void testBooleanArrayLargeManual() {
         boolean[] expected = { false, true, false, false, false, true, true, true, true, true, true, true, false };
 
+//        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         MessageUtil.writeBooleanArray(buffer, expected);
 

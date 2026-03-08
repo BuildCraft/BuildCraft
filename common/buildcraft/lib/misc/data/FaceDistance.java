@@ -1,12 +1,11 @@
 package buildcraft.lib.misc.data;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-
 import buildcraft.lib.misc.VecUtil;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 
 public final class FaceDistance {
-    public final EnumFacing direction;
+    public final Direction direction;
     public final int distance;
 
     public FaceDistance(Axis axis, int distance) {
@@ -14,7 +13,7 @@ public final class FaceDistance {
         this.distance = Math.abs(distance);
     }
 
-    public FaceDistance(EnumFacing direction, int distance) {
+    public FaceDistance(Direction direction, int distance) {
         this.direction = direction;
         this.distance = distance;
     }

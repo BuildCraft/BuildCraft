@@ -6,9 +6,9 @@
 
 package buildcraft.lib.client.model;
 
-import java.util.Set;
-
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Set;
 
 /** Defines an object that will hold a model, and is automatically refreshed from the filesystem when the client reloads
  * all of its resources. */

@@ -6,19 +6,21 @@
 
 package buildcraft.transport;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.inventory.InventoryCrafting;
+import buildcraft.lib.recipe.ChangingItemStack;
+import buildcraft.lib.recipe.IRecipeViewable;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import buildcraft.lib.recipe.ChangingItemStack;
-import buildcraft.lib.recipe.IRecipeViewable;
+import javax.annotation.Nullable;
+
 //TODO: convert to factory if needed, currently not used
-public class RecipePipeColour implements IRecipe, IRecipeViewable {
+public class RecipePipeColour implements IRecipe<IInventory>, IRecipeViewable {
 
     private final ItemStack output;
     /** Single-dimension because all pipe recipes use 3 items or less. */
@@ -32,29 +34,29 @@ public class RecipePipeColour implements IRecipe, IRecipeViewable {
     }
 
     @Override
-    public boolean matches(InventoryCrafting inv, World worldIn) {
+    public boolean matches(IInventory inv, World worldIn) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }
 
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting inv) {
+    public ItemStack assemble(IInventory inv) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return false;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return output;
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(IInventory inv) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }
@@ -69,19 +71,19 @@ public class RecipePipeColour implements IRecipe, IRecipeViewable {
         return null;
     }
 
-    @Override
-    public IRecipe setRegistryName(ResourceLocation name) {
-        return null;
-    }
-
     @Nullable
     @Override
-    public ResourceLocation getRegistryName() {
-        return null;
+    public ResourceLocation getId() {
+        throw new AbstractMethodError("Implement this!");
     }
 
     @Override
-    public Class<IRecipe> getRegistryType() {
-        return null;
+    public IRecipeType<RecipePipeColour> getType() {
+        throw new AbstractMethodError("Implement this!");
+    }
+
+    @Override
+    public IRecipeSerializer<?> getSerializer() {
+        throw new AbstractMethodError("Implement this!");
     }
 }

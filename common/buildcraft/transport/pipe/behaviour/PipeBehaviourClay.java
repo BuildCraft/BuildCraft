@@ -6,28 +6,23 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventFluid;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 
 public class PipeBehaviourClay extends PipeBehaviour {
     public PipeBehaviourClay(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourClay(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourClay(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
     }
 
     @PipeEventHandler
     public void orderSides(PipeEventItem.SideCheck ordering) {
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             ConnectedType type = pipe.getConnectedType(face);
             if (type == ConnectedType.TILE) {
                 /* We only really need to increase the priority, but using a larger number (100) means that it doesn't
@@ -40,7 +35,7 @@ public class PipeBehaviourClay extends PipeBehaviour {
 
     @PipeEventHandler
     public void orderSides(PipeEventFluid.SideCheck ordering) {
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             ConnectedType type = pipe.getConnectedType(face);
             if (type == ConnectedType.TILE) {
                 /* We only really need to increase the priority, but using a larger number (100) means that it doesn't

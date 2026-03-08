@@ -1,13 +1,16 @@
 package buildcraft.lib.misc.search;
 
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.util.text.ITextComponent;
+
 import java.util.List;
 
-import net.minecraft.profiler.Profiler;
-
 public interface ISuffixArray<T> {
-    void add(T obj, String name);
+    // void add(T obj, String name);
+    void add(T obj, ITextComponent name);
 
-    void generate(Profiler prof);
+    // void generate(Profiler prof);
+    void generate(IProfiler prof);
 
     SearchResult<T> search(String substring, int maxResults);
 

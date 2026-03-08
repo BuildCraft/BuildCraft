@@ -1,39 +1,34 @@
 package buildcraft.test.lib.nbt;
 
+import buildcraft.api.data.NbtSquishConstants;
+import buildcraft.lib.misc.HashUtil;
+import buildcraft.lib.misc.ProfilerUtil;
+import buildcraft.lib.nbt.NbtSquisher;
+import com.google.common.base.Stopwatch;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.FloatNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.profiler.Profiler;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Stopwatch;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.profiler.Profiler;
-
-import buildcraft.api.data.NbtSquishConstants;
-
-import buildcraft.lib.misc.HashUtil;
-import buildcraft.lib.misc.ProfilerUtil;
-import buildcraft.lib.nbt.NbtSquisher;
-
 public class NbtSquisherTester {
     private static final String[] IDS = { //
-        "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick", //
-        "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
+            "minecraft:dirt", "minecraft:cooked_steak", "minecraft:cooked_beef", "minecraft:stick", //
+            "minecraft:diamond", "buildcraftcore:gear_wood", "buildcraftcore:gear_stone"//
     };
 
-    public static final NBTTagCompound nbt = genNbt(64 * 64 * 64);
-    public static final NBTTagCompound nbtSmall = genNbt(10);
+    public static final CompoundNBT nbt = genNbt(64 * 64 * 64);
+    public static final CompoundNBT nbtSmall = genNbt(10);
 
     @Test
     public void printSimpleBytes() {
@@ -72,63 +67,63 @@ public class NbtSquisherTester {
         test(true, nbt);
     }
 
-    private static NBTTagCompound genNbt(int bptSize) {
+    private static CompoundNBT genNbt(int bptSize) {
         Random rand = new Random(0x517123);
 
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("primitive|byte", (byte) 1);
-        nbt.setShort("primitive|short", (short) 2);
-        nbt.setInteger("primitive|int", 4);
-        nbt.setLong("primitive|long", 6);
-        nbt.setFloat("primitive|float", 10.01f);
-        nbt.setDouble("primitive|double", 11.11010101010101001010);
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putByte("primitive|byte", (byte) 1);
+        nbt.putShort("primitive|short", (short) 2);
+        nbt.putInt("primitive|int", 4);
+        nbt.putLong("primitive|long", 6);
+        nbt.putFloat("primitive|float", 10.01f);
+        nbt.putDouble("primitive|double", 11.11010101010101001010);
 
-        nbt.setByteArray("array|byte", new byte[] { 12, 13, 14 });
-        nbt.setIntArray("array|int", new int[] { 15000, 160000, 17000, 180000 });
+        nbt.putByteArray("array|byte", new byte[] { 12, 13, 14 });
+        nbt.putIntArray("array|int", new int[] { 15000, 160000, 17000, 180000 });
 
-        nbt.setString("string", "OMG A VALUE");
+        nbt.putString("string", "OMG A VALUE");
 
-        NBTTagList list = new NBTTagList();
-        list.appendTag(new NBTTagFloat(19.91f));
-        list.appendTag(new NBTTagFloat(19.45f));
-        list.appendTag(new NBTTagFloat(19.41f));
-        list.appendTag(new NBTTagFloat(19.32f));
-        list.appendTag(new NBTTagFloat(19.76f));
+        ListNBT list = new ListNBT();
+        list.add(FloatNBT.valueOf(19.91f));
+        list.add(FloatNBT.valueOf(19.45f));
+        list.add(FloatNBT.valueOf(19.41f));
+        list.add(FloatNBT.valueOf(19.32f));
+        list.add(FloatNBT.valueOf(19.76f));
 
-        nbt.setTag("complex|list", list);
+        nbt.put("complex|list", list);
 
-        nbt.setTag("complex|tag", new NBTTagCompound());
+        nbt.put("complex|tag", new CompoundNBT());
 
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setBoolean("a", false);
-        compound.setDouble("b", 20.02);
+        CompoundNBT compound = new CompoundNBT();
+        compound.putBoolean("a", false);
+        compound.putDouble("b", 20.02);
 
-        nbt.setTag("complex|compound", compound);
+        nbt.put("complex|compound", compound);
 
         String[] names = { "minecraft:air", "minecraft:log", "minecraft:torch", "minecraft:stone", "minecraft:fence" };
         int[] metas = { 1, 16, 5, 7, 4 };
 
-        NBTTagCompound[] blocks = new NBTTagCompound[sum(metas)];
+        CompoundNBT[] blocks = new CompoundNBT[sum(metas)];
 
         int block = 0;
         for (int b = 0; b < names.length; b++) {
-            NBTTagCompound blockNbt = new NBTTagCompound();
-            blockNbt.setString("id", names[b]);
+            CompoundNBT blockNbt = new CompoundNBT();
+            blockNbt.putString("id", names[b]);
             blocks[block++] = blockNbt.copy();
             for (int m = 1; m < metas[b]; m++) {
-                blockNbt.setByte("meta", (byte) m);
+                blockNbt.putByte("meta", (byte) m);
                 blocks[block++] = blockNbt.copy();
             }
         }
 
-        NBTTagCompound air = blocks[0];
+        CompoundNBT air = blocks[0];
 
-        NBTTagList bpt = new NBTTagList();
+        ListNBT bpt = new ListNBT();
 
         int chests = 0;
         for (int i = 0; i < bptSize; i++) {
             double r = rand.nextDouble();
-            final NBTTagCompound toUse;
+            final CompoundNBT toUse;
             if (r < 0.4) {
                 toUse = air;
             } else if (r < 0.9999) {
@@ -137,11 +132,11 @@ public class NbtSquisherTester {
                 toUse = genRandomChest(rand);
                 chests++;
             }
-            bpt.appendTag(toUse);
+            bpt.add(toUse);
         }
         System.out.println(chests + " random chests in a " + Math.cbrt(bptSize) + " bpt");
 
-        nbt.setTag("bpt", bpt);
+        nbt.put("bpt", bpt);
         return nbt;
     }
 
@@ -153,7 +148,7 @@ public class NbtSquisherTester {
         return total;
     }
 
-    public static long[] test(boolean print, NBTTagCompound nbt) throws IOException {
+    public static long[] test(boolean print, CompoundNBT nbt) throws IOException {
         int msPadLength = 10;
         long[] times = new long[8];
 
@@ -167,7 +162,7 @@ public class NbtSquisherTester {
         }
         watch.reset();
 
-        NBTTagCompound to = NbtSquisher.expand(bytes.clone());
+        CompoundNBT to = NbtSquisher.expand(bytes.clone());
         checkEquality(nbt, to);
 
         watch.start();
@@ -247,7 +242,7 @@ public class NbtSquisherTester {
         return times;
     }
 
-    public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
+    public static void checkEquality(CompoundNBT from, CompoundNBT to) {
         String error = compoundEqual(from, to);
         if (!error.isEmpty()) {
             System.out.println(error);
@@ -255,15 +250,15 @@ public class NbtSquisherTester {
         }
     }
 
-    private static String compoundEqual(NBTTagCompound from, NBTTagCompound to) {
-        Set<String> keysFrom = from.getKeySet();
-        Set<String> keysTo = to.getKeySet();
+    private static String compoundEqual(CompoundNBT from, CompoundNBT to) {
+        Set<String> keysFrom = from.getAllKeys();
+        Set<String> keysTo = to.getAllKeys();
         if (!keysFrom.equals(keysTo)) {
             return "keys " + keysFrom + " -> " + keysTo;
         } else {
             for (String key : keysFrom) {
-                NBTBase valFrom = from.getTag(key);
-                NBTBase valTo = to.getTag(key);
+                INBT valFrom = from.get(key);
+                INBT valTo = to.get(key);
                 String err = nbtEquals(valFrom, valTo);
                 if (!err.isEmpty()) {
                     return key + " = " + err;
@@ -273,9 +268,9 @@ public class NbtSquisherTester {
         }
     }
 
-    private static String listEquals(NBTTagList from, NBTTagList to) {
-        int l1 = from.tagCount();
-        int l2 = to.tagCount();
+    private static String listEquals(ListNBT from, ListNBT to) {
+        int l1 = from.size();
+        int l2 = to.size();
         if (l1 != l2) {
             System.out.println("Differing lengths!");
             System.out.println("  from = " + l1);
@@ -283,8 +278,8 @@ public class NbtSquisherTester {
             return "";
         } else {
             for (int i = 0; i < l1; i++) {
-                NBTBase valFrom = from.get(i);
-                NBTBase valTo = to.get(i);
+                INBT valFrom = from.get(i);
+                INBT valTo = to.get(i);
                 String err = nbtEquals(valFrom, valTo);
                 if (!err.isEmpty()) {
                     return "[" + i + "] = " + err;
@@ -294,12 +289,12 @@ public class NbtSquisherTester {
         }
     }
 
-    private static String nbtEquals(NBTBase valFrom, NBTBase valTo) {
-        if (valFrom instanceof NBTTagCompound && valTo instanceof NBTTagCompound) {
-            return compoundEqual((NBTTagCompound) valFrom, (NBTTagCompound) valTo);
+    private static String nbtEquals(INBT valFrom, INBT valTo) {
+        if (valFrom instanceof CompoundNBT && valTo instanceof CompoundNBT) {
+            return compoundEqual((CompoundNBT) valFrom, (CompoundNBT) valTo);
         }
-        if (valFrom instanceof NBTTagList && valTo instanceof NBTTagList) {
-            return listEquals((NBTTagList) valFrom, (NBTTagList) valTo);
+        if (valFrom instanceof ListNBT && valTo instanceof ListNBT) {
+            return listEquals((ListNBT) valFrom, (ListNBT) valTo);
         }
         if (!valFrom.equals(valTo)) {
             return valFrom + " -> " + valTo;
@@ -307,31 +302,31 @@ public class NbtSquisherTester {
         return "";
     }
 
-    private static NBTTagCompound genRandomChest(Random rand) {
-        NBTTagCompound chest = new NBTTagCompound();
-        chest.setString("block", "minecraft:chest");
-        chest.setByte("meta", (byte) rand.nextInt(4));
-        NBTTagList chestItems = new NBTTagList();
+    private static CompoundNBT genRandomChest(Random rand) {
+        CompoundNBT chest = new CompoundNBT();
+        chest.putString("block", "minecraft:chest");
+        chest.putByte("meta", (byte) rand.nextInt(4));
+        ListNBT chestItems = new ListNBT();
 
-        NBTTagCompound itemB = genRandomItem(rand);
+        CompoundNBT itemB = genRandomItem(rand);
         int num = rand.nextInt(3) + 2;
         for (int i = 0; i < num; i++) {
             if (rand.nextInt(6) > 0) {
-                chestItems.appendTag(itemB);
+                chestItems.add(itemB);
             } else {
-                chestItems.appendTag(genRandomItem(rand));
+                chestItems.add(genRandomItem(rand));
             }
         }
 
-        chest.setTag("items", chestItems);
+        chest.put("items", chestItems);
         return chest;
     }
 
-    private static NBTTagCompound genRandomItem(Random rand) {
-        NBTTagCompound item = new NBTTagCompound();
-        item.setString("id", IDS[rand.nextInt(IDS.length)]);
-        item.setByte("Count", (byte) (16 + rand.nextInt(3) * 2));
-        item.setShort("Damage", (short) 0);
+    private static CompoundNBT genRandomItem(Random rand) {
+        CompoundNBT item = new CompoundNBT();
+        item.putString("id", IDS[rand.nextInt(IDS.length)]);
+        item.putByte("Count", (byte) (16 + rand.nextInt(3) * 2));
+        item.putShort("Damage", (short) 0);
         return item;
     }
 
@@ -391,7 +386,7 @@ public class NbtSquisherTester {
         watchWhole.start();
 
         // NbtSquisher.profiler.profilingEnabled = true;
-        NbtSquisher.profiler.startSection("root");
+        NbtSquisher.profiler.push("root");
         // NbtSquisher.debugBuffer = PrintingByteBuf::new;
         for (int i = 0; i < 100; i++) {
             System.out.println("Starting test " + (i + 1));
@@ -406,7 +401,7 @@ public class NbtSquisherTester {
             }
         }
         String[] types = { "vanilla   [un|wr]", "vanilla   [cp|wr]", "buildcraft[un|wr]", "buildcraft[cp|wr]",
-            "vanilla   [un|hs]", "vanilla   [cp|hs]", "buildcraft[un|hs]", "buildcraft[cp|hs]" };
+                "vanilla   [un|hs]", "vanilla   [cp|hs]", "buildcraft[un|hs]", "buildcraft[cp|hs]" };
         for (int i = 0; i < 8; i++) {
             long total = 0;
             for (int j = 20; j < times; j++)
@@ -415,10 +410,14 @@ public class NbtSquisherTester {
             System.out.println(types[i] + " took (on average) " + padMicroseconds(average, 10));
         }
 
-        NbtSquisher.profiler.endSection();
-        ProfilerUtil.printProfilerResults(NbtSquisher.profiler, "root.write");
+        NbtSquisher.profiler.pop();
+        if (NbtSquisher.profiler instanceof Profiler) {
+            Profiler activeProfiler = NbtSquisher.profiler;
+//            ProfilerUtil.printProfilerResults(NbtSquisher.profiler, "root.write");
+            ProfilerUtil.printProfilerResults(activeProfiler, "root.write");
+        }
         watchWhole.stop();
         System.out.println("Whole test took " + watchWhole.elapsed(TimeUnit.MINUTES) + "m, "
-            + watchWhole.elapsed(TimeUnit.SECONDS) % 60 + "s");
+                + watchWhole.elapsed(TimeUnit.SECONDS) % 60 + "s");
     }
 }

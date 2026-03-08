@@ -1,14 +1,12 @@
 package buildcraft.lib.gui.statement;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IStatementParameter;
-
 import buildcraft.lib.gui.ISimpleDrawable;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /** An {@link IStatementParameter} that provides methods to draw itself. */
 public interface IDrawingParameter extends IStatementParameter {
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     ISimpleDrawable getDrawable();
 }

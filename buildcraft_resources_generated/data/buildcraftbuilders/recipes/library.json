@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftbuilders",
+  "pattern": [
+    "igi",
+    "sbs",
+    "iri"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "g": {
+      "tag": "forge:gears/iron"
+    },
+    "s": {
+      "tag": "forge:bookshelves"
+    },
+    "b": {
+      "item": "buildcraftbuilders:snapshot_blueprint"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "result": {
+    "item": "buildcraftbuilders:library"
+  }
+}

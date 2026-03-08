@@ -6,13 +6,11 @@
 
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.api.inventory.IItemHandlerFiltered;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.inventory.IItemHandlerFiltered;
+import javax.annotation.Nonnull;
 
 public class DelegateItemHandler implements IItemHandlerModifiable, IItemHandlerFiltered {
     private final IItemHandlerModifiable delegate;
@@ -58,5 +56,9 @@ public class DelegateItemHandler implements IItemHandlerModifiable, IItemHandler
             return ((IItemHandlerFiltered) delegate).getFilter(slot);
         }
         return IItemHandlerFiltered.super.getFilter(slot);
+    }
+
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        return delegate.isItemValid(slot, stack);
     }
 }

@@ -7,20 +7,22 @@
 package buildcraft.lib.gui;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 @FunctionalInterface
 public interface ISimpleDrawable {
-    void drawAt(double x, double y);
+    void drawAt(MatrixStack poseStack, double x, double y);
 
-    default void drawAt(IGuiPosition element) {
-        drawAt(element.getX(), element.getY());
+    default void drawAt(IGuiPosition element, MatrixStack poseStack) {
+        drawAt(poseStack, element.getX(), element.getY());
     }
 
     default ISimpleDrawable andThen(ISimpleDrawable after) {
         ISimpleDrawable t = this;
-        return (x, y) -> {
-            t.drawAt(x, y);
-            after.drawAt(x, y);
+        return (p, x, y) ->
+        {
+            t.drawAt(p, x, y);
+            after.drawAt(p, x, y);
         };
     }
 }

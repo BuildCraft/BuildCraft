@@ -1,38 +1,47 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy.tile;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
-
+import buildcraft.api.tiles.IBCTileMenuProvider;
+import buildcraft.energy.BCEnergyBlocks;
+import buildcraft.energy.BCEnergyMenuTypes;
+import buildcraft.energy.container.ContainerEngineStone_BC8;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.energy.BCEnergyGuis;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
-public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
+public class TileEngineStone_BC8 extends TileEngineBase_BC8 implements IBCTileMenuProvider {
     private static final long MAX_OUTPUT = MjAPI.MJ;
     private static final long MIN_OUTPUT = MAX_OUTPUT / 3;
     // private static final long TARGET_OUTPUT = 0.375f;
@@ -50,6 +59,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private boolean isForceInserting = false;
 
     public TileEngineStone_BC8() {
+        super(BCEnergyBlocks.engineStoneTile.get());
         invFuel = itemManager.addInvHandler("fuel", 1, this::isValidFuel, EnumAccess.BOTH, EnumPipePart.VALUES);
     }
 
@@ -61,26 +71,28 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     // TileEntity overrides
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        burnTime = nbt.getInteger("burnTime");
-        totalBurnTime = nbt.getInteger("totalBurnTime");
+//    public void readFromNBT(NBTTagCompound nbt)
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
+        burnTime = nbt.getInt("burnTime");
+        totalBurnTime = nbt.getInt("totalBurnTime");
         esum = nbt.getLong("esum");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setInteger("burnTime", burnTime);
-        nbt.setInteger("totalBurnTime", totalBurnTime);
-        nbt.setLong("esum", esum);
+//    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    public CompoundNBT save(CompoundNBT nbt) {
+        super.save(nbt);
+        nbt.putInt("burnTime", burnTime);
+        nbt.putInt("totalBurnTime", totalBurnTime);
+        nbt.putLong("esum", esum);
         return nbt;
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
-        if (handler == invFuel) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
+        // if (handler == invFuel)
+        if (handler == invFuel && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
             if (isForceInserting && after.isEmpty()) {
                 isForceInserting = false;
             }
@@ -90,12 +102,12 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     // Engine overrides
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
-        float hitZ) {
-        if (!world.isRemote) {
-            BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
+    public ActionResultType onActivated(PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
+        if (!level.isClientSide) {
+//            BCEnergyGuis.ENGINE_STONE.openGUI(player, getPos());
+            MessageUtil.serverOpenTileGui(player, this);
         }
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     @Nonnull
@@ -144,15 +156,20 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
                         }
                     } else {
                         // Not good!
-                        InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, container);
+                        InventoryUtil.addToBestAcceptor(getLevel(), getBlockPos(), null, container);
                     }
                 }
             }
         }
     }
 
+    /**
+     * {@link FurnaceTileEntity#getFuel()#getItemBurnTime(ItemStack)} will return null if not found, which cannot be cast to int.
+     * {@link ForgeHooks#getBurnTime(ItemStack, IRecipeType)} is recommended by forge
+     */
     private static int getItemBurnTime(ItemStack itemstack) {
-        return TileEntityFurnace.getItemBurnTime(itemstack);
+//        return TileEntityFurnace.getItemBurnTime(itemstack);
+        return ForgeHooks.getBurnTime(itemstack, IRecipeType.SMELTING);
     }
 
     @Override
@@ -191,12 +208,32 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//        super.getDebugInfo(left, right, side);
+//        left.add("esum = " + MjAPI.formatMj(esum) + " M");
+//        long e = 3 * getMaxPower() / 8 - power;
+//        left.add("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " MJ");
+//        left.add("burnTime = " + burnTime);
+//        left.add("delta = " + deltaFuelLeft.getDynamic(0));
         super.getDebugInfo(left, right, side);
-        left.add("esum = " + MjAPI.formatMj(esum) + " M");
+        left.add(new StringTextComponent("esum = " + MjAPI.formatMj(esum) + " M"));
         long e = 3 * getMaxPower() / 8 - power;
-        left.add("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " MJ");
-        left.add("burnTime = " + burnTime);
-        left.add("delta = " + deltaFuelLeft.getDynamic(0));
+        left.add(new StringTextComponent("output = " + MjAPI.formatMj(clamp(e + esum / 20, MIN_OUTPUT, MAX_OUTPUT)) + " MJ"));
+        left.add(new StringTextComponent("burnTime = " + burnTime));
+        left.add(new StringTextComponent("delta = " + deltaFuelLeft.getDynamic(0)));
+    }
+
+    // INamedContainerProvider
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return this.getBlockState().getBlock().getName();
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory inventory, PlayerEntity player) {
+        return new ContainerEngineStone_BC8(BCEnergyMenuTypes.ENGINE_STONE, id, player, this);
     }
 }

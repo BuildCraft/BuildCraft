@@ -6,23 +6,22 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 
 public abstract class PipeBehaviourSeparate extends PipeBehaviour {
     public PipeBehaviourSeparate(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourSeparate(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourSeparate(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+    public boolean canConnect(Direction face, PipeBehaviour other) {
         if (other instanceof PipeBehaviourSeparate) {
             return other.getClass() == getClass();
         } else {

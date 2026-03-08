@@ -1,29 +1,34 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.gui;
 
-import net.minecraft.util.ResourceLocation;
-
+import buildcraft.factory.container.ContainerChute;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-
-import buildcraft.factory.container.ContainerChute;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
 public class GuiChute extends GuiBC8<ContainerChute> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/chute.png");
     private static final int SIZE_X = 176, SIZE_Y = 153;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
-    public GuiChute(ContainerChute container) {
-        super(container);
-        xSize = SIZE_X;
-        ySize = SIZE_Y;
+    public GuiChute(ContainerChute container, PlayerInventory inventory, ITextComponent component) {
+        super(container, inventory, component);
+//        xSize = SIZE_X;
+        imageWidth = SIZE_X;
+//        ySize = SIZE_Y;
+        imageHeight = SIZE_Y;
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.drawAt(mainGui.rootElement);
+//    protected void drawBackgroundLayer(float partialTicks)
+    protected void drawBackgroundLayer(float partialTicks, MatrixStack poseStack) {
+//        ICON_GUI.drawAt(mainGui.rootElement);
+        ICON_GUI.drawAt(mainGui.rootElement, poseStack);
     }
 }

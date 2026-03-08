@@ -6,20 +6,14 @@
 
 package buildcraft.builders;
 
-import java.util.Collection;
-import java.util.Collections;
+import buildcraft.api.statements.*;
+import buildcraft.api.statements.containers.IFillerStatementContainer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IActionInternalSided;
-import buildcraft.api.statements.IActionProvider;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.containers.IFillerStatementContainer;
+import java.util.Collection;
+import java.util.Collections;
 
 public enum BCBuildersActionProvider implements IActionProvider {
     INSTANCE;
@@ -29,11 +23,11 @@ public enum BCBuildersActionProvider implements IActionProvider {
     }
 
     @Override
-    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull EnumFacing side) {
+    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, @Nonnull Direction side) {
     }
 
     @Override
-    public void addExternalActions(Collection<IActionExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
+    public void addExternalActions(Collection<IActionExternal> res, @Nonnull Direction side, TileEntity tile) {
         if (tile instanceof IFillerStatementContainer) {
             Collections.addAll(res, BCBuildersStatements.PATTERNS);
         }

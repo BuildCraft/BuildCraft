@@ -6,24 +6,22 @@
 
 package buildcraft.core.statements;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StackUtil;
-
 import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 public enum StatementParamGateSideOnly implements IStatementParameter {
     ANY(false),
@@ -38,7 +36,7 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
         this.isSpecific = isSpecific;
     }
 
-    public static StatementParamGateSideOnly readFromNbt(NBTTagCompound nbt) {
+    public static StatementParamGateSideOnly readFromNbt(CompoundNBT nbt) {
         if (nbt.getBoolean("isOn")) {
             return SPECIFIC;
         }
@@ -46,8 +44,8 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound compound) {
-        compound.setBoolean("isOn", isSpecific);
+    public void writeToNbt(CompoundNBT compound) {
+        compound.putBoolean("isOn", isSpecific);
     }
 
     @Nonnull
@@ -57,7 +55,7 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         if (isSpecific) {
             return BCCoreSprites.PARAM_GATE_SIDE_ONLY;
@@ -73,13 +71,19 @@ public enum StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     public StatementParamGateSideOnly onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
-        StatementMouseClick mouse) {
+                                              StatementMouseClick mouse) {
         return null;
     }
 
     @Override
-    public String getDescription() {
-        return isSpecific ? LocaleUtil.localize("gate.parameter.redstone.gateSideOnly") : "";
+    public ITextComponent getDescription() {
+//        return isSpecific ? LocaleUtil.localize("gate.parameter.redstone.gateSideOnly") : "";
+        return isSpecific ? new TranslationTextComponent("gate.parameter.redstone.gateSideOnly") : new StringTextComponent("");
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return isSpecific ? "gate.parameter.redstone.gateSideOnly" : "";
     }
 
     @Override

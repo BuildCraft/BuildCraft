@@ -1,0 +1,9 @@
+{
+  "parent": "forge:item/bucket",
+  "textures": {
+    "base": "buildcraftcore:items/fragile_fluid_shard_base",
+    "fluid": "buildcraftcore:items/fragile_fluid_shard_fluid"
+  },
+  "loader": "forge:bucket",
+  "fluid": "minecraft:water"
+}

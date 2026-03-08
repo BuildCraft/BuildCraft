@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftfactory",
+  "pattern": [
+    "ici",
+    "igi",
+    " i "
+  ],
+  "key": {
+    "c": {
+      "tag": "forge:chests/wooden"
+    },
+    "g": {
+      "tag": "forge:gears/stone"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "buildcraftfactory:chute"
+  }
+}

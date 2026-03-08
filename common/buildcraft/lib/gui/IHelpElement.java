@@ -1,8 +1,8 @@
 package buildcraft.lib.gui;
 
-import java.util.List;
-
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
+
+import java.util.List;
 
 @FunctionalInterface
 public interface IHelpElement {

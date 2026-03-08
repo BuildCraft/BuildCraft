@@ -1,40 +1,51 @@
 package buildcraft.lib.block;
 
+import buildcraft.lib.BCLib;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldEventListener;
-import net.minecraft.world.World;
-
-import buildcraft.lib.world.WorldEventListenerAdapter;
 
 
 /**
  * Listens for BlockUpdates in a given world and notifies all registered IBlockUpdateSubscribers of the update provided
  * it was within the update range of the ILocalBlockUpdateSubscriber
  */
+@Mod.EventBusSubscriber(modid = BCLib.MODID) // Calen
 public class LocalBlockUpdateNotifier {
 
-    private static final Map<World, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
+    private static final Map<IWorld, LocalBlockUpdateNotifier> instanceMap = new WeakHashMap<>();
     private final Set<ILocalBlockUpdateSubscriber> subscriberSet = new HashSet<>();
 
+    private LocalBlockUpdateNotifier(IWorld world) {
+//        IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
+//            @Override
+//            public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
+//                                          @Nonnull IBlockState newState, int flags) {
+//                notifySubscribersInRange(world, eventPos, oldState, newState, flags);
+//            }
+//        };
+//        // Calen: moved to #handleForgeEvent
+//        world.addEventListener(worldEventListener);
+    }
 
-    private LocalBlockUpdateNotifier(World world) {
-
-        IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
-            @Override
-            public void notifyBlockUpdate(@Nonnull World world, @Nonnull BlockPos eventPos, @Nonnull IBlockState oldState,
-                                          @Nonnull IBlockState newState, int flags) {
-                notifySubscribersInRange(world, eventPos, oldState, newState, flags);
-            }
-        };
-        world.addEventListener(worldEventListener);
+    // Calen
+    @SubscribeEvent
+    public static void handleForgeEvent(NeighborNotifyEvent event) {
+        instanceMap.forEach(
+                (level, notifier) ->
+                {
+                    if (level == event.getWorld()) {
+                        notifier.notifySubscribersInRange(event.getWorld(), event.getPos());
+                    }
+                }
+        );
     }
 
     /**
@@ -43,7 +54,7 @@ public class LocalBlockUpdateNotifier {
      * @param world the World where BlockUpdate events will be listened for
      * @return the instance of LocalBlockUpdateNotifier for the given world
      */
-    public static LocalBlockUpdateNotifier instance(World world) {
+    public static LocalBlockUpdateNotifier instance(IWorld world) {
         if (!instanceMap.containsKey(world)) {
             instanceMap.put(world, new LocalBlockUpdateNotifier(world));
         }
@@ -75,21 +86,19 @@ public class LocalBlockUpdateNotifier {
      *
      * @param world    from the Block Update
      * @param eventPos from the Block Update
-     * @param oldState from the Block Update
-     * @param newState from the Block Update
-     * @param flags    from the Block Update
      */
-    private void notifySubscribersInRange(World world, BlockPos eventPos, IBlockState oldState, IBlockState newState,
-                                          int flags) {
+//    private void notifySubscribersInRange(World world, BlockPos eventPos, BlockState oldState, BlockState newState, int flags)
+    private void notifySubscribersInRange(IWorld world, BlockPos eventPos) {
         for (ILocalBlockUpdateSubscriber subscriber : subscriberSet) {
             BlockPos keyPos = subscriber.getSubscriberPos();
             int updateRange = subscriber.getUpdateRange();
             if (Math.abs(keyPos.getX() - eventPos.getX()) <= updateRange &&
                     Math.abs(keyPos.getY() - eventPos.getY()) <= updateRange &&
-                    Math.abs(keyPos.getZ() - eventPos.getZ()) <= updateRange) {
-                subscriber.setWorldUpdated(world, eventPos, oldState, newState, flags);
+                    Math.abs(keyPos.getZ() - eventPos.getZ()) <= updateRange)
+            {
+//                subscriber.setWorldUpdated(world, eventPos, oldState, newState, flags);
+                subscriber.setWorldUpdated(world, eventPos);
             }
         }
     }
-
 }

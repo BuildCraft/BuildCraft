@@ -6,58 +6,58 @@
 
 package buildcraft.core.client.render;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
-
-import buildcraft.lib.client.render.DetachedRenderer;
-import buildcraft.lib.client.render.laser.LaserBoxRenderer;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock;
+import buildcraft.lib.client.render.DetachedRenderer;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Atlases;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     @SuppressWarnings("unchecked")
     @Override
-    public void render(EntityPlayer player, float partialTicks) {
-        GlStateManager.enableBlend();
+    public void render(PlayerEntity player, float partialTicks, MatrixStack poseStack) {
+//        GlStateManager.enableBlend();
 
-        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+//        BufferBuilder bb = Tessellator.getInstance().getBuffer();
+//        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        IVertexBuilder bb = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(Atlases.solidBlockSheet());
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
-        ClientVolumeBoxes.INSTANCE.volumeBoxes.forEach(volumeBox -> {
+        ClientVolumeBoxes.INSTANCE.volumeBoxes.forEach(volumeBox ->
+        {
             LaserType type;
             if (volumeBox.isEditingBy(player)) {
                 type = BuildCraftLaserManager.MARKER_VOLUME_SIGNAL;
             } else {
                 type = volumeBox.getLockTargetsStream()
-                    .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
-                    .map(Lock.Target.TargetUsedByMachine.class::cast)
-                    .map(target -> target.type)
-                    .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
-                    .findFirst()
-                    .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
+                        .filter(Lock.Target.TargetUsedByMachine.class::isInstance)
+                        .map(Lock.Target.TargetUsedByMachine.class::cast)
+                        .map(target -> target.type)
+                        .map(Lock.Target.TargetUsedByMachine.EnumType::getLaserType)
+                        .findFirst()
+                        .orElse(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
             }
-            LaserBoxRenderer.renderLaserBoxDynamic(volumeBox.box, type, bb, false);
+            LaserBoxRenderer.renderLaserBoxDynamic(volumeBox.box, type, poseStack.last(), bb, false);
 
             volumeBox.addons.values().forEach(addon ->
-                ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, partialTicks, bb)
+                    ((IFastAddonRenderer<Addon>) addon.getRenderer()).renderAddonFast(addon, player, poseStack.last(), partialTicks, bb)
             );
         });
 
-        Tessellator.getInstance().draw();
+//        Tessellator.getInstance().draw();
 
-        GlStateManager.disableBlend();
+//        GlStateManager.disableBlend();
     }
 }

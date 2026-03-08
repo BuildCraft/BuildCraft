@@ -6,12 +6,11 @@
 
 package buildcraft.lib.particle;
 
+import com.google.common.collect.ImmutableList;
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 import java.util.List;
 import java.util.function.Supplier;
-
-import com.google.common.collect.ImmutableList;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 // This *might* be useful in the future - although I don't really know.
 @Deprecated

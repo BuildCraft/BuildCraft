@@ -6,32 +6,26 @@
 
 package buildcraft.lib.gui.widget;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.gui.BuildCraftGui;
-import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiElementSimple;
-import buildcraft.lib.gui.IInteractionElement;
-import buildcraft.lib.gui.Widget_Neptune;
+import buildcraft.api.net.IMessage;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.misc.GuiUtil;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.InputMappings;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.List;
 
 /** Defines a widget that represents a phantom slot. */
 public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
@@ -50,7 +44,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataServer(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLIENT_TO_SERVER_CLICK) {
             byte flags = buffer.readByte();
@@ -64,16 +58,19 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         boolean single = (flags & CLICK_FLAG_SINGLE) == CLICK_FLAG_SINGLE;
         boolean clone = (flags & CLICK_FLAG_CLONE) == CLICK_FLAG_CLONE;
         if (clone) {
-            if (container.player.capabilities.isCreativeMode) {
+            if (container.player.isCreative()) {
                 ItemStack get = getStack();
-                if (!get.isEmpty() && container.player.inventory.getItemStack().isEmpty()) {
-                    container.player.inventory.setItemStack(get.copy());
+//                if (!get.isEmpty() && container.player.inventory.getItemStack().isEmpty())
+                if (!get.isEmpty() && container.player.inventory.getCarried().isEmpty()) {
+//                    container.player.inventory.setItemStack(get.copy());
+                    container.player.inventory.setCarried(get.copy());
                 }
             }
         } else if (shift) {
             setStack(StackUtil.EMPTY, true);
         } else {
-            ItemStack toSet = container.player.inventory.getItemStack();
+//            ItemStack toSet = container.player.inventory.getItemStack();
+            ItemStack toSet = container.player.inventory.getCarried();
             if (toSet.isEmpty()) {
                 setStack(StackUtil.EMPTY, true);
             } else {
@@ -87,10 +84,10 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataClient(MessageContext ctx, PacketBufferBC buffer) throws IOException {
+    public IMessage handleWidgetDataClient(NetworkEvent.Context ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_SERVER_TO_CLIENT_ITEM) {
-            stack = StackUtil.asNonNull(buffer.readItemStack());
+            stack = StackUtil.asNonNull(buffer.readItem());
             onSetStack();
         }
         return null;
@@ -111,18 +108,20 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         if (stack.getCount() > max) {
             this.stack.setCount(max);
         }
-        if (tellClient && !container.player.world.isRemote) {
-            sendWidgetData(buffer -> {
+        if (tellClient && !container.player.level.isClientSide) {
+            sendWidgetData(buffer ->
+            {
                 buffer.writeByte(NET_SERVER_TO_CLIENT_ITEM);
-                buffer.writeItemStack(stack);
+                buffer.writeItemStack(stack, false);
             });
         }
         onSetStack();
     }
 
-    protected void onSetStack() {}
+    protected void onSetStack() {
+    }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public class GuiElementPhantomSlot extends GuiElementSimple implements IInteractionElement {
         private final ToolTip tooltip = GuiUtil.createToolTip(this::getStack);
 
@@ -131,12 +130,15 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         }
 
         @Override
-        public void drawForeground(float partialTicks) {
-            RenderHelper.enableGUIStandardItemLighting();
-            gui.mc.getRenderItem().renderItemAndEffectIntoGUI(getStack(), (int) getX(), (int) getY());
-            RenderHelper.disableStandardItemLighting();
+        public void drawForeground(MatrixStack poseStack, float partialTicks) {
+//            RenderHelper.enableGUIStandardItemLighting();
+            RenderUtil.enableGUIStandardItemLighting();
+//            gui.mc.getRenderItem().renderItemAndEffectIntoGUI(getStack(), (int) getX(), (int) getY());
+            gui.mc.getItemRenderer().renderAndDecorateItem(getStack(), (int) (getX() - gui.rootElement.getX()), (int) (getY() - gui.rootElement.getY()));
+//            RenderHelper.disableStandardItemLighting();
+            RenderUtil.disableStandardItemLighting();
             if (contains(gui.mouse) && shouldDrawHighlight()) {
-                GuiUtil.drawRect(this, 0x70_FF_FF_FF);
+                GuiUtil.drawRect(poseStack, this, 0x70_FF_FF_FF);
             }
         }
 
@@ -154,8 +156,13 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
             if (contains(gui.mouse)) {
                 byte flags = 0;
                 if (button == 1) flags |= CLICK_FLAG_SINGLE;
-                if (GuiScreen.isShiftKeyDown()) flags |= CLICK_FLAG_SHIFT;
-                if (gui.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(button - 100)) {
+//                if (GuiScreen.isShiftKeyDown()) flags |= CLICK_FLAG_SHIFT;
+                if (Screen.hasShiftDown()) {
+                    flags |= CLICK_FLAG_SHIFT;
+                }
+                // Calen: should not -100 in 1.18.2
+//                if (gui.mc.gameSettings.keyBindPickBlock.isActiveAndMatches(button - 100))
+                if (gui.mc.options.keyPickItem.isActiveAndMatches(InputMappings.Type.MOUSE.getOrCreate(button))) {
                     flags |= CLICK_FLAG_CLONE;
                     BCLog.logger.info("clone");
                 }
@@ -163,7 +170,8 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
                 // Pretend what we did was right
                 WidgetPhantomSlot.this.tryMouseClick(flags);
                 // Tell the server what we just did so we can get confirmation that it was right
-                WidgetPhantomSlot.this.sendWidgetData(buffer -> {
+                WidgetPhantomSlot.this.sendWidgetData(buffer ->
+                {
                     buffer.writeByte(NET_CLIENT_TO_SERVER_CLICK);
                     buffer.writeByte(writtenFlags);
                 });

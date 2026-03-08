@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "buildcraftsilicon:items/redstone_chipset/diamond"
+  }
+}

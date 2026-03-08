@@ -7,21 +7,27 @@
 package buildcraft.lib.client.guide.parts;
 
 import buildcraft.lib.client.guide.GuiGuide;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.text.ITextComponent;
 
 public class GuideChapterWithin extends GuideChapter {
     private int lastPage = -1;
 
-    public GuideChapterWithin(GuiGuide gui, int level, String text) {
-        super(gui, level, text);
+    // public GuideChapterWithin(GuiGuide gui, int level, String text)
+    public GuideChapterWithin(GuiGuide gui, int level, String textKey, ITextComponent text) {
+//        super(gui, level, text);
+        super(gui, level, textKey, text);
     }
 
-    public GuideChapterWithin(GuiGuide gui, String chapter) {
-        this(gui, 0, chapter);
+    // public GuideChapterWithin(GuiGuide gui, String chapter)
+    public GuideChapterWithin(GuiGuide gui, String chapterKey, ITextComponent chapter) {
+//        this(gui, 0, chapter);
+        this(gui, 0, chapterKey, chapter);
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
-        PagePosition pos = super.renderIntoArea(x, y, width, height, current, index);
+    public PagePosition renderIntoArea(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
+        PagePosition pos = super.renderIntoArea(poseStack, x, y, width, height, current, index);
         lastPage = pos.page;
         if (pos.pixel == 0) {
             lastPage = pos.page - 1;

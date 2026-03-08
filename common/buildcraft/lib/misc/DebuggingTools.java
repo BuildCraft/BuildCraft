@@ -6,14 +6,15 @@
 
 package buildcraft.lib.misc;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.world.WorldEventListenerAdapter;
+import buildcraft.lib.block.ILocalBlockUpdateSubscriber;
+import buildcraft.lib.block.LocalBlockUpdateNotifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class DebuggingTools {
     public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.world");
@@ -27,13 +28,16 @@ public class DebuggingTools {
     private static class EventHook {
         @SubscribeEvent
         public void worldLoadEvent(WorldEvent.Load load) {
-            load.getWorld().addEventListener(new WorldListener());
+//            load.getWorld().addEventListener(new WorldListener());
+            LocalBlockUpdateNotifier.instance(load.getWorld()).registerSubscriberForUpdateNotifications(new WorldListener());
         }
     }
 
-    private static class WorldListener extends WorldEventListenerAdapter {
+    // private static class WorldListener extends WorldEventListenerAdapter
+    private static class WorldListener implements ILocalBlockUpdateSubscriber {
         @Override
-        public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {
+//        public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2)
+        public void setWorldUpdated(IWorld world, BlockPos pos) {
             StackTraceElement[] elements = new Throwable().getStackTrace();
             String[] bc = new String[elements.length];
             int bcIndex = 0;
@@ -43,11 +47,22 @@ public class DebuggingTools {
                 bc[bcIndex++] = ste.getClassName() + " # " + ste.getMethodName() + " : " + ste.getLineNumber();
             }
             if (bcIndex > 0) {
-                BCLog.logger.info("[lib.debug.world] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
+//                BCLog.logger.info("[lib.debug.world] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
+                BCLog.logger.info("[lib.debug.world] markBlockRangeForRenderUpdate(" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")");
                 for (int i = 0; i < bcIndex; i++) {
                     BCLog.logger.info("[lib.debug.world]   at " + bc[i]);
                 }
             }
+        }
+
+        @Override
+        public BlockPos getSubscriberPos() {
+            return BlockPos.ZERO;
+        }
+
+        @Override
+        public int getUpdateRange() {
+            return Integer.MAX_VALUE;
         }
     }
 }

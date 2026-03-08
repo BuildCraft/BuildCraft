@@ -6,66 +6,84 @@
 
 package buildcraft.transport.client.render;
 
-import javax.vecmath.Point3f;
-
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
-
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.VecUtil;
-
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowPower.Section;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.MatrixStack.Entry;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
     INSTANCE;
 
     @Override
-    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder bb) {
+//    public void render(PipeFlowPower flow, double x, double y, double z, float partialTicks, BufferBuilder bb)
+    public void render(PipeFlowPower flow, float partialTicks, MatrixStack poseStack, IVertexBuilder bb, int combinedLight, int combinedOverlay) {
         double centrePower = 0;
         double[] power = new double[6];
-        for (EnumFacing side : EnumFacing.values()) {
+        for (Direction side : Direction.values()) {
             Section s = flow.getSection(side);
             int i = side.ordinal();
             power[i] = s.displayPower / (double) MjAPI.MJ;
             centrePower = Math.max(centrePower, power[i]);
         }
 
-        bb.setTranslation(x, y, z);
+//        bb.setTranslation(x, y, z);
 
         if (centrePower > 0) {
-            for (EnumFacing side : EnumFacing.values()) {
+            for (Direction side : Direction.values()) {
                 if (!flow.pipe.isConnected(side)) {
                     continue;
                 }
                 int i = side.ordinal();
                 Section s = flow.getSection(side);
-                double offset = MathUtil.interp(partialTicks, s.clientDisplayFlowLast, s.clientDisplayFlow);
-                renderSidePower(side, power[i], centrePower, offset, bb);
+                double offset = computeOffset(s.clientDisplayFlowLast, s.clientDisplayFlow, partialTicks);
+                renderSidePower(side, power[i], centrePower, offset, poseStack.last(), bb);
             }
 
-            renderCentrePower(centrePower, flow.clientDisplayFlowCentre, bb);
+            Vector3d offsetLast = flow.clientDisplayFlowCentreLast;
+            Vector3d offsetThis = flow.clientDisplayFlowCentre;
+            double offsetX = computeOffset(offsetLast.x, offsetThis.x, partialTicks);
+            double offsetY = computeOffset(offsetLast.y, offsetThis.y, partialTicks);
+            double offsetZ = computeOffset(offsetLast.z, offsetThis.z, partialTicks);
+
+            renderCentrePower(centrePower, offsetX, offsetY, offsetZ, poseStack.last(), bb);
         }
 
-        bb.setTranslation(0, 0, 0);
+//        bb.setTranslation(0, 0, 0);
     }
 
-    private static void renderSidePower(EnumFacing side, double power, double centrePower, double offset,
-        BufferBuilder bb) {
+    private static double computeOffset(double tick0, double tick1, float partialTicks) {
+        if (tick0 + 8 < tick1) {
+            // overflow upwards
+            tick0 += 16;
+        } else if (tick1 + 8 < tick0) {
+            // overflow downwards
+            tick1 += 16;
+        }
+        double offset = MathUtil.interp(partialTicks, tick0, tick1);
+        if (offset >= 16) {
+            offset -= 16;
+        }
+        return offset;
+    }
+
+    private static void renderSidePower(Direction side, double power, double centrePower, double offset, Entry pose, IVertexBuilder bb) {
         if (power < 0) {
             return;
         }
@@ -77,35 +95,37 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
         }
 
         TextureAtlasSprite sprite = (overload ? BCTransportSprites.POWER_FLOW_OVERLOAD : BCTransportSprites.POWER_FLOW)
-            .getSprite();
+                .getSprite();
 
         double centreRadius = 0.252 - (0.248 * centrePower);
 
-        Vec3d centre = VecUtil.offset(VecUtil.VEC_HALF, side, 0.25 + 0.125 - centreRadius / 2);
-        Vec3d radiusV = new Vec3d(radius, radius, radius);
+        Vector3d centre = VecUtil.offset(VecUtil.VEC_HALF, side, 0.25 + 0.125 - centreRadius / 2);
+        Vector3d radiusV = new Vector3d(radius, radius, radius);
         radiusV = VecUtil.replaceValue(radiusV, side.getAxis(), 0.125 + centreRadius / 2);
 
-        Point3f centreF = new Point3f((float) centre.x, (float) centre.y, (float) centre.z);
-        Point3f radiusF = new Point3f((float) radiusV.x, (float) radiusV.y, (float) radiusV.z);
+        Vector3f centreF = new Vector3f((float) centre.x, (float) centre.y, (float) centre.z);
+        Vector3f radiusF = new Vector3f((float) radiusV.x, (float) radiusV.y, (float) radiusV.z);
 
         UvFaceData uvs = new UvFaceData();
-        for (EnumFacing face : EnumFacing.values()) {
+        for (Direction face : Direction.values()) {
             if (face == side.getOpposite()) {
                 continue;
             }
 
             AxisAlignedBB box = new AxisAlignedBB(centre.subtract(radiusV).scale(0.5), centre.add(radiusV).scale(0.5));
-            box = box.offset(VecUtil.offset(Vec3d.ZERO, side, offset * side.getAxisDirection().getOffset() / 32));
+//            box = box.move(VecUtil.offset(Vector3d.ZERO, side, offset * side.getAxisDirection().getOffset() / 32));
+            box = box.move(VecUtil.offset(Vector3d.ZERO, side, offset * side.getAxisDirection().getStep() / 32));
             ModelUtil.mapBoxToUvs(box, face, uvs);
 
             MutableQuad quad = ModelUtil.createFace(face, centreF, radiusF, uvs);
             quad.texFromSprite(sprite);
-            quad.lighti(15, 15);
-            quad.render(bb);
+            quad.lighti((byte) 15, (byte) 15);
+            quad.normalf(1, 1, 1);
+            quad.render(pose, bb);
         }
     }
 
-    private static void renderCentrePower(double power, Vec3d offset, BufferBuilder bb) {
+    private static void renderCentrePower(double power, double offsetX, double offsetY, double offsetZ, Entry pose, IVertexBuilder bb) {
         boolean overload = false;
         float radius = 0.248f * (float) power;
         if (radius > 0.248f) {
@@ -113,26 +133,27 @@ public enum PipeFlowRendererPower implements IPipeFlowRenderer<PipeFlowPower> {
             radius = 0.248f;
         }
         TextureAtlasSprite sprite = (overload ? BCTransportSprites.POWER_FLOW_OVERLOAD : BCTransportSprites.POWER_FLOW)
-            .getSprite();
+                .getSprite();
 
-        Point3f centre = new Point3f(0.5f, 0.5f, 0.5f);
-        Point3f radiusP = new Point3f(radius, radius, radius);
+        Vector3f centre = new Vector3f(0.5f, 0.5f, 0.5f);
+        Vector3f radiusP = new Vector3f(radius, radius, radius);
 
         UvFaceData uvs = new UvFaceData();
 
-        for (EnumFacing face : EnumFacing.values()) {
+        for (Direction face : Direction.values()) {
 
             AxisAlignedBB box = new AxisAlignedBB(
-                new Vec3d(0.5 - radius, 0.5 - radius, 0.5 - radius).scale(0.5), //
-                new Vec3d(0.5 + radius, 0.5 + radius, 0.5 + radius).scale(0.5)//
+                    new Vector3d(0.5 - radius, 0.5 - radius, 0.5 - radius).scale(0.5), //
+                    new Vector3d(0.5 + radius, 0.5 + radius, 0.5 + radius).scale(0.5)//
             );
-            box = box.offset(offset.scale(1 / 32.0));
+            box = box.move(offsetX / 32.0, offsetY / 32.0, offsetZ / 32.0);
             ModelUtil.mapBoxToUvs(box, face, uvs);
 
             MutableQuad quad = ModelUtil.createFace(face, centre, radiusP, uvs);
             quad.texFromSprite(sprite);
-            quad.lighti(15, 15);
-            quad.render(bb);
+            quad.lighti((byte) 15, (byte) 15);
+            quad.normalf(1, 1, 1);
+            quad.render(pose, bb);
         }
     }
 }

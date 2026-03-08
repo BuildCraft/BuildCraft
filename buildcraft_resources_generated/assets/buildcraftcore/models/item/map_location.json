@@ -1,0 +1,40 @@
+{
+  "overrides": [
+    {
+      "predicate": {
+        "buildcraft:map_type": 0.0
+      },
+      "model": "buildcraftcore:item/map_location/clean"
+    },
+    {
+      "predicate": {
+        "buildcraft:map_type": 1.0
+      },
+      "model": "buildcraftcore:item/map_location/spot"
+    },
+    {
+      "predicate": {
+        "buildcraft:map_type": 2.0
+      },
+      "model": "buildcraftcore:item/map_location/area"
+    },
+    {
+      "predicate": {
+        "buildcraft:map_type": 3.0
+      },
+      "model": "buildcraftcore:item/map_location/path"
+    },
+    {
+      "predicate": {
+        "buildcraft:map_type": 4.0
+      },
+      "model": "buildcraftcore:item/map_location/zone"
+    },
+    {
+      "predicate": {
+        "buildcraft:map_type": 5.0
+      },
+      "model": "buildcraftcore:item/map_location/path_repeating"
+    }
+  ]
+}

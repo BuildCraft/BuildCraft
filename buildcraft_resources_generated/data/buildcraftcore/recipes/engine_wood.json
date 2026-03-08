@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftcore",
+  "pattern": [
+    "www",
+    " g ",
+    "GpG"
+  ],
+  "key": {
+    "w": {
+      "tag": "minecraft:planks"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "G": {
+      "tag": "forge:gears/wood"
+    },
+    "p": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "buildcraftcore:engine_wood"
+  }
+}

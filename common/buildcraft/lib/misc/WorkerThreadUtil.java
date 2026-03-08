@@ -6,26 +6,13 @@
 
 package buildcraft.lib.misc;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import com.google.common.base.Throwables;
-
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import com.google.common.base.Throwables;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+
+import java.util.concurrent.*;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 
 /** Provides a pool of worker threads that can execute tasks. Each task should take no longer than (ideally) 20ms or at
  * a push 100ms. Each task is watched to make sure that it takes less time to complete that that, and if it takes longer
@@ -43,7 +30,8 @@ public class WorkerThreadUtil {
 
         ThreadFactory factory = new BasicThreadFactory.Builder().daemon(false)//
                 .namingPattern("BuildCraft Worker Thread %d")//
-                .uncaughtExceptionHandler((thread, e) -> {
+                .uncaughtExceptionHandler((thread, e) ->
+                {
                     e.printStackTrace();
                     throw new IllegalStateException(e);
                 })//

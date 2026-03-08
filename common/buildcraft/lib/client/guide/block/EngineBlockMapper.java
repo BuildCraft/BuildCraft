@@ -6,21 +6,21 @@
 
 package buildcraft.lib.client.guide.block;
 
-import java.util.List;
-
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.lib.engine.BlockEngineBase_BC8;
 import com.google.common.collect.Lists;
-
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumEngineType;
-import buildcraft.api.properties.BuildCraftProperties;
+import java.util.List;
 
+@Deprecated()
 public class EngineBlockMapper implements IBlockGuidePageMapper {
     @Override
-    public String getFor(World world, BlockPos pos, IBlockState state) {
-        EnumEngineType type = state.getValue(BuildCraftProperties.ENGINE_TYPE);
+    public String getFor(World world, BlockPos pos, BlockState state) {
+//        EnumEngineType type = state.getValue(BuildCraftProperties.ENGINE_TYPE);
+        EnumEngineType type = (EnumEngineType) ((BlockEngineBase_BC8) state.getBlock()).engineType;
         return "engine_" + type.unlocalizedTag;
     }
 

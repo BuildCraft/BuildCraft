@@ -6,58 +6,71 @@
 
 package buildcraft.energy.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-
+import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.widget.WidgetFluidTank;
-
-import buildcraft.energy.tile.TileEngineIron_BC8;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
 public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8> {
-    public final WidgetFluidTank widgetTankFuel;
-    public final WidgetFluidTank widgetTankCoolant;
-    public final WidgetFluidTank widgetTankResidue;
+    public final WidgetFluidTank<ContainerEngineIron_BC8> widgetTankFuel;
+    public final WidgetFluidTank<ContainerEngineIron_BC8> widgetTankCoolant;
+    public final WidgetFluidTank<ContainerEngineIron_BC8> widgetTankResidue;
 
-    public ContainerEngineIron_BC8(EntityPlayer player, TileEngineIron_BC8 engine) {
-        super(player, engine);
+    public ContainerEngineIron_BC8(ContainerType menuType, int id, PlayerEntity player, TileEngineIron_BC8 engine) {
+        super(menuType, id, player, engine);
 
         addFullPlayerInventory(95);
 
-        widgetTankFuel = addWidget(new WidgetFluidTank(this, engine.tankFuel));
-        widgetTankCoolant = addWidget(new WidgetFluidTank(this, engine.tankCoolant));
-        widgetTankResidue = addWidget(new WidgetFluidTank(this, engine.tankResidue));
+        widgetTankFuel = addWidget(new WidgetFluidTank<>(this, engine.tankFuel));
+        widgetTankCoolant = addWidget(new WidgetFluidTank<>(this, engine.tankCoolant));
+        widgetTankResidue = addWidget(new WidgetFluidTank<>(this, engine.tankResidue));
     }
 
+
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+//    public ItemStack transferStackInSlot(PlayerEntity player, int index)
+    public ItemStack quickMoveStack(PlayerEntity player, int index) {
         // The only slots are player slots -- try to interact with all of the tanks
 
-        if (!player.world.isRemote) {
-            Slot slot = inventorySlots.get(index);
-            ItemStack stack = slot.getStack();
+        if (!player.level.isClientSide) {
+//            Slot slot = inventorySlots.get(index);
+            Slot slot = slots.get(index);
+//            ItemStack stack = slot.getStack();
+            ItemStack stack = slot.getItem();
             ItemStack original = stack.copy();
             stack = tile.tankFuel.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
+//            if (!ItemStack.areItemStacksEqual(stack, original))
+            if (!ItemStack.matches(stack, original)) {
+//                slot.putStack(stack);
+                slot.set(stack);
+//                detectAndSendChanges();
+                broadcastChanges();
                 return ItemStack.EMPTY;
             }
             stack = tile.tankCoolant.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
+//            if (!ItemStack.areItemStacksEqual(stack, original))
+            if (!ItemStack.matches(stack, original)) {
+//                slot.putStack(stack);
+                slot.set(stack);
+//                detectAndSendChanges();
+                broadcastChanges();
                 return ItemStack.EMPTY;
             }
             stack = tile.tankResidue.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
+//            if (!ItemStack.areItemStacksEqual(stack, original))
+            if (!ItemStack.matches(stack, original)) {
+//                slot.putStack(stack);
+                slot.set(stack);
+//                detectAndSendChanges();
+                broadcastChanges();
                 return ItemStack.EMPTY;
             }
         }
 
-        return super.transferStackInSlot(player, index);
+//        return super.transferStackInSlot(player, index);
+        return super.quickMoveStack(player, index);
     }
 }

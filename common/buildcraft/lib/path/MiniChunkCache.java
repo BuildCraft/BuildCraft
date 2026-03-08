@@ -6,6 +6,14 @@
 
 package buildcraft.lib.path;
 
+import buildcraft.lib.misc.WorkerThreadUtil;
+import buildcraft.lib.path.task.TaskMiniChunkManager;
+import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Futures;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -14,28 +22,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.Futures;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import buildcraft.lib.misc.WorkerThreadUtil;
-import buildcraft.lib.path.task.TaskMiniChunkManager;
-
 public class MiniChunkCache {
-    private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();
+    // private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();
+    private static Map<RegistryKey<World>, MiniChunkCache> worldCaches = new HashMap<>();
 
-    public final int dimId;
+    // public final int dimId;
+    public final RegistryKey<World> dimId;
     private final Map<BlockPos, MiniChunkGraph> cache = new ConcurrentHashMap<>();
     final Map<BlockPos, Future<MiniChunkGraph>> tempData = new ConcurrentHashMap<>();
 
-    private MiniChunkCache(int dimId) {
+    // private MiniChunkCache(int dimId)
+    private MiniChunkCache(RegistryKey<World> dimId) {
         this.dimId = dimId;
     }
 
     public static Future<MiniChunkGraph> requestGraph(World world, BlockPos pos) {
-        int dimId = world.provider.getDimension();
+//        int dimId = world.provider.getDimension();
+        RegistryKey<World> dimId = world.dimension();
         if (!worldCaches.containsKey(dimId)) {
             worldCaches.put(dimId, new MiniChunkCache(dimId));
         }
@@ -43,7 +46,8 @@ public class MiniChunkCache {
     }
 
     public static MiniChunkGraph getGraphIfExists(World world, BlockPos pos) {
-        int dimId = world.provider.getDimension();
+//        int dimId = world.provider.getDimension();
+        RegistryKey<World> dimId = world.dimension();
         if (!worldCaches.containsKey(dimId)) {
             worldCaches.put(dimId, new MiniChunkCache(dimId));
         }
@@ -67,9 +71,12 @@ public class MiniChunkCache {
         pos = minPos;
         MiniChunkGraph existing = cache.get(pos);
         if (existing != null) {
-            return Futures.immediateCheckedFuture(existing);
+//            return Futures.immediateCheckedFuture(existing);
+            return Futures.immediateFuture(existing);
         }
-        if (!world.isBlockLoaded(pos)) return Futures.immediateFailedFuture(new Throwable("The block " + pos + " is not loaded!"));
+//        if (!world.isBlockLoaded(pos))
+        if (!world.isLoaded(pos))
+            return Futures.immediateFailedFuture(new Throwable("The block " + pos + " is not loaded!"));
         synchronized (this) {
             if (tempData.containsKey(pos)) {
                 return tempData.get(pos);

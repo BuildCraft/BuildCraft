@@ -6,27 +6,24 @@
 
 package buildcraft.transport.pipe;
 
-import java.io.IOException;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
-
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
-
 import buildcraft.transport.tile.TilePipeHolder;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.io.IOException;
 
 public final class PluggableHolder {
     // TODO: Networking is kinda sub-par at the moment for pluggables
@@ -37,32 +34,32 @@ public final class PluggableHolder {
     public static final int ID_CREATE_PLUG = ID_ALLOC.allocId("CREATE_PLUG");
 
     public final TilePipeHolder holder;
-    public final EnumFacing side;
+    public final Direction side;
     public PipePluggable pluggable;
 
-    public PluggableHolder(TilePipeHolder holder, EnumFacing side) {
+    public PluggableHolder(TilePipeHolder holder, Direction side) {
         this.holder = holder;
         this.side = side;
     }
 
     // Saving + Loading
 
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundNBT writeToNbt() {
+        CompoundNBT nbt = new CompoundNBT();
         if (pluggable != null) {
-            nbt.setString("id", pluggable.definition.identifier.toString());
-            nbt.setTag("data", pluggable.writeToNbt());
+            nbt.putString("id", pluggable.definition.identifier.toString());
+            nbt.put("data", pluggable.writeToNbt());
         }
         return nbt;
     }
 
-    public void readFromNbt(NBTTagCompound nbt) {
-        if (nbt.hasNoTags()) {
+    public void readFromNbt(CompoundNBT nbt) {
+        if (nbt.isEmpty()) {
             pluggable = null;
             return;
         }
         String id = nbt.getString("id");
-        NBTTagCompound data = nbt.getCompoundTag("data");
+        CompoundNBT data = nbt.getCompound("data");
         ResourceLocation identifier = new ResourceLocation(id);
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
@@ -76,7 +73,7 @@ public final class PluggableHolder {
 
     // Network
 
-    /** Called by {@link TilePipeHolder#replacePluggable(EnumFacing, PipePluggable)} to inform clients about the new
+    /** Called by {@link TilePipeHolder#replacePluggable(Direction, PipePluggable)} to inform clients about the new
      * pluggable. */
     public void sendNewPluggableData() {
         holder.sendMessage(PipeMessageReceiver.PLUGGABLES[side.ordinal()], this::writeCreationPayload);
@@ -87,7 +84,7 @@ public final class PluggableHolder {
             buffer.writeByte(ID_REMOVE_PLUG);
         } else {
             buffer.writeByte(ID_CREATE_PLUG);
-            buffer.writeString(pluggable.definition.identifier.toString());
+            buffer.writeUtf(pluggable.definition.identifier.toString());
             pluggable.writeCreationPayload(buffer);
         }
     }
@@ -105,7 +102,7 @@ public final class PluggableHolder {
     }
 
     private void readCreateInternal(PacketBuffer buffer) throws InvalidInputDataException {
-        ResourceLocation identifier = new ResourceLocation(buffer.readString(256));
+        ResourceLocation identifier = new ResourceLocation(buffer.readUtf(256));
         PluggableDefinition def = PipeApi.pluggableRegistry.getDefinition(identifier);
         if (def == null) {
             throw new InvalidInputDataException("Unknown remote pluggable \"" + identifier + "\"");
@@ -117,8 +114,8 @@ public final class PluggableHolder {
         holder.eventBus.registerHandler(pluggable);
     }
 
-    public void writePayload(PacketBufferBC buffer, Side netSide) {
-        if (netSide == Side.CLIENT) {
+    public void writePayload(PacketBufferBC buffer, Dist netSide) {
+        if (netSide == Dist.CLIENT) {
             buffer.writeByte(ID_UPDATE_PLUG);
             if (pluggable != null) {
                 pluggable.writePayload(buffer, netSide);
@@ -133,9 +130,10 @@ public final class PluggableHolder {
         }
     }
 
-    public void readPayload(PacketBufferBC buffer, Side netSide, MessageContext ctx) throws IOException {
+    // public void readPayload(PacketBufferBC buffer, Dist netSide, MessageContext ctx) throws IOException
+    public void readPayload(PacketBufferBC buffer, NetworkDirection netSide, NetworkEvent.Context ctx) throws IOException {
         int id = buffer.readUnsignedByte();
-        if (netSide == Side.SERVER) {
+        if (netSide == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_UPDATE_PLUG) {
                 if (pluggable != null) {
                     pluggable.readPayload(buffer, netSide, ctx);

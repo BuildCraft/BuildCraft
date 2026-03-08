@@ -6,29 +6,28 @@
 
 package buildcraft.core.marker.volume;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.net.PacketBufferBC;
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
-
-import buildcraft.core.client.BuildCraftLaserManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class Lock {
     public Cause cause;
@@ -42,59 +41,63 @@ public class Lock {
         this.targets.addAll(Arrays.asList(targets));
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        NBTTagCompound causeTag = new NBTTagCompound();
-        causeTag.setTag("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
-        causeTag.setTag("data", cause.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("cause", causeTag);
-        nbt.setTag("targets", NBTUtilBC.writeCompoundList(targets.stream().map(target -> {
-            NBTTagCompound targetTag = new NBTTagCompound();
-            targetTag.setTag("type", NBTUtilBC.writeEnum(Target.EnumTarget.getForClass(target.getClass())));
-            targetTag.setTag("data", target.writeToNBT(new NBTTagCompound()));
+    public CompoundNBT writeToNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        CompoundNBT causeTag = new CompoundNBT();
+        causeTag.put("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
+        causeTag.put("data", cause.writeToNBT(new CompoundNBT()));
+        nbt.put("cause", causeTag);
+        nbt.put("targets", NBTUtilBC.writeCompoundList(targets.stream().map(target ->
+        {
+            CompoundNBT targetTag = new CompoundNBT();
+            targetTag.put("type", NBTUtilBC.writeEnum(Target.EnumTarget.getForClass(target.getClass())));
+            targetTag.put("data", target.writeToNBT(new CompoundNBT()));
             return targetTag;
         })));
         return nbt;
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagCompound causeTag = nbt.getCompoundTag("cause");
-        cause = NBTUtilBC.readEnum(causeTag.getTag("type"), Cause.EnumCause.class).supplier.get();
-        cause.readFromNBT(causeTag.getCompoundTag("data"));
-        NBTUtilBC.readCompoundList(nbt.getTag("targets")).map(targetTag -> {
+    public void readFromNBT(CompoundNBT nbt) {
+        CompoundNBT causeTag = nbt.getCompound("cause");
+        cause = NBTUtilBC.readEnum(causeTag.get("type"), Cause.EnumCause.class).supplier.get();
+        cause.readFromNBT(causeTag.getCompound("data"));
+        NBTUtilBC.readCompoundList(nbt.get("targets")).map(targetTag ->
+        {
             Target target;
-            target = NBTUtilBC.readEnum(targetTag.getTag("type"), Target.EnumTarget.class).supplier.get();
-            target.readFromNBT(targetTag.getCompoundTag("data"));
+            target = NBTUtilBC.readEnum(targetTag.get("type"), Target.EnumTarget.class).supplier.get();
+            target.readFromNBT(targetTag.getCompound("data"));
             return target;
         }).forEach(targets::add);
     }
 
     public void toBytes(PacketBuffer buf) {
-        new PacketBufferBC(buf).writeEnumValue(Cause.EnumCause.getForClass(cause.getClass()));
+        new PacketBufferBC(buf).writeEnum(Cause.EnumCause.getForClass(cause.getClass()));
         cause.toBytes(buf);
         buf.writeInt(targets.size());
-        targets.forEach(target -> {
-            new PacketBuffer(buf).writeEnumValue(Target.EnumTarget.getForClass(target.getClass()));
+        targets.forEach(target ->
+        {
+            new PacketBuffer(buf).writeEnum(Target.EnumTarget.getForClass(target.getClass()));
             target.toBytes(buf);
         });
     }
 
     public void fromBytes(PacketBuffer buf) {
-        cause = new PacketBufferBC(buf).readEnumValue(Cause.EnumCause.class).supplier.get();
+        cause = new PacketBufferBC(buf).readEnum(Cause.EnumCause.class).supplier.get();
         cause.fromBytes(buf);
         targets.clear();
-        IntStream.range(0, buf.readInt()).mapToObj(i -> {
+        IntStream.range(0, buf.readInt()).mapToObj(i ->
+        {
             Target target;
-            target = new PacketBufferBC(buf).readEnumValue(Target.EnumTarget.class).supplier.get();
+            target = new PacketBufferBC(buf).readEnum(Target.EnumTarget.class).supplier.get();
             target.fromBytes(buf);
             return target;
         }).forEach(targets::add);
     }
 
     public static abstract class Cause {
-        public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
+        public abstract CompoundNBT writeToNBT(CompoundNBT nbt);
 
-        public abstract void readFromNBT(NBTTagCompound nbt);
+        public abstract void readFromNBT(CompoundNBT nbt);
 
         public abstract void toBytes(PacketBuffer buf);
 
@@ -115,28 +118,32 @@ public class Lock {
             }
 
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-                nbt.setTag("pos", NBTUtil.createPosTag(pos));
-                nbt.setString("block", Block.REGISTRY.getNameForObject(block).toString());
+            public CompoundNBT writeToNBT(CompoundNBT nbt) {
+                nbt.put("pos", NBTUtil.writeBlockPos(pos));
+//                nbt.setString("block", Block.REGISTRY.getNameForObject(block).toString());
+                nbt.putString("block", ForgeRegistries.BLOCKS.getKey(block).toString());
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
-                pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
-                block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("block")));
+            public void readFromNBT(CompoundNBT nbt) {
+                pos = NBTUtil.readBlockPos(nbt.getCompound("pos"));
+//                block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("block")));
+                block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(nbt.getString("block")));
             }
 
             @Override
             public void toBytes(PacketBuffer buf) {
                 MessageUtil.writeBlockPos(buf, pos);
-                buf.writeString(Block.REGISTRY.getNameForObject(block).toString());
+//                buf.writeUtf(Block.REGISTRY.getNameForObject(block).toString());
+                buf.writeUtf(ForgeRegistries.BLOCKS.getKey(block).toString());
             }
 
             @Override
             public void fromBytes(PacketBuffer buf) {
                 pos = MessageUtil.readBlockPos(buf);
-                block = Block.REGISTRY.getObject(new ResourceLocation(buf.readString(1024)));
+//                block = Block.REGISTRY.getObject(new ResourceLocation(buf.readString(1024)));
+                block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(buf.readUtf(1024)));
             }
 
             @Override
@@ -156,17 +163,17 @@ public class Lock {
 
             public static EnumCause getForClass(Class<? extends Cause> clazz) {
                 return Arrays.stream(values())
-                    .filter(enumCause -> enumCause.supplier.get().getClass() == clazz)
-                    .findFirst()
-                    .orElse(null);
+                        .filter(enumCause -> enumCause.supplier.get().getClass() == clazz)
+                        .findFirst()
+                        .orElse(null);
             }
         }
     }
 
     public static abstract class Target {
-        public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
+        public abstract CompoundNBT writeToNBT(CompoundNBT nbt);
 
-        public abstract void readFromNBT(NBTTagCompound nbt);
+        public abstract void readFromNBT(CompoundNBT nbt);
 
         public abstract void toBytes(PacketBuffer buf);
 
@@ -174,12 +181,12 @@ public class Lock {
 
         public static class TargetRemove extends Target {
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            public CompoundNBT writeToNBT(CompoundNBT nbt) {
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
+            public void readFromNBT(CompoundNBT nbt) {
             }
 
             @Override
@@ -193,12 +200,12 @@ public class Lock {
 
         public static class TargetResize extends Target {
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            public CompoundNBT writeToNBT(CompoundNBT nbt) {
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
+            public void readFromNBT(CompoundNBT nbt) {
             }
 
             @Override
@@ -221,24 +228,24 @@ public class Lock {
             }
 
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-                nbt.setTag("slot", NBTUtilBC.writeEnum(slot));
+            public CompoundNBT writeToNBT(CompoundNBT nbt) {
+                nbt.put("slot", NBTUtilBC.writeEnum(slot));
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
-                slot = NBTUtilBC.readEnum(nbt.getTag("slot"), EnumAddonSlot.class);
+            public void readFromNBT(CompoundNBT nbt) {
+                slot = NBTUtilBC.readEnum(nbt.get("slot"), EnumAddonSlot.class);
             }
 
             @Override
             public void toBytes(PacketBuffer buf) {
-                new PacketBufferBC(buf).writeEnumValue(slot);
+                new PacketBufferBC(buf).writeEnum(slot);
             }
 
             @Override
             public void fromBytes(PacketBuffer buf) {
-                slot = new PacketBufferBC(buf).readEnumValue(EnumAddonSlot.class);
+                slot = new PacketBufferBC(buf).readEnum(EnumAddonSlot.class);
             }
         }
 
@@ -253,43 +260,43 @@ public class Lock {
             }
 
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-                nbt.setTag("type", NBTUtilBC.writeEnum(type));
+            public CompoundNBT writeToNBT(CompoundNBT nbt) {
+                nbt.put("type", NBTUtilBC.writeEnum(type));
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
-                type = NBTUtilBC.readEnum(nbt.getTag("type"), EnumType.class);
+            public void readFromNBT(CompoundNBT nbt) {
+                type = NBTUtilBC.readEnum(nbt.get("type"), EnumType.class);
             }
 
             @Override
             public void toBytes(PacketBuffer buf) {
-                new PacketBufferBC(buf).writeEnumValue(type);
+                new PacketBufferBC(buf).writeEnum(type);
             }
 
             @Override
             public void fromBytes(PacketBuffer buf) {
-                type = new PacketBufferBC(buf).readEnumValue(EnumType.class);
+                type = new PacketBufferBC(buf).readEnum(EnumType.class);
             }
 
             public enum EnumType {
                 STRIPES_WRITE {
-                    @SideOnly(Side.CLIENT)
+                    @OnlyIn(Dist.CLIENT)
                     @Override
                     public LaserData_BC8.LaserType getLaserType() {
                         return BuildCraftLaserManager.STRIPES_WRITE;
                     }
                 },
                 STRIPES_READ {
-                    @SideOnly(Side.CLIENT)
+                    @OnlyIn(Dist.CLIENT)
                     @Override
                     public LaserData_BC8.LaserType getLaserType() {
                         return BuildCraftLaserManager.STRIPES_READ;
                     }
                 };
 
-                @SideOnly(Side.CLIENT)
+                @OnlyIn(Dist.CLIENT)
                 public abstract LaserData_BC8.LaserType getLaserType();
             }
         }
@@ -308,9 +315,9 @@ public class Lock {
 
             public static EnumTarget getForClass(Class<? extends Target> clazz) {
                 return Arrays.stream(values())
-                    .filter(enumTarget -> enumTarget.supplier.get().getClass() == clazz)
-                    .findFirst()
-                    .orElse(null);
+                        .filter(enumTarget -> enumTarget.supplier.get().getClass() == clazz)
+                        .findFirst()
+                        .orElse(null);
             }
         }
     }

@@ -6,16 +6,19 @@
 
 package buildcraft.core.marker.volume;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.player.EntityPlayer;
+import com.mojang.blaze3d.matrix.MatrixStack.Entry;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.entity.player.PlayerEntity;
 
 public interface IFastAddonRenderer<T extends Addon> {
-    void renderAddonFast(T addon, EntityPlayer player, float partialTicks, BufferBuilder bb);
+    //    void renderAddonFast(T addon, PlayerEntity player, float partialTicks, BufferBuilder bb);
+    void renderAddonFast(T addon, PlayerEntity player, Entry pose, float partialTicks, IVertexBuilder bb);
 
     default IFastAddonRenderer<T> then(IFastAddonRenderer<? super T> after) {
-        return (addon, player, partialTicks, bb) -> {
-            renderAddonFast(addon, player, partialTicks, bb);
-            after.renderAddonFast(addon, player, partialTicks, bb);
+        return (addon, player, pose, partialTicks, bb) ->
+        {
+            renderAddonFast(addon, player, pose, partialTicks, bb);
+            after.renderAddonFast(addon, player, pose, partialTicks, bb);
         };
     }
 }

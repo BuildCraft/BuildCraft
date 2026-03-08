@@ -1,5 +1,11 @@
 package buildcraft.lib.misc;
 
+import com.google.common.base.Throwables;
+import com.google.common.io.ByteStreams;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,13 +18,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.TreeMap;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 public class HashUtil {
     public static final int DIGEST_LENGTH = 32;
@@ -36,7 +35,7 @@ public class HashUtil {
             // Just in case
             throw new IllegalStateException("Digest length of sha-256 is meant to be 32, but returned " + realLength);
         }
-        Method[] methods = NBTBase.class.getDeclaredMethods();
+        Method[] methods = INBT.class.getDeclaredMethods();
         Class<?>[] expectedParams = { DataOutput.class };
         Method read = null;
         for (Method m : methods) {
@@ -57,8 +56,8 @@ public class HashUtil {
             throw new Error(e);
         }
         // Test the method -- just in case
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("test", 42);
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putInt("test", 42);
         computeHash(nbt);
     }
 
@@ -66,7 +65,7 @@ public class HashUtil {
         return SHA_256.digest(data);
     }
 
-    public static byte[] computeHash(NBTTagCompound nbt) {
+    public static byte[] computeHash(CompoundNBT nbt) {
         // Order is important here - we have to use a stable algorithm for the order
         // (Otherwise we depend on the order that HashMap assigns us)
         try (DigestOutputStream dos = createDigestStream()) {
@@ -110,13 +109,13 @@ public class HashUtil {
     //
     // #####################
 
-    private static void writeStableCompound(NBTTagCompound nbt, DataOutput out) throws IOException {
-        TreeMap<String, NBTBase> entries = new TreeMap<>();
-        for (String key : nbt.getKeySet()) {
-            entries.put(key, nbt.getTag(key));
+    private static void writeStableCompound(CompoundNBT nbt, DataOutput out) throws IOException {
+        TreeMap<String, INBT> entries = new TreeMap<>();
+        for (String key : nbt.getAllKeys()) {
+            entries.put(key, nbt.get(key));
         }
         for (String key : entries.keySet()) {
-            NBTBase tag = entries.get(key);
+            INBT tag = entries.get(key);
             byte id = tag.getId();
             out.writeByte(id);
             if (id != 0) {
@@ -127,27 +126,27 @@ public class HashUtil {
         }
     }
 
-    private static void writeStableList(NBTTagList nbt, DataOutput out) throws IOException {
+    private static void writeStableList(ListNBT nbt, DataOutput out) throws IOException {
         // We have to intercept lists as they might contain compounds
         // (Although normal lists are already stable)
         int type;
-        if (nbt.hasNoTags()) {
+        if (nbt.isEmpty()) {
             type = 0;
         } else {
             type = nbt.get(0).getId();
         }
         out.writeByte(type);
-        out.writeInt(nbt.tagCount());
-        for (int i = 0; i < nbt.tagCount(); i++) {
+        out.writeInt(nbt.size());
+        for (int i = 0; i < nbt.size(); i++) {
             writeStableNbt(nbt.get(i), out);
         }
     }
 
-    private static void writeStableNbt(NBTBase nbt, DataOutput out) throws IOException {
-        if (nbt instanceof NBTTagCompound) {
-            writeStableCompound((NBTTagCompound) nbt, out);
-        } else if (nbt instanceof NBTTagList) {
-            writeStableList((NBTTagList) nbt, out);
+    private static void writeStableNbt(INBT nbt, DataOutput out) throws IOException {
+        if (nbt instanceof CompoundNBT) {
+            writeStableCompound((CompoundNBT) nbt, out);
+        } else if (nbt instanceof ListNBT) {
+            writeStableList((ListNBT) nbt, out);
         } else {
             // Normal NBT writing is package-private
             // We can skip around it with hacks though

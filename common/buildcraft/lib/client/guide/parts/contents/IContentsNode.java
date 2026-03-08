@@ -1,13 +1,18 @@
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.util.Set;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import net.minecraft.util.text.ITextComponent;
+
+import java.util.Set;
 
 public interface IContentsNode {
 
-    String getSearchName();
+    // String getSearchName();
+    ITextComponent getSearchName();
+
+    // Calen
+    String getKey();
 
     boolean isVisible();
 

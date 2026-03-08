@@ -6,27 +6,25 @@
 
 package buildcraft.core.statements;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import buildcraft.core.BCCoreSprites;
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
+// Calen: never used in 1.12.2
 public class StatementParameterRedstoneLevel implements IStatementParameter {
     public final int level;
     private final int minLevel, maxLevel;
@@ -45,17 +43,17 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
         maxLevel = max;
     }
 
-    public StatementParameterRedstoneLevel(NBTTagCompound nbt) {
+    public StatementParameterRedstoneLevel(CompoundNBT nbt) {
         level = nbt.getByte("l");
         minLevel = nbt.getByte("ml");
         maxLevel = nbt.getByte("ma");
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("l", (byte) level);
-        nbt.setByte("mi", (byte) minLevel);
-        nbt.setByte("ma", (byte) maxLevel);
+    public void writeToNbt(CompoundNBT nbt) {
+        nbt.putByte("l", (byte) level);
+        nbt.putByte("mi", (byte) minLevel);
+        nbt.putByte("ma", (byte) maxLevel);
     }
 
     @Nonnull
@@ -65,7 +63,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
         return BCCoreSprites.PARAM_REDSTONE_LEVEL[level & 15];
     }
@@ -102,7 +100,12 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
+    public ITextComponent getDescription() {
+        return new TranslationTextComponent("gate.trigger.redstone.input.level", level);
+    }
+
+    @Override
+    public String getDescriptionKey() {
         return String.format(LocaleUtil.localize("gate.trigger.redstone.input.level"), level);
     }
 

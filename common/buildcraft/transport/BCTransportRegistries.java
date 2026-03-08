@@ -6,33 +6,18 @@
 
 package buildcraft.transport;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.MinecraftForge;
-
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeConnectionAPI;
 import buildcraft.api.transport.pipe.PipeFlowType;
-
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.StripesRegistry;
-import buildcraft.transport.pipe.flow.PipeFlowFluids;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.pipe.flow.PipeFlowPower;
-import buildcraft.transport.pipe.flow.PipeFlowStructure;
-import buildcraft.transport.stripes.PipeExtensionManager;
-import buildcraft.transport.stripes.StripesHandlerDispenser;
-import buildcraft.transport.stripes.StripesHandlerEntityInteract;
-import buildcraft.transport.stripes.StripesHandlerHoe;
-import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
-import buildcraft.transport.stripes.StripesHandlerPipes;
-import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
-import buildcraft.transport.stripes.StripesHandlerPlant;
-import buildcraft.transport.stripes.StripesHandlerShears;
-import buildcraft.transport.stripes.StripesHandlerUse;
+import buildcraft.transport.pipe.flow.*;
+import buildcraft.transport.stripes.*;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.MinecraftForge;
 
 public class BCTransportRegistries {
 
@@ -45,13 +30,14 @@ public class BCTransportRegistries {
         PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
         PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
         PipeApi.flowPower = new PipeFlowType(PipeFlowPower::new, PipeFlowPower::new);
+        PipeApi.flowRf = new PipeFlowType(PipeFlowRedstoneFlux::new, PipeFlowRedstoneFlux::new);
         PipeApi.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new);
         PipeApi.flowStructure.fallbackColourType = EnumPipeColourType.BORDER_OUTER;
     }
 
     public static void init() {
         PipeConnectionAPI.registerConnection(Blocks.BREWING_STAND,
-            (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0);
+                (world, pos, face, state) -> face.getAxis().getPlane() == Direction.Plane.HORIZONTAL ? 4 / 16F : 0);
 
         // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);

@@ -6,20 +6,18 @@
 
 package buildcraft.lib.marker;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.ModContainer;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
 
 public abstract class MarkerCache<S extends MarkerSubCache<?>> {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markers");
@@ -27,18 +25,19 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
 
     public final String name;
 
-    private final Map<Integer, S> cacheClient = new ConcurrentHashMap<>();
-    private final Map<Integer, S> cacheServer = new ConcurrentHashMap<>();
+    private final Map<String, S> cacheClient = new ConcurrentHashMap<>();
+    private final Map<String, S> cacheServer = new ConcurrentHashMap<>();
 
     public MarkerCache(String name) {
         this.name = name;
     }
 
     public static void registerCache(MarkerCache<?> cache) {
-        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
+//        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION))
+        if (ModLoadingContext.get().getActiveContainer().getCurrentState().ordinal() >= ModLoadingStage.COMPLETE.ordinal()) {
             throw new IllegalStateException("Registered too late!");
         }
-        ModContainer mod = Loader.instance().activeModContainer();
+        ModContainer mod = ModLoadingContext.get().getActiveContainer();
         if (mod == null) {
             throw new IllegalStateException("Tried to register a cache without an active mod!");
         }
@@ -59,9 +58,10 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
         }
     }
 
-    public static void onPlayerJoinWorld(EntityPlayerMP player) {
+    // public static void onPlayerJoinWorld(EntityPlayerMP player)
+    public static void onPlayerJoinWorld(ServerPlayerEntity player) {
         for (MarkerCache<?> cache : CACHES) {
-            World world = player.world;
+            World world = player.level;
             cache.getSubCache(world).onPlayerJoinWorld(player);
         }
     }
@@ -73,16 +73,16 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
     }
 
     private void onWorldUnloadImpl(World world) {
-        Map<Integer, S> cache = world.isRemote ? cacheClient : cacheServer;
-        Integer key = world.provider.getDimension();
+        Map<String, S> cache = world.isClientSide ? cacheClient : cacheServer;
+        String key = world.dimension().location().getPath();
         cache.remove(key);
     }
 
     protected abstract S createSubCache(World world);
 
     public S getSubCache(World world) {
-        Map<Integer, S> cache = world.isRemote ? cacheClient : cacheServer;
-        Integer key = world.provider.getDimension();
+        Map<String, S> cache = world.isClientSide ? cacheClient : cacheServer;
+        String key = world.dimension().location().getPath();
         return cache.computeIfAbsent(key, k -> createSubCache(world));
     }
 }

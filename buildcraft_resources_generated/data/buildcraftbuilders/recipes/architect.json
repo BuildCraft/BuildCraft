@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftbuilders",
+  "pattern": [
+    "bmb",
+    "ycy",
+    "dsd"
+  ],
+  "key": {
+    "b": {
+      "tag": "forge:dyes/black"
+    },
+    "m": {
+      "item": "buildcraftcore:marker_volume"
+    },
+    "y": {
+      "tag": "forge:dyes/yellow"
+    },
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "d": {
+      "tag": "forge:gears/diamond"
+    },
+    "s": {
+      "item": "buildcraftbuilders:snapshot_blueprint"
+    }
+  },
+  "result": {
+    "item": "buildcraftbuilders:architect"
+  }
+}

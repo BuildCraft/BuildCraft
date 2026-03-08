@@ -6,33 +6,8 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.model.ModelHolderRegistry;
-import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.ModelUtil.TexturedFace;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
@@ -43,6 +18,17 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.json.JsonVariableObject;
 import buildcraft.lib.misc.JsonUtil;
 import buildcraft.lib.misc.SpriteUtil;
+import com.google.gson.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.Map.Entry;
 
 /** {@link JsonModel} but any element can change depending on variables. */
 public class JsonVariableModel extends JsonVariableObject {
@@ -53,12 +39,12 @@ public class JsonVariableModel extends JsonVariableObject {
     public final JsonVariableModelPart[] cutoutElements, translucentElements;
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx)
-        throws JsonParseException, IOException {
+            throws JsonParseException, IOException {
         return deserialize(from, fnCtx, new ResourceLoaderContext());
     }
 
     public static JsonVariableModel deserialize(ResourceLocation from, FunctionContext fnCtx, ResourceLoaderContext ctx)
-        throws JsonParseException, IOException {
+            throws JsonParseException, IOException {
         try (InputStreamReader isr = ctx.startLoading(from)) {
             return new JsonVariableModel(JsonUtil.inlineCustom(new Gson().fromJson(isr, JsonObject.class)), fnCtx, ctx);
         } finally {
@@ -67,7 +53,7 @@ public class JsonVariableModel extends JsonVariableObject {
     }
 
     static JsonVariableModelPart[] deserializePartArray(JsonObject json, String member, FunctionContext fnCtx,
-        ResourceLoaderContext ctx, boolean require) {
+                                                        ResourceLoaderContext ctx, boolean require) {
         if (!json.has(member)) {
             if (require) {
                 throw new JsonSyntaxException("Did not have '" + member + "' in '" + json + "'");
@@ -88,7 +74,7 @@ public class JsonVariableModel extends JsonVariableObject {
     }
 
     public JsonVariableModel(JsonObject obj, FunctionContext fnCtx, ResourceLoaderContext ctx)
-        throws JsonParseException {
+            throws JsonParseException {
         boolean ambf = false;
         textures = new HashMap<>();
         variables = new LinkedHashMap<>();
@@ -98,11 +84,13 @@ public class JsonVariableModel extends JsonVariableObject {
 
         if (obj.has("values")) {
             fnCtx = new FunctionContext(fnCtx);
-            putVariables(JsonUtils.getJsonObject(obj, "values"), fnCtx);
+//            putVariables(JsonUtils.getJsonObject(obj, "values"), fnCtx);
+            putVariables(JSONUtils.getAsJsonObject(obj, "values"), fnCtx);
         }
 
         if (obj.has("parent")) {
-            String parentName = JsonUtils.getString(obj, "parent");
+//            String parentName = JsonUtils.getString(obj, "parent");
+            String parentName = JSONUtils.getAsString(obj, "parent");
             parentName += ".json";
             ResourceLocation from = new ResourceLocation(parentName);
             JsonVariableModel parent;
@@ -112,26 +100,32 @@ public class JsonVariableModel extends JsonVariableObject {
                 throw new JsonParseException("Didn't find the parent '" + parentName + "'!", e);
             }
             ambf = parent.ambientOcclusion;
-            if (!JsonUtils.getBoolean(obj, "textures_reset", false)) {
+//            if (!JsonUtils.getBoolean(obj, "textures_reset", false))
+            if (!JSONUtils.getAsBoolean(obj, "textures_reset", false)) {
                 textures.putAll(parent.textures);
             }
             variables.putAll(parent.variables);
-            if (!JsonUtils.getBoolean(obj, "cutout_replace", false)) {
+//            if (!JsonUtils.getBoolean(obj, "cutout_replace", false))
+            if (!JSONUtils.getAsBoolean(obj, "cutout_replace", false)) {
                 Collections.addAll(cutout, parent.cutoutElements);
             }
-            if (!JsonUtils.getBoolean(obj, "translucent_replace", false)) {
+//            if (!JsonUtils.getBoolean(obj, "translucent_replace", false))
+            if (!JSONUtils.getAsBoolean(obj, "translucent_replace", false)) {
                 Collections.addAll(translucent, parent.translucentElements);
             }
-            if (!JsonUtils.getBoolean(obj, "rules_replace", false)) {
+//            if (!JsonUtils.getBoolean(obj, "rules_replace", false))
+            if (!JSONUtils.getAsBoolean(obj, "rules_replace", false)) {
                 Collections.addAll(rulesP, parent.rules);
             }
         }
 
-        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", ambf);
+//        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", ambf);
+        ambientOcclusion = JSONUtils.getAsBoolean(obj, "ambientocclusion", ambf);
         deserializeTextures(obj.get("textures"));
         if (obj.has("variables")) {
             fnCtx = new FunctionContext(fnCtx);
-            putVariables(JsonUtils.getJsonObject(obj, "variables"), fnCtx);
+//            putVariables(JsonUtils.getJsonObject(obj, "variables"), fnCtx);
+            putVariables(JSONUtils.getAsJsonObject(obj, "variables"), fnCtx);
         }
         finaliseVariables();
 
@@ -170,6 +164,7 @@ public class JsonVariableModel extends JsonVariableObject {
         if (ModelHolderRegistry.DEBUG) {
             BCLog.logger.info("[lib.model] The model " + modelLocation + " requires these sprites:");
         }
+        // Calen: Engine textures are loaded here
         ReloadSource srcModel = new ReloadSource(modelLocation, SourceType.MODEL);
         for (Entry<String, JsonTexture> entry : textures.entrySet()) {
             JsonTexture lookup = entry.getValue();
@@ -222,7 +217,8 @@ public class JsonVariableModel extends JsonVariableObject {
             attempts++;
         }
         lookup = texture.location;
-        sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+//        sprite = Minecraft.getInstance().getTextureManager().getAtlasSprite(lookup);
+        sprite = Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
         TexturedFace face = new TexturedFace();
         face.sprite = sprite;
         face.faceData = texture.faceData;
@@ -251,6 +247,6 @@ public class JsonVariableModel extends JsonVariableObject {
     }
 
     public interface ITextureGetter {
-        ModelUtil.TexturedFace get(String location);
+        TexturedFace get(String location);
     }
 }

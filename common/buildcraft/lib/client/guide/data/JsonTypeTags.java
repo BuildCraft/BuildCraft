@@ -6,12 +6,10 @@
 
 package buildcraft.lib.client.guide.data;
 
-import net.minecraft.util.StringUtils;
-
 import buildcraft.api.core.BCLog;
-
 import buildcraft.lib.client.guide.ETypeTag;
 import buildcraft.lib.client.guide.TypeOrder;
+import net.minecraft.util.StringUtils;
 
 public class JsonTypeTags {
     public static final JsonTypeTags EMPTY = new JsonTypeTags("", "", "");

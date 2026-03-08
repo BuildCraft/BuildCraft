@@ -5,23 +5,19 @@
  */
 package buildcraft.lib.statement;
 
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.render.ISprite;
+import buildcraft.api.statements.*;
+import buildcraft.lib.misc.ColourUtil;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import net.minecraft.tileentity.TileEntity;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.render.ISprite;
-import buildcraft.api.statements.IAction;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITrigger;
-
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
 
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;
@@ -54,8 +50,16 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
 
     /** @see buildcraft.api.statements.IStatement#getDescription() */
     @Override
-    public String getDescription() {
+    public ITextComponent getDescription() {
         return this.delegate.getDescription();
+    }
+
+    // Calen
+
+    /** @see IStatement#getDescriptionKey() */
+    @Override
+    public String getDescriptionKey() {
+        return this.delegate.getDescriptionKey();
     }
 
     /** @see buildcraft.api.statements.IStatement#createParameter(int) */
@@ -89,12 +93,23 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
     }
 
     @Override
-    public List<String> getTooltip() {
-        List<String> list = delegate.getTooltip();
+    public List<ITextComponent> getTooltip() {
+        List<ITextComponent> list = delegate.getTooltip();
         if (sourcePart != EnumPipePart.CENTER) {
             list = new ArrayList<>(list);
-            String translated = ColourUtil.getTextFullTooltip(sourcePart.face);
-            list.add(LocaleUtil.localize("gate.side", translated));
+            ITextComponent translated = new StringTextComponent(ColourUtil.getTextFullTooltip(sourcePart.face));
+//            list.add(new StringTextComponent(LocaleUtil.localize("gate.side", translated)));
+            list.add(new TranslationTextComponent("gate.side", translated));
+        }
+        return list;
+    }
+
+    @Override
+    public List<String> getTooltipKey() {
+        List<String> list = delegate.getTooltipKey();
+        if (sourcePart != EnumPipePart.CENTER) {
+            list = new ArrayList<>(list);
+            list.add("gate.side." + ColourUtil.getTextFullTooltip(sourcePart.face));
         }
         return list;
     }

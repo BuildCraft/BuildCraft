@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftcore",
+  "pattern": [
+    "r",
+    "g",
+    "w"
+  ],
+  "key": {
+    "r": {
+      "item": "minecraft:redstone_torch"
+    },
+    "g": {
+      "tag": "forge:gears/wood"
+    },
+    "w": {
+      "tag": "forge:tools/wrench"
+    }
+  },
+  "result": {
+    "item": "buildcraftcore:marker_connector"
+  }
+}

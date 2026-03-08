@@ -6,14 +6,13 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
+import net.minecraft.nbt.CompoundNBT;
 
 public class PipeBehaviourStructure extends PipeBehaviour {
 
-    public PipeBehaviourStructure(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourStructure(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
     }
 

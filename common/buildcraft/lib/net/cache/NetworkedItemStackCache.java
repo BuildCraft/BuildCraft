@@ -6,19 +6,17 @@
 
 package buildcraft.lib.net.cache;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
-
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+
+import java.io.IOException;
+import java.util.Objects;
 
 // We use ItemStackKey here because ItemStack doesn't implement hashCode and equals
 public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStack> {
@@ -35,7 +33,7 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStack> {
                 if (o == null || o.isEmpty()) {
                     return 0;
                 }
-                return Objects.hash(o.getItem(), o.getTagCompound());
+                return Objects.hash(o.getItem(), o.getTag());
             }
 
             @Override
@@ -59,23 +57,25 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStack> {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);
-            buffer.writeShort(Item.getIdFromItem(obj.getItem()));
-            buffer.writeShort(obj.getMetadata());
-            NBTTagCompound tag = null;
-            if (obj.getItem().isDamageable() || obj.getItem().getShareTag()) {
-                tag = obj.getItem().getNBTShareTag(obj);
+            buffer.writeShort(Item.getId(obj.getItem()));
+//            buffer.writeShort(obj.getMetadata());
+            CompoundNBT tag = null;
+//            if (obj.getItem().isDamageable(obj) || obj.getItem().getShareTag(obj))
+            if (obj.getItem().isDamageable(obj)) {
+                tag = obj.getItem().getShareTag(obj);
             }
-            buffer.writeCompoundTag(tag);
+            buffer.writeNbt(tag);
         }
     }
 
     @Override
     protected ItemStack readObject(PacketBufferBC buffer) throws IOException {
         if (buffer.readBoolean()) {
-            Item item = Item.getItemById(buffer.readUnsignedShort());
-            int meta = buffer.readShort();
-            ItemStack stack = new ItemStack(item, 1, meta);
-            stack.setTagCompound(buffer.readCompoundTag());
+            Item item = Item.byId(buffer.readUnsignedShort());
+//            int meta = buffer.readShort();
+//            ItemStack stack = new ItemStack(item, 1, meta);
+            ItemStack stack = new ItemStack(item, 1);
+            stack.setTag(buffer.readNbt());
             return stack;
         } else {
             return ItemStack.EMPTY;

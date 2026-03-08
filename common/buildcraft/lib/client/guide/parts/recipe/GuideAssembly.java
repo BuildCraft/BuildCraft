@@ -6,19 +6,18 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartItem;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class GuideAssembly extends GuidePartItem {
     public static final GuiIcon INPUT_LIST = new GuiIcon(GuiGuide.ICONS_2, 119, 108, 98, 54);
@@ -26,7 +25,7 @@ public class GuideAssembly extends GuidePartItem {
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(77, 19, 16, 16);
     public static final GuiRectangle MJ_POSITION = new GuiRectangle(50, 4, 6, 46);
     public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - INPUT_LIST.width) / 2,
-        0, INPUT_LIST.width, INPUT_LIST.height);
+            0, INPUT_LIST.width, INPUT_LIST.height);
     public static final int PIXEL_HEIGHT = 60;
 
     static {
@@ -67,17 +66,20 @@ public class GuideAssembly extends GuidePartItem {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+//    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index)
+    public PagePosition renderIntoArea(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
         x += OFFSET.x;
         y += OFFSET.y + current.pixel;
         if (current.page == index) {
-            INPUT_LIST.drawAt(x, y);
+//            INPUT_LIST.drawAt(x, y);
+            INPUT_LIST.drawAt(poseStack, x, y);
             // Render the item
-            GlStateManager.enableRescaleNormal();
-            RenderHelper.enableGUIStandardItemLighting();
+//            GlStateManager.enableRescaleNormal();
+//            RenderHelper.enableGUIStandardItemLighting();
+            RenderUtil.enableGUIStandardItemLighting();
             for (int i = 0; i < input.length; i++) {
                 GuiRectangle rect = ITEM_POSITION[i];
                 drawItemStack(input[i].get(), x + (int) rect.x, y + (int) rect.y);
@@ -86,19 +88,21 @@ public class GuideAssembly extends GuidePartItem {
             drawItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
 
             if (MJ_POSITION.offset(x, y).contains(gui.mouse)) {
-                gui.tooltips.add(Collections.singletonList(LocaleUtil.localizeMj(mjCost.get())));
+//                gui.tooltips.add(Collections.singletonList(LocaleUtil.localizeMj(mjCost.get())));
+                gui.tooltips.add(Collections.singletonList(LocaleUtil.localizeMjComponent(mjCost.get())));
             }
 
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableRescaleNormal();
+//            RenderHelper.disableStandardItemLighting();
+            RenderUtil.disableStandardItemLighting();
+//            GlStateManager.disableRescaleNormal();
         }
         current = current.nextLine(PIXEL_HEIGHT, height);
         return current;
     }
 
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
-        int mouseX, int mouseY) {
+//    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY)
+    public PagePosition handleMouseClick(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index, double mouseX, double mouseY) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }

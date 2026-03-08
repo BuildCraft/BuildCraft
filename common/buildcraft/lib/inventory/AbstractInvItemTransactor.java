@@ -6,20 +6,16 @@
 
 package buildcraft.lib.inventory;
 
-import java.util.Arrays;
-
-import javax.annotation.Nonnull;
-
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.misc.StackUtil;
 import gnu.trove.list.array.TIntArrayList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.inventory.IItemTransactor;
-
-import buildcraft.lib.inventory.filter.StackFilter;
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 /** Designates an {@link IItemTransactor} that is backed by a simple, static, array based inventory. */
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
@@ -102,7 +98,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             // We have a bad implementation that doesn't respect simulation properly- we are in an invalid state at this
             // point with no chance of recovery
             throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! ("
-                + getClass() + ")");
+                    + getClass() + ")");
         }
         return StackUtil.EMPTY;
     }

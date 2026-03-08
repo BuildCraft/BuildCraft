@@ -9,11 +9,7 @@ package buildcraft.lib.misc;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 
 public class ArrayUtil {
     public static <F, T> T[] map(F[] from, Function<F, T> mapper, IntFunction<T[]> arrayConstructor) {

@@ -6,30 +6,25 @@
 
 package buildcraft.core.list;
 
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
-import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
-
+import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import buildcraft.core.BCCoreItems;
-import buildcraft.core.item.ItemList_BC8;
+import javax.annotation.Nonnull;
+import java.io.IOException;
 
-public class ContainerList extends ContainerBC_Neptune {
+public class ContainerList extends ContainerBC_Neptune<ItemList_BC8> {
     // Network ID's
 
     protected static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("list");
@@ -62,8 +57,8 @@ public class ContainerList extends ContainerBC_Neptune {
         }
     }
 
-    public ContainerList(EntityPlayer iPlayer) {
-        super(iPlayer);
+    public ContainerList(ContainerType menuType, int id, PlayerEntity iPlayer) {
+        super(menuType, id, iPlayer);
 
         lines = ListHandler.getLines(getListItemStack());
 
@@ -80,18 +75,19 @@ public class ContainerList extends ContainerBC_Neptune {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+//    public boolean canInteractWith(EntityPlayer player)
+    public boolean stillValid(PlayerEntity player) {
         return !getListItemStack().isEmpty();
     }
 
     @Nonnull
     public ItemStack getListItemStack() {
-        ItemStack toTry = player.getHeldItemMainhand();
+        ItemStack toTry = player.getMainHandItem();
         if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
-        toTry = player.getHeldItemOffhand();
+        toTry = player.getOffhandItem();
         if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
@@ -106,13 +102,14 @@ public class ContainerList extends ContainerBC_Neptune {
     public void switchButton(final int lineIndex, final int button) {
         lines[lineIndex].toggleOption(button);
 
-        if (player.world.isRemote) {
-            sendMessage(ID_BUTTON, (buffer) -> {
+        if (player.level.isClientSide) {
+            sendMessage(ID_BUTTON, (buffer) ->
+            {
                 buffer.writeByte(lineIndex);
                 buffer.writeByte(button);
             });
         } else if (button == 1 || button == 2) {
-            ListMatchHandler.Type type = lines[lineIndex].getSortingType();
+            Type type = lines[lineIndex].getSortingType();
             if (type == Type.MATERIAL || type == Type.TYPE) {
                 WidgetListSlot[] widgetSlots = slots[lineIndex];
                 for (int i = 1; i < widgetSlots.length; i++) {
@@ -125,23 +122,24 @@ public class ContainerList extends ContainerBC_Neptune {
     }
 
     public void setLabel(final String text) {
-        BCCoreItems.list.setName(getListItemStack(), text);
+        BCCoreItems.list.get().setName(getListItemStack(), text);
 
-        if (player.world.isRemote) {
-            sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));
+        if (player.level.isClientSide) {
+            sendMessage(ID_LABEL, (buffer) -> buffer.writeUtf(text));
         }
     }
 
     @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+//    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException
+    public void readMessage(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+        if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == ID_BUTTON) {
                 int lineIndex = buffer.readUnsignedByte();
                 int button = buffer.readUnsignedByte();
                 switchButton(lineIndex, button);
             } else if (id == ID_LABEL) {
-                setLabel(buffer.readString(1024));
+                setLabel(buffer.readUtf(1024));
             }
         }
     }

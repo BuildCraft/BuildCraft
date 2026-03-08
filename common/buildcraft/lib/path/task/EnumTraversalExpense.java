@@ -6,9 +6,9 @@
 
 package buildcraft.lib.path.task;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -28,16 +28,17 @@ public enum EnumTraversalExpense {
         return getFor(world, pos, world.getBlockState(pos));
     }
 
-    public static EnumTraversalExpense getFor(World world, BlockPos pos, IBlockState state) {
-        if (world.isAirBlock(pos)) {
+    public static EnumTraversalExpense getFor(World world, BlockPos pos, BlockState state) {
+        if (world.isEmptyBlock(pos)) {
             return AIR;
         }
         Material mat = state.getMaterial();
         if (mat.isLiquid()) {
             return FLUID;
         }
-        Block block = state.getBlock();
-        if (block.isPassable(world, pos)) {
+//        Block block = state.getBlock();
+//        if (block.isPassable(world, pos))
+        if (state.isPathfindable(world, pos, PathType.LAND)) {
             return AIR;
         }
         return SOLID;

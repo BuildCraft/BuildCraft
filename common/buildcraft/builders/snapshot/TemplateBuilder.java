@@ -6,17 +6,15 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.util.FakePlayer;
-
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.template.TemplateApi;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.FakePlayer;
+
+import java.util.Collections;
+import java.util.List;
 
 public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     public TemplateBuilder(ITileForTemplateBuilder tile) {
@@ -31,16 +29,16 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean isAir(BlockPos blockPos) {
         return !getBuildingInfo().box.contains(blockPos) ||
-            !getBuildingInfo().getSnapshot().data.get(
-                getBuildingInfo().getSnapshot().posToIndex(
-                    getBuildingInfo().fromWorld(blockPos)
-                )
-            );
+                !getBuildingInfo().getSnapshot().data.get(
+                        getBuildingInfo().getSnapshot().posToIndex(
+                                getBuildingInfo().fromWorld(blockPos)
+                        )
+                );
     }
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return tile.getWorldBC().isAirBlock(blockPos);
+        return tile.getWorldBC().isEmptyBlock(blockPos);
     }
 
     @Override
@@ -61,16 +59,17 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
         FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(
-            (WorldServer) tile.getWorldBC(),
-            tile.getOwner(),
-            tile.getBuilderPos()
+                (ServerWorld) tile.getWorldBC(),
+                tile.getOwner(),
+                tile.getBuilderPos()
         );
-        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
+//        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
+        fakePlayer.setItemInHand(fakePlayer.getUsedItemHand(), placeTask.items.get(0));
         return TemplateApi.templateRegistry.handle(
-            tile.getWorldBC(),
-            placeTask.pos,
-            fakePlayer,
-            placeTask.items.get(0)
+                tile.getWorldBC(),
+                placeTask.pos,
+                fakePlayer,
+                placeTask.items.get(0)
         );
     }
 
@@ -82,6 +81,6 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
+        return !isAir(blockPos) && !tile.getWorldBC().isEmptyBlock(blockPos);
     }
 }

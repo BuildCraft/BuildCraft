@@ -6,24 +6,23 @@
 
 package buildcraft.transport;
 
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.transport.client.render.PipeWireRenderer;
 import buildcraft.transport.net.PipeItemMessageQueue;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public enum BCTransportEventDist {
     INSTANCE;
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (!event.world.isRemote && event.world.getMinecraftServer() != null) {
+//        if (!event.world.isRemote && event.world.getMinecraftServer() != null)
+        if (!event.world.isClientSide && event.world.getServer() != null) {
             WorldSavedDataWireSystems.get(event.world).tick();
         }
     }
@@ -35,17 +34,19 @@ public enum BCTransportEventDist {
 
     @SubscribeEvent
     public void onChunkWatch(ChunkWatchEvent event) {
-        WorldSavedDataWireSystems.get(event.getPlayer().world).changedPlayers.add(event.getPlayer());
+        WorldSavedDataWireSystems.get(event.getPlayer().level).changedPlayers.add(event.getPlayer());
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Post event) {
-        PipeWireRenderer.clearWireCache();
+        // 1.18.2: no longer use GlList
+//        PipeWireRenderer.clearWireCache();
     }
 
     @SubscribeEvent
-    public void onBlockPlace(BlockEvent.PlaceEvent event) {
+//    public void onBlockPlace(BlockEvent.PlaceEvent event)
+    public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         // event.setCanceled(true);
     }
 

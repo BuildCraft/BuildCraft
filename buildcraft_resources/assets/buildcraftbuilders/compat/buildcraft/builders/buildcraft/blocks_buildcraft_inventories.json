@@ -204,7 +204,7 @@
     },
     {
         "selectors": [
-            "buildcraftcore:engine[type=stone]"
+            "buildcraftcore:engine_stone"
         ],
         "requiredExtractors": [
             {

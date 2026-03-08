@@ -1,20 +1,9 @@
 package buildcraft.silicon;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import buildcraft.api.BCModules;
 import buildcraft.api.transport.pipe.PipeApiClient;
 import buildcraft.api.transport.pipe.PipeApiClient.IClientRegistry;
 import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-
 import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelPluggableItem;
@@ -24,22 +13,14 @@ import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeVariableBoolean;
 import buildcraft.lib.expression.node.value.NodeVariableObject;
+import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
-
 import buildcraft.silicon.client.FacadeItemColours;
-import buildcraft.silicon.client.model.GateMeshDefinition;
 import buildcraft.silicon.client.model.ModelGateItem;
-import buildcraft.silicon.client.model.key.KeyPlugFacade;
-import buildcraft.silicon.client.model.key.KeyPlugGate;
-import buildcraft.silicon.client.model.key.KeyPlugLens;
-import buildcraft.silicon.client.model.key.KeyPlugLightSensor;
-import buildcraft.silicon.client.model.key.KeyPlugPulsar;
-import buildcraft.silicon.client.model.plug.ModelFacadeItem;
-import buildcraft.silicon.client.model.plug.ModelLensItem;
-import buildcraft.silicon.client.model.plug.PlugBakerFacade;
-import buildcraft.silicon.client.model.plug.PlugBakerLens;
-import buildcraft.silicon.client.model.plug.PlugGateBaker;
+import buildcraft.silicon.client.model.key.*;
+import buildcraft.silicon.client.model.plug.*;
 import buildcraft.silicon.client.render.PlugGateRenderer;
 import buildcraft.silicon.client.render.PlugPulsarRenderer;
 import buildcraft.silicon.client.render.RenderLaser;
@@ -47,11 +28,23 @@ import buildcraft.silicon.client.render.RenderProgrammingTable;
 import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.plug.PluggableGate;
 import buildcraft.silicon.plug.PluggablePulsar;
-import buildcraft.silicon.tile.TileLaser;
-import buildcraft.silicon.tile.TileProgrammingTable_Neptune;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
+@OnlyIn(Dist.CLIENT)
 public class BCSiliconModels {
     public static final ModelHolderStatic LIGHT_SENSOR;
+    public static final ModelHolderStatic TIMER;
 
     public static final ModelHolderVariable GATE_STATIC;
     public static final ModelHolderVariable GATE_DYNAMIC;
@@ -59,29 +52,35 @@ public class BCSiliconModels {
 
     private static final ModelHolderVariable LENS, FILTER;
     private static final NodeVariableBoolean LENS_HAS_COLOUR;
-    private static final NodeVariableObject<EnumDyeColor> LENS_COLOUR;
-    private static final NodeVariableObject<EnumFacing> LENS_SIDE;
+    private static final NodeVariableObject<DyeColor> LENS_COLOUR;
+    private static final NodeVariableObject<Direction> LENS_SIDE;
 
     public static final ModelHolderStatic PULSAR_STATIC;
     public static final ModelHolderVariable PULSAR_DYNAMIC;
 
     public static final IPluggableStaticBaker<KeyPlugPulsar> BAKER_PLUG_PULSAR;
+    public static final IPluggableStaticBaker<KeyPlugTimer> BAKER_PLUG_TIMER;
     public static final IPluggableStaticBaker<KeyPlugLightSensor> BAKER_PLUG_LIGHT_SENSOR;
 
     static {
+        // Calen: ensure ExpressionCompat ENUM_FACING = new NodeType<>("Facing", Direction.UP); run, or will cause IllegalArgumentException: Unknown NodeType class net.minecraft.util.Direction
+        ExpressionCompat.setup();
+
         LIGHT_SENSOR = getStaticModel("plugs/light_sensor");
+        TIMER = getStaticModel("plugs/timer");
         GATE_STATIC = getModel("plugs/gate", PluggableGate.MODEL_FUNC_CTX_STATIC);
         GATE_DYNAMIC = getModel("plugs/gate_dynamic", PluggableGate.MODEL_FUNC_CTX_DYNAMIC);
         PULSAR_STATIC = getStaticModel("plugs/pulsar_static");
         PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic", PluggablePulsar.MODEL_FUNC_CTX);
 
         BAKER_PLUG_PULSAR = new PlugBakerSimple<>(PULSAR_STATIC::getCutoutQuads);
+        BAKER_PLUG_TIMER = new PlugBakerSimple<>(TIMER::getCutoutQuads);
         BAKER_PLUG_LIGHT_SENSOR = new PlugBakerSimple<>(LIGHT_SENSOR::getCutoutQuads);
 
         {
             FunctionContext fnCtx = DefaultContexts.createWithAll();
-            LENS_COLOUR = fnCtx.putVariableObject("colour", EnumDyeColor.class);
-            LENS_SIDE = fnCtx.putVariableObject("side", EnumFacing.class);
+            LENS_COLOUR = fnCtx.putVariableObject("colour", DyeColor.class);
+            LENS_SIDE = fnCtx.putVariableObject("side", Direction.class);
             LENS_HAS_COLOUR = fnCtx.putVariableBoolean("has_colour");
             LENS = getModel("plugs/lens", fnCtx);
             FILTER = getModel("plugs/filter", fnCtx);
@@ -97,20 +96,24 @@ public class BCSiliconModels {
     }
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCSiliconModels.class);
+        // 1.18.2: following events are IModBusEvent
+//        MinecraftForge.EVENT_BUS.register(BCSiliconModels.class);
+        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCSilicon.MODID).get()).getEventBus();
+        modEventBus.register(BCSiliconModels.class);
     }
 
     public static void fmlInit() {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCSiliconItems.plugGate,
-            GateMeshDefinition.INSTANCE);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaser());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileProgrammingTable_Neptune.class, new RenderProgrammingTable());
+//        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCSiliconItems.plugGate, GateMeshDefinition.INSTANCE);
+
+        RegistryUtil.regTesrIfTilePresent(BCSiliconBlocks.laserTile, RenderLaser::new);
+        RegistryUtil.regTesrIfTilePresent(BCSiliconBlocks.programmingTableTile, RenderProgrammingTable::new);
 
         IClientRegistry pipeRegistryClient = PipeApiClient.registry;
         if (pipeRegistryClient != null) {
             pipeRegistryClient.registerBaker(KeyPlugGate.class, PlugGateBaker.INSTANCE);
             pipeRegistryClient.registerBaker(KeyPlugPulsar.class, BAKER_PLUG_PULSAR);
             pipeRegistryClient.registerBaker(KeyPlugLightSensor.class, BAKER_PLUG_LIGHT_SENSOR);
+            pipeRegistryClient.registerBaker(KeyPlugTimer.class, BAKER_PLUG_TIMER);
             pipeRegistryClient.registerBaker(KeyPlugLens.class, PlugBakerLens.INSTANCE);
             pipeRegistryClient.registerBaker(KeyPlugFacade.class, PlugBakerFacade.INSTANCE);
 
@@ -120,17 +123,35 @@ public class BCSiliconModels {
     }
 
     public static void fmlPostInit() {
-        RenderUtil.registerItemColour(BCSiliconItems.plugFacade, FacadeItemColours.INSTANCE);
+        if (BCSiliconItems.plugFacade != null && BCSiliconItems.plugFacade.isPresent()) {
+            RenderUtil.registerItemColour(((Item) BCSiliconItems.plugFacade.get()), FacadeItemColours.INSTANCE);
+        }
     }
+
+//    @SubscribeEvent
+//    public static void onTesrReg(RegisterRenderers event) {
+//        ClientRegistry.bindTileEntityRenderer(BCSiliconBlocks.laserTile.get(), RenderLaser::new);
+//        ClientRegistry.bindTileEntityRenderer(BCSiliconBlocks.programmingTableTile.get(), RenderProgrammingTable::new);
+//    }
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-        putModel(event, "gate_item#inventory", ModelGateItem.INSTANCE);
-        putModel(event, "lens_item#inventory", ModelLensItem.INSTANCE);
+//        putModel(event, "gate_item#inventory", ModelGateItem.INSTANCE);
+        event.getModelRegistry().replaceAll((rl, model) ->
+                {
+                    if (rl instanceof ModelResourceLocation && ((ModelResourceLocation) rl).getPath().startsWith("plug_gate")) {
+                        return ModelGateItem.INSTANCE;
+                    } else {
+                        return model;
+                    }
+                }
+        );
+//        putModel(event, "lens_item#inventory", ModelLensItem.INSTANCE);
+        putModel(event, "plug_lens#inventory", ModelLensItem.INSTANCE);
         PluggablePulsar.setModelVariablesForItem();
-        putModel(event, "plug_pulsar#inventory",
-            new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), PULSAR_DYNAMIC.getCutoutQuads()));
+        putModel(event, "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), PULSAR_DYNAMIC.getCutoutQuads()));
         putModel(event, "plug_light_sensor#inventory", new ModelPluggableItem(LIGHT_SENSOR.getCutoutQuads()));
+        putModel(event, "plug_timer#inventory", new ModelPluggableItem(TIMER.getCutoutQuads()));
         putModel(event, "plug_facade#inventory", ModelFacadeItem.INSTANCE);
 
         PlugGateBaker.onModelBake();
@@ -143,10 +164,11 @@ public class BCSiliconModels {
     }
 
     private static void putModel(ModelBakeEvent event, String str, IBakedModel model) {
-        event.getModelRegistry().putObject(BCModules.SILICON.createModelLocation(str), model);
+//        event.getModelRegistry().put(BCModules.SILICON.createModelLocation(str), model);
+        event.getModelRegistry().replace(BCModules.SILICON.createModelLocation(str), model);
     }
 
-    public static MutableQuad[] getGateStaticQuads(EnumFacing side, GateVariant variant) {
+    public static MutableQuad[] getGateStaticQuads(Direction side, GateVariant variant) {
         PluggableGate.setClientModelVariables(side, variant);
         if (GATE_VAR_DATA_STATIC.hasNoNodes()) {
             GATE_VAR_DATA_STATIC.setNodes(GATE_STATIC.createTickableNodes());
@@ -155,8 +177,8 @@ public class BCSiliconModels {
         return GATE_STATIC.getCutoutQuads();
     }
 
-    private static void setupLensVariables(ModelHolderVariable model, EnumFacing side, EnumDyeColor colour) {
-        LENS_COLOUR.value = colour == null ? EnumDyeColor.WHITE : colour;
+    private static void setupLensVariables(ModelHolderVariable model, Direction side, DyeColor colour) {
+        LENS_COLOUR.value = colour == null ? DyeColor.WHITE : colour;
         LENS_SIDE.value = side;
         LENS_HAS_COLOUR.value = colour != null;
         ModelVariableData varData = new ModelVariableData();
@@ -165,22 +187,22 @@ public class BCSiliconModels {
         varData.refresh();
     }
 
-    public static MutableQuad[] getLensCutoutQuads(EnumFacing side, EnumDyeColor colour) {
+    public static MutableQuad[] getLensCutoutQuads(Direction side, DyeColor colour) {
         setupLensVariables(LENS, side, colour);
         return LENS.getCutoutQuads();
     }
 
-    public static MutableQuad[] getLensTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
+    public static MutableQuad[] getLensTranslucentQuads(Direction side, DyeColor colour) {
         setupLensVariables(LENS, side, colour);
         return LENS.getTranslucentQuads();
     }
 
-    public static MutableQuad[] getFilterCutoutQuads(EnumFacing side, EnumDyeColor colour) {
+    public static MutableQuad[] getFilterCutoutQuads(Direction side, DyeColor colour) {
         setupLensVariables(FILTER, side, colour);
         return FILTER.getCutoutQuads();
     }
 
-    public static MutableQuad[] getFilterTranslucentQuads(EnumFacing side, EnumDyeColor colour) {
+    public static MutableQuad[] getFilterTranslucentQuads(Direction side, DyeColor colour) {
         setupLensVariables(FILTER, side, colour);
         return FILTER.getTranslucentQuads();
     }

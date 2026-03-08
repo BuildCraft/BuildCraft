@@ -6,34 +6,27 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe.IFlowFluid;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventFluid;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeFaceTex;
-
 import buildcraft.lib.inventory.filter.StackFilter;
-
 import buildcraft.transport.BCTransportConfig;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
 
@@ -46,22 +39,22 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         super(pipe);
     }
 
-    public PipeBehaviourWood(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourWood(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
     }
 
     @Override
-    public PipeFaceTex getTextureData(EnumFacing face) {
+    public PipeFaceTex getTextureData(Direction face) {
         return (face != null && face == getCurrentDir()) ? TEX_FILLED : TEX_CLEAR;
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+    public boolean canConnect(Direction face, PipeBehaviour other) {
         return !(other instanceof PipeBehaviourWood);
     }
 
     @Override
-    protected boolean canFaceDirection(EnumFacing dir) {
+    protected boolean canFaceDirection(Direction dir) {
         return dir != null && pipe.getConnectedType(dir) == ConnectedType.TILE;
     }
 
@@ -87,9 +80,10 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
                 IFlowFluid flow = (IFlowFluid) pipe.getFlow();
                 int maxMillibuckets = (int) (power / BCTransportConfig.mjPerMillibucket);
                 if (maxMillibuckets > 0) {
-                    FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets, simulate);
-                    if (extracted != null && extracted.amount > 0) {
-                        return power - extracted.amount * BCTransportConfig.mjPerMillibucket;
+//                    FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets, simulate);
+                    FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets, simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
+                    if (extracted != null && extracted.getAmount() > 0) {
+                        return power - extracted.getAmount() * BCTransportConfig.mjPerMillibucket;
                     }
                 }
             }
@@ -97,19 +91,21 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         return power;
     }
 
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
+    protected int extractItems(IFlowItems flow, Direction dir, int count, boolean simulate) {
         return flow.tryExtractItems(count, dir, null, StackFilter.ALL, simulate);
     }
 
     @Nullable
-    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
-        return flow.tryExtractFluid(millibuckets, dir, null, simulate);
+//    protected FluidStack extractFluid(IFlowFluid flow, Direction dir, int millibuckets, boolean simulate)
+    protected FluidStack extractFluid(IFlowFluid flow, Direction dir, int millibuckets, IFluidHandler.FluidAction action) {
+//        return flow.tryExtractFluid(millibuckets, dir, null, simulate);
+        return flow.tryExtractFluid(millibuckets, dir, null, action);
     }
 
     // IMjRedstoneReceiver
 
     @Override
-    public boolean canConnect(@Nonnull IMjConnector other) {
+    public boolean canConnect(@javax.annotation.Nonnull IMjConnector other) {
         return true;
     }
 
@@ -124,13 +120,16 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         return extract(microJoules, simulate);
     }
 
+    @Nonnull
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         return mjCaps.getCapability(capability, facing);
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Facing = " + currentDir);
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//        left.add("Facing = " + currentDir);
+        left.add(new StringTextComponent("Facing = " + currentDir));
     }
 }

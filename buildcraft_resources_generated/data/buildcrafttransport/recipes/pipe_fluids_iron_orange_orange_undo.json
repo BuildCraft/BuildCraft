@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_fluids_iron_orange"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_iron_orange"
+  }
+}

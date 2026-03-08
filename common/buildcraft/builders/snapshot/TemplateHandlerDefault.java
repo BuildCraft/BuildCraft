@@ -6,29 +6,50 @@
 
 package buildcraft.builders.snapshot;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.template.ITemplateHandler;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 public enum TemplateHandlerDefault implements ITemplateHandler {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
-        return stack.onItemUse(
-            player,
-            world,
-            pos,
-            player.getActiveHand(),
-            EnumFacing.UP,
-            0.5F,
-            0.0F,
-            0.5F
-        ) == EnumActionResult.SUCCESS;
+    public boolean handle(World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
+//        return stack.onItemUse(
+//            player,
+//            world,
+//            pos,
+//            player.getActiveHand(),
+//            Direction.UP,
+//            0.5F,
+//            0.0F,
+//            0.5F
+//        ) == EnumActionResult.SUCCESS;
+        return stack.useOn(
+                new ItemUseContext(
+                        world,
+                        player,
+                        player.getUsedItemHand(),
+                        player.getItemInHand(player.getUsedItemHand()),
+                        new BlockRayTraceResult(
+                                new Vector3d(
+                                        0.5F,
+                                        0.0F,
+                                        0.5F
+                                ),
+                                Direction.UP,
+                                pos,
+                                false
+
+                        )
+                )
+        ) == ActionResultType.SUCCESS;
     }
 }

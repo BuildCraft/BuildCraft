@@ -1,33 +1,34 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.marker;
+
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.marker.MarkerConnection;
+import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.VecUtil;
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.MatrixStack.Entry;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Atlases;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.marker.MarkerConnection;
-import buildcraft.lib.marker.MarkerSubCache;
-import buildcraft.lib.misc.VecUtil;
-
-import buildcraft.core.client.BuildCraftLaserManager;
-
 public class PathConnection extends MarkerConnection<PathConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;
-    private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
+    private static final Vector3d VEC_HALF = new Vector3d(0.5, 0.5, 0.5);
     private final Deque<BlockPos> positions = new LinkedList<>();
     private boolean loop = false;
 
@@ -205,35 +206,37 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void renderInWorld() {
+    @OnlyIn(Dist.CLIENT)
+    public void renderInWorld(MatrixStack poseStack) {
         BlockPos last = null;
         for (BlockPos p : positions) {
             if (last == null) {
                 last = p;
             } else {
-                renderLaser(VecUtil.add(VEC_HALF, last), VecUtil.add(VEC_HALF, p));
+                renderLaser(VecUtil.add(VEC_HALF, last), VecUtil.add(VEC_HALF, p), poseStack.last());
                 last = p;
             }
         }
         if (loop) {
             BlockPos from = positions.getLast();
             BlockPos to = positions.getFirst();
-            renderLaser(VecUtil.add(VEC_HALF, from), VecUtil.add(VEC_HALF, to));
+            renderLaser(VecUtil.add(VEC_HALF, from), VecUtil.add(VEC_HALF, to), poseStack.last());
         }
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
-    @SideOnly(Side.CLIENT)
-    private static void renderLaser(Vec3d from, Vec3d to) {
-        Vec3d one = offset(from, to);
-        Vec3d two = offset(to, from);
+    @OnlyIn(Dist.CLIENT)
+    private static void renderLaser(Vector3d from, Vector3d to, Entry pose) {
+        Vector3d one = offset(from, to);
+        Vector3d two = offset(to, from);
         LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_PATH_CONNECTED, one, two, RENDER_SCALE);
-        LaserRenderer_BC8.renderLaserStatic(data);
+//        LaserRenderer_BC8.renderLaserStatic(data);
+        LaserRenderer_BC8.renderLaserStatic(data, pose);
     }
 
-    @SideOnly(Side.CLIENT)
-    private static Vec3d offset(Vec3d from, Vec3d to) {
-        Vec3d dir = to.subtract(from).normalize();
+    @OnlyIn(Dist.CLIENT)
+    private static Vector3d offset(Vector3d from, Vector3d to) {
+        Vector3d dir = to.subtract(from).normalize();
         return from.add(VecUtil.scale(dir, 0.125));
     }
 }

@@ -1,40 +1,10 @@
 /*
  * Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 package buildcraft.builders.tile;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IPathProvider;
@@ -44,17 +14,21 @@ import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.tiles.IBCTileMenuProvider;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.api.tiles.ITickable;
+import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.BCBuildersMenuTypes;
+import buildcraft.builders.block.BlockBuilder;
+import buildcraft.builders.container.ContainerBuilder;
+import buildcraft.builders.item.ItemSnapshot;
+import buildcraft.builders.snapshot.*;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.fluid.TankManager;
-import buildcraft.lib.misc.AdvancementUtil;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.*;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.mj.MjBatteryReceiver;
@@ -63,34 +37,58 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.builders.BCBuildersItems;
-import buildcraft.builders.item.ItemSnapshot;
-import buildcraft.builders.snapshot.Blueprint;
-import buildcraft.builders.snapshot.BlueprintBuilder;
-import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
-import buildcraft.builders.snapshot.ITileForBlueprintBuilder;
-import buildcraft.builders.snapshot.ITileForTemplateBuilder;
-import buildcraft.builders.snapshot.Snapshot;
-import buildcraft.builders.snapshot.SnapshotBuilder;
-import buildcraft.builders.snapshot.Template;
-import buildcraft.builders.snapshot.TemplateBuilder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class TileBuilder extends TileBC_Neptune
-    implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
+// public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder, IBCTileMenuProvider
+public class TileBuilder extends TileBC_Neptune implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder, IBCTileMenuProvider, IRequestProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("builder");
     public static final int NET_CAN_EXCAVATE = IDS.allocId("CAN_EXCAVATE");
     public static final int NET_SNAPSHOT_TYPE = IDS.allocId("SNAPSHOT_TYPE");
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:paving_the_way");
 
     public final ItemHandlerSimple invSnapshot =
-        itemManager
-            .addInvHandler("snapshot", 1,
-                (slot, stack) -> stack.getItem() instanceof ItemSnapshot
-                    && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
-                EnumAccess.BOTH, EnumPipePart.VALUES);
+            itemManager
+                    .addInvHandler("snapshot", 1,
+                            (slot, stack) -> stack.getItem() instanceof ItemSnapshot
+                                    && ItemSnapshot.EnumItemSnapshotType.getFromStack(stack).used,
+                            EnumAccess.BOTH, EnumPipePart.VALUES
+                    );
     public final ItemHandlerSimple invResources =
-        itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
+            itemManager.addInvHandler("resources", 27, EnumAccess.BOTH, EnumPipePart.VALUES);
 
     private final MjBattery battery = new MjBattery(16000 * MjAPI.MJ);
     private boolean canExcavate = true;
@@ -114,8 +112,9 @@ public class TileBuilder extends TileBC_Neptune
     private boolean isDone = false;
 
     public TileBuilder() {
+        super(BCBuildersBlocks.builderTile.get());
         for (int i = 1; i <= 4; i++) {
-            tankManager.add(new Tank("tank" + i, Fluid.BUCKET_VOLUME * 8, this) {
+            tankManager.add(new Tank("tank" + i, FluidAttributes.BUCKET_VOLUME * 8, this) {
                 @Override
                 protected void onContentsChanged() {
                     super.onContentsChanged();
@@ -133,16 +132,17 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
-        @Nonnull ItemStack after) {
-        if (!world.isRemote) {
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
+        // if (!level.isClientSide)
+        if (!level.isClientSide && !StackUtil.isSameItemSameDamageSameTagSameCount(before, after)) {
             if (handler == invSnapshot) {
                 currentBasePosIndex = 0;
                 snapshot = null;
                 if (after.getItem() instanceof ItemSnapshot) {
-                    Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
+//                    Snapshot.Header header = BCBuildersItems.snapshot.getHeader(after);
+                    Snapshot.Header header = BCBuildersItems.snapshotBLUEPRINT.get().getHeader(after);
                     if (header != null) {
-                        Snapshot newSnapshot = GlobalSavedDataSnapshots.get(world).getSnapshot(header.key);
+                        Snapshot newSnapshot = GlobalSavedDataSnapshots.get(level).getSnapshot(header.key);
                         if (newSnapshot != null) {
                             snapshot = newSnapshot;
                         }
@@ -159,15 +159,20 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    public void validate() {
-        super.validate();
+//    public void validate()
+    public void clearRemoved() {
+//        super.validate();
+        super.clearRemoved();
         templateBuilder.validate();
         blueprintBuilder.validate();
     }
 
+    // Calen when this called, #saveAdditional has already been called
     @Override
-    public void invalidate() {
-        super.invalidate();
+//    public void invalidate()
+    public void setRemoved() {
+//        super.invalidate();
+        super.setRemoved();
         templateBuilder.invalidate();
         blueprintBuilder.invalidate();
     }
@@ -177,8 +182,8 @@ public class TileBuilder extends TileBC_Neptune
         if (snapshot != null && getCurrentBasePos() != null) {
             snapshotType = snapshot.getType();
             if (canGetFacing) {
-                rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == world
-                    .getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING)).findFirst().orElse(null);
+                rotation = Arrays.stream(Rotation.values()).filter(r -> r.rotate(snapshot.facing) == level
+                        .getBlockState(worldPosition).getValue(BlockBCBase_Neptune.PROP_FACING)).findFirst().orElse(null);
             }
             if (snapshot.getType() == EnumSnapshotType.TEMPLATE) {
                 templateBuildingInfo = ((Template) snapshot).new BuildingInfo(getCurrentBasePos(), rotation);
@@ -210,7 +215,12 @@ public class TileBuilder extends TileBC_Neptune
                 basePoses.addAll(PositionUtil.getAllOnPath(path.get(i - 1), path.get(i)));
             }
         } else {
-            basePoses.add(pos.offset(world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()));
+            // Calen: without this, may get Air block when chunk unloading, without BlockBCBase_Neptune.PROP_FACING
+            BlockState state = level.getBlockState(worldPosition);
+            if (!(state.getBlock() instanceof BlockBuilder)) {
+                return;
+            }
+            basePoses.add(worldPosition.relative(state.getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite()));
         }
     }
 
@@ -219,10 +229,11 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+//    public void onPlacedBy(EntityLivingBase placer, ItemStack stack)
+    public void onPlacedBy(LivingEntity placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        EnumFacing facing = world.getBlockState(pos).getValue(BlockBCBase_Neptune.PROP_FACING);
-        TileEntity inFront = world.getTileEntity(pos.offset(facing.getOpposite()));
+        Direction facing = level.getBlockState(worldPosition).getValue(BlockBCBase_Neptune.PROP_FACING);
+        TileEntity inFront = level.getBlockEntity(worldPosition.relative(facing.getOpposite()));
         if (inFront instanceof IPathProvider) {
             IPathProvider provider = (IPathProvider) inFront;
             ImmutableList<BlockPos> copiedPath = ImmutableList.copyOf(provider.getPath());
@@ -236,10 +247,12 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     public void update() {
-        world.profiler.startSection("main");
-        world.profiler.startSection("power");
-        battery.tick(getWorld(), getPos());
-        world.profiler.endStartSection("builder");
+        ITickable.super.update();
+        IProfiler profiler = level.getProfiler();
+        profiler.push("main");
+        profiler.push("power");
+        battery.tick(getLevel(), getBlockPos());
+        profiler.popPush("builder");
         SnapshotBuilder<?> builder = getBuilder();
         if (builder != null) {
             isDone = builder.tick();
@@ -255,18 +268,18 @@ public class TileBuilder extends TileBC_Neptune
                 }
             }
         }
-        world.profiler.endStartSection("net_update");
+        profiler.popPush("net_update");
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
-        world.profiler.endSection();
-        world.profiler.endSection();
+        profiler.pop();
+        profiler.pop();
     }
 
     // Networking
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Dist side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeInt(path == null ? 0 : path.size());
                 if (path != null) {
@@ -274,7 +287,7 @@ public class TileBuilder extends TileBC_Neptune
                 }
                 buffer.writeBoolean(snapshotType != null);
                 if (snapshotType != null) {
-                    buffer.writeEnumValue(snapshotType);
+                    buffer.writeEnum(snapshotType);
                     // noinspection ConstantConditions
                     getBuilder().writeToByteBuf(buffer);
                 }
@@ -289,15 +302,22 @@ public class TileBuilder extends TileBC_Neptune
                 buffer.writeBoolean(canExcavate);
             }
             if (id == NET_SNAPSHOT_TYPE) {
-                buffer.writeEnumValue(EnumOptionalSnapshotType.fromNullable(snapshotType));
+                // Calen: to update blockstate
+                BlockState state = level.getBlockState(worldPosition);
+                if (state.getBlock() instanceof BlockBCBase_Neptune) {
+                    BlockBCBase_Neptune blockBC = (BlockBCBase_Neptune) state.getBlock();
+                    blockBC.checkActualStateAndUpdate(state, level, worldPosition, this);
+                }
+
+                buffer.writeEnum(EnumOptionalSnapshotType.fromNullable(snapshotType));
             }
         }
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_RENDER_DATA) {
                 path = new ArrayList<>();
                 int pathSize = buffer.readInt();
@@ -308,9 +328,10 @@ public class TileBuilder extends TileBC_Neptune
                 } else {
                     path = null;
                 }
-                updateBasePoses();
+                // Calen: calling level.getBlockState when loading world will get Air Block
+                runWhenWorldNotNull(this::updateBasePoses, true);
                 if (buffer.readBoolean()) {
-                    snapshotType = buffer.readEnumValue(EnumSnapshotType.class);
+                    snapshotType = buffer.readEnum(EnumSnapshotType.class);
                     getBuilder().readFromByteBuf(buffer);
                 } else {
                     snapshotType = null;
@@ -327,13 +348,13 @@ public class TileBuilder extends TileBC_Neptune
             }
             if (id == NET_SNAPSHOT_TYPE) {
                 EnumSnapshotType old = snapshotType;
-                snapshotType = buffer.readEnumValue(EnumOptionalSnapshotType.class).type;
+                snapshotType = buffer.readEnum(EnumOptionalSnapshotType.class).type;
                 if (old != snapshotType) {
                     redrawBlock();
                 }
             }
         }
-        if (side == Side.SERVER) {
+        if (side == NetworkDirection.PLAY_TO_SERVER) {
             if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
                 sendNetworkUpdate(NET_CAN_EXCAVATE);
@@ -347,74 +368,121 @@ public class TileBuilder extends TileBC_Neptune
 
     // Read-write
 
+
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
+//    public CompoundNBT writeToNBT(CompoundNBT nbt)
+    public CompoundNBT save(CompoundNBT nbt) {
+//        super.writeToNBT(nbt);
+        super.save(nbt);
         if (path != null) {
-            nbt.setTag("path", NBTUtilBC.writeCompoundList(path.stream().map(NBTUtil::createPosTag)));
+            nbt.put("path", NBTUtilBC.writeCompoundList(path.stream().map(NBTUtil::writeBlockPos)));
         }
-        nbt.setTag("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::createPosTag)));
-        nbt.setBoolean("canExcavate", canExcavate);
-        nbt.setTag("rotation", NBTUtilBC.writeEnum(rotation));
-        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.setTag("builder", builder.serializeNBT()));
+        nbt.put("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::writeBlockPos)));
+        nbt.putBoolean("canExcavate", canExcavate);
+        nbt.put("rotation", NBTUtilBC.writeEnum(rotation));
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.put("builder", builder.serializeNBT()));
         return nbt;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        if (nbt.hasKey("path")) {
+//    public void readFromNBT(CompoundNBT nbt)
+    public void load(BlockState state, CompoundNBT nbt) {
+//        super.readFromNBT(nbt);
+        super.load(state, nbt);
+        if (nbt.contains("path")) {
             path =
-                NBTUtilBC.readCompoundList(nbt.getTag("path")).map(NBTUtil::getPosFromTag).collect(Collectors.toList());
+                    NBTUtilBC.readCompoundList(nbt.get("path")).map(NBTUtil::readBlockPos).collect(Collectors.toList());
         }
-        basePoses = NBTUtilBC.readCompoundList(nbt.getTag("basePoses")).map(NBTUtil::getPosFromTag)
-            .collect(Collectors.toList());
+        basePoses = NBTUtilBC.readCompoundList(nbt.get("basePoses")).map(NBTUtil::readBlockPos)
+                .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
-        rotation = NBTUtilBC.readEnum(nbt.getTag("rotation"), Rotation.class);
-        if (nbt.hasKey("builder")) {
-            updateSnapshot(false);
-            Optional.ofNullable(getBuilder())
-                .ifPresent(builder -> builder.deserializeNBT(nbt.getCompoundTag("builder")));
-        }
+        rotation = NBTUtilBC.readEnum(nbt.get("rotation"), Rotation.class);
+        // Calen: don't save/load currentBox/currentBasePosIndex/snapshotType/snapshot withNBT, or this will make the builder destroy the placed block and place again
+        // Calen FIX: the items prepared to build will not disappear after tileentity reloaded in 1.18.2
+        runWhenWorldNotNull(() ->
+                {
+                    // Calen FIX: the items prepared to build will not disappear after tileentity reloaded in 1.18.2
+                    if (snapshot == null) {
+                        // Calen: load snapshot, this should before builder#deserializeNBT
+                        itemManager.getCapability(CapUtil.CAP_ITEMS).ifPresent(h ->
+                        {
+                            ItemStack stack = h.getStackInSlot(0);
+                            if (stack.getItem() instanceof ItemSnapshot) {
+                                ItemSnapshot itemSnapshot = (ItemSnapshot) stack.getItem();
+                                Snapshot.Header header = itemSnapshot.getHeader(stack);
+                                snapshot = GlobalSavedDataSnapshots.get(level).getSnapshot(header.key);
+                            }
+                        });
+                    }
+                    if (nbt.contains("builder")) {
+                        updateSnapshot(false);
+                        Optional.ofNullable(getBuilder())
+                                .ifPresent(builder -> builder.deserializeNBT(nbt.getCompound("builder")));
+                        // Calen: make the required items able to be seen, this should after builder#deserializeNBT
+                        itemManager.getCapability(CapUtil.CAP_ITEMS).ifPresent(h ->
+                        {
+                            ItemStack stack = h.getStackInSlot(0);
+                            if (stack.getItem() instanceof ItemSnapshot) {
+                                onSlotChange(invSnapshot, 0, StackUtil.EMPTY, stack);
+                            }
+                        });
+                    }
+                    // Calen: check snapshot type and update blockstate
+                    BlockState currentState = level.getBlockState(worldPosition);
+                    Block b = currentState.getBlock();
+                    if (b instanceof BlockBuilder) {
+                        BlockBuilder builder = (BlockBuilder) b;
+                        builder.checkActualStateAndUpdate(currentState, level, worldPosition, this);
+                    }
+                },
+                false
+        );
     }
 
     // Rendering
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public Box getBox() {
         return currentBox;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean hasFastRenderer() {
-        return true;
-    }
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public boolean hasFastRenderer() {
+//        return true;
+//    }
 
     @Nonnull
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), getBox(), path);
+        return BoundingBoxUtil.makeFrom(worldPosition, getBox(), path);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public double getMaxRenderDistanceSquared() {
-        return Double.MAX_VALUE;
+    @OnlyIn(Dist.CLIENT)
+//    public double getMaxRenderDistanceSquared()
+    public double getViewDistance() {
+//        return Double.MAX_VALUE;
+        return 512;
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("battery = " + battery.getDebugString());
-        left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
-        left.add("currentBasePosIndex = " + currentBasePosIndex);
-        left.add("isDone = " + isDone);
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//        left.add("battery = " + battery.getDebugString());
+//        left.add("basePoses = " + (basePoses == null ? "null" : basePoses.size()));
+//        left.add("currentBasePosIndex = " + currentBasePosIndex);
+//        left.add("isDone = " + isDone);
+        left.add(new StringTextComponent("battery = " + battery.getDebugString()));
+        left.add(new StringTextComponent("basePoses = " + (basePoses == null ? "null" : basePoses.size())));
+        left.add(new StringTextComponent("currentBasePosIndex = " + currentBasePosIndex));
+        left.add(new StringTextComponent("isDone = " + isDone));
     }
 
     @Override
     public World getWorldBC() {
-        return world;
+        return level;
     }
 
     @Override
@@ -424,7 +492,7 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     public BlockPos getBuilderPos() {
-        return pos;
+        return worldPosition;
     }
 
     @Override
@@ -471,5 +539,51 @@ public class TileBuilder extends TileBC_Neptune
     @Override
     public TankManager getTankManager() {
         return tankManager;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return this.getBlockState().getBlock().getName();
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int id, PlayerInventory inventory, PlayerEntity player) {
+        return new ContainerBuilder(BCBuildersMenuTypes.BUILDER, id, player, this);
+    }
+
+    // IRequestProvider
+
+    @Override
+    public int getRequestsCount() {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return 0;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            return this.blueprintBuilder.remainingDisplayRequired.size();
+        }
+        return 0;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getRequest(int slot) {
+        if (snapshotType == EnumSnapshotType.TEMPLATE) {
+            return StackUtil.EMPTY;
+        }
+        if (snapshotType == EnumSnapshotType.BLUEPRINT) {
+            if (slot >= this.blueprintBuilder.remainingDisplayRequired.size()) {
+                return StackUtil.EMPTY;
+            } else {
+                return this.blueprintBuilder.remainingDisplayRequired.get(slot).copy();
+            }
+        }
+        return StackUtil.EMPTY;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack offerItem(int slot, ItemStack stack) {
+        return this.invResources.insert(stack, true, false);
     }
 }

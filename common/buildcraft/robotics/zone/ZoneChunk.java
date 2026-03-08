@@ -6,23 +6,22 @@
 
 package buildcraft.robotics.zone;
 
+import com.google.common.collect.ImmutableList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
+
+import javax.vecmath.Point2i;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
-
-import javax.vecmath.Point2i;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 
 public class ZoneChunk {
     public BitSet property;
     private boolean fullSet = false;
 
-    public ZoneChunk() {}
+    public ZoneChunk() {
+    }
 
     public ZoneChunk(ZoneChunk old) {
         if (old.property != null) {
@@ -76,18 +75,18 @@ public class ZoneChunk {
         return builder.build();
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setBoolean("fullSet", fullSet);
+    public void writeToNBT(CompoundNBT nbt) {
+        nbt.putBoolean("fullSet", fullSet);
 
         if (property != null) {
-            nbt.setByteArray("bits", property.toByteArray());
+            nbt.putByteArray("bits", property.toByteArray());
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(CompoundNBT nbt) {
         fullSet = nbt.getBoolean("fullSet");
 
-        if (nbt.hasKey("bits")) {
+        if (nbt.contains("bits")) {
             property = BitSet.valueOf(nbt.getByteArray("bits"));
         }
     }

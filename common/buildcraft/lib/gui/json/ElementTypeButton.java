@@ -1,10 +1,7 @@
 package buildcraft.lib.gui.json;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteRaw;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiSpriteScaled;
@@ -17,6 +14,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 import buildcraft.lib.misc.SpriteUtil;
+import net.minecraft.util.ResourceLocation;
 
 public class ElementTypeButton extends ElementType {
     public static final String NAME = "buildcraftlib:button";
@@ -109,7 +107,7 @@ public class ElementTypeButton extends ElementType {
     }
 
     private static ISimpleDrawable resolveDrawable(FunctionContext ctx, JsonGuiInfo guiInfo, JsonGuiElement json,
-        BuildCraftJsonGui gui, int sizeX, int sizeY, String key) {
+                                                   BuildCraftJsonGui gui, int sizeX, int sizeY, String key) {
         double[] uvs = new double[4];
         for (int i = 0; i < 4; i++) {
             uvs[i] = resolveEquationDouble(json, key + "[" + i + "]", ctx);

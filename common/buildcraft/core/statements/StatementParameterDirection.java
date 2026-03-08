@@ -6,64 +6,64 @@
 
 package buildcraft.core.statements;
 
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+
+// Calen: never used in 1.12.2
 
 /** Directions *might* be replaced with individual triggers and actions per direction. Not sure yet. */
-@Deprecated
+//@Deprecated
+@Deprecated()
 public class StatementParameterDirection implements IStatementParameter {
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static TextureAtlasSprite[] sprites;
 
     @Nullable
-    private EnumFacing direction = null;
+    private Direction direction = null;
 
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap map) {
-        sprites = new TextureAtlasSprite[] {
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"))
-        };
-    }
+//    @OnlyIn(Dist.CLIENT)
+//    public void registerIcons(AtlasTexture map) {
+//        sprites = new TextureAtlasSprite[] {
+//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down")),
+//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up")),
+//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north")),
+//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south")),
+//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west")),
+//            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"))
+//        };
+//    }
 
     public StatementParameterDirection() {
 
     }
 
-    public StatementParameterDirection(EnumFacing face) {
+    public StatementParameterDirection(Direction face) {
         this.direction = face;
     }
 
     @Nullable
-    public EnumFacing getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
@@ -74,9 +74,9 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISprite getSprite() {
-        EnumFacing dir = getDirection();
+        Direction dir = getDirection();
         if (dir == null) {
             return null;
         } else {
@@ -90,16 +90,16 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
+    public void writeToNbt(CompoundNBT nbt) {
         if (direction != null) {
-            nbt.setByte("direction", (byte) direction.ordinal());
+            nbt.putByte("direction", (byte) direction.ordinal());
         }
     }
 
-//    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        if (nbt.hasKey("direction")) {
-            direction = EnumFacing.VALUES[nbt.getByte("direction")];
+    //    @Override
+    public void readFromNBT(CompoundNBT nbt) {
+        if (nbt.contains("direction")) {
+            direction = Direction.values()[nbt.getByte("direction")];
         } else {
             direction = null;
         }
@@ -120,8 +120,18 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public String getDescription() {
-        EnumFacing dir = getDirection();
+    public ITextComponent getDescription() {
+        Direction dir = getDirection();
+        if (dir == null) {
+            return new StringTextComponent("");
+        } else {
+            return new TranslationTextComponent("direction." + dir.name().toLowerCase());
+        }
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        Direction dir = getDirection();
         if (dir == null) {
             return "";
         } else {
@@ -137,9 +147,10 @@ public class StatementParameterDirection implements IStatementParameter {
     @Override
     public IStatementParameter rotateLeft() {
         StatementParameterDirection d = new StatementParameterDirection();
-        EnumFacing dir = d.getDirection();
+        Direction dir = d.getDirection();
         if (dir != null && dir.getAxis() != Axis.Y) {
-            d.direction = dir.rotateY();
+//            d.direction = dir.rotateY();
+            d.direction = dir.getClockWise();
         }
         return d;
     }

@@ -10,6 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.IChunk;
 
 public class ChunkUtil {
     private static final ThreadLocal<Chunk> lastChunk = new ThreadLocal<>();
@@ -26,8 +28,10 @@ public class ChunkUtil {
         Chunk chunk = lastChunk.get();
 
         if (chunk != null) {
-            if (chunk.isLoaded()) {
-                if (chunk.getWorld() == world && chunk.x == x && chunk.z == z) {
+//            if (chunk.isLoaded())
+            IChunk chunkAccess = world.getChunkSource().getChunk(x, z, ChunkStatus.FULL, false);
+            if (chunkAccess != null) {
+                if (chunk.getLevel() == world && chunk.getPos().x == x && chunk.getPos().z == z) {
                     return chunk;
                 }
             } else {
@@ -35,11 +39,12 @@ public class ChunkUtil {
             }
         }
 
-        if (force) {
-            chunk = world.getChunkProvider().provideChunk(x, z);
-        } else {
-            chunk = world.getChunkProvider().getLoadedChunk(x, z);
-        }
+//        if (force) {
+//            chunk = world.getChunkProvider().provideChunk(x, z);
+//        } else {
+//            chunk = world.getChunkProvider().getLoadedChunk(x, z);
+//        }
+        chunk = world.getChunkSource().getChunk(x, z, force);
 
         if (chunk != null) {
             lastChunk.set(chunk);

@@ -6,13 +6,14 @@
 
 package buildcraft.lib.misc.data;
 
-import java.util.Arrays;
-import java.util.List;
 
 import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.expression.node.value.NodeStateful;
 import buildcraft.lib.expression.node.value.NodeStateful.Instance;
 import buildcraft.lib.expression.node.value.NodeUpdatable;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ModelVariableData {
     private static int currentBakeId = 0;

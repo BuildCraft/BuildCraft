@@ -1,15 +1,14 @@
 package buildcraft.lib.client.model.json;
 
-import java.util.Collections;
-import java.util.List;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.client.model.json.JsonVariableModel.ITextureGetter;
 import buildcraft.lib.expression.FunctionContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.Collections;
+import java.util.List;
 
 public class VariablePartContainer extends JsonVariableModelPart {
 

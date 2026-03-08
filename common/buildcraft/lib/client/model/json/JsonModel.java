@@ -6,30 +6,19 @@
 
 package buildcraft.lib.client.model.json;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
-import net.minecraft.client.renderer.block.model.ModelBlock;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.client.model.ResourceLoaderContext;
 import buildcraft.lib.misc.JsonUtil;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import net.minecraft.client.renderer.model.BlockModel;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
 
-/** {@link ModelBlock} but with different/additional features */
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+/** {@link BlockModel} but with different/additional features */
 public class JsonModel {
     public final boolean ambientOcclusion;
     public final Map<String, String> textures;
@@ -79,8 +68,10 @@ public class JsonModel {
     }
 
     public JsonModel(JsonObject obj, ResourceLoaderContext ctx) throws JsonParseException, IOException {
-        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
-        textures = JsonUtil.getSubAsImmutableMap(obj, "textures", new TypeToken<HashMap<String, String>>() {});
+//        ambientOcclusion = JsonUtils.getBoolean(obj, "ambientocclusion", false);
+        ambientOcclusion = JSONUtils.getAsBoolean(obj, "ambientocclusion", false);
+        textures = JsonUtil.getSubAsImmutableMap(obj, "textures", new TypeToken<HashMap<String, String>>() {
+        });
         if (obj.has("elements")) {
             cutoutElements = deserializePartArray(obj, "elements", false, ctx);
             translucentElements = new JsonModelPart[0];

@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "stage=spread_0": {
+      "model": "buildcraftfactory:block/water_gel/spread_0"
+    },
+    "stage=spread_1": {
+      "model": "buildcraftfactory:block/water_gel/spread_1"
+    },
+    "stage=spread_2": {
+      "model": "buildcraftfactory:block/water_gel/spread_2"
+    },
+    "stage=spread_3": {
+      "model": "buildcraftfactory:block/water_gel/spread_3"
+    },
+    "stage=gelling_0": {
+      "model": "buildcraftfactory:block/water_gel/gelling_0"
+    },
+    "stage=gelling_1": {
+      "model": "buildcraftfactory:block/water_gel/gelling_1"
+    },
+    "stage=gel": {
+      "model": "buildcraftfactory:block/water_gel/gel"
+    }
+  }
+}

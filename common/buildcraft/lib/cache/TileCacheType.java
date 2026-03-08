@@ -1,8 +1,8 @@
 package buildcraft.lib.cache;
 
-import java.util.function.Function;
-
 import net.minecraft.tileentity.TileEntity;
+
+import java.util.function.Function;
 
 public enum TileCacheType {
     NO_CACHE(tile -> NoopTileCache.INSTANCE),

@@ -1,7 +1,6 @@
 package buildcraft.builders.snapshot.pattern;
 
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.builders.BCBuildersSprites;
 
 public class PatternShape2dSemiCircle extends PatternShape2d {

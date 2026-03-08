@@ -6,33 +6,13 @@
 
 package buildcraft.silicon.plug;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.BCModules;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.pipe.IFlowFluid;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventStatement;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.info.ContextInfo;
@@ -46,16 +26,31 @@ import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.net.PacketBufferBC;
-
 import buildcraft.silicon.BCSiliconItems;
 import buildcraft.silicon.BCSiliconStatements;
 import buildcraft.silicon.client.model.key.KeyPlugPulsar;
 import buildcraft.transport.BCTransportConfig;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 public class PluggablePulsar extends PipePluggable {
 
     public static final FunctionContext MODEL_FUNC_CTX;
-    private static final NodeVariableObject<EnumFacing> MODEL_SIDE;
+    private static final NodeVariableObject<Direction> MODEL_SIDE;
     private static final NodeVariableDouble MODEL_STAGE;
     private static final NodeVariableBoolean MODEL_ON;
     private static final NodeVariableBoolean MODEL_AUTO;
@@ -64,7 +59,7 @@ public class PluggablePulsar extends PipePluggable {
 
     private static final int PULSE_STAGE = 20;
 
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+    private static final VoxelShape[] BOXES = new VoxelShape[6];
 
     public final ModelVariableData clientModelData = new ModelVariableData();
 
@@ -89,25 +84,25 @@ public class PluggablePulsar extends PipePluggable {
         double min = 5 / 16.0;
         double max = 11 / 16.0;
 
-        BOXES[EnumFacing.DOWN.ordinal()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.ordinal()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.ordinal()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.ordinal()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.ordinal()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+        BOXES[Direction.DOWN.ordinal()] = VoxelShapes.box(min, ll, min, max, lu, max);
+        BOXES[Direction.UP.ordinal()] = VoxelShapes.box(min, ul, min, max, uu, max);
+        BOXES[Direction.NORTH.ordinal()] = VoxelShapes.box(min, min, ll, max, max, lu);
+        BOXES[Direction.SOUTH.ordinal()] = VoxelShapes.box(min, min, ul, max, max, uu);
+        BOXES[Direction.WEST.ordinal()] = VoxelShapes.box(ll, min, min, lu, max, max);
+        BOXES[Direction.EAST.ordinal()] = VoxelShapes.box(ul, min, min, uu, max, max);
 
         MODEL_FUNC_CTX = DefaultContexts.createWithAll();
-        MODEL_SIDE = MODEL_FUNC_CTX.putVariableObject("side", EnumFacing.class);
+        MODEL_SIDE = MODEL_FUNC_CTX.putVariableObject("side", Direction.class);
         MODEL_STAGE = MODEL_FUNC_CTX.putVariableDouble("stage");
         MODEL_ON = MODEL_FUNC_CTX.putVariableBoolean("on");
         MODEL_AUTO = MODEL_FUNC_CTX.putVariableBoolean("auto");
         MODEL_MANUAL = MODEL_FUNC_CTX.putVariableBoolean("manual");
 
         MODEL_VAR_INFO = new ContextInfo(MODEL_FUNC_CTX);
-        VariableInfoObject<EnumFacing> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
+        VariableInfoObject<Direction> infoSide = MODEL_VAR_INFO.createInfoObject(MODEL_SIDE);
         infoSide.cacheType = CacheType.ALWAYS;
         infoSide.setIsComplete = true;
-        infoSide.possibleValues.addAll(Arrays.asList(EnumFacing.VALUES));
+        infoSide.possibleValues.addAll(Arrays.asList(Direction.values()));
 
         VariableInfoDouble infoStage = MODEL_VAR_INFO.createInfoDouble(MODEL_STAGE);
         infoStage.cacheType = CacheType.IN_SET;
@@ -115,33 +110,33 @@ public class PluggablePulsar extends PipePluggable {
         infoStage.possibleValues.add(0.0);
     }
 
-    public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
+    public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, Direction side) {
         super(definition, holder, side);
     }
 
     // Saving + Loading
 
-    public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
+    public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, Direction side, CompoundNBT nbt) {
         super(definition, holder, side);
         this.manuallyEnabled = nbt.getBoolean("manuallyEnabled");
-        gateEnabledTicks = nbt.getInteger("gateEnabledTicks");
-        gateSinglePulses = nbt.getInteger("gateSinglePulses");
-        pulseStage = MathUtil.clamp(nbt.getInteger("pulseStage"), 0, PULSE_STAGE);
+        gateEnabledTicks = nbt.getInt("gateEnabledTicks");
+        gateSinglePulses = nbt.getInt("gateSinglePulses");
+        pulseStage = MathUtil.clamp(nbt.getInt("pulseStage"), 0, PULSE_STAGE);
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setBoolean("manuallyEnabled", manuallyEnabled);
-        nbt.setInteger("gateEnabledTicks", gateEnabledTicks);
-        nbt.setInteger("gateSinglePulses", gateSinglePulses);
-        nbt.setInteger("pulseStage", pulseStage);
+    public CompoundNBT writeToNbt() {
+        CompoundNBT nbt = super.writeToNbt();
+        nbt.putBoolean("manuallyEnabled", manuallyEnabled);
+        nbt.putInt("gateEnabledTicks", gateEnabledTicks);
+        nbt.putInt("gateSinglePulses", gateSinglePulses);
+        nbt.putInt("pulseStage", pulseStage);
         return nbt;
     }
 
     // Networking
 
-    public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
+    public PluggablePulsar(PluggableDefinition definition, IPipeHolder holder, Direction side, PacketBuffer buffer) {
         super(definition, holder, side);
         readData(buffer);
     }
@@ -153,17 +148,18 @@ public class PluggablePulsar extends PipePluggable {
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+//    public void readPayload(PacketBuffer buffer, Dist side, MessageContext ctx) throws IOException
+    public void readPayload(PacketBuffer buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             readData(buffer);
         }
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketBuffer buffer, Dist side) {
         super.writePayload(buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             writeData(buffer);
         }
     }
@@ -187,7 +183,7 @@ public class PluggablePulsar extends PipePluggable {
     // PipePluggable
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
+    public VoxelShape getBoundingBox() {
         return BOXES[side.ordinal()];
     }
 
@@ -198,12 +194,12 @@ public class PluggablePulsar extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCSiliconItems.plugPulsar);
+        return new ItemStack(BCSiliconItems.plugPulsar.get());
     }
 
     @Override
     public void onTick() {
-        if (holder.getPipeWorld().isRemote) {
+        if (holder.getPipeWorld().isClientSide) {
             if (isPulsing) {
                 pulseStage++;
                 if (pulseStage == PULSE_STAGE) {
@@ -274,8 +270,8 @@ public class PluggablePulsar extends PipePluggable {
     }
 
     @Override
-    public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
-        if (!holder.getPipeWorld().isRemote) {
+    public boolean onPluggableActivate(PlayerEntity player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
+        if (!holder.getPipeWorld().isClientSide) {
             manuallyEnabled = !manuallyEnabled;
             SoundUtil.playLeverSwitch(holder.getPipeWorld(), holder.getPipePos(), manuallyEnabled);
             scheduleNetworkUpdate();
@@ -284,8 +280,9 @@ public class PluggablePulsar extends PipePluggable {
     }
 
     @Override
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugPulsar(side);
+    @OnlyIn(Dist.CLIENT)
+    public PluggableModelKey getModelRenderKey(RenderType layer) {
+        if (layer == RenderType.cutout()) return new KeyPlugPulsar(side);
         return null;
     }
 
@@ -308,7 +305,7 @@ public class PluggablePulsar extends PipePluggable {
         MODEL_AUTO.value = false;
         MODEL_MANUAL.value = false;
         MODEL_ON.value = false;
-        MODEL_SIDE.value = EnumFacing.WEST;
+        MODEL_SIDE.value = Direction.WEST;
     }
 
     public void setModelVariables(float partialTicks) {

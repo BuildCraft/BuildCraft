@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "predicate": {
+        "buildcraft:used": 0.0
+      },
+      "model": "buildcraftcore:item/list/clean"
+    },
+    {
+      "predicate": {
+        "buildcraft:used": 1.0
+      },
+      "model": "buildcraftcore:item/list/used"
+    }
+  ]
+}

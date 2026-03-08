@@ -6,21 +6,26 @@
 
 package buildcraft.builders.client.render;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.client.render.HudRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class HudSingleSchematic extends HudRenderer {
     @Override
-    protected void renderImpl(Minecraft mc, EntityPlayerSP player) {
+//    protected void renderImpl(Minecraft mc, EntityPlayerSP player)
+    protected void renderImpl(Minecraft mc, ClientPlayerEntity player) {
 
     }
 
     @Override
-    protected boolean shouldRender(Minecraft mc, EntityPlayerSP player) {
-        ItemStack stack = player.getHeldItemMainhand();
+//    protected boolean shouldRender(Minecraft mc, EntityPlayerSP player)
+    protected boolean shouldRender(Minecraft mc, ClientPlayerEntity player) {
+//        ItemStack stack = player.getHeldItemMainhand();
+        ItemStack stack = player.getMainHandItem();
         return false;
     }
 }

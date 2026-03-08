@@ -6,40 +6,45 @@
 
 package buildcraft.core.item;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import buildcraft.core.marker.volume.VolumeBox;
+import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.lib.item.ItemBC_Neptune;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.item.ItemBC_Neptune;
-
-import buildcraft.core.marker.volume.VolumeBox;
-import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
-
 public class ItemVolumeBox extends ItemBC_Neptune {
-    public ItemVolumeBox(String id) {
-        super(id);
+    public ItemVolumeBox(String idBC, Item.Properties properties) {
+        super(idBC, properties);
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return EnumActionResult.PASS;
+//    public EnumActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ)
+    public ActionResultType useOn(ItemUseContext ctx) {
+        World world = ctx.getLevel();
+        BlockPos pos = ctx.getClickedPos();
+        Direction facing = ctx.getClickedFace();
+        if (world.isClientSide) {
+//            return EnumActionResult.PASS;
+            return ActionResultType.PASS;
         }
 
-        BlockPos offset = pos.offset(facing);
+        BlockPos offset = pos.relative(facing);
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         VolumeBox current = volumeBoxes.getVolumeBoxAt(offset);
 
         if (current == null) {
             volumeBoxes.addVolumeBox(offset);
-            volumeBoxes.markDirty();
-            return EnumActionResult.SUCCESS;
+            volumeBoxes.setDirty();
+//            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
 
-        return EnumActionResult.FAIL;
+//        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 }

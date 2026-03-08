@@ -12,6 +12,7 @@ import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.gui.pos.IGuiArea;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 public class GuiElementDrawable extends GuiElementSimple {
     private final ISimpleDrawable drawable;
@@ -30,22 +31,22 @@ public class GuiElementDrawable extends GuiElementSimple {
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         if (!foreground) {
-            draw();
+            draw(poseStack);
         }
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
+    public void drawForeground(MatrixStack poseStack, float partialTicks) {
         if (foreground) {
-            draw();
+            draw(poseStack);
         }
     }
 
-    private void draw() {
+    private void draw(MatrixStack poseStack) {
         if (visible.evaluate()) {
-            drawable.drawAt(this);
+            drawable.drawAt(this, poseStack);
         }
     }
 }

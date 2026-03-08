@@ -1,17 +1,17 @@
 package buildcraft.lib.misc;
 
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
+import javax.annotation.Nullable;
 
 public class ModUtil {
 
     @Nullable
     public static String getNameOfMod(String domain) {
-        ModContainer mod = Loader.instance().getIndexedModList().get(domain);
+        ModContainer mod = ModList.get().getModContainerById(domain).get();
         if (mod != null) {
-            return mod.getName();
+            return mod.getModInfo().getDisplayName();
         }
         return null;
     }

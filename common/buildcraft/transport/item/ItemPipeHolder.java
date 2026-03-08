@@ -6,82 +6,95 @@
 
 package buildcraft.transport.item;
 
-import java.util.List;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
-
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
-
-import buildcraft.lib.client.render.font.SpecialColourFontRenderer;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.TagManager;
-
+import buildcraft.transport.BCTransport;
 import buildcraft.transport.BCTransportBlocks;
+import buildcraft.transport.pipe.PipeRegistry;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.RegistryObject;
 
-public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemPipe {
+import javax.annotation.Nullable;
+import java.util.List;
+
+public class ItemPipeHolder extends BlockItem implements IItemBuildCraft, IItemPipe {
     public final PipeDefinition definition;
     private final String id;
     private String unlocalizedName;
-    private CreativeTabs creativeTab;
+    private final DyeColor colour;
+//    private ItemGroup creativeTab;
 
-    protected ItemPipeHolder(PipeDefinition definition, String tagId) {
-        super(BCTransportBlocks.pipeHolder);
+    // protected ItemPipeHolder(PipeDefinition definition, String tagId)
+    protected ItemPipeHolder(PipeDefinition definition, String tagId, DyeColor colour) {
+        super(BCTransportBlocks.pipeHolder.get(), definition.properties.tab(CreativeTabManager.getTab(TagManager.getTag(tagId, TagManager.EnumTagType.CREATIVE_TAB))));
         this.definition = definition;
         this.id = tagId;
-        this.setMaxDamage(0);
-        this.setHasSubtypes(true);
+//        this.setMaxDamage(0);
+//        this.setHasSubtypes(true);
         if (!"".equals(id)) {
             init();
         }
-    }
-
-    /** Creates a new {@link ItemPipeHolder} without requiring a tag. */
-    public static ItemPipeHolder create(PipeDefinition definition) {
-        return new ItemPipeHolder(definition, "");
-    }
-
-    /** Creates a new {@link ItemPipeHolder} with a tag that will be taken from {@link TagManager}. */
-    public static ItemPipeHolder createAndTag(PipeDefinition definition) {
-        ResourceLocation reg = definition.identifier;
-        String tagId = "item.pipe." + reg.getResourceDomain() + "." + reg.getResourcePath();
-        return new ItemPipeHolder(definition, tagId);
-    }
-
-    public ItemPipeHolder registerWithPipeApi() {
-        PipeApi.pipeRegistry.setItemForPipe(definition, this);
-        return this;
+        this.colour = colour;
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (this.isInCreativeTab(tab)) {
+    public DyeColor getColour() {
+        return colour;
+    }
+
+
+//    /** Creates a new {@link ItemPipeHolder} without requiring a tag. */
+//    public static ItemPipeHolder create(PipeDefinition definition) {
+//        return new ItemPipeHolder(definition, "");
+//    }
+
+    /** Creates a new {@link ItemPipeHolder} with a tag that will be taken from {@link TagManager}. */
+//    public static ItemPipeHolder createAndTag(PipeDefinition definition)
+    public static RegistryObject<ItemPipeHolder> createAndTag(PipeDefinition definition, DyeColor colour) {
+        ResourceLocation reg = definition.identifier;
+//        String tagId = "item.pipe." + reg.getResourceDomain() + "." + reg.getResourcePath();
+        String suffix = colour == null ? "_colorless" : "_" + colour.getName();
+        String tagId = "item.pipe." + reg.getNamespace() + "." + reg.getPath();
+        String regName = TagManager.getTag(tagId, TagManager.EnumTagType.REGISTRY_NAME).replace(BCTransport.MODID + ":", "") + suffix;
+        return PipeRegistry.helper.addForcedItem(regName, () -> new ItemPipeHolder(definition, tagId, colour));
+    }
+
+//    public ItemPipeHolder registerWithPipeApi() {
+//        PipeApi.pipeRegistry.setItemForPipe(definition, this);
+//        return this;
+//    }
+
+    @Override
+//    public void getSubItems(ItemGroup tab, NonNullList<ItemStack> items)
+    public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items) {
+//        if (this.isInCreativeTab(tab))
+        if (allowdedIn(tab)) {
             items.add(new ItemStack(this));
         }
     }
 
     @Override
-    public String id() {
+    public String getIdBC() {
         return id;
     }
 
@@ -90,78 +103,89 @@ public class ItemPipeHolder extends ItemBlock implements IItemBuildCraft, IItemP
         return definition;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
-        for (int i = 0; i <= 16; i++) {
-            variants.put(i, new ModelResourceLocation("buildcrafttransport:pipe_item#inventory"));
-        }
-    }
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+//        for (int i = 0; i <= 16; i++) {
+//            variants.put(i, new ModelResourceLocation("buildcrafttransport:pipe_item#inventory"));
+//        }
+//    }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        String colourComponent = "";
-        int meta = stack.getMetadata();
-        if (meta > 0 && meta <= 16) {
-            EnumDyeColor colour = EnumDyeColor.byMetadata(meta - 1);
-            colourComponent = ColourUtil.getTextFullTooltipSpecial(colour) + " ";
-        }
-        return colourComponent + super.getItemStackDisplayName(stack);
+//    public String getItemStackDisplayName(ItemStack stack)
+    public ITextComponent getName(ItemStack stack) {
+//        String colourComponent = "";
+//        int meta = stack.getMetadata();
+//        if (meta > 0 && meta <= 16) {
+//            EnumDyeColor colour = EnumDyeColor.byMetadata(meta - 1);
+//            colourComponent = ColourUtil.getTextFullTooltipSpecial(colour) + " ";
+//        }
+        String colourComponent = this.colour == null ? "" : (ColourUtil.getTextFullTooltipSpecial(this.colour) + " ");
+//        return colourComponent + super.getItemStackDisplayName(stack);
+        return new StringTextComponent(colourComponent).append(new TranslationTextComponent(this.getDescriptionId(stack)));
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public FontRenderer getFontRenderer(ItemStack stack) {
-        return SpecialColourFontRenderer.INSTANCE;
-    }
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public FontRenderer getFontRenderer(ItemStack stack) {
+//        return SpecialColourFontRenderer.INSTANCE;
+//    }
 
     // ItemBlock overrides these to point to the block
 
+    // Calen: can not override final method
     @Override
-    public ItemBlock setUnlocalizedName(String unlocalizedName) {
-        this.unlocalizedName = "item." + unlocalizedName;
-        return this;
+    public void setUnlocalizedName(String unlocalizedName) {
+        this.unlocalizedName = unlocalizedName;
+//        return this;
     }
 
     @Override
-    public String getUnlocalizedName() {
-        return unlocalizedName;
+//    public String getUnlocalizedName()
+    public String getDescriptionId(ItemStack stack) {
+        return this.unlocalizedName;
     }
 
-    @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return unlocalizedName;
-    }
+//    @Override
+//    public String getUnlocalizedName(ItemStack stack) {
+//        return unlocalizedName;
+//    }
 
-    @Override
-    public Item setCreativeTab(CreativeTabs tab) {
-        creativeTab = tab;
-        return this;
-    }
+//    @Override
+//    public Item setCreativeTab(CreativeTabs tab) {
+//        creativeTab = tab;
+//        return this;
+//    }
 
-    @Override
-    public CreativeTabs getCreativeTab() {
-        return creativeTab;
-    }
+//    @Override
+//    public CreativeTabs getCreativeTab() {
+//        return creativeTab;
+//    }
 
     // Misc usefulness
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        String tipName = "tip." + unlocalizedName.replace(".name", "").replace("item.", "");
-        String localised = I18n.format(tipName);
+    @OnlyIn(Dist.CLIENT)
+//    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag)
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+//        String tipName = "tip." + unlocalizedName.replace(".name", "").replace("item.", "");
+        String tipName = "tip." + this.unlocalizedName.replace(".name", "").replace("item.", "");
+        String localised = I18n.get(tipName);
         if (!localised.equals(tipName)) {
-            tooltip.add(TextFormatting.GRAY + localised);
+            tooltip.add(new StringTextComponent(TextFormatting.GRAY + localised));
         }
         if (definition.flowType == PipeApi.flowFluids) {
             PipeApi.FluidTransferInfo fti = PipeApi.getFluidTransferInfo(definition);
-            tooltip.add(LocaleUtil.localizeFluidFlow(fti.transferPerTick));
+//            tooltip.add(new StringTextComponent(LocaleUtil.localizeFluidFlow(fti.transferPerTick)));
+            tooltip.add(LocaleUtil.localizeFluidFlowToTranslatableComponent(fti.transferPerTick));
+            tooltip.add(LocaleUtil.localizeFluidFlowToTranslatableComponent(fti.transferPerTick));
         } else if (definition.flowType == PipeApi.flowPower) {
             PipeApi.PowerTransferInfo pti = PipeApi.getPowerTransferInfo(definition);
-            tooltip.add(LocaleUtil.localizeMjFlow(pti.transferPerTick));
-            // TODO: remove this! (Not localised b/c localisations happen AFTER this is removed)
-            tooltip.add("Work in progress - the above limit isn't enforced!");
+//            tooltip.add(new StringTextComponent(LocaleUtil.localizeMjFlow(pti.transferPerTick)));
+            tooltip.add(LocaleUtil.localizeMjFlowComponent(pti.transferPerTick));
+        } else if (definition.flowType == PipeApi.flowRf && PipeApi.flowRf != null) {
+            PipeApi.RedstoneFluxTransferInfo pti = PipeApi.getRfTransferInfo(definition);
+            tooltip.add(new StringTextComponent(pti.transferPerTick + " RF/t"));//TODO: Locale!
         }
     }
 }

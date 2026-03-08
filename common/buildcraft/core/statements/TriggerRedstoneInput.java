@@ -12,19 +12,20 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
     public final boolean active;
 
     public TriggerRedstoneInput(boolean active) {
-        super("buildcraft:redstone.input." + (active ? "active" : "inactive"), //
-            "buildcraft.redstone.input." + (active ? "active" : "inactive"));
+        super(
+                "buildcraft:redstone.input." + (active ? "active" : "inactive"), //
+                "buildcraft.redstone.input." + (active ? "active" : "inactive")
+        );
         this.active = active;
     }
 
@@ -34,8 +35,14 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     }
 
     @Override
-    public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
+    public ITextComponent getDescription() {
+//        return LocaleUtil.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
+        return new TranslationTextComponent("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return "gate.trigger.redstone.input." + (active ? "active" : "inactive");
     }
 
     @Override
@@ -58,10 +65,11 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
         if (container instanceof IRedstoneStatementContainer) {
             int level = ((IRedstoneStatementContainer) container).getRedstoneInput(null);
             if (parameters.length > 0 && parameters[0] instanceof StatementParamGateSideOnly
-                && ((StatementParamGateSideOnly) parameters[0]).isSpecific
-                && container instanceof ISidedStatementContainer) {
+                    && ((StatementParamGateSideOnly) parameters[0]).isSpecific
+                    && container instanceof ISidedStatementContainer)
+            {
                 level = ((IRedstoneStatementContainer) container)
-                    .getRedstoneInput(((ISidedStatementContainer) container).getSide());
+                        .getRedstoneInput(((ISidedStatementContainer) container).getSide());
             }
 
             return active ? level > 0 : level == 0;

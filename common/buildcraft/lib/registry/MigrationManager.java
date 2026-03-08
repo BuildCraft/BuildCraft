@@ -1,27 +1,23 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.registry;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public enum MigrationManager {
     INSTANCE;
@@ -44,7 +40,7 @@ public enum MigrationManager {
             itemMigrations.put(oldLowerCase, to);
             if (DEBUG) {
                 BCLog.logger
-                    .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + to.getRegistryName());
+                        .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + to.getRegistryName());
             }
         }
     }
@@ -62,7 +58,7 @@ public enum MigrationManager {
             blockMigrations.put(oldLowerCase, to);
             if (DEBUG) {
                 BCLog.logger
-                    .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + to.getRegistryName());
+                        .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + to.getRegistryName());
             }
         }
     }
@@ -77,20 +73,19 @@ public enum MigrationManager {
         onMissingMappings(missing, itemMigrations);
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(MissingMappings<T> missing,
-        Map<String, T> migrations) {
+    private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(RegistryEvent.MissingMappings<T> missing, Map<String, T> migrations) {
         ImmutableList<Mapping<T>> all = missing.getAllMappings();
         if (all.isEmpty()) {
             return;
         }
         if (DEBUG) {
             BCLog.logger.info("[lib.migrate] Received missing mappings event for " + missing.getGenericType() + " with "
-                + all.size() + " missing.");
+                    + all.size() + " missing.");
         }
-        for (MissingMappings.Mapping<T> mapping : all) {
+        for (Mapping<T> mapping : all) {
             ResourceLocation loc = mapping.key;
-            String domain = loc.getResourceDomain();
-            String path = loc.getResourcePath().toLowerCase(Locale.ROOT);
+            String domain = loc.getNamespace();
+            String path = loc.getPath().toLowerCase(Locale.ROOT);
             if (DEBUG) {
                 BCLog.logger.info("[lib.migrate]  - " + domain + ":" + path);
             }

@@ -6,6 +6,18 @@
 
 package buildcraft.lib.client.model;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.model.json.JsonModel;
+import buildcraft.lib.client.model.json.JsonModelPart;
+import buildcraft.lib.client.model.json.JsonQuad;
+import buildcraft.lib.misc.SpriteUtil;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonParseException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,21 +25,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonParseException;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.client.model.json.JsonModel;
-import buildcraft.lib.client.model.json.JsonModelPart;
-import buildcraft.lib.client.model.json.JsonQuad;
-
 /** Holds a model that will never change except if the json file it is defined from is changed.
- * 
+ *
  * @deprecated Unused -- and a lot of duplicated code with ModelHolderVariable */
 @Deprecated
 public class ModelHolderStatic extends ModelHolder {
@@ -120,6 +119,10 @@ public class ModelHolderStatic extends ModelHolder {
 
     @Override
     protected void onModelBake() {
+//        _onModelBake();
+    }
+
+    protected void _onModelBake() {
         if (rawModel == null) {
             quads = null;
         } else {
@@ -131,7 +134,7 @@ public class ModelHolderStatic extends ModelHolder {
     }
 
     private MutableQuad[] bakePart(JsonModelPart[] a) {
-        TextureAtlasSprite missingSprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        TextureAtlasSprite missingSprite = SpriteUtil.missingSprite();
         List<MutableQuad> list = new ArrayList<>();
         for (JsonModelPart part : a) {
             for (JsonQuad quad : part.quads) {
@@ -154,7 +157,8 @@ public class ModelHolderStatic extends ModelHolder {
                         sprite = missingSprite;
                     }
                 } else {
-                    sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+//                    sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+                    sprite = Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS).apply(new ResourceLocation(lookup));
                 }
                 list.add(quad.toQuad(sprite));
             }
@@ -179,6 +183,10 @@ public class ModelHolderStatic extends ModelHolder {
     }
 
     public MutableQuad[] getCutoutQuads() {
+        // Calen
+        if (quads == null) {
+            _onModelBake();
+        }
         return getQuadsChecking()[0];
     }
 

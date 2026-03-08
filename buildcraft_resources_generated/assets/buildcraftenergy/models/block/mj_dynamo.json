@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:builtin/entity",
+  "textures": {
+    "particle": "buildcraftenergy:blocks/mj_dynamo/back"
+  }
+}

@@ -1,0 +1,21 @@
+{
+    "textures": {
+        "#all":"buildcraftsilicon:plugs/timer",
+        "particle":"#all"
+    },
+    "elements": [
+        {
+           "from": [ 2, 5, 5 ],
+            "to": [ 4.01, 11, 11 ],
+            "shade": true,
+            "faces": {
+                "down":  { "uv": [ 3, 5, 5, 11 ], "texture": "#all" },
+                "up":    { "uv": [ 3, 5, 5, 11 ], "texture": "#all" },
+                "north": { "uv": [ 3, 5, 5, 11 ], "texture": "#all" },
+                "south": { "uv": [ 3, 5, 5, 11 ], "texture": "#all" },
+                "west":  { "uv": [ 5, 5, 11, 11 ], "texture": "#all" },
+                "east":  { "uv": [ 5, 5, 11, 11 ], "texture": "#all" }
+            }
+        }
+    ]
+}

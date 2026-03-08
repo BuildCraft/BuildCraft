@@ -1,0 +1,28 @@
+{
+  "parent": "buildcraftenergy:sticky_dipping",
+  "display": {
+    "icon": {
+      "item": "buildcraftenergy:glob_oil"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.refine_and_redefine.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.refine_and_redefine.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

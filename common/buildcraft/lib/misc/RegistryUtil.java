@@ -7,9 +7,18 @@
 package buildcraft.lib.misc;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import java.util.function.Function;
 
 public class RegistryUtil {
     public static boolean isRegistered(Block block) {
@@ -18,5 +27,12 @@ public class RegistryUtil {
 
     public static boolean isRegistered(Item item) {
         return ForgeRegistries.ITEMS.containsValue(item);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static <T extends TileEntity> void regTesrIfTilePresent(RegistryObject<TileEntityType<T>> tileReg, Function<? super TileEntityRendererDispatcher, ? extends TileEntityRenderer<T>> tesrConstructor) {
+        if (tileReg != null && tileReg.isPresent()) {
+            ClientRegistry.bindTileEntityRenderer(tileReg.get(), tesrConstructor);
+        }
     }
 }

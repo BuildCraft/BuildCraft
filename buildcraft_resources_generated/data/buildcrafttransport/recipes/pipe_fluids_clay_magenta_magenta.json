@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_items_clay_magenta"
+    },
+    {
+      "tag": "buildcraft:waterproof"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_fluids_clay_magenta"
+  }
+}

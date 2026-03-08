@@ -3,15 +3,15 @@
         "#logic_and":"buildcraftsilicon:gates/gate_and",
         "#logic_or":"buildcraftsilicon:gates/gate_or",
 
-        "#material_clay_brick":"minecraft:blocks/brick",
-        "#material_iron":"minecraft:blocks/iron_block",
-        "#material_nether_brick":"minecraft:blocks/nether_brick",
-        "#material_gold":"minecraft:blocks/gold_block",
+        "#material_clay_brick":"minecraft:block/bricks",
+        "#material_iron":"minecraft:block/iron_block",
+        "#material_nether_brick":"minecraft:block/nether_bricks",
+        "#material_gold":"minecraft:block/gold_block",
 
-        "#modifier_lapis":"minecraft:blocks/lapis_block",
-        "#modifier_quartz":"minecraft:blocks/quartz_block_top",
-        "#modifier_diamond":"minecraft:blocks/diamond_block",
-        "#modifier_prismarine":"minecraft:blocks/prismarine_bricks",
+        "#modifier_lapis":"minecraft:block/lapis_block",
+        "#modifier_quartz":"minecraft:block/quartz_block_top",
+        "#modifier_diamond":"minecraft:block/diamond_block",
+        "#modifier_prismarine":"minecraft:block/prismarine_bricks",
 
         "particle":"#logic_and"
     },

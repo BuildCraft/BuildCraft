@@ -6,27 +6,26 @@
 
 package buildcraft.silicon.client.model.plug;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
-
 import buildcraft.silicon.BCSiliconModels;
 import buildcraft.silicon.item.ItemPluggableLens.LensData;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public enum ModelLensItem implements IBakedModel {
     INSTANCE;
@@ -44,7 +43,7 @@ public enum ModelLensItem implements IBakedModel {
                 List<BakedQuad> list = new ArrayList<>();
                 LensData data = new LensData(i);
                 MutableQuad[] cutout, translucent;
-                EnumFacing side = EnumFacing.WEST;
+                Direction side = Direction.WEST;
                 if (data.isFilter) {
                     cutout = BCSiliconModels.getFilterCutoutQuads(side, data.colour);
                     translucent = BCSiliconModels.getFilterTranslucentQuads(side, data.colour);
@@ -65,12 +64,14 @@ public enum ModelLensItem implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+//    public List<BakedQuad> getQuads(BlockState state, Direction side, long rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
         return ImmutableList.of();
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+//    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
@@ -80,21 +81,25 @@ public enum ModelLensItem implements IBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+//    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+//    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon() {
         return null;
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+//    public ItemCameraTransforms getItemCameraTransforms()
+    public ItemCameraTransforms getTransforms() {
         return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM;
     }
 
     @Override
+//    public ItemOverrideList getOverrides()
     public ItemOverrideList getOverrides() {
         return LensOverride.LENS_OVERRIDE;
     }
@@ -103,12 +108,18 @@ public enum ModelLensItem implements IBakedModel {
         public static final LensOverride LENS_OVERRIDE = new LensOverride();
 
         private LensOverride() {
-            super(ImmutableList.of());
+//            super(ImmutableList.of());
         }
 
         @Override
-        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
-            return new ModelItemSimple(getQuads(stack.getItemDamage()), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM, false);
+//        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, LivingEntity entity)
+        public IBakedModel resolve(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity) {
+            return new ModelItemSimple(getQuads(stack.getDamageValue()), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM, false);
         }
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
     }
 }

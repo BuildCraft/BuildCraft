@@ -6,12 +6,12 @@
 
 package buildcraft.lib.particle;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class ParticlePosition {
-    public final Vec3d position, motion;
+    public final Vector3d position, motion;
 
-    public ParticlePosition(Vec3d position, Vec3d motion) {
+    public ParticlePosition(Vector3d position, Vector3d motion) {
         this.position = position;
         this.motion = motion;
     }

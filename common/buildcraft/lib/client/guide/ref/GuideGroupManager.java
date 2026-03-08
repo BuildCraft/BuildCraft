@@ -1,29 +1,17 @@
 package buildcraft.lib.client.guide.ref;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
+import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
+import buildcraft.api.statements.IStatement;
+import buildcraft.lib.client.guide.entry.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.BCBlocks;
-import buildcraft.api.BCItems;
-import buildcraft.api.statements.IStatement;
-
-import buildcraft.lib.client.guide.entry.ItemStackValueFilter;
-import buildcraft.lib.client.guide.entry.PageEntryItemStack;
-import buildcraft.lib.client.guide.entry.PageEntryStatement;
-import buildcraft.lib.client.guide.entry.PageValue;
-import buildcraft.lib.client.guide.entry.PageValueType;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Function;
 
 public class GuideGroupManager {
     public static final List<PageValueType<?>> knownTypes = new ArrayList<>();
@@ -43,21 +31,45 @@ public class GuideGroupManager {
     }
 
     private static void temp() {
-        addEntries("buildcraft", "pipe_power_providers", BCItems.Silicon.PLUG_PULSAR,
-            BCItems.Transport.PLUG_POWER_ADAPTOR, new ItemStack(BCBlocks.Core.ENGINE),
-            new ItemStack(BCBlocks.Core.ENGINE, 1, 1), new ItemStack(BCBlocks.Core.ENGINE, 1, 2))//
-                .addKeyArray(BCItems.Transport.PIPE_WOOD_ITEM, BCItems.Transport.PIPE_DIAMOND_WOOD_ITEM,
-                    BCItems.Transport.PIPE_EMZULI_ITEM, BCItems.Transport.PIPE_WOOD_FLUID,
-                    BCItems.Transport.PIPE_DIAMOND_WOOD_FLUID);
-        addEntries("buildcraft", "full_power_providers", new ItemStack(BCBlocks.Core.ENGINE, 1, 1),
-            new ItemStack(BCBlocks.Core.ENGINE, 1, 2)).addKeyArray(BCBlocks.Builders.BUILDER, BCBlocks.Builders.FILLER,
-                BCBlocks.Builders.QUARRY, BCBlocks.Factory.DISTILLER, BCBlocks.Factory.MINING_WELL,
-                BCBlocks.Factory.PUMP, BCBlocks.Silicon.LASER);
-        addEntries("buildcraft", "laser_power_providers", BCBlocks.Silicon.LASER).addKeyArray(
-            BCBlocks.Silicon.ADVANCED_CRAFTING_TABLE, BCBlocks.Silicon.ASSEMBLY_TABLE,
-            BCBlocks.Silicon.INTEGRATION_TABLE);
-        addEntries("buildcraft", "area_markers", BCBlocks.Core.MARKER_VOLUME, BCItems.Core.VOLUME_BOX)
-            .addKeyArray(BCBlocks.Builders.QUARRY, BCBlocks.Builders.ARCHITECT, BCBlocks.Builders.FILLER);
+        addEntries("buildcraft", "pipe_power_providers",
+                BCItems.Silicon.PLUG_PULSAR,
+                BCItems.Transport.PLUG_POWER_ADAPTOR,
+                BCBlocks.Core.ENGINE_WOOD,
+                BCBlocks.Core.ENGINE_STONE,
+                BCBlocks.Core.ENGINE_IRON)//
+                .addKeyArray(
+                        BCItems.Transport.PIPE_ITEMS_WOOD_COLORLESS,
+                        BCItems.Transport.PIPE_ITEMS_DIAMOND_WOOD_COLORLESS,
+                        BCItems.Transport.PIPE_ITEMS_EMZULI_COLORLESS,
+                        BCItems.Transport.PIPE_FLUIDS_WOOD_COLORLESS,
+                        BCItems.Transport.PIPE_FLUIDS_DIAMOND_WOOD_COLORLESS
+                );
+        addEntries("buildcraft", "full_power_providers",
+                BCBlocks.Core.ENGINE_STONE,
+                BCBlocks.Core.ENGINE_IRON)
+                .addKeyArray(
+                        BCBlocks.Builders.BUILDER,
+                        BCBlocks.Builders.FILLER,
+                        BCBlocks.Builders.QUARRY,
+                        BCBlocks.Factory.DISTILLER,
+                        BCBlocks.Factory.MINING_WELL,
+                        BCBlocks.Factory.PUMP,
+                        BCBlocks.Silicon.LASER
+                );
+        addEntries("buildcraft", "laser_power_providers",
+                BCBlocks.Silicon.LASER)
+                .addKeyArray(
+                        BCBlocks.Silicon.ADVANCED_CRAFTING_TABLE,
+                        BCBlocks.Silicon.ASSEMBLY_TABLE,
+                        BCBlocks.Silicon.INTEGRATION_TABLE
+                );
+        addEntries("buildcraft", "area_markers",
+                BCBlocks.Core.MARKER_VOLUME,
+                BCItems.Core.VOLUME_BOX)
+                .addKeyArray(BCBlocks.Builders.QUARRY,
+                        BCBlocks.Builders.ARCHITECT,
+                        BCBlocks.Builders.FILLER
+                );
     }
 
     // Known types
@@ -71,7 +83,8 @@ public class GuideGroupManager {
             // Function<T, PageValue<Dest>> where Dest is presumed to be a valid type
             Function<Object, PageValue<?>> destTransform = getTransform(toClass);
             if (destTransform != null) {
-                Function<Object, PageValue<?>> realTransform = o -> {
+                Function<Object, PageValue<?>> realTransform = o ->
+                {
                     F from = fromClass.cast(o);
                     T to = transform.apply(from);
                     return destTransform.apply(to);
@@ -82,7 +95,8 @@ public class GuideGroupManager {
             }
             throw new IllegalArgumentException("You cannot register a transformer to an unregistered class!");
         }
-        Function<Object, PageValue<?>> realTransform = o -> {
+        Function<Object, PageValue<?>> realTransform = o ->
+        {
             F from = fromClass.cast(o);
             T to = transform.apply(from);
             return destType.wrap(to);
@@ -129,7 +143,7 @@ public class GuideGroupManager {
             return transform.apply(value);
         }
         throw new IllegalArgumentException("Unknown " + value.getClass()
-            + " - is this a programming mistake, or have you forgotton to register the class as valid?");
+                + " - is this a programming mistake, or have you forgotton to register the class as valid?");
     }
 
     private static boolean isValidClass(Class<?> clazz) {
@@ -143,7 +157,8 @@ public class GuideGroupManager {
         }
         PageValueType<?> type = null;
         if (!clazz.isArray()) {
-            search: {
+            search:
+            {
                 Class<?> superClazz = clazz.getSuperclass();
                 if (superClazz != null) {
                     type = getEntryType(superClazz);
@@ -169,7 +184,8 @@ public class GuideGroupManager {
             return func;
         }
         if (!clazz.isArray()) {
-            search: {
+            search:
+            {
                 Class<?> superClazz = clazz.getSuperclass();
                 if (superClazz != null) {
                     func = getTransform(superClazz);

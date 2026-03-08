@@ -5,15 +5,14 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFilledTemplate;
@@ -83,7 +82,7 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
     private IFilledTemplate createFilledTemplate(BlockPos size) {
         Template template = new Template();
         template.size = size;
-        template.offset = BlockPos.ORIGIN;
+        template.offset = BlockPos.ZERO;
         template.data = new BitSet(Snapshot.getDataSize(size));
         return template.getFilledTemplate();
     }
@@ -106,7 +105,7 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
         System.out.println("Full:\n" + filledTemplateFull);
 
         // Test halfs
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             BlockPos halfSize = VecUtil.replaceValue(fullSize, face.getAxis(), VecUtil.getValue(size, face.getAxis()));
             IStatementParameter[] params = new IStatementParameter[] { //
                 PatternParameterHollow.HOLLOW, //
@@ -115,9 +114,9 @@ public class ShapePatternsTester extends VanillaSetupBaseTester {
             IFilledTemplate filledTemplateHalf = createFilledTemplate(halfSize);
             Assert.assertTrue(BCBuildersStatements.PATTERN_HEMI_SPHERE.fillTemplate(filledTemplateHalf, params));
             System.out.println("Half:\n" + filledTemplateHalf);
-            int dx = face == EnumFacing.WEST ? filledTemplateHalf.getSize().getX() : 0;
-            int dy = face == EnumFacing.DOWN ? filledTemplateHalf.getSize().getY() : 0;
-            int dz = face == EnumFacing.NORTH ? filledTemplateHalf.getSize().getZ() : 0;
+            int dx = face == Direction.WEST ? filledTemplateHalf.getSize().getX() : 0;
+            int dy = face == Direction.DOWN ? filledTemplateHalf.getSize().getY() : 0;
+            int dz = face == Direction.NORTH ? filledTemplateHalf.getSize().getZ() : 0;
             for (int z = 0; z <= filledTemplateHalf.getMax().getZ(); z++) {
                 for (int y = 0; y <= filledTemplateHalf.getMax().getY(); y++) {
                     for (int x = 0; x <= filledTemplateHalf.getMax().getX(); x++) {

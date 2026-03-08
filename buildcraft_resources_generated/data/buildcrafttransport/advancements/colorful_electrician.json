@@ -1,0 +1,29 @@
+{
+  "parent": "buildcrafttransport:logic_transportation",
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:wire",
+      "nbt": "{colour:\"lime\"}"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.colorful_electrician.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.colorful_electrician.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

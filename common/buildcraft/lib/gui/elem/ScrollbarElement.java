@@ -6,9 +6,6 @@
 
 package buildcraft.lib.gui.elem;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
@@ -16,8 +13,11 @@ import buildcraft.lib.gui.IInteractionElement;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.MathUtil;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ScrollbarElement extends GuiElementSimple implements IInteractionElement {
     private static final int HEIGHT = 14;
     private final GuiIcon background, scroller;
@@ -31,10 +31,10 @@ public class ScrollbarElement extends GuiElementSimple implements IInteractionEl
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
+    public void drawBackground(float partialTicks, MatrixStack poseStack) {
         if (len > 0) {
-            background.drawAt(this);
-            scroller.drawAt(this.offset(0, pos * (getHeight() - HEIGHT + 2) / len));
+            background.drawAt(this, poseStack);
+            scroller.drawAt(this.offset(0, pos * (getHeight() - HEIGHT + 2) / len), poseStack);
         }
     }
 
@@ -56,7 +56,8 @@ public class ScrollbarElement extends GuiElementSimple implements IInteractionEl
 
     /** This is called EVEN IF the mouse is not inside your width and height! */
     @Override
-    public void onMouseDragged(int button, long ticksSinceClick) {
+//    public void onMouseDragged(int button, long ticksSinceClick)
+    public void onMouseDragged(int button) {
         if (isClicking && button == 0) {
             updatePositionFromMouse();
         }

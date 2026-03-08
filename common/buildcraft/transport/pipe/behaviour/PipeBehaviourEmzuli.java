@@ -6,24 +6,6 @@
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.RayTraceResult;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.transport.pipe.IFlowItems;
@@ -31,30 +13,44 @@ import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pipe.PipeEventActionActivate;
 import buildcraft.api.transport.pipe.PipeEventStatement;
-
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-
-import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.statements.ActionExtractionPreset;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 public class PipeBehaviourEmzuli extends PipeBehaviourWood {
 
     public enum SlotIndex {
-        SQUARE(EnumDyeColor.RED),
-        CIRCLE(EnumDyeColor.GREEN),
-        TRIANGLE(EnumDyeColor.BLUE),
-        CROSS(EnumDyeColor.YELLOW);
+        SQUARE(DyeColor.RED),
+        CIRCLE(DyeColor.GREEN),
+        TRIANGLE(DyeColor.BLUE),
+        CROSS(DyeColor.YELLOW);
 
         public static final SlotIndex[] VALUES = values();
 
-        public final EnumDyeColor colour;
+        public final DyeColor colour;
 
-        SlotIndex(EnumDyeColor colour) {
+        SlotIndex(DyeColor colour) {
             this.colour = colour;
         }
 
@@ -71,7 +67,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
         }
     }
 
-    public final EnumMap<SlotIndex, EnumDyeColor> slotColours = new EnumMap<>(SlotIndex.class);
+    public final EnumMap<SlotIndex, DyeColor> slotColours = new EnumMap<>(SlotIndex.class);
     public final ItemHandlerSimple invFilters = new ItemHandlerSimple(4, null);
     private final EnumSet<SlotIndex> activeSlots;
     private final byte[] activatedTtl = new byte[SlotIndex.VALUES.length];
@@ -84,38 +80,38 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
         activeSlots = EnumSet.noneOf(SlotIndex.class);
     }
 
-    public PipeBehaviourEmzuli(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourEmzuli(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
-        invFilters.deserializeNBT(nbt.getCompoundTag("Filters"));
-        activeSlots = NBTUtilBC.readEnumSet(nbt.getTag("activeSlots"), SlotIndex.class);
-        currentSlot = NBTUtilBC.readEnum(nbt.getTag("currentSlot"), SlotIndex.class);
+        invFilters.deserializeNBT(nbt.getCompound("Filters"));
+        activeSlots = NBTUtilBC.readEnumSet(nbt.get("activeSlots"), SlotIndex.class);
+        currentSlot = NBTUtilBC.readEnum(nbt.get("currentSlot"), SlotIndex.class);
         for (SlotIndex index : SlotIndex.VALUES) {
             byte c = nbt.getByte("slotColors[" + index.ordinal() + "]");
             if (c > 0 && c <= 16) {
-                slotColours.put(index, EnumDyeColor.byMetadata(c - 1));
+                slotColours.put(index, DyeColor.byId(c - 1));
             }
         }
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("Filters", invFilters.serializeNBT());
-        nbt.setTag("activeSlots", NBTUtilBC.writeEnumSet(activeSlots, SlotIndex.class));
-        nbt.setTag("currentSlot", NBTUtilBC.writeEnum(currentSlot));
+    public CompoundNBT writeToNbt() {
+        CompoundNBT nbt = super.writeToNbt();
+        nbt.put("Filters", invFilters.serializeNBT());
+        nbt.put("activeSlots", NBTUtilBC.writeEnumSet(activeSlots, SlotIndex.class));
+        nbt.put("currentSlot", NBTUtilBC.writeEnum(currentSlot));
         for (SlotIndex index : SlotIndex.VALUES) {
-            EnumDyeColor c = slotColours.get(index);
-            nbt.setByte("slotColors[" + index.ordinal() + "]", (byte) (c == null ? 0 : c.getMetadata() + 1));
+            DyeColor c = slotColours.get(index);
+            nbt.putByte("slotColors[" + index.ordinal() + "]", (byte) (c == null ? 0 : c.getId() + 1));
         }
         return nbt;
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBuffer buffer, NetworkDirection side, NetworkEvent.Context ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetworkDirection.PLAY_TO_CLIENT) {
             for (SlotIndex index : SlotIndex.VALUES) {
-                EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
+                DyeColor colour = MessageUtil.readEnumOrNull(buffer, DyeColor.class);
                 if (colour == null) {
                     slotColours.remove(index);
                 } else {
@@ -129,9 +125,9 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketBuffer buffer, Dist side) {
         super.writePayload(buffer, side);
-        if (side == Side.SERVER) {
+        if (side == Dist.DEDICATED_SERVER) {
             for (SlotIndex index : SlotIndex.VALUES) {
                 MessageUtil.writeEnumOrNull(buffer, slotColours.get(index));
             }
@@ -141,7 +137,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
+    protected int extractItems(IFlowItems flow, Direction dir, int count, boolean simulate) {
         if (currentSlot == null && activeSlots.size() > 0) {
             currentSlot = getNextSlot();
         }
@@ -166,7 +162,7 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     @Override
     public void onTick() {
         super.onTick();
-        if (pipe.getHolder().getPipeWorld().isRemote) {
+        if (pipe.getHolder().getPipeWorld().isClientSide) {
             return;
         }
         for (SlotIndex index : SlotIndex.VALUES) {
@@ -206,12 +202,14 @@ public class PipeBehaviourEmzuli extends PipeBehaviourWood {
     }
 
     @Override
-    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+    public boolean onPipeActivate(PlayerEntity player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
             return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
         }
-        if (player.isServerWorld()) {
-            BCTransportGuis.PIPE_EMZULI.openGui(player, pipe.getHolder().getPipePos());
+//        if (player.isServerWorld())
+        if (player instanceof ServerPlayerEntity) {
+//            BCTransportGuis.PIPE_EMZULI.openGui(player, pipe.getHolder().getPipePos());
+            MessageUtil.serverOpenTileGui(player, pipe.getHolder(), pipe.getHolder().getPipePos());
         }
         return true;
     }

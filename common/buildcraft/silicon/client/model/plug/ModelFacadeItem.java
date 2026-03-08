@@ -6,44 +6,46 @@
 
 package buildcraft.silicon.client.model.plug;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
 import buildcraft.api.BCModules;
-
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
-
 import buildcraft.silicon.client.model.key.KeyPlugFacade;
 import buildcraft.silicon.item.ItemPluggableFacade;
 import buildcraft.silicon.plug.FacadeInstance;
 import buildcraft.silicon.plug.FacadePhasedState;
 import buildcraft.transport.BCTransportModels;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.EmptyBlockReader;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public enum ModelFacadeItem implements IBakedModel {
     INSTANCE;
 
     private static final LoadingCache<KeyPlugFacade, IBakedModel> cache = CacheBuilder.newBuilder()//
-        .expireAfterAccess(1, TimeUnit.MINUTES)//
-        .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK, false)));
+            .expireAfterAccess(1, TimeUnit.MINUTES)//
+            .build(CacheLoader.from(key -> new ModelItemSimple(bakeForKey(key), ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK, false)));
 
     public static void onModelBake() {
         cache.invalidateAll();
@@ -55,7 +57,8 @@ public enum ModelFacadeItem implements IBakedModel {
             quads.add(quad.toBakedItem());
         }
 
-        if (BCModules.TRANSPORT.isLoaded() && key.state.isFullBlock() && !key.isHollow) {
+//        if (BCModules.TRANSPORT.isLoaded() && key.state.isFullBlock() && !key.isHollow)
+        if (BCModules.TRANSPORT.isLoaded() && key.state.getShape(EmptyBlockReader.INSTANCE, BlockPos.ZERO) == VoxelShapes.block() && !key.isHollow) {
             for (MutableQuad quad : BCTransportModels.BLOCKER.getCutoutQuads()) {
                 quads.add(quad.toBakedItem());
             }
@@ -63,13 +66,16 @@ public enum ModelFacadeItem implements IBakedModel {
         return quads;
     }
 
+    @Nonnull
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+//    public List<BakedQuad> getQuads(BlockState state, Direction side, long rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState p_119123_, @Nullable Direction p_119124_, Random rand) {
         return ImmutableList.of();
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+//    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
@@ -79,17 +85,20 @@ public enum ModelFacadeItem implements IBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+//    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+//    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon() {
         return null;
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+//    public ItemCameraTransforms getItemCameraTransforms()
+    public ItemCameraTransforms getTransforms() {
         return ModelItemSimple.TRANSFORM_PLUG_AS_BLOCK;
     }
 
@@ -102,16 +111,21 @@ public enum ModelFacadeItem implements IBakedModel {
         public static final FacadeOverride FACADE_OVERRIDE = new FacadeOverride();
 
         private FacadeOverride() {
-            super(ImmutableList.of());
+//            super(ImmutableList.of());
         }
 
         @Override
-        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world,
-            EntityLivingBase entity) {
+//        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, LivingEntity entity)
+        public IBakedModel resolve(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity) {
             FacadeInstance inst = ItemPluggableFacade.getStates(stack);
             FacadePhasedState state = inst.getCurrentStateForStack();
             return cache.getUnchecked(
-                new KeyPlugFacade(BlockRenderLayer.TRANSLUCENT, EnumFacing.WEST, state.stateInfo.state, inst.isHollow));
+                    new KeyPlugFacade(RenderType.translucent(), Direction.WEST, state.stateInfo.state, inst.isHollow));
         }
+    }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
     }
 }

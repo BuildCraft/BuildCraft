@@ -6,47 +6,12 @@
 
 package buildcraft.transport.pipe.flow;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
+import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.pipe.IFlowItems;
-import buildcraft.api.transport.pipe.IPipe;
+import buildcraft.api.transport.pipe.*;
 import buildcraft.api.transport.pipe.IPipe.ConnectedType;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeEventStatement;
-import buildcraft.api.transport.pipe.PipeFlow;
-
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.misc.CapUtil;
@@ -55,28 +20,57 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
-
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.net.MessageMultiPipeItem.TravellingItemData;
 import buildcraft.transport.net.PipeItemMessageQueue;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkDirection;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Supplier;
 
 public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
     public static final int NET_CREATE_ITEM = 2;
 
     private final DelayedList<TravellingItem> items = new DelayedList<>();
+    private final List<ItemStack> postDropCache = new ArrayList<>();
 
     public PipeFlowItems(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeFlowItems(IPipe pipe, NBTTagCompound nbt) {
+    public PipeFlowItems(IPipe pipe, CompoundNBT nbt) {
         super(pipe, nbt);
-        NBTTagList list = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
-        long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
-        for (int i = 0; i < list.tagCount(); i++) {
-            TravellingItem item = new TravellingItem(list.getCompoundTagAt(i), tickNow);
+        ListNBT list = nbt.getList("items", Constants.NBT.TAG_COMPOUND);
+        // Calen: when world loading, the level of TE is null
+//        long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        long tickNow = nbt.getLong("tickNow");
+
+        for (int i = 0; i < list.size(); i++) {
+            TravellingItem item = new TravellingItem(list.getCompound(i), tickNow);
             if (!item.stack.isEmpty()) {
                 items.add(item.getCurrentDelay(tickNow), item);
             }
@@ -84,37 +78,42 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
+    public CompoundNBT writeToNbt() {
+        CompoundNBT nbt = super.writeToNbt();
         List<List<TravellingItem>> allItems = items.getAllElements();
-        NBTTagList list = new NBTTagList();
+        ListNBT list = new ListNBT();
 
-        long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+//        long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        long tickNow = pipe.getHolder().getPipeWorld().getGameTime();
         for (List<TravellingItem> l : allItems) {
             for (TravellingItem item : l) {
-                list.appendTag(item.writeToNbt(tickNow));
+                list.add(item.writeToNbt(tickNow));
             }
         }
-        nbt.setTag("items", list);
+        nbt.put("items", list);
+        // Calen
+        nbt.putLong("tickNow", pipe.getHolder().getPipeWorld().getGameTime());
         return nbt;
     }
 
     // Network
 
     @Override
-    public void readPayload(int id, PacketBuffer bufIn, Side msgSide) throws IOException {
+//    public void readPayload(int id, PacketBuffer bufIn, Dist msgSide) throws IOException
+    public void readPayload(int id, PacketBuffer bufIn, NetworkDirection msgSide) throws IOException {
         PacketBufferBC buffer = PacketBufferBC.asPacketBufferBc(bufIn);
-        if (msgSide == Side.CLIENT) {
+        if (msgSide == NetworkDirection.PLAY_TO_CLIENT) {
             if (id == NET_CREATE_ITEM) {
                 int stackId = buffer.readInt();
                 Supplier<ItemStack> link = BuildCraftObjectCaches.retrieveItemStack(stackId);
                 int count = buffer.readUnsignedShort();
                 TravellingItem item = new TravellingItem(link, count);
                 item.toCenter = buffer.readBoolean();
-                item.side = buffer.readEnumValue(EnumFacing.class);
-                item.colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
+                item.side = buffer.readEnum(Direction.class);
+                item.colour = MessageUtil.readEnumOrNull(buffer, DyeColor.class);
                 item.timeToDest = buffer.readUnsignedShort();
-                item.tickStarted = pipe.getHolder().getPipeWorld().getTotalWorldTime() + 1;
+//                item.tickStarted = pipe.getHolder().getPipeWorld().getTotalWorldTime() + 1;
+                item.tickStarted = pipe.getHolder().getPipeWorld().getGameTime() + 1;
                 item.tickFinished = item.tickStarted + item.timeToDest;
                 items.add(item.timeToDest + 1, item);
             }
@@ -136,7 +135,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.side = data.side;
         item.colour = data.colour;
         item.timeToDest = data.timeToDest;
-        item.tickStarted = pipe.getHolder().getPipeWorld().getTotalWorldTime() + 1;
+//        item.tickStarted = pipe.getHolder().getPipeWorld().getTotalWorldTime() + 1;
+        item.tickStarted = pipe.getHolder().getPipeWorld().getGameTime() + 1;
         item.tickFinished = item.tickStarted + item.timeToDest;
         items.add(item.timeToDest + 1, item);
     }
@@ -153,9 +153,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         // buf.writeShort(item.timeToDest > Short.MAX_VALUE ? Short.MAX_VALUE : item.timeToDest);
         // });
         PipeItemMessageQueue.appendTravellingItem(
-            pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(), stackId, (byte) item.stack.getCount(),
-            item.toCenter, item.side, item.colour, item.timeToDest > Byte.MAX_VALUE ? Byte.MAX_VALUE
-                : (byte) item.timeToDest
+                pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(), stackId, (byte) item.stack.getCount(),
+                item.toCenter, item.side, item.colour, item.timeToDest > Byte.MAX_VALUE ? Byte.MAX_VALUE
+                        : (byte) item.timeToDest
         );
     }
 
@@ -174,8 +174,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     // IFlowItems
 
     @Override
-    public int tryExtractItems(int count, EnumFacing from, EnumDyeColor colour, IStackFilter filter, boolean simulate) {
-        if (pipe.getHolder().getPipeWorld().isRemote) {
+    public int tryExtractItems(int count, Direction from, DyeColor colour, IStackFilter filter, boolean simulate) {
+        if (pipe.getHolder().getPipeWorld().isClientSide) {
             throw new IllegalStateException("Cannot extract items on the client side!");
         }
         if (from == null) {
@@ -208,7 +208,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         if (stack.isEmpty()) {
             throw new IllegalStateException(
-                "The transactor " + trans + " returned an empty itemstack from a known good request!"
+                    "The transactor " + trans + " returned an empty itemstack from a known good request!"
             );
         }
 
@@ -220,17 +220,18 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     @Override
-    public void sendPhantomItem(ItemStack stack, EnumFacing from, EnumFacing to, EnumDyeColor colour) {
+    public void sendPhantomItem(ItemStack stack, Direction from, Direction to, DyeColor colour) {
         if (from == null && to == null) {
             return;
         }
-        EnumFacing face0, face1, face2;
+        Direction face0, face1, face2;
         boolean twoItems = from != null && to != null;
         face0 = from;
         face1 = from == null ? to : null;
         face2 = to;
 
-        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+//        long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        long now = pipe.getHolder().getPipeWorld().getGameTime();
 
         TravellingItem firstItem = new TravellingItem(stack);
         firstItem.isPhantom = true;
@@ -258,23 +259,25 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     // PipeFlow
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (capability == PipeApi.CAP_INJECTABLE) {
-            return PipeApi.CAP_INJECTABLE.cast(this);
+//            return PipeApi.CAP_INJECTABLE.cast(this);
+            return LazyOptional.of(() -> this).cast();
         } else if (capability == CapUtil.CAP_ITEM_TRANSACTOR) {
-            return CapUtil.CAP_ITEM_TRANSACTOR.cast(ItemTransactorHelper.wrapInjectable(this, facing));
+//            return CapabilityHelper.CAP_ITEM_TRANSACTOR.cast(ItemTransactorHelper.wrapInjectable(this, facing));
+            return LazyOptional.of(() -> ItemTransactorHelper.wrapInjectable(this, facing)).cast();
         } else {
             return super.getCapability(capability, facing);
         }
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeFlow other) {
+    public boolean canConnect(Direction face, PipeFlow other) {
         return other instanceof IFlowItems;
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, TileEntity oTile) {
+    public boolean canConnect(Direction face, TileEntity oTile) {
         return ItemTransactorHelper.getTransactor(oTile, face.getOpposite()) != NoSpaceTransactor.INSTANCE;
     }
 
@@ -283,7 +286,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         World world = pipe.getHolder().getPipeWorld();
 
         List<TravellingItem> toTick = items.advance();
-        long currentTime = world.getTotalWorldTime();
+//        long currentTime = world.getTotalWorldTime();
+        long currentTime = world.getGameTime();
 
         for (TravellingItem item : toTick) {
             if (item.tickFinished > currentTime) {
@@ -292,9 +296,10 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 continue;
             }
             if (item.isPhantom) {
+                postDropCache.add(item.stack);
                 continue;
             }
-            if (world.isRemote) {
+            if (world.isClientSide) {
                 // TODO: Client item advancing/intelligent stuffs
                 continue;
             }
@@ -306,10 +311,15 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
     }
 
+    @Override
+    public void postPluggableTick() {
+        postDropCache.clear();
+    }
+
     private void onItemReachCenter(TravellingItem item) {
         IPipeHolder holder = pipe.getHolder();
         PipeEventItem.ReachCenter reachCenter = new PipeEventItem.ReachCenter(
-            holder, this, item.colour, item.stack, item.side
+                holder, this, item.colour, item.stack, item.side
         );
         holder.fireEvent(reachCenter);
         if (reachCenter.getStack().isEmpty()) {
@@ -317,20 +327,20 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(
-            holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
+                holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
         );
         sideCheck.disallow(reachCenter.from);
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             if (item.tried.contains(face) || !pipe.isConnected(face)) {
                 sideCheck.disallow(face);
             }
         }
         holder.fireEvent(sideCheck);
 
-        List<EnumSet<EnumFacing>> order = sideCheck.getOrder();
+        List<EnumSet<Direction>> order = sideCheck.getOrder();
         if (order.isEmpty()) {
             PipeEventItem.TryBounce tryBounce = new PipeEventItem.TryBounce(
-                holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
+                    holder, this, reachCenter.colour, reachCenter.from, reachCenter.getStack()
             );
             holder.fireEvent(tryBounce);
             if (tryBounce.canBounce) {
@@ -342,7 +352,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         PipeEventItem.ItemEntry entry = new PipeEventItem.ItemEntry(
-            reachCenter.colour, reachCenter.getStack(), reachCenter.from
+                reachCenter.colour, reachCenter.getStack(), reachCenter.from
         );
         PipeEventItem.Split split = new PipeEventItem.Split(holder, this, order, entry);
         holder.fireEvent(split);
@@ -352,7 +362,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         holder.fireEvent(findDest);
 
         World world = holder.getPipeWorld();
-        long now = world.getTotalWorldTime();
+        long now = world.getGameTime();
         for (PipeEventItem.ItemEntry itemEntry : findDest.items) {
             if (itemEntry.stack.isEmpty()) {
                 continue;
@@ -381,7 +391,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 }
             }
 
-            List<EnumFacing> destinations = itemEntry.to;
+            List<Direction> destinations = itemEntry.to;
             if (destinations == null || destinations.size() == 0) {
                 destinations = findDest.generateRandomOrder();
             }
@@ -413,7 +423,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
         if (pipe.isConnected(item.side)) {
             ConnectedType type = pipe.getConnectedType(item.side);
-            EnumFacing oppositeSide = item.side.getOpposite();
+            Direction oppositeSide = item.side.getOpposite();
             switch (type) {
                 case PIPE: {
                     IPipe oPipe = pipe.getConnectedPipe(item.side);
@@ -450,22 +460,24 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             }
         }
         if (excess.isEmpty()) {
+            postDropCache.add(item.stack);
             return;
         }
         item.tried.add(item.side);
         item.toCenter = true;
         item.stack = excess;
-        item.genTimings(holder.getPipeWorld().getTotalWorldTime(), getPipeLength(item.side));
+//        item.genTimings(holder.getPipeWorld().getTotalWorldTime(), getPipeLength(item.side));
+        item.genTimings(holder.getPipeWorld().getGameTime(), getPipeLength(item.side));
         items.add(item.timeToDest, item);
         sendItemDataToClient(item);
     }
 
-    private ItemStack fireEventEjectIntoPipe(IFlowItems oFlow, EnumFacing to, ItemStack before, ItemStack excess) {
+    private ItemStack fireEventEjectIntoPipe(IFlowItems oFlow, Direction to, ItemStack before, ItemStack excess) {
         IPipeHolder holder = this.pipe.getHolder();
         return fireEventEjected(holder, new PipeEventItem.Ejected.IntoPipe(holder, this, before, excess, to, oFlow));
     }
 
-    private ItemStack fireEventEjectIntoTile(TileEntity tile, EnumFacing to, ItemStack before, ItemStack excess) {
+    private ItemStack fireEventEjectIntoTile(TileEntity tile, Direction to, ItemStack before, ItemStack excess) {
         IPipeHolder holder = this.pipe.getHolder();
         return fireEventEjected(holder, new PipeEventItem.Ejected.IntoTile(holder, this, before, excess, to, tile));
     }
@@ -475,7 +487,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return event.getExcess();
     }
 
-    private void dropItem(ItemStack stack, EnumFacing side, EnumFacing motion, double speed) {
+    private void dropItem(ItemStack stack, Direction side, Direction motion, double speed) {
         if (stack == null || stack.isEmpty()) {
             return;
         }
@@ -484,35 +496,42 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         World world = holder.getPipeWorld();
         BlockPos pos = holder.getPipePos();
 
-        double x = pos.getX() + 0.5 + motion.getFrontOffsetX() * 0.5;
-        double y = pos.getY() + 0.5 + motion.getFrontOffsetY() * 0.5;
-        double z = pos.getZ() + 0.5 + motion.getFrontOffsetZ() * 0.5;
+//        double x = pos.getX() + 0.5 + motion.getFrontOffsetX() * 0.5;
+//        double y = pos.getY() + 0.5 + motion.getFrontOffsetY() * 0.5;
+//        double z = pos.getZ() + 0.5 + motion.getFrontOffsetZ() * 0.5;
+        double x = pos.getX() + 0.5 + motion.getStepX() * 0.5;
+        double y = pos.getY() + 0.5 + motion.getStepY() * 0.5;
+        double z = pos.getZ() + 0.5 + motion.getStepZ() * 0.5;
         speed += 0.01;
         speed *= 2;
-        EntityItem ent = new EntityItem(world, x, y, z, stack);
-        ent.motionX = motion.getFrontOffsetX() * speed;
-        ent.motionY = motion.getFrontOffsetY() * speed;
-        ent.motionZ = motion.getFrontOffsetZ() * speed;
+        ItemEntity ent = new ItemEntity(world, x, y, z, stack);
+//        ent.motionX = motion.getFrontOffsetX() * speed;
+//        ent.motionY = motion.getFrontOffsetY() * speed;
+//        ent.motionZ = motion.getFrontOffsetZ() * speed;
+        ent.setDeltaMovement(motion.getStepX() * speed, motion.getStepY() * speed, motion.getStepZ() * speed);
 
         PipeEventItem.Drop drop = new PipeEventItem.Drop(holder, this, ent);
         holder.fireEvent(drop);
-        if (ent.getItem().isEmpty() || ent.isDead) {
+//        if (ent.getItem().isEmpty() || ent.isDead)
+        if (ent.getItem().isEmpty() || !ent.isAlive()) {
             return;
         }
 
-        world.spawnEntity(ent);
+//        world.spawnEntity(ent);
+        world.addFreshEntity(ent);
     }
 
     @Override
-    public boolean canInjectItems(EnumFacing from) {
-        return pipe.isConnected(from);
+    public boolean canInjectItems(Direction from) {
+        // return pipe.isConnected(from);
+        // Calen 1.18.2: supported robot station
+        return pipe.isConnected(from) || (pipe.getHolder().getPluggable(from) instanceof IDockingStationProvider);
     }
 
     @Nonnull
     @Override
-    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor colour,
-        double speed) {
-        if (pipe.getHolder().getPipeWorld().isRemote) {
+    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, Direction from, DyeColor colour, double speed) {
+        if (pipe.getHolder().getPipeWorld().isClientSide) {
             throw new IllegalStateException("Cannot inject items on the client side!");
         }
         if (!canInjectItems(from)) {
@@ -531,7 +550,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
             return stack;
         }
         ItemStack toSplit = stack.copy();
-        ItemStack toInsert = toSplit.splitStack(tryInsert.accepted);
+//        ItemStack toInsert = toSplit.splitStack(tryInsert.accepted);
+        ItemStack toInsert = toSplit.split(tryInsert.accepted);
 
         if (doAdd) {
             insertItemEvents(toInsert, colour, speed, from);
@@ -545,9 +565,9 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     @Override
-    public void insertItemsForce(@Nonnull ItemStack stack, EnumFacing from, EnumDyeColor colour, double speed) {
+    public void insertItemsForce(@Nonnull ItemStack stack, Direction from, DyeColor colour, double speed) {
         World world = pipe.getHolder().getPipeWorld();
-        if (world.isRemote) {
+        if (world.isClientSide) {
             throw new IllegalStateException("Cannot inject items on the client side!");
         }
         if (stack.isEmpty()) {
@@ -556,18 +576,19 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (speed < 0.01) {
             speed = 0.01;
         }
-        long now = world.getTotalWorldTime();
+//        long now = world.getTotalWorldTime();
+        long now = world.getGameTime();
         TravellingItem item = new TravellingItem(stack);
         if (from == null) {
             // Find a reasonable alternative (as it's not allowed to be null)
-            for (EnumFacing f : EnumFacing.values()) {
+            for (Direction f : Direction.values()) {
                 if (!pipe.isConnected(f)) {
                     item.side = f;
                     break;
                 }
             }
             if (item.side == null) {
-                item.side = EnumFacing.UP;
+                item.side = Direction.UP;
             }
         } else {
             item.side = from;
@@ -586,7 +607,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
     }
 
     /** Used internally to split up manual insertions from controlled extractions. */
-    private void insertItemEvents(@Nonnull ItemStack toInsert, EnumDyeColor colour, double speed, EnumFacing from) {
+    private void insertItemEvents(@Nonnull ItemStack toInsert, DyeColor colour, double speed, Direction from) {
         IPipeHolder holder = pipe.getHolder();
 
         PipeEventItem.OnInsert onInsert = new PipeEventItem.OnInsert(holder, this, colour, toInsert, from);
@@ -597,7 +618,8 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         World world = pipe.getHolder().getPipeWorld();
-        long now = world.getTotalWorldTime();
+//        long now = world.getTotalWorldTime();
+        long now = world.getGameTime();
 
         TravellingItem item = new TravellingItem(toInsert);
         item.side = from;
@@ -632,7 +654,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         // (including phantom items, which is fine)
         // This only works because this list is only expanded to add elements
         // and elements are only removed in advance()
-        return items.getMaxDelay() > 0;
+        return items.getMaxDelay() > 0 || !postDropCache.isEmpty();
     }
 
     public boolean containsItemMatching(ItemStack filter) {
@@ -646,12 +668,17 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
                 }
             }
         }
+        for (ItemStack stack : postDropCache) {
+            if (StackUtil.matchesStackOrList(filter, stack)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Nullable
-    private static EnumSet<EnumFacing> getFirstNonEmptySet(List<EnumSet<EnumFacing>> possible) {
-        for (EnumSet<EnumFacing> set : possible) {
+    private static EnumSet<Direction> getFirstNonEmptySet(List<EnumSet<Direction>> possible) {
+        for (EnumSet<Direction> set : possible) {
             if (set.size() > 0) {
                 return set;
             }
@@ -659,7 +686,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         return null;
     }
 
-    double getPipeLength(EnumFacing side) {
+    double getPipeLength(Direction side) {
         if (side == null) {
             return 0;
         }
@@ -674,7 +701,7 @@ public final class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public List<TravellingItem> getAllItemsForRender() {
         List<TravellingItem> all = new ArrayList<>();
         for (List<TravellingItem> innerList : items.getAllElements()) {

@@ -1,13 +1,11 @@
 package buildcraft.lib.client.sprite;
 
-import java.util.function.Supplier;
-
-import net.minecraft.client.Minecraft;
+import buildcraft.api.core.render.ISprite;
+import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.misc.SpriteUtil;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.render.ISprite;
-
-import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import java.util.function.Supplier;
 
 /** Defines a sprite that is taken directly from the given resource location. */
 public class SpriteChanging implements ISprite {
@@ -24,7 +22,8 @@ public class SpriteChanging implements ISprite {
 
     @Override
     public void bindTexture() {
-        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(location.get()));
+//        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(location.get()));
+        SpriteUtil.bindTexture(new ResourceLocation(location.get()));
     }
 
     @Override

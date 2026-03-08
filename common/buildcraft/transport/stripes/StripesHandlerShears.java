@@ -6,23 +6,22 @@
 
 package buildcraft.transport.stripes;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemShears;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.IShearable;
-
+import buildcraft.api.blocks.BlockConstants;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShearsItem;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.IForgeShearable;
+
+import java.util.List;
 
 public enum StripesHandlerShears implements IStripesHandlerItem {
     INSTANCE;
@@ -30,26 +29,28 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
-        if (!(stack.getItem() instanceof ItemShears)) {
+        if (!(stack.getItem() instanceof ShearsItem)) {
             return false;
         }
 
-        pos = pos.offset(direction);
-        IBlockState state = world.getBlockState(pos);
+        pos = pos.relative(direction);
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (block instanceof IShearable) {
-            IShearable shearableBlock = (IShearable) block;
+//        if (block instanceof IShearable shearableBlock)
+        if (block instanceof IForgeShearable) {
+            IForgeShearable shearableBlock = (IForgeShearable) block;
             if (shearableBlock.isShearable(stack, world, pos)) {
-                List<ItemStack> drops = shearableBlock.onSheared(stack, world, pos, 0);
-                if (stack.attemptDamageItem(1, player.getRNG(), player instanceof EntityPlayerMP ? (EntityPlayerMP) player : null)) {
+                List<ItemStack> drops = shearableBlock.onSheared(null, stack, world, pos, 0);
+//                if (stack.attemptDamageItem(1, player.getRNG(), player instanceof ServerPlayerEntity ? (ServerPlayerEntity) player : null))
+                if (stack.hurt(1, player.getRandom(), player instanceof ServerPlayerEntity ? (ServerPlayerEntity) player : null)) {
                     stack.shrink(1);
                 }
-                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11); // Might become obsolete in 1.12+
+                world.setBlock(pos, Blocks.AIR.defaultBlockState(), BlockConstants.UPDATE_ALL_IMMEDIATE); // Might become obsolete in 1.12+
                 for (ItemStack dropStack : drops) {
                     activator.sendItem(dropStack, direction);
                 }

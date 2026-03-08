@@ -8,6 +8,7 @@ package buildcraft.lib.client.guide.parts;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.world.WorldState;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 public class GuideInWorld extends GuidePart {
     private boolean fullscreen = false;
@@ -20,13 +21,13 @@ public class GuideInWorld extends GuidePart {
     }
 
     @Override
-    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+    public PagePosition renderIntoArea(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }
-    
+
     @Override
-    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(MatrixStack poseStack, int x, int y, int width, int height, PagePosition current, int index, double mouseX, double mouseY) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }

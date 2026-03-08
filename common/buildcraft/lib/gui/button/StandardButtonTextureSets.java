@@ -8,6 +8,7 @@ package buildcraft.lib.gui.button;
 
 import net.minecraft.util.ResourceLocation;
 
+@Deprecated()
 public enum StandardButtonTextureSets implements IButtonTextureSet {
     LARGE_BUTTON(0, 0, 20, 200),
     SMALL_BUTTON(0, 100, 15, 200),

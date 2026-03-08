@@ -6,24 +6,21 @@
 
 package buildcraft.lib.client.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /** Dispatches "detached renderer elements" - rendering that does not require a specific tile or entity in the world
  * (perhaps held item HUD elements) */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public enum DetachedRenderer {
     INSTANCE;
 
@@ -40,29 +37,29 @@ public enum DetachedRenderer {
         }
 
         @Override
-        public void glPre(EntityPlayer clientPlayer, float partialTicks) {
-            if (pre != null) pre.glPre(clientPlayer, partialTicks);
+        public void glPre(PlayerEntity clientPlayer, float partialTicks, MatrixStack poseStack, ActiveRenderInfo camera) {
+            if (pre != null) pre.glPre(clientPlayer, partialTicks, poseStack, camera);
         }
 
         @Override
-        public void glPost() {
-            if (post != null) post.glPost();
+        public void glPost(MatrixStack poseStack) {
+            if (post != null) post.glPost(poseStack);
         }
     }
 
     @FunctionalInterface
     public interface IGlPre {
-        void glPre(EntityPlayer clientPlayer, float partialTicks);
+        void glPre(PlayerEntity clientPlayer, float partialTicks, MatrixStack poseStack, ActiveRenderInfo camera);
     }
 
     @FunctionalInterface
     public interface IGLPost {
-        void glPost();
+        void glPost(MatrixStack poseStack);
     }
 
     @FunctionalInterface
     public interface IDetachedRenderer {
-        void render(EntityPlayer player, float partialTicks);
+        void render(PlayerEntity player, float partialTicks, MatrixStack poseStack);
     }
 
     private final Map<RenderMatrixType, List<IDetachedRenderer>> renders = new EnumMap<>(RenderMatrixType.class);
@@ -77,33 +74,41 @@ public enum DetachedRenderer {
         renders.get(type).add(renderer);
     }
 
-    public void renderWorldLastEvent(EntityPlayer player, float partialTicks) {
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+    public void renderWorldLastEvent(PlayerEntity player, float partialTicks, MatrixStack poseStack, ActiveRenderInfo camera) {
+//        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+//        Minecraft.getInstance().entityRenderer.enableLightmap();
 
         for (RenderMatrixType type : RenderMatrixType.values()) {
             List<IDetachedRenderer> rendersForType = this.renders.get(type);
             if (rendersForType.isEmpty()) continue;
-            type.glPre(player, partialTicks);
+            // Calen: push
+            type.glPre(player, partialTicks, poseStack, camera);
             for (IDetachedRenderer render : rendersForType) {
-                render.render(player, partialTicks);
+                render.render(player, partialTicks, poseStack);
             }
-            type.glPost();
+            // Calen: pop
+            type.glPost(poseStack);
         }
 
-        Minecraft.getMinecraft().entityRenderer.disableLightmap();
+//        Minecraft.getInstance().entityRenderer.disableLightmap();
     }
 
-    public static void fromWorldOriginPre(EntityPlayer player, float partialTicks) {
-        GL11.glPushMatrix();
-
-        Vec3d diff = new Vec3d(0, 0, 0);
-        diff = diff.subtract(player.getPositionEyes(partialTicks));
-        diff = diff.addVector(0, player.getEyeHeight(), 0);
-        GL11.glTranslated(diff.x, diff.y, diff.z);
+    public static void fromWorldOriginPre(PlayerEntity player, float partialTicks, MatrixStack poseStack, ActiveRenderInfo camera) {
+//        GL11.glPushMatrix();
+        poseStack.pushPose();
+//        Vec3d diff = new Vec3d(0, 0, 0);
+//        diff = diff.subtract(player.getPositionEyes(partialTicks));
+//        diff = diff.addVector(0, player.getEyeHeight(), 0);
+//        GL11.glTranslated(diff.x, diff.y, diff.z);
+        Vector3d vec3 = camera.getPosition();
+        double d0 = vec3.x();
+        double d1 = vec3.y();
+        double d2 = vec3.z();
+        poseStack.translate(-d0, -d1, -d2);
     }
 
-    public static void fromWorldOriginPost() {
-        GL11.glPopMatrix();
+    public static void fromWorldOriginPost(MatrixStack poseStack) {
+//        GL11.glPopMatrix();
+        poseStack.popPose();
     }
 }

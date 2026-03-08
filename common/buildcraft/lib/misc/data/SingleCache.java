@@ -6,10 +6,10 @@
 
 package buildcraft.lib.misc.data;
 
+import com.google.common.base.Suppliers;
+
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
-import com.google.common.base.Suppliers;
 
 public class SingleCache<T> implements Supplier<T> {
     private final Supplier<T> delegate;

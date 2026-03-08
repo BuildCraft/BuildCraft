@@ -1,32 +1,21 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
 package buildcraft.lib.cap;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import buildcraft.api.core.EnumPipePart;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-
-import buildcraft.api.core.EnumPipePart;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /** Provides a simple way of mapping {@link Capability}'s to instances. Also allows for additional providers */
 public class CapabilityHelper implements ICapabilityProvider {
     private final Map<EnumPipePart, Map<Capability<?>, Supplier<?>>> caps = new EnumMap<>(EnumPipePart.class);
+
     private final List<ICapabilityProvider> additional = new ArrayList<>();
 
     public CapabilityHelper() {
@@ -35,7 +24,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         }
     }
 
-    private Map<Capability<?>, Supplier<?>> getCapMap(EnumFacing facing) {
+    private Map<Capability<?>, Supplier<?>> getCapMap(Direction facing) {
         return caps.get(EnumPipePart.fromFacing(facing));
     }
 
@@ -53,7 +42,7 @@ public class CapabilityHelper implements ICapabilityProvider {
         }
     }
 
-    public <T> void addCapability(@Nullable Capability<T> cap, Function<EnumFacing, T> getter, EnumPipePart... parts) {
+    public <T> void addCapability(@Nullable Capability<T> cap, Function<Direction, T> getter, EnumPipePart... parts) {
         if (cap == null) {
             return;
         }
@@ -69,24 +58,29 @@ public class CapabilityHelper implements ICapabilityProvider {
         return provider;
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        return getCapability(capability, facing) != null;
-    }
+    // 1.18.2: use getCapability().isPresent()
+//    @Override
+//    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+//        return getCapability(capability, facing) != null;
+//    }
 
     @SuppressWarnings("unchecked")
+    @Nonnull
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    public <T> LazyOptional<T> getCapability(@javax.annotation.Nonnull Capability<T> capability, Direction facing) {
         Map<Capability<?>, Supplier<?>> capMap = getCapMap(facing);
         Supplier<?> supplier = capMap.get(capability);
         if (supplier != null) {
-            return (T) supplier.get();
+            Object ret = supplier.get();
+            return ret == null ? LazyOptional.empty() : LazyOptional.of(() -> (T) ret);
         }
         for (ICapabilityProvider provider : additional) {
-            if (provider.hasCapability(capability, facing)) {
-                return provider.getCapability(capability, facing);
+//            if (provider.hasCapability(capability, facing))
+            LazyOptional<T> result = provider.getCapability(capability, facing);
+            if (result.isPresent()) {
+                return result;
             }
         }
-        return null;
+        return LazyOptional.empty();
     }
 }

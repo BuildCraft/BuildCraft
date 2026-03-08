@@ -1,19 +1,16 @@
 package buildcraft.builders.filler;
 
+import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
+import buildcraft.builders.BCBuildersStatements;
+import buildcraft.builders.snapshot.pattern.PatternShape2d;
+import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.statement.StatementContext;
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import buildcraft.api.filler.FillerManager;
-import buildcraft.api.filler.IFillerPattern;
-
-import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.statement.StatementContext;
-
-import buildcraft.builders.BCBuildersStatements;
-import buildcraft.builders.snapshot.pattern.PatternShape2d;
 
 public enum FillerStatementContext implements StatementContext<IFillerPattern> {
     CONTEXT_ALL;

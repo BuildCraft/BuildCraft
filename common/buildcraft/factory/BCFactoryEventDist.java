@@ -6,21 +6,45 @@
 
 package buildcraft.factory;
 
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.factory.client.render.RenderMiningWell;
-import buildcraft.factory.client.render.RenderPump;
+import buildcraft.factory.tile.TileMiner;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public enum BCFactoryEventDist {
     INSTANCE;
 
+//    @SubscribeEvent
+//    @OnlyIn(Dist.CLIENT)
+//    public static void textureStitchPre(TextureStitchEvent.Pre event) {
+//        RenderPump.textureStitchPre();
+////        RenderMiningWell.textureStitchPre();
+//    }
+
+//    @SubscribeEvent
+//    @OnlyIn(Dist.CLIENT)
+//    public static void textureStitchPost(TextureStitchEvent.Post event) {
+//        if (event.getAtlas().location().equals(AtlasTexture.LOCATION_BLOCKS)) {
+//            // Calen: don't call here! The event will be called several times, then the setWhiteTex(event) will be called duplicated to make the texture lean
+//            // moved to RenderPump&RenderMiningWell#initWhiteTex()
+//            RenderPump.textureStitchPost();
+//            RenderMiningWell.textureStitchPost();
+//        }
+//    }
+
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void textureStitchPost(TextureStitchEvent.Post event) {
-        RenderPump.textureStitchPost();
-        RenderMiningWell.textureStitchPost();
+    public void onPlayerDestroyBlock(BlockEvent.BreakEvent event) {
+        if (event.getState().getBlock() != BCFactoryBlocks.tube.get()) {
+            return;
+        }
+        BlockPos currentPos = event.getPos();
+        World world = event.getPlayer().getCommandSenderWorld();
+        // noinspection StatementWithEmptyBody
+        while (world.getBlockState(currentPos = currentPos.above()).getBlock() == BCFactoryBlocks.tube.get()) {
+        }
+        if (world.getBlockEntity(currentPos) instanceof TileMiner) {
+            event.setCanceled(true);
+        }
     }
 }

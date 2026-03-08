@@ -1,14 +1,12 @@
 package buildcraft.lib.gui.json;
 
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.inventory.Slot;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.gui.IGuiElement;
 import buildcraft.lib.gui.elem.GuiElementSlotMover;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.inventory.container.Slot;
 
 public class ElementTypeSlot extends ElementType {
     public static final String NAME = "buildcraftlib:slot";
@@ -43,7 +41,7 @@ public class ElementTypeSlot extends ElementType {
 
         if (index < 0 || index >= holder.slots.length) {
             throw new JsonSyntaxException(
-                "Invalid slot index! (" + index + ", min = 0, max = " + (holder.slots.length - 1) + ")");
+                    "Invalid slot index! (" + index + ", min = 0, max = " + (holder.slots.length - 1) + ")");
         }
         return new GuiElementSlotMover(gui, pos, visible, holder.slots[index]);
     }

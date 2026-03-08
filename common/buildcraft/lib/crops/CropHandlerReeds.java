@@ -6,20 +6,24 @@
 
 package buildcraft.lib.crops;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
+import buildcraft.lib.misc.BlockUtil;
+import buildcraft.lib.misc.FakePlayerProvider;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SugarCaneBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+
 
 public enum CropHandlerReeds implements ICropHandler {
     INSTANCE;
@@ -27,28 +31,32 @@ public enum CropHandlerReeds implements ICropHandler {
 
     @Override
     public boolean isSeed(ItemStack stack) {
-        return stack.getItem() == Items.REEDS;
+//        return stack.getItem() == Items.REEDS;
+        return stack.getItem() == Items.SUGAR_CANE;
     }
 
     @Override
     public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        return block.canSustainPlant(state, world, pos, EnumFacing.UP, Blocks.REEDS) && block != Blocks.REEDS && world.isAirBlock(pos.up());
+//        return block.canSustainPlant(state, world, pos, Direction.UP, Blocks.REEDS) && block != Blocks.REEDS && world.isAirBlock(pos.up());
+        return block.canSustainPlant(state, world, pos, Direction.UP, (SugarCaneBlock) Blocks.SUGAR_CANE) && block != Blocks.SUGAR_CANE && world.isEmptyBlock(pos.above());
     }
 
     @Override
-    public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
+    public boolean plantCrop(World world, PlayerEntity player, ItemStack seed, BlockPos pos) {
         return CropManager.getDefaultHandler().plantCrop(world, player, seed, pos);
     }
 
     @Override
-    public boolean isMature(IBlockAccess access, IBlockState state, BlockPos pos) {
-        return false;
+    public boolean isMature(IWorld access, BlockState state, BlockPos pos) {
+        // return false;
+        return state.is(Blocks.SUGAR_CANE) && access.getBlockState(pos.relative(Direction.DOWN)).is(Blocks.SUGAR_CANE);
     }
 
     @Override
-    public boolean harvestCrop(World world, BlockPos pos, NonNullList<ItemStack> drops) {
-        return false;
+    public CropManager.HarvestResult harvestCrop(World world, BlockPos pos, ItemStack tool, NonNullList<ItemStack> drops) {
+        // return false;
+        return BlockUtil.harvestBlock((ServerWorld) world, pos, tool, FakePlayerProvider.NULL_PROFILE) ? CropManager.HarvestResult.SUCCESS : CropManager.HarvestResult.FAIL;
     }
 }

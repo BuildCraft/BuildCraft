@@ -6,14 +6,13 @@
 
 package buildcraft.lib.path.task;
 
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-
+import buildcraft.lib.misc.WorkerThreadUtil;
+import buildcraft.lib.path.MiniChunkGraph;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.lib.misc.WorkerThreadUtil;
-import buildcraft.lib.path.MiniChunkGraph;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 public class TaskMiniChunkManager implements Callable<MiniChunkGraph> {
     private World world;

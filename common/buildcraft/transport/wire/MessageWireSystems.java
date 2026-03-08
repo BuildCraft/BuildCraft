@@ -6,18 +6,15 @@
 
 package buildcraft.transport.wire;
 
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.network.PacketBuffer;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.network.PacketBuffer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 public class MessageWireSystems implements IMessage {
     private Map<Integer, WireSystem> wireSystems = new HashMap<>();
@@ -31,10 +28,11 @@ public class MessageWireSystems implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         PacketBuffer pb = new PacketBuffer(buf);
         pb.writeInt(wireSystems.size());
-        wireSystems.forEach((wiresHashCode, wireSystem) -> {
+        wireSystems.forEach((wiresHashCode, wireSystem) ->
+        {
             pb.writeInt(wiresHashCode);
             List<WireSystem.WireElement> elements = wireSystem.elements.stream()
                     .filter(element -> element.type == WireSystem.WireElement.Type.WIRE_PART)
@@ -45,7 +43,7 @@ public class MessageWireSystems implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(PacketBuffer buf) {
         PacketBuffer pb = new PacketBuffer(buf);
         wireSystems.clear();
         int count = pb.readInt();
@@ -63,7 +61,8 @@ public class MessageWireSystems implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageWireSystems, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageWireSystems, IMessage> HANDLER = (message, ctx) ->
+    {
         ClientWireSystems.INSTANCE.wireSystems.clear();
         ClientWireSystems.INSTANCE.wireSystems.putAll(message.wireSystems);
         return null;

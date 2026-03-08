@@ -6,41 +6,40 @@
 
 package buildcraft.lib.misc;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 import buildcraft.lib.particle.ParticlePipes;
 import buildcraft.lib.particle.ParticlePosition;
+import net.minecraft.item.DyeColor;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class ParticleUtil {
-    public static void showChangeColour(World world, Vec3d pos, @Nullable EnumDyeColor colour) {
+    public static void showChangeColour(World world, Vector3d pos, @Nullable DyeColor colour) {
         if (colour == null) {
             showWaterParticles(world, pos);
         }
     }
 
-    private static void showWaterParticles(World world, Vec3d pos) {
+    private static void showWaterParticles(World world, Vector3d pos) {
 
     }
 
-    public static void showTempPower(World world, BlockPos pos, EnumFacing face, long microJoules) {
-        double x = pos.getX() + 0.5 + face.getFrontOffsetX() * 0.5;
-        double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;
-        double z = pos.getZ() + 0.5 + face.getFrontOffsetZ() * 0.5;
+    public static void showTempPower(World world, BlockPos pos, Direction face, long microJoules) {
+        double x = pos.getX() + 0.5 + face.getStepX() * 0.5;
+        double y = pos.getY() + 0.5 + face.getStepY() * 0.5;
+        double z = pos.getZ() + 0.5 + face.getStepZ() * 0.5;
 
-        Vec3d startingMotion = new Vec3d(face.getDirectionVec());
+        Vector3d startingMotion = Vector3d.atLowerCornerOf(face.getNormal());
         startingMotion = VecUtil.scale(startingMotion, 0.05);
 
-        ParticlePosition nPos = new ParticlePosition(new Vec3d(x, y, z), startingMotion);
+        ParticlePosition nPos = new ParticlePosition(new Vector3d(x, y, z), startingMotion);
 
         for (ParticlePosition pp : ParticlePipes.DUPLICATE_SPREAD.pipe(nPos)) {
-            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.x, pp.motion.y, pp.motion.z);
+            world.addParticle(ParticleTypes.FLAME, x, y, z, pp.motion.x, pp.motion.y, pp.motion.z);
         }
     }
 }

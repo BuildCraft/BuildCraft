@@ -6,12 +6,12 @@
 
 package buildcraft.lib.mj;
 
-import javax.annotation.Nonnull;
-
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjBattery;
+
+import javax.annotation.Nonnull;
 
 public class MjBatteryReceiver implements IMjReceiver, IMjReadable {
     private final MjBattery battery;

@@ -1,0 +1,13 @@
+{
+  "type": "buildcraftsilicon:programming",
+  "input": {
+    "ingredient": {
+      "item": "buildcraftrobotics:board_robot_empty"
+    },
+    "count": 1
+  },
+  "output": {
+    "item": "buildcraftrobotics:board_robot_fluid_carrier"
+  },
+  "energyCost": 800000000
+}

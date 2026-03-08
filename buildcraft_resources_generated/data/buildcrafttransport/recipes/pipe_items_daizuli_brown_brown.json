@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:storage_blocks/lapis"
+    },
+    "g": {
+      "tag": "forge:glass/brown"
+    },
+    "r": {
+      "tag": "forge:gems/diamond"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_daizuli_brown",
+    "count": 8
+  }
+}

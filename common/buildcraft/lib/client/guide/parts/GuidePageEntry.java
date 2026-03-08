@@ -1,14 +1,12 @@
 package buildcraft.lib.client.guide.parts;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.entry.PageEntry;
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class GuidePageEntry extends GuidePage {
 

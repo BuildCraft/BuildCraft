@@ -6,17 +6,16 @@
 
 package buildcraft.lib.config;
 
+import buildcraft.lib.BCLibProxy;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.BCLibProxy;
-
-@Deprecated
+@Deprecated()
 public class RoamingConfigManager extends StreamConfigManager {
     private static final Map<ResourceLocation, RoamingConfigManager> instances = new HashMap<>();
     private final ResourceLocation identifier;
@@ -55,7 +54,8 @@ public class RoamingConfigManager extends StreamConfigManager {
     }
 
     @Override
-    protected void write() {}
+    protected void write() {
+    }
 
     @Override
     protected String comment() {

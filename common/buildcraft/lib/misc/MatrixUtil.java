@@ -6,31 +6,25 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Map;
-
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableMap;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
+
+import javax.vecmath.*;
+import java.util.Map;
 
 public class MatrixUtil {
     /** Rotation map for gates */
-    private static final Map<EnumFacing, Matrix4f> rotationMap;
+    private static final Map<Direction, Matrix4f> rotationMap;
 
     static {
-        ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
-        for (EnumFacing face : EnumFacing.VALUES) {
+        ImmutableMap.Builder<Direction, Matrix4f> builder = ImmutableMap.builder();
+        for (Direction face : Direction.values()) {
             Matrix4f mat = new Matrix4f();
             mat.setIdentity();
 
-            if (face == EnumFacing.WEST) {
+            if (face == Direction.WEST) {
                 builder.put(face, mat);
                 continue;
             }
@@ -39,17 +33,17 @@ public class MatrixUtil {
             m2.setIdentity();
 
             if (face.getAxis() == Axis.Y) {
-                AxisAngle4f axisAngle = new AxisAngle4f(0, 0, 1, (float) Math.PI * 0.5f * -face.getFrontOffsetY());
+                AxisAngle4f axisAngle = new AxisAngle4f(0, 0, 1, (float) Math.PI * 0.5f * -face.getStepY());
                 m2.setRotation(axisAngle);
                 mat.mul(m2);
 
                 m2.setIdentity();
-                m2.setRotation(new AxisAngle4f(1, 0, 0, (float) Math.PI * (1 + face.getFrontOffsetY() * 0.5f)));
+                m2.setRotation(new AxisAngle4f(1, 0, 0, (float) Math.PI * (1 + face.getStepY() * 0.5f)));
                 mat.mul(m2);
             } else {
                 int ang;
-                if (face == EnumFacing.EAST) ang = 2;
-                else if (face == EnumFacing.NORTH) ang = 3;
+                if (face == Direction.EAST) ang = 2;
+                else if (face == Direction.NORTH) ang = 3;
                 else ang = 1;
                 AxisAngle4f axisAngle = new AxisAngle4f(0, 1, 0, (float) Math.PI * 0.5f * ang);
                 m2.setRotation(axisAngle);
@@ -65,12 +59,12 @@ public class MatrixUtil {
     }
 
     /** Rotates towards the given face, assuming what you want to rotate from is WEST. */
-    public static Matrix4f rotateTowardsFace(EnumFacing face) {
+    public static Matrix4f rotateTowardsFace(Direction face) {
         return new Matrix4f(rotationMap.get(face));
     }
 
     /** Rotates towards the given face, from the specified face */
-    public static Matrix4f rotateTowardsFace(EnumFacing from, EnumFacing to) {
+    public static Matrix4f rotateTowardsFace(Direction from, Direction to) {
         Matrix4f fromMatrix = new Matrix4f(rotateTowardsFace(from));
         // Because we want to do the opposite of what this does
         fromMatrix.invert();

@@ -6,11 +6,10 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
-
+import buildcraft.lib.misc.StackUtil;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 /** Returns true if the stack matches any one one of the filter stacks. Takes into account item lists. */
 public class ArrayStackOrListFilter extends ArrayStackFilter {

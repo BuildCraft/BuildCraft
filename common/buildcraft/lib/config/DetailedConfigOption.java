@@ -6,23 +6,19 @@
 
 package buildcraft.lib.config;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.BCLog;
-
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.expression.DefaultContexts;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.InvalidExpressionException;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import buildcraft.core.BCCoreConfig;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DetailedConfigOption {
     private static final Set<DetailedConfigOption> allRegistered = new HashSet<>();
@@ -143,7 +139,7 @@ public class DetailedConfigOption {
         return Math.min(max, Math.max(min, getAsFloat()));
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public enum ReloadListener implements IResourceManagerReloadListener {
         INSTANCE;
 

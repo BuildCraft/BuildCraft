@@ -6,11 +6,11 @@
 
 package buildcraft.lib.client.reload;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.BCLibConfig.RenderRotation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public enum LibConfigChangeListener implements Runnable {
     INSTANCE;

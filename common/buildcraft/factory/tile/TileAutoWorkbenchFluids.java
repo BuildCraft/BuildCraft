@@ -6,24 +6,26 @@
 
 package buildcraft.factory.tile;
 
-import java.util.List;
-
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fluids.Fluid;
-
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
-
+import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.fluid.Tank;
 import buildcraft.lib.misc.CapUtil;
+import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fluids.FluidAttributes;
+
+import java.util.List;
 
 public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase implements IDebuggable {
-    private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
-    private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
+    // private final Tank tank1 = new Tank("tank1", Fluid.BUCKET_VOLUME * 6, this);
+    private final Tank tank1 = new Tank("tank1", FluidAttributes.BUCKET_VOLUME * 6, this);
+    // private final Tank tank2 = new Tank("tank2", Fluid.BUCKET_VOLUME * 6, this);
+    private final Tank tank2 = new Tank("tank2", FluidAttributes.BUCKET_VOLUME * 6, this);
 
     public TileAutoWorkbenchFluids() {
-        super(2, 2);
+        super(BCFactoryBlocks.autoWorkbenchFluidsTile.get(), 2, 2);
         tankManager.addAll(tank1, tank2);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tankManager, EnumPipePart.CENTER);
         caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, tank1, EnumPipePart.DOWN, EnumPipePart.NORTH, EnumPipePart.WEST);
@@ -31,9 +33,13 @@ public class TileAutoWorkbenchFluids extends TileAutoWorkbenchBase implements ID
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Tanks:");
-        left.add("  " + tank1.getContentsString());
-        left.add("  " + tank2.getContentsString());
+//    public void getDebugInfo(List<String> left, List<String> right, Direction side)
+    public void getDebugInfo(List<ITextComponent> left, List<ITextComponent> right, Direction side) {
+//        left.add("Tanks:");
+//        left.add("  " + tank1.getContentsString());
+//        left.add("  " + tank2.getContentsString());
+        left.add(new StringTextComponent("Tanks:"));
+        left.add(new StringTextComponent("  ").append(tank1.getContentsString()));
+        left.add(new StringTextComponent("  ").append(tank2.getContentsString()));
     }
 }

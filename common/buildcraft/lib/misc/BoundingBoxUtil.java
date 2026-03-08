@@ -6,20 +6,19 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
+import buildcraft.api.core.IBox;
+import buildcraft.lib.misc.data.Box;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 
-import buildcraft.api.core.IBox;
-
-import buildcraft.lib.misc.data.Box;
+import javax.annotation.Nullable;
+import java.util.Collection;
 
 /** Various methods operating on (and creating) {@link AxisAlignedBB} */
 public class BoundingBoxUtil {
@@ -32,7 +31,7 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box.min(), additional);
             BlockPos max = VecUtil.max(box.max(), additional);
-            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+            return new AxisAlignedBB(min, max.offset(VecUtil.POS_ONE));
         }
     }
 
@@ -44,7 +43,7 @@ public class BoundingBoxUtil {
         return box.getBoundingBox();
     }
 
-    /** Creates an {@link AxisAlignedBB} from a block pos and 2 boxes Note that additional must NOT be null, but (either
+    /** Creates an {@link AxisAlignedBB} from a block     pos and 2 boxes Note that additional must NOT be null, but (either
      * of) the boxes can be. */
     public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box1, @Nullable IBox box2) {
         if (box1 == null) {
@@ -54,20 +53,28 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box1.min(), box2.min(), additional);
             BlockPos max = VecUtil.max(box1.max(), box2.max(), additional);
-            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+            return new AxisAlignedBB(min, max.offset(VecUtil.POS_ONE));
         }
     }
 
-    public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
+    public static AxisAlignedBB makeFrom(Vector3d from, Vector3d to) {
         return new AxisAlignedBB(from.x, from.y, from.z, to.x, to.y, to.z);
     }
 
-    public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
-        return makeFrom(from, to).grow(radius);
+    public static VoxelShape makeVoxelShapeFrom(Vector3d from, Vector3d to) {
+        return VoxelShapes.box(from.x, from.y, from.z, to.x, to.y, to.z);
     }
 
-    public static AxisAlignedBB makeAround(Vec3d around, double radius) {
-        return new AxisAlignedBB(around.x, around.y, around.z, around.x, around.y, around.z).grow(radius);
+    public static VoxelShape makeVoxelShapeFrom(Vector3d from, Vector3d to, double radius) {
+        return VoxelShapes.create(makeFrom(from, to, radius));
+    }
+
+    public static AxisAlignedBB makeFrom(Vector3d from, Vector3d to, double radius) {
+        return makeFrom(from, to).inflate(radius);
+    }
+
+    public static AxisAlignedBB makeAround(Vector3d around, double radius) {
+        return new AxisAlignedBB(around.x, around.y, around.z, around.x, around.y, around.z).inflate(radius);
     }
 
     public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
@@ -79,13 +86,13 @@ public class BoundingBoxUtil {
                 max = VecUtil.max(max, p);
             }
         }
-        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+        return new AxisAlignedBB(min, max.offset(VecUtil.POS_ONE));
     }
 
     /** Creates a box that extrudes from the specified face of the given block position. */
-    public static AxisAlignedBB extrudeFace(BlockPos pos, EnumFacing face, double depth) {
-        Vec3d from = new Vec3d(pos);
-        Vec3d to = new Vec3d(pos).addVector(1, 1, 1);
+    public static AxisAlignedBB extrudeFace(BlockPos pos, Direction face, double depth) {
+        Vector3d from = new Vector3d(pos.getX(), pos.getY(), pos.getZ());
+        Vector3d to = new Vector3d(pos.getX(), pos.getY(), pos.getZ()).add(1, 1, 1);
 
         Axis axis = face.getAxis();
         if (face.getAxisDirection() == AxisDirection.POSITIVE) {
