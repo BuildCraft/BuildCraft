@@ -6,19 +6,12 @@
 
 package buildcraft.lib.statement;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerExternalOverride;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.ITriggerInternalSided;
+import buildcraft.api.statements.*;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import javax.annotation.Nonnull;
 
 /** Wrapper class around ITriggerInternal to allow for treating all triggers as internal triggers. It also provides the
  * background colour for sides. */
@@ -28,7 +21,7 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
         super(delegate, sourcePart);
     }
 
-    public static TriggerWrapper wrap(IStatement statement, EnumFacing side) {
+    public static TriggerWrapper wrap(IStatement statement, Direction side) {
         if (statement == null) {
             return null;
         } else if (statement instanceof TriggerWrapper) {
@@ -86,7 +79,7 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
     public static class TriggerWrapperInternalSided extends TriggerWrapper {
         public final ITriggerInternalSided trigger;
 
-        public TriggerWrapperInternalSided(ITriggerInternalSided trigger, @Nonnull EnumFacing side) {
+        public TriggerWrapperInternalSided(ITriggerInternalSided trigger, @Nonnull Direction side) {
             super(trigger, EnumPipePart.fromFacing(side));
             this.trigger = trigger;
         }
@@ -100,21 +93,21 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
     public static class TriggerWrapperExternal extends TriggerWrapper {
         public final ITriggerExternal trigger;
 
-        public TriggerWrapperExternal(ITriggerExternal trigger, @Nonnull EnumFacing side) {
+        public TriggerWrapperExternal(ITriggerExternal trigger, @Nonnull Direction side) {
             super(trigger, EnumPipePart.fromFacing(side));
             this.trigger = trigger;
         }
 
         @Override
         public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
-            TileEntity tile = getNeighbourTile(source);
+            BlockEntity tile = getNeighbourTile(source);
             if (tile == null) {
                 return false;
             }
             if (tile instanceof ITriggerExternalOverride) {
                 ITriggerExternalOverride override = (ITriggerExternalOverride) tile;
                 ITriggerExternalOverride.Result result =
-                    override.override(sourcePart.face, source, trigger, parameters);
+                        override.override(sourcePart.face, source, trigger, parameters);
                 if (result == ITriggerExternalOverride.Result.FALSE) {
                     return false;
                 } else if (result == ITriggerExternalOverride.Result.TRUE) {

@@ -1,15 +1,14 @@
 package buildcraft.builders.snapshot.pattern;
 
-import java.util.BitSet;
-
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
 import buildcraft.api.statements.IStatementParameter;
-
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
+
+import java.util.BitSet;
 
 public class PatternSphere extends Pattern implements IFillerPatternShape {
     public PatternSphere() {

@@ -4,14 +4,14 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.core.statements;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 
 /** A tile entity implementing this interface will be able to prevent BuildCraft from adding default triggers.
  *
  * This does not block other statement providers from adding triggers or actions. See IOverrideDefaultStatements for a
  * more aggressive approach. */
 public interface IBlockDefaultTriggers {
-    boolean blockInventoryTriggers(EnumFacing side);
+    boolean blockInventoryTriggers(Direction side);
 
-    boolean blockFluidHandlerTriggers(EnumFacing side);
+    boolean blockFluidHandlerTriggers(Direction side);
 }

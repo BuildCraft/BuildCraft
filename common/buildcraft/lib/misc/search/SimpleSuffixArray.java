@@ -1,17 +1,16 @@
 package buildcraft.lib.misc.search;
 
+import buildcraft.api.core.BCLog;
+import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.profiling.ProfilerFiller;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-
-import net.minecraft.profiler.Profiler;
-
-import buildcraft.api.core.BCLog;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectSortedMap;
 
 public class SimpleSuffixArray<T> implements ISuffixArray<T> {
 
@@ -19,7 +18,8 @@ public class SimpleSuffixArray<T> implements ISuffixArray<T> {
     private static final boolean USE_AVL = true;
     private static final boolean SPLIT_WORDS = true;
 
-    private final List<String> tempAddedNames = new ArrayList<>();
+    // private final List<String> tempAddedNames = new ArrayList<>();
+    private final List<Component> tempAddedNames = new ArrayList<>();
     private final List<T> tempAddedObjects = new ArrayList<>();
     private int maxLength = 0;
 
@@ -35,20 +35,25 @@ public class SimpleSuffixArray<T> implements ISuffixArray<T> {
     }
 
     @Override
-    public void add(T obj, String name) {
+//    public void add(T obj, String name)
+    public void add(T obj, Component name) {
         if (!ADD_IS_GENERATE) {
             tempAddedObjects.add(obj);
             tempAddedNames.add(name);
         } else {
-            int end = name.length();
-            for (int s = name.length() - 1; s >= 0; s--) {
-                char c = name.charAt(s);
+//            int end = name.length();
+            int end = name.getString().length();
+//            for (int s = name.length() - 1; s >= 0; s--)
+            for (int s = name.getString().length() - 1; s >= 0; s--) {
+//                char c = name.charAt(s);
+                char c = name.getString().charAt(s);
                 if (c == '\n' || (SPLIT_WORDS && c == ' ')) {
                     // Skip over /n as it's impossible to search over a line boundary
                     end = s;
                     continue;
                 }
-                String suffix = name.substring(s, end);
+//                String suffix = name.substring(s, end);
+                String suffix = name.getString().substring(s, end);
                 List<T> list = suffixArray.get(suffix);
                 if (list == null) {
                     list = new ArrayList<>();
@@ -61,7 +66,8 @@ public class SimpleSuffixArray<T> implements ISuffixArray<T> {
     }
 
     @Override
-    public void generate(Profiler prof) {
+//    public void generate(Profiler prof)
+    public void generate(ProfilerFiller prof) {
         if (ADD_IS_GENERATE) {
             BCLog.logger.info("[lib.search] Max suffix length is " + maxLength);
             for (String suffix : suffixArray.keySet()) {
@@ -72,17 +78,22 @@ public class SimpleSuffixArray<T> implements ISuffixArray<T> {
             return;
         }
         for (int i = 0; i < tempAddedNames.size(); i++) {
-            String name = tempAddedNames.get(i);
+//            String name = tempAddedNames.get(i);
+            Component name = tempAddedNames.get(i);
             T obj = tempAddedObjects.get(i);
-            int end = name.length();
-            for (int s = name.length() - 1; s >= 0; s--) {
-                char c = name.charAt(s);
+//            int end = name.length();
+            int end = name.getString().length();
+//            for (int s = name.length() - 1; s >= 0; s--)
+            for (int s = name.getString().length() - 1; s >= 0; s--) {
+//                char c = name.charAt(s);
+                char c = name.getString().charAt(s);
                 if (c == '\n' || (SPLIT_WORDS && c == ' ')) {
                     // Skip over /n as it's impossible to search over a line boundary
                     end = s;
                     continue;
                 }
-                String suffix = name.substring(s, end);
+//                String suffix = name.substring(s, end);
+                String suffix = name.getString().substring(s, end);
                 List<T> list = suffixArray.get(suffix);
                 if (list == null) {
                     list = new ArrayList<>();
@@ -95,6 +106,7 @@ public class SimpleSuffixArray<T> implements ISuffixArray<T> {
         BCLog.logger.info("[lib.search] Max suffix length is " + maxLength);
     }
 
+    // TODO Calen: tolower is unabled when set lower name so here shoud do sth...?
     @Override
     public SearchResult<T> search(String substring, int maxResults) {
 

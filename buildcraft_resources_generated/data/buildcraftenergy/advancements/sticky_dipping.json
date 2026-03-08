@@ -1,0 +1,31 @@
+{
+  "parent": "buildcraftenergy:fine_riches",
+  "display": {
+    "icon": {
+      "item": "buildcraftenergy:glob_oil"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.sticky_dipping.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.sticky_dipping.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "oil": {
+      "trigger": "minecraft:enter_block",
+      "conditions": {
+        "block": "buildcraftenergy:fluid_block_oil_heat_0"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "oil"
+    ]
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_items_cobblestone_colorless"
+    },
+    {
+      "tag": "buildcraft:waterproof"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_fluids_cobblestone_colorless"
+  }
+}

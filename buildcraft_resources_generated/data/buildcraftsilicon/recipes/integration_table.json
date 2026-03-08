@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftsilicon",
+  "pattern": [
+    "OiO",
+    "OrO",
+    "OgO"
+  ],
+  "key": {
+    "r": {
+      "item": "buildcraftsilicon:chipset_iron"
+    },
+    "g": {
+      "tag": "forge:gears/diamond"
+    },
+    "i": {
+      "tag": "forge:ingots/gold"
+    },
+    "O": {
+      "tag": "forge:obsidian"
+    }
+  },
+  "result": {
+    "item": "buildcraftsilicon:integration_table"
+  }
+}

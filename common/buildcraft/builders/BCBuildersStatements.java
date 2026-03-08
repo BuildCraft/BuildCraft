@@ -7,32 +7,8 @@
 package buildcraft.builders;
 
 import buildcraft.api.statements.StatementManager;
-
-import buildcraft.builders.snapshot.pattern.Pattern;
-import buildcraft.builders.snapshot.pattern.PatternBox;
-import buildcraft.builders.snapshot.pattern.PatternClear;
-import buildcraft.builders.snapshot.pattern.PatternFill;
-import buildcraft.builders.snapshot.pattern.PatternFrame;
-import buildcraft.builders.snapshot.pattern.PatternNone;
-import buildcraft.builders.snapshot.pattern.PatternPyramid;
-import buildcraft.builders.snapshot.pattern.PatternShape2dArc;
-import buildcraft.builders.snapshot.pattern.PatternShape2dCircle;
-import buildcraft.builders.snapshot.pattern.PatternShape2dHexagon;
-import buildcraft.builders.snapshot.pattern.PatternShape2dOctagon;
-import buildcraft.builders.snapshot.pattern.PatternShape2dPentagon;
-import buildcraft.builders.snapshot.pattern.PatternShape2dSemiCircle;
-import buildcraft.builders.snapshot.pattern.PatternShape2dSquare;
-import buildcraft.builders.snapshot.pattern.PatternShape2dTriangle;
-import buildcraft.builders.snapshot.pattern.PatternSphere;
-import buildcraft.builders.snapshot.pattern.PatternSpherePart;
-import buildcraft.builders.snapshot.pattern.PatternStairs;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterAxis;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterCenter;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterFacing;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterHollow;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterRotation;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterXZDir;
-import buildcraft.builders.snapshot.pattern.parameter.PatternParameterYDir;
+import buildcraft.builders.snapshot.pattern.*;
+import buildcraft.builders.snapshot.pattern.parameter.*;
 
 public class BCBuildersStatements {
     public static final PatternNone PATTERN_NONE = new PatternNone();
@@ -58,12 +34,12 @@ public class BCBuildersStatements {
     public static final PatternSpherePart PATTERN_EIGHTH_SPHERE = new PatternSpherePart(PatternSpherePart.SpherePartType.EIGHTH);
 
     public static final Pattern[] PATTERNS = { //
-        PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME, //
-        /* PATTERN_HORIZON, PATTERN_FLATTEN, */ PATTERN_PYRAMID, PATTERN_STAIRS, //
-        PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON, PATTERN_HEXAGON, //
-        PATTERN_OCTAGON, PATTERN_ARC, PATTERN_SEMI_CIRCLE, PATTERN_CIRCLE, //
-        PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE, //
-        PATTERN_EIGHTH_SPHERE //
+            PATTERN_NONE, PATTERN_CLEAR, PATTERN_FILL, PATTERN_BOX, PATTERN_FRAME, //
+            /* PATTERN_HORIZON, PATTERN_FLATTEN, */ PATTERN_PYRAMID, PATTERN_STAIRS, //
+            PATTERN_TRIANGLE, PATTERN_SQUARE, PATTERN_PENTAGON, PATTERN_HEXAGON, //
+            PATTERN_OCTAGON, PATTERN_ARC, PATTERN_SEMI_CIRCLE, PATTERN_CIRCLE, //
+            PATTERN_SPHERE, PATTERN_HEMI_SPHERE, PATTERN_QUARTER_SPHERE, //
+            PATTERN_EIGHTH_SPHERE //
     };
 
     static {

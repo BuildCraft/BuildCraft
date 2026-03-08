@@ -1,0 +1,11 @@
+{
+    "package": "buildcraft.lib.mixin",
+    "mixins": [
+    ],
+    "client": [
+    ],
+    "refmap": "refmap.buildcraft.json",
+    "required": true,
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8"
+}

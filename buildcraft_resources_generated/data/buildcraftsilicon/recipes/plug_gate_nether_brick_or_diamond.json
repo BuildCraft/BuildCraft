@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcraftsilicon",
+  "ingredients": [
+    {
+      "item": "buildcraftsilicon:plug_gate_nether_brick_and_diamond"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug_gate_nether_brick_or_diamond"
+  }
+}

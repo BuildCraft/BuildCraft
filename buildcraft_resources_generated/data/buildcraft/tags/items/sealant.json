@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#forge:dyes/green",
+      "required": false
+    },
+    {
+      "id": "#forge:slimeballs",
+      "required": false
+    }
+  ]
+}

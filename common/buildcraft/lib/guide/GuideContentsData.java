@@ -1,17 +1,11 @@
 package buildcraft.lib.guide;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import buildcraft.api.BCModules;
-
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.ModUtil;
+
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class GuideContentsData {
 

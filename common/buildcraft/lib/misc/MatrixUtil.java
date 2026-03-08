@@ -6,91 +6,87 @@
 
 package buildcraft.lib.misc;
 
-import java.util.Map;
-
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableMap;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.phys.AABB;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.AxisAlignedBB;
+import java.util.Map;
 
 public class MatrixUtil {
     /** Rotation map for gates */
-    private static final Map<EnumFacing, Matrix4f> rotationMap;
+    private static final Map<Direction, Matrix4f> rotationMap;
 
     static {
-        ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
-        for (EnumFacing face : EnumFacing.VALUES) {
+        ImmutableMap.Builder<Direction, Matrix4f> builder = ImmutableMap.builder();
+        for (Direction face : Direction.values()) {
             Matrix4f mat = new Matrix4f();
             mat.setIdentity();
 
-            if (face == EnumFacing.WEST) {
+            if (face == Direction.WEST) {
                 builder.put(face, mat);
                 continue;
             }
-            mat.setTranslation(new Vector3f(0.5f, 0.5f, 0.5f));
+            mat.setTranslation(0.5f, 0.5f, 0.5f);
             Matrix4f m2 = new Matrix4f();
             m2.setIdentity();
 
             if (face.getAxis() == Axis.Y) {
-                AxisAngle4f axisAngle = new AxisAngle4f(0, 0, 1, (float) Math.PI * 0.5f * -face.getFrontOffsetY());
-                m2.setRotation(axisAngle);
-                mat.mul(m2);
+                m2.multiply(Vector3f.ZP.rotation((float) Math.PI * 0.5f * -face.getStepY()));
+                mat.multiply(m2);
 
                 m2.setIdentity();
-                m2.setRotation(new AxisAngle4f(1, 0, 0, (float) Math.PI * (1 + face.getFrontOffsetY() * 0.5f)));
-                mat.mul(m2);
+                m2.multiply(Vector3f.XP.rotation((float) Math.PI * (1 + face.getStepY() * 0.5f)));
+                mat.multiply(m2);
             } else {
                 int ang;
-                if (face == EnumFacing.EAST) ang = 2;
-                else if (face == EnumFacing.NORTH) ang = 3;
+                if (face == Direction.EAST) ang = 2;
+                else if (face == Direction.NORTH) ang = 3;
                 else ang = 1;
-                AxisAngle4f axisAngle = new AxisAngle4f(0, 1, 0, (float) Math.PI * 0.5f * ang);
-                m2.setRotation(axisAngle);
-                mat.mul(m2);
+                m2.multiply(Vector3f.YP.rotation((float) Math.PI * 0.5f * ang));
+                mat.multiply(m2);
             }
 
             m2.setIdentity();
-            m2.setTranslation(new Vector3f(-0.5f, -0.5f, -0.5f));
-            mat.mul(m2);
+            m2.setTranslation(-0.5f, -0.5f, -0.5f);
+            mat.multiply(m2);
             builder.put(face, mat);
         }
         rotationMap = builder.build();
     }
 
     /** Rotates towards the given face, assuming what you want to rotate from is WEST. */
-    public static Matrix4f rotateTowardsFace(EnumFacing face) {
+    public static Matrix4f rotateTowardsFace(Direction face) {
         return new Matrix4f(rotationMap.get(face));
     }
 
     /** Rotates towards the given face, from the specified face */
-    public static Matrix4f rotateTowardsFace(EnumFacing from, EnumFacing to) {
+    public static Matrix4f rotateTowardsFace(Direction from, Direction to) {
         Matrix4f fromMatrix = new Matrix4f(rotateTowardsFace(from));
         // Because we want to do the opposite of what this does
         fromMatrix.invert();
 
         Matrix4f toMatrix = rotateTowardsFace(to);
         Matrix4f result = new Matrix4f(toMatrix);
-        result.mul(fromMatrix);
+        result.multiply(fromMatrix);
         return result;
     }
 
-    public static AxisAlignedBB multiply(AxisAlignedBB box, Matrix4f matrix) {
-        Point3f min = new Point3f(new Point3d(box.minX, box.minY, box.minZ));
-        Point3f max = new Point3f(new Point3d(box.maxX, box.maxY, box.maxZ));
-        matrix.transform(min);
-        matrix.transform(max);
-        return new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z);
+    public static AABB multiply(AABB box, Matrix4f matrix) {
+        Vector3f min = new Vector3f((float) box.minX, (float) box.minY, (float) box.minZ);
+        Vector3f max = new Vector3f((float) box.maxX, (float) box.maxY, (float) box.maxZ);
+        Vector4f min4f = new Vector4f(min);
+        Vector4f max4f = new Vector4f(max);
+        min4f.transform(matrix);
+        max4f.transform(matrix);
+        return new AABB(min4f.x(), min4f.y(), min4f.z(), max4f.x(), max4f.y(), max4f.z());
     }
 
-    public static AxisAlignedBB[] multiplyAll(AxisAlignedBB[] boxes, Matrix4f matrix) {
-        AxisAlignedBB[] result = new AxisAlignedBB[boxes.length];
+    public static AABB[] multiplyAll(AABB[] boxes, Matrix4f matrix) {
+        AABB[] result = new AABB[boxes.length];
         for (int i = 0; i < boxes.length; i++) {
             result[i] = multiply(boxes[i], matrix);
         }

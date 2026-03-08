@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:ingots/gold"
+    },
+    "g": {
+      "tag": "forge:glass/light_gray"
+    },
+    "r": {
+      "tag": "forge:ingots/gold"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_gold_light_gray",
+    "count": 8
+  }
+}

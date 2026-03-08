@@ -1,0 +1,28 @@
+{
+  "parent": "buildcrafttransport:plugging_the_gap",
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:pipe_items_emzuli_colorless"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.categorizing_with_colors.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.categorizing_with_colors.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

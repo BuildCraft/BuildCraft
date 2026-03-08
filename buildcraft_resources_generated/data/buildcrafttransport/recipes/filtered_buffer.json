@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "wdw",
+    "wcw",
+    "wpw"
+  ],
+  "key": {
+    "p": {
+      "item": "minecraft:piston"
+    },
+    "c": {
+      "tag": "forge:chests/wooden"
+    },
+    "d": {
+      "tag": "buildcraft:pipe/items_diamond"
+    },
+    "w": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:filtered_buffer"
+  }
+}

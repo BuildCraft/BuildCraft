@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftcore",
+  "pattern": [
+    " o ",
+    "o o",
+    " o "
+  ],
+  "key": {
+    "o": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "result": {
+    "item": "buildcraftcore:gear_wood"
+  }
+}

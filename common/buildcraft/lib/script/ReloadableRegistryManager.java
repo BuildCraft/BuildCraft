@@ -1,26 +1,18 @@
 package buildcraft.lib.script;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import buildcraft.api.registry.*;
+import buildcraft.api.registry.IReloadableRegistry.PackType;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.misc.JsonUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
-import net.minecraftforge.common.MinecraftForge;
-
-import buildcraft.api.registry.BuildCraftRegistryManager;
-import buildcraft.api.registry.EventBuildCraftReload;
-import buildcraft.api.registry.IReloadableRegistry;
-import buildcraft.api.registry.IReloadableRegistry.PackType;
-import buildcraft.api.registry.IReloadableRegistryManager;
-import buildcraft.api.registry.IScriptableRegistry;
-
-import buildcraft.lib.misc.JsonUtil;
+import java.util.*;
 
 public enum ReloadableRegistryManager implements IReloadableRegistryManager {
     DATA_PACKS(PackType.DATA_PACK),
@@ -81,18 +73,22 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
         if (isInReload()) {
             throw new IllegalStateException("Cannot reload while we are reloading!");
         }
+        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCLib.MODID).get()).getEventBus();
         try {
             isReloading = true;
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.BeforeClear(this, set));
+            modEventBus.post(new EventBuildCraftReload.BeforeClear(this, set));
             set.forEach(registry -> registry.getReloadableEntryMap().clear());
 
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PreLoad(this, set));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PreLoad(this, set));
+            modEventBus.post(new EventBuildCraftReload.PreLoad(this, set));
 
             GsonBuilder builder = new GsonBuilder();
             // register our own types here, so that others can replace them
             JsonUtil.registerTypeAdaptors(builder);
 
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
+            modEventBus.post(new EventBuildCraftReload.PopulateGson(this, set, builder));
             Gson gson = builder.create();
 
             for (IReloadableRegistry<?> registry : set) {
@@ -101,12 +97,14 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
                 }
             }
 
-            MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PostLoad(this, set));
+            // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.PostLoad(this, set));
+            modEventBus.post(new EventBuildCraftReload.PostLoad(this, set));
         } finally {
             reloadCount++;
             isReloading = false;
         }
-        MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.FinishLoad(this, set));
+        // MinecraftForge.EVENT_BUS.post(new EventBuildCraftReload.FinishLoad(this, set));
+        modEventBus.post(new EventBuildCraftReload.FinishLoad(this, set));
     }
 
     @Override
@@ -142,7 +140,7 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
     public void registerRegistry(String entryType, IScriptableRegistry<?> registry) {
         if (entryType.indexOf(':') != -1) {
             throw new IllegalArgumentException(
-                "The entry type must be a valid resource path! (so it must not contain a colon)");
+                    "The entry type must be a valid resource path! (so it must not contain a colon)");
         }
         registries.put(entryType, registry);
     }

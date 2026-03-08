@@ -6,13 +6,11 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.util.List;
+import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
-import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import java.util.List;
 
 /** Defines a stack recipe lookup - implementations should register with {@link RecipeLookupHelper} to be used by the
  * guide for usages and recipes. */

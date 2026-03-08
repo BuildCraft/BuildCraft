@@ -6,7 +6,7 @@
 
 package buildcraft.lib.client.guide.font;
 
-import java.awt.Font;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 

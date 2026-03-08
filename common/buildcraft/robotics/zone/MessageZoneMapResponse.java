@@ -6,12 +6,9 @@
 
 package buildcraft.robotics.zone;
 
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.network.PacketBuffer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class MessageZoneMapResponse implements IMessage {
     private ZonePlannerMapChunkKey key;
@@ -27,18 +24,23 @@ public class MessageZoneMapResponse implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+//    public void fromBytes(ByteBuf buf)
+    public void fromBytes(FriendlyByteBuf buf) {
         key = new ZonePlannerMapChunkKey(buf);
-        data = new ZonePlannerMapChunk(new PacketBuffer(buf));
+//        data = new ZonePlannerMapChunk(new PacketBuffer(buf));
+        data = new ZonePlannerMapChunk(new FriendlyByteBuf(buf));
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+//    public void toBytes(ByteBuf buf)
+    public void toBytes(FriendlyByteBuf buf) {
         key.toBytes(buf);
-        data.write(new PacketBuffer(buf));
+//        data.write(new PacketBuffer(buf));
+        data.write(new FriendlyByteBuf(buf));
     }
 
-    public static final IMessageHandler<MessageZoneMapResponse, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageZoneMapResponse, IMessage> HANDLER = (message, ctx) ->
+    {
         ZonePlannerMapDataClient.INSTANCE.onChunkReceived(message.key, message.data);
         return null;
     };

@@ -6,13 +6,9 @@
 
 package buildcraft.lib.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import buildcraft.api.core.BCLog;
+
+import java.io.*;
 
 @Deprecated
 public class FileConfigManager extends StreamConfigManager {
@@ -45,7 +41,8 @@ public class FileConfigManager extends StreamConfigManager {
         }
     }
 
-    public void exportDefault() {}
+    public void exportDefault() {
+    }
 
     @Override
     protected void write() {

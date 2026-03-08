@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:builtin/entity",
+  "textures": {
+    "particle": "buildcraftcore:blocks/engine/wood/back"
+  }
+}

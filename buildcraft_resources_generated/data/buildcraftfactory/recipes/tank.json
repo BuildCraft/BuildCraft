@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftfactory",
+  "pattern": [
+    "ggg",
+    "g g",
+    "ggg"
+  ],
+  "key": {
+    "g": {
+      "tag": "forge:glass/colorless"
+    }
+  },
+  "result": {
+    "item": "buildcraftfactory:tank"
+  }
+}

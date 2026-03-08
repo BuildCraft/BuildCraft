@@ -1,11 +1,9 @@
 package buildcraft.lib.gui.config;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.api.IVariableNode.IVariableNodeBoolean;
 
 public class GuiPropertyBoolean extends GuiProperty implements IVariableNodeBoolean {
 

@@ -6,95 +6,107 @@
 
 package buildcraft.factory;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import buildcraft.factory.client.model.ModelHeatExchange;
+import buildcraft.factory.client.render.*;
+import buildcraft.factory.tile.TileDistiller_BC8;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.ExpressionCompat;
+import buildcraft.lib.misc.RegistryUtil;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
-import buildcraft.factory.client.model.ModelHeatExchange;
-import buildcraft.factory.client.render.RenderDistiller;
-import buildcraft.factory.client.render.RenderHeatExchange;
-import buildcraft.factory.client.render.RenderMiningWell;
-import buildcraft.factory.client.render.RenderPump;
-import buildcraft.factory.client.render.RenderTank;
-import buildcraft.factory.tile.TileDistiller_BC8;
-import buildcraft.factory.tile.TileHeatExchange;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileTank;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class BCFactoryModels {
-    public static final ModelHolderVariable DISTILLER = new ModelHolderVariable(
-        "buildcraftfactory:models/tiles/distiller.json",
-        TileDistiller_BC8.MODEL_FUNC_CTX
-    );
-    public static final ModelHolderVariable HEAT_EXCHANGE_STATIC = new ModelHolderVariable(
-        "buildcraftfactory:models/tiles/heat_exchange_static.json",
-        ModelHeatExchange.FUNCTION_CONTEXT
-    );
+    public static final ModelHolderVariable DISTILLER;
+    public static final ModelHolderVariable HEAT_EXCHANGE_STATIC;
+
+    static {
+        // Calen: ensure ExpressionCompat ENUM_FACING = new NodeType<>("Facing", Direction.UP) runned
+        // or this will cause IllegalArgumentException: Unknown NodeType class net.minecraft.core.Direction
+        ExpressionCompat.setup();
+
+        DISTILLER = new ModelHolderVariable(
+                "buildcraftfactory:models/tiles/distiller.json",
+                TileDistiller_BC8.MODEL_FUNC_CTX
+        );
+        HEAT_EXCHANGE_STATIC = new ModelHolderVariable(
+                "buildcraftfactory:models/tiles/heat_exchange_static.json",
+                ModelHeatExchange.FUNCTION_CONTEXT
+        );
+    }
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCFactoryModels.class);
+        // 1.18.2: following events are IModBusEvent
+//        MinecraftForge.EVENT_BUS.register(BCFactoryModels.class);
+        IEventBus modEventBus = ((FMLModContainer) ModList.get().getModContainerById(BCFactory.MODID).get()).getEventBus();
+        modEventBus.register(BCFactoryModels.class);
+    }
+
+//    @SubscribeEvent
+//    @SideOnly(Side.CLIENT)
+//    public static void onModelRegistry(ModelRegistryEvent event) {
+//        if (BCFactoryBlocks.heatExchange != null) {
+//            ModelLoader.setCustomStateMapper(
+//                    BCFactoryBlocks.heatExchange,
+//                    new StateMapperBase() {
+//                        @Nonnull
+//                        @Override
+//                        protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+//                            return new ModelResourceLocation("buildcraftfactory:heat_exchange#normal");
+//                        }
+//                    }
+//            );
+//        }
+//    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+//    public static void fmlInit()
+    public static void onTesrReg(RegisterRenderers event) {
+//        ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.miningWellTile, RenderMiningWell::new);
+//        ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.pumpTile, RenderPump::new);
+//        ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.tankTile, RenderTank::new);
+//        ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.distillerTile, RenderDistiller::new);
+//        ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchange.class, new RenderHeatExchange());
+        RegistryUtil.regTesrIfTilePresent(BCFactoryBlocks.heatExchangeTile, RenderHeatExchange::new);
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public static void onModelRegistry(ModelRegistryEvent event) {
-        if (BCFactoryBlocks.heatExchange != null) {
-            ModelLoader.setCustomStateMapper(
-                BCFactoryBlocks.heatExchange,
-                new StateMapperBase() {
-                    @Nonnull
-                    @Override
-                    protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                        return new ModelResourceLocation("buildcraftfactory:heat_exchange#normal");
-                    }
-                }
-            );
-        }
-    }
-
-    public static void fmlInit() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
-        ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchange.class, new RenderHeatExchange());
-    }
-
-    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
     public static void onModelBake(ModelBakeEvent event) {
-        event.getModelRegistry().putObject(
-            new ModelResourceLocation("buildcraftfactory:heat_exchange#normal"),
-            new ModelHeatExchange()
-        );
-        event.getModelRegistry().putObject(
-            new ModelResourceLocation("buildcraftfactory:heat_exchange#inventory"),
-            new ModelItemSimple(
-                Arrays.stream(BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads())
-                    .map(MutableQuad::multShade)
-                    .map(MutableQuad::toBakedItem)
-                    .collect(Collectors.toList()),
-                ModelItemSimple.TRANSFORM_BLOCK,
-                true
-            )
+        // Calen: to set model for each blockState
+        // the model path contains blockstate props
+        ModelHeatExchange modelHeatExchange = new ModelHeatExchange();
+        event.getModelRegistry().replaceAll((rl, m) -> (
+                rl.getNamespace().equals(BCFactory.MODID)
+                        && rl.getPath().contains("heat_exchange")
+                        && !rl.getPath().contains("inventory")
+        ) ? modelHeatExchange : m);
+        event.getModelRegistry().replace(
+                new ModelResourceLocation(BCFactoryBlocks.heatExchange.getId(), "inventory"),
+                new ModelItemSimple(
+                        Arrays.stream(BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads())
+                                .map(MutableQuad::multShade)
+                                .map(MutableQuad::toBakedItem)
+                                .collect(Collectors.toList()),
+                        ModelItemSimple.TRANSFORM_BLOCK,
+                        true
+                )
         );
     }
 }

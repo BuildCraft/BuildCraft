@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:cobblestone"
+    },
+    "g": {
+      "tag": "forge:glass/orange"
+    },
+    "r": {
+      "tag": "forge:cobblestone"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_cobblestone_orange",
+    "count": 8
+  }
+}

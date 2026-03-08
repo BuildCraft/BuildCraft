@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:sandstone"
+    },
+    "g": {
+      "tag": "forge:glass/blue"
+    },
+    "r": {
+      "tag": "forge:sandstone"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_sandstone_blue",
+    "count": 8
+  }
+}

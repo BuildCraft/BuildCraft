@@ -1,0 +1,73 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_lime",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_light_gray",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_brown",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_orange",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_black",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_cyan",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_yellow",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_pink",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_magenta",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_white",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_green",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_purple",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_light_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_blue",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_red",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_gray",
+      "required": false
+    }
+  ]
+}

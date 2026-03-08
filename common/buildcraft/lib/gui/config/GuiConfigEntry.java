@@ -1,16 +1,14 @@
 package buildcraft.lib.gui.config;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.NodeTypes;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.NodeTypes;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 class GuiConfigEntry {
     final String name;
@@ -27,7 +25,7 @@ class GuiConfigEntry {
             GuiPropertyConstructor constructor = GuiConfigManager.customGuiProperties.get(type);
             if (constructor == null) {
                 throw new IllegalArgumentException("No support for '" + type
-                    + "' has been added!\n\tSupported types are: " + GuiConfigManager.customGuiProperties.keySet());
+                        + "' has been added!\n\tSupported types are: " + GuiConfigManager.customGuiProperties.keySet());
             }
             prop = constructor.create(name);
             prop.set(value);
@@ -52,7 +50,7 @@ class GuiConfigEntry {
             Class<?> clazz = NodeTypes.getType(type);
             if (clazz == null) {
                 BCLog.logger.warn("[lib.gui.config] Unknown NodeType '" + type + "' - must be one of "
-                    + NodeTypes.getValidTypeNames());
+                        + NodeTypes.getValidTypeNames());
                 continue;
             }
             GuiProperty current = typeToProperty.get(type);

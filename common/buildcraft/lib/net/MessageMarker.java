@@ -6,23 +6,19 @@
 
 package buildcraft.lib.net;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-
 import buildcraft.api.core.BCLog;
-
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MessageMarker implements IMessage {
     private static final boolean DEBUG = MessageManager.DEBUG;
@@ -32,7 +28,7 @@ public class MessageMarker implements IMessage {
     public final List<BlockPos> positions = new ArrayList<>();
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(FriendlyByteBuf buf) {
         PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
         add = packet.readBoolean();
         multiple = packet.readBoolean();
@@ -49,7 +45,7 @@ public class MessageMarker implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         count = positions.size();
         multiple = count != 1;
         PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
@@ -69,11 +65,12 @@ public class MessageMarker implements IMessage {
     public String toString() {
         boolean[] flags = { add, multiple, connection };
         return "Message Marker [" + Arrays.toString(flags) + ", cacheId " + cacheId + ", count = " + count
-            + ", positions = " + positions + "]";
+                + ", positions = " + positions + "]";
     }
 
-    public static final IMessageHandler<MessageMarker, IMessage> HANDLER = (message, ctx) -> {
-        World world = BCLibProxy.getProxy().getClientWorld();
+    public static final IMessageHandler<MessageMarker, IMessage> HANDLER = (message, ctx) ->
+    {
+        Level world = BCLibProxy.getProxy().getClientWorld();
         if (world == null) {
             if (DEBUG) {
                 BCLog.logger.warn("[lib.messages][marker] The world was null for a message!");

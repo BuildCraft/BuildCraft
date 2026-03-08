@@ -6,15 +6,14 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.util.Arrays;
-
-import net.minecraft.item.ItemStack;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.ArrayUtil;
 import buildcraft.lib.recipe.ChangingItemStack;
 import buildcraft.lib.recipe.ChangingObject;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.Arrays;
 
 public class GuideAssemblyFactory implements GuidePartFactory {
     private final ChangingItemStack[] input;

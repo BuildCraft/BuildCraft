@@ -6,35 +6,36 @@
 
 package buildcraft.core.marker.volume;
 
+import buildcraft.lib.item.ItemBC_Neptune;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
-
-import buildcraft.lib.item.ItemBC_Neptune;
-
 public abstract class ItemAddon extends ItemBC_Neptune {
-    public ItemAddon(String id) {
-        super(id);
+    public ItemAddon(String idBC, Item.Properties properties) {
+        super(idBC, properties);
     }
 
     public abstract Addon createAddon();
 
+    // TODO Calen: how to use Addon?
     @SuppressWarnings("NullableProblems")
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if (world.isRemote) {
-            return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+//    public ActionResult<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand)
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        if (world.isClientSide) {
+            return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
         }
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(
-            player,
-            volumeBoxes.volumeBoxes
+                player,
+                volumeBoxes.volumeBoxes
         );
         VolumeBox volumeBox = selectingVolumeBoxAndSlot.getLeft();
         EnumAddonSlot slot = selectingVolumeBoxAndSlot.getRight();
@@ -45,12 +46,12 @@ public abstract class ItemAddon extends ItemBC_Neptune {
                     addon.volumeBox = volumeBox;
                     volumeBox.addons.put(slot, addon);
                     volumeBox.addons.get(slot).onAdded();
-                    volumeBoxes.markDirty();
-                    return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                    volumeBoxes.setDirty();
+                    return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
                 }
             }
         }
 
-        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+        return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
     }
 }

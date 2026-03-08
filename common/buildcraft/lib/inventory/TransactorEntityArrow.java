@@ -6,36 +6,34 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityArrow.PickupStatus;
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor.IItemExtractable;
-
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.world.entity.projectile.AbstractArrow.Pickup;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class TransactorEntityArrow implements IItemExtractable {
 
-    private final EntityArrow entity;
+    private final Arrow entity;
 
-    public TransactorEntityArrow(EntityArrow entity) {
+    public TransactorEntityArrow(Arrow entity) {
         this.entity = entity;
     }
 
     @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
-        if (entity.isDead || entity.pickupStatus != PickupStatus.ALLOWED || min > 1 || max < 1 || max < min) {
+        if (!entity.isAlive() || entity.pickup != Pickup.ALLOWED || min > 1 || max < 1 || max < min) {
             return StackUtil.EMPTY;
         }
 
         ItemStack stack = EntityUtil.getArrowStack(entity);
         if (!simulate) {
-            entity.setDead();
+            entity.kill();
         }
         return stack;
     }

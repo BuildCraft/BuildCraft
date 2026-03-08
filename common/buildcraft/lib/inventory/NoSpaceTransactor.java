@@ -6,15 +6,13 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
-
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public enum NoSpaceTransactor implements IItemTransactor {
     INSTANCE;

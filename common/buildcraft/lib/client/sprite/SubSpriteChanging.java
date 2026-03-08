@@ -1,7 +1,6 @@
 package buildcraft.lib.client.sprite;
 
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.gui.pos.IGuiArea;
 

@@ -6,11 +6,6 @@
 
 package buildcraft.builders.snapshot;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -19,9 +14,13 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 @SuppressWarnings("WeakerAccess")
 public class JsonSelector {
@@ -34,10 +33,10 @@ public class JsonSelector {
         this.expressions = expressions;
     }
 
-    public boolean matches(Predicate<String> basePredicate, NBTTagCompound nbt) {
+    public boolean matches(Predicate<String> basePredicate, CompoundTag nbt) {
         return basePredicate.test(base) &&
-            expressions.stream()
-                .allMatch(expression -> expression.operation.compare(expression.key.get(nbt), expression.value));
+                expressions.stream()
+                        .allMatch(expression -> expression.operation.compare(expression.key.get(nbt), expression.value));
     }
 
     public static final TypeAdapterFactory TYPE_ADAPTER_FACTORY = new TypeAdapterFactory() {
@@ -57,8 +56,8 @@ public class JsonSelector {
                 @Override
                 public T read(JsonReader in) throws IOException {
                     return in.peek() == JsonToken.STRING
-                        ? (T) new JsonSelector(in.nextString(), Collections.emptyList())
-                        : delegate.read(in);
+                            ? (T) new JsonSelector(in.nextString(), Collections.emptyList())
+                            : delegate.read(in);
                 }
             };
         }
@@ -67,9 +66,9 @@ public class JsonSelector {
     private static class Expression {
         public final NbtPath key;
         public final EnumNbtCompareOperation operation;
-        public final NBTBase value;
+        public final Tag value;
 
-        public Expression(NbtPath key, EnumNbtCompareOperation operation, NBTBase value) {
+        public Expression(NbtPath key, EnumNbtCompareOperation operation, Tag value) {
             this.key = key;
             this.operation = operation;
             this.value = value;

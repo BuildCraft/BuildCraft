@@ -36,7 +36,7 @@ public class OrderedEnumMap<E extends Enum<E>> {
     public E[] getOrder() {
         return order;
     }
-    
+
     public int getOrderLength() {
         return order.length;
     }

@@ -1,0 +1,84 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "buildcraftbuilders:blocks/frame/default"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#all",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#all",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#all",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#all",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#all",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#all",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        12,
+        12
+      ],
+      "to": [
+        4,
+        4,
+        4
+      ],
+      "faces": {
+        "down": {
+          "texture": "#all",
+          "cullface": "up"
+        },
+        "up": {
+          "texture": "#all",
+          "cullface": "down"
+        },
+        "north": {
+          "texture": "#all",
+          "cullface": "south"
+        },
+        "south": {
+          "texture": "#all",
+          "cullface": "north"
+        },
+        "west": {
+          "texture": "#all",
+          "cullface": "east"
+        },
+        "east": {
+          "texture": "#all",
+          "cullface": "west"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,964 @@
+{
+  "variants": {
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=north": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_false",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_false",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_true",
+      "y": 180
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=south": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_true",
+      "y": 180
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_false",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_false",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_true",
+      "y": 270
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=west": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_true",
+      "y": 270
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_false_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_false_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_false_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_false_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_false_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_false_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_false_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=false,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_false_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_false_true_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_false_true_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_false_true_true_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=false,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/false_true_true_true_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_false",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_false",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_false_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_false_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_false_true_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_false_true_true_true",
+      "y": 90
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_false_true_true_true_true",
+      "y": 90
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_up=true,connected_west=true,facing=east": {
+      "model": "buildcraftbuilders:block/quarry/true_true_true_true_true_true",
+      "y": 90
+    }
+  }
+}

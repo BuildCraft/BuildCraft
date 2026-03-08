@@ -6,9 +6,8 @@
 
 package buildcraft.lib.inventory.filter;
 
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.IFluidFilter;
+import net.minecraftforge.fluids.FluidStack;
 
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class PassThroughFluidFilter implements IFluidFilter {

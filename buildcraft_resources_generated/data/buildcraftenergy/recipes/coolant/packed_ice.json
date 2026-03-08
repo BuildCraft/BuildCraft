@@ -1,0 +1,12 @@
+{
+  "type": "buildcraftenergy:coolant",
+  "coolantType": "solid",
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 1000
+  },
+  "multiplier": 2.0,
+  "solid": {
+    "item": "minecraft:packed_ice"
+  }
+}

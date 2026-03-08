@@ -6,52 +6,51 @@
 
 package buildcraft.lib.inventory;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.IItemHandler;
-
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
-import buildcraft.api.inventory.IItemTransactor.IItemInsertable;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.pipe.PipeApi;
-
 import buildcraft.lib.misc.CapUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.StackUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class ItemTransactorHelper {
     @Nonnull
-    public static IItemTransactor getTransactor(ICapabilityProvider provider, EnumFacing face) {
+    public static IItemTransactor getTransactor(ICapabilityProvider provider, Direction face) {
         if (provider == null) {
             return NoSpaceTransactor.INSTANCE;
         }
 
-        IItemTransactor trans = provider.getCapability(CapUtil.CAP_ITEM_TRANSACTOR, face);
-        if (trans != null) {
-            return trans;
+        LazyOptional<IItemTransactor> trans = provider.getCapability(CapUtil.CAP_ITEM_TRANSACTOR, face);
+        if (trans.isPresent()) {
+            return trans.resolve().get();
         }
 
-        IItemHandler handler = provider.getCapability(CapUtil.CAP_ITEMS, face);
+        IItemHandler handler = provider.getCapability(CapUtil.CAP_ITEMS, face).orElse(null);
         if (handler == null) {
-            if (provider instanceof ISidedInventory) {
-                return new SidedInventoryWrapper((ISidedInventory) provider, face);
+//            if (provider instanceof ISidedInventory)
+            if (provider instanceof WorldlyContainer) {
+//                return new SidedInventoryWrapper((ISidedInventory) provider, face);
+                return new SidedInventoryWrapper((WorldlyContainer) provider, face);
             }
-            if (provider instanceof IInventory) {
-                return new InventoryWrapper((IInventory) provider);
+            if (provider instanceof Container) {
+                return new InventoryWrapper((Container) provider);
             }
             return NoSpaceTransactor.INSTANCE;
         }
@@ -62,7 +61,7 @@ public class ItemTransactorHelper {
     }
 
     @Nonnull
-    public static IItemTransactor getTransactor(InventoryPlayer inventory) {
+    public static IItemTransactor getTransactor(Inventory inventory) {
         if (inventory == null) {
             return NoSpaceTransactor.INSTANCE;
         }
@@ -70,32 +69,32 @@ public class ItemTransactorHelper {
     }
 
     @Nonnull
-    public static IItemTransactor getTransactorForEntity(Entity entity, EnumFacing face) {
+    public static IItemTransactor getTransactorForEntity(Entity entity, Direction face) {
         IItemTransactor transactor = getTransactor(entity, face);
         if (transactor != NoSpaceTransactor.INSTANCE) {
             return transactor;
-        } else if (entity instanceof EntityItem) {
-            return new TransactorEntityItem((EntityItem) entity);
-        } else if (entity instanceof EntityArrow) {
-            return new TransactorEntityArrow((EntityArrow) entity);
+        } else if (entity instanceof ItemEntity) {
+            return new TransactorEntityItem((ItemEntity) entity);
+        } else if (entity instanceof Arrow arrow) {
+            return new TransactorEntityArrow(arrow);
         } else {
             return NoSpaceTransactor.INSTANCE;
         }
     }
 
     @Nonnull
-    public static IInjectable getInjectable(ICapabilityProvider provider, EnumFacing face) {
+    public static IInjectable getInjectable(ICapabilityProvider provider, Direction face) {
         if (provider == null) {
             return NoSpaceInjectable.INSTANCE;
         }
-        IInjectable injectable = provider.getCapability(PipeApi.CAP_INJECTABLE, face);
-        if (injectable == null) {
+        LazyOptional<IInjectable> injectable = provider.getCapability(PipeApi.CAP_INJECTABLE, face);
+        if (!injectable.isPresent()) {
             return NoSpaceInjectable.INSTANCE;
         }
-        return injectable;
+        return injectable.resolve().get();
     }
 
-    public static IItemTransactor wrapInjectable(IInjectable injectable, EnumFacing facing) {
+    public static IItemTransactor wrapInjectable(IInjectable injectable, Direction facing) {
         return new InjectableWrapper(injectable, facing);
     }
 
@@ -114,14 +113,14 @@ public class ItemTransactorHelper {
     }
 
     /** Attempts to move as many items as possible from the source {@link IItemTransactor} to the destination.
-     * 
+     *
      * @return The number of items moved. */
     public static int move(IItemTransactor src, IItemTransactor dst) {
         return move(src, dst, Integer.MAX_VALUE);
     }
 
     /** Attempts to move up to maxItems from the source {@link IItemTransactor} to the destination.
-     * 
+     *
      * @param maxItems The maximum number of items to move.
      * @return The number of items moved. */
     public static int move(IItemTransactor src, IItemTransactor dst, int maxItems) {
@@ -129,14 +128,14 @@ public class ItemTransactorHelper {
     }
 
     /** Attempts to move up to maxItems from the source {@link IItemTransactor} to the destination.
-     * 
+     *
      * @return The number of items moved. */
     public static int move(IItemTransactor src, IItemTransactor dst, IStackFilter filter) {
         return move(src, dst, filter, Integer.MAX_VALUE);
     }
 
     /** Attempts to move up to maxItems from the source {@link IItemTransactor} to the destination.
-     * 
+     *
      * @param filter The stack filter to use - only items that match this filter will be moved.
      * @param maxItems The maximum number of items to move.
      * @return The number of items moved. */
@@ -189,8 +188,9 @@ public class ItemTransactorHelper {
         return toTake;
     }
 
-    public static IItemInsertable createDroppingTransactor(World world, Vec3d vec) {
-        return (stack, allorNone, simulate) -> {
+    public static IItemTransactor.IItemInsertable createDroppingTransactor(Level world, Vec3 vec) {
+        return (stack, allorNone, simulate) ->
+        {
             if (!simulate) {
                 InventoryUtil.drop(world, vec, stack);
             }

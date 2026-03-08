@@ -6,17 +6,16 @@
 
 package buildcraft.test.lib.net;
 
+import buildcraft.lib.net.PacketBufferBC;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.Bootstrap;
+
 import java.io.PrintStream;
 
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.init.Bootstrap;
-import net.minecraft.network.PacketBuffer;
-
-import buildcraft.lib.net.PacketBufferBC;
-
 public final class PrintingByteBuf extends PacketBufferBC {
-    private static final PrintStream SYSOUT = Bootstrap.SYSOUT;
+    //    private static final PrintStream SYSOUT = Bootstrap.SYSOUT;
+    private static final PrintStream SYSOUT = Bootstrap.STDOUT;
 
     public PrintingByteBuf(ByteBuf wrapped) {
         super(wrapped);
@@ -69,7 +68,8 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public PacketBuffer writeVarInt(int value) {
+//    public PacketBuffer writeVarInt(int value)
+    public FriendlyByteBuf writeVarInt(int value) {
         SYSOUT.print(" _var[" + value + "] (");
         super.writeVarInt(value);
         SYSOUT.print(" )");
@@ -77,7 +77,8 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public PacketBuffer writeVarLong(long value) {
+//    public PacketBuffer writeVarLong(long value)
+    public FriendlyByteBuf writeVarLong(long value) {
         SYSOUT.print(" _var[" + value + "L](");
         super.writeVarLong(value);
         SYSOUT.print(" )");
@@ -122,7 +123,7 @@ public final class PrintingByteBuf extends PacketBufferBC {
     @Override
     public ByteBuf setByte(int index, int value) {
         SYSOUT.println("\n  Set " + index + " (" + new String(padLength(2, getByte(index)))//
-            + " ) to" + new String(padLength(2, value)));
+                + " ) to" + new String(padLength(2, value)));
         super.setByte(index, value);
         return this;
     }
@@ -154,9 +155,11 @@ public final class PrintingByteBuf extends PacketBufferBC {
     }
 
     @Override
-    public PacketBufferBC writeEnumValue(Enum<?> value) {
+//    public PacketBufferBC writeEnumValue(Enum<?> value)
+    public PacketBufferBC writeEnum(Enum<?> value) {
         SYSOUT.println("Writing " + value + " from " + value.getClass());
-        super.writeEnumValue(value);
+//        super.writeEnumValue(value);
+        super.writeEnum(value);
         return this;
     }
 }

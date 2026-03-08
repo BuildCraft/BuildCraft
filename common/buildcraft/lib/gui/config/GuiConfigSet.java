@@ -1,16 +1,14 @@
 package buildcraft.lib.gui.config;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.expression.api.IExpressionNode;
+import buildcraft.lib.expression.api.IVariableNode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.api.IExpressionNode;
-import buildcraft.lib.expression.api.IVariableNode;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 class GuiConfigSet {
     final Map<String, GuiConfigEntry> properties = new TreeMap<>();

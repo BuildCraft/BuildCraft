@@ -6,54 +6,59 @@
 
 package buildcraft.lib.misc;
 
-import java.nio.ByteBuffer;
-
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import net.minecraft.client.Minecraft;
+import java.nio.ByteBuffer;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-@SideOnly(Side.CLIENT)
+@Deprecated(forRemoval = true)
+@OnlyIn(Dist.CLIENT)
 public class GlUtil {
     private static ByteBuffer depthBuffer = null;
 
     public static void saveDepthBuffer() {
-        Minecraft.getMinecraft().mcProfiler.startSection("Save depth buffer");
+        Minecraft.getInstance().getProfiler().push("Save depth buffer");
         depthBuffer = BufferUtils.createByteBuffer(
-            Minecraft.getMinecraft().displayWidth
-                * Minecraft.getMinecraft().displayHeight
-                * Float.BYTES
+//            Minecraft.getInstance().displayWidth
+                Minecraft.getInstance().getWindow().getWidth()
+//                * Minecraft.getInstance().displayHeight
+                        * Minecraft.getInstance().getWindow().getHeight()
+                        * Float.BYTES
         );
         GL11.glReadPixels(
-            0,
-            0,
-            Minecraft.getMinecraft().displayWidth,
-            Minecraft.getMinecraft().displayHeight,
-            GL11.GL_DEPTH_COMPONENT,
-            GL11.GL_FLOAT,
-            depthBuffer
+                0,
+                0,
+//            Minecraft.getInstance().displayWidth,
+                Minecraft.getInstance().getWindow().getWidth(),
+//            Minecraft.getInstance().displayHeight,
+                Minecraft.getInstance().getWindow().getHeight(),
+                GL11.GL_DEPTH_COMPONENT,
+                GL11.GL_FLOAT,
+                depthBuffer
         );
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getInstance().getProfiler().pop();
     }
 
     public static void restoreDepthBuffer() {
-        Minecraft.getMinecraft().mcProfiler.startSection("Restore depth buffer");
+        Minecraft.getInstance().getProfiler().push("Restore depth buffer");
         GL11.glColorMask(false, false, false, false);
         GL11.glRasterPos2i(0, 0);
         GL14.glWindowPos2i(0, 0);
         GL11.glDrawPixels(
-            Minecraft.getMinecraft().displayWidth,
-            Minecraft.getMinecraft().displayHeight,
-            GL11.GL_DEPTH_COMPONENT,
-            GL11.GL_FLOAT,
-            depthBuffer
+//            Minecraft.getInstance().displayWidth,
+                Minecraft.getInstance().getWindow().getWidth(),
+//            Minecraft.getInstance().displayHeight,
+                Minecraft.getInstance().getWindow().getHeight(),
+                GL11.GL_DEPTH_COMPONENT,
+                GL11.GL_FLOAT,
+                depthBuffer
         );
         depthBuffer = null;
         GL11.glColorMask(true, true, true, true);
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getInstance().getProfiler().pop();
     }
 }

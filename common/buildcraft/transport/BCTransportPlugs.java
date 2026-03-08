@@ -6,16 +6,14 @@
 
 package buildcraft.transport;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
-
 import buildcraft.transport.plug.PluggableBlocker;
 import buildcraft.transport.plug.PluggablePowerAdaptor;
+import net.minecraft.resources.ResourceLocation;
 
 public class BCTransportPlugs {
 

@@ -6,29 +6,22 @@
 
 package buildcraft.lib.world.gen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.map.hash.TObjectByteHashMap;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.storage.WorldSavedData;
-
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
+import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.saveddata.SavedData;
 
-public class RetroGenData extends WorldSavedData {
+import java.util.*;
+import java.util.Map.Entry;
+
+//public class RetroGenData extends WorldSavedData
+public class RetroGenData extends SavedData {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.gen.retro");
     public static final String NAME = "buildcraft_world_gen";
     private final Map<ChunkPos, Set<String>> gennedChunks = new HashMap<>();
@@ -38,17 +31,17 @@ public class RetroGenData extends WorldSavedData {
     }
 
     public RetroGenData(String name) {
-        super(name);
+//        super(name);
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    // @Override
+    public void readFromNBT(CompoundTag nbt) {
         gennedChunks.clear();
 
-        NBTTagList registry = nbt.getTagList("registry", Constants.NBT.TAG_STRING);
-        String[] names = new String[registry.tagCount()];
-        for (int i = 0; i < registry.tagCount(); i++) {
-            names[i] = registry.getStringTagAt(i);
+        ListTag registry = nbt.getList("registry", Tag.TAG_STRING);
+        String[] names = new String[registry.size()];
+        for (int i = 0; i < registry.size(); i++) {
+            names[i] = registry.getString(i);
         }
 
         if (DEBUG) {
@@ -58,8 +51,8 @@ public class RetroGenData extends WorldSavedData {
             }
         }
 
-        NBTTagCompound data = nbt.getCompoundTag("data");
-        for (String key : data.getKeySet()) {
+        CompoundTag data = nbt.getCompound("data");
+        for (String key : data.getAllKeys()) {
             ChunkPos pos = deserializeChunkPos(key);
             if (pos == null) {
                 continue;
@@ -105,33 +98,34 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+//    public CompoundTag writeToNBT(CompoundTag nbt)
+    public CompoundTag save(CompoundTag nbt) {
         Set<String> allNames = new HashSet<>();
         for (Set<String> used : gennedChunks.values()) {
             allNames.addAll(used);
         }
-        TObjectByteHashMap<String> map = new TObjectByteHashMap<>();
+        Object2ByteOpenHashMap<String> map = new Object2ByteOpenHashMap<>();
         List<String> list = new ArrayList<>(allNames);
-        NBTTagList registry = new NBTTagList();
+        ListTag registry = new ListTag();
         for (int i = 0; i < list.size(); i++) {
             String name = list.get(i);
             map.put(name, (byte) i);
-            registry.appendTag(new NBTTagString(name));
+            registry.add(StringTag.valueOf(name));
         }
-        nbt.setTag("registry", registry);
+        nbt.put("registry", registry);
 
-        NBTTagCompound data = new NBTTagCompound();
+        CompoundTag data = new CompoundTag();
         for (Entry<ChunkPos, Set<String>> entry : gennedChunks.entrySet()) {
             String key = serializeChunkPos(entry.getKey());
             Set<String> names = entry.getValue();
-            TByteArrayList ids = new TByteArrayList();
+            ByteArrayList ids = new ByteArrayList();
             for (String s : names) {
                 byte b = map.get(s);
                 ids.add(b);
             }
-            data.setByteArray(key, ids.toArray());
+            data.putByteArray(key, ids.toByteArray());
         }
-        nbt.setTag("data", data);
+        nbt.put("data", data);
 
         return nbt;
     }

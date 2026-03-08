@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftcore:guide",
+  "display": {
+    "icon": {
+      "item": "minecraft:iron_helmet",
+      "nbt": "{Damage:0}"
+    },
+    "title": {
+      "translate": "advancements.buildcraftcore.goggles.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftcore.goggles.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

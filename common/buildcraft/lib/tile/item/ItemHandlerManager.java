@@ -6,34 +6,25 @@
 
 package buildcraft.lib.tile.item;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.lib.misc.CapUtil;
+import buildcraft.lib.misc.InventoryUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.core.EnumPipePart;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.Map.Entry;
 
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
-
-public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
+public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable<CompoundTag> {
     public enum EnumAccess {
         /** An {@link IItemHandler} that shouldn't be accessible by external sources. */
         NONE,
@@ -49,7 +40,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     public final StackChangeCallback callback;
     private final List<IItemHandlerModifiable> handlersToDrop = new ArrayList<>();
     private final Map<EnumPipePart, Wrapper> wrappers = new EnumMap<>(EnumPipePart.class);
-    private final Map<String, INBTSerializable<NBTTagCompound>> handlers = new HashMap<>();
+    private final Map<String, INBTSerializable<CompoundTag>> handlers = new HashMap<>();
 
     public ItemHandlerManager(StackChangeCallback defaultCallback) {
         this.callback = defaultCallback;
@@ -58,8 +49,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         }
     }
 
-    public <T extends INBTSerializable<NBTTagCompound> & IItemHandlerModifiable> T addInvHandler(String key, T handler,
-        EnumAccess access, EnumPipePart... parts) {
+    public <T extends INBTSerializable<CompoundTag> & IItemHandlerModifiable> T addInvHandler(String key, T handler, EnumAccess access, EnumPipePart... parts) {
         if (parts == null) {
             parts = new EnumPipePart[0];
         }
@@ -68,7 +58,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
             external = null;
             if (parts.length > 0) {
                 throw new IllegalArgumentException(
-                    "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
+                        "Completely useless to not allow access to multiple sides! Just don't pass any sides!");
             }
         } else if (access == EnumAccess.EXTRACT) {
             external = new WrappedItemHandlerExtract(handler);
@@ -99,22 +89,20 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         return addInvHandler(key, handler, access, parts);
     }
 
-    public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionChecker checker, EnumAccess access,
-        EnumPipePart... parts) {
+    public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionChecker checker, EnumAccess access, EnumPipePart... parts) {
         ItemHandlerSimple handler = new ItemHandlerSimple(size, callback);
         handler.setChecker(checker);
         return addInvHandler(key, handler, access, parts);
     }
 
-    public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionFunction insertionFunction,
-        EnumAccess access, EnumPipePart... parts) {
+    public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionFunction insertionFunction, EnumAccess access, EnumPipePart... parts) {
         ItemHandlerSimple handler = new ItemHandlerSimple(size, callback);
         handler.setInsertor(insertionFunction);
         return addInvHandler(key, handler, access, parts);
     }
 
     public ItemHandlerSimple addInvHandler(String key, int size, StackInsertionChecker checker,
-        StackInsertionFunction insertionFunction, EnumAccess access, EnumPipePart... parts) {
+                                           StackInsertionFunction insertionFunction, EnumAccess access, EnumPipePart... parts) {
         ItemHandlerSimple handler = new ItemHandlerSimple(size, checker, insertionFunction, callback);
         return addInvHandler(key, handler, access, parts);
     }
@@ -125,39 +113,41 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         }
     }
 
+//    @Override
+//    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+//        if (capability == CapUtil.CAP_ITEMS) {
+//            Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
+//            return wrapper.combined != null;
+//        }
+//        return false;
+//    }
+
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (capability == CapUtil.CAP_ITEMS) {
             Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
-            return wrapper.combined != null;
+            if (wrapper.combined != null) {
+                return LazyOptional.of(() -> wrapper.combined).cast();
+            }
         }
-        return false;
+        return LazyOptional.empty();
     }
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (capability == CapUtil.CAP_ITEMS) {
-            Wrapper wrapper = wrappers.get(EnumPipePart.fromFacing(facing));
-            return CapUtil.CAP_ITEMS.cast(wrapper.combined);
-        }
-        return null;
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        for (Entry<String, INBTSerializable<NBTTagCompound>> entry : handlers.entrySet()) {
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        for (Entry<String, INBTSerializable<CompoundTag>> entry : handlers.entrySet()) {
             String key = entry.getKey();
-            nbt.setTag(key, entry.getValue().serializeNBT());
+            nbt.put(key, entry.getValue().serializeNBT());
         }
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        for (Entry<String, INBTSerializable<NBTTagCompound>> entry : handlers.entrySet()) {
+    public void deserializeNBT(CompoundTag nbt) {
+        for (Entry<String, INBTSerializable<CompoundTag>> entry : handlers.entrySet()) {
             String key = entry.getKey();
-            entry.getValue().deserializeNBT(nbt.getCompoundTag(key));
+            entry.getValue().deserializeNBT(nbt.getCompound(key));
         }
     }
 

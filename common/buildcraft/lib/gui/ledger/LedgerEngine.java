@@ -6,16 +6,16 @@
 
 package buildcraft.lib.gui.ledger;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.BCLibSprites;
+import buildcraft.lib.engine.IEngineLikeForLedger;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.config.GuiConfigManager;
 import buildcraft.lib.misc.LocaleUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.resources.ResourceLocation;
 
 public class LedgerEngine extends Ledger_Neptune {
     private static final int OVERLAY_COLOUR = 0xFF_D4_6C_1F;// 0xFF_FF_55_11;// TEMP!
@@ -23,23 +23,23 @@ public class LedgerEngine extends Ledger_Neptune {
     private static final int SUB_HEADER_COLOUR = 0xFF_AA_AF_b8;
     private static final int TEXT_COLOUR = 0xFF_00_00_00;
 
-    public final TileEngineBase_BC8 engine;
+    public final IEngineLikeForLedger engine;
 
-    public LedgerEngine(BuildCraftGui gui, TileEngineBase_BC8 engine, boolean expandPositive) {
+    public LedgerEngine(BuildCraftGui gui, IEngineLikeForLedger engine, boolean expandPositive) {
         super(gui, OVERLAY_COLOUR, expandPositive);
         this.engine = engine;
         this.title = "gui.power";
 
         appendText(LocaleUtil.localize("gui.currentOutput") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
-        appendText(() -> LocaleUtil.localizeMjFlow(engine.currentOutput), TEXT_COLOUR);
+        appendText(() -> LocaleUtil.localizeMjFlow(engine.getCurrentMjOutput()), TEXT_COLOUR);
         appendText(LocaleUtil.localize("gui.stored") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
-        appendText(() -> LocaleUtil.localizeMj(engine.getEnergyStored()), TEXT_COLOUR);
+        appendText(() -> LocaleUtil.localizeMj(engine.getMjStored()), TEXT_COLOUR);
         appendText(LocaleUtil.localize("gui.heat") + ":", SUB_HEADER_COLOUR).setDropShadow(true);
         appendText(() -> LocaleUtil.localizeHeat(engine.getHeat()), TEXT_COLOUR);
         calculateMaxSize();
 
         setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:engine"),
-            "ledger.power.is_open", false));
+                "ledger.power.is_open", false));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class LedgerEngine extends Ledger_Neptune {
     }
 
     @Override
-    protected void drawIcon(double x, double y) {
+    protected void drawIcon(PoseStack poseStack, double x, double y) {
         ISprite sprite;
         switch (engine.getPowerStage()) {
             case OVERHEAT:
@@ -61,6 +61,6 @@ public class LedgerEngine extends Ledger_Neptune {
             default:
                 sprite = engine.isEngineOn() ? BCLibSprites.ENGINE_ACTIVE : BCLibSprites.ENGINE_INACTIVE;
         }
-        GuiIcon.draw(sprite, x, y, x + 16, y + 16);
+        GuiIcon.draw(sprite, poseStack, x, y, x + 16, y + 16);
     }
 }

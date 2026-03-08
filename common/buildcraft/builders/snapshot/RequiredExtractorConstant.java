@@ -6,20 +6,17 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.gson.annotations.SerializedName;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.gson.annotations.SerializedName;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fluids.FluidStack;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 public class RequiredExtractorConstant extends RequiredExtractor {
@@ -30,41 +27,41 @@ public class RequiredExtractorConstant extends RequiredExtractor {
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<ItemStack> extractItemsFromBlock(@Nonnull BlockState blockState, @Nullable CompoundTag tileNbt) {
         return Collections.unmodifiableList(
-            itemRefs.stream()
-                .map(ref -> ref.get(tileNbt))
-                .collect(Collectors.toList())
+                itemRefs.stream()
+                        .map(ref -> ref.get(tileNbt))
+                        .collect(Collectors.toList())
         );
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> extractFluidsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<FluidStack> extractFluidsFromBlock(@Nonnull BlockState blockState, @Nullable CompoundTag tileNbt) {
         return Collections.unmodifiableList(
-            fluidRefs.stream()
-                .map(ref -> ref.get(tileNbt))
-                .collect(Collectors.toList())
+                fluidRefs.stream()
+                        .map(ref -> ref.get(tileNbt))
+                        .collect(Collectors.toList())
         );
     }
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<ItemStack> extractItemsFromEntity(@Nonnull CompoundTag entityNbt) {
         return Collections.unmodifiableList(
-            itemRefs.stream()
-                .map(ref -> ref.get(entityNbt))
-                .collect(Collectors.toList())
+                itemRefs.stream()
+                        .map(ref -> ref.get(entityNbt))
+                        .collect(Collectors.toList())
         );
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> extractFluidsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<FluidStack> extractFluidsFromEntity(@Nonnull CompoundTag entityNbt) {
         return Collections.unmodifiableList(
-            fluidRefs.stream()
-                .map(ref -> ref.get(entityNbt))
-                .collect(Collectors.toList())
+                fluidRefs.stream()
+                        .map(ref -> ref.get(entityNbt))
+                        .collect(Collectors.toList())
         );
     }
 }

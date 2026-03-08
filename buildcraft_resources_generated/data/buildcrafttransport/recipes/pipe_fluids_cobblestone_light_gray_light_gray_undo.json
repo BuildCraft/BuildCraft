@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_fluids_cobblestone_light_gray"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_cobblestone_light_gray"
+  }
+}

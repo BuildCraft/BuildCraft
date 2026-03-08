@@ -1,0 +1,189 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "buildcrafttransport:pipe_rf_sandstone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_stripes_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_quartz_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_clay_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_iron_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_sandstone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_stone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_cobblestone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_clay_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_cobblestone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_cobblestone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_gold_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_diamond_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_gold_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_sandstone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_sandstone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_quartz_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_stone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_obsidian_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_lapis_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_cobblestone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_void_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_gold_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_void_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_iron_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_structure_cobblestone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_iron_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_diamond_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_emzuli_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_iron_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_gold_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_diamond_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_diamond_wood_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_items_daizuli_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_stone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_power_quartz_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_diamond_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_rf_stone_colorless",
+      "required": false
+    },
+    {
+      "id": "buildcrafttransport:pipe_fluids_quartz_colorless",
+      "required": false
+    }
+  ]
+}

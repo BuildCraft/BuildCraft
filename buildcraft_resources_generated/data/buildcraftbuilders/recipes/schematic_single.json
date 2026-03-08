@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcraftbuilders",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "tag": "forge:gems/lapis"
+    }
+  ],
+  "result": {
+    "item": "buildcraftbuilders:schematic_single",
+    "count": 4
+  }
+}

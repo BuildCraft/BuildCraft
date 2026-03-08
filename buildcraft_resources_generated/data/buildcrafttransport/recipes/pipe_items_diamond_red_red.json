@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:gems/diamond"
+    },
+    "g": {
+      "tag": "forge:glass/red"
+    },
+    "r": {
+      "tag": "forge:gems/diamond"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_diamond_red",
+    "count": 8
+  }
+}

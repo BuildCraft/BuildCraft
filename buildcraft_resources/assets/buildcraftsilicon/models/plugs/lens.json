@@ -2,7 +2,7 @@
     "textures": {
         "#main":"buildcraftsilicon:plugs/lens",
         "#lens":"buildcraftsilicon:plugs/overlay_lens",
-        "#water_flowing":"minecraft:blocks/water_flow"
+        "#water_flowing":"minecraft:block/water_flow"
     },
     "variables": {
         "translucent_tex":"has_colour ? '#lens' : '#water_flowing'",

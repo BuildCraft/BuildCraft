@@ -6,7 +6,7 @@
 
 package buildcraft.lib.inventory.filter;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 @FunctionalInterface
 public interface ISingleStackFilter {

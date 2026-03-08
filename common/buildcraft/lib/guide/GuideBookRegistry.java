@@ -1,10 +1,9 @@
 package buildcraft.lib.guide;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.lib.script.ScriptableRegistry;
+import net.minecraft.resources.ResourceLocation;
+
+import javax.annotation.Nullable;
 
 public class GuideBookRegistry extends ScriptableRegistry<GuideBook> {
 

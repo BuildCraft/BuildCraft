@@ -1,43 +1,8 @@
 package buildcraft.lib.script;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import org.apache.commons.io.IOUtils;
-
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.registry.IReloadableRegistryManager;
 import buildcraft.api.registry.IScriptableRegistry;
-
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.JsonUtil;
 import buildcraft.lib.misc.TimeUtil;
@@ -45,6 +10,24 @@ import buildcraft.lib.script.SimpleScript.ScriptAction;
 import buildcraft.lib.script.SimpleScript.ScriptActionAdd;
 import buildcraft.lib.script.SimpleScript.ScriptActionRemove;
 import buildcraft.lib.script.SimpleScript.ScriptActionReplace;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import org.apache.commons.io.IOUtils;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implements IScriptableRegistry<E> {
 
@@ -60,7 +43,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
 
     public ScriptableRegistry(PackType type, String entryPath) {
         this(type == PackType.DATA_PACK ? ReloadableRegistryManager.DATA_PACKS
-            : ReloadableRegistryManager.RESOURCE_PACKS, entryPath);
+                : ReloadableRegistryManager.RESOURCE_PACKS, entryPath);
     }
 
     @Override
@@ -112,8 +95,14 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
         List<FileSystem> openFileSystems = new ArrayList<>();
         Map<File, Path> loadedFiles = new HashMap<>();
         List<Path> jarRoots = new ArrayList<>();
-        for (ModContainer container : Loader.instance().getActiveModList()) {
-            File source = container.getSource();
+
+        for (ModFileInfo container : LoadingModList.get().getModFiles()) {
+            // Calen 1.18.2
+            if ("forge".equals(container.moduleName())) {
+                continue;
+            }
+            // 1.12.2
+            File source = container.getFile().getFilePath().toFile();
             if (!source.exists()) {
                 continue;
             }
@@ -133,7 +122,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
             }
         }
 
-        File baseFile = new File(Loader.instance().getConfigDir(), "buildcraft/scripts");
+        File baseFile = new File(FMLPaths.CONFIGDIR.get().toFile(), "buildcraft/scripts");
         if (!baseFile.isDirectory()) {
             baseFile.mkdirs();
         }
@@ -158,9 +147,9 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
         }
     }
 
-    private void visitFile(List<FileSystem> openFileSystems, Map<File, Path> loadedFiles, List<Path> roots,
-        File source) {
-        if (loadedFiles.containsKey(source)) {
+    private void visitFile(List<FileSystem> openFileSystems, Map<File, Path> loadedFiles, List<Path> roots, File source) {
+//        if (loadedFiles.containsKey(source))
+        if (loadedFiles.containsKey(source) || !source.exists()) {
             return;
         }
         Path root = getRoot(openFileSystems, source);
@@ -195,7 +184,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
     }
 
     private void loadScripts(List<FileSystem> openFileSystems, List<ScriptAction> actions, File file, Path root,
-        List<Path> jarRoots, boolean genInfo) {
+                             List<Path> jarRoots, boolean genInfo) {
         try {
             boolean loggedInsn = false;
             String postPath = "compat/" + this.entryPath;
@@ -224,11 +213,11 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
                     }
                     if (!"~{buildcraft/json/insn}".equals(contents.set(0, "// Valid file declaration was here"))) {
                         SimpleScript.logForAll(
-                            root.relativize(scriptFile) + " didn't start with '~{buildcraft/json/insn}', ignoring.");
+                                root.relativize(scriptFile) + " didn't start with '~{buildcraft/json/insn}', ignoring.");
                         continue;
                     }
                     SimpleScript script =
-                        new SimpleScript(this, root, scriptDomain, scriptDir, scriptFile, jarRoots, contents);
+                            new SimpleScript(this, root, scriptDomain, scriptDir, scriptFile, jarRoots, contents);
                     actions.addAll(script.actions);
                     if (!script.actions.isEmpty()) {
                         sourceDomains.add(scriptDomain);
@@ -271,8 +260,8 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
             Collection<ScriptAction> adders = added.get(name);
             if (adders.size() > 1) {
                 SimpleScript.logForAll("Multiple scripts attempting to add " + name
-                    + "! This is likely caused by either a single script containing duplicate 'add' entries "
-                    + "with the same id, or multiple datapacks with the same namespace!");
+                        + "! This is likely caused by either a single script containing duplicate 'add' entries "
+                        + "with the same id, or multiple datapacks with the same namespace!");
                 continue;
             }
             ScriptAction adder = adders.iterator().next();
@@ -336,7 +325,8 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
     private void loadReloadable(ResourceLocation name, Gson gson, JsonObject json) throws JsonSyntaxException {
         String type = "";
         if (json.has("type")) {
-            type = JsonUtils.getString(json, "type");
+//            type = JsonUtils.getString(json, "type");
+            type = GsonHelper.getAsString(json, "type");
         }
         IEntryDeserializer<? extends E> deserializer = getCustomDeserializers().get(type);
         if (deserializer != null) {

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "sis",
+    "sgs",
+    "srs"
+  ],
+  "key": {
+    "s": {
+      "tag": "buildcraft:pipe/structure_cobblestone"
+    },
+    "g": {
+      "tag": "forge:gears/stone"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "i": {
+      "tag": "forge:ingots/gold"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:plug_power_adaptor",
+    "count": 4
+  }
+}

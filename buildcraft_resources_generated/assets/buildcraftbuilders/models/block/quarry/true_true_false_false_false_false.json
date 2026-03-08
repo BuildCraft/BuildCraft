@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "buildcraftbuilders:blocks/quarry/normal/side",
+    "up": "buildcraftbuilders:blocks/quarry/connected/top",
+    "down": "buildcraftbuilders:blocks/quarry/connected/bottom",
+    "east": "buildcraftbuilders:blocks/quarry/normal/side",
+    "west": "buildcraftbuilders:blocks/quarry/normal/side",
+    "north": "buildcraftbuilders:blocks/quarry/normal/front",
+    "south": "buildcraftbuilders:blocks/quarry/normal/back"
+  }
+}

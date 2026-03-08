@@ -1,0 +1,28 @@
+{
+  "parent": "buildcrafttransport:pipe_dream",
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:pipe_items_diamond_wood_colorless"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.pipe_diversification.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.pipe_diversification.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

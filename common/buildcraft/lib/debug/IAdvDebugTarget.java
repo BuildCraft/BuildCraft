@@ -6,10 +6,9 @@
 
 package buildcraft.lib.debug;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /** Something that can be put into an "advanced debug" state - every tick {@link #sendDebugState()} will be called on
  * the server, to allow the client to render all of the details normally hidden on the server. */
@@ -28,6 +27,6 @@ public interface IAdvDebugTarget {
     /** Called on the client to actually render off the target. Note that this might not be called every frame this this
      * is rendered, so the returned render should always correctly render the current debug target, provided that
      * {@link #doesExistInWorld()} returns true. */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     IDetachedRenderer getDebugRenderer();
 }

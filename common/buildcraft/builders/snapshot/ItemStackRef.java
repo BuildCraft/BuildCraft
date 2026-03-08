@@ -6,54 +6,57 @@
 
 package buildcraft.builders.snapshot;
 
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import java.util.Objects;
 import java.util.Optional;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagString;
-
 public class ItemStackRef {
-    private final NbtRef<NBTTagString> item;
-    private final NbtRef<NBTTagInt> amount;
-    private final NbtRef<NBTTagInt> meta;
-    private final NbtRef<NBTTagCompound> tagCompound;
+    private final NbtRef<StringTag> item;
+    private final NbtRef<IntTag> amount;
+    //    private final NbtRef<IntTag> meta;
+    private final NbtRef<CompoundTag> tagCompound;
 
-    public ItemStackRef(NbtRef<NBTTagString> item,
-                        NbtRef<NBTTagInt> amount,
-                        NbtRef<NBTTagInt> meta,
-                        NbtRef<NBTTagCompound> tagCompound) {
+    public ItemStackRef(NbtRef<StringTag> item,
+                        NbtRef<IntTag> amount,
+//                        NbtRef<IntTag> meta,
+                        NbtRef<CompoundTag> tagCompound) {
         this.item = item;
         this.amount = amount;
-        this.meta = meta;
+//        this.meta = meta;
         this.tagCompound = tagCompound;
     }
 
-    public ItemStack get(NBTBase nbt) {
+    public ItemStack get(Tag nbt) {
         ItemStack itemStack = new ItemStack(
-            Objects.requireNonNull(
-                Item.getByNameOrId(
-                    item
-                        .get(nbt)
-                        .orElseThrow(NullPointerException::new)
-                        .getString()
-                )
-            ),
-            Optional.ofNullable(amount)
-                .flatMap(ref -> ref.get(nbt))
-                .map(NBTTagInt::getInt)
-                .orElse(1),
-            Optional.ofNullable(meta)
-                .flatMap(ref -> ref.get(nbt))
-                .map(NBTTagInt::getInt)
-                .orElse(0)
+                Objects.requireNonNull(
+//                        Item.getByNameOrId(
+                        ForgeRegistries.ITEMS.getValue(new ResourceLocation(
+                                item
+                                        .get(nbt)
+                                        .orElseThrow(NullPointerException::new)
+                                        .getAsString()
+                        ))
+                ),
+                Optional.ofNullable(amount)
+                        .flatMap(ref -> ref.get(nbt))
+                        .map(IntTag::getAsInt)
+                        .orElse(1)
+//            Optional.ofNullable(meta)
+//                .flatMap(ref -> ref.get(nbt))
+//                .map(IntTag::getAsInt)
+//                .orElse(0)
         );
         Optional.ofNullable(tagCompound)
-            .flatMap(ref -> ref.get(nbt))
-            .ifPresent(itemStack::setTagCompound);
+                .flatMap(ref -> ref.get(nbt))
+                .ifPresent(itemStack::setTag);
         return itemStack;
     }
 }

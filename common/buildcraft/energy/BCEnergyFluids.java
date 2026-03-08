@@ -1,61 +1,95 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
 package buildcraft.energy;
 
+import buildcraft.api.BCModules;
+import buildcraft.energy.item.BCBucketItem;
+import buildcraft.lib.fluid.BCFluid;
+import buildcraft.lib.fluid.BCFluidAttributes;
+import buildcraft.lib.fluid.BCFluidBlock;
+import buildcraft.lib.fluid.BCFluidRegistryContainer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.DispenseFluidContainer;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.BCModules;
-
-import buildcraft.lib.fluid.BCFluid;
-import buildcraft.lib.fluid.BCFluidBlock;
-import buildcraft.lib.fluid.FluidManager;
-
 public class BCEnergyFluids {
-    public static BCFluid[] crudeOil;
+    private static final DeferredRegister<Fluid> fluidRegister = DeferredRegister.create(ForgeRegistries.FLUIDS, BCEnergy.MODID);
+    private static final DeferredRegister<Block> blockRegister = DeferredRegister.create(ForgeRegistries.BLOCKS, BCEnergy.MODID);
+    private static final DeferredRegister<Item> bucketRegister = DeferredRegister.create(ForgeRegistries.ITEMS, BCEnergy.MODID);
+
+    static {
+        IEventBus bus = ((FMLModContainer) ModList.get().getModContainerById(BCEnergy.MODID).get()).getEventBus();
+        blockRegister.register(bus);
+        fluidRegister.register(bus);
+        bucketRegister.register(bus);
+    }
+
+    public static RegistryObject<BCFluid.Source>[] crudeOil;
     /** All 3 fuels (no residue) */
-    public static BCFluid[] oilDistilled;
+    public static RegistryObject<BCFluid.Source>[] oilDistilled;
     /** The 3 heaviest components (fuelLight, fuelDense and oilResidue) */
-    public static BCFluid[] oilHeavy;
+    public static RegistryObject<BCFluid.Source>[] oilHeavy;
     /** The 2 lightest fuels (no dense fuel) */
-    public static BCFluid[] fuelMixedLight;
+    public static RegistryObject<BCFluid.Source>[] fuelMixedLight;
     /** The 2 heaviest fuels (no gaseous fuel) */
-    public static BCFluid[] fuelMixedHeavy;
+    public static RegistryObject<BCFluid.Source>[] fuelMixedHeavy;
     /** The 2 heaviest products (fuelDense and oilResidue) */
-    public static BCFluid[] oilDense;
+    public static RegistryObject<BCFluid.Source>[] oilDense;
 
     // End products in order from least to most dense
-    public static BCFluid[] fuelGaseous;
-    public static BCFluid[] fuelLight;
-    public static BCFluid[] fuelDense;
-    public static BCFluid[] oilResidue;
+    public static RegistryObject<BCFluid.Source>[] fuelGaseous;
+    public static RegistryObject<BCFluid.Source>[] fuelLight;
+    public static RegistryObject<BCFluid.Source>[] fuelDense;
+    public static RegistryObject<BCFluid.Source>[] oilResidue;
 
-    public static BCFluid tar;
+    public static RegistryObject<BCFluid.Source>[] tar;
 
-    public static final List<BCFluid> allFluids = new ArrayList<>();
+    public static final List<RegistryObject<BCFluid.Source>> allStill = new ArrayList<>();
+    public static final List<RegistryObject<BCFluid.Flowing>> allFlow = new ArrayList<>();
+
+    public static int[][] data = { //@formatter:off
+        // Tabular form of all the fluid values
+        // density, viscosity, boil, spread,  tex_light,   tex_dark, sticky, flammable
+        {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05,      1,         1 },// Crude Oil
+        {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42,      1,         0 },// Residue
+        {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20,      1,         1 },// Heavy Oil
+        {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24,      1,         1 },// Dense Oil
+        {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00,      0,         1 },// Distilled Oil
+        {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00,      0,         1 },// Dense Fuel
+        {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00,      0,         1 },// Mixed Heavy Fuels
+        {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00,      0,         1 },// Light Fuel
+        {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00,      0,         1 },// Mixed Light Fuels
+        {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00,      0,         1 },// Gas Fuel
+    };//@formatter:on
+
+    public static String STILL_SUFFIX = "_still";
+    public static String FLOW_SUFFIX = "_flow";
+
+    public static String FLUID_TRANSLATION_PREFIX = "buildcraft.fluid.heat_";
+    public static String HEAT_TRANSLATION_PREFIX = "fluid.";
+    public static boolean allowGas = true;
 
     public static void preInit() {
-        int[][] data = { //@formatter:off
-            // Tabular form of all the fluid values
-            // density, viscosity, boil, spread,  tex_light,   tex_dark, sticky, flammable
-            {      900,      2000,    3,      6, 0x50_50_50, 0x05_05_05,      1,         1 },// Crude Oil
-            {     1200,      4000,    3,      4, 0x10_0F_10, 0x42_10_42,      1,         0 },// Residue
-            {      850,      1800,    3,      6, 0xA0_8F_1F, 0x42_35_20,      1,         1 },// Heavy Oil
-            {      950,      1600,    3,      5, 0x87_6E_77, 0x42_24_24,      1,         1 },// Dense Oil
-            {      750,      1400,    2,      8, 0xE4_AF_78, 0xB4_7F_00,      0,         1 },// Distilled Oil
-            {      600,       800,    2,      7, 0xFF_AF_3F, 0xE0_7F_00,      0,         1 },// Dense Fuel
-            {      700,      1000,    2,      7, 0xF2_A7_00, 0xC4_87_00,      0,         1 },// Mixed Heavy Fuels
-            {      400,       600,    1,      8, 0xFF_FF_30, 0xE4_CF_00,      0,         1 },// Light Fuel
-            {      650,       900,    1,      9, 0xF6_D7_00, 0xC4_B7_00,      0,         1 },// Mixed Light Fuels
-            {      300,       500,    0,     10, 0xFA_F6_30, 0xE0_D9_00,      0,         1 },// Gas Fuel
-        };//@formatter:on
         if (BCModules.FACTORY.isLoaded()) {
             int index = 0;
 
@@ -71,28 +105,28 @@ public class BCEnergyFluids {
             fuelMixedLight = defineFluids(data[index++], "fuel_mixed_light");
             fuelGaseous = defineFluids(data[index++], "fuel_gaseous");
         } else {
-            crudeOil = new BCFluid[] { defineFluid(data[0], 0, "oil") };
-            oilResidue = new BCFluid[0];
-            oilHeavy = new BCFluid[0];
-            oilDense = new BCFluid[0];
-            oilDistilled = new BCFluid[0];
-            fuelDense = new BCFluid[0];
-            fuelMixedHeavy = new BCFluid[0];
-            fuelLight = new BCFluid[] { defineFluid(data[7], 0, "fuel_light") };
-            fuelMixedLight = new BCFluid[0];
-            fuelGaseous = new BCFluid[0];
+            crudeOil = new RegistryObject[] { defineFluid(data[0], 0, "oil") };
+            oilResidue = new RegistryObject[0];
+            oilHeavy = new RegistryObject[0];
+            oilDense = new RegistryObject[0];
+            oilDistilled = new RegistryObject[0];
+            fuelDense = new RegistryObject[0];
+            fuelMixedHeavy = new RegistryObject[0];
+            fuelLight = new RegistryObject[] { defineFluid(data[7], 0, "fuel_light") };
+            fuelMixedLight = new RegistryObject[0];
+            fuelGaseous = new RegistryObject[0];
         }
     }
 
-    private static BCFluid[] defineFluids(int[] data, String name) {
-        BCFluid[] arr = new BCFluid[3];
+    private static RegistryObject<BCFluid.Source>[] defineFluids(int[] data, String name) {
+        RegistryObject<BCFluid.Source>[] arr = new RegistryObject[3];
         for (int h = 0; h < 3; h++) {
             arr[h] = defineFluid(data, h, name);
         }
         return arr;
     }
 
-    private static BCFluid defineFluid(int[] data, int heat, String name) {
+    private static RegistryObject<BCFluid.Source> defineFluid(int[] data, int heat, String name) {
         final int density = data[0];
         final int baseViscosity = data[1];
         final int boilPoint = data[2];
@@ -102,52 +136,157 @@ public class BCEnergyFluids {
         final boolean sticky = BCEnergyConfig.oilIsSticky && data[6] == 1;
         final boolean flammable = BCEnergyConfig.enableOilBurn ? data[7] == 1 : false;
 
-        String fullName = name + (heat == 0 ? "" : "_heat_" + heat);
+        String fullName = name + "_heat_" + heat;
         int tempAdjustedViscosity = baseViscosity * (4 - heat) / 4;
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
-        String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
-        BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"),
-            new ResourceLocation(fluidTexture + "_flow"));
-        def.setBlockName(name + "_heat_" + heat);
-        def.setMapColour(getMapColor(texDark));
-        def.setFlammable(flammable);
-        def.setHeat(heat);
-        def.setUnlocalizedName(name);
-        def.setTemperature(300 + 20 * heat);
-        def.setViscosity(tempAdjustedViscosity);
-        def.setDensity(boilAdjustedDensity);
-        def.setGaseous(def.getDensity() < 0);
-        def.setColour(texLight, texDark);
-        def.setHeatable(true);
-        FluidManager.register(def);
+        String fluidTexture = "buildcraftenergy:fluids/" + fullName;
+        BCFluidRegistryContainer fluidRegistryContainer = new BCFluidRegistryContainer();
 
-        BCFluidBlock block = (BCFluidBlock) def.getBlock();
-        block.setLightOpacity(3);
-        block.setSticky(sticky);
-        // Distance that the fluid will travel: 1->16
-        // Higher heat values travel a little further
-        block.setQuantaPerBlock(baseQuanta + (baseQuanta > 6 ? heat : heat / 2));
+        // Attributes
+        FluidAttributes.Builder attributeBuilder = BCFluidAttributes.builder(
+                        new ResourceLocation(fluidTexture + STILL_SUFFIX),
+                        new ResourceLocation(fluidTexture + FLOW_SUFFIX)
+                )
+                // def.setHeat(heat)
+                .setHeat(heat)
+                // def.setHeatable(true)
+                .setHeatable(true)
+                // def.setColour(texLight, texDark)
+                .setColour(texLight, texDark)
+                // def.setUnlocalizedName(name)
+                .translationKey(HEAT_TRANSLATION_PREFIX + name)
+                .sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY)
+                // Calen: if use color filter on white texture of water, here should be Water Overlay
+                // if the texture is colored, [.overlay(WATER_OVERLAY) and .color(0xFFFFFFFF)] will make the fluid block looks white behind glass block
+                .overlay(null)
+                // def.setTemperature(300 + 20 * heat)
+                .temperature(300 + 20 * heat)
+                // def.setDensity(boilAdjustedDensity)
+                .density(boilAdjustedDensity)
+                // def.setViscosity(tempAdjustedViscosity)
+                .viscosity(tempAdjustedViscosity)
+                // 1.12.2: BCFluid#colour
+                .color(0xFFFFFFFF);
 
-        allFluids.add(def);
-        return def;
+        // Properties
+        ForgeFlowingFluid.Properties fluidProperties = new ForgeFlowingFluid.Properties(
+                fluidRegistryContainer::getStill,
+                fluidRegistryContainer::getFlowing,
+                attributeBuilder
+        )
+                .bucket(fluidRegistryContainer::getBucket)
+                .block(fluidRegistryContainer::getBlock)
+                // 1.12.2 BlockFluidBase#<init>: this.tickRate = fluid.viscosity / 200
+                // 1.18.2: should set by ourselves
+                .tickRate(tempAdjustedViscosity / 200)
+                // Distance that the fluid will travel: 1->16
+                // Higher heat values travel a little further
+                // 1.12.2: block.setQuantaPerBlock(baseQuanta + (baseQuanta > 6 ? heat : heat / 2));
+                // 1.12.2 max = 16 Block#setQuantaPerBlock(range)
+                // 1.18.2 max = 8 Properties#levelDecreasePerBlock(decrease)
+                .levelDecreasePerBlock(8 / Math.min((baseQuanta + (baseQuanta > 6 ? heat : heat / 2)) / 2, 8));
+        // def.setGaseous(def.getDensity() < 0)
+        if (boilAdjustedDensity < 0 && allowGas) {
+            attributeBuilder.gaseous();
+        }
+
+        // Still
+        String stillId = fullName;
+        RegistryObject<BCFluid.Source> still = fluidRegister.register(
+                stillId,
+                () ->
+                {
+                    BCFluid.Source def = new BCFluid.Source(
+                            fluidProperties,
+                            fluidRegistryContainer
+                    );
+                    return def;
+                }
+        );
+        fluidRegistryContainer.setStill(still);
+        allStill.add(still);
+
+        // Flow
+        String flowId = fullName + "_flow";
+        RegistryObject<BCFluid.Flowing> flow = fluidRegister.register(
+                flowId,
+                () -> new BCFluid.Flowing(fluidProperties, fluidRegistryContainer)
+        );
+        fluidRegistryContainer.setFlowing(flow);
+        allFlow.add(flow);
+
+        // Bucket
+        String bucketId = fullName + "_bucket";
+        Item.Properties bucketProp = new Item.Properties()
+                .stacksTo(1)
+                .craftRemainder(Items.BUCKET);
+        RegistryObject<BucketItem> bucket = bucketRegister.register(
+                bucketId,
+                () -> new BCBucketItem(
+                        fluidRegistryContainer::getStill,
+                        bucketProp
+                )
+        );
+        fluidRegistryContainer.setBucket(bucket);
+
+        // Block
+        String blockId = "fluid_block_" + name + "_heat_" + heat;
+        BlockBehaviour.Properties blockProp = BlockBehaviour.Properties.of(
+                        fluidMaterial(
+                                // def.setMapColour(getMapColor(texDark))
+                                getMapColor(texDark),
+                                // def.setFlammable(flammable)
+                                flammable
+                        )
+                )
+                .noCollission()
+                .randomTicks()
+                .strength(100.0F)
+                .noDrops();
+        RegistryObject<BCFluidBlock> block = blockRegister.register(
+                blockId,
+                () -> new BCFluidBlock(
+                        fluidRegistryContainer::getStill,
+                        blockProp,
+                        // block.setSticky(sticky)
+                        sticky
+                )
+        );
+        fluidRegistryContainer.setBlock(block);
+
+        // TODO Calen setLightOpacity???
+//        block.setLightOpacity(3);
+        return still;
     }
 
-    private static MapColor getMapColor(int color) {
-        MapColor bestMapColor = MapColor.BLACK;
+    private static Material fluidMaterial(MaterialColor color, boolean canBurn) {
+        // if not replaceable, <Create> mod's HosePulley will not be able to enter the oil block
+        return new Material(color, /*liquid*/ true, /*solid*/ false, /*blocksMotion*/ true, /*solidBlocking*/ false, /*flammable*/ canBurn, /*replaceable*/ true, /*pushReaction*/ PushReaction.DESTROY);
+    }
+
+    // private static MapColor getMapColor(int color)
+    private static MaterialColor getMapColor(int color) {
+//        MapColor bestMapColor = MapColor.BLACK;
+        MaterialColor bestMapColor = MaterialColor.COLOR_BLACK;
         int currentDifference = Integer.MAX_VALUE;
 
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
 
-        for (MapColor mapColor : MapColor.COLORS) {
-            if (mapColor == null || mapColor.colorValue == 0) {
+//        for (MapColor mapColor : MapColor.COLORS)
+        for (MaterialColor mapColor : MaterialColor.MATERIAL_COLORS) {
+//            if (mapColor == null || mapColor.colorValue == 0)
+            if (mapColor == null || mapColor.col == 0) {
                 continue;
             }
-            int mr = (mapColor.colorValue >> 16) & 0xFF;
-            int mg = (mapColor.colorValue >> 8) & 0xFF;
-            int mb = mapColor.colorValue & 0xFF;
+//            int mr = (mapColor.colorValue >> 16) & 0xFF;
+            int mr = (mapColor.col >> 16) & 0xFF;
+//            int mg = (mapColor.colorValue >> 8) & 0xFF;
+            int mg = (mapColor.col >> 8) & 0xFF;
+//            int mb = mapColor.colorValue & 0xFF;
+            int mb = mapColor.col & 0xFF;
 
             int dr = mr - r;
             int dg = mg - g;
@@ -161,5 +300,19 @@ public class BCEnergyFluids {
             }
         }
         return bestMapColor;
+    }
+
+    public static List<RegistryObject<BCFluid.Source>> getAllStill() {
+        return Collections.unmodifiableList(allStill);
+    }
+
+    public static List<RegistryObject<BCFluid.Flowing>> getAllFlow() {
+        return Collections.unmodifiableList(allFlow);
+    }
+
+    public static void registerBucketDispenserBehavior() {
+        for (RegistryObject<BCFluid.Source> fluid : getAllStill()) {
+            DispenserBlock.registerBehavior(fluid.get().getBucket(), DispenseFluidContainer.getInstance());
+        }
     }
 }

@@ -1,0 +1,17 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "subType": "BASIC",
+  "requiredMicroJoules": 500000000,
+  "requiredStacks": [
+    {
+      "ingredient": {
+        "tag": "forge:glass/green"
+      },
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "buildcraftsilicon:plug_lens",
+    "nbt": "{Damage:2}"
+  }
+}

@@ -6,12 +6,12 @@
 
 package buildcraft.lib.client.guide.parts.recipe;
 
-import java.util.Arrays;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.recipe.ChangingItemStack;
+
+import java.util.Arrays;
 
 public class GuideCraftingFactoryDirect implements GuidePartFactory {
     public final ChangingItemStack[][] input;
@@ -49,7 +49,8 @@ public class GuideCraftingFactoryDirect implements GuidePartFactory {
         // Short-circuit equals, as checking the contents of ChangingItemStack can be really expensive
         if (output == other.output) {
             if (input.length == other.input.length) {
-                outer_loop: {
+                outer_loop:
+                {
                     for (int i = 0; i < input.length; i++) {
                         if (input[i].length == other.input[i].length) {
                             for (int j = 0; j < input[i].length; j++) {
@@ -65,7 +66,7 @@ public class GuideCraftingFactoryDirect implements GuidePartFactory {
             return Arrays.deepEquals(input, other.input);
         } else {
             return Arrays.deepEquals(input, other.input)//
-                && output.equals(other.output);
+                    && output.equals(other.output);
         }
     }
 }

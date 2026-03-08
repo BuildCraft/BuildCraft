@@ -6,11 +6,11 @@
 
 package buildcraft.lib.config;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+@Deprecated(forRemoval = true)
 public class OverridableConfigOption extends DetailedConfigOption {
     private final String assetName;
     private final RoamingConfigManager manager;
@@ -23,7 +23,7 @@ public class OverridableConfigOption extends DetailedConfigOption {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected boolean refresh() {
         if (manager.exists()) {
             return manager.refresh(this, assetName);

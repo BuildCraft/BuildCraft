@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_false_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_false_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_false_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_false_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_false_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_false_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_false_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_false_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_true_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_true_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_true_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_true_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_true_false_false"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_true_false_false"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_true_true_false"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_west=false": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_true_true_false"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_false_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_false_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_false_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_false_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_false_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_false_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_false_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=false,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_false_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=false,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_true_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=false,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_true_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=false,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_false_true_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=false,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_false_true_true_true"
+    },
+    "connected_down=false,connected_east=false,connected_north=true,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_true_false_true"
+    },
+    "connected_down=true,connected_east=false,connected_north=true,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_true_false_true"
+    },
+    "connected_down=false,connected_east=true,connected_north=true,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/false_true_true_true_true"
+    },
+    "connected_down=true,connected_east=true,connected_north=true,connected_south=true,connected_west=true": {
+      "model": "buildcraftfactory:block/flood_gate/true_true_true_true_true"
+    }
+  }
+}

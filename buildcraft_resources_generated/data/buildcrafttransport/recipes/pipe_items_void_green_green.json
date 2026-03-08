@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:dyes/black"
+    },
+    "g": {
+      "tag": "forge:glass/green"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_void_green",
+    "count": 8
+  }
+}

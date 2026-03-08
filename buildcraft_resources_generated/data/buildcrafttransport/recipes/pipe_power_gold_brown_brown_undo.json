@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_power_gold_brown"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_gold_brown"
+  }
+}

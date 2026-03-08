@@ -6,18 +6,17 @@
 
 package buildcraft.builders.snapshot;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.template.ITemplateHandler;
 import buildcraft.api.template.ITemplateRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 public enum TemplateRegistry implements ITemplateRegistry {
     INSTANCE;
@@ -36,7 +35,7 @@ public enum TemplateRegistry implements ITemplateRegistry {
     }
 
     @Override
-    public boolean handle(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
+    public boolean handle(Level world, BlockPos pos, Player player, ItemStack stack) {
         for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (ITemplateHandler handler : handlers.get(priority)) {
                 if (handler.handle(world, pos, player, stack)) {

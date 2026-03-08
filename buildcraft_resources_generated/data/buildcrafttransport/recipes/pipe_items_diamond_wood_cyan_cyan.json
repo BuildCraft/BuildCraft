@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "minecraft:planks"
+    },
+    "g": {
+      "tag": "forge:glass/cyan"
+    },
+    "r": {
+      "tag": "forge:gems/diamond"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_diamond_wood_cyan",
+    "count": 8
+  }
+}

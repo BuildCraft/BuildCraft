@@ -1,16 +1,14 @@
 package buildcraft.lib.statement;
 
-import java.io.IOException;
-
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementManager.IParamReaderBuf;
 import buildcraft.api.statements.StatementManager.IParameterReader;
-
 import buildcraft.lib.net.PacketBufferBC;
+import net.minecraft.nbt.CompoundTag;
+
+import java.io.IOException;
 
 public class StatementTypeParam extends StatementType<IStatementParameter> {
     public static final StatementTypeParam INSTANCE = new StatementTypeParam();
@@ -25,7 +23,7 @@ public class StatementTypeParam extends StatementType<IStatementParameter> {
     }
 
     @Override
-    public IStatementParameter readFromNbt(NBTTagCompound nbt) {
+    public IStatementParameter readFromNbt(CompoundTag nbt) {
         String kind = nbt.getString("kind");
         IParameterReader reader = StatementManager.getParameterReader(kind);
         if (reader == null) {
@@ -36,11 +34,11 @@ public class StatementTypeParam extends StatementType<IStatementParameter> {
     }
 
     @Override
-    public NBTTagCompound writeToNbt(IStatementParameter slot) {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public CompoundTag writeToNbt(IStatementParameter slot) {
+        CompoundTag nbt = new CompoundTag();
         if (slot != null) {
             slot.writeToNbt(nbt);
-            nbt.setString("kind", slot.getUniqueTag());
+            nbt.putString("kind", slot.getUniqueTag());
         }
         return nbt;
     }
@@ -65,7 +63,7 @@ public class StatementTypeParam extends StatementType<IStatementParameter> {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);
-            buffer.writeString(slot.getUniqueTag());
+            buffer.writeUtf(slot.getUniqueTag());
             slot.writeToBuf(buffer);
         }
     }

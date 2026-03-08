@@ -1,0 +1,10 @@
+{
+  "type": "buildcraftenergy:fuel",
+  "fluid": {
+    "fluid": "buildcraftenergy:fuel_gaseous_heat_0",
+    "amount": 1
+  },
+  "powerPerCycle": 8000000,
+  "totalBurningTime": 1875,
+  "dirty": false
+}

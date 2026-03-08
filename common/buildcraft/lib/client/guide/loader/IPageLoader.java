@@ -6,15 +6,14 @@
 
 package buildcraft.lib.client.guide.loader;
 
+import buildcraft.lib.client.guide.entry.PageEntry;
+import buildcraft.lib.client.guide.parts.GuidePageFactory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.profiling.ProfilerFiller;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.lib.client.guide.entry.PageEntry;
-import buildcraft.lib.client.guide.parts.GuidePageFactory;
-
 public interface IPageLoader {
-    GuidePageFactory loadPage(InputStream in, ResourceLocation name, PageEntry<?> entry, Profiler prof) throws IOException;
+    GuidePageFactory loadPage(InputStream in, ResourceLocation name, PageEntry<?> entry, ProfilerFiller prof) throws IOException;
 }

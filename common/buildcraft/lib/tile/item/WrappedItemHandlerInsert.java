@@ -6,13 +6,11 @@
 
 package buildcraft.lib.tile.item;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
+import buildcraft.lib.misc.StackUtil;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.lib.misc.StackUtil;
+import javax.annotation.Nonnull;
 
 public class WrappedItemHandlerInsert extends DelegateItemHandler {
 

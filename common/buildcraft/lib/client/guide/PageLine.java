@@ -6,12 +6,12 @@
 
 package buildcraft.lib.client.guide;
 
-import java.util.List;
-import java.util.function.Supplier;
+import buildcraft.lib.gui.ISimpleDrawable;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
-
-import buildcraft.lib.gui.ISimpleDrawable;
+import java.util.List;
+import java.util.function.Supplier;
 
 /** Stores information about a single line of text. This may be displayed as more than a single line though. */
 public class PageLine implements Comparable<PageLine> {
@@ -20,23 +20,22 @@ public class PageLine implements Comparable<PageLine> {
     public ISimpleDrawable startIconHovered;
     public final int indent;
     /** This will be wrapped automatically when it is rendered. */
-    public final String text;
+    public final Component text;
+    public final String textKey;
     public final boolean link;
 
     @Nullable
-    public final Supplier<List<String>> tooltipSupplier;
+    public final Supplier<List<Component>> tooltipSupplier;
 
-    public PageLine(int indent, String text, boolean isLink) {
-        this(null, null, indent, text, isLink);
+    public PageLine(int indent, String textKey, Component text, boolean isLink) {
+        this(null, null, indent, textKey, text, isLink);
     }
 
-    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text,
-        boolean isLink) {
-        this(startIcon, startIconHovered, indent, text, isLink, null);
+    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String textKey, Component text, boolean isLink) {
+        this(startIcon, startIconHovered, indent, textKey, text, isLink, null);
     }
 
-    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, boolean link,
-        @Nullable Supplier<List<String>> tooltipSupplier) {
+    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String textKey, Component text, boolean link, @Nullable Supplier<List<Component>> tooltipSupplier) {
         if (text == null) throw new NullPointerException("text");
         this.startIcon = startIcon;
         this.startIconHovered = startIconHovered;
@@ -44,6 +43,8 @@ public class PageLine implements Comparable<PageLine> {
         this.text = text;
         this.link = link;
         this.tooltipSupplier = tooltipSupplier;
+
+        this.textKey = textKey;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class PageLine implements Comparable<PageLine> {
 
     @Override
     public int compareTo(PageLine o) {
-        return text.toLowerCase().compareTo(o.text.toLowerCase());
+        return text.getString().toLowerCase().compareTo(o.text.getString().toLowerCase());
     }
 
     @Override
@@ -85,7 +86,7 @@ public class PageLine implements Comparable<PageLine> {
     }
 
     @Nullable
-    public List<String> getTooltip() {
+    public List<Component> getTooltip() {
         return tooltipSupplier == null ? null : tooltipSupplier.get();
     }
 }

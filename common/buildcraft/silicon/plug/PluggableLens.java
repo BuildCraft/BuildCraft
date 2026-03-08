@@ -6,30 +6,30 @@
 
 package buildcraft.silicon.plug;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
-
 import buildcraft.silicon.BCSiliconItems;
 import buildcraft.silicon.client.model.key.KeyPlugLens;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PluggableLens extends PipePluggable {
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+    private static final VoxelShape[] BOXES = new VoxelShape[6];
 
     static {
         double ll = 0 / 16.0;
@@ -40,21 +40,21 @@ public class PluggableLens extends PipePluggable {
         double min = 3 / 16.0;
         double max = 13 / 16.0;
 
-        BOXES[EnumFacing.DOWN.getIndex()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.getIndex()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.getIndex()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+        BOXES[Direction.DOWN.ordinal()] = Shapes.box(min, ll, min, max, lu, max);
+        BOXES[Direction.UP.ordinal()] = Shapes.box(min, ul, min, max, uu, max);
+        BOXES[Direction.NORTH.ordinal()] = Shapes.box(min, min, ll, max, max, lu);
+        BOXES[Direction.SOUTH.ordinal()] = Shapes.box(min, min, ul, max, max, uu);
+        BOXES[Direction.WEST.ordinal()] = Shapes.box(ll, min, min, lu, max, max);
+        BOXES[Direction.EAST.ordinal()] = Shapes.box(ul, min, min, uu, max, max);
     }
 
-    public final EnumDyeColor colour;
+    public final DyeColor colour;
     public final boolean isFilter;
 
     // Manual constructor (called by the specific item pluggable code)
 
-    public PluggableLens(PluggableDefinition def, IPipeHolder holder, EnumFacing side, EnumDyeColor colour,
-        boolean isFilter) {
+    public PluggableLens(PluggableDefinition def, IPipeHolder holder, Direction side, DyeColor colour,
+                         boolean isFilter) {
         super(def, holder, side);
         this.colour = colour;
         this.isFilter = isFilter;
@@ -62,35 +62,35 @@ public class PluggableLens extends PipePluggable {
 
     // Saving + Loading
 
-    public PluggableLens(PluggableDefinition def, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
+    public PluggableLens(PluggableDefinition def, IPipeHolder holder, Direction side, CompoundTag nbt) {
         super(def, holder, side);
-        if (nbt.hasKey("colour")) {
-            colour = NBTUtilBC.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
+        if (nbt.contains("colour")) {
+            colour = NBTUtilBC.readEnum(nbt.get("colour"), DyeColor.class);
         } else {
-            colour = EnumDyeColor.byMetadata(nbt.getByte("c"));
+            colour = DyeColor.byId(nbt.getByte("c"));
         }
         isFilter = nbt.getBoolean("f");
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("colour", NBTUtilBC.writeEnum(colour));
-        nbt.setBoolean("f", isFilter);
+    public CompoundTag writeToNbt() {
+        CompoundTag nbt = super.writeToNbt();
+        nbt.put("colour", NBTUtilBC.writeEnum(colour));
+        nbt.putBoolean("f", isFilter);
         return nbt;
     }
 
     // Networking
 
-    public PluggableLens(PluggableDefinition def, IPipeHolder holder, EnumFacing side, PacketBuffer buffer) {
+    public PluggableLens(PluggableDefinition def, IPipeHolder holder, Direction side, FriendlyByteBuf buffer) {
         super(def, holder, side);
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-        colour = MessageUtil.readEnumOrNull(buf, EnumDyeColor.class);
+        colour = MessageUtil.readEnumOrNull(buf, DyeColor.class);
         isFilter = buf.readBoolean();
     }
 
     @Override
-    public void writeCreationPayload(PacketBuffer buffer) {
+    public void writeCreationPayload(FriendlyByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         MessageUtil.writeEnumOrNull(buf, colour);
         buf.writeBoolean(isFilter);
@@ -99,13 +99,13 @@ public class PluggableLens extends PipePluggable {
     // Pluggable methods
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
-        return BOXES[side.getIndex()];
+    public VoxelShape getBoundingBox() {
+        return BOXES[side.ordinal()];
     }
 
     @Override
     public ItemStack getPickStack() {
-        return BCSiliconItems.plugLens.getStack(colour, isFilter);
+        return BCSiliconItems.plugLens.get().getStack(colour, isFilter);
     }
 
     @Override
@@ -114,20 +114,26 @@ public class PluggableLens extends PipePluggable {
     }
 
     @Override
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        switch (layer) {
-            case CUTOUT:
-            case TRANSLUCENT:
-                return new KeyPlugLens(layer, side, colour, isFilter);
-            default:
-                return null;
+    @OnlyIn(Dist.CLIENT)
+    public PluggableModelKey getModelRenderKey(RenderType layer) {
+//        switch (layer) {
+//            case CUTOUT:
+//            case TRANSLUCENT:
+//                return new KeyPlugLens(layer, side, colour, isFilter);
+//            default:
+//                return null;
+//        }
+        if (layer == RenderType.cutout() || layer == RenderType.translucent()) {
+            return new KeyPlugLens(layer, side, colour, isFilter);
+        } else {
+            return null;
         }
     }
 
     @PipeEventHandler
     public void tryInsert(PipeEventItem.TryInsert tryInsert) {
         if (isFilter && tryInsert.from == side) {
-            EnumDyeColor itemColour = tryInsert.colour;
+            DyeColor itemColour = tryInsert.colour;
             if (itemColour != null && itemColour != colour) {
                 tryInsert.cancel();
             }
@@ -148,7 +154,7 @@ public class PluggableLens extends PipePluggable {
     }
 
     /** Called from either *this* pipe, or the neighbouring pipe as given in compareSide. */
-    void sideCheckAnyPos(PipeEventItem.SideCheck event, EnumFacing compareSide) {
+    void sideCheckAnyPos(PipeEventItem.SideCheck event, Direction compareSide) {
         // Note that this should *never* use "this.side" as it may be wrong!
         if (isFilter) {
             if (event.colour == colour) {

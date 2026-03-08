@@ -1,58 +1,73 @@
-/*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
- */
-
 package buildcraft.silicon;
 
-import java.util.function.Consumer;
-
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.facades.FacadeAPI;
-
-import buildcraft.lib.BCLib;
+import buildcraft.api.imc.BcImcMessage;
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLibRegistries;
+import buildcraft.lib.recipe.assembly.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.assembly.AssemblyRecipeSerializer;
+import buildcraft.lib.recipe.integration.IntegrationRecipeSerializer;
+import buildcraft.lib.recipe.programming.ProgrammingRecipeSerializer;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryConfig;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 import buildcraft.lib.registry.TagManager.TagEntry;
-
-import buildcraft.core.BCCore;
+import buildcraft.silicon.client.SiliconItemModelPredicates;
+import buildcraft.silicon.gate.GateVariant;
 import buildcraft.silicon.plug.FacadeBlockStateInfo;
 import buildcraft.silicon.plug.FacadeInstance;
 import buildcraft.silicon.plug.FacadeStateManager;
+import buildcraft.silicon.recipe.FacadeAssemblyRecipes;
+import buildcraft.silicon.recipe.FacadeSwapRecipeSerializer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.registries.IForgeRegistry;
+
+import java.util.function.Consumer;
 
 //@formatter:off
-@Mod(
-    modid = BCSilicon.MODID,
-    name = "BuildCraft Silicon",
-    version = BCLib.VERSION,
-    dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "];"
-        // Pluggable registration needs to happen *after* the transport registries have been set
-        + "after:buildcrafttransport"
-)
+//@Mod(
+//        modid = BCSilicon.MODID,
+//        name = "BuildCraft Silicon",
+//        version = BCLib.VERSION,
+//        dependencies = "required-after:buildcraftcore@[" + BCLib.VERSION + "];"
+//                // Pluggable registration needs to happen *after* the transport registries have been set
+//                + "after:buildcrafttransport"
+//)
 //@formatter:on
+@Mod(BCSilicon.MODID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BCSilicon {
     public static final String MODID = "buildcraftsilicon";
 
-    @Mod.Instance(MODID)
+    // @Mod.Instance(MODID)
     public static BCSilicon INSTANCE = null;
 
     private static CreativeTabBC tabPlugs;
     private static CreativeTabBC tabFacades;
 
-    @Mod.EventHandler
-    public static void preInit(FMLPreInitializationEvent evt) {
+    public BCSilicon() {
+        INSTANCE = this;
+    }
+
+    @SubscribeEvent
+    public static void preInit(FMLConstructModEvent evt) {
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
         tabPlugs = CreativeTabManager.createTab("buildcraft.plugs");
@@ -65,79 +80,146 @@ public class BCSilicon {
         BCSiliconItems.preInit();
         BCSiliconStatements.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCSiliconProxy.getProxy());
-
+//        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCSiliconProxy.getProxy());
+//
         BCSiliconProxy.getProxy().fmlPreInit();
     }
 
-    @Mod.EventHandler
-    public static void init(FMLInitializationEvent evt) {
+    @SubscribeEvent
+    public static void init(FMLCommonSetupEvent evt) {
         BCSiliconProxy.getProxy().fmlInit();
         FacadeStateManager.init();
     }
 
-    @Mod.EventHandler
-    public static void postInit(FMLPostInitializationEvent evt) {
+    @SubscribeEvent
+    public static void postInit(FMLLoadCompleteEvent evt) {
         BCSiliconProxy.getProxy().fmlPostInit();
         if (BCSiliconItems.plugFacade != null) {
             FacadeBlockStateInfo state = FacadeStateManager.previewState;
             FacadeInstance inst = FacadeInstance.createSingle(state, false);
-            tabFacades.setItem(BCSiliconItems.plugFacade.createItemStack(inst));
+//            tabFacades.setItem(BCSiliconItems.plugFacade.createItemStack(inst));
+            tabFacades.setItemStack(() -> BCSiliconItems.plugFacade.get().createItemStack(inst));
         }
 
         if (!BCModules.TRANSPORT.isLoaded()) {
-            tabPlugs.setItem(BCSiliconItems.plugGate);
+//            tabPlugs.setItem(BCSiliconItems.plugGate);
+            tabPlugs.setItem(BCSiliconItems.variantGateMap.get(new GateVariant(new CompoundTag())));
         }
     }
 
-    @Mod.EventHandler
-    public static void onImcEvent(IMCEvent imc) {
-        for (IMCMessage message : imc.getMessages()) {
-            FacadeStateManager.receiveInterModComms(message);
-        }
+    @SubscribeEvent
+    public static void registerGui(RegistryEvent.Register<MenuType<?>> event) {
+        BCSiliconMenuTypes.registerAll(event);
     }
+
+    @SubscribeEvent
+//    public static void onImcEvent(IMCEvent imc)
+    public static void onImcEvent(InterModProcessEvent imc) {
+
+//        for (InterModComms.IMCMessage message : imc.getMessages())
+        InterModComms.getMessages(MODID).forEach(message ->
+        {
+            Object inner = message.messageSupplier().get();
+            if (inner instanceof BcImcMessage bcImcMessage) {
+                FacadeStateManager.receiveInterModComms(message, bcImcMessage);
+            } else {
+                BCLog.logger.error("[silicon.imc] Unknown IMC message type: " + inner.getClass().getName());
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void registerRecipeSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
+        IForgeRegistry<RecipeSerializer<?>> registry = event.getRegistry();
+        registry.register(AssemblyRecipeSerializer.INSTANCE);
+        registry.register(FacadeSwapRecipeSerializer.INSTANCE);
+        registry.register(ProgrammingRecipeSerializer.INSTANCE);
+        registry.register(IntegrationRecipeSerializer.INSTANCE);
+
+        AssemblyRecipeRegistry.FACADE_ASSEMBLY_RECIPE = FacadeAssemblyRecipes.INSTANCE;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.assemblyTable.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.advancedCraftingTable.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.integrationTable.get(), RenderType.cutout());
+        // Calen: 1.12.2 not impl……
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.chargingTable.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BCSiliconBlocks.programmingTable.get(), RenderType.translucent());
+
+        SiliconItemModelPredicates.register(event);
+    }
+
+    private static final TagManager tagManager = new TagManager();
 
     static {
         startBatch();
         // Items
-        registerTag("item.redstone_chipset").reg("redstone_chipset").locale("redstone_chipset")
-            .model("redstone_chipset/");
-        registerTag("item.gate_copier").reg("gate_copier").locale("gateCopier")
-            .model("gatecopier_");
-        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.plugs")
-            .oldReg("plug_gate");
-        registerTag("item.plug.lens").reg("plug_lens").locale("lens").model("pluggable/lens").tab("buildcraft.plugs")
-            .oldReg("plug_lens");
-        registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("plug_pulsar").tab("buildcraft.plugs")
-            .oldReg("plug_pulsar");
-        registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor").model("plug_light_sensor")
-            .tab("buildcraft.plugs").oldReg("plug_light_sensor");
-        registerTag("item.plug.facade").reg("plug_facade").locale("Facade").model("plug_facade")
-            .tab("buildcraft.facades").oldReg("plug_facade");
+        registerTag("item.chipset.redstone").reg("chipset_redstone").locale("chipset_redstone");
+//                .model("chipset_redstone/");
+        registerTag("item.chipset.iron").reg("chipset_iron").locale("chipset_iron");
+//                .model("chipset_redstone/");
+        registerTag("item.chipset.gold").reg("chipset_gold").locale("chipset_gold");
+//                .model("chipset_redstone/");
+        registerTag("item.chipset.quartz").reg("chipset_quartz").locale("chipset_quartz");
+//                .model("chipset_redstone/");
+        registerTag("item.chipset.diamond").reg("chipset_diamond").locale("chipset_diamond");
+//                .model("chipset_redstone/");
+        registerTag("item.redstone_crystal").reg("redstone_crystal").locale("redstoneCrystal");
+        registerTag("item.gate_copier").reg("gate_copier").locale("gateCopier");
+//                .model("gatecopier_");
+        registerTag("item.plug.gate").reg("plug_gate").locale("gate")
+//                .model("pluggable/gate")
+                .tab("buildcraft.plugs");
+//                .oldReg("plug_gate");
+        registerTag("item.plug.lens").reg("plug_lens").locale("lens")
+//                .model("pluggable/lens")
+                .tab("buildcraft.plugs");
+//                .oldReg("plug_lens");
+        registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar")
+//                .model("plug_pulsar")
+                .tab("buildcraft.plugs");
+//                .oldReg("plug_pulsar");
+        registerTag("item.plug.light_sensor").reg("plug_light_sensor").locale("light_sensor")
+//                .model("plug_light_sensor")
+                .tab("buildcraft.plugs");
+//                .oldReg("plug_light_sensor");
+        registerTag("item.plug.timer").reg("plug_timer").locale("timer")
+//                .model("plug_timer")
+                .tab("buildcraft.plugs");
+//                .oldReg("plug_timer");
+        registerTag("item.plug.facade").reg("plug_facade").locale("Facade")
+//                .model("plug_facade")
+                .tab("buildcraft.facades");
+//                .oldReg("plug_facade");
         // Item Blocks
-        registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
-        registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock")
-            .model("assembly_table");
-        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table")
-            .locale("assemblyWorkbenchBlock").model("advanced_crafting_table");
-        registerTag("item.block.integration_table").reg("integration_table").locale("integrationTableBlock")
-            .model("integration_table");
-        registerTag("item.block.charging_table").reg("charging_table").locale("chargingTableBlock")
-            .model("charging_table");
-        registerTag("item.block.programming_table").reg("programming_table").locale("programmingTableBlock")
-            .model("programming_table");
+        registerTag("item.block.laser").reg("laser").locale("laserBlock");
+//                .model("laser");
+        registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock");
+//                .model("assembly_table");
+        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table").locale("assemblyWorkbenchBlock");
+//                .model("advanced_crafting_table");
+        registerTag("item.block.integration_table").reg("integration_table").locale("integrationTableBlock");
+//                .model("integration_table");
+        registerTag("item.block.charging_table").reg("charging_table").locale("chargingTableBlock");
+//                .model("charging_table");
+        registerTag("item.block.programming_table").reg("programming_table").locale("programmingTableBlock");
+//                .model("programming_table");
         // Blocks
-        registerTag("block.laser").reg("laser").oldReg("laserBlock").locale("laserBlock").model("laser");
-        registerTag("block.assembly_table").reg("assembly_table").oldReg("assemblyTableBlock")
-            .locale("assemblyTableBlock").model("assembly_table");
-        registerTag("block.advanced_crafting_table").reg("advanced_crafting_table").oldReg("advancedCraftingTableBlock")
-            .locale("assemblyWorkbenchBlock").model("advanced_crafting_table");
-        registerTag("block.integration_table").reg("integration_table").oldReg("integrationTableBlock")
-            .locale("integrationTableBlock").model("integration_table");
-        registerTag("block.charging_table").reg("charging_table").oldReg("chargingTableBlock")
-            .locale("chargingTableBlock").model("charging_table");
-        registerTag("block.programming_table").reg("programming_table").oldReg("programmingTableBlock")
-            .locale("programmingTableBlock").model("programming_table");
+//        registerTag("block.laser").reg("laser").oldReg("laserBlock").locale("laserBlock").model("laser");
+        registerTag("block.laser").reg("laser").locale("laserBlock");
+//        registerTag("block.assembly_table").reg("assembly_table").oldReg("assemblyTableBlock").locale("assemblyTableBlock").model("assembly_table");
+        registerTag("block.assembly_table").reg("assembly_table").locale("assemblyTableBlock");
+//        registerTag("block.advanced_crafting_table").reg("advanced_crafting_table").oldReg("advancedCraftingTableBlock").locale("assemblyWorkbenchBlock").model("advanced_crafting_table");
+        registerTag("block.advanced_crafting_table").reg("advanced_crafting_table").locale("assemblyWorkbenchBlock");
+//        registerTag("block.integration_table").reg("integration_table").oldReg("integrationTableBlock").locale("integrationTableBlock").model("integration_table");
+        registerTag("block.integration_table").reg("integration_table").locale("integrationTableBlock");
+//        registerTag("block.charging_table").reg("charging_table").oldReg("chargingTableBlock").locale("chargingTableBlock").model("charging_table");
+        registerTag("block.charging_table").reg("charging_table").locale("chargingTableBlock");
+//        registerTag("block.programming_table").reg("programming_table").oldReg("programmingTableBlock").locale("programmingTableBlock").model("programming_table");
+        registerTag("block.programming_table").reg("programming_table").locale("programmingTableBlock");
         // Tiles
         registerTag("tile.laser").reg("laser");
         registerTag("tile.assembly_table").reg("assembly_table");
@@ -146,19 +228,26 @@ public class BCSilicon {
         registerTag("tile.charging_table").reg("charging_table");
         registerTag("tile.programming_table").reg("programming_table");
 
-        endBatch(TagManager.prependTags("buildcraftsilicon:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION)
-            .andThen(TagManager.setTab("buildcraft.main")));
+//        endBatch(TagManager.prependTags("buildcraftsilicon:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION)
+        endBatch(TagManager.prependTags("buildcraftsilicon:", EnumTagType.REGISTRY_NAME)
+                .andThen(TagManager.setTab("buildcraft.main"))
+        );
     }
 
+
     private static TagEntry registerTag(String id) {
-        return TagManager.registerTag(id);
+//        return TagManager.registerTag(id);
+        return tagManager.registerTag(id);
     }
 
     private static void startBatch() {
-        TagManager.startBatch();
+//        TagManager.startBatch();
+        tagManager.startBatch();
     }
 
+    // Calen: the batch often causes Exception...
     private static void endBatch(Consumer<TagEntry> consumer) {
-        TagManager.endBatch(consumer);
+//        TagManager.endBatch(consumer);
+        tagManager.endBatch(consumer);
     }
 }

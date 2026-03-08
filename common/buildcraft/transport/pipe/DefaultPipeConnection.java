@@ -6,37 +6,44 @@
 
 package buildcraft.transport.pipe;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public enum DefaultPipeConnection implements ICustomPipeConnection {
     INSTANCE;
 
     @Override
-    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
-        AxisAlignedBB bb = state.getCollisionBoundingBox(world, pos);
-        if (bb == null) {
+    public float getExtension(Level world, BlockPos pos, Direction face, BlockState state) {
+//        AxisAlignedBB bb = state.getCollisionBoundingBox(world, pos);
+        VoxelShape bb = state.getShape(world, pos);
+//        if (bb == null)
+        if (bb == null || bb.isEmpty()) {
             return 0;
         }
 
         switch (face) {
             case DOWN:
-                return (float) bb.minY;
+//                return (float) bb.minY;
+                return (float) bb.bounds().minY;
             case UP:
-                return 1 - (float) bb.maxY;
+//                return 1 - (float) bb.maxY;
+                return 1 - (float) bb.bounds().maxY;
             case NORTH:
-                return (float) bb.minZ;
+//                return (float) bb.minZ;
+                return (float) bb.bounds().minZ;
             case SOUTH:
-                return 1 - (float) bb.maxZ;
+//                return 1 - (float) bb.maxZ;
+                return 1 - (float) bb.bounds().maxZ;
             case WEST:
-                return (float) bb.minX;
+//                return (float) bb.minX;
+                return (float) bb.bounds().minX;
             case EAST:
-                return 1 - (float) bb.maxX;
+//                return 1 - (float) bb.maxX;
+                return 1 - (float) bb.bounds().maxX;
             default:
                 return 0;
         }

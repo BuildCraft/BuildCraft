@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "buildcraftcore:block/power_tester"
+    }
+  }
+}

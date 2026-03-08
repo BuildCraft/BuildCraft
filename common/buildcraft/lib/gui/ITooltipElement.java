@@ -6,9 +6,9 @@
 
 package buildcraft.lib.gui;
 
-import java.util.List;
-
 import buildcraft.lib.gui.elem.ToolTip;
+
+import java.util.List;
 
 /** Defines some sort of element that should be queried to get tooltips that should be shown. */
 @FunctionalInterface

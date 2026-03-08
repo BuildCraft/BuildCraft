@@ -1,16 +1,5 @@
 package buildcraft.lib.json;
 
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.JsonUtils;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
 import buildcraft.lib.expression.api.IConstantNode;
@@ -21,6 +10,15 @@ import buildcraft.lib.expression.node.value.ITickableNode;
 import buildcraft.lib.expression.node.value.NodeStateful;
 import buildcraft.lib.expression.node.value.NodeStateful.IGetterFunc;
 import buildcraft.lib.expression.node.value.NodeUpdatable;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.GsonHelper;
+
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class JsonVariableObject {
 
@@ -44,10 +42,13 @@ public class JsonVariableObject {
             if (value.isJsonObject()) {
                 JsonObject objValue = value.getAsJsonObject();
                 value = objValue.get("value");
-                type = JsonUtils.getString(objValue, "type");
-                getter = JsonUtils.getString(objValue, "getter");
+//                type = JsonUtils.getString(objValue, "type");
+                type = GsonHelper.getAsString(objValue, "type");
+//                getter = JsonUtils.getString(objValue, "getter");
+                getter = GsonHelper.getAsString(objValue, "getter");
                 if (objValue.has("rounder")) {
-                    rounder = JsonUtils.getString(objValue, "rounder");
+//                    rounder = JsonUtils.getString(objValue, "rounder");
+                    rounder = GsonHelper.getAsString(objValue, "rounder");
                 }
             }
 
@@ -82,7 +83,7 @@ public class JsonVariableObject {
                         stateful.setRounder(nodeRounder);
                     } catch (InvalidExpressionException iee) {
                         throw new JsonSyntaxException("Could not compile a rounder for the variable '" + name + "'",
-                            iee);
+                                iee);
                     }
                 }
             }
@@ -123,7 +124,8 @@ public class JsonVariableObject {
         if ("var".equalsIgnoreCase(getter)) {
             return NodeStateful.GetterType.USE_VAR;
         }
-        return (var, last) -> {
+        return (var, last) ->
+        {
             FunctionContext fnCtx2 = new FunctionContext("Getters", fnCtx);
             fnCtx2.putVariable("var", var);
             fnCtx2.putVariable("last", last);

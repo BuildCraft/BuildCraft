@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "buildcraftbuilders:items/schematic_single/clean"
+  }
+}

@@ -1,10 +1,5 @@
 package buildcraft.lib.gui.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gson.JsonSyntaxException;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
@@ -16,6 +11,10 @@ import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ElementTypeToolTip extends ElementType {
     public static final String NAME = "buildcraftlib:tooltip";
@@ -68,7 +67,8 @@ public class ElementTypeToolTip extends ElementType {
             } catch (InvalidExpressionException e) {
                 throw new JsonSyntaxException(e);
             }
-            source = (list) -> {
+            source = (list) ->
+            {
                 if (visible.evaluate()) {
                     String[] arr = new String[nodes.size()];
                     for (int i = 0; i < arr.length; i++) {
@@ -79,7 +79,8 @@ public class ElementTypeToolTip extends ElementType {
             };
         } else {
             ToolTip tooltip = ToolTip.createLocalized(text.toArray(new String[0]));
-            source = (list) -> {
+            source = (list) ->
+            {
                 if (visible.evaluate()) {
                     list.add(tooltip);
                 }

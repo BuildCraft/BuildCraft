@@ -1,10 +1,8 @@
 package buildcraft.lib.gui.json;
 
-import net.minecraft.client.Minecraft;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteAtlas;
+import buildcraft.lib.misc.SpriteUtil;
 
 public class SpriteDelegate implements ISprite {
     public ISprite delegate;
@@ -14,7 +12,8 @@ public class SpriteDelegate implements ISprite {
     }
 
     public SpriteDelegate() {
-        this(new SpriteAtlas(Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite()));
+//        this(new SpriteAtlas(Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite()));
+        this(new SpriteAtlas(SpriteUtil.missingSprite()));
     }
 
     @Override

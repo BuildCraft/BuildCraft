@@ -6,12 +6,11 @@
 
 package buildcraft.robotics.zone;
 
+import buildcraft.lib.net.MessageManager;
+import net.minecraft.world.level.Level;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.world.World;
-
-import buildcraft.lib.net.MessageManager;
 
 public class ZonePlannerMapDataClient extends ZonePlannerMapData {
     public static final ZonePlannerMapDataClient INSTANCE = new ZonePlannerMapDataClient();
@@ -19,14 +18,13 @@ public class ZonePlannerMapDataClient extends ZonePlannerMapData {
     private final List<ZonePlannerMapChunkKey> pending = new ArrayList<>();
 
     @Override
-    public ZonePlannerMapChunk loadChunk(World world, ZonePlannerMapChunkKey key) {
+    public ZonePlannerMapChunk loadChunk(Level world, ZonePlannerMapChunkKey key) {
         if (!pending.contains(key)) {
             pending.add(key);
             MessageManager.sendToServer(new MessageZoneMapRequest(key));
         }
         return null;
     }
-
 
     public void onChunkReceived(ZonePlannerMapChunkKey key, ZonePlannerMapChunk zonePlannerMapChunk) {
         pending.remove(key);

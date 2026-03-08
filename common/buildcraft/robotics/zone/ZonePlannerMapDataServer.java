@@ -6,13 +6,13 @@
 
 package buildcraft.robotics.zone;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class ZonePlannerMapDataServer extends ZonePlannerMapData {
     public static final ZonePlannerMapDataServer INSTANCE = new ZonePlannerMapDataServer();
 
     @Override
-    public ZonePlannerMapChunk loadChunk(World world, ZonePlannerMapChunkKey key) {
+    public ZonePlannerMapChunk loadChunk(Level world, ZonePlannerMapChunkKey key) {
         return new ZonePlannerMapChunk(world, key);
     }
 }

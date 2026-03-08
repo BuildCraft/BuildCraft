@@ -1,16 +1,15 @@
 package buildcraft.lib.gui.json;
 
+import buildcraft.lib.client.model.ResourceLoaderContext;
+import buildcraft.lib.expression.DefaultContexts;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.expression.DefaultContexts;
 
 /** Turns several json elements into some functional gui data. */
 public class JsonGuiTypeRegistry {

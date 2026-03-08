@@ -1,0 +1,21 @@
+{
+  "type": "buildcraftsilicon:integration",
+  "requiredMicroJoules": 5000000000,
+  "centerStack": {
+    "ingredient": {
+      "item": "buildcraftrobotics:robot_base"
+    },
+    "count": 1
+  },
+  "requirements": [
+    {
+      "ingredient": {
+        "item": "buildcraftrobotics:board_robot_stripes"
+      },
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "buildcraftrobotics:robot_stripes"
+  }
+}

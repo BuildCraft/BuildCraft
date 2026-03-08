@@ -1,0 +1,24 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "subType": "BASIC",
+  "requiredMicroJoules": 100000000000,
+  "requiredStacks": [
+    {
+      "ingredient": {
+        "type": "forge:nbt",
+        "item": "buildcraftsilicon:plug_gate_gold_and_no_modifier",
+        "count": 1
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "tag": "forge:gems/lapis"
+      },
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "buildcraftsilicon:plug_gate_gold_and_lapis"
+  }
+}

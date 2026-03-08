@@ -1,0 +1,28 @@
+{
+  "parent": "buildcraftfactory:fluid_storage",
+  "display": {
+    "icon": {
+      "item": "buildcraftfactory:flood_gate"
+    },
+    "title": {
+      "translate": "advancements.buildcraftfactory.flooding_the_world.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftfactory.flooding_the_world.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

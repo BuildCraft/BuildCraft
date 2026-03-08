@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcrafttransport",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:pipe_items_diamond_wood_lime"
+    },
+    {
+      "tag": "forge:storage_blocks/lapis"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:pipe_items_emzuli_lime"
+  }
+}

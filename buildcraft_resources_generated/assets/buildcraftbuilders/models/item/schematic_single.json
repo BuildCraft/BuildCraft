@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "predicate": {
+        "buildcraft:used": 0.0
+      },
+      "model": "buildcraftbuilders:item/schematic_single/clean"
+    },
+    {
+      "predicate": {
+        "buildcraft:used": 1.0
+      },
+      "model": "buildcraftbuilders:item/schematic_single/used"
+    }
+  ]
+}

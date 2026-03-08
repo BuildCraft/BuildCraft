@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:ingots/iron"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "r": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_iron_colorless",
+    "count": 8
+  }
+}

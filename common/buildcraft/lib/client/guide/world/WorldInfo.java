@@ -6,15 +6,15 @@
 
 package buildcraft.lib.client.guide.world;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public class WorldInfo {
     public final String schematic;
     public final WorldLabel[] labels;
-    public final Vec3d cameraPos;
-    public final Vec3d cameraFacing;
+    public final Vec3 cameraPos;
+    public final Vec3 cameraFacing;
 
-    public WorldInfo(String schematic, WorldLabel[] labels, Vec3d cameraPos, Vec3d cameraFacing) {
+    public WorldInfo(String schematic, WorldLabel[] labels, Vec3 cameraPos, Vec3 cameraFacing) {
         this.schematic = schematic;
         this.labels = labels;
         this.cameraPos = cameraPos;

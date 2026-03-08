@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcraftfactory",
+  "pattern": [
+    "igi",
+    "###",
+    "igi"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "g": {
+      "tag": "forge:gears/iron"
+    },
+    "#": {
+      "tag": "forge:glass/colorless"
+    }
+  },
+  "result": {
+    "item": "buildcraftfactory:heat_exchange"
+  }
+}

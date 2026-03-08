@@ -1,9 +1,10 @@
 package buildcraft.lib.misc.search;
 
-import java.util.List;
+import net.minecraft.client.searchtree.SuffixArray;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.profiling.ProfilerFiller;
 
-import net.minecraft.client.util.SuffixArray;
-import net.minecraft.profiler.Profiler;
+import java.util.List;
 
 /** An implementation of {@link ISuffixArray} that delegates to a vanilla minecraft {@link SuffixArray}. */
 public final class VanillaSuffixArray<T> implements ISuffixArray<T> {
@@ -18,12 +19,15 @@ public final class VanillaSuffixArray<T> implements ISuffixArray<T> {
     }
 
     @Override
-    public void add(T obj, String name) {
-        vanillaSuffixArray.add(obj, name);
+//    public void add(T obj, String name)
+    public void add(T obj, Component name) {
+//        vanillaSuffixArray.add(obj, name);
+        vanillaSuffixArray.add(obj, name.getString());
     }
 
     @Override
-    public void generate(Profiler prof) {
+//    public void generate(Profiler prof)
+    public void generate(ProfilerFiller prof) {
         vanillaSuffixArray.generate();
     }
 

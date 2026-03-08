@@ -1,10 +1,8 @@
 package buildcraft.core.tile;
 
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.energy.tile.TileSpringOil;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.core.BlockPos;
 
 /** Implemented by {@link TileSpringOil} in the energy module. */
 public interface ITileOilSpring {

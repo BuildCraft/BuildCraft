@@ -6,11 +6,11 @@
 
 package buildcraft.lib.misc.data;
 
-import gnu.trove.list.array.TByteArrayList;
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 
 public class CompactingBitSet {
     public final int bits;
-    private final TByteArrayList bytes = new TByteArrayList();
+    private final ByteArrayList bytes = new ByteArrayList();
     private int bitIndex = 0;
 
     public CompactingBitSet(int bits) {
@@ -49,6 +49,6 @@ public class CompactingBitSet {
     }
 
     public byte[] getBytes() {
-        return bytes.toArray();
+        return bytes.toByteArray();
     }
 }

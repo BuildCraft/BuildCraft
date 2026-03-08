@@ -6,14 +6,12 @@
 
 package buildcraft.lib.misc;
 
-import com.mojang.authlib.GameProfile;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.core.IPlayerOwned;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 /** Future class for checking to see if a given player can actually do something. */
 public class PermissionUtil {
@@ -41,9 +39,9 @@ public class PermissionUtil {
         return true;
     }
 
-    public static boolean hasPermission(Object type, EntityPlayer attempting, PermissionBlock target) {
+    public static boolean hasPermission(Object type, Player attempting, PermissionBlock target) {
         // TODO: fire a forge block-break event if its a break event
-        if (attempting.getDistanceSq(target.pos) > MAX_INTERACT_DISTANCE_SQ) {
+        if (attempting.distanceToSqr(target.pos.getX(), target.pos.getY(), target.pos.getZ()) > MAX_INTERACT_DISTANCE_SQ) {
             return false;
         }
 
@@ -53,8 +51,8 @@ public class PermissionUtil {
         return true;
     }
 
-    public static PermissionBlock createFrom(World world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+    public static PermissionBlock createFrom(Level world, BlockPos pos) {
+        BlockEntity tile = world.getBlockEntity(pos);
         IPlayerOwned owned = null;
 
         if (tile instanceof IPlayerOwned) {

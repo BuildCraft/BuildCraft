@@ -6,29 +6,25 @@
 
 package buildcraft.lib.client.guide.entry;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.contents.PageLink;
 import buildcraft.lib.gui.ISimpleDrawable;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.profiling.ProfilerFiller;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class PageValueType<T> {
 
-    public abstract OptionallyDisabled<PageEntry<T>> deserialize(ResourceLocation name, JsonObject json,
-        JsonDeserializationContext ctx);
+    public abstract OptionallyDisabled<PageEntry<T>> deserialize(ResourceLocation name, JsonObject json, JsonDeserializationContext ctx);
 
     public abstract Class<T> getEntryClass();
 
@@ -45,15 +41,17 @@ public abstract class PageValueType<T> {
         return value;
     }
 
-    public abstract String getTitle(T value);
+    public abstract Component getTitle(T value);
 
-    public abstract List<String> getTooltip(T value);
+    public abstract String getTitleKey(T value);
 
-    public abstract void iterateAllDefault(IEntryLinkConsumer consumer, Profiler prof);
+    public abstract List<Component> getTooltip(T value);
+
+    public abstract void iterateAllDefault(IEntryLinkConsumer consumer, ProfilerFiller prof);
 
     /** @param to Something that identifies what this should link to.
      * @return Either the {@link PageLink}, or the error for why the given "to" doesn't result in a valid link. */
-    public OptionallyDisabled<PageLink> createLink(String to, Profiler prof) {
+    public OptionallyDisabled<PageLink> createLink(String to, ProfilerFiller prof) {
         return new OptionallyDisabled<>(getClass().getSimpleName() + " doesn't support links");
     }
 

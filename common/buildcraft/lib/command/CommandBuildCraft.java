@@ -1,24 +1,29 @@
 package buildcraft.lib.command;
 
-import net.minecraft.command.ICommandSender;
 
-import net.minecraftforge.server.command.CommandTreeBase;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandSourceStack;
 
-public class CommandBuildCraft extends CommandTreeBase {
+//public class CommandBuildCraft extends CommandTreeBase
+public class CommandBuildCraft {
+    private static final String NAME = "buildcraft";
+    private static final String USAGE = "command.buildcraft.help";
 
-    public CommandBuildCraft() {
-        addSubcommand(new CommandVersion());
-        addSubcommand(new CommandChangelog());
-        addSubcommand(new CommandReloadRegistries());
-    }
+    public static final LiteralArgumentBuilder<CommandSourceStack> COMMAND =
+            LiteralArgumentBuilder.<CommandSourceStack>literal(NAME)
+                    .requires((req) -> req.hasPermission(0));
 
-    @Override
-    public String getName() {
-        return "buildcraft";
-    }
+//    public CommandBuildCraft() {
+//        addSubcommand(new CommandVersion());
+//        addSubcommand(new CommandChangelog());
+//        addSubcommand(new CommandReloadRegistries());
+//    }
 
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "command.buildcraft.help";
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        new CommandVersion().addSubcommand(COMMAND);
+        new CommandChangelog().addSubcommand(COMMAND);
+        new CommandReloadRegistries().addSubcommand(COMMAND);
+        dispatcher.register(COMMAND);
     }
 }

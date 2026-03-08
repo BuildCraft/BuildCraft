@@ -6,26 +6,11 @@
 
 package buildcraft.builders.addon;
 
-import java.io.IOException;
-import java.util.stream.IntStream;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
 import buildcraft.api.core.IBox;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
-
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.statement.FullStatement;
-
-import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.filler.FillerType;
 import buildcraft.builders.filler.FillerUtil;
@@ -34,12 +19,24 @@ import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.AddonDefaultRenderer;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.ISingleAddon;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.statement.FullStatement;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.stream.IntStream;
 
 public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerStatementContainer {
     public final FullStatement<IFillerPattern> patternStatement = new FullStatement<>(
-        FillerType.INSTANCE,
-        4,
-        null
+            FillerType.INSTANCE,
+            4,
+            null
     );
     public boolean inverted;
     @Nullable
@@ -47,12 +44,12 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
 
     public void updateBuildingInfo() {
         buildingInfo = FillerUtil.createBuildingInfo(
-            this,
-            patternStatement,
-            IntStream.range(0, patternStatement.maxParams)
-                .mapToObj(patternStatement::get)
-                .toArray(IStatementParameter[]::new),
-            inverted
+                this,
+                patternStatement,
+                IntStream.range(0, patternStatement.maxParams)
+                        .mapToObj(patternStatement::get)
+                        .toArray(IStatementParameter[]::new),
+                inverted
         );
     }
 
@@ -64,7 +61,7 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
     @Override
     public IFastAddonRenderer<AddonFillerPlanner> getRenderer() {
         return new AddonDefaultRenderer<AddonFillerPlanner>(BCBuildersSprites.FILLER_PLANNER.getSprite())
-            .then(new AddonRendererFillerPlanner());
+                .then(new AddonRendererFillerPlanner());
     }
 
     @Override
@@ -80,21 +77,22 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
     }
 
     @Override
-    public void onPlayerRightClick(EntityPlayer player) {
+    public void onPlayerRightClick(Player player) {
         super.onPlayerRightClick(player);
-        BCBuildersGuis.FILLER_PLANNER.openGUI(player);
+//        BCBuildersGuis.FILLER_PLANNER.openGUI(player);
+        MessageUtil.serverOpenItemGui(player, BCBuildersItems.addonFillerPlanner.get());
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("patternStatement", patternStatement.writeToNbt());
-        nbt.setBoolean("inverted", inverted);
+    public CompoundTag writeToNBT(CompoundTag nbt) {
+        nbt.put("patternStatement", patternStatement.writeToNbt());
+        nbt.putBoolean("inverted", inverted);
         return nbt;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        patternStatement.readFromNbt(nbt.getCompoundTag("patternStatement"));
+    public void readFromNBT(CompoundTag nbt) {
+        patternStatement.readFromNbt(nbt.getCompound("patternStatement"));
         inverted = nbt.getBoolean("inverted");
     }
 
@@ -114,17 +112,17 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
     // IFillerStatementContainer
 
     @Override
-    public TileEntity getNeighbourTile(EnumFacing side) {
+    public BlockEntity getNeighbourTile(Direction side) {
         return null;
     }
 
     @Override
-    public TileEntity getTile() {
+    public BlockEntity getTile() {
         return null;
     }
 
     @Override
-    public World getFillerWorld() {
+    public Level getFillerWorld() {
         return volumeBox.world;
     }
 

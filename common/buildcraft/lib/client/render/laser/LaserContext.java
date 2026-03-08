@@ -6,21 +6,22 @@
 
 package buildcraft.lib.client.render.laser;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
-
-import net.minecraft.util.math.Vec3d;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.client.model.MutableQuad;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.BufferUtils;
+
+import java.nio.FloatBuffer;
 
 public class LaserContext {
     public final Matrix4f matrix = new Matrix4f();
-    private final Point3f point = new Point3f();
+    private final Vector3f point = new Vector3f();
     private final Vector4f normal = new Vector4f();
     private final ILaserRenderer renderer;
     public final double length;
@@ -32,14 +33,14 @@ public class LaserContext {
         this.useNormalColour = useNormalColour;
         this.drawBothSides = isCullEnabled;
         this.minBlockLight = data.minBlockLight;
-        Vec3d delta = data.start.subtract(data.end);
+        Vec3 delta = data.start.subtract(data.end);
         double dx = delta.x;
         double dy = delta.y;
         double dz = delta.z;
 
         final double angleY, angleZ;
 
-        double realLength = delta.lengthVector();
+        double realLength = delta.length();
         length = realLength / data.scale;
         angleZ = Math.PI - Math.atan2(dz, dx);
         double rl_squared = realLength * realLength;
@@ -67,43 +68,39 @@ public class LaserContext {
         holding.setIdentity();
 
         // // Step 4
-        Vector3f translation = new Vector3f();
-        translation.x = (float) data.start.x;
-        translation.y = (float) data.start.y;
-        translation.z = (float) data.start.z;
-        holding.setTranslation(translation);
-        matrix.mul(holding);
+        holding.setTranslation((float) data.start.x, (float) data.start.y, (float) data.start.z);
+        matrix.multiply(holding);
         holding.setIdentity();
 
         // Step 3
-        holding.m00 = (float) data.scale;
-        holding.m11 = (float) data.scale;
-        holding.m22 = (float) data.scale;
-        matrix.mul(holding);
+        setMatrix4fValue(holding, 0, 0, (float) data.scale);
+        setMatrix4fValue(holding, 1, 1, (float) data.scale);
+        setMatrix4fValue(holding, 2, 2, (float) data.scale);
+        matrix.multiply(holding);
         holding.setIdentity();
 
         // Step 2
-        holding.rotY((float) angleZ);
-        matrix.mul(holding);
+        holding.multiply(Vector3f.YP.rotation((float) angleZ));
+        matrix.multiply(holding);
         holding.setIdentity();
 
         // Step 1
-        holding.rotZ((float) angleY);
-        matrix.mul(holding);
+        holding.multiply(Vector3f.ZP.rotation((float) angleY));
+        matrix.multiply(holding);
         holding.setIdentity();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setFaceNormal(double nx, double ny, double nz) {
         if (useNormalColour) {
-            normal.x = (float) nx;
-            normal.y = (float) ny;
-            normal.z = (float) nz;
-            normal.w = 0;
-            matrix.transform(normal);
-            n[0] = normal.x;
-            n[1] = normal.y;
-            n[2] = normal.z;
+            normal.setX((float) nx);
+            normal.setY((float) ny);
+            normal.setZ((float) nz);
+            normal.setW(0);
+            normal.transform(matrix);
+            n[0] = normal.x();
+            n[1] = normal.y();
+            n[2] = normal.z();
             diffuse = MutableQuad.diffuseLight(n[0], n[1], n[2]);
         }
     }
@@ -115,19 +112,23 @@ public class LaserContext {
     private final double[] u = { 0, 0, 0, 0 };
     private final double[] v = { 0, 0, 0, 0 };
     private final int[] l = { 0, 0, 0, 0 };
+    // Calen BeaconRenderer.class
+    private final int overlay = OverlayTexture.NO_OVERLAY;
     private final float[] n = { 0, 1, 0 };
     private float diffuse;
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void addPoint(double xIn, double yIn, double zIn, double uIn, double vIn) {
-        point.x = (float) xIn;
-        point.y = (float) yIn;
-        point.z = (float) zIn;
-        matrix.transform(point);
-        int lmap = LaserRenderer_BC8.computeLightmap(point.x, point.y, point.z, minBlockLight);
-        x[index] = point.x;
-        y[index] = point.y;
-        z[index] = point.z;
+        point.setX((float) xIn);
+        point.setY((float) yIn);
+        point.setZ((float) zIn);
+        Vector4f point4f = new Vector4f(point);
+        point4f.transform(matrix);
+        point.set(point4f.x(), point4f.y(), point4f.z());
+        int lmap = LaserRenderer_BC8.computeLightmap(point.x(), point.y(), point.z(), minBlockLight);
+        x[index] = point.x();
+        y[index] = point.y();
+        z[index] = point.z();
         u[index] = uIn;
         v[index] = vIn;
         l[index] = lmap;
@@ -156,9 +157,16 @@ public class LaserContext {
 
     private void vertex(int i) {
         if (useNormalColour) {
-            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], n[0], n[1], n[2], diffuse);
+            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], overlay, n[0], n[1], n[2], diffuse);
         } else {
-            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], 0, 1, 0, 1);
+            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], overlay, 0, 1, 0, 1);
         }
+    }
+
+    private static void setMatrix4fValue(Matrix4f matrix, int x, int y, float value) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        matrix.store(buffer);
+        buffer.put(buffer.position() + x * 4 + y, value);
+        matrix.load(buffer);
     }
 }

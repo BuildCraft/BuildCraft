@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "buildcrafttransport",
+  "pattern": [
+    "lgr"
+  ],
+  "key": {
+    "l": {
+      "tag": "forge:obsidian"
+    },
+    "g": {
+      "tag": "forge:glass/colorless"
+    },
+    "r": {
+      "tag": "forge:obsidian"
+    }
+  },
+  "result": {
+    "item": "buildcrafttransport:pipe_items_obsidian_colorless",
+    "count": 8
+  }
+}

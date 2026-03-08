@@ -12,24 +12,31 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.registry.BuildCraftRegistryManager;
 import buildcraft.api.transport.pipe.PipeApi;
-
+import buildcraft.lib.crops.CropHandlerGlowBerries;
 import buildcraft.lib.crops.CropHandlerPlantable;
 import buildcraft.lib.crops.CropHandlerReeds;
-import buildcraft.lib.fluid.CoolantRegistry;
-import buildcraft.lib.fluid.FuelRegistry;
 import buildcraft.lib.guide.GuideBookRegistry;
 import buildcraft.lib.misc.FakePlayerProvider;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
-import buildcraft.lib.recipe.RefineryRecipeRegistry;
+import buildcraft.lib.recipe.coolant.CoolantRegistry;
+import buildcraft.lib.recipe.fuel.FuelRegistry;
+import buildcraft.lib.recipe.integration.IntegrationRecipeRegistry;
+import buildcraft.lib.recipe.programming.ProgrammingRecipeManager;
+import buildcraft.lib.recipe.refinery.RefineryRecipeRegistry;
 import buildcraft.lib.registry.PluggableRegistry;
 import buildcraft.lib.script.ReloadableRegistryManager;
 
 public class BCLibRegistries {
-    public static void fmlPreInit() {
-        BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
-        BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
-        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
-        BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
+    private static boolean preInitialized = false;
+    public static synchronized void fmlPreInit() {
+        if (preInitialized) {
+            return;
+        }
+        preInitialized = true;
+
+//        BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
+//        BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
+//        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
+//        BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
         BuildCraftAPI.fakePlayerProvider = FakePlayerProvider.INSTANCE;
         PipeApi.pluggableRegistry = PluggableRegistry.INSTANCE;
 
@@ -39,7 +46,17 @@ public class BCLibRegistries {
 
         CropManager.setDefaultHandler(CropHandlerPlantable.INSTANCE);
         CropManager.registerHandler(CropHandlerReeds.INSTANCE);
+        CropManager.registerHandler(CropHandlerGlowBerries.INSTANCE);
     }
 
-    public static void fmlInit() {}
+    public static void initRecipeRegistry() {
+        BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
+        BuildcraftRecipeRegistry.refineryRecipes = RefineryRecipeRegistry.INSTANCE;
+        BuildcraftRecipeRegistry.programmingRecipes = ProgrammingRecipeManager.INSTANCE;
+        BuildcraftFuelRegistry.fuel = FuelRegistry.INSTANCE;
+        BuildcraftFuelRegistry.coolant = CoolantRegistry.INSTANCE;
+    }
+
+    public static void fmlInit() {
+    }
 }

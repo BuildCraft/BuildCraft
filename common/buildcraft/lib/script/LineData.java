@@ -32,7 +32,7 @@ public class LineData {
 
     public LineData createReplacement(String newText, SourceLine newSource, int newLine) {
         ImmutableList<SourceLine> list =
-            ImmutableList.<SourceLine> builder().addAll(firstLineSources).add(newSource).build();
+                ImmutableList.<SourceLine>builder().addAll(firstLineSources).add(newSource).build();
         return new LineData(newText, this, newLine, list);
     }
 

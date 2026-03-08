@@ -6,19 +6,17 @@
 
 package buildcraft.lib.net;
 
-import java.io.IOException;
-
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.relauncher.Side;
-
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkDirection;
+
+import java.io.IOException;
 
 public class MessageContainer implements IMessage {
 
@@ -27,7 +25,8 @@ public class MessageContainer implements IMessage {
     private PacketBufferBC payload;
 
     @SuppressWarnings("unused")
-    public MessageContainer() {}
+    public MessageContainer() {
+    }
 
     public MessageContainer(int windowId, int msgId, PacketBufferBC payload) {
         this.windowId = windowId;
@@ -41,7 +40,7 @@ public class MessageContainer implements IMessage {
     // BYTE[size] - PAYLOAD
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(FriendlyByteBuf buf) {
         windowId = buf.readInt();
         msgId = buf.readUnsignedShort();
         int payloadSize = buf.readUnsignedShort();
@@ -50,7 +49,7 @@ public class MessageContainer implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeShort(msgId);
         int length = payload.readableBytes();
@@ -58,18 +57,17 @@ public class MessageContainer implements IMessage {
         buf.writeBytes(payload, 0, length);
     }
 
-    public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) ->
+    {
         try {
             int id = message.windowId;
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player != null && player.openContainer instanceof ContainerBC_Neptune
-                && player.openContainer.windowId == id) {
-                ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
-                container.readMessage(message.msgId, message.payload, ctx.side, ctx);
+            Player player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+            if (player != null && player.containerMenu instanceof ContainerBC_Neptune<?> container && player.containerMenu.containerId == id) {
+                container.readMessage(message.msgId, message.payload, ctx.getDirection(), ctx);
 
                 // error checking
                 String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
+                MessageUtil.ensureEmpty(message.payload, ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT, extra);
             }
             return null;
         } catch (IOException e) {

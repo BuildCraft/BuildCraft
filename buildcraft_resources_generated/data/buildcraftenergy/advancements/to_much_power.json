@@ -1,0 +1,28 @@
+{
+  "parent": "buildcraftenergy:powering_up",
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:wrench"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.to_much_power.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.to_much_power.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

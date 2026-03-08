@@ -6,40 +6,40 @@
 
 package buildcraft.builders.snapshot;
 
+import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.lib.misc.NBTUtilBC;
 
 public class RequiredExtractorItemsList extends RequiredExtractor {
     private NbtPath path = null;
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<ItemStack> extractItemsFromBlock(@Nonnull BlockState blockState, @Nullable CompoundTag tileNbt) {
         return Optional.ofNullable(path.get(tileNbt))
-            .map(NBTUtilBC::readCompoundList)
-            .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
-            .map(Collections::unmodifiableList)
-            .orElseGet(Collections::emptyList);
+                .map(NBTUtilBC::readCompoundList)
+//                .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
+                .map(stream -> stream.map(ItemStack::of).collect(Collectors.toList()))
+                .map(Collections::unmodifiableList)
+                .orElseGet(Collections::emptyList);
     }
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<ItemStack> extractItemsFromEntity(@Nonnull CompoundTag entityNbt) {
         return Optional.ofNullable(path.get(entityNbt))
-            .map(NBTUtilBC::readCompoundList)
-            .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
-            .map(Collections::unmodifiableList)
-            .orElseGet(Collections::emptyList);
+                .map(NBTUtilBC::readCompoundList)
+//                .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
+                .map(stream -> stream.map(ItemStack::of).collect(Collectors.toList()))
+                .map(Collections::unmodifiableList)
+                .orElseGet(Collections::emptyList);
     }
 }

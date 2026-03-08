@@ -6,10 +6,9 @@
 
 package buildcraft.lib.client.sprite;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.render.ISprite;
+import buildcraft.lib.misc.SpriteUtil;
+import net.minecraft.resources.ResourceLocation;
 
 /** Defines a sprite that is taken directly from the given resource location. */
 public class SpriteRaw implements ISprite {
@@ -34,7 +33,8 @@ public class SpriteRaw implements ISprite {
 
     @Override
     public void bindTexture() {
-        Minecraft.getMinecraft().renderEngine.bindTexture(location);
+//        Minecraft.getMinecraft().renderEngine.bindTexture(location);
+        SpriteUtil.bindTexture(location);
     }
 
     @Override

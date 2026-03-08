@@ -1,0 +1,18 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "subType": "BASIC",
+  "requiredMicroJoules": 20000000000,
+  "requiredStacks": [
+    {
+      "ingredient": {
+        "type": "forge:nbt",
+        "item": "buildcraftsilicon:chipset_iron",
+        "count": 1
+      },
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "buildcraftsilicon:plug_gate_iron_and_no_modifier"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:block/cube",
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        135,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  },
+  "textures": {
+    "particle": "buildcraftbuilders:blocks/library/back",
+    "down": "buildcraftbuilders:blocks/library/bottom",
+    "up": "buildcraftbuilders:blocks/library/top",
+    "north": "buildcraftbuilders:blocks/library/front",
+    "east": "buildcraftbuilders:blocks/library/left",
+    "south": "buildcraftbuilders:blocks/library/back",
+    "west": "buildcraftbuilders:blocks/library/right"
+  }
+}

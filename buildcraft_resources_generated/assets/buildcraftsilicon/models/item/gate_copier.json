@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "predicate": {
+        "buildcraft:has_data": 0.0
+      },
+      "model": "buildcraftsilicon:item/gate_copier/empty"
+    },
+    {
+      "predicate": {
+        "buildcraft:has_data": 1.0
+      },
+      "model": "buildcraftsilicon:item/gate_copier/full"
+    }
+  ]
+}

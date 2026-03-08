@@ -6,16 +6,14 @@
 
 package buildcraft.lib.client.model;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.expression.info.ContextInfo;
+import buildcraft.lib.expression.info.VariableInfo;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nullable;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.expression.info.ContextInfo;
-import buildcraft.lib.expression.info.VariableInfo;
 
 public class AdvModelCache {
     private static final int MODEL_INDEX_INCORRECT = -1;
@@ -92,10 +90,10 @@ public class AdvModelCache {
 
         if (!missKeys.isEmpty()) {
             BCLog.logger.warn(
-                "[lib.model.adv_cache] Creating an indexed cache despite knowing that there will be cache misses!");
+                    "[lib.model.adv_cache] Creating an indexed cache despite knowing that there will be cache misses!");
             for (VariableInfo<?> info : missKeys) {
                 BCLog.logger.warn("[lib.model.adv_cache]  - " + info.node + " (" + info.cacheType + ", "
-                    + info.getPossibleValues() + ")");
+                        + info.getPossibleValues() + ")");
             }
         }
 
@@ -131,8 +129,8 @@ public class AdvModelCache {
                 if (index == MODEL_INDEX_INCORRECT) {
                     // Uh-oh! incorrect creation of this cache!
                     BCLog.logger.warn(
-                        "[lib.model.adv_cache] Cache miss for indexed cache - this should be impossible! (index = "
-                            + index + ", length = " + values.length + ")");
+                            "[lib.model.adv_cache] Cache miss for indexed cache - this should be impossible! (index = "
+                                    + index + ", length = " + values.length + ")");
                     for (VariableInfo<?> var : variables) {
                         BCLog.logger.warn("            - " + var);
                     }

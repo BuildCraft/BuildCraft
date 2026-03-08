@@ -6,11 +6,10 @@
 
 package buildcraft.lib.inventory.filter;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.IStackFilter;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class InvertedStackFilter implements IStackFilter {
 

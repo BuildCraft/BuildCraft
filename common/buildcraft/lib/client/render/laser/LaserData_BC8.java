@@ -6,29 +6,27 @@
 
 package buildcraft.lib.client.render.laser;
 
-import java.util.Objects;
-
-import net.minecraft.util.math.Vec3d;
-
 import buildcraft.api.core.render.ISprite;
-
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.Objects;
 
 /** Holds information on what a single laser in the world: its {@link LaserType}, is position, its size, and some other
  * misc rendering info. */
 public class LaserData_BC8 {
     public final LaserType laserType;
-    public final Vec3d start, end;
+    public final Vec3 start, end;
     public final double scale;
     public final boolean enableDiffuse, doubleFace;
     public final int minBlockLight;
     private final int hash;
 
-    public LaserData_BC8(LaserType laserType, Vec3d start, Vec3d end, double scale) {
+    public LaserData_BC8(LaserType laserType, Vec3 start, Vec3 end, double scale) {
         this(laserType, start, end, scale, true, false, 0);
     }
 
-    public LaserData_BC8(LaserType laserType, Vec3d start, Vec3d end, double scale, boolean enableDiffuse, boolean doubleFace, int minBlockLight) {
+    public LaserData_BC8(LaserType laserType, Vec3 start, Vec3 end, double scale, boolean enableDiffuse, boolean doubleFace, int minBlockLight) {
         this.laserType = laserType;
         this.start = start;
         this.end = end;

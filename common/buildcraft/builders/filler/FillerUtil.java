@@ -6,16 +6,13 @@
 
 package buildcraft.builders.filler;
 
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IFillerStatementContainer;
-
-import buildcraft.lib.statement.FullStatement;
-
 import buildcraft.builders.snapshot.Template;
+import buildcraft.lib.statement.FullStatement;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Rotation;
 
 public class FillerUtil {
     public static Template.BuildingInfo createBuildingInfo(IFillerStatementContainer filler,
@@ -23,8 +20,8 @@ public class FillerUtil {
                                                            IStatementParameter[] params,
                                                            boolean inverted) {
         Template.FilledTemplate filledTemplate = (Template.FilledTemplate) patternStatement.get().createTemplate(
-            filler,
-            params
+                filler,
+                params
         );
         if (filledTemplate == null) {
             return null;
@@ -32,6 +29,6 @@ public class FillerUtil {
         if (inverted) {
             filledTemplate.getTemplate().invert();
         }
-        return filledTemplate.getTemplate().new BuildingInfo(BlockPos.ORIGIN, Rotation.NONE);
+        return filledTemplate.getTemplate().new BuildingInfo(BlockPos.ZERO, Rotation.NONE);
     }
 }

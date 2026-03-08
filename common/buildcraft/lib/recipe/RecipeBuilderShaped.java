@@ -6,28 +6,24 @@
 
 package buildcraft.lib.recipe;
 
+import buildcraft.lib.misc.StackUtil;
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import gnu.trove.map.hash.TCharObjectHashMap;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import buildcraft.lib.misc.StackUtil;
-
+// 1.18.2: use datagen
+@Deprecated(forRemoval = true)
 public class RecipeBuilderShaped {
     @Nonnull
     private ItemStack result = StackUtil.EMPTY;
     private final List<String> shape = new ArrayList<>();
-    private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
+    private final Char2ObjectOpenHashMap<Object> objects = new Char2ObjectOpenHashMap<>();
 
     public void clear() {
         result = StackUtil.EMPTY;
@@ -38,7 +34,7 @@ public class RecipeBuilderShaped {
     public RecipeBuilderShaped add(String row) {
         if (shape.size() > 0 && shape.get(0).length() != row.length()) {
             throw new IllegalArgumentException(
-                "Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
+                    "Badly sized row! (Other rows = " + shape.get(0).length() + ", given row = " + row.length() + ")");
         }
         shape.add(row);
         return this;
@@ -49,9 +45,9 @@ public class RecipeBuilderShaped {
         for (Object v : values) {
             if (v != null && v != StackUtil.EMPTY) {
                 if (v instanceof Item//
-                    || v instanceof Block//
-                    || v instanceof ItemStack//
-                    || v instanceof String) {
+                        || v instanceof Block//
+                        || v instanceof ItemStack//
+                        || v instanceof String) {
                     if (!put) {
                         objects.put(c, v);
                         put = true;
@@ -78,7 +74,7 @@ public class RecipeBuilderShaped {
         for (String s : shape) {
             objs[offset++] = s;
         }
-        for (char c : objects.keys()) {
+        for (char c : objects.keySet()) {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
@@ -98,29 +94,29 @@ public class RecipeBuilderShaped {
         return objs;
     }
 
-    public ShapedOreRecipe buildRotated() {
-        int fromRows = shape.size();
-        int toRows = shape.get(0).length();
-        StringBuilder[] strings = new StringBuilder[toRows];
-        for (int toRow = 0; toRow < toRows; toRow++) {
-            strings[toRow] = new StringBuilder();
-        }
-        for (String toAdd : shape) {
-            for (int toRow = 0; toRow < toRows; toRow++) {
-                strings[toRow].append(toAdd.charAt(toRow));
-            }
-        }
-        Object[] objs = new Object[toRows + objects.size() * 2];
-        int offset = 0;
-        for (StringBuilder string : strings) {
-            objs[offset++] = string.toString();
-        }
-        for (char c : objects.keys()) {
-            objs[offset++] = c;
-            objs[offset++] = objects.get(c);
-        }
-        return new ShapedOreRecipe(result.getItem().getRegistryName(), result, objs);
-    }
+//    public ShapedOreRecipe buildRotated() {
+//        int fromRows = shape.size();
+//        int toRows = shape.get(0).length();
+//        StringBuilder[] strings = new StringBuilder[toRows];
+//        for (int toRow = 0; toRow < toRows; toRow++) {
+//            strings[toRow] = new StringBuilder();
+//        }
+//        for (String toAdd : shape) {
+//            for (int toRow = 0; toRow < toRows; toRow++) {
+//                strings[toRow].append(toAdd.charAt(toRow));
+//            }
+//        }
+//        Object[] objs = new Object[toRows + objects.size() * 2];
+//        int offset = 0;
+//        for (StringBuilder string : strings) {
+//            objs[offset++] = string.toString();
+//        }
+//        for (char c : objects.keys()) {
+//            objs[offset++] = c;
+//            objs[offset++] = objects.get(c);
+//        }
+//        return new ShapedOreRecipe(result.getItem().getRegistryName(), result, objs);
+//    }
 
     private void ensureValid() {
         if (result.isEmpty()) {
@@ -131,19 +127,19 @@ public class RecipeBuilderShaped {
     public void register() {
         ensureValid();
         ResourceLocation name = result.getItem().getRegistryName();
-        ShapedOreRecipe recipe = new ShapedOreRecipe(name, result, createRecipeObjectArray());
-        ForgeRegistries.RECIPES.register(recipe.setRegistryName(name));
+//        ShapedOreRecipe recipe = new ShapedOreRecipe(name, result, createRecipeObjectArray());
+//        ForgeRegistries.RECIPES.register(recipe.setRegistryName(name));
     }
 
     public void registerNbtAware(String regName) {
         ensureValid();
-        ShapedOreRecipe recipe =
-            new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT());
-        ForgeRegistries.RECIPES.register(recipe.setRegistryName(regName));
+////        ShapedOreRecipe recipe = new ShapedOreRecipe(result.getItem().getRegistryName(), result, createRecipeObjectArrayNBT());
+//        ShapedRecipe recipe = new ShapedRecipe(result.getItem().getRegistryName(), regName, result, createRecipeObjectArrayNBT());
+//        ForgeRegistries.RECIPES.register(recipe.setRegistryName(regName));
     }
 
-    public void registerRotated() {
-        ensureValid();
-        ForgeRegistries.RECIPES.register(buildRotated().setRegistryName(result.getItem().getRegistryName()));
-    }
+//    public void registerRotated() {
+//        ensureValid();
+//        ForgeRegistries.RECIPES.register(buildRotated().setRegistryName(result.getItem().getRegistryName()));
+//    }
 }

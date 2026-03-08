@@ -1,0 +1,81 @@
+{
+  "textures": {
+    "particle": "buildcraftfactory:blocks/chute/top",
+    "top": "buildcraftfactory:blocks/chute/top",
+    "top_bottom": "buildcraftfactory:blocks/chute/top_bottom",
+    "top_side": "buildcraftfactory:blocks/chute/top_side",
+    "bottom": "buildcraftfactory:blocks/chute/bottom",
+    "side": "buildcraftfactory:blocks/chute/side",
+    "side2": "buildcraftfactory:blocks/chute/side2"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        3,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            6.0
+          ]
+        },
+        "up": {
+          "texture": "#bottom",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            6.0
+          ]
+        },
+        "north": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#bottom",
+          "uv": [
+            10.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        }
+      }
+    }
+  ]
+}

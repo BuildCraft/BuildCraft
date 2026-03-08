@@ -6,22 +6,17 @@
 
 package buildcraft.transport.pipe;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.transport.pipe.PipeEvent;
+import buildcraft.api.transport.pipe.PipeEventHandler;
+import buildcraft.api.transport.pipe.PipeEventPriority;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.transport.pipe.PipeEvent;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventPriority;
+import java.util.*;
 
 public class PipeEventBus {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("transport.pipe.event_bus");
@@ -102,7 +97,7 @@ public class PipeEventBus {
     }
 
     /** Sends this event to all of the registered handlers.
-     * 
+     *
      * @return True if at least 1 event handler was called, 0 if no handlers were called. */
     public boolean fireEvent(PipeEvent event) {
         boolean handled = false;
@@ -110,7 +105,7 @@ public class PipeEventBus {
             String error = event.checkStateForErrors();
             if (error != null) {
                 throw new IllegalArgumentException("The event " + event.getClass() + " was in an invalid state when firing! This is DEFINITELY a bug!\n"//
-                    + "(error = " + error + ")");
+                        + "(error = " + error + ")");
             }
         }
         for (LocalHandler handler : currentHandlers) {
@@ -119,7 +114,7 @@ public class PipeEventBus {
                 String error = event.checkStateForErrors();
                 if (error != null) {
                     throw new IllegalStateException("The event " + event.getClass() + " was in an invalid state after being handled by "//
-                        + handler.methodName + " (error = " + error + ")");
+                            + handler.methodName + " (error = " + error + ")");
                 }
             }
         }

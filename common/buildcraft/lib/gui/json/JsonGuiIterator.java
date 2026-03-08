@@ -1,21 +1,18 @@
 package buildcraft.lib.gui.json;
 
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.util.JsonUtils;
-
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.InvalidExpressionException;
 import buildcraft.lib.expression.node.value.NodeVariableLong;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.GsonHelper;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 public class JsonGuiIterator {
     public final String name;
@@ -29,15 +26,20 @@ public class JsonGuiIterator {
     public JsonGuiIterator(JsonElement element) {
         if (element.isJsonObject()) {
             JsonObject obj = element.getAsJsonObject();
-            name = JsonUtils.getString(obj, "name", "index");
-            start = JsonUtils.getString(obj, "start", "0");
-            step = JsonUtils.getString(obj, "step");
+//            name = JsonUtils.getString(obj, "name", "index");
+            name = GsonHelper.getAsString(obj, "name", "index");
+//            start = JsonUtils.getString(obj, "start", "0");
+            start = GsonHelper.getAsString(obj, "start", "0");
+//            step = JsonUtils.getString(obj, "step");
+            step = GsonHelper.getAsString(obj, "step");
             if (obj.has("while")) {
-                shouldContinue = JsonUtils.getString(obj, "while");
+//                shouldContinue = JsonUtils.getString(obj, "while");
+                shouldContinue = GsonHelper.getAsString(obj, "while");
             } else {
-                String end = JsonUtils.getString(obj, "end");
+//                String end = JsonUtils.getString(obj, "end");
+                String end = GsonHelper.getAsString(obj, "end");
                 shouldContinue = "step > 0 ? ($name <= $end) : ($name >= $end)"//
-                    .replace("$end", end).replace("$name", name);
+                        .replace("$end", end).replace("$name", name);
             }
             if (obj.has("iterator")) {
                 childIterator = new JsonGuiIterator(obj.get("iterator"));

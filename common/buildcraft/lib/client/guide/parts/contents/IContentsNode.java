@@ -1,13 +1,18 @@
 package buildcraft.lib.client.guide.parts.contents;
 
-import java.util.Set;
-
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import net.minecraft.network.chat.Component;
+
+import java.util.Set;
 
 public interface IContentsNode {
 
-    String getSearchName();
+    // String getSearchName();
+    Component getSearchName();
+
+    // Calen
+    String getKey();
 
     boolean isVisible();
 

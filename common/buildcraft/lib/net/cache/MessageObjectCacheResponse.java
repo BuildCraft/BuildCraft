@@ -6,15 +6,13 @@
 
 package buildcraft.lib.net.cache;
 
-import java.io.IOException;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-
+import buildcraft.api.net.IMessage;
+import buildcraft.api.net.IMessageHandler;
 import buildcraft.lib.net.PacketBufferBC;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+
+import java.io.IOException;
 
 public class MessageObjectCacheResponse implements IMessage {
 
@@ -34,7 +32,7 @@ public class MessageObjectCacheResponse implements IMessage {
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeByte(cacheId);
         buf.writeShort(ids.length);
         for (int i = 0; i < ids.length; i++) {
@@ -45,7 +43,7 @@ public class MessageObjectCacheResponse implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(FriendlyByteBuf buf) {
         cacheId = buf.readByte();
         int idCount = buf.readShort();
         ids = new int[idCount];
@@ -57,7 +55,8 @@ public class MessageObjectCacheResponse implements IMessage {
         }
     }
 
-    public static final IMessageHandler<MessageObjectCacheResponse, IMessage> HANDLER = (message, ctx) -> {
+    public static final IMessageHandler<MessageObjectCacheResponse, IMessage> HANDLER = (message, ctx) ->
+    {
         try {
             NetworkedObjectCache<?> cache = BuildCraftObjectCaches.CACHES.get(message.cacheId);
             for (int i = 0; i < message.ids.length; i++) {

@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "buildcraftenergy:oil_desert",
+    "buildcraftenergy:oil_ocean"
+  ]
+}

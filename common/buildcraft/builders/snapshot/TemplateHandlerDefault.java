@@ -6,29 +6,50 @@
 
 package buildcraft.builders.snapshot;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import buildcraft.api.template.ITemplateHandler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public enum TemplateHandlerDefault implements ITemplateHandler {
     INSTANCE;
 
     @Override
-    public boolean handle(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
-        return stack.onItemUse(
-            player,
-            world,
-            pos,
-            player.getActiveHand(),
-            EnumFacing.UP,
-            0.5F,
-            0.0F,
-            0.5F
-        ) == EnumActionResult.SUCCESS;
+    public boolean handle(Level world, BlockPos pos, Player player, ItemStack stack) {
+//        return stack.onItemUse(
+//            player,
+//            world,
+//            pos,
+//            player.getActiveHand(),
+//            Direction.UP,
+//            0.5F,
+//            0.0F,
+//            0.5F
+//        ) == EnumActionResult.SUCCESS;
+        return stack.useOn(
+                new UseOnContext(
+                        world,
+                        player,
+                        player.getUsedItemHand(),
+                        player.getItemInHand(player.getUsedItemHand()),
+                        new BlockHitResult(
+                                new Vec3(
+                                        0.5F,
+                                        0.0F,
+                                        0.5F
+                                ),
+                                Direction.UP,
+                                pos,
+                                false
+
+                        )
+                )
+        ) == InteractionResult.SUCCESS;
     }
 }

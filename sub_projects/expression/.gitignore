@@ -5,7 +5,6 @@ run/*
 .settings/*
 bin/*
 out/*
-src/autogen/java/*
 
 # files
 .project

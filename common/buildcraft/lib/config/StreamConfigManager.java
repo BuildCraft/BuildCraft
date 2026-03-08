@@ -6,20 +6,14 @@
 
 package buildcraft.lib.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import buildcraft.api.core.BCLog;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeSet;
-
-import buildcraft.api.core.BCLog;
 
 @Deprecated
 public abstract class StreamConfigManager {

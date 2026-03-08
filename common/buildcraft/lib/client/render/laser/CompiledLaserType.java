@@ -6,19 +6,18 @@
 
 package buildcraft.lib.client.render.laser;
 
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import net.minecraft.util.Mth;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.util.math.MathHelper;
-
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-
 public class CompiledLaserType {
-    public final LaserType type;
+    public final LaserData_BC8.LaserType type;
     private final CompiledLaserRow startCap, endCap;
     private final CompiledLaserRow start, end;
     private final double startWidth, middleWidth, endWidth;
@@ -52,7 +51,8 @@ public class CompiledLaserType {
         endCap.bakeEndCap(context);
 
         double lengthForMiddle = Math.max(0, context.length - startWidth - endWidth);
-        int numMiddle = MathHelper.floor(lengthForMiddle / middleWidth);
+//        int numMiddle = MathHelper.floor(lengthForMiddle / middleWidth);
+        int numMiddle = Mth.floor(lengthForMiddle / middleWidth);
         double leftOverFromMiddle = lengthForMiddle - middleWidth * numMiddle;
         if (leftOverFromMiddle > 0) {
             numMiddle++;

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "buildcraftsilicon",
+  "ingredients": [
+    {
+      "item": "buildcraftsilicon:plug_gate_gold_or_no_modifier"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug_gate_gold_and_no_modifier"
+  }
+}

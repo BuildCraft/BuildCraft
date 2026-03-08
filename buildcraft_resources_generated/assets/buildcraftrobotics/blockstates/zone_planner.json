@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "buildcraftrobotics:block/zone_planner"
+    },
+    "facing=south": {
+      "model": "buildcraftrobotics:block/zone_planner",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "buildcraftrobotics:block/zone_planner",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "buildcraftrobotics:block/zone_planner",
+      "y": 90
+    }
+  }
+}
