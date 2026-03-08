@@ -38,7 +38,7 @@ public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
     @Override
     public void initWhenOpenGuiOrResizeWindow() {
         super.initWhenOpenGuiOrResizeWindow();
-        this.removeWidget(this.nameField);
+        this.children.remove(this.nameField);
 //        nameField = new GuiTextField(0, fontRenderer, guiLeft + 90, guiTop + 62, 156, 12);
         nameField = new TextFieldWidget(font, leftPos + 90, topPos + 62, 156, 12, new StringTextComponent(""));
         this.addWidget(nameField);

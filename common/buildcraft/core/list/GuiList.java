@@ -163,7 +163,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     protected void initWhenOpenGuiOrResizeWindow() {
         super.initWhenOpenGuiOrResizeWindow();
 
-        this.removeWidget(this.textField);
+        this.children.remove(this.textField);
 //        textField = new GuiTextField(6, this.fontRenderer, guiLeft + 10, guiTop + 10, 156, 12);
         textField = new TextFieldWidget(this.font, leftPos + 10, topPos + 10, 156, 12, new StringTextComponent(""));
         this.addWidget(textField);

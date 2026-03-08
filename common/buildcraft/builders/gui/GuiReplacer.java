@@ -40,7 +40,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
     public void initWhenOpenGuiOrResizeWindow() {
         super.initWhenOpenGuiOrResizeWindow();
 
-        this.removeWidget(this.nameField);
+        this.children.remove(this.nameField);
 //        nameField = new GuiTextField(0, fontRenderer, guiLeft + 30, guiTop + 117, 138, 12);
         nameField = new TextFieldWidget(font, leftPos + 30, topPos + 117, 138, 12, new StringTextComponent(""));
         this.addWidget(nameField);
