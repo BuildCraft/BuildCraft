@@ -261,7 +261,8 @@ public class BCEnergyFluids {
     }
 
     private static Material fluidMaterial(MaterialColor color, boolean canBurn) {
-        return new Material(color, /*liquid*/ true, /*solid*/ false, /*blocksMotion*/ true, /*solidBlocking*/ false, /*flammable*/ canBurn, /*replaceable*/ false, /*pushReaction*/ PushReaction.DESTROY);
+        // if not replaceable, <Create> mod's HosePulley will not be able to enter the oil block
+        return new Material(color, /*liquid*/ true, /*solid*/ false, /*blocksMotion*/ true, /*solidBlocking*/ false, /*flammable*/ canBurn, /*replaceable*/ true, /*pushReaction*/ PushReaction.DESTROY);
     }
 
     // private static MapColor getMapColor(int color)

@@ -12,6 +12,7 @@ import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.imc.BcImcMessage;
 import buildcraft.api.schematics.SchematicBlockFactoryRegistry;
 import buildcraft.core.BCCore;
+import buildcraft.lib.BCLibRegistries;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.CreativeTabManager.CreativeTabBC;
 import buildcraft.lib.registry.RegistryConfig;
@@ -61,6 +62,8 @@ public class BCTransport {
 
     @SubscribeEvent
     public static void preInit(FMLConstructModEvent evt) {
+        BCLibRegistries.fmlPreInit(); // this should be called in BCLib#<clinit> before BCTransport#preInit called, but sometimes the order is incorrect?
+
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
 
         tabPipes = CreativeTabManager.createTab("buildcraft.pipes");
@@ -74,7 +77,7 @@ public class BCTransport {
         BCTransportItems.preInit();
         BCTransportStatements.preInit();
 
-        // Reload after all of the pipe defs have been created.
+        // Reload after all the pipe defs have been created.
 //        BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
         BCTransportConfig.reloadConfig();
 

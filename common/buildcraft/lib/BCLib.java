@@ -81,7 +81,7 @@ public class BCLib {
         // load dependencies
         loadJarInJarDependencies();
 
-        // Calen: should before BCSiliconPlugs.preInit()
+        // Calen: should be called before BCSiliconPlugs.preInit() and BCTransportPlugs.preInit()
         BCLibRegistries.fmlPreInit();
     }
 
@@ -204,7 +204,7 @@ public class BCLib {
         BCLog.logger.info("");
 
         ExpressionDebugManager.logger = BCLog.logger::info;
-//        ExpressionCompat.setup(); // Calen: moved to <init> to be loaded early enough, or the Silicon/Transport/Factory model classed will cause Exception when running <cinit>
+//        ExpressionCompat.setup(); // Calen: moved to <init> to be loaded early enough, or the Silicon/Transport/Factory model classed will cause Exception when running <clinit>
 
 
 //        BCLibRegistries.fmlPreInit(); // Calen: moved to static

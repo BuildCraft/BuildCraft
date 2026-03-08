@@ -78,10 +78,16 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune<?>> extends Container
             initGui();
         }
         firstCallInit = false;
+
+        this.initWhenOpenGuiOrResizeWindow();
     }
 
     // Calen: default: do nothing
     protected void initGui() {
+
+    }
+
+    protected void initWhenOpenGuiOrResizeWindow() {
 
     }
 

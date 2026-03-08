@@ -84,8 +84,7 @@ public abstract class BCFluid extends ForgeFlowingFluid {
 
     @Override
     protected boolean canBeReplacedWith(FluidState state, IBlockReader level, BlockPos pos, Fluid fluidIn, Direction direction) {
-        // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
-        return direction == /*here different from ForgeFlowingFluid*/ (isGas ? Direction.UP : Direction.DOWN) && !isSame(fluidIn);
+        return false; // never be replaced by other fluids
     }
 
     // FlowingFluid

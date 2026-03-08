@@ -70,8 +70,8 @@ public class BCCoreConfig {
     private static ConfigCategory<Double> propMjPerRf;
     private static ConfigCategory<BCLibConfig.PowerMode> propPowerMode;
 
-    // Calen: just ensure <cinit> run and registered to RegistryConfig#modObjectConfigs
-    public static synchronized void cinit() {
+    // Calen: just ensure <clinit> run and registered to RegistryConfig#modObjectConfigs
+    public static synchronized void clinit() {
     }
 
     static {

@@ -157,10 +157,16 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                 b.registerListener(this);
             }
         }
+    }
 
+    @Override
+    protected void initWhenOpenGuiOrResizeWindow() {
+        super.initWhenOpenGuiOrResizeWindow();
+
+        this.removeWidget(this.textField);
 //        textField = new GuiTextField(6, this.fontRenderer, guiLeft + 10, guiTop + 10, 156, 12);
-//        textField = new TextFieldWidget(this.font, leftPos + 10, topPos + 10, 156, 12, new StringTextComponent(""));
-        textField = new TextFieldWidget(this.font, 10, 10, 156, 12, new StringTextComponent(""));
+        textField = new TextFieldWidget(this.font, leftPos + 10, topPos + 10, 156, 12, new StringTextComponent(""));
+        this.addWidget(textField);
 //        textField.setMaxStringLength(32);
         textField.setMaxLength(32);
 //        textField.setText(BCCoreItems.list.getName(container.getListItemStack()));
@@ -183,10 +189,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     @Override
     protected void drawForegroundLayer(MatrixStack poseStack) {
 //        textField.drawTextBox();
-        poseStack.pushPose();
-        poseStack.translate(leftPos, topPos, 0);
         textField.renderButton(poseStack, 0, 0, Minecraft.getInstance().getFrameTime());
-        poseStack.popPose();
     }
 
     private boolean isCarryingNonEmptyList() {
@@ -207,26 +210,30 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 //        if (textField.isFocused() && keyCode != Keyboard.KEY_ESCAPE)
         if (textField.isFocused() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
 //            textField.textboxKeyTyped(typedChar, keyCode);
-            handled = textField.keyPressed(typedChar, keyCode, modifiers);
+            handled = textField.keyPressed(typedChar, keyCode, modifiers) || this.textField.canConsumeInput();
 //            container.setLabel(textField.getText());
             container.setLabel(textField.getValue());
-
-            return handled;
+        }
+        if (handled) {
+            return true;
         } else {
 //            super.keyTyped(typedChar, keyCode);
             return super.keyPressed(typedChar, keyCode, modifiers);
         }
     }
 
+    @Override
     public boolean charTyped(char typedChar, int keyCode) {
         boolean handled = false;
 //        if (textField.isFocused() && keyCode != Keyboard.KEY_ESCAPE)
         if (textField.isFocused() && typedChar != GLFW.GLFW_KEY_ESCAPE) {
 //            textField.textboxKeyTyped(typedChar, keyCode);
-            handled = textField.charTyped(typedChar, keyCode);
+            handled = textField.charTyped(typedChar, keyCode) || this.textField.canConsumeInput();
 //            container.setLabel(textField.getText());
             container.setLabel(textField.getValue());
-            return handled;
+        }
+        if (handled) {
+            return true;
         } else {
 //            super.keyTyped(typedChar, keyCode);
             return super.charTyped(typedChar, keyCode);
