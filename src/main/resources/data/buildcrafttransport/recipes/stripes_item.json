@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "m": {
+      "item": "buildcraftcore:gears/gear_gold"
+    }
+  },
+  "pattern": [
+    "mgm"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:stripes_item"
+  }
+}

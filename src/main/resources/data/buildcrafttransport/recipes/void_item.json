@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "m": {
+      "item": "minecraft:ink_sac"
+    },
+    "n": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "mgn"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:void_item"
+  }
+}

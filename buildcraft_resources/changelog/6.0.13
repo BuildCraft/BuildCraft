@@ -1,7 +1,0 @@
-#1799 fix drain method causing dupe glitches [M3gaFr3ak]
-#1794 glass should be considered standalone block [SpaceToad]
-#1792 remove unnecessary extends for ISidedBatteryProvider [Prototik]
-#1791 refinery doesn't get emptied in blueprints [SpaceToad]
-#1790 blueprints don't remove liquid from pumps [SpaceToad]
-#1789 quarries should not remove bedrock [SpaceToad]
-#1786 migrate to Forge's fake player management [SpaceToad]

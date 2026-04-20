@@ -1,0 +1,21 @@
+{
+  "multipart": [
+    {
+      "when": {"facing": "north"},
+      "apply":{"model": "buildcraftfactory:block/mining_well"}
+    },
+    {
+      "when": {"facing": "east"},
+      "apply":{"model": "buildcraftfactory:block/mining_well","y": 90}
+      
+    },
+    {
+      "when": {"facing": "south"},
+      "apply": {"model": "buildcraftfactory:block/mining_well","y": 180}
+    },
+    {
+      "when": {"facing": "west"},
+      "apply": {"model": "buildcraftfactory:block/mining_well","y": 270}
+    }
+  ]
+}

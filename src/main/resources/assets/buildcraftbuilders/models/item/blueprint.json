@@ -1,0 +1,20 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "buildcraftbuilders:items/blueprint/clean"
+    },
+	"overrides": [
+	        {
+	            "predicate": {
+	                "buildcraftbuilder:used": 0
+	            },
+	            "model": "buildcraftbuilders:item/snapshot/blueprint_clean"
+	        },
+	        {
+	            "predicate": {
+	                "buildcraftbuilder:used": 1
+	            },
+	            "model": "buildcraftbuilders:item/snapshot/blueprint_used"
+	        }
+	    ]
+}

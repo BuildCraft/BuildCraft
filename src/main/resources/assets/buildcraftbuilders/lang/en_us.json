@@ -1,0 +1,36 @@
+{
+	"block.buildcraftbuilders.filler":"Filler",
+	"block.buildcraftbuilders.builder":"Builder",
+	"block.buildcraftbuilders.architect":"Architect Table",
+	"block.buildcraftbuilders.library":"Electronic Library",
+	"block.buildcraftbuilders.replacer":"Replacer",
+	"block.buildcraftbuilders.frame":"Frame",
+	"block.buildcraftbuilders.quarry":"Quarry",
+	
+	"item.buildcraftbuilders.blueprint":"Blueprint",
+	"item.buildcraftbuilders.template":"Template",
+	"item.buildcraftbuilders.schematic_single":"Single Block Schematic",
+	"item.buildcraftbuilders.filler_planner":"Filler Planner",
+	"item.buildcraftbuilders.filler":"Filler",
+	"item.buildcraftbuilders.builder":"Builder",
+	"item.buildcraftbuilders.architect":"Architect Table",
+	"item.buildcraftbuilders.library":"Electronic Library",
+	"item.buildcraftbuilders.replacer":"Replacer",
+	"item.buildcraftbuilders.frame":"Frame",
+	"item.buildcraftbuilders.quarry":"Quarry",
+	
+	"item.blueprint.unnamed": "<unnamed>",
+	"item.blueprint.author": "by",
+	"item.blueprint.blank": "Blank",
+	"item.blueprint.creative_only": "Creative Only",
+	"item.blueprint.no_build": "No Building",
+	"item.blueprint.incomplete": "Incomplete",
+	
+	"block.architect.rotate": "Rotate",
+	"block.architect.allowCreative": "Mode: Creative",
+	"block.architect.noallowCreative": "Mode: Survival",
+	"block.architect.tooltip.allowCreative.1": "Creative allows all blocks - Creative Mode only!",
+	"block.architect.tooltip.allowCreative.2": "Survival ignores all unsupported blocks",
+	"block.architect.excavate": "Excavate"
+	
+}

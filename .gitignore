@@ -1,41 +1,25 @@
-#eclipse
-.project
-.classpath
-.settings/
-.metadata
-*.launch
-org.*
+# eclipse
 bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-#idea
-*.iml
+# idea
+out
 *.ipr
 *.iws
+*.iml
 .idea
-out
 
-#gradle
+# gradle
 build
 .gradle
-modules
-libs
 
-#runtime
+# other
+eclipse
 run
-run_server
 
-#mac
-.DS_Store
-
-#Custom code to inject the the dev environment
-custom
-test-results
-
-#licnse_checker
-# Not in git because it contains names + emails.
-license_checker/agreed.txt
-license_checker/unused_code.txt
-license_checker/out/**
-
-# For some annoying reason the tests creates a log file in "/logs/latest.txt"
-logs
+# Files from Forge MDK
+forge*changelog.txt

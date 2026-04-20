@@ -1,0 +1,62 @@
+ {
+	 "parent":"minecraft:block/block",
+	 "textures": {
+        "chamber":"buildcraftlib:blocks/engine/chamber_base",
+        "back":"buildcraftcore:blocks/engine/wood/back",
+        "side":"buildcraftcore:blocks/engine/wood/side",
+        "trunk":"buildcraftlib:blocks/engine/trunk_blue"
+    },
+    "shade":true,
+    "elements": [
+        {
+            "name":"base",
+            "from": [ 0, 0, 0 ],
+            "to": [ 16, 4, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#back" },
+                "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#back" },
+                "north": { "uv": [ 0, 0, 16, 4 ], "texture": "#side" },
+                "south": { "uv": [ 0, 0, 16, 4 ], "texture": "#side" },
+                "west":  { "uv": [ 0, 0, 16, 4 ], "texture": "#side"},
+                "east":  { "uv": [ 0, 0, 16, 4 ], "texture": "#side" }
+            }
+        },
+   	    {
+            "name":"base_moving",
+            "from": [ 0, 7, 0 ],
+            "to": [ 16, 11, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#back" },
+                "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#back" },
+                "north": { "uv": [ 0, 0, 16, 4 ], "texture": "#side" },
+                "south": { "uv": [ 0, 0, 16, 4 ], "texture": "#side" },
+                "west":  { "uv": [ 0, 0, 16, 4 ], "texture": "#side"},
+                "east":  { "uv": [ 0, 0, 16, 4 ], "texture": "#side" }
+            }
+        },	
+        {
+            "name":"chamber",
+            "from": [ 3, 4, 3 ],
+            "to": [ 13, 7, 13 ],
+            "faces": {
+                "north": { "uv": [ 3, 4, 13, 0 ], "texture": "#chamber" },
+                "south": { "uv": [ 3, 4, 13, 0 ], "texture": "#chamber" },
+                "west":  { "uv": [ 3, 4, 13, 0 ], "texture": "#chamber" },
+                "east":  { "uv": [ 3, 4, 13, 0 ], "texture": "#chamber" }
+            }
+        },        
+	    {
+   	       "name":"trunk",
+     	   "from": [ 4, 4, 4 ],    
+    	   "to": [ 12, 16, 12],
+      	   "faces": {
+           	"down":  { "uv": [ 0, 0, 8, 8 ], "texture": "#trunk" },
+            "up":    { "uv": [ 0, 0, 8, 8 ], "texture": "#trunk" },
+            "north": { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk" },
+            "south": { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk" },
+            "west":  { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk"},
+            "east":  { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk" }
+        }
+    }  
+    ]
+}

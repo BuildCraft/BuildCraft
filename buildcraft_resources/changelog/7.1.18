@@ -1,5 +1,0 @@
-Bugs fixed:
-
-* [#3262] Builders and fillers not working above y=128 in the end (AlexIIL)
-* [#3395] Filler in the Nether - Crash (AlexIIL)
-* [#3283] Engine Blocks can be crafted, even if they were disabled in the config (AlexIIL)

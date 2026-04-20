@@ -1,0 +1,20 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "buildcraftbuilders:items/template/clean"
+    },
+		"overrides": [
+		        {
+		            "predicate": {
+		                "used": 1
+		            },
+		            "model": "buildcraftbuilders:item/snapshot/template_used"
+		        },
+		        {
+		            "predicate": {
+		                "used": 0
+		            },
+		            "model": "buildcraftbuilders:item/snapshot/template_clean"
+		        }
+		    ]
+}

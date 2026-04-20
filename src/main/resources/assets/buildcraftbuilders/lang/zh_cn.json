@@ -1,0 +1,31 @@
+{
+	"block.buildcraftbuilders.filler":"填充机",
+	"block.buildcraftbuilders.builder":"建筑机",
+	"block.buildcraftbuilders.architect":"建筑工作台",
+	"block.buildcraftbuilders.library":"电子档案馆",
+	"block.buildcraftbuilders.replacer":"替换机",
+	"block.buildcraftbuilders.frame":"框架",
+	"block.buildcraftbuilders.quarry":"采石场",
+	
+	"item.buildcraftbuilders.blueprint":"蓝图",
+	"item.buildcraftbuilders.template":"模板",
+	"item.buildcraftbuilders.schematic_single":"单方块图纸",
+	"item.buildcraftbuilders.filler_planner":"填充规划机",
+	"item.buildcraftbuilders.filler":"填充机",
+	"item.buildcraftbuilders.builder":"建筑机",
+	"item.buildcraftbuilders.architect":"建筑工作台",
+	"item.buildcraftbuilders.library":"电子档案馆",
+	"item.buildcraftbuilders.replacer":"替换机",
+	"item.buildcraftbuilders.frame":"框架",
+	"item.buildcraftbuilders.quarry":"采石场",
+	
+	"item.blueprint.unnamed": "<未命名>",
+	"item.blueprint.author": "作者：",
+	"item.blueprint.blank": "空白",
+	"item.blueprint.creative_only": "仅限创造模式",
+	"item.blueprint.no_build": "No Building",
+	"item.blueprint.incomplete": "未完成"
+	
+	
+	
+}

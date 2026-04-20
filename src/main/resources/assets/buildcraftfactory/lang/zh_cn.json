@@ -1,0 +1,21 @@
+{
+	"item.buildcraftfactory.pump": "泵",
+	"item.buildcraftfactory.tank": "储罐",
+	"item.buildcraftfactory.chute": "料斗",
+	"item.buildcraftfactory.flood_gate": "液阀",
+	"item.buildcraftfactory.mining_well": "矿井",
+	"item.buildcraftfactory.distiller": "蒸馏器",
+	"item.buildcraftfactory.heat_exchange": "热交换器",
+	"item.buildcraftfactory.autoworkbench_item": "自动工作台",
+	"item.buildcraftfactory.water_gel": "水凝胶剂",
+	"item.buildcraftfactory.gel": "水凝胶",
+
+	"block.buildcraftfactory.pump": "泵",
+	"block.buildcraftfactory.tank": "储罐",
+	"block.buildcraftfactory.chute": "料斗",
+	"block.buildcraftfactory.flood_gate": "液闸",
+	"block.buildcraftfactory.mining_well": "矿井",
+	"block.buildcraftfactory.distiller": "蒸馏器",
+	"block.buildcraftfactory.heat_exchange": "热交换器",
+	"block.buildcraftfactory.autoworkbench_item": "自动工作台"
+}

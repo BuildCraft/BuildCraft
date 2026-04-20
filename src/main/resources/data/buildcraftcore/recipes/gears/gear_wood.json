@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    " s ",
+    "s s",
+    " s "
+  ],
+  "result": {
+    "item": "buildcraftcore:gears/gear_wood"
+  }
+}

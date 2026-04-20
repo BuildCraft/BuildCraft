@@ -1,0 +1,279 @@
+modLoader="javafml"
+# Forge for 1.19 is version 41
+loaderVersion="[41,)"
+license="All rights reserved"
+showAsResourcePack=false
+
+[[mods]]
+    modId="buildcraftlib"
+    version="8.0.0.0"
+    displayName="BuildCraft Library"
+    displayURL="buildcraft.com"
+    logoFile="logo.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcraftlib]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftlib]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+    
+#core    
+[[mods]]
+    modId="buildcraftcore"
+    version="8.0.0.0"
+    displayName="BuildCraft Core"
+    displayURL="buildcraft.com"
+    logoFile="buildcraft.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcraftcore]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftcore]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftcore]]
+    modId="buildcraftlib"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="AFTER"
+    side="BOTH"
+    
+#factory    
+[[mods]]
+    modId="buildcraftfactory"
+    version="8.0.0.0"
+    displayName="BuildCraft Factory"
+    displayURL="buildcraft.com"
+    logoFile="buildcraft.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcraftfactory]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftfactory]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftfactory]]
+    modId="buildcraftlib"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.buildcraftfactory]]
+    modId="buildcraftcore"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="NONE"
+    side="BOTH"
+#transport    
+[[mods]]
+    modId="buildcrafttransport"
+    version="8.0.0.0"
+    displayName="BuildCraft Transport"
+    displayURL="buildcraft.com"
+    logoFile="buildcraft.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcrafttransport]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcrafttransport]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcrafttransport]]
+    modId="buildcraftlib"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.buildcrafttransport]]
+    modId="buildcraftcore"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="NONE"
+    side="BOTH"
+
+ 
+    
+ #energy    
+[[mods]]
+    modId="buildcraftenergy"
+    version="8.0.0.0"
+    displayName="BuildCraft Energy"
+    displayURL="buildcraft.com"
+    logoFile="buildcraft.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcraftenergy]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftenergy]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftenergy]]
+    modId="buildcraftlib"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.buildcraftenergy]]
+    modId="buildcraftcore"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="NONE"
+    side="BOTH"
+    
+#builders    
+[[mods]]
+    modId="buildcraftbuilders"
+    version="8.0.0.0"
+    displayName="BuildCraft Builders"
+    displayURL="buildcraft.com"
+    logoFile="buildcraft.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcraftbuilders]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftbuilders]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftbuilders]]
+    modId="buildcraftlib"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftbuilders]]
+    modId="buildcraftcore"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="NONE"
+    side="BOTH"
+
+#silicon    
+[[mods]]
+    modId="buildcraftsilicon"
+    version="8.0.0.0"
+    displayName="BuildCraft Silicon"
+    displayURL="buildcraft.com"
+    logoFile="buildcraft.png"
+    credits="I'd like to thank my mother and father."
+    authors="Author"
+    description='''
+Lets you craft dirt into diamonds. This is a traditional mod that has existed for eons. It is ancient. The holy Notch created it. Jeb rainbowfied it. Dinnerbone made it upside down. Etc.
+    '''
+    displayTest="MATCH_VERSION"
+
+[[dependencies.buildcraftsilicon]]
+    modId="forge"
+    mandatory=true
+    versionRange="[41,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftsilicon]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19,1.20)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildcraftsilicon]]
+    modId="buildcraftlib"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.buildcraftsilicon]]
+    modId="buildcraftcore"
+    mandatory=true
+    versionRange="[8.0.0.0]"
+    ordering="NONE"
+    side="BOTH"
+    

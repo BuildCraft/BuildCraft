@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": {"model": "buildcrafttransport:block/filtered_buffer"}
+    }
+}

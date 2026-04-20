@@ -1,0 +1,23 @@
+{
+	"item.buildcraftfactory.pump": "Pump",
+	"item.buildcraftfactory.tank": "Tank",
+	"item.buildcraftfactory.chute": "Chute",
+	"item.buildcraftfactory.flood_gate" :"Flood Gate",
+	"item.buildcraftfactory.mining_well" :"Mining Well",
+	"item.buildcraftfactory.distiller" :"Distiller",
+	"item.buildcraftfactory.heat_exchange" :"Heat Exchanger",
+	"item.buildcraftfactory.autoworkbench_item":"Auto Workbench",
+	"item.buildcraftfactory.water_gel" :"Water Gelifier",
+	"item.buildcraftfactory.gel" :"Gelled Water",
+
+	"block.buildcraftfactory.pump": "Pump",
+	"block.buildcraftfactory.tank": "Tank",
+	"block.buildcraftfactory.chute": "Chute",
+	"block.buildcraftfactory.flood_gate" :"Flood Gate",
+	"block.buildcraftfactory.mining_well" :"Mining Well",
+	"block.buildcraftfactory.distiller" :"Distiller",
+	"block.buildcraftfactory.heat_exchange" :"Heat Exchanger",
+	"block.buildcraftfactory.autoworkbench_item":"Auto Workbench"
+	
+
+}

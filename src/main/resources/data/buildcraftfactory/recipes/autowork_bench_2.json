@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "s": {
+      "item": "buildcraftcore:gears/gear_stone"
+    }
+  },
+  "pattern": [
+    "   ",
+    "scs",
+    "   "
+  ],
+  "result": {
+    "item": "buildcraftfactory:autoworkbench_item"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "multipart": [
+    {
+      "when": {"facing": "north"},
+      "apply":{"model": "buildcraftbuilders:block/replacer"}
+    },
+    {
+      "when": {"facing": "east"},
+      "apply":{"model": "buildcraftbuilders:block/replacer","y": 90}
+      
+    },
+    {
+      "when": {"facing": "south"},
+      "apply": {"model": "buildcraftbuilders:block/replacer","y": 180}
+    },
+    {
+      "when": {"facing": "west"},
+      "apply": {"model": "buildcraftbuilders:block/replacer","y": 270}
+    }
+  ]
+}

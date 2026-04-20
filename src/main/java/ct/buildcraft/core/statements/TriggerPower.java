@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
+package ct.buildcraft.core.statements;
+
+import ct.buildcraft.api.core.EnumPipePart;
+import ct.buildcraft.api.mj.IMjReadable;
+import ct.buildcraft.api.mj.MjAPI;
+import ct.buildcraft.api.statements.IStatement;
+import ct.buildcraft.api.statements.IStatementContainer;
+import ct.buildcraft.api.statements.IStatementParameter;
+import ct.buildcraft.api.statements.ITriggerExternal;
+import ct.buildcraft.api.statements.ITriggerInternal;
+import ct.buildcraft.core.BCCoreSprites;
+import ct.buildcraft.core.BCCoreStatements;
+import ct.buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
+public class TriggerPower extends BCStatement implements ITriggerInternal, ITriggerExternal {
+    private final boolean high;
+
+    public TriggerPower(boolean high) {
+        super("buildcraft:energyStored" + (high ? "high" : "low"));
+        this.high = high;
+    }
+
+    @Override
+    public SpriteHolder getSprite() {
+        return high ? BCCoreSprites.TRIGGER_POWER_HIGH : BCCoreSprites.TRIGGER_POWER_LOW;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.translatable("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
+    }
+
+    public boolean isTriggeredMjConnector(IMjReadable readable) {
+        if (readable == null) {
+            return false;
+        }
+        long stored = readable.getStored();
+        long max = readable.getCapacity();
+
+        if (max > 0) {
+            double level = stored / (double) max;
+            if (high) {
+                return level > 0.95;
+            } else {
+                return level < 0.05;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isTriggeringTile(BlockEntity tile) {
+        return isTriggeringTile(tile, null);
+    }
+
+    public static boolean isTriggeringTile(BlockEntity tile, Direction face) {
+        return tile.getCapability(MjAPI.CAP_READABLE, face).isPresent();
+    }
+
+    protected boolean isActive(ICapabilityProvider tile, EnumPipePart side) {
+        return isTriggeredMjConnector(tile.getCapability(MjAPI.CAP_READABLE, side.face).orElse(null));
+    }
+
+    @Override
+    public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
+        return isActive(source.getTile(), EnumPipePart.CENTER);
+    }
+
+    @Override
+    public boolean isTriggerActive(BlockEntity target, Direction side, IStatementContainer source, IStatementParameter[] parameters) {
+        return isActive(target, EnumPipePart.fromFacing(side.getOpposite()));
+    }
+
+    @Override
+    public IStatement[] getPossible() {
+        return BCCoreStatements.TRIGGER_POWER;
+    }
+}

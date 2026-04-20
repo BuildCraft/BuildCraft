@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "m": {
+      "item": "minecraft:lapis_block"
+    },
+    "n": {
+      "item": "minecraft:emerald"
+    }
+  },
+  "pattern": [
+    "mgn"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:emzuli_item"
+  }
+}

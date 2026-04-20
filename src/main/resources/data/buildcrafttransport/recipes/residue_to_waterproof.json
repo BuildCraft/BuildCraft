@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "buildcraftenergy:oil_distilled/cool_bucket"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:waterproof"
+  }
+}

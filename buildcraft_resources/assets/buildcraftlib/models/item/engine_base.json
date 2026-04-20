@@ -1,8 +1,0 @@
-{
-    "parent":"buildcraftlib:models/block/engine_base",
-    "values": {
-        "facing":"'up'",
-        "stage":"'blue'",
-        "progress": "0.2"
-    }
-}

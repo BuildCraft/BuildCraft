@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "joined_below=false": {"model": "buildcraftfactory:block/tank"},
+        "joined_below=true": {"model": "buildcraftfactory:block/tank_joined_below"}
+    }
+}
