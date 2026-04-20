@@ -1,0 +1,554 @@
+1.19.x Changelog
+43.2
+====
+ - 43.2.0 43.2 Recommended Build.
+
+43.1
+====
+ - 43.1.65 Allow discovering services from the mods folder that use java's modular definition. (#9143)
+ - 43.1.64 Make Datapack Registries support ICondition(s) (#9113)
+ - 43.1.63 Enable additional build types to handle pull request validation. (#9159)
+ - 43.1.62 Check source permission level before selector permission (#9147)
+           In some situations, such as execution of a function by an advancement as
+           part of its reward, a command source stack may have a backing source of
+           a ServerPlayer which may lack the entity selector permission and have an
+           explicit permission level that should allow the use of entity selectors,
+           through CommandSourceStack#withPermission.
+           We now check if the permission level of the command source stack is
+           sufficient for entity selectors _before_ checking if the source is a
+           player and if they have the requisite permission.
+           This means that an operator permission level of 2 will always override
+           the Forge entity selector permission.
+           Fixes #9137
+ - 43.1.61 Fix fires spreading too/igniting custom portal frames. (#9142)
+ - 43.1.60 Add supplier to FlowerBlock so it works with custom MobEffects (#9139)
+ - 43.1.59 Fix some logical bugs related to the Grindstone Event (#9089)
+ - 43.1.58 Call baked model's `getModelData` before `getRenderTypes` (#9163)
+ - 43.1.57 Make Util.memoize thread-safe (#9155)
+ - 43.1.56 Rendering tweaks and fixes: Part 4 (#9065)
+ - 43.1.55 Fix `Transformation` loading `PoseStack` (#9083)
+ - 43.1.54 Add simple block appearance API (#9066)
+ - 43.1.53 Fix invalidated modded packets when on LAN (#9157)
+ - 43.1.52 Improve extensibility of DetectorRailBlock and PoweredRailBlock (#9130)
+ - 43.1.51 Fix launch handler minecraft classpath locator (#9120)
+ - 43.1.50 Add HitResult to `EntityTeleportEvent$EnderPearl` (#9135)
+ - 43.1.49 Throw aggregate exception for erroneous registry event dispatch (#9111)
+           This means that exceptions occurring during the dispatch of the registry
+           events, such as those from the suppliers of RegistryObjects, properly
+           cause a crash rather than merely being logged and allowing the game to
+           reach the main menu.
+           Fixes #8720
+ - 43.1.48 Add missing semi-colon near the Dist import statement in example mod.
+ - 43.1.47 Fix ClientModEvents example not subscribing to client-sided events (#9097)
+ - 43.1.46 Use GitHub action to lock issues with the `spam` label (#9087)
+ - 43.1.45 Remove structures slave map to Feature registry (#9091)
+ - 43.1.44 Improve logging of missing or unsupported dependencies (#9104)
+ - 43.1.43 [1.19.x] Fix ValueSpec caching the return value incorrectly (#9046)
+ - 43.1.42 [1.19.x] Add event for registering spawn placements, and modifying existing (#9024)
+ - 43.1.41 [1.19.x] Add event for items being stacked or swapped in a GUI. (#9050)
+ - 43.1.40 [1.19.x] Fix PlayerInteractEvent.EntityInteractSpecific not cancelling on a server (#9079)
+ - 43.1.39 Fix canceling phantom spawns preventing any further attempts that tick. (#9041)
+ - 43.1.38 Rename fluid type milk translation keys (#9077)
+ - 43.1.37 Fix minecart speed with water (#9076)
+ - 43.1.36 Add a cancellable event that gets fired when a Totem of Undying is used (#9069)
+ - 43.1.35 Fix performance issue and logging when resource caching is enabled (#9029)
+ - 43.1.34 Fix NPE when feeding wolves and cats (#9074)
+ - 43.1.33 Fix logically breaking change to ForgeConfigSpec.Builder#comment where modders could not add a empty line to the start of comments. (#9061)
+ - 43.1.32 Fix ServiceLoader bug
+ - 43.1.31 Fix ClientChatReceivedEvent for system messages
+ - 43.1.30 Make ForgeConfigSpec$Builder.comment able to be called multiple times for the same entry. (#9056)
+ - 43.1.29 Fix control modifier for mac with `KeyMapping`s  using Alt instead of Super (#9057)
+ - 43.1.28 Fix is_desert tag not being applied correctly. (#9051)
+ - 43.1.27 Fix mob griefing event for SmallFireballs not using owner entity. (#9038)
+ - 43.1.26 Fix minecarts on rails not properly slowing down in water (#9033)
+ - 43.1.25 Change codestyle for BookShelves tag. Closes #9027
+           Add IS_CAVE tag Closes #8885
+           Add IS_DESERT tag Closes #8979
+           Simplify Mangrove Swamp tags Closes #8980
+ - 43.1.24 Allow faces of an "elements" model to have disabled ambient occlusion (#9019)
+ - 43.1.23 [1.19.x] Recipe ID-based grouping between modded and vanilla recipes. (#8876)
+ - 43.1.22 Update fence_gates/wooden (#8936)
+ - 43.1.21 [1.19.x] Added event for growing fungus (#8981)
+ - 43.1.20 Added Bookshelves block tag (#8991)
+ - 43.1.19 Create a Forge EntityType Tag for Bosses (#9017)
+ - 43.1.18 Allow mods to specify shader import namespace (#9021)
+ - 43.1.17 Grindstone Events (#8934)
+           One to modify the output, and one to modify the input.
+ - 43.1.16 Fix the serialized names of the enum (#9014)
+ - 43.1.15 Fix `tryEmptyContainerAndStow` duping fluids with stackable containers (#9004)
+ - 43.1.14 Add mod mismatch event (#8989)
+ - 43.1.13 [1.19.x] add methods with more context to tree growers (#8956)
+ - 43.1.12 [1.19.X] Adding more precise events for Advancements (#8360)
+ - 43.1.11 Default IItemHandler capability for shulker box itemstacks (#8827)
+           Co-authored-by: LexManos <LexManos@gmail.com>
+ - 43.1.10 [1.19] Add hook for items to remain in the hotbar when picking blocks/entities (#8872)
+ - 43.1.9  [1.19.x] Block Model Builder Root Transform Support (#8860)
+           Co-authored-by: sciwhiz12 <sciwhiz12@gmail.com>
+ - 43.1.8  [1.19.x] Make LivingSetAttackTargetEvent compatible with the Brain/Behavior system. (Port of PR #8918) (#8954)
+ - 43.1.7  [1.19.x] Add IForgeBlock#onTreeGrow to replace IForgeBlock#onPlantGrow from 1.16 (#8999)
+ - 43.1.6  [1.19.x] Moved Player.resetAttackStrengthTicker() to the end of Player.attack() (#9000)
+ - 43.1.5  fix misplaced patch in sapling block (#9005)
+ - 43.1.4  Fix failed entity interactions consuming the click. (#9007)
+ - 43.1.3  Fix entity selector permission check to check original source (#8995)
+           Permission checks should be against the command source and not the
+           target entity, as is done in vanilla.
+           Fixes #8994
+ - 43.1.2  Hotfix for 1.19.2 item animation bug (#8987)
+           * [HOT FIX]: Fixes #8985 by no-oping for vanilla models instead of throwing error
+ - 43.1.1  Add ability to Auto register capabilities via annotation (#8972)
+ - 43.1.0  1.19.2 RB
+
+43.0
+====
+ - 43.0.22 Added ItemDecorator API (#8794)
+ - 43.0.21 [1.19.x] Custom usage animations for items (#8932)
+ - 43.0.20 Allow registering custom `ColorResolver`s (#8880)
+ - 43.0.19 [1.19] Allow custom outline rendering on EntityRenderers and BlockEntityRenderers (#8938)
+ - 43.0.18 Redirect checks for entity selector use to a permission (#8947)
+           This allows greater flexibility for configuring servers with
+           operator-like permissions to user groups through the permissions API and
+           their permissions handler of choice without needing to grant the
+           vanilla operator permission to any player.
+           The new permission is "forge:use_entity_selectors", which is granted by
+           default to players with permission level 2 (GAMEMASTERS) and above.
+           The hook falls back to checking the permission level if the source of
+           the command is not a ServerPlayer, such as for command blocks and
+           functions.
+ - 43.0.17 Allow FakePlayer to report its position (#8963)
+ - 43.0.16 Add alternate version of renderEntityInInventory to allow for directly specifying the angles (#8961)
+ - 43.0.15 Add cancellable ToastAddEvent (#8952)
+ - 43.0.14 Modify ScreenEvent.RenderInventoryMobEffects to allow moving the effect stack left or right (#8951)
+ - 43.0.13 Fix Enchantment#doPostHurt and Enchantment#doPostAttack being called twice for players. Fixes MC-248272 (#8948)
+ - 43.0.12 Remove reflective implementation of ICustomPacket. (#8973)
+           Make vanilla custom packets able to be sent multiple times. Closes #8969
+ - 43.0.11 Filter name spaces to directories only. Closes #8413
+ - 43.0.10 Fix a corner case where the UMLB can not extract a version from a library. (#8967)
+ - 43.0.9  Fix worlds with removed dimension types unable to load. (#8959) Closes #8800
+ - 43.0.8  Fix issue where unknown chunk generators would cause DFU to fail. (#8957)
+ - 43.0.7  Fix comments and documentation that were missed during the review of #8712 (#8945)
+ - 43.0.6  Make AnvilUpdateEvent fire even if the second input is empty, which means it fires even if only changing the item name. (#8905)
+ - 43.0.5  Fix `LivingEntity#isBlocking` to use `ToolActions#SHIELD_BLOCK` instead of `UseAnim#BLOCK` (#8933)
+ - 43.0.4  Add Custom HolderSet Types allowing for logical combining of sets. (#8928)
+ - 43.0.3  Add values to VersionSupportMatrix to support loading mods that restrict versions to 1.19.1 on 1.19.2 (#8946)
+ - 43.0.2  Fix certain particles not updating their bounding box when their position changes (#8925)
+ - 43.0.1  Update EventBus to address concurrency issue in ModLauncher Factory. Closes #8924
+ - 43.0.0  1.19.2
+
+42.0
+====
+ - 42.0.9 Remove calls to getStepHeight in Player#maybeBackOffFromEdge (#8927)
+ - 42.0.8 Add forge tags for tools and armors, these DO NOT replace ToolActions, and are designed just for Recipes. (#8914)
+ - 42.0.7 Add Biomes.BEACH to Tags (#8892)
+ - 42.0.6 Let NetworkInstance.isRemotePresent check minecraft:register for channel IDs.  (#8921)
+ - 42.0.5 Add an event for when the chunk ticket level is updated (#8909)
+ - 42.0.4 Re-add PotentialSpawns event (#8712)
+ - 42.0.3 Fix misplaced patch in ItemEntityRenderer breaking ItemEntityRenderer#shouldBob() (#8919)
+ - 42.0.2 [1.19] [HotFix] Fix the dedicated server not having access to the JiJ filesystems. (#8931)
+ - 42.0.1 Match Mojang's action bar fix for MC-72687 (#8917)
+ - 42.0.0 Forge 1.19.1
+          Load natives from classpath
+          Make command argument types a forge registry
+          Add `EntityMobGriefingEvent` to `Allay#wantsToPickUp`
+          Overhaul `ServerChatEvent` to use `ChatDecorator` system
+          Remove `ClientChatEvent#setMessage` for now
+          Gradle 7.5
+
+41.1
+====
+ - 41.1.0 Mark 1.19 RB
+
+41.0
+====
+ - 41.0.113 Allow faces of an "elements" model to be made emissive (#8890)
+ - 41.0.112 Fix invalid channel names sent from the server causing the network thread to error. (#8902)
+ - 41.0.111 Fix PlayerEvent.BreakSpeed using magic block position to signify invalid position. Closes #8906
+ - 41.0.110 Fix cases where URIs would not work properly with JarInJar (#8900)
+ - 41.0.109 Add new hook to allow modification of lightmap via Dimension special effects (#8863)
+ - 41.0.108 Fix Forge's packet handling on play messages. (#8875)
+ - 41.0.107 Add API for tab list header/footer (#8803)
+ - 41.0.106 Allow modded blocks overriding canStickTo prevent sticking to vanilla blocks/other modded blocks (#8837)
+ - 41.0.105 Multiple tweaks and fixes to the recent changes in the client refactor PR: Part 3 (#8864)
+            Fix weighted baked models not respecting children render types
+            Allow fluid container model to use base texture as particle
+            Fix inverted behavior in composite model building. Fixes #8871
+ - 41.0.104 Fix crossbows not firing ArrowLooseEvent (#8887)
+ - 41.0.103 Add User-Agent header to requests made by the update checker (#8881)
+            Format: Java-http-client/<Java version> MinecraftForge/<ForgeVer> <ModId>/<ModVersion>
+ - 41.0.102 Output the full path in a crash report so it is easier to find the outer mod when a crash in Jar-In-Jar occurs. (#8856)
+ - 41.0.101 Clean up the pick item ("middle mouse click") patches (#8870)
+ - 41.0.100 [1.19.x] Hotfix for test mods while the refactor is ongoing
+ - 41.0.99  add event to SugarCaneBlock (#8877)
+ - 41.0.98  Fix Global Loot Modifiers not using Dispatch Codec (#8859)
+ - 41.0.97  Allow block render types to be set in datagen (#8852)
+ - 41.0.96  Fix renderBreakingTexture not using the target's model data (#8849)
+ - 41.0.95  Multiple tweaks and fixes to the recent changes in the client refactor PR: Part 2 (#8854)
+            * Add getter for the component names in an unbaked geometry
+            * Fix render type hint not being copied in BlockGeometryBakingContext
+            * Ensure BlockRenderDispatches's renderSingleBlock uses the correct buffer
+ - 41.0.94  [1.19.x] Apply general renames, A SRG is provided for modders. (#8840)
+            See https://gist.github.com/SizableShrimp/882a671ff74256d150776da08c89ef72
+ - 41.0.93  Fix mob block breaking AI not working correctly when chunk 0,0 is unloaded. Closes #8853
+ - 41.0.92  Fix crash when breaking blocks with multipart models and remove caching. Closes #8850
+ - 41.0.91  Fixed `CompositeModel.Baked.Builder.build()` passing arguments in the wrong order (#8846)
+ - 41.0.90  Make cutout mipmaps explicitly opt-in for item/entity rendering (#8845)
+            * Make cutout mipmaps explicitly opt-in for item/entity rendering
+            * Default render type domain to "minecraft" in model datagens
+ - 41.0.89  Fixed multipart block models not using the new model driven render type system. (#8844)
+ - 41.0.88  Update to the latest JarJar to fix a collision issue where multiple jars could provide an exact match. (#8847)
+ - 41.0.87  Add FML config to disable DFU optimizations client-side. (#8842)
+            * Add client-side command line argument to disable DFU optimizations.
+            * Switch to using FMLConfig value instead.
+ - 41.0.86  [1.19] Fixed broken BufferBuilder.putBulkData(ByteBuffer) added by Forge (#8819)
+            * Fixes BufferBuilder.putBulkData(ByteBuffer)
+            * use nextElementByte
+            * Fixed merge conflict
+ - 41.0.85  [1.19.x] Fix shulker boxes allowing input of items, that return false for Item#canFitInsideContainerItems, through hoppers. (#8823)
+            * Make ShulkerBoxBlockEntity#canPlaceItemThroughFace delegate to Item#canFitInsideContainerItems.
+            * Switch to using Or and add comment.
+            * Switch Or to And.
+ - 41.0.84  [1.19.x] Added RenderLevelStageEvent to replace RenderLevelLastEvent (#8820)
+            * Ported RenderLevelStageEvent from 1.18.2
+            * Updated to fix merge conflicts
+ - 41.0.83  [1.19.x] Fix door datagenerator (#8821)
+            * Fix door datagenerator
+            Fix datagenerator for door blocks. Successor to #8687, addresses comments made there about statement complexity.
+            * Fix extra space around parameter
+            Fix extra space before comma around a parameter.
+ - 41.0.82  Create PieceBeardifierModifier to re-enable piecewise beardifier definitions (#8798)
+ - 41.0.81  Allow blocks to provide a dynamic MaterialColor for display on maps (#8812)
+ - 41.0.80  [1.19.x] BiomeTags Fixes/Improvements (#8711)
+            * dimension specific tag fix
+            * remove forge:is_beach cause vanilla has it already
+            * remove forge tags for new 1.19 vanilla tags (savanna, beach, overworld, end)
+            Co-authored-by: Flemmli97 <Flemmli97@users.noreply.github.com>
+ - 41.0.79  1.19 - Remove GlobalLootModifierSerializer and move to Codecs (#8721)
+            * convert GLM serializer class to codec
+            * cleanup
+            * GLM list needs to be sorted
+            * datagen
+            * simplify serialization
+            * fix test mods (oops)
+            * properly use suppliers for codec as they are registry obj
+ - 41.0.78  Implement item hooks for potions and enchantments (#8718)
+            * Implement item hooks for potions and enchantments
+            * code style fixes
+ - 41.0.77  Re-apply missing patch to ServerLevel.EntityCallbacks#onTrackingEnd() (#8828)
+ - 41.0.76  Double Bar Rendering fixed (#8806) (#8807)
+            * Double Bar Rendering fixed (#8806)
+            * Added requested changes by sciwhiz12
+ - 41.0.75  Multiple tweaks and fixes to the recent changes in the client refactor PR (#8836)
+            * Add an easy way to get the NamedGuiOverlay from a vanilla overlay
+            * Fix static member ordering crash in UnitTextureAtlasSprite
+            * Allow boss bar rendering to be cancelled
+            * Make fluid container datagen use the new name
+ - 41.0.74  Add FogMode to ViewportEvent.RenderFog (#8825)
+ - 41.0.73  Provide additional context to the getFieldOfView event (#8830)
+ - 41.0.72  Pass renderType to IForgeBakedModel.useAmbientOcclusion (#8834)
+ - 41.0.71  Load custom ITransformationServices from the classpath in dev (#8818)
+            * Add a classpath transformer discoverer to load custom transformation services from the classpath
+            * Update ClasspathTransformerDiscoverer to 1.18
+            * Update license year
+            * Update license header
+            * Fix the other license headers
+            * Update ClasspathTransformerDiscoverer to 1.19
+ - 41.0.70  Handle modded packets on the network thread (#8703)
+            * Handle modded packets on the network thread
+             - On the server we simply need to remove the call to
+               ensureRunningOnSameThread.
+             - On the client side, we now handle the packet at the very start of the
+               call. We make sure we're running from a network thread to prevent
+               calling the handling code twice.
+               While this does mean we no longer call .release(), in practice this
+               doesn't cause any leaks as ClientboundCustomPayloadPacket releases
+               for us.
+            * Clarify behaviour a little in the documentation
+            * Javadoc formatting
+            * Add a helper method for handling packets on the main thread
+            Also rename the network thread one. Should make it clearer the expected
+            behaviour of the two, and make it clearer there's a potentially breaking
+            change.
+            * Add back consumer() methods
+            Also document EventNetworkChannel, to clarify the thread behaviour
+            there.
+            * Add since = "1.19" to deprecated annotations
+ - 41.0.69  Cache resource listing calls in resource packs (#8829)
+            * Make the resource lookups cached.
+            * Include configurability and handle patch cleanup.
+            * Document and comment the cache manager.
+            * Make thread selection configurable.
+            * Implement a configurable loading mechanic that falls back to default behaviour when the config is not bound yet.
+            * Use boolean supplier and fix wildcard import.
+            * Clean up the VPR since this is more elegant.
+            * Clean up the VPR since this is more elegant.
+            * Address review comments.
+            * Address more review comments.
+            * Fix formatting on `getSource`
+            * Address comments by ichtt
+            * Adapt to pups requests.
+            * Stupid idea.
+            * Attempt this again with a copy on write list.
+            * Fix a concurrency and loading issue.
+            * Fix #8813
+            Checks if the paths are valid resource paths.
+            * Move the new methods on vanilla Patch.
+ - 41.0.68  Update SJH and JIJ
+ - 41.0.67  Fix #8833 (#8835)
+ - 41.0.66  Fix backwards fabulous check in SimpleBakedModel (#8832)
+            Yet another blunder we missed during the review of #8786.
+ - 41.0.65  Make texture atlas in StandaloneGeometryBakingContext configurable (#8831)
+ - 41.0.64  [1.19.X] Client code cleanup, updates, and other refactors (#8786)
+            * Revert "Allow safely registering RenderType predicates at any time (#8685)"
+            This reverts commit be7275443fd939db9c58bcad47079c3767789ac1.
+            * Renderable API refactors
+            - Rename "render values" to "context"
+            - Rename SimpleRenderable to CompositeRenderable to better reflect its use
+            - Remove IMultipartRenderValues since it doesn't have any real use
+            - Add extensive customization options to BakedModelRenderable
+            * ClientRegistry and MinecraftForgeClient refactors
+            - Add sprite loader manager and registration event
+            - Add spectator shader manager and registration event
+            - Add client tooltip factory manager and registration event
+            - Add recipe book manager and registration event
+            - Add key mapping registration event
+            - Remove ClientRegistry, as everything has been moved out of it
+            - Remove registration methods from MinecraftForgeClient, as they have dedicated events now
+            * Dimension special effects refactors
+            - Fold handlers into an extension class and remove public mutable fields
+            - Add dimension special effects manager and registration event
+            * HUD overlay refactors
+            - Rename to IGuiOverlay match vanilla (instead of Ingame)
+            - Add overlay manager and registration event
+            - Move vanilla overlays to a standalone enum
+            * Model loader refactors
+            - Rename IModelLoader to IGeometryLoader
+            - Add loader manager and registration event
+            - Fold all model events into one
+            - Move registration of additionally loaded models to an event
+            - Remove ForgeModelBakery and related classes as they served no purpose anymore
+            * Render properties refactors
+            - Rename all render properties to client extensions and relocate accordingly
+            - Move lookups to the respective interfaces
+            * Model data refactors
+            - Convert model data to a final class backed by an immutable map and document mutability requirements. This addresses several thread-safety issues in the current implementation which could result in race conditions
+            - Transfer ownership of the data manager to the client level. This addresses several issues that arise when multiple levels are used at once
+            * GUI and widget refactors
+            - Move all widgets to the correct package
+            - Rename GuiUtils and children to match vanilla naming
+            * New vertex pipeline API
+            - Move to vanilla's VertexConsumer
+            - Roll back recent PR making VertexConsumer format-aware. This is the opposite of what vanilla does, and should not be relevant with the updated lighting pipeline
+            * Lighting pipeline refactors
+            - Move to dedicated lighting package
+            - Separate flat and smooth lighters
+            - Convert from a vertex pipeline transformer to a pure vertex source (input is baked quads)
+            * Model geometry API refactors
+            - Rename IModelGeometry to IUnbakedGeometry
+            - Rename IModelConfiguration to IGeometryBakingContext
+            - Rename other elements to match vanilla naming
+            - Remove current changes to ModelState, as they do not belong there. Transforms should be specified through vanilla's system. ModelState is intended to transfer state from the blockstate JSON
+            - Remove multipart geometries and geometry parts. After some discussion, these should not be exposed. Instead, geometries should be baked with only the necessary parts enabled
+            * Make render types a first-class citizen in baked models
+            - Add named render types (block + entity + fabulous entity)
+            - Add named render type manager + registration event
+            - Make BakedModel aware of render types and transfer control over which ones are used to it instead of ItemBlockRenderTypes (fallback)
+            - (additional) Add concatenated list view. A wrapper for multiple lists that iterates through them in order without the cost of merging them. Useful for merging lists of baked quads
+            * General event refactors
+            - Several renames to either match vanilla or improve clarity
+            - Relocate client chat event dispatching out of common code
+            * Forge model type refactors
+            - Rename SeparatePerspectiveModel to SeparateTransformsModel
+            - Rename ItemModelMesherForge to ForgeItemModelShaper
+            - Rename DynamicBucketModel to DynamicFluidContainerModel
+            - Prefix all OBJ-related classes with "Obj" and decouple parsing from construction
+            - Extract ElementsModel from model loader registry
+            - Add EmptyModel (baked, unbaked and loader)
+            - Refactor CompositeModel to take over ItemMultiLayerBakedModel
+            - Remove FluidModel as it's not used and isn't compatible with the new fluid rendering in modern versions
+            - Move model loader registration to a proper event handler
+            - Update names of several JSON fields (backwards-compatible)
+            - Update datagens to match
+            * Miscellaneous changes and overlapping patches
+            - Dispatch all new registration events
+            - Convert ExtendedServerListData to a record
+            - Add/remove hooks from ForgeHooksClient as necessary
+            * Update test mods
+            * Fix VertexConsumerWrapper returning parent instead of itself
+            * Additional event cleanup pass
+            As discussed on Discord:
+            - Remove "@hidden" and "@see <callsite>" javadoc annotations from all client events and replace them with @ApiStatus.Internal annotation
+            - Make all events that shouldn't be fired directly into abstract classes with protected constructors
+            - Another styling pass, just in case (caught some missed classes)
+            * Add proper deprecation javadocs and de-dupe some vertex consumer code
+            * Replace sets of chunk render types with a faster BitSet-backed collection
+            This largely addresses potential performance concerns that using a plain HashSet might involve by making lookups and iteration as linear as they can likely be (aside from using a plain byte/int/long for bit storage). Further performance concerns related to the implementation may be addressed separately, as all the implementation details are hidden from the end user
+            * Requested changes
+            - Remove MinecraftForgeClient and move members to Minecraft, IForgeMinecraft and StencilManager
+            - Allow non-default elements to be passed into VertexConsumer and add support to derived classes
+            - Move array instantiation out of quad processing in lighting pipeline
+            - Fix flipped fluid container model
+            - Set default UV1 to the correct values in the remapping pipeline
+            - Minor documentation changes
+            * Add/update EXC entries and fix AT comment
+            * Add test mod as per Orion's request
+            * Additional requested changes
+            * Allow custom model types to request the particle texture to be loaded
+            * Even more requested changes
+            * Improve generics in ConcatenatedListView and add missing fallbacks
+            * Fix fluid render types being bound to the fluid and not its holder
+            * Remove non-contractual nullability in ChunkRenderTypeSet and add isEmpty
+            Additionally, introduce chunk render type checks in ItemBlockRenderTypes
+            Co-authored-by: Dennis C <xfacthd@gmx.de>
+ - 41.0.63  Implement full support for IPv6 (#8742)
+ - 41.0.62  Fix certain user-configured options being overwritten incorrectly due to validators. (#8780)
+ - 41.0.61  Allow safely registering RenderType predicates at any time (#8685)
+ - 41.0.60  Fix crash after loading error due to fluid texture gathering and config lookup (#8802)
+ - 41.0.59  Remove the configuration option for handling empty tags in ingredients. (#8799)
+            Now empty tags are considered broken in all states.
+ - 41.0.58  Fix MC-105317 Structure blocks do not rotate entities correctly when loading (#8792)
+ - 41.0.57  Fire ChunkWatchEvents after sending packets (#8747)
+ - 41.0.56  Add item handler capability to chest boats (#8787)
+ - 41.0.55  Add getter for correct BiomeSpecialEffectsBuilder to BiomeInfo$Builder (#8781)
+ - 41.0.54  Fix BlockToolModificationEvent missing cancelable annotation (#8778)
+ - 41.0.53  Fix ticking chunk tickets from forge's chunk manager not causing chunks to fully tick (#8775)
+ - 41.0.52  Fix default audio device config loading string comparison issue (#8767)
+ - 41.0.51  Fix missed vanilla method overrides in ForgeRegistry (#8766)
+ - 41.0.50  Add MinecraftServer reference to ServerTickEvent (#8765)
+ - 41.0.49  Fix TagsProviders for datapack registries not recognizing existing files (#8761)
+ - 41.0.48  Add callback after a BlockState was changed and the neighbors were updated (#8686)
+ - 41.0.47  Add biome tag entries for 1.19 biomes (#8684)
+ - 41.0.46  Make fishing rods use tool actions for relevant logic (#8681)
+ - 41.0.45  Update BootstrapLauncher to 1.1.1 and remove the forced
+            merge of text2speech since new BSL does it.
+ - 41.0.44  Merge text2speech libs together so the natives are part of the jar
+ - 41.0.43  Make Forge ConfigValues implement Supplier. (#8776)
+ - 41.0.42  Fix merge derp in AbstractModProvider and logic derp in ModDiscoverer
+ - 41.0.41  Add "send to mods in order" method to ModList and use it (#8759)
+            * Add "send to mods in order" method to ModList and use it in RegistryEvents and DataGen..
+            * Also preserve order in runAll
+            * Do better comparator thanks @pupnewfster
+            * postEvent as well.
+ - 41.0.40  Update SJH to 2.0.2.. (#8774)
+            * Update SJH to 2.0.3..
+ - 41.0.39  Sanity check the version specified in the mod file (#8749)
+            * Sanity check the version specified in the mod file to
+            make sure it's compatible with JPMS standards for
+            version strings.
+            Closes #8748
+            Requires SPI 6
+ - 41.0.38  Fix SP-Devtime world loading crash due to missing server configs (#8757)
+ - 41.0.37  Remove ForgeWorldPreset and related code (#8756)
+            Vanilla has a working replacement.
+ - 41.0.36  Change ConfigValue#get() to throw if called before config loaded  (#8236)
+            This prevents silent issues where a mod gets the value of the setting
+            before configs are loaded, which means the default value is always
+            returned.
+            As there may be situations where the getting the config setting before
+            configs are loaded is needed, and it is not preferable to hardcode the
+            default value, the original behavior is made available through #getRaw.
+            Implements and closes #7716
+            * Remove getRaw() method
+            This is effectively replaced with the expression `spec.isLoaded() ?
+            configValue.get() : configValue.getDefault()`.
+            * Remove forceSystemNanoTime config setting
+            As implemented, it never had any effect as any place where the config
+            value would be queried happens before the configs are loaded.
+ - 41.0.35  Fix EnumArgument to use enum names for suggestions (#8728)
+            Previously, the suggestions used the string representation of the enum
+            through Enum#toString, which can differ from the name of the enum as
+            required by Enum#valueOf, causing invalid suggestions (both in gui and
+            through the error message).
+ - 41.0.34  Jar-In-Jar (#8715)
+ - 41.0.33  [1.19] Fix data-gen output path of custom data-pack registries (#8724)
+ - 41.0.32  Fix player dive and surface animations in custom fluids (#8738)
+ - 41.0.31  [1.19.x] Affect ItemEntity Motion in Custom Fluids (#8737)
+ - 41.0.30  [1.19] Add support for items to add enchantments without setting them in NBT (#8719)
+ - 41.0.29  [1.19.x] Add stock biome modifier types for adding features and spawns (#8697)
+ - 41.0.28  [1.19.x] Fluid API Overhaul (#8695)
+ - 41.0.27  Replace StructureSpawnListGatherEvent with StructureModifiers (#8717)
+ - 41.0.26  Use stack sensitive translation key by default for FluidAttributes. (#8707)
+ - 41.0.25  Delete LootItemRandomChanceCondition which added looting bonus enchantment incorrectly. (#8733)
+ - 41.0.24  Update EventBus to 6.0, ModLauncher to 10.0.1 and BootstrapLauncher to 1.1 (#8725)
+ - 41.0.23  Replace support bot with support action (#8700)
+ - 41.0.22  Fix Reach Distance / Attack Range being clamped at 6.0 (#8699)
+ - 41.0.21  [1.19.x] Fix mods' worldgen data not being loaded when creating new singleplayer worlds (#8693)
+ - 41.0.20  [1.19.x] Fix experimental confirmation screen (#8727)
+ - 41.0.19  Move is_mountain to forge's tag instead of vanilla's (#8726)
+ - 41.0.18  [1.19.x] Add CommandBuildContext to Register Command Events (#8716)
+ - 41.0.17  Only rewrite datagen cache when needed (#8709)
+ - 41.0.16  Implement a simple feature system for Forge (#8670)
+            * Implement a simple feature system for Forge. Allows mods to demand certain features are available in the loading system. An example for java_version is provided, but not expected to be used widely. This is more targeted to properties of the display, such as GL version and glsl profile.
+            Requires https://github.com/MinecraftForge/ForgeSPI/pull/13 to be merged first in ForgeSPI, and the SPI to be updated appropriately in build.gradle files.
+            * rebase onto 1.19 and add in SPI update
+ - 41.0.15  displayTest option in mods.toml (#8656)
+            * displayTest option in mods.toml
+            * "MATCH_VERSION" (or none) is existing match version string behaviour
+            * "IGNORE_SERVER_VERSION" accepts anything and sends special SERVERONLY string
+            * "IGNORE_ALL_VERSION" accepts anything and sends an empty string
+            * "NONE" allows the mod to supply their own displaytest using the IExtensionPoint mechanism.
+            * Update display test with feedback and added the mods.toml discussion in mdk.
+ - 41.0.14  Update forgeSPI to v5 (#8696)
+ - 41.0.13  Make IVertexConsumers such as the lighting pipeline, be aware of which format they are dealing with. (#8692)
+            Also fix Lighting pipeline ignoring the overlay coords from the block renderer.
+ - 41.0.12  Fixed misaligned patch to invalidateCaps in Entity (#8705)
+ - 41.0.11  Fix readAdditionalLevelSaveData (#8704)
+ - 41.0.10  Fixes setPos to syncPacketPositionCodec (#8702)
+ - 41.0.9   Fix wrong param passed to PlayLevelSoundEvent.AtEntity (#8688)
+ - 41.0.8   Override initialize in SlotItemHandler, so it uses the itemhandler instead of container (#8679)
+ - 41.0.7   Update MDK for 1.19 changes (#8675)
+ - 41.0.6   Add helper to RecipeType, and fix eclipse compiler error in test class.
+ - 41.0.5   Update modlauncher to latest (#8691)
+ - 41.0.4   Fix getting entity data serializer id crashing due to improper port to new registry system (#8678)
+ - 41.0.3   Fire registry events in the order vanilla registers to registries (#8677)
+            Custom registries are still fired in alphabetical order, after all vanilla registries.
+            Move forge's data_serializers registry to forge namespace.
+ - 41.0.2   Add method with pre/post wrap to allow setting/clearing mod context. (#8682)
+            Fixes ActiveContainer in ModContext not being present in registry events. Closes #8680
+ - 41.0.1   Fix the Curlie oopsie
+ - 41.0.0   Forge 1.19
+            * Bump pack.mcmeta formats
+            * 1.19 biome modifiers
+            * Mark ClientPlayerNetworkEvent.LoggedOutEvent's getters as nullable
+            * Add docs and package-info to client extension interfaces package
+            * Move RenderBlockOverlayEvent hooks to ForgeHooksClient
+            * Add package-infos to client events package
+            * Rename SoundLoadEvent to SoundEngineLoadEvent
+            This reduces confusion from consumers which may think the
+            name SoundLoadEvent refers to an individual sound being loaded rather
+            than the sound engine.
+            * Document and change SoundLoadEvent to fire on mod bus
+            Previously, it fired on both the mod bus and the Forge bus, which is
+            confusing for consumers.
+            * Delete SoundSetupEvent
+            Looking at its original implementation shows that there isn't an
+            appropriate place in the new sound code to reinsert the event, and the
+            place of 'sound engine/manager initialization event' is taken already by SoundLoadEvent.
+            * Perform some cleanup on client events
+             - Removed nullable annotations from ClientPlayerNetworkEvent
+             - Renamed #getPartialTicks methods to #getPartialTick, to be consistent
+              with vanilla's naming of the partial tick
+             - Cleanup documentation to remove line breaks, use the
+              spelling 'cancelled' over
+              'canceled', and improve docs on existing and
+               new methods.
+            * Remove EntityEvent.CanUpdate
+            Closes MinecraftForge/MinecraftForge#6394
+            * Switch to Jetbrains nullability annotations
+            * New PlayLevelSoundEvent; replaces old PlaySoundAtEntityEvent
+            * Remove ForgeWorldPresetScreens
+            * Remove IForgeRegistryEntry
+            * Remove use of List<Throwable> in FML's CompletableFutures
+            * Add docs to mod loading stages, stages, and phases
+            * Gradle 7.4.2
+            * Use SLF4J in FMLLoader and other subprojects
+            * Switch dynamic versions in subprojects to pinned ones
+            * Switch ForgeRoot and MDK to FG plugin markers
+            * Configure Forge javadoc task
+            The task now uses a custom stylesheet with MCForge elements, and
+            configured to combine the generation from the four FML subprojects
+            (fmlloader, fmlcore, javafmllanguage, mclanguage) and the Forge project
+            into the javadoc output.
+            * Update docs/md files, for 1.19 update and the move away from IRC to Discord.
+            * Make "Potentially dangerous alternative prefix" a debug warning, not info.
+            Co-authored-by: Curle <curle@gemwire.uk>
+            Co-authored-by: sciwhiz12 <arnoldnunag12@gmail.com>
+

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "minecraft:chorus_fruit"
+  },
+  "result": "minecraft:popped_chorus_fruit"
+}

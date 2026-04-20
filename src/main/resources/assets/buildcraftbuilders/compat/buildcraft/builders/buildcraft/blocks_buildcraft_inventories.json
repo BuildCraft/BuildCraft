@@ -1,0 +1,234 @@
+[
+    {
+        "selectors": [
+            "buildcraftbuilders:architect"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "in", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "out", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftbuilders:builder"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "snapshot", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "resources", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftbuilders:filler"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "resources", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftbuilders:replacer"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "snapshot", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "schematicFrom", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "schematicTo", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftbuilders:library"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "downIn", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "downOut", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "upIn", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "upOut", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:autoworkbench_item"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "blueprint", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "materials", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "result", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "overflow", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:chute"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "inv", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftrobotics:zone_planner"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "paintbrushes", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "inputPaintbrush", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "inputMapLocation", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "inputResult", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "outputPaintbrush", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "outputMapLocation", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "outputResult", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftsilicon:assembly_table"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "inv", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftsilicon:advanced_crafting_table"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "blueprint", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "materials", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "result", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftsilicon:integration_table"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "target", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "toIntegrate", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "result", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftcore:engine[type=stone]"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "fuel", "items"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcrafttransport:filtered_buffer"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "items_list",
+                "path": ["items", "filter", "items"]
+            }, {
+                "type": "items_list",
+                "path": ["items", "main", "items"]
+            }
+        ]
+    }
+]

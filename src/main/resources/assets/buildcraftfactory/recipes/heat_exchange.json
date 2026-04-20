@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "buildcraftfactory:heat_exchange"
+  },
+  "pattern": [
+    "igi",
+    "###",
+    "igi"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "i": {
+      "item": "#ingotIron"
+    },
+    "g": {
+      "item": "#gearIron"
+    },
+    "#": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlassColorless"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:heat_exchange"
+    }
+  ]
+}

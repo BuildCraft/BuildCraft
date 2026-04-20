@@ -1,0 +1,28 @@
+{
+    "forge_marker":1,
+    "defaults": {
+    	"model": "buildcraftfactory:heat_exchange_joiner",
+        "textures": {
+            "sprite_a":"buildcraftfactory:blocks/heat_exchange/sprite_a",
+            "sprite_b":"buildcraftfactory:blocks/heat_exchange/sprite_b"
+        }
+    },
+    "variants": {
+        "facing": {
+            "north": { "x": 180, "y":270 },
+            "west":  { "x": 180, "y":180 },
+            "south": { "x": 180, "y":90  },
+            "east":  { "x": 180, "y":0   }
+        },
+        "connected": {
+        	"true": {},
+        	"false": {
+        		"submodel":"buildcraftfactory:heat_exchange_cap"
+        	}
+        },
+        "connected_y": {
+        	"true": {},
+        	"false": {}
+        }
+    }
+}

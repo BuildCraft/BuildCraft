@@ -1,0 +1,22 @@
+{
+	"render_type":"cutout",
+    "textures": {
+        "sprite_a":"buildcraftfactory:blocks/heat_exchange/sprite_a",
+        "sprite_b":"buildcraftfactory:blocks/heat_exchange/sprite_b",
+        "particle":"buildcraftfactory:blocks/heat_exchange/sprite_b"
+    },	
+	"elements": [
+		{
+			"comment": "Cap",
+			"from": [14, 2, 2],
+			"to": [16, 14, 14],
+			"faces": {
+				"east": { "uv": [ 0, 0, 8, 8 ],  "texture": "#sprite_b" },
+				"up":   { "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b", "rotation": 180 },
+				"down": { "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b", "rotation": 180 },
+				"north":{ "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b" },
+				"south":{ "uv": [ 8, 0, 10, 8 ], "texture": "#sprite_b", "rotation": 180 }
+			}
+		}
+	]
+}

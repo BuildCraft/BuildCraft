@@ -1,0 +1,65 @@
+{
+    "parent": "block/block",
+    "elements": [
+        {
+            "comment": "Inner Pipe",
+            "from": [2, 4, 4],
+            "to": [16, 12, 12],
+            "faces": {
+                "up": {"uv": [0, 0, 16, 4], "texture": "#sprite_a"},
+                "down": {"uv": [0, 0, 16, 4], "texture": "#sprite_a"},
+                "north": {"uv": [0, 0, 16, 4], "texture": "#sprite_a"},
+                "south": {"uv": [0, 0, 16, 4], "texture": "#sprite_a"}
+            }
+        },
+        {
+            "comment": "Outer Pipe Center",
+            "from": [2, 2, 2],
+            "to": [14, 14, 14],
+            "faces": {
+                "up": {"uv": [8, 8, 16, 16], "texture": "#sprite_b"},
+                "west": {"uv": [8, 8, 16, 16], "texture": "#sprite_b", "rotation": 90},
+                "north": {"uv": [0, 8, 8, 16], "texture": "#sprite_b", "rotation": 180},
+                "south": {"uv": [0, 8, 8, 16], "texture": "#sprite_b", "rotation": 90}
+            }
+        },
+        {
+            "comment": "Outer Pipe To Middle",
+            "from": [14, 2, 2],
+            "to": [16, 14, 14],
+            "faces": {
+                "up": {"uv": [0, 4, 4, 12], "texture": "#sprite_a"},
+                "down": {"uv": [0, 4, 4, 12], "texture": "#sprite_a"},
+                "north": {"uv": [0, 4, 4, 12], "texture": "#sprite_a"},
+                "south": {"uv": [0, 4, 4, 12], "texture": "#sprite_a"}
+            }
+        },
+        {
+            "comment": "Outer Pipe To Out",
+            "from": [2, 0, 2],
+            "to": [14, 2, 14],
+            "faces": {
+                "east": {"uv": [0, 4, 4, 12], "texture": "#sprite_a", "rotation": 90},
+                "west": {"uv": [0, 4, 4, 12], "texture": "#sprite_a", "rotation": 90},
+                "north": {"uv": [0, 4, 4, 12], "texture": "#sprite_a", "rotation": 90},
+                "south": {"uv": [0, 4, 4, 12], "texture": "#sprite_a", "rotation": 90}
+            }
+        },
+        {
+            "comment": "Cap",
+            "from": [14, 2, 2],
+            "to": [16, 14, 14],
+            "faces": {
+                "east": {"uv": [0, 0, 8, 8], "texture": "#sprite_b"},
+                "up": {"uv": [8, 0, 10, 8], "texture": "#sprite_b", "rotation": 180},
+                "down": {"uv": [8, 0, 10, 8], "texture": "#sprite_b", "rotation": 180},
+                "north": {"uv": [8, 0, 10, 8], "texture": "#sprite_b"},
+                "south": {"uv": [8, 0, 10, 8], "texture": "#sprite_b", "rotation": 180}
+            }
+        }
+    ],
+    "textures": {
+        "sprite_a": "buildcraftfactory:blocks/heat_exchange/sprite_a",
+        "sprite_b": "buildcraftfactory:blocks/heat_exchange/sprite_b"
+    }
+}

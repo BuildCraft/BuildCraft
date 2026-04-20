@@ -1,0 +1,7 @@
+{
+  "parent": "forge:item/bucket_drip",
+  "apply_tint": false,
+  "flip_gas": true,
+  "fluid": "buildcraftenergy:oil_dense_heat_2",
+  "loader": "forge:fluid_container"
+}

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:bucket"
+    },
+    "g": {
+      "item": "buildcraftcore:gears/gear_iron"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "t": {
+      "item": "buildcraftfactory:tank"
+    }
+  },
+  "pattern": [
+    "iri",
+    "igi",
+    "tbt"
+  ],
+  "result": {
+    "item": "buildcraftfactory:pump"
+  }
+}

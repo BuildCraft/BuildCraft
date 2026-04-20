@@ -1,0 +1,35 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "frame":"buildcraftbuilders:blocks/frameBlock/default",
+            "particle":"buildcraftbuilders:blocks/frameBlock/default"
+        }
+    },
+    "variants": {
+        "connected_up": {
+            "false": { "submodel": "buildcraftbuilders:frame_survival_side", "x": 270 },
+            "true":  { "submodel": "buildcraftbuilders:frame_survival_conn", "x": 270 }
+        },
+        "connected_down": {
+            "false": { "submodel": "buildcraftbuilders:frame_survival_side", "x": 90 },
+            "true":  { "submodel": "buildcraftbuilders:frame_survival_conn", "x": 90 }
+        },
+        "connected_east": {
+            "false": { "submodel": "buildcraftbuilders:frame_survival_side", "y": 90 },
+            "true":  { "submodel": "buildcraftbuilders:frame_survival_conn", "y": 90 }
+        },
+        "connected_west": {
+            "false": { "submodel": "buildcraftbuilders:frame_survival_side", "y": 270 },
+            "true":  { "submodel": "buildcraftbuilders:frame_survival_conn", "y": 270 }
+        },
+        "connected_north": {
+            "false": { "submodel": "buildcraftbuilders:frame_survival_side" },
+            "true":  { "submodel": "buildcraftbuilders:frame_survival_conn" }
+        },
+        "connected_south": {
+            "false": { "submodel": "buildcraftbuilders:frame_survival_side", "y": 180 },
+            "true":  { "submodel": "buildcraftbuilders:frame_survival_conn", "y": 180 }
+        }
+    }
+}

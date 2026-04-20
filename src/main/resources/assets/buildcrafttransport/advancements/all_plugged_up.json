@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftsilicon:plug_light_sensor"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.all_plugged_up.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.all_plugged_up.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcrafttransport:pipe_logic",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

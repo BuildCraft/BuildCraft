@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:yellow_glazed_terracotta"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_yellow_terracotta": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:yellow_terracotta"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_yellow_terracotta",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:yellow_glazed_terracotta"
+    ]
+  }
+}

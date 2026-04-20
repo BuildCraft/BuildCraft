@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "waxed_cut_copper_slab",
+  "key": {
+    "#": {
+      "item": "minecraft:waxed_cut_copper"
+    }
+  },
+  "pattern": [
+    "###"
+  ],
+  "result": {
+    "count": 6,
+    "item": "minecraft:waxed_cut_copper_slab"
+  }
+}

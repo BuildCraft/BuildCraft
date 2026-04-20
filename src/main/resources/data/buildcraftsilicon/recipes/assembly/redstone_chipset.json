@@ -1,0 +1,16 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 10000000000,
+  "group": "buildcraftsilicon:chipsets",
+  "ingredient_counts": [
+    1
+  ],
+  "ingredients": [
+    {
+      "tag": "forge:dusts/redstone"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:redstone_chipset/red"
+  }
+}

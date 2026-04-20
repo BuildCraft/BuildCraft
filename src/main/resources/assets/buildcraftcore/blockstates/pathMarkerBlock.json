@@ -1,0 +1,25 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "facing": {
+            "up":    { "model": "buildcraftcore:marker_path" },
+            "down":  { "model": "buildcraftcore:marker_path", "x": 180 },
+            "east":  { "model": "buildcraftcore:marker_path", "x": 90, "y": 90 },
+            "south": { "model": "buildcraftcore:marker_path", "x": 90, "y": 180 },
+            "west":  { "model": "buildcraftcore:marker_path", "x": 90, "y": 270 },
+            "north": { "model": "buildcraftcore:marker_path", "x": 90 }
+        },
+        "led_done": {
+            "false": {
+                "textures": {
+                    "torch": "buildcraftcore:blocks/marker/path"
+                }
+            },
+            "true": {
+                "textures": {
+                    "torch": "buildcraftcore:blocks/marker/path_searching"
+                }
+            }
+        }
+    }
+}

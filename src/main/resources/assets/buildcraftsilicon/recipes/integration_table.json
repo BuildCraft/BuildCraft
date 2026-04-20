@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "buildcraftsilicon:integration_table"
+  },
+  "pattern": [
+    "OiO",
+    "OrO",
+    "OgO"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "buildcraftsilicon:redstone_chipset",
+      "data": 1
+    },
+    "g": {
+      "item": "#gearDiamond"
+    },
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftsilicon:integration_table"
+    }
+  ]
+}

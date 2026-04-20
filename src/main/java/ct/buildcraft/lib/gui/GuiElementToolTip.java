@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
+package ct.buildcraft.lib.gui;
+
+import java.util.List;
+
+import ct.buildcraft.lib.gui.elem.ToolTip;
+import ct.buildcraft.lib.gui.pos.IGuiArea;
+
+public class GuiElementToolTip extends GuiElementSimple {
+    public final ITooltipElement source;
+
+    public GuiElementToolTip(BuildCraftGui gui, IGuiArea area, ITooltipElement source) {
+        super(gui, area);
+        this.source = source;
+    }
+
+    @Override
+    public void addToolTips(List<ToolTip> tooltips) {
+        if (contains(gui.mouse)) {
+            source.addToolTips(tooltips);
+        }
+    }
+}

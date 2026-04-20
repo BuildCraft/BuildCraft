@@ -1,0 +1,6 @@
+{
+	"render_type": "minecraft:cutout_mipped",
+  	"textures": {
+		"particle": "buildcrafttransport:pipes/cobblestone_fluid"
+ 	}
+}

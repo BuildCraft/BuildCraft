@@ -1,0 +1,178 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
+package ct.buildcraft.factory.client.render;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+
+import ct.buildcraft.factory.BCFactoryBlocks;
+import ct.buildcraft.factory.BCFactoryModels;
+import ct.buildcraft.factory.tile.TileDistiller_BC8;
+import ct.buildcraft.lib.block.BlockBCBase_Neptune;
+import ct.buildcraft.lib.client.model.MutableQuad;
+import ct.buildcraft.lib.client.render.fluid.FluidRenderer;
+import ct.buildcraft.lib.client.render.fluid.FluidRenderer.TankSize;
+import ct.buildcraft.lib.client.render.fluid.FluidSpriteType;
+import ct.buildcraft.lib.fluid.FluidSmoother;
+import ct.buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
+import ct.buildcraft.lib.misc.VecUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
+public class RenderDistiller implements BlockEntityRenderer<TileDistiller_BC8> {
+    private static final Map<Direction, TankRenderSizes> TANK_SIZES = new EnumMap<>(Direction.class);
+
+    static {
+        Direction face = Direction.WEST;
+        TankSize tankIn = new TankSize(0, 0, 4, 8, 16, 12).shrink(1 / 64.0);
+        TankSize tankGasOut = new TankSize(8, 8, 0, 16, 16, 16).shrink(1 / 64.0);
+        TankSize tankLiquidOut = new TankSize(8, 0, 0, 16, 8, 16).shrink(1 / 64.0);
+        TankRenderSizes sizes = new TankRenderSizes(tankIn, tankGasOut, tankLiquidOut);
+        for (int i = 0; i < 4; i++) {
+            TANK_SIZES.put(face, sizes);
+            face = face.getClockWise();
+            sizes = sizes.rotateY();
+        }
+    }
+
+	public RenderDistiller(BlockEntityRendererProvider.Context ctx) {
+	}
+    
+	@Override
+	public void render(TileDistiller_BC8 tile, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLight,
+			int overlay) {
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (state.getBlock() != BCFactoryBlocks.DISTILLER_BLOCK.get()) {
+            return;
+        }
+
+        ProfilerFiller profiler = Minecraft.getInstance().getProfiler();
+        profiler.push("bc");
+        profiler.push("distiller");
+
+        Direction face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        TankRenderSizes sizes = TANK_SIZES.get(face);
+
+        // buffer setup
+        {
+        	VertexConsumer bb = buffer.getBuffer(RenderType.solid());
+        	Pose last = matrix.last();
+        	Matrix4f pose = last.pose();
+        	Matrix3f normal = last.normal();
+            profiler.push("model");
+            profiler.push("compute");
+            if (tile.clientModelData.hasNoNodes()) {
+                tile.clientModelData.setNodes(BCFactoryModels.DISTILLER.createTickableNodes());
+            }
+            tile.setClientModelVariables(partialTicks);
+            tile.clientModelData.refresh();
+            MutableQuad[] quads = BCFactoryModels.DISTILLER.getCutoutQuads();
+            profiler.popPush("render");
+
+            MutableQuad copy = new MutableQuad(0, null);
+            int lightc = combinedLight;
+            int light_block = (lightc >> 4) & 15;
+            int light_sky = (lightc >> 20) & 15;
+            for (MutableQuad q : quads) {
+                copy.copyFrom(q);
+                copy.maxLighti(light_block, light_sky);
+                copy.multShade();
+                copy.render(pose, normal, bb);
+            }
+
+            profiler.pop();
+            profiler.popPush("fluid");
+
+            renderTank(sizes.tankIn, tile.smoothedTankIn, combinedLight, partialTicks, bb, last);
+            renderTank(sizes.tankOutGas, tile.smoothedTankGasOut, combinedLight, partialTicks, bb, last);
+            renderTank(sizes.tankOutLiquid, tile.smoothedTankLiquidOut, combinedLight, partialTicks, bb, last);
+
+            // buffer finish
+            profiler.popPush("draw");
+        }
+
+        // gl state finish
+
+        profiler.pop();
+        profiler.pop();
+        profiler.pop();
+    }
+
+    public static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks,
+    		VertexConsumer bb, Pose pose) {
+        FluidStackInterp fluid = tank.getFluidForRender(partialTicks);
+        if (fluid == null || fluid.amount <= 0) {
+            return;
+        }
+        int blockLight = fluid.fluid.getFluid().getFluidType().getLightLevel(fluid.fluid) & 0xF;
+        combinedLight |= blockLight << 4;
+        FluidRenderer.vertex.lighti(combinedLight);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid.fluid, fluid.amount, tank.getCapacity(), size.min,
+            size.max, bb, pose, null);
+    }
+
+    static class TankRenderSizes {
+        final TankSize tankIn, tankOutGas, tankOutLiquid;
+
+        public TankRenderSizes(TankSize tankIn, TankSize tankOutGas, TankSize tankOutLiquid) {
+            this.tankIn = tankIn;
+            this.tankOutGas = tankOutGas;
+            this.tankOutLiquid = tankOutLiquid;
+        }
+
+        public TankRenderSizes rotateY() {
+            return new TankRenderSizes(tankIn.rotateY(), tankOutGas.rotateY(), tankOutLiquid.rotateY());
+        }
+    }
+
+    static class Size {
+        final Vec3 min, max;
+
+        public Size(int sx, int sy, int sz, int ex, int ey, int ez) {
+            this(new Vec3(sx, sy, sz).scale(1 / 16.0), new Vec3(ex, ey, ez).scale(1 / 16.0));
+        }
+
+        public Size(Vec3 min, Vec3 max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public Size shrink(double by) {
+            return new Size(min.add(by, by, by), max.subtract(by, by, by));
+        }
+
+        public Size rotateY() {
+            Vec3 _min = rotateY(min);
+            Vec3 _max = rotateY(max);
+            return new Size(VecUtil.min(_min, _max), VecUtil.max(_min, _max));
+        }
+
+        private static Vec3 rotateY(Vec3 vec) {
+            return new Vec3(//
+                1 - vec.z, //
+                vec.y, //
+                vec.x//
+            );
+        }
+    }
+}

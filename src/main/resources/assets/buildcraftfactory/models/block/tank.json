@@ -1,0 +1,24 @@
+{
+	"parent": "block/block",
+	"render_type": "cutout",
+    "elements": [
+        {
+            "from": [2, 0, 2],
+            "to": [14, 16, 14],
+            "faces": {
+                "down": {"uv": [ 2, 2, 14, 14 ],"texture": "#down", "cullface": "down"},
+                "up": {"uv": [ 2, 2, 14, 14 ],"texture": "#up", "cullface": "up"},
+                "north": {"uv": [ 2, 0, 14, 16 ],"texture": "#side"},
+                "south": {"uv": [ 2, 0, 14, 16 ],"texture": "#side"},
+                "west": {"uv": [ 2, 0, 14, 16 ],"texture": "#side"},
+                "east": {"uv": [ 2, 0, 14, 16 ],"texture": "#side"}
+            }
+        }
+    ],
+    "textures": {
+        "particle": "buildcraftfactory:blocks/tank/side",
+        "up": "buildcraftfactory:blocks/tank/end",
+        "down": "buildcraftfactory:blocks/tank/end",
+        "side": "buildcraftfactory:blocks/tank/side"
+    }
+}

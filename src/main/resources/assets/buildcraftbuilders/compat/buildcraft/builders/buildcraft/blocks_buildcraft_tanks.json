@@ -1,0 +1,133 @@
+[
+    {
+        "selectors": [
+            "buildcraftfactory:tank"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:distiller"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "in"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "gasOut"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "liquidOut"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:flood_gate"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:heat_exchange_start"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "heatableIn"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "coolableOut"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:heat_exchange_start"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "heatableOut"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "coolableIn"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftfactory:pump"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftcore:engine[type=iron]"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "fuel"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "coolant"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "residue"]
+            }
+        ]
+    },
+    {
+        "selectors": [
+            "buildcraftbuilders:builder"
+        ],
+        "requiredExtractors": [
+            {
+                "type": "item_from_block"
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank1"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank2"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank3"]
+            }, {
+                "type": "tank",
+                "path": ["tanks", "tank4"]
+            }
+        ]
+    }
+]

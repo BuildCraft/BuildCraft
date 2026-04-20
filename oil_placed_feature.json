@@ -1,0 +1,61 @@
+{
+	"feature":	{
+		"type":"buildcraftenergy:worldgen.feature.oil",
+		"config":{
+			"excludedBiomes": [
+				"minecraft:the_end",
+				"minecraft:end_barrens",
+				"minecraft:end_highlands",
+				"minecraft:end_midlands",
+				"minecraft:small_end_islands",
+				"minecraft:crimson_forest",
+				"minecraft:basalt_deltas",
+				"minecraft:nether_wastes",
+				"minecraft:warped_forest",
+				"minecraft:the_void"
+			],
+			"excessiveBiomes":[
+				{
+					"biome" : "minecraft:desert",
+					"noiseScale" : 0.001,
+					"noiseThreshold" : 0.7
+				},
+				{
+					"biome" : "minecraft:deep_cold_ocean",
+					"noiseScale" : 0.0005,
+					"noiseThreshold" : 0.7
+				},
+				{
+					"biome" : "minecraft:deep_ocean",
+					"noiseScale" : 0.0005,
+					"noiseThreshold" : 0.9
+				}
+			],
+			"surfaceDepositBiomes":[
+				
+			],
+			"oilWellGenerationRate" : 1.0,
+			"genOilInEveryVanillaBiomes" : true,
+			"genOilInEveryModBiomes" : false,
+			"oilStructureSetting" :{
+				"genOilState": {
+				  "Name": "buildcraftenergy:oil"
+				},
+				"enableOilSpouts" : true,
+				"smallSpoutMinHeight" : 6,
+				"smallSpoutMaxHeight" : 12,
+				"largeSpoutMinHeight" : 10,
+				"largeSpoutMaxHeight" : 20,
+				"smallOilGenProb" : 2.0,
+				"mediumOilGenProb" : 0.1,
+				"largeOilGenProb" : 0.04
+			}
+		}
+	},
+	"placement":[
+		{
+			"type":"count",
+			"count":1
+		}
+	]
+}

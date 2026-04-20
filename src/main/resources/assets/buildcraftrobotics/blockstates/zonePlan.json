@@ -1,0 +1,24 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftcore:default_cube",
+        "textures": {
+            "particle":"buildcraftrobotics:blocks/zone_plan/top",
+            "down":"buildcraftrobotics:blocks/zone_plan/default",
+            "up":"buildcraftrobotics:blocks/zone_plan/top",
+            "north":"buildcraftrobotics:blocks/zone_plan/back",
+            "east":"buildcraftrobotics:blocks/zone_plan/right",
+            "south":"buildcraftrobotics:blocks/zone_plan/front",
+            "west":"buildcraftrobotics:blocks/zone_plan/left"
+        }
+    },
+    "variants": {
+        "inventory": [{}],
+        "facing": {
+            "north": { "y": 180 },
+            "south": {          },
+            "east":  { "y": 270 },
+            "west":  { "y": 90  }
+        }
+    }
+}

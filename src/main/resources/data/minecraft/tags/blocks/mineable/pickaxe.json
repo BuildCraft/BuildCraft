@@ -1,0 +1,15 @@
+{
+  "values": [
+    "buildcraftcore:engine",
+    "buildcraftfactory:autoworkbench_item",
+    "buildcraftfactory:distiller",
+    "buildcraftfactory:flood_gate",
+    "buildcraftfactory:chute",
+    "buildcraftfactory:heat_exchange",
+    "buildcraftfactory:mining_well",
+    "buildcraftfactory:pump",
+    "buildcraftfactory:tank",
+    "buildcrafttransport:filtered_buffer",
+    "buildcrafttransport:pipe_holder"
+  ]
+}

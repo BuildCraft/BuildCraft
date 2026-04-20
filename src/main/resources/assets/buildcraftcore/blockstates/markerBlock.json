@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=up":  { "model": "buildcraftcore:marker" },
+        "facing=down":  { "model": "buildcraftcore:marker", "x": 180 },
+        "facing=east":  { "model": "buildcraftcore:marker", "y": 90, "x": 90 },
+        "facing=south":  { "model": "buildcraftcore:marker", "y": 180, "x": 90 },
+        "facing=west":  { "model": "buildcraftcore:marker", "y": 270, "x": 90 },
+        "facing=north":  { "model": "buildcraftcore:marker", "x": 90 }
+    }
+}

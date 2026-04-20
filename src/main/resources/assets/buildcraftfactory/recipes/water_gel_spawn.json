@@ -1,0 +1,35 @@
+{
+  "result": {
+    "item": "buildcraftfactory:water_gel_spawn"
+  },
+  "pattern": [
+    " s ",
+    "srs",
+    " s "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "s": {
+      "item": "minecraft:sand",
+      "data": 0
+    },
+    "r": {
+      "type": "minecraft:item_nbt",
+      "item": "forge:bucketfilled",
+      "nbt": {
+        "FluidName": "oil_residue",
+        "Amount": 1000
+      }
+    }
+  },
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftfactory:water_gel_spawn"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "buildcraftenergy"
+    }
+  ]
+}

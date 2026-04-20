@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftbuilders:filler"
+    },
+    "title": {
+      "translate": "advancements.buildcraftbuilders.building_for_the_future.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftbuilders.building_for_the_future.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcraftbuilders:shaping_the_world",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

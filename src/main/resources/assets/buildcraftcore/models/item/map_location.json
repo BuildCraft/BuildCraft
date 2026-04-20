@@ -1,0 +1,44 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "buildcraftcore:items/map/clean"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "buildcraftcore:map_type": 0.375
+            },
+            "model": "buildcraftcore:item/map_location/path_repeating"
+        },
+        {
+            "predicate": {
+                "buildcraftcore:map_type": 0.5
+            },
+            "model": "buildcraftcore:item/map_location/zone"
+        },
+		{
+		    "predicate": {
+		        "buildcraftcore:map_type": 0.625
+		    },
+		    "model": "buildcraftcore:item/map_location/path"
+		},
+		{
+		    "predicate": {
+		        "buildcraftcore:map_type": 0.75
+		    },
+		    "model": "buildcraftcore:item/map_location/area"
+		},
+		{
+		    "predicate": {
+		        "buildcraftcore:map_type": 0.875
+		    },
+		    "model": "buildcraftcore:item/map_location/spot"
+		},
+		{
+		    "predicate": {
+		        "buildcraftcore:map_type": 1
+		    },
+		    "model": "buildcraftcore:item/map_location/clean"
+		}
+    ]
+}

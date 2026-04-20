@@ -1,0 +1,19 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 20000000000,
+  "group": "buildcraftsilicon:gate_or",
+  "ingredient_counts": [
+    1
+  ],
+  "ingredients": [
+    {
+      "type": "forge:nbt",
+      "count": 1,
+      "item": "buildcraftsilicon:redstone_chipset/iron"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug/gate",
+    "nbt": "{gate:{logic:1b,material:1b,modifier:0b}}"
+  }
+}

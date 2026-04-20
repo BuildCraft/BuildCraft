@@ -1,0 +1,21 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 500000000,
+  "group": "buildcraftsilicon:lens_filters",
+  "ingredient_counts": [
+    1,
+    1
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:yellow_stained_glass"
+    },
+    {
+      "item": "minecraft:iron_bars"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug/lens",
+    "nbt": "{Damage:20}"
+  }
+}
