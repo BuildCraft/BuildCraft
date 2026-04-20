@@ -1,6 +1,0 @@
-[
-    {
-        "selectors": ["minecraft:dispenser"],
-        "ignoredProperties": ["triggered"]
-    }
-]

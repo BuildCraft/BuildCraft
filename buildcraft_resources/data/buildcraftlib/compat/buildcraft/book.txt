@@ -1,5 +1,0 @@
-~{buildcraft/json/insn}
-add "meta" `{
-    "title": "buildcraft.guide.book.meta.name",
-    "all_entries": false
-}`

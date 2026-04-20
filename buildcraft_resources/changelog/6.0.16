@@ -1,6 +1,0 @@
-#1854 fix tile marker crash [Prototik]
-#1852 fix pump crash [Prototik]
-#1848 energy converter crash [Prototik]
-#1842 take into account blueprints with no ids [SpaceToad]
-#1833 fix canFill/canDrain in tanks [Prototik]
-#1831 Fix possible NPE in FacadeItemRenderer [Prototik]
