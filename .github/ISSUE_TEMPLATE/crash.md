@@ -9,5 +9,5 @@ assignees: ''
 
 <!-- Crashes can be found in <your_game_directory>/crash_reports/ -->
 
-Crash Report or Log: <!-- Upload your crash report https://gist.github.com -->
+Crash Report or Log: <!-- Please do not put the entire log here, upload it on pastebin (https://pastebin.com/) or gist (https://gist.github.com/) and paste here the link. -->
 
