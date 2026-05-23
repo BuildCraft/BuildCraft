@@ -98,6 +98,12 @@ public class BCTransportRecipes {
             addPipeUpgradeRecipe(BCTransportItems.pipePowerWood, BCTransportItems.pipeRfWood, upgrade);
             addPipeUpgradeRecipe(BCTransportItems.pipePowerCobble, BCTransportItems.pipeRfCobble, upgrade);
             addPipeUpgradeRecipe(BCTransportItems.pipePowerStone, BCTransportItems.pipeRfStone, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerQuartz, BCTransportItems.pipeRfQuartz, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerIron, BCTransportItems.pipeRfIron, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerGold, BCTransportItems.pipeRfGold, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerSandstone, BCTransportItems.pipeRfSandstone, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerDiamond, BCTransportItems.pipeRfDiamond, upgrade);
+            addPipeUpgradeRecipe(BCTransportItems.pipePowerDiaWood, BCTransportItems.pipeRfDiaWood, upgrade);
         }
 
         if (BCTransportItems.wire != null) {
