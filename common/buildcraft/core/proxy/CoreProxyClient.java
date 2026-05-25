@@ -101,7 +101,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* GFX */
 	@Override
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
-		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(getClientWorld(), item, tile));
 	}
 
 	@Override
