@@ -20,7 +20,7 @@
 
 plugins {
     // Fabric Loom replaces net.minecraftforge.gradle.forge
-    alias(libs.plugins.fabricLoom)
+    alias(libs.plugins.fabric.loom)
     id 'maven-publish'
 }
 
@@ -149,15 +149,15 @@ dependencies {
     // ---- Fabric toolchain (managed by Loom, not bundled in the output jar) ----
     minecraft libs.minecraft
     // Yarn mappings: the :v2 classifier selects the intermediary-mapped variant.
-    mappings variantOf(libs.yarnMappings) { classifier "v2" }
-    modImplementation libs.fabricLoader
-    modImplementation libs.fabricApi
+    mappings variantOf(libs.yarn.mappings) { classifier "v2" }
+    modImplementation libs.fabric.loader
+    modImplementation libs.fabric.api
 
     // ---- Energy API (Phase 3 — not yet referenced in Java source) ----
     // teamreborn:energy replaces net.minecraftforge.energy.{IEnergyStorage, CapabilityEnergy}.
     // It is declared here so the dependency chain is established; actual usage in
     // tile entities is part of the capability migration phase.
-    modImplementation libs.teamRebornEnergy
+    modImplementation libs.team.reborn.energy
 
     // ---- Annotation support ----
     // @Nonnull / @Nullable are used throughout; jsr305 must be on the compile

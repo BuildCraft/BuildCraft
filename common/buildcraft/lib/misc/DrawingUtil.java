@@ -11,9 +11,12 @@ import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+// TODO(R.Chen): javax.vecmath.Point2i was provided by Java 3D under Forge.
+// Not available on Fabric/Java 17. Replace with a small Point2i record or
+// java.awt.Point in a follow-up pass.
 import javax.vecmath.Point2i;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public class DrawingUtil {
     @SuppressWarnings("Duplicates")

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.io.BufferedWriter;
@@ -9,6 +15,11 @@ import java.nio.file.StandardOpenOption;
 import java.text.NumberFormat;
 import java.util.List;
 
+// TODO(R.Chen): Profiler in 1.20.1 (Yarn) is at net.minecraft.util.profiler.Profiler
+// but its API was overhauled: Profiler.Result, profilingEnabled, getProfilingData(),
+// startSection/endSection were all removed/replaced with ProfilerFiller + Profiler.PathEntry.
+// This entire file needs a rewrite against the new profiler API. Leaving import as
+// 1.12.2 path so the compile error here pinpoints the migration site clearly.
 import net.minecraft.profiler.Profiler;
 
 import buildcraft.api.core.BCLog;

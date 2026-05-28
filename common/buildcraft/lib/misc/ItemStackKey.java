@@ -10,6 +10,10 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
+// TODO(R.Chen): ItemStack.getMetadata() was removed after 1.13 (item flattening);
+// stack.serializeNBT() was Forge-only. Both call sites below need rework before
+// this class compiles under Fabric 1.20.1. Likely replacement: compare NBT via
+// stack.getNbt() and drop metadata comparison entirely.
 public class ItemStackKey {
     public static final ItemStackKey EMPTY = new ItemStackKey(StackUtil.EMPTY);
 

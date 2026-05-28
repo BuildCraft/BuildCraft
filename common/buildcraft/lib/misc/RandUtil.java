@@ -1,7 +1,17 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
 import java.util.Random;
 
+// Yarn 1.20.1: net.minecraft.world.World is still the correct package.
+// TODO(R.Chen): world.getSeed() moved to ServerWorld in 1.20.1. Either change
+// the createRandomForChunk(World,...) signature to take ServerWorld, or cast
+// at the call site. Behavioral seed math below is unchanged.
 import net.minecraft.world.World;
 
 /** Utilities based around more complex (but common) usages of {@link Random}. */
