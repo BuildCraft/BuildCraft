@@ -97,6 +97,28 @@ loom {
 // Fabric has no concept of a separately-shipped API artifact at this stage.
 // Re-split in a later phase when the API surface has been reworked.
 sourceSets {
+    // ---------------------------------------------------------------------------
+    // libLeaf — isolated sourceSet for incremental lib/misc migration verification.
+    // Only contains the 11 already-migrated leaf files; grows as more files are ported.
+    // Run: ./gradlew compileLibLeaf
+    // ---------------------------------------------------------------------------
+    libLeaf {
+        java {
+            // The 11 migrated leaf files
+            srcDir "common/buildcraft/lib/misc"
+            include "ArrayUtil.java",
+                    "MathUtil.java",
+                    "ObjectUtilBC.java",
+                    "TimeUtil.java",
+                    "WorkerThreadUtil.java",
+                    "DrawingUtil.java",
+                    "ItemStackKey.java",
+                    "ProfilerUtil.java",
+                    "RandUtil.java",
+                    "StackMatchingPredicate.java",
+                    "WorldUtil.java"
+        }
+    }
     main {
         java {
             srcDir "common"               // all eight BC modules
@@ -125,6 +147,10 @@ sourceSets {
         }
     }
 }
+
+// Wire libLeaf classpath to main's compile classpath so it sees Minecraft + Fabric API.
+// Done outside the sourceSets block to avoid forward-reference issues.
+sourceSets.libLeaf.compileClasspath += sourceSets.main.compileClasspath
 
 // ---------------------------------------------------------------------------
 // Repositories
@@ -260,6 +286,15 @@ if (project.hasProperty("runCheckstyle")) {
         // NOTE: guidelines/buildcraft.checkstyle may need rule updates for 10.x.
         toolVersion = "10.12.4"
     }
+}
+
+// ---------------------------------------------------------------------------
+// compileLibLeaf — compile only the verified-migrated leaf files
+// ---------------------------------------------------------------------------
+tasks.register("compileLibLeaf") {
+    group       = "verification"
+    description = "Compile only the lib-leaf source set for incremental migration verification."
+    dependsOn compileLibLeafJava
 }
 
 // ---------------------------------------------------------------------------

@@ -11,12 +11,11 @@ import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-// TODO(R.Chen): javax.vecmath.Point2i was provided by Java 3D under Forge.
-// Not available on Fabric/Java 17. Replace with a small Point2i record or
-// java.awt.Point in a follow-up pass.
-import javax.vecmath.Point2i;
+// org.joml.Vector2i ships with Minecraft 1.20.1 and replaces javax.vecmath.Vector2i
+// (removed when Java 3D was dropped). Field names .x/.y are the same.
+import org.joml.Vector2i;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class DrawingUtil {
     @SuppressWarnings("Duplicates")
@@ -160,10 +159,10 @@ public class DrawingUtil {
 
 
     public static void fill(boolean[][] data, int startX, int startY, int width, int height) {
-        Queue<Point2i> queue = new ArrayDeque<>();
-        queue.add(new Point2i(startX, startY));
+        Queue<Vector2i> queue = new ArrayDeque<>();
+        queue.add(new Vector2i(startX, startY));
         while (!queue.isEmpty()) {
-            Point2i point = queue.poll();
+            Vector2i point = queue.poll();
             if (point.x < 0 || point.y < 0 || point.x >= width || point.y >= height) {
                 continue;
             }
@@ -171,10 +170,10 @@ public class DrawingUtil {
                 continue;
             }
             data[point.x][point.y] = true;
-            queue.add(new Point2i(point.x - 1, point.y));
-            queue.add(new Point2i(point.x + 1, point.y));
-            queue.add(new Point2i(point.x, point.y - 1));
-            queue.add(new Point2i(point.x, point.y + 1));
+            queue.add(new Vector2i(point.x - 1, point.y));
+            queue.add(new Vector2i(point.x + 1, point.y));
+            queue.add(new Vector2i(point.x, point.y - 1));
+            queue.add(new Vector2i(point.x, point.y + 1));
         }
     }
 }

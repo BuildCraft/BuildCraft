@@ -6,27 +6,28 @@
 
 package buildcraft.lib.misc;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
-// TODO(R.Chen): ItemStack.getMetadata() was removed after 1.13 (item flattening);
-// stack.serializeNBT() was Forge-only. Both call sites below need rework before
-// this class compiles under Fabric 1.20.1. Likely replacement: compare NBT via
-// stack.getNbt() and drop metadata comparison entirely.
 public class ItemStackKey {
-    public static final ItemStackKey EMPTY = new ItemStackKey(StackUtil.EMPTY);
+    public static final ItemStackKey EMPTY = new ItemStackKey(ItemStack.EMPTY);
 
     public final @Nonnull ItemStack baseStack;
     private final int hash;
 
     public ItemStackKey(@Nonnull ItemStack stack) {
         if (stack.isEmpty()) {
-            baseStack = StackUtil.EMPTY;
+            baseStack = ItemStack.EMPTY;
             hash = 0;
         } else {
             this.baseStack = stack.copy();
-            this.hash = StackUtil.hash(baseStack);
+            // getMetadata() and serializeNBT() were removed in 1.13+.
+            // Hash on item identity + NBT tag hashCode (null NBT → 0).
+            this.hash = Objects.hash(this.baseStack.getItem(),
+                this.baseStack.getNbt() != null ? this.baseStack.getNbt().hashCode() : 0);
         }
     }
 
@@ -45,10 +46,13 @@ public class ItemStackKey {
         if (baseStack.getItem() != other.baseStack.getItem()) {
             return false;
         }
-        if (baseStack.getMetadata() != other.baseStack.getMetadata()) {
-            return false;
-        }
-        return baseStack.serializeNBT().equals(other.baseStack.serializeNBT());
+        // getMetadata() was removed in 1.13 (item flattening). Item identity is now sufficient.
+        // serializeNBT() was Forge-only; compare via getNbt() which returns null when no tag is present.
+        net.minecraft.nbt.NbtCompound a = baseStack.getNbt();
+        net.minecraft.nbt.NbtCompound b = other.baseStack.getNbt();
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return a.equals(b);
     }
 
     @Override

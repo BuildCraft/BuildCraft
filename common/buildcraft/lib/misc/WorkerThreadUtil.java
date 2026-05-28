@@ -23,22 +23,24 @@ import java.util.concurrent.TimeoutException;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Provides a pool of worker threads that can execute tasks. Each task should take no longer than (ideally) 20ms or at
  * a push 100ms. Each task is watched to make sure that it takes less time to complete that that, and if it takes longer
  * then a warning is logged. */
 public class WorkerThreadUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger("buildcraft.lib.threads");
     private static final ExecutorService WORKING_POOL, DEPENDANT_WORKING_POOL, MONITORING_POOL;
-    private static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.threads");
+    // TODO(R.Chen): BCDebugging.shouldDebugLog used Forge's Loader to check debug flags at runtime.
+    // Replace with a system-property or Fabric config option in a later pass.
+    private static final boolean DEBUG = Boolean.getBoolean("buildcraft.debug.threads");
 
     static {
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         int max = Math.max(1, availableProcessors / 3);
         if (DEBUG) {
-            BCLog.logger.info("[lib.threads] Creating 2 thread pools with up to " + max + " threads each.");
+            LOGGER.info("[lib.threads] Creating 2 thread pools with up to " + max + " threads each.");
         }
 
         ThreadFactory factory = new BasicThreadFactory.Builder().daemon(false)//
@@ -145,17 +147,17 @@ public class WorkerThreadUtil {
         @Override
         public T call() throws Exception {
             if (DEBUG) {
-                BCLog.logger.info("[lib.threads] A task has been started [" + taskType + "]");
+                LOGGER.info("[lib.threads] A task has been started [" + taskType + "]");
             }
             start.countDown();
             try {
                 T result = delegate.call();
                 if (DEBUG) {
-                    BCLog.logger.info("[lib.threads] A task has finished successfully [" + taskType + "]");
+                    LOGGER.info("[lib.threads] A task has finished successfully [" + taskType + "]");
                 }
                 return result;
             } catch (Throwable t) {
-                BCLog.logger.info("[lib.threads] A task failed! [" + taskType + "]", t);
+                LOGGER.info("[lib.threads] A task failed! [" + taskType + "]", t);
                 throw Throwables.propagate(t);
             } finally {
                 end.countDown();
@@ -185,22 +187,22 @@ public class WorkerThreadUtil {
             long startMonitor = System.currentTimeMillis();
             task.start.await();
             if (System.currentTimeMillis() - startMonitor > 100) {
-                BCLog.logger.warn("[lib.threads] A task took a long time to start! (more than 100 ms) [" + task.taskType + "]");
+                LOGGER.warn("[lib.threads] A task took a long time to start! (more than 100 ms) [" + task.taskType + "]");
             }
             try {
                 future.get(100, TimeUnit.MILLISECONDS);
             } catch (ExecutionException e1) {
                 // Ignore it- it will have been logged by the executor
             } catch (TimeoutException e) {
-                BCLog.logger.warn("[lib.threads] A task took too long! (more than 100 ms) [" + task.taskType + "]");
+                LOGGER.warn("[lib.threads] A task took too long! (more than 100 ms) [" + task.taskType + "]");
                 try {
                     future.get(9900, TimeUnit.MILLISECONDS);
                 } catch (ExecutionException e1) {
                     // Ignore it- it will have been logged by the executor
                 } catch (TimeoutException e1) {
-                    BCLog.logger.warn("[lib.threads] A task took WAAAAY too long! (more than 10 seconds) [" + task.taskType + "]");
+                    LOGGER.warn("[lib.threads] A task took WAAAAY too long! (more than 10 seconds) [" + task.taskType + "]");
                     task.end.await();
-                    BCLog.logger.info("[lib.threads] The task FINALLY completed after " + (System.currentTimeMillis() - startMonitor) + "ms");
+                    LOGGER.info("[lib.threads] The task FINALLY completed after " + (System.currentTimeMillis() - startMonitor) + "ms");
                 }
             }
         }

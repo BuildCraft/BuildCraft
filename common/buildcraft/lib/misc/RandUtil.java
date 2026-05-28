@@ -8,17 +8,14 @@ package buildcraft.lib.misc;
 
 import java.util.Random;
 
-// Yarn 1.20.1: net.minecraft.world.World is still the correct package.
-// TODO(R.Chen): world.getSeed() moved to ServerWorld in 1.20.1. Either change
-// the createRandomForChunk(World,...) signature to take ServerWorld, or cast
-// at the call site. Behavioral seed math below is unchanged.
-import net.minecraft.world.World;
+// Yarn 1.20.1: getSeed() moved from World to ServerWorld.
+import net.minecraft.server.world.ServerWorld;
 
 /** Utilities based around more complex (but common) usages of {@link Random}. */
 public class RandUtil {
     /** Creates a {@link Random} instance for a specific generator, for the specified chunk, in the specified world.
-     * 
-     * @param world The world to generate for.
+     *
+     * @param world The server world to generate for (getSeed() requires ServerWorld in 1.20.1).
      * @param chunkX The chunk X co-ord to generate for.
      * @param chunkY The chunk X co-ord to generate for.
      * @param magicNumber The magic number, specific to the generator. Each different generator that calls this should
@@ -26,7 +23,7 @@ public class RandUtil {
      *            place. It is recommended that you generate a random number once, and place it statically in the
      *            generator class (Perhaps by using <code>new SecureRandom().nextLong()</code>).
      * @return A {@link Random} instance that starts off with the same seed given the same arguments. */
-    public static Random createRandomForChunk(World world, int chunkX, int chunkY, long magicNumber) {
+    public static Random createRandomForChunk(ServerWorld world, int chunkX, int chunkY, long magicNumber) {
         long worldSeed = world.getSeed();
         return createRandomForChunk(worldSeed, chunkX, chunkY, magicNumber);
     }

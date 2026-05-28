@@ -18,6 +18,12 @@ pluginManagement {
     }
 }
 
+// foojay-resolver lets Gradle auto-provision JDK 17 without a manual JAVA_HOME export.
+// Must be declared as a settings plugin (here, not in build.gradle).
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
 // Gradle 8 automatically picks up gradle/libs.versions.toml as the default version
 // catalog named "libs".  No explicit versionCatalogs {} block is required.
 
