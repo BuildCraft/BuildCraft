@@ -1,0 +1,42 @@
+# gradle/libs.versions.toml
+# Version catalog for BuildCraft → Fabric 1.20.1 migration.
+# Access in build scripts via the `libs` accessor (Gradle auto-registers this file).
+#
+# NOTE: fabric-transfer-api is *part of* fabric-api and does NOT need a separate
+# dependency. It is exposed through the fabric-api artifact.
+# Team Reborn Energy (teamRebornEnergy) is the community-standard Fabric energy API
+# that replaces Forge RF / IEnergyStorage.  Add its maven repo in build.gradle.
+
+[versions]
+minecraft         = "1.20.1"
+yarn              = "1.20.1+build.10"
+fabric-loader     = "0.15.11"
+fabric-api        = "0.92.2+1.20.1"
+fabric-loom       = "1.6-SNAPSHOT"
+team-reborn-energy = "3.0.0"
+jsr305            = "3.0.2"
+junit             = "4.13.2"
+
+[libraries]
+# Minecraft + mappings (consumed by Fabric Loom, not added to the jar)
+minecraft          = { module = "com.mojang:minecraft",            version.ref = "minecraft" }
+# Classifier "v2" must be applied in build.gradle via variantOf(libs.yarnMappings){ classifier "v2" }
+yarn-mappings      = { module = "net.fabricmc:yarn",               version.ref = "yarn" }
+
+# Fabric runtime
+fabric-loader      = { module = "net.fabricmc:fabric-loader",      version.ref = "fabric-loader" }
+fabric-api         = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+
+# Energy API — replaces Forge RF / IEnergyStorage (wired up in Phase 3)
+# Repository: https://maven.teamreborn.energy/
+team-reborn-energy = { module = "teamreborn:energy",               version.ref = "team-reborn-energy" }
+
+# Annotation-only; not shipped in the jar (compileOnly / implementation scope)
+jsr305             = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
+
+# Test
+junit              = { module = "junit:junit",                      version.ref = "junit" }
+
+[plugins]
+# Pin to a specific release when one is available; -SNAPSHOT tracks the latest 1.6.x drop.
+fabric-loom        = { id = "fabric-loom", version.ref = "fabric-loom" }

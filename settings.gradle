@@ -1,1 +1,29 @@
+/*
+ * settings.gradle — BuildCraft (Fabric 1.20.1 port)
+ *
+ * Migration note: ForgeGradle 2.3 required no pluginManagement block because it
+ * shipped its own bootstrap mechanism.  Fabric Loom is a standard Gradle plugin
+ * and must be resolvable from the FabricMC maven before any project script runs.
+ */
+
+pluginManagement {
+    repositories {
+        // Fabric Loom lives here; must be first so it is found before the Plugin Portal.
+        maven {
+            name = "FabricMC"
+            url  = "https://maven.fabricmc.net/"
+        }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+// Gradle 8 automatically picks up gradle/libs.versions.toml as the default version
+// catalog named "libs".  No explicit versionCatalogs {} block is required.
+
+rootProject.name = "BuildCraft"
+
+// sub_projects/expression is a pure-Java library (no Minecraft / Forge deps).
+// It is kept as a standalone subproject so its code generator (AutoGenerator)
+// can be compiled and executed independently before the main source set.
 include 'sub_projects:expression'
