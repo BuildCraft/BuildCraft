@@ -124,7 +124,10 @@ sourceSets {
             include "buildcraft/lib/BCLibInitializer.java",
                     "buildcraft/lib/BCLibClientInitializer.java",
                     "buildcraft/lib/compat/forge_stubs/MissingMappingsStub.java",
-                    "buildcraft/lib/compat/forge_stubs/ObjectHolderStub.java"
+                    "buildcraft/lib/compat/forge_stubs/ObjectHolderStub.java",
+                    "buildcraft/lib/compat/forge_stubs/LegacyNetStubs.java",
+                    "buildcraft/lib/net/BCNetworkManager.java",
+                    "buildcraft/lib/net/UpdateTilePayload.java"
         }
         // BuildCraftFabric.java is in src/main/java; libLeaf depends on it for LOGGER
         java {
