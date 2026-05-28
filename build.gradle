@@ -134,7 +134,15 @@ sourceSets {
                     "buildcraft/lib/mj/IMJRedstoneReceiver.java",
                     "buildcraft/lib/mj/MJEnergyStorage.java",
                     "buildcraft/lib/compat/BCItemStorage.java",
-                    "buildcraft/lib/compat/BCFluidStorage.java"
+                    "buildcraft/lib/compat/BCFluidStorage.java",
+                    // Middle-layer migration (unblock TileBC_Neptune) — zero-Forge / Easy
+                    "buildcraft/lib/misc/data/IdAllocator.java",
+                    "buildcraft/lib/misc/collect/OrderedEnumMap.java",
+                    "buildcraft/lib/misc/collect/TypedKeyMap.java",
+                    "buildcraft/lib/misc/collect/TypedMap.java",
+                    "buildcraft/lib/misc/collect/TypedMapDirect.java",
+                    "buildcraft/lib/misc/collect/TypedMapHierarchy.java",
+                    "buildcraft/lib/migrate/BCVersion.java"
         }
         // BuildCraftFabric.java is in src/main/java; libLeaf depends on it for LOGGER
         java {
