@@ -118,6 +118,19 @@ sourceSets {
                     "StackMatchingPredicate.java",
                     "WorldUtil.java"
         }
+        // Fabric-native initializers + forge_stubs (registry + event migration)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/BCLibInitializer.java",
+                    "buildcraft/lib/BCLibClientInitializer.java",
+                    "buildcraft/lib/compat/forge_stubs/MissingMappingsStub.java",
+                    "buildcraft/lib/compat/forge_stubs/ObjectHolderStub.java"
+        }
+        // BuildCraftFabric.java is in src/main/java; libLeaf depends on it for LOGGER
+        java {
+            srcDir "src/main/java"
+            include "buildcraft/BuildCraftFabric.java"
+        }
     }
     main {
         java {
