@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.engine;
@@ -11,23 +13,22 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
@@ -44,10 +45,16 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.collect.OrderedEnumMap;
 import buildcraft.lib.misc.data.ModelVariableData;
+import buildcraft.lib.mj.MJEnergyStorage;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable, IEngineLikeForLedger {
+// Step 3 migration scope (R.Chen): only the Forge IEnergyStorage capability, the ITickable tick, and the
+// energy-field NBT have been ported. All engine-specific game logic (heat, piston, burn, MJ chaining) is
+// preserved verbatim and marked with TODO(R.Chen) where it still depends on un-migrated APIs
+// (buildcraft.api.mj, IDebuggable, the Forge MjToRfAutoConvertor RF bridge). Do NOT treat the game logic as
+// verified for Fabric.
+public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebuggable, IEngineLikeForLedger {
 
     /** Heat per {@link MjAPI#MJ}. */
     public static final double HEAT_PER_MJ = 0.0023;
@@ -58,6 +65,8 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Nonnull
     public final IMjConnector mjConnector = createConnector();
+    // TODO(R.Chen): MjCapabilityHelper is part of the un-migrated buildcraft.api.mj package (Forge
+    // Capability model). It must be replaced by a Transfer API EnergyStorage.SIDED lookup registration.
     private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(mjConnector);
 
     protected double heat = MIN_HEAT;// TODO: sync gui data
@@ -68,7 +77,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     private int progressPart = 0;
 
     protected EnumPowerStage powerStage = EnumPowerStage.BLUE;
-    protected EnumFacing currentDirection = EnumFacing.UP;
+    protected Direction currentDirection = Direction.UP;
 
     public long currentOutput;// TODO: sync gui data
     public boolean isRedstonePowered = false;
@@ -79,41 +88,58 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     // Needed: Power stored
 
-    public TileEngineBase_BC8() {}
+    // Step 3: Forge IEnergyStorage capability → Team Reborn EnergyStorage (MJ, µJ-based). Created lazily
+    // because the capacity / transfer limits come from subclass-defined abstract methods that cannot be
+    // called from the constructor.
+    // TODO(R.Chen): the manual `long power` accumulator below should be folded onto this storage, and the
+    // storage exposed via EnergyStorage.SIDED in the owning ModInitializer (replacing getCapability).
+    private MJEnergyStorage mjEnergyStorage;
+
+    // TODO(R.Chen): Yarn BlockEntity requires (BlockEntityType<?>, BlockPos, BlockState). Subclasses must
+    // pass their registered BlockEntityType. This replaces the Forge no-arg constructor.
+    public TileEngineBase_BC8(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    protected MJEnergyStorage getMjEnergyStorage() {
+        if (mjEnergyStorage == null) {
+            mjEnergyStorage = new MJEnergyStorage(getMaxPower(), maxPowerReceived(), maxPowerExtracted());
+        }
+        return mjEnergyStorage;
+    }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        currentDirection = NBTUtilBC.readEnum(nbt.getTag("currentDirection"), EnumFacing.class);
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        currentDirection = NBTUtilBC.readEnum(nbt.get("currentDirection"), Direction.class);
         if (currentDirection == null) {
-            currentDirection = EnumFacing.UP;
+            currentDirection = Direction.UP;
         }
         isRedstonePowered = nbt.getBoolean("isRedstonePowered");
         heat = nbt.getDouble("heat");
         power = nbt.getLong("power");
         progress = nbt.getFloat("progress");
-        progressPart = nbt.getInteger("progressPart");
+        progressPart = nbt.getInt("progressPart");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setTag("currentDirection", NBTUtilBC.writeEnum(currentDirection));
-        nbt.setBoolean("isRedstonePowered", isRedstonePowered);
-        nbt.setDouble("heat", heat);
-        nbt.setLong("power", power);
-        nbt.setFloat("progress", progress);
-        nbt.setInteger("progressPart", progressPart);
-        return nbt;
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.put("currentDirection", NBTUtilBC.writeEnum(currentDirection));
+        nbt.putBoolean("isRedstonePowered", isRedstonePowered);
+        nbt.putDouble("heat", heat);
+        nbt.putLong("power", power);
+        nbt.putFloat("progress", progress);
+        nbt.putInt("progressPart", progressPart);
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 isPumping = buffer.readBoolean();
-                currentDirection = buffer.readEnumValue(EnumFacing.class);
+                currentDirection = buffer.readEnumValue(Direction.class);
                 powerStage = buffer.readEnumValue(EnumPowerStage.class);
                 progress = buffer.readFloat();
             } else if (id == NET_GUI_DATA) {
@@ -130,9 +156,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(isPumping);
                 buffer.writeEnumValue(currentDirection);
@@ -151,9 +177,11 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
     }
 
-    public EnumActionResult attemptRotation() {
-        OrderedEnumMap<EnumFacing> possible = VanillaRotationHandlers.ROTATE_FACING;
-        EnumFacing current = currentDirection;
+    // TODO(R.Chen): GAME LOGIC — not verified for Fabric. world.updateNeighborsAlways replaces the Forge
+    // notifyNeighborsRespectDebug call; behaviour parity unconfirmed.
+    public ActionResult attemptRotation() {
+        OrderedEnumMap<Direction> possible = VanillaRotationHandlers.ROTATE_FACING;
+        Direction current = currentDirection;
         for (int i = 0; i < 6; i++) {
             current = possible.next(current);
             if (isFacingReceiver(current)) {
@@ -162,16 +190,16 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                     // makeTileCache();
                     sendNetworkUpdate(NET_RENDER_DATA);
                     redrawBlock();
-                    world.notifyNeighborsRespectDebug(getPos(), getBlockType(), true);
-                    return EnumActionResult.SUCCESS;
+                    world.updateNeighborsAlways(getPos(), getCachedState().getBlock());
+                    return ActionResult.SUCCESS;
                 }
-                return EnumActionResult.FAIL;
+                return ActionResult.FAIL;
             }
         }
-        return EnumActionResult.FAIL;
+        return ActionResult.FAIL;
     }
 
-    private boolean isFacingReceiver(EnumFacing dir) {
+    private boolean isFacingReceiver(Direction dir) {
         return getReceiverToPower(dir) != null;
     }
 
@@ -190,20 +218,22 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
         attemptRotation();
         if (currentDirection == null) {
-            currentDirection = EnumFacing.UP;
+            currentDirection = Direction.UP;
         }
     }
 
     @Override
-    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+    public void onPlacedBy(LivingEntity placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
         currentDirection = null;// Force rotateIfInvalid to always attempt to rotate
         rotateIfInvalid();
     }
 
+    // TODO(R.Chen): GAME LOGIC — World.getBiome returns a RegistryEntry<Biome> in 1.20.1; unwrapped via
+    // .value(). Biome.getTemperature(BlockPos) signature parity unconfirmed.
     protected Biome getBiome() {
         // TODO: Cache this!
-        return world.getBiome(getPos());
+        return world.getBiome(getPos()).value();
     }
 
     /** @return The heat of the current biome, in celsius. */
@@ -228,7 +258,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     @Override
     public final EnumPowerStage getPowerStage() {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             EnumPowerStage newStage = computePowerStage();
 
             if (powerStage != newStage) {
@@ -278,17 +308,22 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     @Override
     public void onNeighbourBlockChanged(Block block, BlockPos nehighbour) {
         super.onNeighbourBlockChanged(block, nehighbour);
-        isRedstonePowered = world.isBlockIndirectlyGettingPowered(getPos()) > 0;
+        isRedstonePowered = world.getReceivedRedstonePower(getPos()) > 0;
     }
 
-    @Override
-    public void update() {
+    // Step 3: ITickable.update() → BlockEntityTicker pattern. The owning Block must return this ticker from
+    // Block#getTicker(...). The tick BODY below is preserved verbatim game logic — TODO(R.Chen): unverified.
+    public static <T extends TileEngineBase_BC8> BlockEntityTicker<T> ticker() {
+        return (world, pos, state, be) -> be.tick();
+    }
+
+    public void tick() {
         deltaManager.tick();
         if (cannotUpdate()) return;
 
         boolean overheat = getPowerStage() == EnumPowerStage.OVERHEAT;
 
-        if (world.isRemote) {
+        if (world.isClient) {
             lastProgress = progress;
 
             if (isPumping) {
@@ -419,25 +454,25 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     // TEMP
     @FunctionalInterface
     public interface ITileBuffer {
-        TileEntity getTile();
+        BlockEntity getTile();
     }
 
     /** Temp! This should be replaced with a tile buffer! */
-    public ITileBuffer getTileBuffer(EnumFacing side) {
-        TileEntity tile = world.getTileEntity(getPos().offset(side));
+    public ITileBuffer getTileBuffer(Direction side) {
+        BlockEntity tile = world.getBlockEntity(getPos().offset(side));
         return () -> tile;
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
+    public void markRemoved() {
+        super.markRemoved();
         // tileCache = null;
         // checkOrientation = true;
     }
 
     @Override
-    public void validate() {
-        super.validate();
+    public void cancelRemoval() {
+        super.cancelRemoval();
         // tileCache = null;
         // checkOrientation = true;
     }
@@ -511,7 +546,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return extracted;
     }
 
-    public final boolean isPoweredTile(TileEntity tile, EnumFacing side) {
+    public final boolean isPoweredTile(BlockEntity tile, Direction side) {
         if (tile == null) return false;
         if (tile.getClass() == getClass()) {
             TileEngineBase_BC8 other = (TileEngineBase_BC8) tile;
@@ -520,16 +555,21 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return getReceiverToPower(tile, side) != null;
     }
 
-    /** @deprecated Replaced with {@link #getReceiverToPower(EnumFacing)}. */
+    // TODO(R.Chen): GAME LOGIC / CROSS-MOD — uses the un-migrated buildcraft.api.mj capability
+    // (MjAPI.CAP_RECEIVER) and the Forge RF bridge (CapabilityEnergy via MjToRfAutoConvertor). Both depend
+    // on the Forge Capability model and must move to Transfer API lookups. The RF fallback branch is stubbed
+    // out (returns null) until a Team Reborn EnergyStorage lookup replaces it.
+    /** @deprecated Replaced with {@link #getReceiverToPower(Direction)}. */
     @Deprecated
-    public IMjReceiver getReceiverToPower(TileEntity tile, EnumFacing side) {
+    public IMjReceiver getReceiverToPower(BlockEntity tile, Direction side) {
         if (tile == null) return null;
-        IMjReceiver rec = tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite());
+        // STUB(R.Chen): tile.getCapability(MjAPI.CAP_RECEIVER, side.getOpposite()) — Forge capability lookup.
+        IMjReceiver rec = null; // TODO(R.Chen): MjAPI.CAP_RECEIVER lookup via Transfer API.
         if (rec != null && rec.canConnect(mjConnector) && mjConnector.canConnect(rec)) {
             return rec;
         } else if (couldPowerRf()) {
-            IEnergyStorage rf = tile.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
-            return MjToRfAutoConvertor.createReceiver(rf);
+            // STUB(R.Chen): tile.getCapability(CapabilityEnergy.ENERGY, ...) — Forge RF capability.
+            return MjToRfAutoConvertor.createReceiver(null); // TODO(R.Chen): Team Reborn EnergyStorage lookup.
         } else {
             return null;
         }
@@ -541,9 +581,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return MjAPI.isRfAutoConversionEnabled();
     }
 
-    public IMjReceiver getReceiverToPower(EnumFacing side) {
+    public IMjReceiver getReceiverToPower(Direction side) {
         TileEngineBase_BC8 engine = this;
-        TileEntity next = null;
+        BlockEntity next = null;
 
         for (int len = 0; len <= getMaxChainLength(); len++) {
             next = engine.getTileBuffer(side).getTile();
@@ -575,14 +615,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return getReceiverToPower(next, side);
     }
 
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (facing == currentDirection) {
-            return mjCaps.getCapability(capability, facing);
-        } else {
-            return super.getCapability(capability, facing);
-        }
-    }
+    // STUB(R.Chen): Forge getCapability(Capability<T>, EnumFacing) override removed. The MJ receiver
+    // capability (mjCaps) must be exposed via an EnergyStorage.SIDED Transfer API lookup, restricted to
+    // currentDirection, registered against the owning BlockEntityType in the ModInitializer.
 
     public abstract long getMaxPower();
 
@@ -619,7 +654,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return getEnergyStored();
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public float getProgressClient(float partialTicks) {
         float last = lastProgress;
         float now = progress;
@@ -631,12 +666,14 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return interp % 1;
     }
 
-    public EnumFacing getCurrentFacing() {
+    public Direction getCurrentFacing() {
         return currentDirection;
     }
 
+    // TODO(R.Chen): IDebuggable (buildcraft.api.tiles) is un-migrated and still declares EnumFacing; this
+    // override signature uses Direction and will only match once that API is ported.
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         left.add("facing = " + currentDirection);
         left.add("heat = " + LocaleUtil.localizeHeat(heat) + " -- " + StringUtilBC.formatSafe("%.2f %%", getHeatLevel()));
         left.add("power = " + LocaleUtil.localizeMj(power));
@@ -645,15 +682,15 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         left.add("last = " + LocaleUtil.localizeMjFlow(lastPower));
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
-    public void getClientDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getClientDebugInfo(List<String> left, List<String> right, Direction side) {
         left.add("Current Model Variables:");
         clientModelData.addDebugInfo(left);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public boolean hasFastRenderer() {
         return true;
     }

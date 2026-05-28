@@ -134,7 +134,9 @@ sourceSets {
                     "buildcraft/lib/mj/IMJRedstoneReceiver.java",
                     "buildcraft/lib/mj/MJEnergyStorage.java",
                     "buildcraft/lib/compat/BCItemStorage.java",
-                    "buildcraft/lib/compat/BCFluidStorage.java"
+                    "buildcraft/lib/compat/BCFluidStorage.java",
+                    "buildcraft/lib/tile/TileBC_Neptune.java",
+                    "buildcraft/lib/engine/TileEngineBase_BC8.java"
         }
         // BuildCraftFabric.java is in src/main/java; libLeaf depends on it for LOGGER
         java {
