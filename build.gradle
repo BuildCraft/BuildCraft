@@ -448,6 +448,135 @@ sourceSets {
                     "buildcraft/transport/stripes/StripesHandlerHoe.java",
                     "buildcraft/transport/stripes/StripesHandlerPlaceBlock.java"
         }
+        // Layer P — lib.gui container/slot layer (ScreenHandler + Slot migration).
+        // Shared container/slot logic; CLIENT-ONLY render files deferred to Phase 5 (commit 2).
+        // IItemHandlerAdv: Forge IItemHandler stub — Transfer-API wiring deferred.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/tile/item/StackInsertionChecker.java",
+                    "buildcraft/lib/tile/item/IItemHandlerAdv.java",
+                    // lib.gui.pos — pure geometry, no MC/Forge deps
+                    "buildcraft/lib/gui/pos/AreaCallable.java",
+                    "buildcraft/lib/gui/pos/GuiRectangle.java",
+                    "buildcraft/lib/gui/pos/IGuiArea.java",
+                    "buildcraft/lib/gui/pos/IGuiPosition.java",
+                    "buildcraft/lib/gui/pos/MousePosition.java",
+                    "buildcraft/lib/gui/pos/PositionAbsolute.java",
+                    "buildcraft/lib/gui/pos/PositionAdded.java",
+                    "buildcraft/lib/gui/pos/PositionCallable.java",
+                    "buildcraft/lib/gui/pos/PositionOffset.java",
+                    // lib.gui.config — deferred: GuiConfigSet/Entry/PropertyBoolean all call
+                    // GuiConfigManager which needs BCLibConfig (not yet in libLeaf).
+                    // Only GuiProperty and GuiPropertyConstructor are clean but isolated without the rest.
+                    "buildcraft/lib/gui/config/GuiProperty.java",
+                    "buildcraft/lib/gui/config/GuiPropertyConstructor.java",
+                    // lib.gui.slot — Fabric Slot / Inventory migration
+                    "buildcraft/lib/gui/slot/IPhantomSlot.java",
+                    "buildcraft/lib/gui/slot/SlotBase.java",
+                    "buildcraft/lib/gui/slot/SlotDisplay.java",
+                    "buildcraft/lib/gui/slot/SlotHidden.java",
+                    "buildcraft/lib/gui/slot/SlotLimited.java",
+                    "buildcraft/lib/gui/slot/SlotOutput.java",
+                    "buildcraft/lib/gui/slot/SlotPhantom.java",
+                    "buildcraft/lib/gui/slot/SlotUntouchable.java",
+                    "buildcraft/lib/gui/slot/SlotValidated.java",
+                    // lib.gui root — shared interface + ScreenHandler container tier
+                    "buildcraft/lib/gui/ISimpleDrawable.java",
+                    "buildcraft/lib/gui/ContainerBC_Neptune.java",
+                    "buildcraft/lib/gui/ContainerBCTile.java",
+                    "buildcraft/lib/gui/ContainerPipe.java",
+                    "buildcraft/lib/gui/Widget_Neptune.java",
+                    // lib.gui.json — slot holder (shared, no render deps)
+                    "buildcraft/lib/gui/json/InventorySlotHolder.java"
+        }
+        // Layer Q — lib.gui CLIENT-ONLY render stubs (Phase 5 deferred).
+        // All files marked @Environment(EnvType.CLIENT) with empty bodies.
+        // Stubs satisfy compile-time type references; real render implementation is Phase 5 work.
+        java {
+            srcDir "common"
+            // root gui — render classes and client-only interfaces
+            include "buildcraft/lib/gui/IGuiElement.java",
+                    "buildcraft/lib/gui/ITooltipElement.java",
+                    "buildcraft/lib/gui/IHelpElement.java",
+                    "buildcraft/lib/gui/IInteractionElement.java",
+                    "buildcraft/lib/gui/IMenuElement.java",
+                    "buildcraft/lib/gui/IContainingElement.java",
+                    "buildcraft/lib/gui/BuildCraftGui.java",
+                    "buildcraft/lib/gui/GuiBC8.java",
+                    "buildcraft/lib/gui/GuiIcon.java",
+                    "buildcraft/lib/gui/GuiScreenBuildCraft.java",
+                    "buildcraft/lib/gui/GuiSpriteScaled.java",
+                    "buildcraft/lib/gui/GuiElementSimple.java",
+                    "buildcraft/lib/gui/GuiElementToolTip.java",
+                    "buildcraft/lib/gui/GuiStack.java",
+                    // button/
+                    "buildcraft/lib/gui/button/ButtonTextureSet.java",
+                    "buildcraft/lib/gui/button/GuiAbstractButton.java",
+                    "buildcraft/lib/gui/button/GuiButtonDrawable.java",
+                    "buildcraft/lib/gui/button/GuiImageButton.java",
+                    "buildcraft/lib/gui/button/IButtonBehaviour.java",
+                    "buildcraft/lib/gui/button/IButtonClickEventListener.java",
+                    "buildcraft/lib/gui/button/IButtonClickEventTrigger.java",
+                    "buildcraft/lib/gui/button/IButtonTextureSet.java",
+                    "buildcraft/lib/gui/button/StandardButtonTextureSets.java",
+                    "buildcraft/lib/gui/button/StandardSpriteButtons.java",
+                    // elem/
+                    "buildcraft/lib/gui/elem/ToolTip.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainer2.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainerHelp.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainerResizing.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainerScissor.java",
+                    "buildcraft/lib/gui/elem/GuiElementDrawable.java",
+                    "buildcraft/lib/gui/elem/GuiElementSlotMover.java",
+                    "buildcraft/lib/gui/elem/GuiElementText.java",
+                    "buildcraft/lib/gui/elem/ScrollbarElement.java",
+                    "buildcraft/lib/gui/elem/ScrollWindow.java",
+                    // help/
+                    "buildcraft/lib/gui/help/DummyHelpElement.java",
+                    "buildcraft/lib/gui/help/ElementHelpInfo.java",
+                    // json/ CLIENT-ONLY stubs (InventorySlotHolder already in Layer P)
+                    "buildcraft/lib/gui/json/BuildCraftJsonGui.java",
+                    "buildcraft/lib/gui/json/ElementType.java",
+                    "buildcraft/lib/gui/json/ElementTypeButton.java",
+                    "buildcraft/lib/gui/json/ElementTypeContainer.java",
+                    "buildcraft/lib/gui/json/ElementTypeDrawnStack.java",
+                    "buildcraft/lib/gui/json/ElementTypeHelp.java",
+                    "buildcraft/lib/gui/json/ElementTypeLedger.java",
+                    "buildcraft/lib/gui/json/ElementTypeSlot.java",
+                    "buildcraft/lib/gui/json/ElementTypeSprite.java",
+                    "buildcraft/lib/gui/json/ElementTypeStatementParam.java",
+                    "buildcraft/lib/gui/json/ElementTypeStatementSlot.java",
+                    "buildcraft/lib/gui/json/ElementTypeStatementSource.java",
+                    "buildcraft/lib/gui/json/ElementTypeText.java",
+                    "buildcraft/lib/gui/json/ElementTypeToolTip.java",
+                    "buildcraft/lib/gui/json/JsonGuiElement.java",
+                    "buildcraft/lib/gui/json/JsonGuiInfo.java",
+                    "buildcraft/lib/gui/json/JsonGuiIterator.java",
+                    "buildcraft/lib/gui/json/JsonGuiTypeRegistry.java",
+                    "buildcraft/lib/gui/json/SpriteDelegate.java",
+                    // ledger/
+                    "buildcraft/lib/gui/ledger/LedgerEngine.java",
+                    "buildcraft/lib/gui/ledger/LedgerHelp.java",
+                    "buildcraft/lib/gui/ledger/LedgerOwnership.java",
+                    "buildcraft/lib/gui/ledger/Ledger_Neptune.java",
+                    // recipe/
+                    "buildcraft/lib/gui/recipe/GuiButtonRecipePhantom.java",
+                    "buildcraft/lib/gui/recipe/GuiRecipeBookPhantom.java",
+                    "buildcraft/lib/gui/recipe/GuiRecipeBookTyped.java",
+                    "buildcraft/lib/gui/recipe/RecipeBookPagePhantom.java",
+                    "buildcraft/lib/gui/recipe/RecipeListPhantom.java",
+                    // statement/
+                    "buildcraft/lib/gui/statement/GuiElementStatement.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementDrag.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementParam.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementSource.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementVariant.java",
+                    "buildcraft/lib/gui/statement/IDrawingParameter.java",
+                    "buildcraft/lib/gui/statement/ParameterRenderer.java",
+                    // widget/
+                    "buildcraft/lib/gui/widget/WidgetFluidTank.java",
+                    "buildcraft/lib/gui/widget/WidgetPhantomSlot.java"
+        }
     }
     main {
         java {
