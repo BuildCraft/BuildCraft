@@ -577,6 +577,25 @@ sourceSets {
                     "buildcraft/lib/gui/widget/WidgetFluidTank.java",
                     "buildcraft/lib/gui/widget/WidgetPhantomSlot.java"
         }
+        // Layer R — transport containers unblocked: ItemHandlerSimple + TileFilteredBuffer + BCTransportSprites stub.
+        // PipeBehaviour subclasses are compile-only stubs; full migration deferred (pipeline dep).
+        java {
+            srcDir "common"
+            include "buildcraft/lib/tile/item/StackInsertionFunction.java",
+                    "buildcraft/lib/tile/item/ItemHandlerSimple.java",
+                    "buildcraft/lib/tile/item/ItemHandlerFiltered.java",
+                    "buildcraft/transport/BCTransportSprites.java",
+                    "buildcraft/transport/tile/TileFilteredBuffer.java",
+                    // PipeBehaviour stubs — minimal surface for container compile
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDiamond.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourWoodDiamond.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourEmzuli.java",
+                    // Transport containers
+                    "buildcraft/transport/container/ContainerFilteredBuffer_BC8.java",
+                    "buildcraft/transport/container/ContainerDiamondPipe.java",
+                    "buildcraft/transport/container/ContainerDiamondWoodPipe.java",
+                    "buildcraft/transport/container/ContainerEmzuliPipe_BC8.java"
+        }
     }
     main {
         java {

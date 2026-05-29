@@ -20,8 +20,22 @@ public class ItemHandlerManager {
     @SuppressWarnings("unused")
     private final StackChangeCallback defaultCallback;
 
+    public enum EnumAccess {
+        NONE, INSERT, EXTRACT, BOTH, PHANTOM
+    }
+
     public ItemHandlerManager(StackChangeCallback defaultCallback) {
         this.defaultCallback = defaultCallback;
+    }
+
+    // STUB(R.Chen): addInvHandler stubs — real slot registration deferred to Transfer-API pass.
+    public ItemHandlerSimple addInvHandler(String name, int size, EnumAccess access) {
+        return new ItemHandlerSimple(size, defaultCallback);
+    }
+
+    public <T extends ItemHandlerSimple> T addInvHandler(String name, T handler, EnumAccess access,
+        Object... args) {
+        return handler;
     }
 
     public void addDrops(DefaultedList<ItemStack> toDrop) {

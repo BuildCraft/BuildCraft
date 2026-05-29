@@ -64,6 +64,22 @@ public class MessageUtil {
         return null;
     }
 
+    public static <E extends Enum<E>> void writeEnumOrNull(PacketByteBuf buffer, E value) {
+        if (value == null) {
+            buffer.writeByte(0);
+        } else {
+            buffer.writeByte(value.ordinal() + 1);
+        }
+    }
+
+    public static <E extends Enum<E>> E readEnumOrNull(PacketByteBuf buffer, Class<E> enumClass) {
+        int ordinal = buffer.readUnsignedByte();
+        if (ordinal == 0) return null;
+        E[] constants = enumClass.getEnumConstants();
+        int idx = ordinal - 1;
+        return (idx >= 0 && idx < constants.length) ? constants[idx] : null;
+    }
+
     /** Checks that the given buffer has been fully read; logs (or throws) if bytes remain. */
     public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
         int readableBytes = buf.readableBytes();
