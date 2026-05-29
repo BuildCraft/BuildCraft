@@ -6,29 +6,29 @@
 
 package buildcraft.lib.net;
 
-import java.io.IOException;
+import io.netty.buffer.Unpooled;
 
-import io.netty.buffer.ByteBuf;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+/**
+ * Fabric 1.20.1 {@link FabricPacket} carrying a {@link PacketBufferBC} payload keyed by a tile's
+ * {@link BlockPos}. Replaces the original Forge {@code IMessage}; the bit-level layered payload format
+ * (PacketBufferBC) is preserved verbatim on the wire.
+ */
+public class MessageUpdateTile implements FabricPacket {
 
-import buildcraft.api.core.BCLog;
+    public static final PacketType<MessageUpdateTile> TYPE = PacketType.create(
+        new Identifier("buildcraft", "update_tile_bc"),
+        MessageUpdateTile::read
+    );
 
-import buildcraft.lib.BCLibProxy;
-import buildcraft.lib.misc.MessageUtil;
-
-public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
     private PacketBufferBC payload;
-
-    @SuppressWarnings("unused")
-    public MessageUpdateTile() {}
 
     public MessageUpdateTile(BlockPos pos, PacketBufferBC payload) {
         this.pos = pos;
@@ -38,43 +38,41 @@ public class MessageUpdateTile implements IMessage {
         }
     }
 
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    public PacketBufferBC getPayload() {
+        return payload;
+    }
+
     public int getPayloadSize() {
         return payload == null ? 0 : payload.readableBytes();
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.pos = MessageUtil.readBlockPos(new PacketBuffer(buf));
+    public static MessageUpdateTile read(PacketByteBuf buf) {
+        BlockPos pos = buf.readBlockPos();
         int size = buf.readUnsignedMedium();
-        payload = new PacketBufferBC(buf.readBytes(size));
+        return new MessageUpdateTile(pos, new PacketBufferBC(buf.readBytes(size)));
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
-        MessageUtil.writeBlockPos(new PacketBuffer(buf), pos);
+    public void write(PacketByteBuf buf) {
+        buf.writeBlockPos(pos);
         int length = payload.readableBytes();
         buf.writeMedium(length);
-        buf.writeBytes(payload, 0, length);
+        buf.writeBytes(payload, payload.readerIndex(), length);
     }
 
-    public static final IMessageHandler<MessageUpdateTile, IMessage> HANDLER = (message, ctx) -> {
-        try {
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player == null || player.world == null) {
-                return null;
-            }
-            TileEntity tile = player.world.getTileEntity(message.pos);
-            if (tile instanceof IPayloadReceiver) {
-                return ((IPayloadReceiver) tile).receivePayload(ctx, message.payload);
-            } else {
-                BCLog.logger.warn("Dropped message for player " + player.getName() + " for tile at " + message.pos
-                    + " (found " + tile + ")");
-            }
-            return null;
-        } catch (IOException io) {
-            throw new RuntimeException(io);
-        } finally {
-            message.payload.release();
-        }
-    };
+    @Override
+    public PacketType<?> getType() {
+        return TYPE;
+    }
+
+    /** Convenience for callers that build a payload eagerly. */
+    public static MessageUpdateTile of(BlockPos pos, IPayloadWriter writer) {
+        PacketBufferBC buffer = new PacketBufferBC(Unpooled.buffer());
+        writer.write(buffer);
+        return new MessageUpdateTile(pos, buffer);
+    }
 }

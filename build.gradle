@@ -149,6 +149,51 @@ sourceSets {
             srcDir "src/main/java"
             include "buildcraft/BuildCraftFabric.java"
         }
+        // Layer A — api.core (BCLog/BCDebugging/IPlayerOwned) needed by TileBC_Neptune
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/BCLog.java",
+                    "buildcraft/api/core/BCDebugging.java",
+                    "buildcraft/api/core/IPlayerOwned.java"
+        }
+        // Layers B/C/D — TileBC_Neptune blockers (lib.misc utils, lib.net primitives, render/debug stubs)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/BlockUtil.java",
+                    "buildcraft/lib/misc/ChunkUtil.java",
+                    "buildcraft/lib/misc/FakePlayerProvider.java",
+                    "buildcraft/lib/misc/InventoryUtil.java",
+                    "buildcraft/lib/misc/MessageUtil.java",
+                    "buildcraft/lib/misc/PermissionUtil.java",
+                    "buildcraft/lib/misc/StringUtilBC.java",
+                    "buildcraft/lib/net/IPayloadWriter.java",
+                    "buildcraft/lib/net/IPayloadReceiver.java",
+                    "buildcraft/lib/net/PacketBufferBC.java",
+                    "buildcraft/lib/net/MessageUpdateTile.java",
+                    "buildcraft/lib/net/MessageManager.java",
+                    "buildcraft/lib/client/render/DetachedRenderer.java",
+                    "buildcraft/lib/debug/IAdvDebugTarget.java",
+                    // lib.cache — chunk/tile caches (NeighbourTileCache stubbed to no-op)
+                    "buildcraft/lib/cache/IChunkCache.java",
+                    "buildcraft/lib/cache/ITileCache.java",
+                    "buildcraft/lib/cache/TileCacheRet.java",
+                    "buildcraft/lib/cache/TileCacheType.java",
+                    "buildcraft/lib/cache/NoopTileCache.java",
+                    "buildcraft/lib/cache/NeighbourTileCache.java",
+                    "buildcraft/lib/cache/CachedChunk.java",
+                    // lib.delta — numeric delta networking
+                    "buildcraft/lib/delta/DeltaManager.java",
+                    "buildcraft/lib/delta/DeltaInt.java",
+                    // lib.debug — advanced debug target holder
+                    "buildcraft/lib/debug/BCAdvDebugging.java",
+                    // Stubs (cap/fluid/item) — minimal surface for TileBC_Neptune
+                    "buildcraft/lib/cap/CapabilityHelper.java",
+                    "buildcraft/lib/fluid/TankManager.java",
+                    "buildcraft/lib/tile/item/ItemHandlerManager.java",
+                    "buildcraft/lib/tile/item/StackChangeCallback.java",
+                    // The integration target
+                    "buildcraft/lib/tile/TileBC_Neptune.java"
+        }
     }
     main {
         java {

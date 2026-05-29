@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
-
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.network.PacketByteBuf;
 
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
@@ -80,7 +79,7 @@ public class DeltaInt {
         return start ? staticStartValue : staticEndValue;
     }
 
-    void receiveData(EnumDeltaMessage type, PacketBuffer buffer) {
+    void receiveData(EnumDeltaMessage type, PacketByteBuf buffer) {
         if (type == EnumDeltaMessage.ADD_SINGLE) {
             long start = buffer.readLong();
             long end = buffer.readLong();
@@ -110,7 +109,7 @@ public class DeltaInt {
         }
     }
 
-    void writeState(PacketBuffer buffer) {
+    void writeState(PacketByteBuf buffer) {
         buffer.writeInt(staticStartValue);
         buffer.writeInt(staticEndValue);
         buffer.writeShort(changingEntries.size());
@@ -149,40 +148,40 @@ public class DeltaInt {
         manager.sendDeltaMessage(EnumDeltaMessage.SET_VALUE, this, (buffer) -> buffer.writeInt(value));
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         tick = nbt.getLong("tick");
-        staticStartValue = nbt.getInteger("static-start");
-        staticEndValue = nbt.getInteger("static-end");
+        staticStartValue = nbt.getInt("static-start");
+        staticEndValue = nbt.getInt("static-end");
         // dynamic is calculated every tick so there is no need to read + write it
         changingEntries.clear();
-        NBTTagList list = nbt.getTagList("changing", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < list.tagCount(); i++) {
-            NBTTagCompound entryNbt = list.getCompoundTagAt(i);
+        NbtList list = nbt.getList("changing", NbtElement.COMPOUND_TYPE);
+        for (int i = 0; i < list.size(); i++) {
+            NbtCompound entryNbt = list.getCompound(i);
             long start = entryNbt.getLong("start");
             long end = entryNbt.getLong("end");
-            int delta = entryNbt.getInteger("delta");
+            int delta = entryNbt.getInt("delta");
             DeltaIntEntry entry = new DeltaIntEntry(start, end, delta);
             entry.hasStarted = entryNbt.getBoolean("started");
             changingEntries.add(entry);
         }
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setLong("tick", tick);
-        nbt.setInteger("static-start", staticStartValue);
-        nbt.setInteger("static-end", staticEndValue);
+    public NbtCompound writeToNBT() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putLong("tick", tick);
+        nbt.putInt("static-start", staticStartValue);
+        nbt.putInt("static-end", staticEndValue);
         // dynamic is calculated every tick so there is no need to read + write it
-        NBTTagList list = new NBTTagList();
+        NbtList list = new NbtList();
         for (DeltaIntEntry entry : changingEntries) {
-            NBTTagCompound entryNbt = new NBTTagCompound();
-            entryNbt.setLong("start", entry.startTick);
-            entryNbt.setLong("end", entry.endTick);
-            entryNbt.setInteger("delta", entry.delta);
-            entryNbt.setBoolean("started", entry.hasStarted);
-            list.appendTag(entryNbt);
+            NbtCompound entryNbt = new NbtCompound();
+            entryNbt.putLong("start", entry.startTick);
+            entryNbt.putLong("end", entry.endTick);
+            entryNbt.putInt("delta", entry.delta);
+            entryNbt.putBoolean("started", entry.hasStarted);
+            list.add(entryNbt);
         }
-        nbt.setTag("changing", list);
+        nbt.put("changing", list);
         return nbt;
     }
 

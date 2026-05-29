@@ -9,8 +9,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 
 import buildcraft.lib.net.IPayloadWriter;
 
@@ -56,7 +56,7 @@ public class DeltaManager {
         }
     }
 
-    public void receiveDeltaData(boolean gui, EnumDeltaMessage type, PacketBuffer buffer) {
+    public void receiveDeltaData(boolean gui, EnumDeltaMessage type, PacketByteBuf buffer) {
         EnumNetworkVisibility visibility = gui ? EnumNetworkVisibility.GUI_ONLY : EnumNetworkVisibility.RENDER;
         if (type == EnumDeltaMessage.CURRENT_STATE) {
             for (DeltaInt delta : deltas.get(visibility)) {
@@ -83,26 +83,26 @@ public class DeltaManager {
         });
     }
 
-    public void writeDeltaState(boolean gui, PacketBuffer buffer) {
+    public void writeDeltaState(boolean gui, PacketByteBuf buffer) {
         EnumNetworkVisibility visibility = gui ? EnumNetworkVisibility.GUI_ONLY : EnumNetworkVisibility.RENDER;
         for (DeltaInt delta : deltas.get(visibility)) {
             delta.writeState(buffer);
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         for (List<DeltaInt> innerList : deltas.values()) {
             for (DeltaInt delta : innerList) {
-                delta.readFromNBT(nbt.getCompoundTag(delta.name));
+                delta.readFromNBT(nbt.getCompound(delta.name));
             }
         }
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NbtCompound writeToNBT() {
+        NbtCompound nbt = new NbtCompound();
         for (List<DeltaInt> innerList : deltas.values()) {
             for (DeltaInt delta : innerList) {
-                nbt.setTag(delta.name, delta.writeToNBT());
+                nbt.put(delta.name, delta.writeToNBT());
             }
         }
         return nbt;

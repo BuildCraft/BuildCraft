@@ -11,12 +11,11 @@ import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.PacketByteBuf;
 
-/** Special {@link PacketBuffer} class that provides methods specific to "offset" reading and writing - like writing a
+/** Special {@link PacketByteBuf} class that provides methods specific to "offset" reading and writing - like writing a
  * single bit to the stream, and auto-compacting it with similar bits into a single byte. */
-public class PacketBufferBC extends PacketBuffer {
+public class PacketBufferBC extends PacketByteBuf {
 
     // Byte-based flag access
     private int readPartialOffset = 8;// so it resets down to 0 and reads a byte on read
@@ -259,26 +258,31 @@ public class PacketBufferBC extends PacketBuffer {
         return value;
     }
 
-    @Override
+    // STUB(R.Chen): Yarn PacketByteBuf has no writeEnumValue/readEnumValue (Forge extension);
+    // kept as bit-packed custom methods. Forge MathHelper.log2DeBruijn -> local ceilLog2.
     public PacketBufferBC writeEnumValue(Enum<?> value) {
         Enum<?>[] possible = value.getDeclaringClass().getEnumConstants();
         if (possible == null) throw new IllegalArgumentException("Not an enum " + value.getClass());
         if (possible.length == 0) throw new IllegalArgumentException("Tried to write an enum value without any values! How did you do this?");
         if (possible.length == 1) return this;
-        writeFixedBits(value.ordinal(), MathHelper.log2DeBruijn(possible.length));
+        writeFixedBits(value.ordinal(), ceilLog2(possible.length));
         return this;
     }
 
-    @Override
     public <E extends Enum<E>> E readEnumValue(Class<E> enumClass) {
         // No need to lookup the declaring class as you cannot refer to sub-classes of Enum.
         E[] enums = enumClass.getEnumConstants();
         if (enums == null) throw new IllegalArgumentException("Not an enum " + enumClass);
         if (enums.length == 0) throw new IllegalArgumentException("Tried to read an enum value without any values! How did you do this?");
         if (enums.length == 1) return enums[0];
-        int length = MathHelper.log2DeBruijn(enums.length);
+        int length = ceilLog2(enums.length);
         int index = readFixedBits(length);
         return enums[index];
+    }
+
+    /** Number of bits needed to index {@code count} distinct values (ceil(log2(count))). */
+    private static int ceilLog2(int count) {
+        return count <= 1 ? 0 : 32 - Integer.numberOfLeadingZeros(count - 1);
     }
 
     /**

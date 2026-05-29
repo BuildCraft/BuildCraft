@@ -1,7 +1,7 @@
 package buildcraft.lib.cache;
 
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public enum NoopTileCache implements ITileCache {
     INSTANCE;
@@ -15,7 +15,7 @@ public enum NoopTileCache implements ITileCache {
     }
 
     @Override
-    public TileCacheRet getTile(EnumFacing offset) {
+    public TileCacheRet getTile(Direction offset) {
         return null;
     }
 }
