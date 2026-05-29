@@ -1,44 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.gui.recipe;
 
-import java.lang.reflect.Field;
-import java.util.BitSet;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.client.gui.recipebook.RecipeList;
-import net.minecraft.item.crafting.IRecipe;
-
-public class RecipeListPhantom extends RecipeList {
-
-    public RecipeListPhantom(RecipeList from) throws ReflectiveOperationException {
-        getRecipes().addAll(from.getRecipes());
-        Class<?> clazzBitSet = BitSet.class;
-        boolean first = true;
-        for (Field fld : RecipeList.class.getDeclaredFields()) {
-            if (fld.getType() == clazzBitSet) {
-                fld.setAccessible(true);
-                Object object = fld.get(from);
-                if (first) {
-                    ((BitSet) object).set(0, getRecipes().size());
-                }
-                fld.set(this, object);
-                first = false;
-            }
-        }
-    }
-
-    @Override
-    public boolean hasSingleResultItem() {
-        // Only called by the draw function -- for some reason this will render a second
-        // item beside the first if this returns true and getOrderedRecipes().size() > 1
-        return false;
-    }
-
-    @Override
-    public boolean isCraftable(IRecipe recipe) {
-        return true;
-    }
-
-    @Override
-    public boolean containsCraftableRecipes() {
-        return !getRecipes().isEmpty();
-    }
-}
+// STUB(R.Chen): GUI render — Phase 5.
+@Environment(EnvType.CLIENT)
+public class RecipeListPhantom {}

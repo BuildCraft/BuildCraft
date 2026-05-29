@@ -2,52 +2,25 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui;
 
-import java.util.List;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import com.google.common.collect.ImmutableList;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
-/** Defines an element that can be irendered, that exists inside of a rectangle. */
-@SideOnly(Side.CLIENT)
+// STUB(R.Chen): GUI render — Phase 5. Forge @SideOnly → @Environment(EnvType.CLIENT).
+@Environment(EnvType.CLIENT)
 public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
     default void drawBackground(float partialTicks) {}
-
     default void drawForeground(float partialTicks) {}
-
     default void tick() {}
-
-    /** {@inheritDoc}
-     * <p>
-     * This is called EVEN IF the mouse is not inside your width and height! */
-    @Override
-    default void addToolTips(List<ToolTip> tooltips) {}
-
-    @Override
-    default void addHelpElements(List<HelpPosition> elements) {}
-
-    default List<IGuiElement> getThisAndChildrenAt(double x, double y) {
-        if (contains(x, y)) {
-            return ImmutableList.of(this);
-        } else {
-            return ImmutableList.of();
-        }
-    }
-
-    /** Add debugging information to the list. Note that a lot of elements will be called for this, so keep the amount
-     * of information minimal.
-     * 
-     * @return An identifier for this element (usually a name) */
-    default String getDebugInfo(List<String> info) {
-        return toString();
+    default String getDebugInfo(java.util.List<String> info) { return toString(); }
+    default java.util.List<IGuiElement> getThisAndChildrenAt(double x, double y) {
+        if (contains(x, y)) return com.google.common.collect.ImmutableList.of(this);
+        return com.google.common.collect.ImmutableList.of();
     }
 }

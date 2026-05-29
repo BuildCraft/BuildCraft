@@ -1,36 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.gui.json;
 
-import net.minecraft.client.Minecraft;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import buildcraft.api.core.render.ISprite;
-
-import buildcraft.lib.client.sprite.SpriteAtlas;
-
-public class SpriteDelegate implements ISprite {
-    public ISprite delegate;
-
-    public SpriteDelegate(ISprite delegate) {
-        this.delegate = delegate;
-    }
-
-    public SpriteDelegate() {
-        this(new SpriteAtlas(Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite()));
-    }
-
-    @Override
-    public void bindTexture() {
-        if (delegate != null) {
-            delegate.bindTexture();
-        }
-    }
-
-    @Override
-    public double getInterpU(double u) {
-        return delegate == null ? 0 : delegate.getInterpU(u);
-    }
-
-    @Override
-    public double getInterpV(double v) {
-        return delegate == null ? 0 : delegate.getInterpV(v);
-    }
-}
+// STUB(R.Chen): GUI render — Phase 5.
+@Environment(EnvType.CLIENT)
+public class SpriteDelegate {}

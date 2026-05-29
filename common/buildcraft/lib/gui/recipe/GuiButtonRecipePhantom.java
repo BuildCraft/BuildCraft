@@ -1,18 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.gui.recipe;
 
-import net.minecraft.client.gui.recipebook.GuiButtonRecipe;
-import net.minecraft.client.gui.recipebook.RecipeBookPage;
-import net.minecraft.client.gui.recipebook.RecipeList;
-import net.minecraft.stats.RecipeBook;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-public class GuiButtonRecipePhantom extends GuiButtonRecipe {
-    @Override
-    public void init(RecipeList list, RecipeBookPage page, RecipeBook book) {
-        try {
-            list = new RecipeListPhantom(list);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException(e);
-        }
-        super.init(list, page, book);
-    }
-}
+// STUB(R.Chen): GUI render — Phase 5.
+@Environment(EnvType.CLIENT)
+public class GuiButtonRecipePhantom {}

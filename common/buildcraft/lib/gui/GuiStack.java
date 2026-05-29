@@ -2,28 +2,23 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.item.ItemStack;
 
+import buildcraft.lib.gui.pos.IGuiPosition;
+
+// STUB(R.Chen): GlStateManager/RenderHelper render — Phase 5.
+@Environment(EnvType.CLIENT)
 public class GuiStack implements ISimpleDrawable {
-    private final ItemStack stack;
-
-    public GuiStack(ItemStack stack) {
-        this.stack = stack;
-    }
-
-    @Override
-    public void drawAt(double x, double y) {
-        GlStateManager.color(1, 1, 1);
-        RenderHelper.enableGUIStandardItemLighting();
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, (int) x, (int) y);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.color(1, 1, 1);
-    }
+    public GuiStack(ItemStack stack) {}
+    public GuiStack(java.util.function.Supplier<ItemStack> stack) {}
+    @Override public void drawAt(double x, double y) {}
+    public void drawAt(IGuiPosition pos, double scale) {}
 }
