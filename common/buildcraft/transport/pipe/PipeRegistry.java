@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe;
@@ -17,22 +19,17 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.transport.pipe.IItemPipe;
 import buildcraft.api.transport.pipe.IPipeRegistry;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.lib.registry.RegistrationHelper;
-
-import buildcraft.transport.item.ItemPipeHolder;
-
 public enum PipeRegistry implements IPipeRegistry {
     INSTANCE;
 
-    private final RegistrationHelper helper = new RegistrationHelper();
-    private final Map<ResourceLocation, PipeDefinition> definitions = new HashMap<>();
+    private final Map<Identifier, PipeDefinition> definitions = new HashMap<>();
     private final Map<PipeDefinition, IItemPipe> pipeItems = new IdentityHashMap<>();
 
     @Override
@@ -53,24 +50,19 @@ public enum PipeRegistry implements IPipeRegistry {
     }
 
     @Override
-    public ItemPipeHolder createItemForPipe(PipeDefinition definition) {
-        ItemPipeHolder item = ItemPipeHolder.createAndTag(definition);
-        helper.addForcedItem(item);
-        if (definitions.values().contains(definition)) {
-            setItemForPipe(definition, item);
-        }
-        return item;
+    public IItemPipe createItemForPipe(PipeDefinition definition) {
+        // STUB(R.Chen): item creation deferred — blocked by transport.item.ItemPipeHolder
+        // (extends BlockItem, pulls in BCTransportBlocks.pipeHolder / BlockPipeHolder) and
+        // lib.registry.RegistrationHelper (Forge RegistryEvent / OreDictionary / GameRegistry).
+        // Restore once those migrate. The definition→item map (setItemForPipe/getItemForPipe)
+        // and the lookup half (registerPipe/getDefinition/loadDefinition) remain fully functional.
+        throw new UnsupportedOperationException("createItemForPipe is not yet migrated to Fabric");
     }
 
     @Override
     public IItemPipe createUnnamedItemForPipe(PipeDefinition definition, Consumer<Item> postCreate) {
-        ItemPipeHolder item = ItemPipeHolder.create(definition);
-        postCreate.accept(item);
-        helper.addForcedItem(item);
-        if (definitions.values().contains(definition)) {
-            setItemForPipe(definition, item);
-        }
-        return item;
+        // STUB(R.Chen): see createItemForPipe — deferred alongside ItemPipeHolder / RegistrationHelper.
+        throw new UnsupportedOperationException("createUnnamedItemForPipe is not yet migrated to Fabric");
     }
 
     @Override
@@ -80,13 +72,13 @@ public enum PipeRegistry implements IPipeRegistry {
 
     @Override
     @Nullable
-    public PipeDefinition getDefinition(ResourceLocation identifier) {
+    public PipeDefinition getDefinition(Identifier identifier) {
         return definitions.get(identifier);
     }
 
     @Nonnull
     public PipeDefinition loadDefinition(String identifier) throws InvalidInputDataException {
-        PipeDefinition def = getDefinition(new ResourceLocation(identifier));
+        PipeDefinition def = getDefinition(new Identifier(identifier));
         if (def == null) {
             throw new InvalidInputDataException("Unknown pipe definition " + identifier);
         }

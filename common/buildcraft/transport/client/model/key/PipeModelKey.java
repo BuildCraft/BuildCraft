@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.client.model.key;
@@ -9,16 +11,16 @@ package buildcraft.transport.client.model.key;
 import java.util.Arrays;
 import java.util.Objects;
 
-import net.minecraft.item.EnumDyeColor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.DyeColor;
 
 import buildcraft.api.transport.pipe.EnumPipeColourType;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeFaceTex;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public final class PipeModelKey {
     public static final PipeModelKey DEFAULT_KEY;
 
@@ -33,11 +35,11 @@ public final class PipeModelKey {
     public final PipeFaceTex center;
     public final PipeFaceTex[] sides;
     public final float[] connected;
-    public final EnumDyeColor colour;
+    public final DyeColor colour;
     private final int hash;
 
     public PipeModelKey(PipeDefinition definition, PipeFaceTex center, PipeFaceTex[] sides, float[] connected,
-        EnumDyeColor colour) {
+        DyeColor colour) {
         this.definition = definition;
         this.center = center;
         this.sides = sides;

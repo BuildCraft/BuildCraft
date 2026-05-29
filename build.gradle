@@ -596,6 +596,18 @@ sourceSets {
                     "buildcraft/transport/container/ContainerDiamondWoodPipe.java",
                     "buildcraft/transport/container/ContainerEmzuliPipe_BC8.java"
         }
+        // Layer S — pipe core: PipeRegistry (item-creation stubbed), Pipe, PipeModelKey.
+        // Unblocks the pipe.flow layer's dependency on the central Pipe class.
+        // PipeRegistry.createItemForPipe* stubbed (blocked by ItemPipeHolder / RegistrationHelper).
+        // Pipe Forge ICapabilityProvider stripped → BlockApiLookup wiring deferred (Phase 4F).
+        // TilePipeHolder NOT added — blocked by WireManager + BlockPipeHolder (1115 LOC) +
+        // PluggableHolder (circular) + silicon.FilterEventHandler + AdvancementUtil cascade.
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/PipeRegistry.java",
+                    "buildcraft/transport/client/model/key/PipeModelKey.java",
+                    "buildcraft/transport/pipe/Pipe.java"
+        }
     }
     main {
         java {
