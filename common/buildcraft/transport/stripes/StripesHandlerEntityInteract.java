@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.stripes;
@@ -9,13 +11,12 @@ package buildcraft.transport.stripes;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -28,17 +29,17 @@ public enum StripesHandlerEntityInteract implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
-        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(
-            EntityLivingBase.class,
-            new AxisAlignedBB(pos.offset(direction))
-        );
+        BlockPos target = pos.offset(direction);
+        Box box = new Box(target.getX(), target.getY(), target.getZ(), target.getX() + 1, target.getY() + 1, target.getZ() + 1);
+        // TODO(R.Chen): getEntitiesWithinAABB → getEntitiesByClass
+        List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, box, e -> true);
         Collections.shuffle(entities);
-        for (EntityLivingBase entity : entities) {
-            if (player.interactOn(entity, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS) {
+        for (LivingEntity entity : entities) {
+            if (player.interact(entity, Hand.MAIN_HAND).isAccepted()) {
                 return true;
             }
         }

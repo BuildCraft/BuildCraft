@@ -418,6 +418,36 @@ sourceSets {
                     "buildcraft/api/statements/containers/ISidedStatementContainer.java",
                     "buildcraft/api/gates/IGate.java"
         }
+        // Layer O — transport rename-only batch: zero-Forge files with all BC deps in libLeaf.
+        // PipeBehaviourIron excluded (extends PipeBehaviourDirectional, not yet migrated).
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/PipeEventBus.java",
+                    "buildcraft/transport/client/PipeRegistryClient.java",
+                    "buildcraft/transport/pipe/flow/IPipeTransportPowerHook.java",
+                    "buildcraft/transport/pipe/flow/IPipeTransportRfHook.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowStructure.java",
+                    "buildcraft/transport/pipe/DefaultPipeConnection.java",
+                    "buildcraft/transport/pipe/StripesRegistry.java",
+                    "buildcraft/transport/wire/EnumWireBetween.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourSeparate.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourCobble.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourGold.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourQuartz.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourStone.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourSandstone.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourStructure.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourVoid.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourClay.java",
+                    "buildcraft/transport/client/model/key/KeyPlugBlocker.java",
+                    "buildcraft/transport/client/model/key/KeyPlugPowerAdaptor.java",
+                    "buildcraft/transport/stripes/StripesHandlerPipes.java",
+                    "buildcraft/transport/stripes/StripesHandlerUse.java",
+                    "buildcraft/transport/stripes/StripesHandlerEntityInteract.java",
+                    "buildcraft/transport/stripes/StripesHandlerPipeWires.java",
+                    "buildcraft/transport/stripes/StripesHandlerHoe.java",
+                    "buildcraft/transport/stripes/StripesHandlerPlaceBlock.java"
+        }
     }
     main {
         java {

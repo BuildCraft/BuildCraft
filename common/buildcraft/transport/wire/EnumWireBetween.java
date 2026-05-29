@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.wire;
@@ -9,10 +11,10 @@ package buildcraft.transport.wire;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
+import net.minecraft.util.math.Box;
 
 import buildcraft.api.transport.EnumWirePart;
 
@@ -35,45 +37,45 @@ public enum EnumWireBetween {
     Z_DOWN_WEST(Axis.Z, false, false),
 
     // Between pipes
-    EAST_UP_SOUTH(EnumFacing.EAST, true, true),
-    EAST_UP_NORTH(EnumFacing.EAST, true, false),
-    EAST_DOWN_SOUTH(EnumFacing.EAST, false, true),
-    EAST_DOWN_NORTH(EnumFacing.EAST, false, false),
+    EAST_UP_SOUTH(Direction.EAST, true, true),
+    EAST_UP_NORTH(Direction.EAST, true, false),
+    EAST_DOWN_SOUTH(Direction.EAST, false, true),
+    EAST_DOWN_NORTH(Direction.EAST, false, false),
 
-    WEST_UP_SOUTH(EnumFacing.WEST, true, true),
-    WEST_UP_NORTH(EnumFacing.WEST, true, false),
-    WEST_DOWN_SOUTH(EnumFacing.WEST, false, true),
-    WEST_DOWN_NORTH(EnumFacing.WEST, false, false),
+    WEST_UP_SOUTH(Direction.WEST, true, true),
+    WEST_UP_NORTH(Direction.WEST, true, false),
+    WEST_DOWN_SOUTH(Direction.WEST, false, true),
+    WEST_DOWN_NORTH(Direction.WEST, false, false),
 
-    UP_SOUTH_EAST(EnumFacing.UP, true, true),
-    UP_SOUTH_WEST(EnumFacing.UP, true, false),
-    UP_NORTH_EAST(EnumFacing.UP, false, true),
-    UP_NORTH_WEST(EnumFacing.UP, false, false),
+    UP_SOUTH_EAST(Direction.UP, true, true),
+    UP_SOUTH_WEST(Direction.UP, true, false),
+    UP_NORTH_EAST(Direction.UP, false, true),
+    UP_NORTH_WEST(Direction.UP, false, false),
 
-    DOWN_SOUTH_EAST(EnumFacing.DOWN, true, true),
-    DOWN_SOUTH_WEST(EnumFacing.DOWN, true, false),
-    DOWN_NORTH_EAST(EnumFacing.DOWN, false, true),
-    DOWN_NORTH_WEST(EnumFacing.DOWN, false, false),
+    DOWN_SOUTH_EAST(Direction.DOWN, true, true),
+    DOWN_SOUTH_WEST(Direction.DOWN, true, false),
+    DOWN_NORTH_EAST(Direction.DOWN, false, true),
+    DOWN_NORTH_WEST(Direction.DOWN, false, false),
 
-    SOUTH_UP_EAST(EnumFacing.SOUTH, true, true),
-    SOUTH_UP_WEST(EnumFacing.SOUTH, true, false),
-    SOUTH_DOWN_EAST(EnumFacing.SOUTH, false, true),
-    SOUTH_DOWN_WEST(EnumFacing.SOUTH, false, false),
+    SOUTH_UP_EAST(Direction.SOUTH, true, true),
+    SOUTH_UP_WEST(Direction.SOUTH, true, false),
+    SOUTH_DOWN_EAST(Direction.SOUTH, false, true),
+    SOUTH_DOWN_WEST(Direction.SOUTH, false, false),
 
-    NORTH_UP_EAST(EnumFacing.NORTH, true, true),
-    NORTH_UP_WEST(EnumFacing.NORTH, true, false),
-    NORTH_DOWN_EAST(EnumFacing.NORTH, false, true),
-    NORTH_DOWN_WEST(EnumFacing.NORTH, false, false);
+    NORTH_UP_EAST(Direction.NORTH, true, true),
+    NORTH_UP_WEST(Direction.NORTH, true, false),
+    NORTH_DOWN_EAST(Direction.NORTH, false, true),
+    NORTH_DOWN_WEST(Direction.NORTH, false, false);
 
     public static final EnumWireBetween[] VALUES = values();
     public static final EnumWireBetween[] CENTRES = Arrays.copyOfRange(VALUES, 0, 12, EnumWireBetween[].class);
     public static final EnumWireBetween[] CONNECTIONS = Arrays.copyOfRange(VALUES, 12, 36, EnumWireBetween[].class);
 
     public final Axis mainAxis;
-    public final EnumFacing to;
+    public final Direction to;
     public final boolean xy;
     public final boolean yz;
-    public final AxisAlignedBB boundingBox;
+    public final Box boundingBox;
     public final EnumWirePart[] parts;
 
     EnumWireBetween(Axis mainAxis, boolean xy, boolean yz) {
@@ -87,23 +89,23 @@ public enum EnumWireBetween {
         int x2 = x1 + (mainAxis == Axis.X ? 8 : 1);
         int y2 = y1 + (mainAxis == Axis.Y ? 8 : 1);
         int z2 = z1 + (mainAxis == Axis.Z ? 8 : 1);
-        boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
+        boundingBox = new Box(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
     }
 
-    EnumWireBetween(EnumFacing to, boolean xy, boolean yz) {
+    EnumWireBetween(Direction to, boolean xy, boolean yz) {
         this.mainAxis = to.getAxis();
         this.to = to;
         this.xy = xy;
         this.yz = yz;
-        int start = to.getAxisDirection() == AxisDirection.POSITIVE ? 13 : 0;
+        int start = to.getDirection() == AxisDirection.POSITIVE ? 13 : 0;
         int x1 = mainAxis == Axis.X ? start : (xy ? 12 : 3);
         int y1 = mainAxis == Axis.Y ? start : ((mainAxis == Axis.X ? xy : yz) ? 12 : 3);
         int z1 = mainAxis == Axis.Z ? start : (yz ? 12 : 3);
         int x2 = x1 + (mainAxis == Axis.X ? 3 : 1);
         int y2 = y1 + (mainAxis == Axis.Y ? 3 : 1);
         int z2 = z1 + (mainAxis == Axis.Z ? 3 : 1);
-        boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
+        boundingBox = new Box(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
     }
 
@@ -118,7 +120,7 @@ public enum EnumWireBetween {
                     if(to == null) {
                         directions[j] = i == 0 ? AxisDirection.NEGATIVE : AxisDirection.POSITIVE;
                     } else {
-                        directions[j] = i == 0 ? to.getAxisDirection() : to.getOpposite().getAxisDirection();
+                        directions[j] = i == 0 ? to.getDirection() : to.getOpposite().getDirection();
                     }
                 } else if(!found) {
                     directions[j] = xy ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;

@@ -1,14 +1,16 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
- * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.transport.stripes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -21,26 +23,19 @@ public enum StripesHandlerPlaceBlock implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
-        if (!(stack.getItem() instanceof ItemBlock)) {
+        if (!(stack.getItem() instanceof BlockItem)) {
             return false;
         }
-        if (!world.isAirBlock(pos.offset(direction))) {
+        // TODO(R.Chen): isAirBlock → isAir
+        if (!world.isAir(pos.offset(direction))) {
             return false;
         }
-        stack.getItem().onItemUse(
-            player,
-            world,
-            pos.offset(direction),
-            EnumHand.MAIN_HAND,
-            direction,
-            0.5f,
-            0.5f,
-            0.5f
-        );
-        return true;
+        // STUB(R.Chen): onItemUse → useOnBlock(ItemUsageContext) in 1.20.1
+        // TODO(R.Chen): replace with ItemUsageContext-based call
+        return false;
     }
 }
