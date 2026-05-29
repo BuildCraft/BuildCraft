@@ -393,6 +393,31 @@ sourceSets {
                     "buildcraft/api/transport/pluggable/PluggableDefinition.java",
                     "buildcraft/api/transport/pluggable/PluggableModelKey.java"
         }
+        // Layer N — api.mj (remaining after E) + api.statements (remaining after M) + api.gates.
+        // IFillerStatementContainer deferred — blocked on api.filler.IFillerPattern migration.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/mj/ILaserTarget.java",
+                    "buildcraft/api/mj/ILaserTargetBlock.java",
+                    "buildcraft/api/mj/IMjEffectManager.java",
+                    "buildcraft/api/mj/IMjReadable.java",
+                    "buildcraft/api/mj/IMjToRfStatus.java",
+                    "buildcraft/api/mj/MjBattery.java",
+                    "buildcraft/api/mj/MjRfConversion.java",
+                    "buildcraft/api/statements/IActionExternal.java",
+                    "buildcraft/api/statements/IActionProvider.java",
+                    "buildcraft/api/statements/IActionReceptor.java",
+                    "buildcraft/api/statements/IActionSingle.java",
+                    "buildcraft/api/statements/ITriggerExternal.java",
+                    "buildcraft/api/statements/ITriggerExternalOverride.java",
+                    "buildcraft/api/statements/ITriggerProvider.java",
+                    "buildcraft/api/statements/IOverrideDefaultStatements.java",
+                    "buildcraft/api/statements/StatementManager.java",
+                    "buildcraft/api/statements/StatementParameterItemStack.java",
+                    "buildcraft/api/statements/StatementSlot.java",
+                    "buildcraft/api/statements/containers/ISidedStatementContainer.java",
+                    "buildcraft/api/gates/IGate.java"
+        }
     }
     main {
         java {
