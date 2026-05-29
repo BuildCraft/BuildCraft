@@ -2,17 +2,25 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.core.marker.volume;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.entity.player.EntityPlayer;
+// Yarn 1.20.1 renames:
+//   EntityPlayer         → PlayerEntity
+//   EnumHand             → Hand
+//   ActionResult<T>      → TypedActionResult<T>
+//   EnumActionResult     → ActionResult   (enum values: PASS, SUCCESS, FAIL, CONSUME)
+//   World#isRemote       → World#isClient
+//   player.getHeldItem() → player.getStackInHand()
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import buildcraft.lib.item.ItemBC_Neptune;
@@ -24,11 +32,10 @@ public abstract class ItemAddon extends ItemBC_Neptune {
 
     public abstract Addon createAddon();
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if (world.isRemote) {
-            return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        if (world.isClient) {
+            return TypedActionResult.pass(player.getStackInHand(hand));
         }
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
@@ -46,11 +53,11 @@ public abstract class ItemAddon extends ItemBC_Neptune {
                     volumeBox.addons.put(slot, addon);
                     volumeBox.addons.get(slot).onAdded();
                     volumeBoxes.markDirty();
-                    return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+                    return TypedActionResult.success(player.getStackInHand(hand));
                 }
             }
         }
 
-        return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
+        return TypedActionResult.pass(player.getStackInHand(hand));
     }
 }

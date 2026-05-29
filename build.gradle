@@ -275,6 +275,19 @@ sourceSets {
                     "buildcraft/core/marker/volume/Lock.java",
                     "buildcraft/core/marker/volume/VolumeBox.java"
         }
+        // Layer K — complete core.marker.volume migration (ItemAddon + remaining blocked files)
+        // lib.item (ItemBC_Neptune, IItemBuildCraft) + lib.BCLibProxy unblocked here.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/item/IItemBuildCraft.java",
+                    "buildcraft/lib/item/ItemBC_Neptune.java",
+                    "buildcraft/lib/BCLibProxy.java",
+                    "buildcraft/core/marker/volume/ItemAddon.java",
+                    "buildcraft/core/marker/volume/WorldSavedDataVolumeBoxes.java",
+                    "buildcraft/core/marker/volume/MessageVolumeBoxes.java",
+                    "buildcraft/core/marker/volume/ClientVolumeBoxes.java",
+                    "buildcraft/core/marker/volume/AddonDefaultRenderer.java"
+        }
     }
     main {
         java {

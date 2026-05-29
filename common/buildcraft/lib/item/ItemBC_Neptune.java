@@ -1,21 +1,22 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.item;
 
-import net.minecraft.creativetab.CreativeTabs;
+// Yarn 1.20.1: Item constructor now takes Item.Settings instead of no-arg.
+// CreativeTabs / NonNullList dropped — Fabric creative tabs use ItemGroupEvents in ModInitializer.
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-
-import buildcraft.lib.registry.TagManager;
 
 public class ItemBC_Neptune extends Item implements IItemBuildCraft {
-    /** The tag used to identify this in the {@link TagManager} */
+    /** The tag used to identify this item in the registry and TagManager. */
     public final String id;
 
     public ItemBC_Neptune(String id) {
+        super(new Item.Settings());
         this.id = id;
         init();
     }
@@ -25,19 +26,6 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
         return id;
     }
 
-    @Override
-    public final void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (isInCreativeTab(tab)) {
-            addSubItems(tab, items);
-        }
-    }
-
-    /** Identical to {@link #getSubItems(CreativeTabs, NonNullList)} in every way, EXCEPT that this is only called if
-     * this is actually in the given creative tab.
-     * 
-     * @param tab The {@link CreativeTabs} to display the items in. This is provided just in case an item has multiple
-     *            subtypes, split across different tabs */
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        items.add(new ItemStack(this));
-    }
+    // STUB(R.Chen): getSubItems / addSubItems dropped — Fabric creative tab population
+    // is handled via ItemGroupEvents.modifyEntriesEvent in the module's ModInitializer (Phase 5).
 }
