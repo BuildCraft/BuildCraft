@@ -215,6 +215,12 @@ sourceSets {
                     "buildcraft/lib/engine/IEngineLikeForLedger.java",
                     "buildcraft/lib/engine/TileEngineBase_BC8.java"
         }
+        // Layer F — buildcraft.core entry point + standalone leaf files
+        java {
+            srcDir "common"
+            include "buildcraft/core/BCCoreInitializer.java",
+                    "buildcraft/core/statements/IBlockDefaultTriggers.java"
+        }
     }
     main {
         java {
