@@ -2,91 +2,46 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.render.laser;
 
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TIntArrayList;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.BufferBuilder;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-@SideOnly(Side.CLIENT)
+/**
+ * STUB(R.Chen): client render — full implementation in Phase 5.
+ *
+ * The Forge original buffered vertex data in trove primitive lists ({@code gnu.trove}, no longer on the
+ * classpath) and replayed it into a {@code BufferBuilder} using the old {@code pos/color/tex/lightmap}
+ * API. Vertex emission is part of the dedicated render pass; the {@link Builder}/{@link #render} surface
+ * is kept as no-ops so callers compile.
+ */
+@Environment(EnvType.CLIENT)
 public class LaserCompiledBuffer {
-    private static final int DOUBLE_STRIDE = 5;
-    private static final int INT_STRIDE = 2;
-    private final int vertices;
-    private final double[] da;
-    private final int[] ia;
 
-    public LaserCompiledBuffer(int vertices, double[] da, int[] ia) {
-        this.vertices = vertices;
-        this.da = da;
-        this.ia = ia;
+    public LaserCompiledBuffer() {
     }
 
-    /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
     public void render(BufferBuilder buffer) {
-        for (int i = 0; i < vertices; i++) {
-            // POSITION_3F
-            buffer.pos(da[DOUBLE_STRIDE * i + 0], da[DOUBLE_STRIDE * i + 1], da[DOUBLE_STRIDE * i + 2]);
-
-            // COLOR_4UB
-            int c = ia[INT_STRIDE * i + 0];
-            buffer.color(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF, (c >> 24) & 0xFF);
-
-            // TEX_2F
-            buffer.tex(da[DOUBLE_STRIDE * i + 3], da[DOUBLE_STRIDE * i + 4]);
-
-            // TEX_2S
-            int lmap = ia[INT_STRIDE * i + 1];
-            buffer.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
-
-            buffer.endVertex();
-        }
+        // STUB(R.Chen): client render — vertex replay deferred to Phase 5.
     }
 
     public static class Builder implements ILaserRenderer {
-        private final boolean useNormalColour;
-        private final TDoubleArrayList doubleData = new TDoubleArrayList();
-        private final TIntArrayList intData = new TIntArrayList();
-        private int vertices = 0;
-
         public Builder(boolean useNormalColour) {
-            this.useNormalColour = useNormalColour;
         }
 
         @Override
         public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz, float diffuse) {
-            // POSITION_3F
-            doubleData.add(x);
-            doubleData.add(y);
-            doubleData.add(z);
-
-            // COLOR_4UB
-            if (useNormalColour) {
-                int c = (int) (diffuse * 0xFF);
-                intData.add(c | c << 8 | c << 16 | 0xFF << 24);
-            } else {
-                intData.add(0xFF_FF_FF_FF);
-            }
-
-            // TEX_2F
-            doubleData.add(u);
-            doubleData.add(v);
-
-            // TEX_2S
-            intData.add(lmap);
-
-            vertices++;
+            // STUB(R.Chen): client render — vertex accumulation deferred to Phase 5.
         }
 
         public LaserCompiledBuffer build() {
-            return new LaserCompiledBuffer(vertices, doubleData.toArray(), intData.toArray());
+            return new LaserCompiledBuffer();
         }
     }
 }

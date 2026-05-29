@@ -2,168 +2,48 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.render.laser;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.RemovalNotification;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.VertexFormat;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.misc.SpriteUtil;
-
-@SideOnly(Side.CLIENT)
+/**
+ * STUB(R.Chen): client render — full implementation in Phase 5.
+ *
+ * The Forge original cached compiled laser geometry (Guava {@code LoadingCache}), computed lightmaps
+ * via {@code World#getLightFor(EnumSkyBlock,...)}, and emitted vertices through {@code BufferBuilder}
+ * with custom {@code VertexFormat}s built from {@code DefaultVertexFormats}. All of that is part of the
+ * dedicated render pass. The public surface (format fields + the render/compute entry points) is kept
+ * so callers compile; bodies are no-ops / return defaults.
+ */
+@Environment(EnvType.CLIENT)
 public class LaserRenderer_BC8 {
-    private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
-    private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_STATIC_LASERS;
-    private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_DYNAMIC_LASERS;
 
-    public static final VertexFormat FORMAT_LESS, FORMAT_ALL;
-
-    static {
-        COMPILED_STATIC_LASERS = CacheBuilder.newBuilder()//
-            .expireAfterWrite(5, TimeUnit.SECONDS)//
-            .removalListener(LaserRenderer_BC8::removeCompiledLaser)//
-            .build(CacheLoader.from(LaserRenderer_BC8::makeStaticLaser));
-
-        COMPILED_DYNAMIC_LASERS = CacheBuilder.newBuilder()//
-            .expireAfterWrite(5, TimeUnit.SECONDS)//
-            .build(CacheLoader.from(LaserRenderer_BC8::makeDynamicLaser));
-
-        FORMAT_LESS = new VertexFormat();
-        FORMAT_LESS.addElement(DefaultVertexFormats.POSITION_3F);
-        FORMAT_LESS.addElement(DefaultVertexFormats.TEX_2F);
-        FORMAT_LESS.addElement(DefaultVertexFormats.TEX_2S);
-
-        FORMAT_ALL = new VertexFormat();
-        FORMAT_ALL.addElement(DefaultVertexFormats.POSITION_3F);
-        FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2F);
-        FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2S);
-        FORMAT_ALL.addElement(DefaultVertexFormats.COLOR_4UB);
-    }
+    // STUB(R.Chen): vertex formats — rebuilt from VertexFormats/VertexFormatElement in Phase 5.
+    public static final VertexFormat FORMAT_LESS = null;
+    public static final VertexFormat FORMAT_ALL = null;
 
     public static void clearModels() {
-        COMPILED_LASER_TYPES.clear();
-    }
-
-    private static CompiledLaserType compileType(LaserType laserType) {
-        if (!COMPILED_LASER_TYPES.containsKey(laserType)) {
-            COMPILED_LASER_TYPES.put(laserType, new CompiledLaserType(laserType));
-        }
-        return COMPILED_LASER_TYPES.get(laserType);
-    }
-
-    private static LaserCompiledList makeStaticLaser(LaserData_BC8 data) {
-        try (LaserCompiledList.Builder renderer = new LaserCompiledList.Builder(data.enableDiffuse)) {
-            makeLaser(data, renderer);
-            return renderer.build();
-        }
-    }
-
-    private static LaserCompiledBuffer makeDynamicLaser(LaserData_BC8 data) {
-        LaserCompiledBuffer.Builder renderer = new LaserCompiledBuffer.Builder(data.enableDiffuse);
-        makeLaser(data, renderer);
-        return renderer.build();
-    }
-
-    private static void makeLaser(LaserData_BC8 data, ILaserRenderer renderer) {
-        LaserContext ctx = new LaserContext(renderer, data, data.enableDiffuse, data.doubleFace);
-        CompiledLaserType type = compileType(data.laserType);
-        type.bakeFor(ctx);
-    }
-
-    private static void removeCompiledLaser(RemovalNotification<LaserData_BC8, LaserCompiledList> notification) {
-        LaserCompiledList comp = notification.getValue();
-        if (comp != null) {
-            comp.delete();
-        }
+        // STUB(R.Chen): client render — compiled-laser cache invalidation deferred to Phase 5.
     }
 
     public static int computeLightmap(double x, double y, double z, int minBlockLight) {
-        World world = Minecraft.getMinecraft().world;
-        if (world == null) return 0;
-        int blockLight =
-            minBlockLight >= 15 ? 15 : Math.max(minBlockLight, getLightFor(world, EnumSkyBlock.BLOCK, x, y, z));
-        int skyLight = getLightFor(world, EnumSkyBlock.SKY, x, y, z);
-        return skyLight << 20 | blockLight << 4;
-    }
-
-    private static int getLightFor(World world, EnumSkyBlock type, double x, double y, double z) {
-        int max = 0;
-        int count = 0;
-        int sum = 0;
-
-        boolean ao = Minecraft.isAmbientOcclusionEnabled();
-
-        double xn = (x % 1 + 1) % 1;
-        double yn = (y % 1 + 1) % 1;
-        double zn = (z % 1 + 1) % 1;
-
-        final double lowerBound = 0.3;
-        final double upperBound = 1 - lowerBound;
-
-        int xl = ao ? (xn < lowerBound ? -1 : 0) : -1;
-        int yl = ao ? (yn < lowerBound ? -1 : 0) : -1;
-        int zl = ao ? (zn < lowerBound ? -1 : 0) : -1;
-        int xu = ao ? (xn > upperBound ? 1 : 0) : 1;
-        int yu = ao ? (yn > upperBound ? 1 : 0) : 1;
-        int zu = ao ? (zn > upperBound ? 1 : 0) : 1;
-
-        for (int xp = xl; xp <= xu; xp++) {
-            for (int yp = yl; yp <= yu; yp++) {
-                for (int zp = zl; zp <= zu; zp++) {
-                    int light = world.getLightFor(type, new BlockPos(x + xp, y + yp, z + zp));
-                    if (light > 0) {
-                        sum += light;
-                        count++;
-                    }
-                    max = Math.max(max, light);
-                }
-            }
-        }
-
-        if (ao) {
-            return count == 0 ? 0 : sum / count;
-        } else {
-            return max;
-        }
+        // STUB(R.Chen): client render — world lightmap sampling deferred to Phase 5.
+        return 0;
     }
 
     public static void renderLaserStatic(LaserData_BC8 data) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("compute");
-        LaserCompiledList compiled = COMPILED_STATIC_LASERS.getUnchecked(data);
-        profiler.endStartSection("render");
-        SpriteUtil.bindBlockTextureMap();
-        compiled.render();
-        profiler.endSection();
+        // STUB(R.Chen): client render — static (display-list/VBO) laser draw deferred to Phase 5.
     }
 
-    /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
     public static void renderLaserDynamic(LaserData_BC8 data, BufferBuilder buffer) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("compute");
-        LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);
-        profiler.endStartSection("render");
-        compiled.render(buffer);
-        profiler.endSection();
+        // STUB(R.Chen): client render — dynamic laser draw deferred to Phase 5.
     }
 }

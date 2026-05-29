@@ -244,6 +244,37 @@ sourceSets {
                     "buildcraft/lib/misc/data/FaceDistance.java",
                     "buildcraft/lib/misc/data/Box.java"
         }
+        // Layer I — lib.client.render.laser layer (data files migrated; render-heavy files stubbed).
+        // SpriteHolderRegistry + BuildCraftLaserManager are aggressive client-render stubs.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/render/ISprite.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/client/sprite/SpriteHolderRegistry.java",
+                    "buildcraft/lib/client/render/laser/ILaserRenderer.java",
+                    "buildcraft/lib/client/render/laser/LaserData_BC8.java",
+                    "buildcraft/lib/client/render/laser/LaserContext.java",
+                    "buildcraft/lib/client/render/laser/CompiledLaserRow.java",
+                    "buildcraft/lib/client/render/laser/CompiledLaserType.java",
+                    "buildcraft/lib/client/render/laser/LaserCompiledBuffer.java",
+                    "buildcraft/lib/client/render/laser/LaserCompiledList.java",
+                    "buildcraft/lib/client/render/laser/LaserBoxRenderer.java",
+                    "buildcraft/lib/client/render/laser/LaserRenderer_BC8.java",
+                    "buildcraft/core/client/BuildCraftLaserManager.java"
+        }
+        // Layer J — core.marker.volume coupled cluster (VolumeBox↔Addon↔EnumAddonSlot↔Lock + helpers)
+        java {
+            srcDir "common"
+            include "buildcraft/core/marker/volume/ISingleAddon.java",
+                    "buildcraft/core/marker/volume/AddonsRegistry.java",
+                    "buildcraft/core/marker/volume/IFastAddonRenderer.java",
+                    "buildcraft/core/marker/volume/EnumAddonSlot.java",
+                    "buildcraft/core/marker/volume/Addon.java",
+                    "buildcraft/core/marker/volume/Lock.java",
+                    "buildcraft/core/marker/volume/VolumeBox.java"
+        }
     }
     main {
         java {

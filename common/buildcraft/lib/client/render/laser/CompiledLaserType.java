@@ -2,6 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ * Pure geometry/data — bakes against LaserContext (stubbed until the Phase 5 client-render pass).
  */
 
 package buildcraft.lib.client.render.laser;
@@ -11,6 +14,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+// Yarn 1.20.1: net.minecraft.util.math.MathHelper (same FQN as MCP)
 import net.minecraft.util.math.MathHelper;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
