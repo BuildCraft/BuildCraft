@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
+// TODO(R.Chen): Fabric migration DEFERRED — blocked by unmigrated api.transport.pluggable
+//               (IPluggableRegistry, PluggableDefinition → EnumFacing/PacketBuffer/IPipeHolder chain).
+//               Forge-free otherwise; only needs ResourceLocation → Identifier once transport lands.
 package buildcraft.lib.registry;
 
 import java.util.HashMap;

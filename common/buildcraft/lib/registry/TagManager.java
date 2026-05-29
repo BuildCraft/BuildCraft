@@ -1,7 +1,10 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.registry;
 
 import java.util.ArrayDeque;
@@ -15,9 +18,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+// Yarn 1.20.1: net.minecraft.util.ResourceLocation → net.minecraft.util.Identifier
+import net.minecraft.util.Identifier;
+// Forge ForgeRegistries.ITEMS → vanilla Registries.ITEM
+import net.minecraft.registry.Registries;
 
 /** Stores several types of "tag" (strings) for BuildCraft. A central place for all of them to init in. Refer to the
  * "static" block for all of the tag ID's
@@ -30,9 +34,9 @@ public class TagManager {
 
     public static Item getItem(String id) {
         String regTag = getTag(id, EnumTagType.REGISTRY_NAME);
-        ResourceLocation loc = new ResourceLocation(regTag);
-        if (ForgeRegistries.ITEMS.containsKey(loc)) {
-            return ForgeRegistries.ITEMS.getValue(loc);
+        Identifier loc = new Identifier(regTag);
+        if (Registries.ITEM.containsId(loc)) {
+            return Registries.ITEM.get(loc);
         } else {
             return null;
         }

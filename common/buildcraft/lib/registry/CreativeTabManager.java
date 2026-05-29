@@ -1,32 +1,44 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.registry;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+/**
+ * Forge {@code CreativeTabs} → Fabric {@link ItemGroup}.
+ *
+ * In 1.20.1 creative tabs are registry entries built via {@link FabricItemGroup#builder()} and
+ * registered into {@link Registries#ITEM_GROUP}. The mutable icon of the legacy {@code CreativeTabBC}
+ * is preserved through a captured {@link ItemStack} field read lazily by the icon supplier.
+ */
 public class CreativeTabManager {
     private static final Map<String, CreativeTabBC> tabMap = new HashMap<>();
 
-    public static CreativeTabs getTab(String name) {
+    public static ItemGroup getTab(String name) {
         if (name.startsWith("vanilla.")) {
-            String after = name.substring("vanilla.".length());
-            switch (after) {
-                case "misc":
-                    return CreativeTabs.MISC;
-                case "materials":
-                    return CreativeTabs.MATERIALS;
-            }
+            // TODO(R.Chen): vanilla tab placement is data-driven in 1.20.1 — items are added to
+            // vanilla groups via ItemGroupEvents.modifyEntriesEvent, not by returning the group.
+            // Returning the BuildCraft tab as a fallback until the registration pass is ported.
         }
         if (tabMap.containsKey(name)) {
-            return tabMap.get(name);
+            return tabMap.get(name).getGroup();
         } else {
             throw new IllegalArgumentException("Unknown tab " + name);
         }
@@ -42,7 +54,7 @@ public class CreativeTabManager {
         return tab;
     }
 
-    public static void setItem(String name, Item item) {
+    public static void setItem(String name, ItemConvertible item) {
         if (item != null) {
             setItemStack(name, new ItemStack(item));
         }
@@ -55,27 +67,34 @@ public class CreativeTabManager {
         }
     }
 
-    public static class CreativeTabBC extends CreativeTabs {
-        private ItemStack item = new ItemStack(Items.COMPARATOR); // Temp.
+    public static class CreativeTabBC {
+        private ItemStack icon = new ItemStack(Items.COMPARATOR); // Temp.
+        private final ItemGroup group;
 
         private CreativeTabBC(String name) {
-            super(name);
+            // Register the group into Registries.ITEM_GROUP. The icon supplier reads the mutable
+            // field so a later setItem(...) call is reflected without rebuilding the group.
+            Identifier id = new Identifier("buildcraftlib", name.replace('.', '_'));
+            this.group = Registry.register(Registries.ITEM_GROUP, id,
+                FabricItemGroup.builder()
+                    .icon(() -> icon)
+                    .displayName(Text.translatable("itemGroup." + name))
+                    .build());
         }
 
-        public void setItem(Item item) {
+        public ItemGroup getGroup() {
+            return group;
+        }
+
+        public void setItem(ItemConvertible item) {
             if (item != null) {
-                this.item = new ItemStack(item);
+                this.icon = new ItemStack(item);
             }
         }
 
         public void setItem(ItemStack stack) {
             if (stack == null || stack.isEmpty()) return;
-            item = stack;
-        }
-
-        @Override
-        public ItemStack getTabIconItem() {
-            return item;
+            icon = stack;
         }
     }
 }

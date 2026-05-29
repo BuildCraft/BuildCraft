@@ -221,6 +221,15 @@ sourceSets {
             include "buildcraft/core/BCCoreInitializer.java",
                     "buildcraft/core/statements/IBlockDefaultTriggers.java"
         }
+        // Layer G — lib.registry (greenable subset; RegistrationHelper + PluggableRegistry
+        // deferred — blocked by unmigrated lib.block / lib.item / api.transport)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/registry/TagManager.java",
+                    "buildcraft/lib/registry/CreativeTabManager.java",
+                    "buildcraft/lib/registry/MigrationManager.java",
+                    "buildcraft/lib/registry/RegistryConfig.java"
+        }
     }
     main {
         java {

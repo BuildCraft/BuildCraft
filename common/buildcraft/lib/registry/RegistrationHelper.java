@@ -1,3 +1,8 @@
+// TODO(R.Chen): Fabric migration DEFERRED — blocked by unmigrated lib.block.BlockBCBase_Neptune,
+//               lib.item.IItemBuildCraft, lib.item.ItemBlockBC_Neptune. Migrate alongside lib.block /
+//               lib.item, then strip Forge here: ModelRegistryEvent (→ resource packs), OreDictionary
+//               (→ item tags), GameRegistry.registerTileEntity (→ Registries.BLOCK_ENTITY_TYPE),
+//               RegistryEvent.Register + MinecraftForge.EVENT_BUS (→ Fabric Registry.register).
 package buildcraft.lib.registry;
 
 import java.util.ArrayList;
