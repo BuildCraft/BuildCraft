@@ -239,7 +239,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
     /** @return The heat of the current biome, in celsius. */
     protected float getBiomeHeat() {
         Biome biome = getBiome();
-        float temp = biome.getTemperature(getPos());
+        // TODO(R.Chen): getTemperature(BlockPos) is private in 1.20.1; using no-arg overload — positional biome
+        // temperature (elevation scaling) is lost. Restore once Biome internals are accessible or a mixin is added.
+        float temp = biome.getTemperature();
         return Math.max(0, Math.min(30, temp * 15f));
     }
 
@@ -689,7 +691,8 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
         clientModelData.addDebugInfo(left);
     }
 
-    @Override
+    // STUB(R.Chen): hasFastRenderer() was a Forge BlockEntityRenderer hint; removed @Override since
+    // BlockEntity has no such method in 1.20.1. TODO(R.Chen): port to Fabric rendering API if needed.
     @Environment(EnvType.CLIENT)
     public boolean hasFastRenderer() {
         return true;

@@ -194,6 +194,27 @@ sourceSets {
                     // The integration target
                     "buildcraft/lib/tile/TileBC_Neptune.java"
         }
+        // Layer E — TileEngineBase_BC8 and its direct dependencies
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/mj/IMjConnector.java",
+                    "buildcraft/api/mj/IMjReceiver.java",
+                    "buildcraft/api/mj/IMjRedstoneReceiver.java",
+                    "buildcraft/api/mj/MjAPI.java",
+                    "buildcraft/api/mj/MjCapabilityHelper.java",
+                    "buildcraft/api/mj/MjToRfAutoConvertor.java",
+                    "buildcraft/api/enums/EnumPowerStage.java",
+                    "buildcraft/api/tiles/IDebuggable.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/NBTUtilBC.java",
+                    "buildcraft/lib/misc/LocaleUtil.java",
+                    "buildcraft/lib/misc/data/ModelVariableData.java",
+                    "buildcraft/lib/block/VanillaRotationHandlers.java",
+                    "buildcraft/lib/engine/IEngineLikeForLedger.java",
+                    "buildcraft/lib/engine/TileEngineBase_BC8.java"
+        }
     }
     main {
         java {
