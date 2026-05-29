@@ -288,6 +288,33 @@ sourceSets {
                     "buildcraft/core/marker/volume/ClientVolumeBoxes.java",
                     "buildcraft/core/marker/volume/AddonDefaultRenderer.java"
         }
+        // Layer L — lib.block.BlockBCBase_Neptune + prerequisites, core/block and core/item leaf files.
+        // Unblocked by: BuildCraftProperties migration, RotationUtil, IBlockWithFacing.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/IEngineType.java",
+                    "buildcraft/api/enums/EnumSnapshotType.java",
+                    "buildcraft/api/enums/EnumDecoratedBlock.java",
+                    "buildcraft/api/enums/EnumEngineType.java",
+                    "buildcraft/api/enums/EnumLaserTableType.java",
+                    "buildcraft/api/enums/EnumMachineState.java",
+                    "buildcraft/api/enums/EnumOptionalSnapshotType.java",
+                    "buildcraft/api/enums/EnumSpring.java",
+                    "buildcraft/api/blocks/ICustomRotationHandler.java",
+                    "buildcraft/api/properties/BuildCraftProperties.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/XorShift128Random.java",
+                    "buildcraft/lib/misc/RotationUtil.java",
+                    "buildcraft/lib/block/IBlockWithFacing.java",
+                    "buildcraft/lib/block/BlockBCBase_Neptune.java",
+                    // core/block — only direct BlockBCBase_Neptune subclasses; others deferred
+                    "buildcraft/core/block/BlockDecoration.java",
+                    "buildcraft/core/block/BlockSpring.java",
+                    // core/item — only fully-unblocked leaf
+                    "buildcraft/core/item/ItemVolumeBox.java"
+        }
     }
     main {
         java {

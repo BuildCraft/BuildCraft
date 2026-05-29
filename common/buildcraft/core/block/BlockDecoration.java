@@ -1,18 +1,21 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.core.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import java.util.List;
+
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.MapColor;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Property;
 
 import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.properties.BuildCraftProperties;
@@ -20,48 +23,24 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 
 public class BlockDecoration extends BlockBCBase_Neptune {
-    public static final IProperty<EnumDecoratedBlock> DECORATED_TYPE = BuildCraftProperties.DECORATED_BLOCK;
+    public static final Property<EnumDecoratedBlock> DECORATED_TYPE = BuildCraftProperties.DECORATED_BLOCK;
 
     public BlockDecoration(String id) {
-        super(Material.IRON, id);
-        setDefaultState(getDefaultState().withProperty(DECORATED_TYPE, EnumDecoratedBlock.DESTROY));
+        super(AbstractBlock.Settings.create()
+            .mapColor(MapColor.IRON_GRAY)
+            .strength(5.0F, 10.0F)
+            .sounds(BlockSoundGroup.METAL)
+            .luminance(state -> state.get(DECORATED_TYPE).lightValue),
+            id);
+        setDefaultState(getDefaultState().with(DECORATED_TYPE, EnumDecoratedBlock.DESTROY));
     }
 
-    // IBlockState
+    // BlockState
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, DECORATED_TYPE);
+    protected void addProperties(List<Property<?>> properties) {
+        properties.add(DECORATED_TYPE);
     }
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        IBlockState state = getDefaultState();
-        return state.withProperty(DECORATED_TYPE, EnumDecoratedBlock.fromMeta(meta));
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(DECORATED_TYPE).ordinal();
-    }
-
-    // Other
-
-    @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        for (EnumDecoratedBlock type : EnumDecoratedBlock.values()) {
-            list.add(new ItemStack(this, 1, type.ordinal()));
-        }
-    }
-
-    @Override
-    public int damageDropped(IBlockState state) {
-        return state.getValue(DECORATED_TYPE).ordinal();
-    }
-
-    @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        EnumDecoratedBlock type = state.getValue(DECORATED_TYPE);
-        return type.lightValue;
-    }
 }
+

@@ -1,3 +1,4 @@
+// TODO(R.Chen): blocked by Forge fluid capability (ICapabilityProvider/IFluidHandlerItem/FluidStack) — Phase 3 fluid migration
 package buildcraft.core.item;
 
 import java.util.List;
