@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.misc.data;
@@ -14,23 +16,20 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+// Yarn 1.20.1 renames:
+//   NBTTagCompound → NbtCompound, PacketBuffer → PacketByteBuf, TileEntity → BlockEntity
+//   AxisAlignedBB → net.minecraft.util.math.Box (referenced fully-qualified below to avoid clashing
+//   with this class's own name)
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -38,17 +37,11 @@ import buildcraft.lib.misc.VecUtil;
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox {
 
-    // Client side cache: used to compare current laser type with previously
-    // rendered data.
-
-    @SideOnly(Side.CLIENT)
-    public LaserData_BC8[] laserData;
-
-    @SideOnly(Side.CLIENT)
-    public BlockPos lastMin, lastMax;
-
-    @SideOnly(Side.CLIENT)
-    public LaserType lastType;
+    // STUB(R.Chen): client-side laser render cache (laserData / lastMin / lastMax / lastType)
+    //               removed for now — its type LaserData_BC8 pulls in the unmigrated
+    //               lib.client.render.laser + lib.client.sprite stack. The only consumer is
+    //               LaserBoxRenderer (also unmigrated). Re-add (annotated @Environment(EnvType.CLIENT))
+    //               once lib.client.render.laser is ported.
 
     private BlockPos min, max;
 
@@ -62,7 +55,7 @@ public class Box implements IBox {
         this.max = VecUtil.max(min, max);
     }
 
-    public Box(TileEntity e) {
+    public Box(BlockEntity e) {
         this(e.getPos(), e.getPos());
     }
 
@@ -102,25 +95,25 @@ public class Box implements IBox {
         extendToEncompassBoth(a.min(), a.max());
     }
 
-    public void initialize(NBTTagCompound nbt) {
+    public void initialize(NbtCompound nbt) {
         reset();
-        if (nbt.hasKey("xMin")) {
-            min = new BlockPos(nbt.getInteger("xMin"), nbt.getInteger("yMin"), nbt.getInteger("zMin"));
-            max = new BlockPos(nbt.getInteger("xMax"), nbt.getInteger("yMax"), nbt.getInteger("zMax"));
+        if (nbt.contains("xMin")) {
+            min = new BlockPos(nbt.getInt("xMin"), nbt.getInt("yMin"), nbt.getInt("zMin"));
+            max = new BlockPos(nbt.getInt("xMax"), nbt.getInt("yMax"), nbt.getInt("zMax"));
         } else {
-            min = NBTUtilBC.readBlockPos(nbt.getTag("min"));
-            max = NBTUtilBC.readBlockPos(nbt.getTag("max"));
+            min = NBTUtilBC.readBlockPos(nbt.get("min"));
+            max = NBTUtilBC.readBlockPos(nbt.get("max"));
         }
         extendToEncompassBoth(min, max);
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        if (min != null) nbt.setTag("min", NBTUtilBC.writeBlockPos(min));
-        if (max != null) nbt.setTag("max", NBTUtilBC.writeBlockPos(max));
+    public void writeToNBT(NbtCompound nbt) {
+        if (min != null) nbt.put("min", NBTUtilBC.writeBlockPos(min));
+        if (max != null) nbt.put("max", NBTUtilBC.writeBlockPos(max));
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NbtCompound writeToNBT() {
+        NbtCompound nbt = new NbtCompound();
         writeToNBT(nbt);
         return nbt;
     }
@@ -136,8 +129,9 @@ public class Box implements IBox {
     public List<BlockPos> getBlocksInArea() {
         List<BlockPos> blocks = new ArrayList<>();
 
-        for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
-            blocks.add(pos);
+        for (BlockPos pos : BlockPos.iterate(min, max)) {
+            // BlockPos.iterate reuses a mutable cursor — store an immutable copy.
+            blocks.add(pos.toImmutable());
         }
 
         return blocks;
@@ -163,7 +157,7 @@ public class Box implements IBox {
 
     @Override
     public boolean contains(Vec3d p) {
-        AxisAlignedBB bb = getBoundingBox();
+        net.minecraft.util.math.Box bb = getBoundingBox();
         if (p.x < bb.minX || p.x >= bb.maxX) return false;
         if (p.y < bb.minY || p.y >= bb.maxY) return false;
         if (p.z < bb.minZ || p.z >= bb.maxZ) return false;
@@ -171,7 +165,7 @@ public class Box implements IBox {
     }
 
     public boolean contains(BlockPos i) {
-        return contains(new Vec3d(i));
+        return contains(Vec3d.of(i));
     }
 
     @Override
@@ -191,11 +185,11 @@ public class Box implements IBox {
     }
 
     public BlockPos center() {
-        return new BlockPos(centerExact());
+        return BlockPos.ofFloored(centerExact());
     }
 
     public Vec3d centerExact() {
-        return new Vec3d(size()).scale(0.5).add(new Vec3d(min()));
+        return Vec3d.of(size()).multiply(0.5).add(Vec3d.of(min()));
     }
 
     @Override
@@ -211,10 +205,10 @@ public class Box implements IBox {
         return this;
     }
 
-    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#contains(Vec3d)} as the
-     * logic is different! */
-    public AxisAlignedBB getBoundingBox() {
-        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link net.minecraft.util.math.Box#contains(Vec3d)}
+     * as the logic is different! */
+    public net.minecraft.util.math.Box getBoundingBox() {
+        return new net.minecraft.util.math.Box(min, max.add(VecUtil.POS_ONE));
     }
 
     public Box extendToEncompass(Vec3d toBeContained) {
@@ -236,7 +230,7 @@ public class Box implements IBox {
 
     @Override
     public double distanceToSquared(BlockPos index) {
-        return closestInsideTo(index).distanceSq(index);
+        return closestInsideTo(index).getSquaredDistance(index);
     }
 
     public BlockPos closestInsideTo(BlockPos toTest) {
@@ -285,28 +279,28 @@ public class Box implements IBox {
 
     /** Calculates the total number of blocks on the edge. This is identical to (but faster than) calling
      * {@link #getBlocksOnEdge()}.{@link List#size() size()}
-     * 
+     *
      * @return The size of the list returned by {@link #getBlocksOnEdge()}. */
     public int getBlocksOnEdgeCount() {
         return PositionUtil.getCountOnEdge(min(), max());
     }
 
-    public void readData(PacketBuffer stream) {
+    public void readData(PacketByteBuf stream) {
         if (stream.readBoolean()) {
-            min = MessageUtil.readBlockPos(stream);
-            max = MessageUtil.readBlockPos(stream);
+            min = stream.readBlockPos();
+            max = stream.readBlockPos();
         } else {
             min = null;
             max = null;
         }
     }
 
-    public void writeData(PacketBuffer stream) {
+    public void writeData(PacketByteBuf stream) {
         boolean isValid = isInitialized();
         stream.writeBoolean(isValid);
         if (isValid) {
-            MessageUtil.writeBlockPos(stream, min);
-            MessageUtil.writeBlockPos(stream, max);
+            stream.writeBlockPos(min);
+            stream.writeBlockPos(max);
         }
     }
 

@@ -230,6 +230,20 @@ sourceSets {
                     "buildcraft/lib/registry/MigrationManager.java",
                     "buildcraft/lib/registry/RegistryConfig.java"
         }
+        // Layer H — lib.misc.data.Box + its dependency chain (gates core marker/volume)
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/IZone.java",
+                    "buildcraft/api/core/IBox.java",
+                    "buildcraft/api/core/IAreaProvider.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/VecUtil.java",
+                    "buildcraft/lib/misc/PositionUtil.java",
+                    "buildcraft/lib/misc/data/FaceDistance.java",
+                    "buildcraft/lib/misc/data/Box.java"
+        }
     }
     main {
         java {
