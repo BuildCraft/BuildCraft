@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
 //   MessageContext → Object (stub)
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.block.Block;
@@ -76,7 +77,7 @@ import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
 
-public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebuggable {
+public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebuggable, RenderAttachmentBlockEntity {
 
     protected static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("pipe");
 
@@ -652,5 +653,17 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     @Environment(EnvType.CLIENT)
     public boolean hasFastRenderer() {
         return true;
+    }
+
+    // IExtendedBlockState replacement (FRAPI render-attachment)
+    // --------------------------------------------------------
+    // Forge BlockPipeHolder attached a WeakReference<TilePipeHolder> to the block state via the unlisted
+    // PROP_TILE property + getExtendedState(), and the baked model pulled the PipeModelKey from it. 1.20.1 has no
+    // IExtendedBlockState; Fabric routes per-tile render data through RenderAttachmentBlockEntity. The attachment
+    // is read on the client chunk-mesher thread only (never on a dedicated server), so returning the CLIENT-side
+    // PipeModelKey here is safe. The Phase 5 baked pipe model consumes this key.
+    @Override
+    public Object getRenderAttachmentData() {
+        return pipe == null ? null : pipe.getModel();
     }
 }
