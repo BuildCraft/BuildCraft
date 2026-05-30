@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model;
@@ -10,16 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.render.model.BakedQuad;
 
 /** An adding {@link IModelCache} that takes a single key and adds all of the sub-keys given by the
- * {@link IModelKeyMultipleSameMapper}
- * 
- * @author AlexIIL
- * @since 14 Mar 2016
- *
- * @param <K> The from type. This is the input key type.
- * @param <T> The "to" type. This is the output key type. */
+ * {@link IModelKeyMultipleSameMapper}. */
 public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     private final IModelCache<K> mainCache;
     private final IModelKeyMultipleSameMapper<K, T> mapper;

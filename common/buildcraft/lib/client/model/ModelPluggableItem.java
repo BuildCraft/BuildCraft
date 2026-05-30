@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model;
@@ -10,15 +12,20 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-public class ModelPluggableItem implements IBakedModel {
+import net.minecraft.block.BlockState;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.render.model.json.ModelOverrideList;
+import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
+
+@Environment(EnvType.CLIENT)
+public class ModelPluggableItem implements BakedModel {
 
     private final List<BakedQuad> quads;
 
@@ -33,37 +40,44 @@ public class ModelPluggableItem implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    public List<BakedQuad> getQuads(BlockState state, Direction side, Random random) {
         return side == null ? quads : ImmutableList.of();
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
     @Override
-    public boolean isGui3d() {
+    public boolean hasDepth() {
         return false;
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+    public boolean isSideLit() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public boolean isBuiltin() {
+        return false;
+    }
+
+    @Override
+    public Sprite getParticleSprite() {
         return null;
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
-        return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM;
+    public ModelTransformation getTransformation() {
+        return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM != null
+            ? ModelItemSimple.TRANSFORM_PLUG_AS_ITEM
+            : ModelTransformation.NONE;
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
+    public ModelOverrideList getOverrides() {
+        return ModelOverrideList.EMPTY;
     }
 }

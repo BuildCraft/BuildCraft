@@ -1,58 +1,76 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
+
 package buildcraft.lib.client.model;
 
 import java.util.List;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import com.google.common.collect.ImmutableList;
 
-// TODO: Implement this!
-// (Just a way to make sure people know that RF support is enabled, I'm not sure how detailed this will need to be)
-public class ModelNotifyOfRF implements IBakedModel {
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-    final IBakedModel parent;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.render.model.json.ModelOverrideList;
+import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 
-    public ModelNotifyOfRF(IBakedModel parent) {
+// TODO(R.Chen): Implement this — just a way to indicate that RF support is enabled.
+@Environment(EnvType.CLIENT)
+public class ModelNotifyOfRF implements BakedModel {
+
+    final BakedModel parent;
+
+    public ModelNotifyOfRF(BakedModel parent) {
         this.parent = parent;
     }
 
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public List<BakedQuad> getQuads(BlockState state, Direction side, Random random) {
+        throw new UnsupportedOperationException("// TODO(R.Chen): Implement ModelNotifyOfRF");
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public boolean useAmbientOcclusion() {
+        throw new UnsupportedOperationException("// TODO(R.Chen): Implement ModelNotifyOfRF");
     }
 
     @Override
-    public boolean isGui3d() {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public boolean hasDepth() {
+        throw new UnsupportedOperationException("// TODO(R.Chen): Implement ModelNotifyOfRF");
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public boolean isSideLit() {
+        throw new UnsupportedOperationException("// TODO(R.Chen): Implement ModelNotifyOfRF");
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public boolean isBuiltin() {
+        throw new UnsupportedOperationException("// TODO(R.Chen): Implement ModelNotifyOfRF");
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+    public Sprite getParticleSprite() {
+        throw new UnsupportedOperationException("// TODO(R.Chen): Implement ModelNotifyOfRF");
     }
 
+    @Override
+    public ModelTransformation getTransformation() {
+        return ModelTransformation.NONE;
+    }
+
+    @Override
+    public ModelOverrideList getOverrides() {
+        return ModelOverrideList.EMPTY;
+    }
 }

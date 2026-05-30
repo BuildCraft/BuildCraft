@@ -2,19 +2,19 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
+import org.joml.Vector3f;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
 
 /** Provides various utilities for creating {@link MutableQuad} out of various position information, such as a single
  * face of a cuboid. */
@@ -77,11 +77,12 @@ public class ModelUtil {
     }
 
     public static class TexturedFace {
-        public TextureAtlasSprite sprite;
+        public Sprite sprite;
         public UvFaceData faceData = new UvFaceData();
     }
 
-    public static MutableQuad createFace(EnumFacing face, Tuple3f a, Tuple3f b, Tuple3f c, Tuple3f d, UvFaceData uvs) {
+    public static MutableQuad createFace(Direction face, Vector3f a, Vector3f b, Vector3f c, Vector3f d,
+        UvFaceData uvs) {
         MutableQuad quad = new MutableQuad(-1, face);
         if (uvs == null) {
             uvs = UvFaceData.DEFAULT;
@@ -100,28 +101,27 @@ public class ModelUtil {
         return quad;
     }
 
-    public static <T extends Tuple3f> MutableQuad createFace(EnumFacing face, T[] points, UvFaceData uvs) {
+    public static MutableQuad createFace(Direction face, Vector3f[] points, UvFaceData uvs) {
         return createFace(face, points[0], points[1], points[2], points[3], uvs);
     }
 
-    public static MutableQuad createFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
-        Point3f[] points = getPointsForFace(face, center, radius);
+    public static MutableQuad createFace(Direction face, Vector3f center, Vector3f radius, UvFaceData uvs) {
+        Vector3f[] points = getPointsForFace(face, center, radius);
         return createFace(face, points, uvs).normalf(
-            face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ()
+            face.getOffsetX(), face.getOffsetY(), face.getOffsetZ()
         );
     }
 
-    public static MutableQuad createInverseFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
+    public static MutableQuad createInverseFace(Direction face, Vector3f center, Vector3f radius, UvFaceData uvs) {
         return createFace(face, center, radius, uvs).copyAndInvertNormal();
     }
 
-    public static MutableQuad[] createDoubleFace(EnumFacing face, Tuple3f center, Tuple3f radius, UvFaceData uvs) {
+    public static MutableQuad[] createDoubleFace(Direction face, Vector3f center, Vector3f radius, UvFaceData uvs) {
         MutableQuad norm = createFace(face, center, radius, uvs);
         return new MutableQuad[] { norm, norm.copyAndInvertNormal() };
     }
 
-    public static void mapBoxToUvs(AxisAlignedBB box, EnumFacing side, UvFaceData uvs) {
-        // TODO: Fix these!
+    public static void mapBoxToUvs(Box box, Direction side, UvFaceData uvs) {
         switch (side) {
             case WEST: /* -X */ {
                 uvs.minU = (float) box.minZ;
@@ -171,14 +171,16 @@ public class ModelUtil {
         }
     }
 
-    public static Point3f[] getPointsForFace(EnumFacing face, Tuple3f center, Tuple3f radius) {
-        Point3f centerOfFace = new Point3f(center);
-        Point3f faceAdd = new Point3f(
-            face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z
+    public static Vector3f[] getPointsForFace(Direction face, Vector3f center, Vector3f radius) {
+        Vector3f centerOfFace = new Vector3f(center);
+        Vector3f faceAdd = new Vector3f(
+            face.getOffsetX() * radius.x,
+            face.getOffsetY() * radius.y,
+            face.getOffsetZ() * radius.z
         );
         centerOfFace.add(faceAdd);
         Vector3f faceRadius = new Vector3f(radius);
-        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
+        if (face.getDirection() == AxisDirection.POSITIVE) {
             faceRadius.sub(faceAdd);
         } else {
             faceRadius.add(faceAdd);
@@ -186,10 +188,13 @@ public class ModelUtil {
         return getPoints(centerOfFace, faceRadius);
     }
 
-    public static Point3f[] getPoints(Point3f centerFace, Tuple3f faceRadius) {
-        Point3f[] array = { new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace), new Point3f(
-            centerFace
-        ) };
+    public static Vector3f[] getPoints(Vector3f centerFace, Vector3f faceRadius) {
+        Vector3f[] array = {
+            new Vector3f(centerFace),
+            new Vector3f(centerFace),
+            new Vector3f(centerFace),
+            new Vector3f(centerFace)
+        };
         array[0].add(addOrNegate(faceRadius, false, false));
         array[1].add(addOrNegate(faceRadius, false, true));
         array[2].add(addOrNegate(faceRadius, true, true));
@@ -197,22 +202,21 @@ public class ModelUtil {
         return array;
     }
 
-    public static Vector3f addOrNegate(Tuple3f coord, boolean u, boolean v) {
+    public static Vector3f addOrNegate(Vector3f coord, boolean u, boolean v) {
         boolean zisv = coord.x != 0 && coord.y == 0;
         float x = coord.x * (u ? 1 : -1);
         float y = coord.y * (v ? -1 : 1);
         float z = coord.z * (zisv ? (v ? -1 : 1) : (u ? 1 : -1));
-        Vector3f neg = new Vector3f(x, y, z);
-        return neg;
+        return new Vector3f(x, y, z);
     }
 
-    public static boolean shouldInvertForRender(EnumFacing face) {
-        boolean flip = face.getAxisDirection() == AxisDirection.NEGATIVE;
+    public static boolean shouldInvertForRender(Direction face) {
+        boolean flip = face.getDirection() == AxisDirection.NEGATIVE;
         if (face.getAxis() == Axis.Z) flip = !flip;
         return flip;
     }
 
-    public static EnumFacing faceForRender(EnumFacing face) {
+    public static Direction faceForRender(Direction face) {
         if (shouldInvertForRender(face)) return face.getOpposite();
         return face;
     }

@@ -769,8 +769,46 @@ sourceSets {
                     "buildcraft/transport/client/render/PipeFlowRendererPower.java",
                     "buildcraft/transport/client/render/PipeFlowRendererRf.java",
                     "buildcraft/transport/client/render/PipeWireRenderer.java",
-                    "buildcraft/transport/client/render/RenderPipeHolder.java",
-                    "buildcraft/transport/gui/GuiDiamondPipe.java",
+                    "buildcraft/transport/client/render/RenderPipeHolder.java"
+        }
+        // Layer V — lib.client.model base render layer (MutableQuad/Vertex JOML + BakedModel stubs)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/client/model/MutableVertex.java",
+                    "buildcraft/lib/client/model/MutableQuad.java",
+                    "buildcraft/lib/client/model/ModelUtil.java",
+                    "buildcraft/lib/client/model/IModelCache.java",
+                    "buildcraft/lib/client/model/ModelCache.java",
+                    "buildcraft/lib/client/model/ModelHolder.java",
+                    "buildcraft/lib/client/model/ModelHolderRegistry.java",
+                    "buildcraft/lib/client/model/ModelHolderVariable.java",
+                    "buildcraft/lib/client/model/ModelHolderStatic.java",
+                    "buildcraft/lib/client/model/ModelItemSimple.java",
+                    "buildcraft/lib/client/model/ModelPluggableItem.java",
+                    "buildcraft/lib/client/model/ModelNotifyOfRF.java",
+                    "buildcraft/lib/client/model/ModelCacheJoiner.java",
+                    "buildcraft/lib/client/model/ModelCacheMultipleSame.java",
+                    "buildcraft/lib/client/model/AdvModelCache.java",
+                    "buildcraft/lib/client/model/ResourceLoaderContext.java",
+                    "buildcraft/lib/client/model/json/JsonTexture.java",
+                    "buildcraft/lib/client/model/json/JsonVariableModel.java",
+                    "buildcraft/lib/client/model/json/JsonVariableModelPart.java",
+                    "buildcraft/lib/client/model/json/JsonModel.java",
+                    "buildcraft/lib/client/model/json/JsonModelPart.java",
+                    "buildcraft/lib/client/model/json/JsonModelRule.java",
+                    "buildcraft/lib/client/model/json/JsonQuad.java",
+                    "buildcraft/lib/client/model/json/JsonVariableFaceUV.java",
+                    "buildcraft/lib/client/model/json/JsonVertex.java",
+                    "buildcraft/lib/client/model/json/VariablePartContainer.java",
+                    "buildcraft/lib/client/model/json/VariablePartCuboid.java",
+                    "buildcraft/lib/client/model/json/VariablePartCuboidBase.java",
+                    "buildcraft/lib/client/model/json/VariablePartLed.java",
+                    "buildcraft/lib/client/model/json/VariablePartTextureExpand.java",
+                    "buildcraft/lib/client/model/plug/PlugBakerSimple.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/transport/gui/GuiDiamondPipe.java",
                     "buildcraft/transport/gui/GuiDiamondWoodPipe.java",
                     "buildcraft/transport/gui/GuiEmzuliPipe_BC8.java",
                     "buildcraft/transport/gui/GuiFilteredBuffer.java"

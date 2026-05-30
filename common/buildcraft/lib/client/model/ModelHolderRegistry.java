@@ -2,64 +2,49 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
 
-import buildcraft.lib.client.sprite.AtlasSpriteVariants;
-
+/**
+ * STUB(R.Chen): client model — Phase 5.
+ *
+ * The Forge original fired callbacks on TextureStitchEvent.Pre (atlas sprite registration) and
+ * ModelBakeEvent (model baking). In Fabric 1.20.1 these are replaced by ModelLoadingPlugin +
+ * ClientSpriteRegistryCallback. The full wiring is deferred to the dedicated render migration pass.
+ * Only the compile-time surface (static {@link #HOLDERS} list, {@link #onTextureStitchPre} and
+ * {@link #onModelBake} entry points) is retained so dependent classes compile.
+ */
+@Environment(EnvType.CLIENT)
 public class ModelHolderRegistry {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.model.holder");
 
     static final List<ModelHolder> HOLDERS = new ArrayList<>();
 
-    public static void onTextureStitchPre(TextureMap map) {
-        Set<ResourceLocation> toStitch = new HashSet<>();
+    // STUB(R.Chen): Phase 5 — replace with ModelLoadingPlugin / ClientSpriteRegistryCallback.
+    public static void onTextureStitchPre(Set<Identifier> toStitch) {
         for (ModelHolder holder : HOLDERS) {
             holder.onTextureStitchPre(toStitch);
         }
-
-        for (ResourceLocation res : toStitch) {
-            map.setTextureEntry(AtlasSpriteVariants.createForConfig(res));
-        }
     }
 
+    // STUB(R.Chen): Phase 5 — replace with ModelLoadingPlugin#onInitializeModelLoader.
     public static void onModelBake() {
         for (ModelHolder holder : HOLDERS) {
             holder.onModelBake();
-        }
-        if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE)) {
-            BCLog.logger.info("[lib.model.holder] List of registered Models:");
-            List<ModelHolder> holders = new ArrayList<>();
-            holders.addAll(HOLDERS);
-            holders.sort(Comparator.comparing(a -> a.modelLocation.toString()));
-
-            for (ModelHolder holder : holders) {
-                String status = "  ";
-                if (holder.failReason != null) {
-                    status += "(" + holder.failReason + ")";
-                } else if (!holder.hasBakedQuads()) {
-                    status += "(Model was registered too late)";
-                }
-
-                BCLog.logger.info("  - " + holder.modelLocation + status);
-            }
-            BCLog.logger.info("[lib.model.holder] Total of " + HOLDERS.size() + " models");
         }
     }
 }
