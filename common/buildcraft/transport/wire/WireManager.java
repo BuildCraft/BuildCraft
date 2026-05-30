@@ -2,8 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.wire;
 
 import java.io.IOException;
@@ -13,17 +14,20 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+// Yarn 1.20.1 renames:
+//   EnumDyeColor → DyeColor   EnumFacing → Direction   NBTTagCompound → NbtCompound
+//   TileEntity   → BlockEntity   world.isRemote → world.isClient   getTileEntity → getBlockEntity
+//   @SideOnly(Side.CLIENT) → @Environment(EnvType.CLIENT)   Side → EnvType   MessageContext → Object (stub)
+//   EnumDyeColor.byMetadata(i) → DyeColor.byId(i)   color.getMetadata() → color.getId()
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.IWireManager;
@@ -34,9 +38,9 @@ import buildcraft.lib.net.PacketBufferBC;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;
-    public final Map<EnumWirePart, EnumDyeColor> parts = new EnumMap<>(EnumWirePart.class);
+    public final Map<EnumWirePart, DyeColor> parts = new EnumMap<>(EnumWirePart.class);
     public final Set<EnumWirePart> poweredClient = EnumSet.noneOf(EnumWirePart.class);
-    public final Map<EnumWireBetween, EnumDyeColor> betweens = new EnumMap<>(EnumWireBetween.class);
+    public final Map<EnumWireBetween, DyeColor> betweens = new EnumMap<>(EnumWireBetween.class);
     public boolean initialised = false;
     // TODO: Wire connections to adjacent blocks
 
@@ -54,13 +58,13 @@ public class WireManager implements IWireManager {
     }
 
     public void invalidate() {
-        if (!holder.getPipeWorld().isRemote) {
+        if (!holder.getPipeWorld().isClient) {
             removePartsFromSystem(parts.keySet());
         }
     }
 
     public void validate() {
-        if (!holder.getPipeWorld().isRemote) {
+        if (!holder.getPipeWorld().isClient) {
             initialised = false;
         }
     }
@@ -68,7 +72,7 @@ public class WireManager implements IWireManager {
     public void tick() {
         if (!initialised) {
             initialised = true;
-            if (!holder.getPipeWorld().isRemote) {
+            if (!holder.getPipeWorld().isClient) {
                 for (EnumWirePart part : parts.keySet()) {
                     getWireSystems().buildAndAddWireSystem(new WireSystem.WireElement(holder.getPipePos(), part));
                 }
@@ -78,10 +82,10 @@ public class WireManager implements IWireManager {
     }
 
     @Override
-    public boolean addPart(EnumWirePart part, EnumDyeColor colour) {
+    public boolean addPart(EnumWirePart part, DyeColor colour) {
         if (getColorOfPart(part) == null) {
             parts.put(part, colour);
-            if (!holder.getPipeWorld().isRemote) {
+            if (!holder.getPipeWorld().isClient) {
                 getWireSystems().buildAndAddWireSystem(new WireSystem.WireElement(holder.getPipePos(), part));
                 holder.getPipeTile().markDirty();
             }
@@ -93,13 +97,13 @@ public class WireManager implements IWireManager {
     }
 
     @Override
-    public EnumDyeColor removePart(EnumWirePart part) {
-        EnumDyeColor color = getColorOfPart(part);
+    public DyeColor removePart(EnumWirePart part) {
+        DyeColor color = getColorOfPart(part);
         if (color == null) {
             return null;
         } else {
             parts.remove(part);
-            if (!holder.getPipeWorld().isRemote) {
+            if (!holder.getPipeWorld().isClient) {
                 WireSystem.WireElement element = new WireSystem.WireElement(holder.getPipePos(), part);
                 WireSystem.getConnectedElementsOfElement(holder, element)
                     .forEach(getWireSystems()::buildAndAddWireSystem);
@@ -113,7 +117,7 @@ public class WireManager implements IWireManager {
 
     public void removeParts(Collection<EnumWirePart> toRemove) {
         toRemove.forEach(this.parts::remove);
-        if (!holder.getPipeWorld().isRemote) {
+        if (!holder.getPipeWorld().isClient) {
             removePartsFromSystem(toRemove);
         }
         updateBetweens(false);
@@ -153,8 +157,8 @@ public class WireManager implements IWireManager {
         });
 
         if (!recursive) {
-            for (EnumFacing side : EnumFacing.VALUES) {
-                TileEntity tile = holder.getPipeWorld().getTileEntity(holder.getPipePos().offset(side));
+            for (Direction side : Direction.values()) {
+                BlockEntity tile = holder.getPipeWorld().getBlockEntity(holder.getPipePos().offset(side));
                 if (tile instanceof IPipeHolder) {
                     ((IPipeHolder) tile).getWireManager().updateBetweens(true);
                 }
@@ -163,18 +167,18 @@ public class WireManager implements IWireManager {
     }
 
     @Override
-    public EnumDyeColor getColorOfPart(EnumWirePart part) {
+    public DyeColor getColorOfPart(EnumWirePart part) {
         return parts.get(part);
     }
 
     @Override
-    public boolean hasPartOfColor(EnumDyeColor color) {
+    public boolean hasPartOfColor(DyeColor color) {
         return parts.values().contains(color);
     }
 
     @Override
     public boolean isPowered(EnumWirePart part) {
-        if (holder.getPipeWorld().isRemote) {
+        if (holder.getPipeWorld().isClient) {
             return poweredClient.contains(part);
         } else {
             WorldSavedDataWireSystems wireSystems = this.getWireSystems();
@@ -192,9 +196,9 @@ public class WireManager implements IWireManager {
     }
 
     @Override
-    public boolean isAnyPowered(EnumDyeColor color) {
+    public boolean isAnyPowered(DyeColor color) {
         if (!this.parts.isEmpty()) {
-            for (Map.Entry<EnumWirePart, EnumDyeColor> partColor : this.parts.entrySet()) {
+            for (Map.Entry<EnumWirePart, DyeColor> partColor : this.parts.entrySet()) {
                 if (partColor.getValue() == color && this.isPowered(partColor.getKey())) {
                     return true;
                 }
@@ -203,45 +207,45 @@ public class WireManager implements IWireManager {
         return false;
     }
 
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NbtCompound writeToNbt() {
+        NbtCompound nbt = new NbtCompound();
         int[] wiresArray = new int[parts.size() * 2];
         int[] i = { 0 };
         parts.forEach((part, color) -> {
             wiresArray[i[0]] = part.ordinal();
-            wiresArray[i[0] + 1] = color.getMetadata();
+            wiresArray[i[0] + 1] = color.getId();
             i[0] += 2;
         });
-        nbt.setIntArray("parts", wiresArray);
+        nbt.putIntArray("parts", wiresArray);
         return nbt;
     }
 
-    public void readFromNbt(NBTTagCompound nbt) {
+    public void readFromNbt(NbtCompound nbt) {
         parts.clear();
         int[] wiresArray = nbt.getIntArray("parts");
         for (int i = 0; i < wiresArray.length; i += 2) {
-            parts.put(EnumWirePart.VALUES[wiresArray[i]], EnumDyeColor.byMetadata(wiresArray[i + 1]));
+            parts.put(EnumWirePart.VALUES[wiresArray[i]], DyeColor.byId(wiresArray[i + 1]));
         }
     }
 
-    public void writePayload(PacketBufferBC buffer, Side side) {
-        if (side == Side.SERVER) {
+    public void writePayload(PacketBufferBC buffer, EnvType side) {
+        if (side == EnvType.SERVER) {
             buffer.writeInt(parts.size());
-            for (Entry<EnumWirePart, EnumDyeColor> entry : parts.entrySet()) {
+            for (Entry<EnumWirePart, DyeColor> entry : parts.entrySet()) {
                 buffer.writeEnumValue(entry.getKey());
                 buffer.writeEnumValue(entry.getValue());
             }
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void readPayload(PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        if (side == Side.CLIENT) {
+    @Environment(EnvType.CLIENT)
+    public void readPayload(PacketBufferBC buffer, EnvType side, /* STUB(R.Chen): MessageContext */ Object ctx) throws IOException {
+        if (side == EnvType.CLIENT) {
             parts.clear();
             int count = buffer.readInt();
             for (int i = 0; i < count; i++) {
                 EnumWirePart part = buffer.readEnumValue(EnumWirePart.class);
-                EnumDyeColor colour = buffer.readEnumValue(EnumDyeColor.class);
+                DyeColor colour = buffer.readEnumValue(DyeColor.class);
                 parts.put(part, colour);
             }
             updateBetweens(false);

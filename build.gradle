@@ -659,6 +659,29 @@ sourceSets {
             srcDir "common"
             include "buildcraft/transport/pipe/flow/PipeFlowFluids.java"
         }
+        // Layer W — TilePipeHolder (the pipe capability hub) + the wire system + plug/block/event scaffolding.
+        // The whole wire layer is migrated as a unit (WireManager needs WireSystem + WorldSavedDataWireSystems):
+        //   - WorldSavedDataWireSystems → PersistentState (per-player MessageWireSystems broadcast deferred to
+        //     Phase 5, same as container networking); WireSystem.isPlayerWatching stubbed alongside it.
+        //   - AdvancementUtil migrated (UUID overload no-ops until a MinecraftServer holder exists).
+        //   - FilterEventHandler stubbed to a no-op (silicon Phase 7 — depends on PluggableLens).
+        //   - BCTransportBlocks stubbed to the pipeHolder handle only (BlockFilteredBuffer not yet migrated).
+        //   - BlockPipeHolder stubbed (1,115-LOC VoxelShape/render finale is Phase 4F).
+        //   - PluggableHolder fully migrated (circular with TilePipeHolder, same layer).
+        //   - TilePipeHolder: ITickable→BlockEntityTicker, Forge getCapability/provider → BlockApiLookup design
+        //     (registerCapabilities(), wired in Phase 4F); neighbour CAP_PIPE lookup resolved via IPipeHolder.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/AdvancementUtil.java",
+                    "buildcraft/silicon/plug/FilterEventHandler.java",
+                    "buildcraft/transport/BCTransportBlocks.java",
+                    "buildcraft/transport/block/BlockPipeHolder.java",
+                    "buildcraft/transport/wire/WireSystem.java",
+                    "buildcraft/transport/wire/WorldSavedDataWireSystems.java",
+                    "buildcraft/transport/wire/WireManager.java",
+                    "buildcraft/transport/pipe/PluggableHolder.java",
+                    "buildcraft/transport/tile/TilePipeHolder.java"
+        }
     }
     main {
         java {
