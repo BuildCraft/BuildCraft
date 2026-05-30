@@ -10,8 +10,21 @@ package buildcraft.transport.client.render;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): PipeFlowRendererRf — Forge GlStateManager/Tessellator/BufferBuilder → Fabric VertexConsumer Phase 5.
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.util.math.MatrixStack;
+
+import buildcraft.api.transport.pipe.IPipeFlowRenderer;
+
+import buildcraft.transport.pipe.flow.PipeFlowRedstoneFlux;
+
+// STUB(R.Chen): PipeFlowRendererRf — blocked by RF/Team Reborn Energy API migration (Phase 4F).
 @Environment(EnvType.CLIENT)
-public class PipeFlowRendererRf {
-    // STUB Phase 5
+public enum PipeFlowRendererRf implements IPipeFlowRenderer<PipeFlowRedstoneFlux> {
+    INSTANCE;
+
+    @Override
+    public void render(PipeFlowRedstoneFlux flow, MatrixStack matrices, VertexConsumer vc,
+            int light, float partialTicks) {
+        // STUB(R.Chen): Phase 4F Team Reborn Energy integration required.
+    }
 }

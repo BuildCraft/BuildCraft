@@ -14,6 +14,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 
+import buildcraft.lib.client.render.DetachedRenderer;
+
 import buildcraft.BuildCraftFabric;
 
 /**
@@ -46,10 +48,8 @@ public class BCLibClientInitializer implements ClientModInitializer {
             // STUB(R.Chen): ItemDebugger hover-debug request → use MinecraftClient#crosshairTarget.
         });
 
-        // Forge: RenderWorldLastEvent
-        WorldRenderEvents.LAST.register(context -> {
-            // STUB(R.Chen): DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks);
-        });
+        // Forge: RenderWorldLastEvent → DetachedRenderer event bus
+        DetachedRenderer.registerEvents();
 
         // STUB(R.Chen): TextureStitchEvent → ModelLoadingPlugin / ClientSpriteRegistryCallback.
         // STUB(R.Chen): ModelBakeEvent → ModelLoadingPlugin#onInitializeModelLoader.

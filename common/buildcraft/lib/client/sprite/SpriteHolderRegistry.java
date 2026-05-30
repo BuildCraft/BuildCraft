@@ -7,28 +7,29 @@
  */
 package buildcraft.lib.client.sprite;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.render.ISprite;
 
 /**
- * STUB(R.Chen): client render — full implementation in Phase 5.
+ * Manages named sprite holders that lazily resolve to stitched atlas sprites.
  *
- * The Forge original stitched BuildCraft sprites into the block texture atlas via
- * {@code TextureStitchEvent} + raw GL ({@code GL11}/{@code GL12}/{@code GlStateManager}/{@code TextureMap}).
- * Fabric uses a different texturing pipeline ({@code SpriteAtlasTexture} + data-driven atlases /
- * {@code ClientSpriteRegistryCallback}). This stub keeps only the compile-time surface that the
- * laser/marker data layer needs: the {@link SpriteHolder} {@link ISprite} implementation and the
- * {@link #getHolder} factories. UV interpolation returns the identity passthrough until the real
- * atlas wiring lands.
+ * Sprites must appear in the block atlas — either by being referenced in a block/item model JSON or
+ * by explicit listing in {@code assets/<namespace>/atlases/blocks.json}.  Once the atlas is
+ * ready (after {@link MinecraftClient} resource reload), {@link SpriteHolder#getSprite()} resolves
+ * via {@code MinecraftClient.getSpriteAtlas(BLOCK_ATLAS_TEXTURE).apply(id)}.
  */
+@Environment(EnvType.CLIENT)
 public class SpriteHolderRegistry {
 
     private static final Map<Identifier, SpriteHolder> holders = new HashMap<>();
@@ -41,38 +42,47 @@ public class SpriteHolderRegistry {
         return holders.computeIfAbsent(location, SpriteHolder::new);
     }
 
+    /** All registered holders — used by sprite registration callbacks. */
+    public static Collection<SpriteHolder> allHolders() {
+        return holders.values();
+    }
+
     public static class SpriteHolder implements ISprite {
         public final Identifier spriteLocation;
-
-        // STUB(R.Chen): the backing atlas Sprite is resolved during stitching in Phase 5.
-        @Environment(EnvType.CLIENT)
-        private Sprite sprite;
 
         private SpriteHolder(Identifier spriteLocation) {
             this.spriteLocation = spriteLocation;
         }
 
+        /**
+         * Returns the stitched atlas sprite for this holder.  Returns {@code null} before the
+         * block atlas has been stitched (e.g. during server-side init).  The sprite is resolved
+         * lazily so atlas reloads are reflected automatically.
+         */
         @Environment(EnvType.CLIENT)
         public Sprite getSprite() {
-            // STUB(R.Chen): client render — returns the stitched atlas sprite in Phase 5.
-            return sprite;
+            MinecraftClient mc = MinecraftClient.getInstance();
+            if (mc == null) return null;
+            return mc.getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).apply(spriteLocation);
         }
 
         @Override
         public double getInterpU(double u) {
-            // STUB(R.Chen): client render — identity passthrough until atlas UVs are wired (Phase 5).
-            return u;
+            Sprite s = getSprite();
+            if (s == null) return u;
+            return s.getMinU() + u * (s.getMaxU() - s.getMinU());
         }
 
         @Override
         public double getInterpV(double v) {
-            // STUB(R.Chen): client render — identity passthrough until atlas UVs are wired (Phase 5).
-            return v;
+            Sprite s = getSprite();
+            if (s == null) return v;
+            return s.getMinV() + v * (s.getMaxV() - s.getMinV());
         }
 
         @Override
         public void bindTexture() {
-            // STUB(R.Chen): OpenGL — texture binding handled by the Fabric render pipeline in Phase 5.
+            // Texture binding is handled by the Fabric render pipeline via RenderLayer.
         }
     }
 }

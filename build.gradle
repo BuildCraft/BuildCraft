@@ -769,7 +769,9 @@ sourceSets {
                     "buildcraft/transport/client/render/PipeFlowRendererPower.java",
                     "buildcraft/transport/client/render/PipeFlowRendererRf.java",
                     "buildcraft/transport/client/render/PipeWireRenderer.java",
-                    "buildcraft/transport/client/render/RenderPipeHolder.java"
+                    "buildcraft/transport/client/render/RenderPipeHolder.java",
+                    // Layer W — transport client initializer
+                    "buildcraft/transport/BCTransportClientInitializer.java"
         }
         // Layer V — lib.client.model base render layer (MutableQuad/Vertex JOML + BakedModel stubs)
         java {
