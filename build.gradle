@@ -608,6 +608,29 @@ sourceSets {
                     "buildcraft/transport/client/model/key/PipeModelKey.java",
                     "buildcraft/transport/pipe/Pipe.java"
         }
+        // Layer T — PipeFlowItems (item pipe flow) + its deps. TravellingItem migrated fully;
+        // PipeFlowItems migrated with only its Forge-capability getCapability body stubbed (Phase 4F,
+        // same deferral as PipeFlow/Pipe). Deps: lib.inventory (IItemTransactor migrated; transactor
+        // helpers stubbed), lib.misc.StackUtil (partial — OreDict/IList helpers dropped),
+        // lib.misc.data.DelayedList, lib.net.cache.BuildCraftObjectCaches (stub), transport.net
+        // message queue (stub) + BCTransportStatements (stub).
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/inventory/IItemTransactor.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/StackUtil.java",
+                    "buildcraft/lib/misc/data/DelayedList.java",
+                    "buildcraft/lib/inventory/NoSpaceTransactor.java",
+                    "buildcraft/lib/inventory/ItemTransactorHelper.java",
+                    "buildcraft/lib/net/cache/BuildCraftObjectCaches.java",
+                    "buildcraft/transport/net/MessageMultiPipeItem.java",
+                    "buildcraft/transport/net/PipeItemMessageQueue.java",
+                    "buildcraft/transport/BCTransportStatements.java",
+                    "buildcraft/transport/pipe/flow/TravellingItem.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowItems.java"
+        }
     }
     main {
         java {
