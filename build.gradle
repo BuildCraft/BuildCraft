@@ -631,6 +631,19 @@ sourceSets {
                     "buildcraft/transport/pipe/flow/TravellingItem.java",
                     "buildcraft/transport/pipe/flow/PipeFlowItems.java"
         }
+        // Layer U — PipeFlowPower (MJ power pipe flow). Pipe→pipe power-distribution math kept intact;
+        // the Forge MJ-capability edges (CAP_RECEIVER / CAP_CONNECTOR / CAP_PASSIVE_PROVIDER, removed from
+        // MjAPI) are stubbed — external-tile power delivery deferred to Phase 4F (EnergyStorage.SIDED lookup).
+        // AverageInt is a zero-Forge leaf pulled in as the only new dependency.
+        // PipeFlowFluids is NOT added — blocked by the unmigrated Forge-fluid layer (Phase 4E): IFluidFilter
+        // + IFluidHandlerAdv (still Forge FluidStack/IFluidHandler), CapUtil.CAP_FLUIDS, the FluidStack
+        // NetworkedObjectCache (BuildCraftObjectCaches.CACHE_FLUIDS) and BCCoreConfig/BCCoreItems.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/AverageInt.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowPower.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowRedstoneFlux.java"
+        }
     }
     main {
         java {

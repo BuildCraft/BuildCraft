@@ -4,6 +4,20 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
 
+// TODO(R.Chen): Fabric port DEFERRED — blocked by the unmigrated Forge-fluid layer (Phase 4E).
+// This file is NOT in the libLeaf sourceSet and is left in Forge form on purpose, to keep libLeaf green.
+// Hard blockers (all still Forge / absent), each part of the FluidStack→FluidVariant bridge not yet built:
+//   - api.core.IFluidFilter + api.core.IFluidHandlerAdv  (still import net.minecraftforge.fluids.FluidStack
+//     / IFluidHandler; the migrated IFlowFluid passes `Object filter` precisely to avoid them).
+//   - net.minecraftforge.fluids.{Fluid,FluidStack,capability.IFluidHandler,capability.IFluidTankProperties}
+//     used pervasively; Section itself `implements IFluidHandler`.
+//   - lib.misc.CapUtil.CAP_FLUIDS  (Forge Capability — no Fabric equivalent yet).
+//   - lib.net.cache.NetworkedObjectCache<FluidStack> + BuildCraftObjectCaches.CACHE_FLUIDS
+//     (the FluidStack network cache; the libLeaf BuildCraftObjectCaches stub only has the ItemStack cache).
+//   - core.BCCoreConfig.networkUpdateRate + core.BCCoreItems.fragileFluidShard (core, not in libLeaf).
+// Migrate once Phase 4E lands: FluidStack→FluidVariant+long droplets, IFluidHandler→Storage<FluidVariant>
+// (Transaction insert/extract), Forge getCapability→BlockApiLookup. Then add to a new libLeaf layer.
+
 package buildcraft.transport.pipe.flow;
 
 import java.io.IOException;
