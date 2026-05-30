@@ -1,34 +1,18 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.transport.client;
 
-import javax.annotation.Nullable;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-
-import buildcraft.api.transport.pluggable.PipePluggable;
-
-import buildcraft.transport.tile.TilePipeHolder;
-
-public enum PipeBlockColours implements IBlockColor {
-    INSTANCE;
-
-    @Override
-    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex) {
-        if (world != null && pos != null) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TilePipeHolder) {
-                TilePipeHolder tilePipeHolder = (TilePipeHolder) tile;
-                EnumFacing side = EnumFacing.getFront(tintIndex % EnumFacing.VALUES.length);
-                PipePluggable pluggable = tilePipeHolder.getPluggable(side);
-                if (pluggable != null) {
-                    return pluggable.getBlockColor(tintIndex / 6);
-                }
-            }
-        }
-        return -1;
-    }
+// STUB(R.Chen): PipeBlockColours — Forge IBlockColor / Minecraft.blockColors.registerBlockColorHandler
+// → Fabric ColorProviderRegistry.BLOCK.register (Phase 5).
+@Environment(EnvType.CLIENT)
+public class PipeBlockColours {
+    public static void register() {} // STUB Phase 5
 }

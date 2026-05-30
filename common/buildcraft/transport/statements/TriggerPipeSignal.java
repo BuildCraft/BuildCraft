@@ -2,25 +2,25 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.item.EnumDyeColor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
+import net.minecraft.util.DyeColor;
+
+import buildcraft.api.core.render.ISprite;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IWireManager;
-
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.BCTransportSprites;
@@ -29,21 +29,18 @@ import buildcraft.transport.BCTransportStatements;
 public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     private final boolean active;
-    private final EnumDyeColor colour;
+    private final DyeColor colour;
 
-    public TriggerPipeSignal(boolean active, EnumDyeColor colour) {
-        super(
-            "buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
-                + (active ? ".active" : ".inactive"), //
+    public TriggerPipeSignal(boolean active, DyeColor colour) {
+        super("buildcraft:pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
+                + (active ? ".active" : ".inactive"),
             "buildcraft.pipe.wire.input." + colour.getName().toLowerCase(Locale.ROOT)
                 + (active ? ".active" : ".inactive"));
-
         this.active = active;
         this.colour = colour;
     }
 
-    public static boolean doesGateHaveColour(IGate gate, EnumDyeColor c) {
-        // FIXME: replace with a check to wires.hasWire(colour)!
+    public static boolean doesGateHaveColour(IGate gate, DyeColor c) {
         return gate.getPipeHolder().getWireManager().hasPartOfColor(c);
     }
 
@@ -53,8 +50,13 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     }
 
     @Override
+    public IStatementParameter createParameter(int index) {
+        return TriggerParameterSignal.EMPTY;
+    }
+
+    @Override
     public String getDescription() {
-        return StringUtilBC.formatSafe(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
+        return "gate.trigger.pipe.wire." + (active ? "active" : "inactive") + "." + colour.getName();
     }
 
     @Override
@@ -62,20 +64,15 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         if (!(container instanceof IGate)) {
             return false;
         }
-
         IGate gate = (IGate) container;
         IWireManager wires = gate.getPipeHolder().getWireManager();
-
         if (this.active != wires.isAnyPowered(this.colour)) {
             return false;
         }
-
         for (IStatementParameter param : parameters) {
-            if (param != null && param instanceof TriggerParameterSignal) {
+            if (param instanceof TriggerParameterSignal) {
                 TriggerParameterSignal signal = (TriggerParameterSignal) param;
-                if (signal.colour == null) {
-                    continue;
-                }
+                if (signal.colour == null) continue;
                 if (signal.active != wires.isAnyPowered(signal.colour)) {
                     return false;
                 }
@@ -85,12 +82,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     }
 
     @Override
-    public IStatementParameter createParameter(int index) {
-        return TriggerParameterSignal.EMPTY;
-    }
-
-    @Override
-    public SpriteHolder getSprite() {
+    @Environment(EnvType.CLIENT)
+    public ISprite getSprite() {
         return BCTransportSprites.getPipeSignal(active, colour);
     }
 

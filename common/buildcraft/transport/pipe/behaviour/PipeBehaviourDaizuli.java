@@ -2,105 +2,86 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.behaviour;
 
 import java.io.IOException;
-import java.util.Collections;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.RayTraceResult;
+import net.fabricmc.api.EnvType;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pipe.PipeEventStatement;
 
-import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 
-import buildcraft.transport.BCTransportStatements;
-import buildcraft.transport.statements.ActionPipeColor;
-
 public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
-    private EnumDyeColor colour = EnumDyeColor.WHITE;
+    private DyeColor colour = DyeColor.WHITE;
 
     public PipeBehaviourDaizuli(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourDaizuli(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourDaizuli(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
-        colour = NBTUtilBC.readEnum(nbt.getTag("colour"), EnumDyeColor.class);
+        colour = NBTUtilBC.readEnum(nbt.get("colour"), DyeColor.class);
         if (colour == null) {
-            colour = EnumDyeColor.WHITE;
+            colour = DyeColor.WHITE;
         }
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("colour", NBTUtilBC.writeEnum(colour));
+    public NbtCompound writeToNbt() {
+        NbtCompound nbt = super.writeToNbt();
+        nbt.put("colour", NBTUtilBC.writeEnum(colour));
         return nbt;
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketByteBuf buffer, EnvType side) {
         super.writePayload(buffer, side);
-        if (side == Side.SERVER) {
-            buffer.writeByte(colour.getMetadata());
+        if (side == EnvType.SERVER) {
+            buffer.writeByte(colour.getId());
         }
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketByteBuf buffer, EnvType side, Object ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
-        if (side == Side.CLIENT) {
-            colour = EnumDyeColor.byMetadata(buffer.readUnsignedByte());
+        if (side == EnvType.CLIENT) {
+            colour = DyeColor.byId(buffer.readUnsignedByte() & 15);
         }
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
+    public int getTextureIndex(Direction face) {
         if (face != currentDir.face && face != null) {
             return 16;
         }
-        return colour.getMetadata();
+        return colour.getId();
     }
 
     @Override
-    protected boolean canFaceDirection(EnumFacing dir) {
+    protected boolean canFaceDirection(Direction dir) {
         return true;
     }
 
     @Override
-    public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
-        if (part != EnumPipePart.CENTER && part != currentDir) {
-            // Activating the centre of a pipe always falls back to changing the colour
-            // And so does clicking on the current facing side
-            return super.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
-        }
-        if (player.world.isRemote) {
-            return EntityUtil.getWrenchHand(player) != null;
-        }
-        if (EntityUtil.getWrenchHand(player) != null) {
-            EntityUtil.activateWrench(player, trace);
-            int n = colour.getMetadata() + (player.isSneaking() ? 15 : 1);
-            colour = EnumDyeColor.byMetadata(n & 15);
-            pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
-            return true;
-        }
+    public boolean onPipeActivate(PlayerEntity player, HitResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+        // STUB(R.Chen): EntityUtil.getWrenchHand not migrated — wrench detection disabled.
         return false;
     }
 
@@ -115,19 +96,6 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
 
     @Override
     public void addActions(PipeEventStatement.AddActionInternal event) {
-        super.addActions(event);
-        Collections.addAll(event.actions, BCTransportStatements.ACTION_PIPE_COLOUR);
-    }
-
-    @Override
-    public void onActionActivate(PipeEventActionActivate event) {
-        super.onActionActivate(event);
-        if (event.action instanceof ActionPipeColor) {
-            ActionPipeColor action = ((ActionPipeColor) event.action);
-            if (this.colour != action.color) {
-                this.colour = action.color;
-                pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
-            }
-        }
+        // STUB(R.Chen): statement layer deferred to Phase 4E — BCTransportStatements.ACTION_PIPE_DIRECTION/COLOUR not registered yet.
     }
 }

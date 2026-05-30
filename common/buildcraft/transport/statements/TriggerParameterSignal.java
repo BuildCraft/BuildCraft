@@ -2,8 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.statements;
 
 import java.util.ArrayList;
@@ -14,14 +15,13 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.DyeColor;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.gates.IGate;
@@ -30,81 +30,52 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.BCTransportSprites;
 
 public class TriggerParameterSignal implements IStatementParameter {
 
-    public static final TriggerParameterSignal EMPTY;
-    private static final Map<EnumDyeColor, TriggerParameterSignal> SIGNALS_OFF, SIGNALS_ON;
+    public static final TriggerParameterSignal EMPTY = new TriggerParameterSignal(false, null);
+    private static final Map<DyeColor, TriggerParameterSignal> SIGNALS_OFF = new EnumMap<>(DyeColor.class);
+    private static final Map<DyeColor, TriggerParameterSignal> SIGNALS_ON = new EnumMap<>(DyeColor.class);
 
     static {
-        EMPTY = new TriggerParameterSignal(false, null);
-        SIGNALS_OFF = new EnumMap<>(EnumDyeColor.class);
-        SIGNALS_ON = new EnumMap<>(EnumDyeColor.class);
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
-            SIGNALS_OFF.put(colour, new TriggerParameterSignal(false, colour));
-            SIGNALS_ON.put(colour, new TriggerParameterSignal(true, colour));
-        }
-    }
-
-    public static TriggerParameterSignal get(boolean active, EnumDyeColor colour) {
-        if (colour == null) {
-            return EMPTY;
-        }
-        return new TriggerParameterSignal(active, colour);
-    }
-
-    public static TriggerParameterSignal readFromNbt(NBTTagCompound nbt) {
-        if (nbt.hasKey("color", Constants.NBT.TAG_ANY_NUMERIC)) {
-            EnumDyeColor colour = EnumDyeColor.byMetadata(nbt.getByte("color"));
-            boolean active = nbt.getBoolean("active");
-            return get(active, colour);
-        } else {
-            return EMPTY;
-        }
-    }
-
-    @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        if (colour != null) {
-            nbt.setByte("color", (byte) colour.getMetadata());
-            nbt.setBoolean("active", active);
-        }
-    }
-
-    public static TriggerParameterSignal readFromBuf(PacketBuffer buffer) {
-        PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
-        EnumDyeColor colour = MessageUtil.readEnumOrNull(buf, EnumDyeColor.class);
-        if (colour == null) {
-            return EMPTY;
-        } else {
-            return get(buf.readBoolean(), colour);
-        }
-    }
-
-    @Override
-    public void writeToBuf(PacketBuffer buffer) {
-        MessageUtil.writeEnumOrNull(buffer, colour);
-        if (colour != null) {
-            buffer.writeBoolean(active);
+        for (DyeColor c : DyeColor.values()) {
+            SIGNALS_OFF.put(c, new TriggerParameterSignal(false, c));
+            SIGNALS_ON.put(c, new TriggerParameterSignal(true, c));
         }
     }
 
     public final boolean active;
-
     @Nullable
-    public final EnumDyeColor colour;
+    public final DyeColor colour;
 
-    private TriggerParameterSignal(boolean active, EnumDyeColor colour) {
+    private TriggerParameterSignal(boolean active, DyeColor colour) {
         this.active = active;
         this.colour = colour;
+    }
+
+    public static TriggerParameterSignal get(boolean active, DyeColor colour) {
+        if (colour == null) return EMPTY;
+        return active ? SIGNALS_ON.get(colour) : SIGNALS_OFF.get(colour);
+    }
+
+    public static TriggerParameterSignal readFromNbt(NbtCompound nbt) {
+        if (nbt.contains("color", NbtElement.NUMBER_TYPE)) {
+            DyeColor colour = DyeColor.byId(nbt.getByte("color") & 0xFF);
+            boolean active = nbt.getBoolean("active");
+            return get(active, colour);
+        }
+        return EMPTY;
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound nbt) {
+        if (colour != null) {
+            nbt.putByte("color", (byte) colour.getId());
+            nbt.putBoolean("active", active);
+        }
     }
 
     @Nonnull
@@ -114,12 +85,9 @@ public class TriggerParameterSignal implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
-        if (colour == null) {
-            return null;
-        }
-        return BCTransportSprites.getPipeSignal(active, colour);
+        return colour == null ? null : BCTransportSprites.getPipeSignal(active, colour);
     }
 
     @Override
@@ -130,10 +98,8 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        if (colour == null) {
-            return null;
-        }
-        return StringUtilBC.formatSafe(LocaleUtil.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
+        return colour == null ? null
+            : "gate.trigger.pipe.wire." + (active ? "active" : "inactive") + "." + colour.getName();
     }
 
     @Override
@@ -148,18 +114,16 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     public TriggerParameterSignal[] getPossible(IStatementContainer source) {
-        if (!(source instanceof IGate)) {
-            return null;
-        }
+        if (!(source instanceof IGate)) return null;
         IGate gate = (IGate) source;
-        List<TriggerParameterSignal> poss = new ArrayList<>(ColourUtil.COLOURS.length * 2 + 1);
+        List<TriggerParameterSignal> poss = new ArrayList<>();
         poss.add(EMPTY);
-        for (EnumDyeColor c : ColourUtil.COLOURS) {
+        for (DyeColor c : DyeColor.values()) {
             if (TriggerPipeSignal.doesGateHaveColour(gate, c)) {
-                poss.add(get(true, c));
                 poss.add(get(false, c));
+                poss.add(get(true, c));
             }
         }
-        return poss.toArray(new TriggerParameterSignal[poss.size()]);
+        return poss.toArray(new TriggerParameterSignal[0]);
     }
 }

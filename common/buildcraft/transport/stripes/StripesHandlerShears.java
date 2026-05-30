@@ -2,24 +2,20 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.stripes;
 
-import java.util.List;
+// STUB(R.Chen): StripesHandlerShears — IShearable is a Forge interface; ItemShears→ShearsItem.
+// Shear logic restores in Phase 4E when Forge-compat shear API is handled.
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemShears;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.IShearable;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandlerItem;
@@ -30,32 +26,11 @@ public enum StripesHandlerShears implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
-        if (!(stack.getItem() instanceof ItemShears)) {
-            return false;
-        }
-
-        pos = pos.offset(direction);
-        IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-
-        if (block instanceof IShearable) {
-            IShearable shearableBlock = (IShearable) block;
-            if (shearableBlock.isShearable(stack, world, pos)) {
-                List<ItemStack> drops = shearableBlock.onSheared(stack, world, pos, 0);
-                if (stack.attemptDamageItem(1, player.getRNG(), player instanceof EntityPlayerMP ? (EntityPlayerMP) player : null)) {
-                    stack.shrink(1);
-                }
-                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11); // Might become obsolete in 1.12+
-                for (ItemStack dropStack : drops) {
-                    activator.sendItem(dropStack, direction);
-                }
-                return true;
-            }
-        }
+        // STUB(R.Chen): IShearable is a Forge interface — deferred to Phase 4E.
         return false;
     }
 }

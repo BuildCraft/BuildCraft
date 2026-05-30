@@ -2,30 +2,28 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.behaviour;
 
-import java.io.IOException;
+// STUB(R.Chen): PipeBehaviourStripes — FakePlayer (Forge), BuildCraftAPI.fakePlayerProvider,
+// BlockUtil.computeBlockBreakPower/breakBlockAndGetDrops not migrated. Phase 4F.
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
+import java.io.IOException;
+
+import net.fabricmc.api.EnvType;
+
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
@@ -33,92 +31,64 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.pipe.IFlowItems;
 import buildcraft.api.transport.pipe.IPipe;
-import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
-import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.api.transport.pipe.PipeFlow;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
-import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.transport.BCTransportStatements;
+import net.minecraft.item.ItemStack;
 
 public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActivator, IMjRedstoneReceiver {
     private final MjBattery battery = new MjBattery(256 * MjAPI.MJ);
 
     @Nullable
-    public EnumFacing direction = null;
+    public Direction direction = null;
     private int progress;
 
     public PipeBehaviourStripes(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourStripes(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourStripes(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
-        battery.deserializeNBT(nbt.getCompoundTag("battery"));
-        setDirection(NBTUtilBC.readEnum(nbt.getTag("direction"), EnumFacing.class));
+        battery.readFromNbt(nbt.getCompound("battery"));
+        setDirection(NBTUtilBC.readEnum(nbt.get("direction"), Direction.class));
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setTag("battery", battery.serializeNBT());
-        nbt.setTag("direction", NBTUtilBC.writeEnum(direction));
+    public NbtCompound writeToNbt() {
+        NbtCompound nbt = super.writeToNbt();
+        nbt.put("battery", battery.writeToNbt());
+        nbt.put("direction", NBTUtilBC.writeEnum(direction));
         return nbt;
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketByteBuf buffer, EnvType side, Object ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
-        direction = MessageUtil.readEnumOrNull(buffer, EnumFacing.class);
+        direction = MessageUtil.readEnumOrNull(buffer, Direction.class);
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketByteBuf buffer, EnvType side) {
         super.writePayload(buffer, side);
         MessageUtil.writeEnumOrNull(buffer, direction);
     }
 
     // Sides
 
-    private void setDirection(@Nullable EnumFacing newValue) {
+    private void setDirection(@Nullable Direction newValue) {
         if (direction != newValue) {
             direction = newValue;
-            if (!pipe.getHolder().getPipeWorld().isRemote) {
+            if (!pipe.getHolder().getPipeWorld().isClient) {
                 pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
-            }
-        }
-    }
-
-    // Actions
-
-    @PipeEventHandler
-    public void addInternalActions(PipeEventStatement.AddActionInternal event) {
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (!pipe.isConnected(face)) {
-                PipePluggable plug = pipe.getHolder().getPluggable(face);
-                if (plug == null || !plug.isBlocking()) {
-                    event.actions.add(BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]);
-                }
-            }
-        }
-    }
-
-    @PipeEventHandler
-    public void onActionActivate(PipeEventActionActivate event) {
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (event.action == BCTransportStatements.ACTION_PIPE_DIRECTION[face.ordinal()]) {
-                setDirection(face);
             }
         }
     }
@@ -143,7 +113,7 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     // Stripes
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+    public boolean canConnect(Direction face, PipeBehaviour other) {
         return !(other instanceof PipeBehaviourStripes);
     }
 
@@ -151,13 +121,13 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
     public void onTick() {
         World world = pipe.getHolder().getPipeWorld();
         BlockPos pos = pipe.getHolder().getPipePos();
-        if (world.isRemote) {
+        if (world.isClient) {
             return;
         }
         if (direction == null || pipe.isConnected(direction)) {
             int sides = 0;
-            EnumFacing dir = null;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            Direction dir = null;
+            for (Direction face : Direction.values()) {
                 if (pipe.isConnected(face)) {
                     sides++;
                     dir = face;
@@ -171,25 +141,8 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         }
         battery.tick(world, pipe.getHolder().getPipePos());
         if (direction != null) {
-            BlockPos offset = pos.offset(direction);
-            long target = BlockUtil.computeBlockBreakPower(world, offset);
-            if (target > 0) {
-                int offsetHash = offset.hashCode();
-                if (progress < target) {
-                    progress += battery.extractPower(0, Math.min(target - progress, MjAPI.MJ * 10));
-                    if (progress > 0) {
-                        world.sendBlockBreakProgress(offsetHash, offset, (int) (progress * 9 / target));
-                    }
-                } else {
-                    BlockUtil.breakBlockAndGetDrops(
-                        (WorldServer) world,
-                        offset,
-                        new ItemStack(Items.DIAMOND_PICKAXE),
-                        pipe.getHolder().getOwner()
-                    ).ifPresent(stacks -> stacks.forEach(stack -> sendItem(stack, direction)));
-                    progress = 0;
-                }
-            }
+            // STUB(R.Chen): block breaking deferred — BlockUtil.computeBlockBreakPower/breakBlockAndGetDrops not migrated.
+            progress = 0;
         } else {
             progress = 0;
         }
@@ -197,34 +150,16 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
 
     @PipeEventHandler
     public void onDrop(PipeEventItem.Drop event) {
-        if (direction == null) {
-            return;
-        }
-        IPipeHolder holder = pipe.getHolder();
-        World world = holder.getPipeWorld();
-        BlockPos pos = holder.getPipePos();
-        FakePlayer player = BuildCraftAPI.fakePlayerProvider.getFakePlayer((WorldServer) world, holder.getOwner(), pos);
-        player.inventory.clear();
-        // set the main hand of the fake player to the stack
-        player.inventory.setInventorySlotContents(player.inventory.currentItem, event.getStack());
-        if (PipeApi.stripeRegistry.handleItem(world, pos, direction, event.getStack(), player, this)) {
-            event.setStack(StackUtil.EMPTY);
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack stack = player.inventory.removeStackFromSlot(i);
-                if (!stack.isEmpty()) {
-                    sendItem(stack, direction);
-                }
-            }
-        }
+        // STUB(R.Chen): onDrop deferred — FakePlayer + PipeApi.stripeRegistry not migrated. Phase 4F.
     }
 
     @Override
-    public void dropItem(@Nonnull ItemStack stack, EnumFacing direction) {
+    public void dropItem(@Nonnull ItemStack stack, Direction direction) {
         InventoryUtil.drop(pipe.getHolder().getPipeWorld(), pipe.getHolder().getPipePos(), stack);
     }
 
     @Override
-    public boolean sendItem(@Nonnull ItemStack stack, EnumFacing from) {
+    public boolean sendItem(@Nonnull ItemStack stack, Direction from) {
         PipeFlow flow = pipe.getFlow();
         if (flow instanceof IFlowItems) {
             ((IFlowItems) flow).insertItemsForce(stack, from, null, 0.02);
@@ -232,19 +167,5 @@ public class PipeBehaviourStripes extends PipeBehaviour implements IStripesActiv
         } else {
             return false;
         }
-    }
-
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (capability == MjAPI.CAP_REDSTONE_RECEIVER) {
-            return MjAPI.CAP_REDSTONE_RECEIVER.cast(this);
-        }
-        if (capability == MjAPI.CAP_RECEIVER) {
-            return MjAPI.CAP_RECEIVER.cast(this);
-        }
-        if (capability == MjAPI.CAP_CONNECTOR) {
-            return MjAPI.CAP_CONNECTOR.cast(this);
-        }
-        return super.getCapability(capability, facing);
     }
 }

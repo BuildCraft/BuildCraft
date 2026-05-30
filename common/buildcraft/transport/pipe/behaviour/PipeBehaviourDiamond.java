@@ -8,6 +8,8 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import net.minecraft.nbt.NbtCompound;
+
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 
@@ -22,5 +24,10 @@ public abstract class PipeBehaviourDiamond extends PipeBehaviour {
 
     public PipeBehaviourDiamond(IPipe pipe) {
         super(pipe);
+    }
+
+    public PipeBehaviourDiamond(IPipe pipe, NbtCompound nbt) {
+        super(pipe, nbt);
+        // STUB(R.Chen): filter NBT deserialization deferred — full diamond migration in Phase 4E.
     }
 }

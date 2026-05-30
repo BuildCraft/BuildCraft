@@ -2,17 +2,18 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.statements;
 
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -22,8 +23,6 @@ import buildcraft.api.statements.ITriggerInternalSided;
 import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pipe.PipeEventStatement;
-
-import buildcraft.lib.misc.ColourUtil;
 
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
@@ -38,26 +37,22 @@ public enum TriggerProviderPipes implements ITriggerProvider {
             IGate gate = (IGate) container;
             IPipeHolder holder = gate.getPipeHolder();
             holder.fireEvent(new PipeEventStatement.AddTriggerInternal(holder, triggers));
-
-            for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            for (DyeColor colour : DyeColor.values()) {
                 if (TriggerPipeSignal.doesGateHaveColour(gate, colour)) {
                     triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 0]);
                     triggers.add(BCTransportStatements.TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 1]);
                 }
             }
-
-            if (holder.getPipe().getFlow() instanceof PipeFlowPower) {
-                triggers.add(BCTransportStatements.TRIGGER_POWER_REQUESTED);
-            }
-
-            if (holder.getPipe().getFlow() instanceof PipeFlowRedstoneFlux) {
+            if (holder.getPipe().getFlow() instanceof PipeFlowPower
+                || holder.getPipe().getFlow() instanceof PipeFlowRedstoneFlux) {
                 triggers.add(BCTransportStatements.TRIGGER_POWER_REQUESTED);
             }
         }
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> triggers, IStatementContainer container, @Nonnull EnumFacing side) {
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> triggers, IStatementContainer container,
+        @Nonnull Direction side) {
         if (container instanceof IGate) {
             IGate gate = (IGate) container;
             IPipeHolder holder = gate.getPipeHolder();
@@ -66,7 +61,5 @@ public enum TriggerProviderPipes implements ITriggerProvider {
     }
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> triggers, @Nonnull EnumFacing side, TileEntity tile) {
-
-    }
+    public void addExternalTriggers(Collection<ITriggerExternal> triggers, @Nonnull Direction side, BlockEntity tile) {}
 }

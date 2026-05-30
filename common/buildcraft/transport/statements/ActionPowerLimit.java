@@ -1,34 +1,30 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.transport.statements;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
-import buildcraft.api.mj.MjAPI;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
-import buildcraft.api.transport.pipe.PipeApi.RedstoneFluxTransferInfo;
 import buildcraft.api.transport.pipe.PipeDefinition;
 
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.LocaleUtil;
-
 import buildcraft.core.statements.BCStatement;
-import buildcraft.transport.BCTransportConfig;
 import buildcraft.transport.BCTransportPipes;
-import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourLimiter;
 
 public abstract class ActionPowerLimit extends BCStatement implements IActionInternal {
 
     public final PipeDefinition pipe;
-
-    /** Behaves identically to {@link PipeBehaviourLimiter} */
     public final int limitShift;
 
     public ActionPowerLimit(PipeDefinition pipe, int limitShift, String... uniqueTags) {
@@ -47,52 +43,22 @@ public abstract class ActionPowerLimit extends BCStatement implements IActionInt
 
     @Override
     public String getDescription() {
-        if (isRf()) {
-            RedstoneFluxTransferInfo pipeInfo = PipeApi.rfTransferData.get(pipe);
-            final Object max;
-            if (limitShift == PipeBehaviourLimiter.MAX_SHIFT) {
-                max = 0;
-            } else if (pipeInfo == null) {
-                max = "??[INVALID_PIPE]??";
-            } else {
-                max = pipeInfo.transferPerTick >> limitShift;
-            }
-            return LocaleUtil.localize("gate.action.pipe.rf_limit", max);
-        }
-        PowerTransferInfo pipeInfo = PipeApi.powerTransferData.get(pipe);
-        final Object max;
-        if (limitShift == PipeBehaviourLimiter.MAX_SHIFT) {
-            max = 0;
-        } else if (pipeInfo == null) {
-            max = "??[INVALID_PIPE]??";
-        } else {
-            max = (int) ((pipeInfo.transferPerTick >> limitShift) / MjAPI.MJ);
-        }
-        return LocaleUtil.localize("gate.action.pipe.power_limit", max);
+        return "gate.action.pipe." + (isRf() ? "rf" : "power") + "_limit.shift" + limitShift;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
-        SpriteHolder[] sprites;
-        if (BCTransportConfig.powerPipeUseOldMjTexture || !isRf()) {
-            sprites = BCTransportSprites.POWER_LIMIT;
-        } else {
-            sprites = BCTransportSprites.POWER_LIMIT_RF;
-        }
-        return sprites[limitShift];
+        return null; // STUB(R.Chen): Phase 5 — BCTransportSprites.POWER_LIMIT[limitShift].
     }
 
     @Override
-    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
-        // The behaviour handles this
-    }
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {}
 
     @Override
     public abstract IStatement[] getPossible();
 
     public static class ActionIronPowerLimit extends ActionPowerLimit {
-
         public ActionIronPowerLimit(int limitShift) {
             super("iron", BCTransportPipes.ironPower, limitShift);
         }
@@ -104,7 +70,6 @@ public abstract class ActionPowerLimit extends BCStatement implements IActionInt
     }
 
     public static class ActionDiamondPowerLimit extends ActionPowerLimit {
-
         public ActionDiamondPowerLimit(int limitShift) {
             super("diamond", BCTransportPipes.diamondPower, limitShift);
         }
@@ -116,7 +81,6 @@ public abstract class ActionPowerLimit extends BCStatement implements IActionInt
     }
 
     public static class ActionIronRfLimit extends ActionPowerLimit {
-
         public ActionIronRfLimit(int limitShift) {
             super("iron_rf", BCTransportPipes.ironRf, limitShift);
         }
@@ -133,7 +97,6 @@ public abstract class ActionPowerLimit extends BCStatement implements IActionInt
     }
 
     public static class ActionDiamondRfLimit extends ActionPowerLimit {
-
         public ActionDiamondRfLimit(int limitShift) {
             super("diamond_rf", BCTransportPipes.diamondRf, limitShift);
         }

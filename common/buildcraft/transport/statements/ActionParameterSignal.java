@@ -2,8 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.statements;
 
 import java.util.ArrayList;
@@ -15,11 +16,13 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.DyeColor;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.gates.IGate;
@@ -28,64 +31,56 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-import buildcraft.lib.misc.ColourUtil;
-import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 import buildcraft.transport.BCTransportSprites;
 
 public class ActionParameterSignal implements IStatementParameter {
 
     public static final ActionParameterSignal EMPTY = new ActionParameterSignal(null);
-    private static final Map<EnumDyeColor, ActionParameterSignal> SIGNALS;
+    private static final Map<DyeColor, ActionParameterSignal> SIGNALS = new EnumMap<>(DyeColor.class);
 
     static {
-        SIGNALS = new EnumMap<>(EnumDyeColor.class);
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+        for (DyeColor colour : DyeColor.values()) {
             SIGNALS.put(colour, new ActionParameterSignal(colour));
         }
     }
 
     @Nullable
-    public final EnumDyeColor colour;
+    public final DyeColor colour;
 
-    private ActionParameterSignal(EnumDyeColor colour) {
+    private ActionParameterSignal(DyeColor colour) {
         this.colour = colour;
     }
 
-    public static ActionParameterSignal get(EnumDyeColor colour) {
+    public static ActionParameterSignal get(DyeColor colour) {
         return colour == null ? EMPTY : SIGNALS.get(colour);
     }
 
-    public static ActionParameterSignal readFromNbt(NBTTagCompound nbt) {
-        if (nbt.hasKey("color", Constants.NBT.TAG_ANY_NUMERIC)) {
-            return get(EnumDyeColor.byMetadata(nbt.getByte("color")));
+    @Nullable
+    public DyeColor getColor() {
+        return colour;
+    }
+
+    public static ActionParameterSignal readFromNbt(NbtCompound nbt) {
+        if (nbt.contains("color", NbtElement.NUMBER_TYPE)) {
+            DyeColor colour = DyeColor.byId(nbt.getByte("color") & 0xFF);
+            return get(colour);
         }
         return EMPTY;
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        EnumDyeColor c = colour;
-        if (c != null) {
-            nbt.setByte("color", (byte) c.getMetadata());
+    public void writeToNbt(NbtCompound nbt) {
+        if (colour != null) {
+            nbt.putByte("color", (byte) colour.getId());
         }
-    }
-
-    @Nullable
-    public EnumDyeColor getColor() {
-        return colour;
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
-        EnumDyeColor c = colour;
-        if (c == null) {
-            return null;
-        } else {
-            return BCTransportSprites.getPipeSignal(true, c);
-        }
+        return colour == null ? null : BCTransportSprites.getPipeSignal(true, colour);
     }
 
     @Override
@@ -97,28 +92,19 @@ public class ActionParameterSignal implements IStatementParameter {
     @Override
     public boolean equals(Object object) {
         if (object instanceof ActionParameterSignal) {
-            ActionParameterSignal param = (ActionParameterSignal) object;
-
-            return param.getColor() == getColor();
-        } else {
-            return false;
+            return Objects.equals(((ActionParameterSignal) object).colour, colour);
         }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getColor());
+        return Objects.hash(colour);
     }
 
     @Override
     public String getDescription() {
-        EnumDyeColor c = colour;
-        if (c == null) {
-            return null;
-        }
-        String format = LocaleUtil.localize("gate.action.pipe.wire");
-        Object[] args = { ColourUtil.getTextFullTooltip(c) };
-        return StringUtilBC.formatSafe(format, args);
+        return colour == null ? null : "gate.action.pipe.wire." + colour.getName();
     }
 
     @Override
@@ -143,13 +129,13 @@ public class ActionParameterSignal implements IStatementParameter {
             return null;
         }
         IGate gate = (IGate) source;
-        List<IStatementParameter> poss = new ArrayList<>(1 + ColourUtil.COLOURS.length);
+        List<IStatementParameter> poss = new ArrayList<>();
         poss.add(EMPTY);
-        for (EnumDyeColor c : ColourUtil.COLOURS) {
+        for (DyeColor c : DyeColor.values()) {
             if (TriggerPipeSignal.doesGateHaveColour(gate, c)) {
                 poss.add(get(c));
             }
         }
-        return poss.toArray(new IStatementParameter[poss.size()]);
+        return poss.toArray(new IStatementParameter[0]);
     }
 }

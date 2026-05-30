@@ -1,20 +1,14 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.transport.recipe;
 
-import java.util.function.BooleanSupplier;
-
-import com.google.gson.JsonObject;
-
-import net.minecraftforge.common.crafting.IConditionFactory;
-import net.minecraftforge.common.crafting.JsonContext;
-
-import buildcraft.api.enums.EnumEngineType;
-
-import buildcraft.core.BCCoreBlocks;
-
-public class EngineRegisteredFactory implements IConditionFactory {
-
-    @Override
-    public BooleanSupplier parse(JsonContext context, JsonObject json) {
-        return () -> BCCoreBlocks.engine.isRegistered(EnumEngineType.valueOf(json.get("engineType").getAsString()));
-    }
+// STUB(R.Chen): IConditionFactory (Forge conditional crafting) → Phase 4E data-gen.
+// No Fabric equivalent exists; engine-type recipe conditions are handled via tags.
+public class EngineRegisteredFactory {
+    // STUB — no Fabric IConditionFactory equivalent.
 }

@@ -2,14 +2,13 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.EnumHandlerPriority;
 import buildcraft.api.transport.pipe.EnumPipeColourType;
@@ -41,7 +40,7 @@ public class BCTransportRegistries {
         PipeApi.pipeRegistry = PipeRegistry.INSTANCE;
         PipeApi.stripeRegistry = StripesRegistry.INSTANCE;
         PipeApi.extensionManager = PipeExtensionManager.INSTANCE;
-        MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(PipeExtensionManager.INSTANCE) removed — Phase 4F.
 
         PipeApi.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
         PipeApi.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
@@ -53,31 +52,17 @@ public class BCTransportRegistries {
 
     public static void init() {
         PipeConnectionAPI.registerConnection(Blocks.BREWING_STAND,
-            (world, pos, face, state) -> face.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? 4 / 16F : 0);
+            (world, pos, face, state) -> face.getAxis().isHorizontal() ? 4 / 16F : 0);
 
-        // Item use stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlant.INSTANCE);
         PipeApi.stripeRegistry.addHandler(StripesHandlerShears.INSTANCE);
         PipeApi.stripeRegistry.addHandler(new StripesHandlerPipes());
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerPipeWires());
         PipeApi.stripeRegistry.addHandler(StripesHandlerEntityInteract.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerHoe.INSTANCE);
-        // PipeApi.stripeRegistry.addHandler(new StripesHandlerRightClick(), EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerDispenser.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerPlaceBlock.INSTANCE, EnumHandlerPriority.LOW);
         PipeApi.stripeRegistry.addHandler(StripesHandlerUse.INSTANCE, EnumHandlerPriority.LOW);
-
-        // For testing
-        // StripesHandlerDispenser.ITEM_CLASSES.add(ItemBucket.class);
-        // StripesHandlerDispenser.ITEM_CLASSES.add(ItemMinecart.class);
-
-        // StripesHandlerRightClick.items.add(Items.EGG);
-        // StripesHandlerRightClick.items.add(Items.SNOWBALL);
-        // StripesHandlerRightClick.items.add(Items.EXPERIENCE_BOTTLE);
-
-        // Block breaking stripes handlers
         PipeApi.stripeRegistry.addHandler(StripesHandlerMinecartDestroy.INSTANCE);
-
         PipeApi.extensionManager.registerRetractionPipe(BCTransportPipes.voidItem);
     }
 }

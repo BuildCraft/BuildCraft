@@ -10,6 +10,7 @@ package buildcraft.transport.pipe.behaviour;
 
 import java.util.EnumMap;
 
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.DyeColor;
 
 import buildcraft.api.transport.pipe.IPipe;
@@ -41,5 +42,9 @@ public class PipeBehaviourEmzuli extends PipeBehaviour {
 
     public PipeBehaviourEmzuli(IPipe pipe) {
         super(pipe);
+    }
+
+    public PipeBehaviourEmzuli(IPipe pipe, NbtCompound nbt) {
+        super(pipe, nbt);
     }
 }

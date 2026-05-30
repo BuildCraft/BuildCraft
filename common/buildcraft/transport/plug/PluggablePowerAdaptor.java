@@ -1,32 +1,37 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
+
 package buildcraft.transport.plug;
 
-import javax.annotation.Nonnull;
+// STUB(R.Chen): PluggablePowerAdaptor — heavy Forge MJ/RF caps:
+//   - MjAPI.CAP_CONNECTOR/CAP_RECEIVER/CAP_REDSTONE_RECEIVER (Forge cap stubs)
+//   - CapabilityEnergy/IEnergyStorage (Forge RF, not available)
+//   - MjAPI.isRfAutoConversionEnabled / getRfConversion (Forge-only RF bridge)
+// getCapability → stub null; restore in Phase 4E RF + Phase 4F cap layer.
+
 import javax.annotation.Nullable;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-
-import buildcraft.api.mj.IMjReadable;
-import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IPipeHolder;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
-import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPowerAdaptor;
 
 public class PluggablePowerAdaptor extends PipePluggable {
 
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
+    private static final Box[] BOXES = new Box[6];
 
     static {
         double ll = 0 / 16.0;
@@ -37,35 +42,35 @@ public class PluggablePowerAdaptor extends PipePluggable {
         double min = 3 / 16.0;
         double max = 13 / 16.0;
 
-        BOXES[EnumFacing.DOWN.getIndex()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.getIndex()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.getIndex()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+        BOXES[Direction.DOWN.ordinal()]  = new Box(min, ll, min, max, lu, max);
+        BOXES[Direction.UP.ordinal()]    = new Box(min, ul, min, max, uu, max);
+        BOXES[Direction.NORTH.ordinal()] = new Box(min, min, ll, max, max, lu);
+        BOXES[Direction.SOUTH.ordinal()] = new Box(min, min, ul, max, max, uu);
+        BOXES[Direction.WEST.ordinal()]  = new Box(ll, min, min, lu, max, max);
+        BOXES[Direction.EAST.ordinal()]  = new Box(ul, min, min, uu, max, max);
     }
 
     private long storedMJ = 0;
 
-    public PluggablePowerAdaptor(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
+    public PluggablePowerAdaptor(PluggableDefinition definition, IPipeHolder holder, Direction side) {
         super(definition, holder, side);
     }
 
-    public PluggablePowerAdaptor(PluggableDefinition definition, IPipeHolder holder, EnumFacing side, NBTTagCompound nbt) {
+    public PluggablePowerAdaptor(PluggableDefinition definition, IPipeHolder holder, Direction side, NbtCompound nbt) {
         super(definition, holder, side);
         storedMJ = nbt.getLong("storedMJ");
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setLong("storedMJ", storedMJ);
+    public NbtCompound writeToNbt() {
+        NbtCompound nbt = super.writeToNbt();
+        nbt.putLong("storedMJ", storedMJ);
         return nbt;
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
-        return BOXES[side.getIndex()];
+    public Box getBoundingBox() {
+        return BOXES[side.ordinal()];
     }
 
     @Override
@@ -75,99 +80,15 @@ public class PluggablePowerAdaptor extends PipePluggable {
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugPowerAdaptor);
+        // STUB(R.Chen): BCTransportItems not in libLeaf (Forge RegistrationHelper dep). Phase 4F.
+        return ItemStack.EMPTY;
     }
 
     @Override
     @Nullable
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) {
+    public PluggableModelKey getModelRenderKey(RenderLayer layer) {
+        if (layer == RenderLayer.getCutout()) {
             return new KeyPlugPowerAdaptor(side);
-        }
-        return null;
-    }
-
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> cap) {
-        if (cap == MjAPI.CAP_CONNECTOR || cap == MjAPI.CAP_RECEIVER || cap == MjAPI.CAP_REDSTONE_RECEIVER) {
-            return holder.getPipe().getBehaviour().getCapability(cap, side);
-        }
-        if (MjAPI.isRfAutoConversionEnabled() && cap == CapabilityEnergy.ENERGY) {
-            IMjReceiver receiver = holder.getPipe().getBehaviour().getCapability(MjAPI.CAP_RECEIVER, side);
-            if (receiver == null) {
-                return null;
-            }
-            return CapabilityEnergy.ENERGY.cast(new IEnergyStorage() {
-
-                @Override
-                public boolean canReceive() {
-                    return receiver.canReceive();
-                }
-
-                @Override
-                public boolean canExtract() {
-                    return false;
-                }
-
-                @Override
-                public int receiveEnergy(int maxReceive, boolean simulate) {
-
-                    if (maxReceive <= 0) {
-                        return 0;
-                    }
-
-                    if (!receiver.canReceive()) {
-                        return 0;
-                    }
-
-                    // TODO: Validate!
-
-                    long mjPerRf = MjAPI.getRfConversion().mjPerRf;
-                    long maxReceiveMj = maxReceive * mjPerRf + storedMJ;
-                    long excess = receiver.receivePower(maxReceiveMj, simulate);
-
-                    // Actual MJ that was accepted
-                    long acceptedMj = maxReceiveMj - excess;
-
-                    if (acceptedMj <= 0) {
-                        return 0;
-                    }
-
-                    long acceptedRF = acceptedMj / mjPerRf;
-                    long mjExcess = acceptedMj % mjPerRf;
-
-                    if (mjExcess > 0) {
-                        acceptedRF++;
-
-                        if (!simulate) {
-                            storedMJ = mjPerRf - mjExcess;
-                        }
-                    }
-
-                    return (int) acceptedRF;
-                }
-
-                @Override
-                public int getMaxEnergyStored() {
-                    if (receiver instanceof IMjReadable) {
-                        long mjPerRf = MjAPI.getRfConversion().mjPerRf;
-                        return (int) (((IMjReadable) receiver).getCapacity() / mjPerRf);
-                    } else {
-                        return 0;
-                    }
-                }
-
-                @Override
-                public int getEnergyStored() {
-                    return 0;
-                }
-
-                @Override
-                public int extractEnergy(int maxExtract, boolean simulate) {
-                    return 0;
-                }
-
-            });
         }
         return null;
     }

@@ -8,6 +8,8 @@
 
 package buildcraft.transport.pipe.behaviour;
 
+import net.minecraft.nbt.NbtCompound;
+
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 
@@ -31,5 +33,9 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviour {
 
     public PipeBehaviourWoodDiamond(IPipe pipe) {
         super(pipe);
+    }
+
+    public PipeBehaviourWoodDiamond(IPipe pipe, NbtCompound nbt) {
+        super(pipe, nbt);
     }
 }

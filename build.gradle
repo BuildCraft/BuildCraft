@@ -682,6 +682,99 @@ sourceSets {
                     "buildcraft/transport/pipe/PluggableHolder.java",
                     "buildcraft/transport/tile/TilePipeHolder.java"
         }
+        // Layer X — pipe behaviours (directional/lapis/daizuli/limiter/diamond/wood/obsidian/stripes),
+        // wire message stubs, stripes handlers, plug holders.
+        // Heavy Forge deps (MjCapabilityHelper, FluidStack, FakePlayer, BlockDispenser, IShearable,
+        // CropManager, EntityUtil) are stubbed to no-ops; restore in Phase 4E/4F.
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/behaviour/PipeBehaviourDirectional.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourIron.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourLapis.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDaizuli.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourLimiter.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDiamondItem.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDiamondFluid.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourObsidian.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourWood.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourWoodPower.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourStripes.java",
+                    "buildcraft/transport/wire/ClientWireSystems.java",
+                    "buildcraft/transport/wire/MessageWireSystems.java",
+                    "buildcraft/transport/wire/MessageWireSystemsPowered.java",
+                    "buildcraft/transport/stripes/StripesHandlerDispenser.java",
+                    "buildcraft/transport/stripes/StripesHandlerMinecartDestroy.java",
+                    "buildcraft/transport/stripes/StripesHandlerPlant.java",
+                    "buildcraft/transport/stripes/StripesHandlerShears.java",
+                    "buildcraft/transport/stripes/PipeExtensionManager.java",
+                    "buildcraft/transport/plug/PluggableBlocker.java",
+                    "buildcraft/transport/plug/PluggablePowerAdaptor.java"
+        }
+        // Layer Y — complete transport module: BCStatement (unblocks all statements), root module
+        // stubs, 13 statement classes, items, block, recipe, schematic, and all 21 client stubs.
+        java {
+            srcDir "common"
+            // BCStatement from core (only dep is migrated api) — unlocks all transport statements
+            include "buildcraft/core/statements/BCStatement.java",
+                    // Root module
+                    "buildcraft/transport/BCTransport.java",
+                    "buildcraft/transport/BCTransportConfig.java",
+                    "buildcraft/transport/BCTransportEventDist.java",
+                    "buildcraft/transport/BCTransportGuis.java",
+                    "buildcraft/transport/BCTransportItems.java",
+                    "buildcraft/transport/BCTransportModels.java",
+                    "buildcraft/transport/BCTransportPipes.java",
+                    "buildcraft/transport/BCTransportPlugs.java",
+                    "buildcraft/transport/BCTransportProxy.java",
+                    "buildcraft/transport/BCTransportRecipes.java",
+                    "buildcraft/transport/BCTransportRegistries.java",
+                    "buildcraft/transport/RecipePipeColour.java",
+                    // Block
+                    "buildcraft/transport/block/BlockFilteredBuffer.java",
+                    // Items
+                    "buildcraft/transport/item/ItemPipeHolder.java",
+                    "buildcraft/transport/item/ItemWire.java",
+                    // Pipe misc
+                    "buildcraft/transport/pipe/SchematicBlockPipe.java",
+                    // Recipe
+                    "buildcraft/transport/recipe/EngineRegisteredFactory.java",
+                    // Statements
+                    "buildcraft/transport/statements/ActionExtractionPreset.java",
+                    "buildcraft/transport/statements/ActionParameterSignal.java",
+                    "buildcraft/transport/statements/ActionPipeColor.java",
+                    "buildcraft/transport/statements/ActionPipeDirection.java",
+                    "buildcraft/transport/statements/ActionPipeSignal.java",
+                    "buildcraft/transport/statements/ActionPowerLimit.java",
+                    "buildcraft/transport/statements/ActionProviderPipes.java",
+                    "buildcraft/transport/statements/TriggerFluidsTraversing.java",
+                    "buildcraft/transport/statements/TriggerItemsTraversing.java",
+                    "buildcraft/transport/statements/TriggerParameterSignal.java",
+                    "buildcraft/transport/statements/TriggerPipeSignal.java",
+                    "buildcraft/transport/statements/TriggerPowerRequested.java",
+                    "buildcraft/transport/statements/TriggerProviderPipes.java",
+                    // Client stubs — Phase 5
+                    "buildcraft/transport/client/PipeBlockColours.java",
+                    "buildcraft/transport/client/model/IPipeBaseModelGen.java",
+                    "buildcraft/transport/client/model/ModelPipe.java",
+                    "buildcraft/transport/client/model/ModelPipeItem.java",
+                    "buildcraft/transport/client/model/PipeBaseModelGenConnected.java",
+                    "buildcraft/transport/client/model/PipeBaseModelGenStandard.java",
+                    "buildcraft/transport/client/model/PipeModelCacheAll.java",
+                    "buildcraft/transport/client/model/PipeModelCacheBase.java",
+                    "buildcraft/transport/client/model/PipeModelCachePluggable.java",
+                    "buildcraft/transport/client/model/plug/PlugBakerSimple.java",
+                    "buildcraft/transport/client/render/PipeBehaviourRendererStripes.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererFluids.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererItems.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererPower.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererRf.java",
+                    "buildcraft/transport/client/render/PipeWireRenderer.java",
+                    "buildcraft/transport/client/render/RenderPipeHolder.java",
+                    "buildcraft/transport/gui/GuiDiamondPipe.java",
+                    "buildcraft/transport/gui/GuiDiamondWoodPipe.java",
+                    "buildcraft/transport/gui/GuiEmzuliPipe_BC8.java",
+                    "buildcraft/transport/gui/GuiFilteredBuffer.java"
+        }
     }
     main {
         java {

@@ -2,23 +2,24 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.behaviour;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+// STUB(R.Chen): PipeBehaviourDiamondFluid — FluidStack / FluidUtil are Forge and not yet migrated.
+// sideCheck(PipeEventFluid.SideCheck) no-ops until the fluid-filter layer is ported (Phase 4E fluid).
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 
 public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
-    public PipeBehaviourDiamondFluid(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourDiamondFluid(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
     }
 
@@ -28,33 +29,6 @@ public class PipeBehaviourDiamondFluid extends PipeBehaviourDiamond {
 
     @PipeEventHandler
     public void sideCheck(PipeEventFluid.SideCheck sideCheck) {
-        FluidStack toCompare = sideCheck.fluid;
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (sideCheck.isAllowed(face) && pipe.isConnected(face)) {
-                int offset = FILTERS_PER_SIDE * face.ordinal();
-                boolean sideAllowed = false;
-                boolean foundItem = false;
-                for (int i = 0; i < FILTERS_PER_SIDE; i++) {
-                    ItemStack compareTo = filters.getStackInSlot(offset + i);
-                    if (compareTo.isEmpty()) continue;
-                    FluidStack target = FluidUtil.getFluidContained(compareTo);
-                    if (target == null || target.amount <= 0) {
-                        continue;
-                    }
-                    foundItem = true;
-                    if (target.isFluidEqual(toCompare)) {
-                        sideAllowed = true;
-                        break;
-                    }
-                }
-                if (foundItem) {
-                    if (sideAllowed) {
-                        sideCheck.increasePriority(face, 12);
-                    } else {
-                        sideCheck.disallow(face);
-                    }
-                }
-            }
-        }
+        // STUB(R.Chen): fluid filter matching deferred to Phase 4E — FluidStack/FluidUtil not migrated.
     }
 }
