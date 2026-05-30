@@ -76,4 +76,9 @@ public final class BCFluidStorage {
     public static long mBToDroplets(long mB) {
         return mB * (BUCKET / 1000L);
     }
+
+    /** Convert a droplet amount back into legacy mB (truncating any sub-mB remainder). */
+    public static long dropletsToMB(long droplets) {
+        return droplets / (BUCKET / 1000L);
+    }
 }

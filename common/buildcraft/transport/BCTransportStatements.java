@@ -14,11 +14,13 @@ import buildcraft.api.statements.ITriggerInternal;
 // The full statement registry depends on ~15 unmigrated Trigger*/Action* classes
 // (TriggerPipeSignal, ActionPipeColor, ActionPowerLimit, …), ColourUtil, PipeBehaviourLimiter,
 // PipeBehaviourEmzuli.SlotIndex, BCTransportConfig and StatementManager registration. Only the
-// TRIGGER_ITEMS_TRAVERSING field referenced by PipeFlowItems#addTriggers is exposed; it is null
-// until the statement layer is migrated.
+// TRIGGER_ITEMS_TRAVERSING / TRIGGER_FLUIDS_TRAVERSING fields referenced by
+// PipeFlowItems#addTriggers / PipeFlowFluids#addTriggers are exposed; they are null until the
+// statement layer is migrated.
 public class BCTransportStatements {
 
     public static final ITriggerInternal TRIGGER_ITEMS_TRAVERSING = null;
+    public static final ITriggerInternal TRIGGER_FLUIDS_TRAVERSING = null;
 
     public static void preInit() {
         // STUB(R.Chen): trigger/action provider registration deferred to Phase 4E.

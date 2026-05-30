@@ -635,14 +635,29 @@ sourceSets {
         // the Forge MJ-capability edges (CAP_RECEIVER / CAP_CONNECTOR / CAP_PASSIVE_PROVIDER, removed from
         // MjAPI) are stubbed — external-tile power delivery deferred to Phase 4F (EnergyStorage.SIDED lookup).
         // AverageInt is a zero-Forge leaf pulled in as the only new dependency.
-        // PipeFlowFluids is NOT added — blocked by the unmigrated Forge-fluid layer (Phase 4E): IFluidFilter
-        // + IFluidHandlerAdv (still Forge FluidStack/IFluidHandler), CapUtil.CAP_FLUIDS, the FluidStack
-        // NetworkedObjectCache (BuildCraftObjectCaches.CACHE_FLUIDS) and BCCoreConfig/BCCoreItems.
         java {
             srcDir "common"
             include "buildcraft/lib/misc/data/AverageInt.java",
                     "buildcraft/transport/pipe/flow/PipeFlowPower.java",
                     "buildcraft/transport/pipe/flow/PipeFlowRedstoneFlux.java"
+        }
+        // Layer V — PipeFlowFluids (fluid pipe flow) + the FluidStack→FluidVariant bridge.
+        // IFluidFilter / IFluidHandlerAdv migrated to FluidVariant + Fabric Storage<FluidVariant>.
+        // The pipe's internal fluid mechanics run fully on FluidVariant + int mB; every external-tile
+        // edge that used getCapabilityFromPipe(side, CAP_FLUIDS) is stubbed to Phase 4F (FluidStorage.SIDED).
+        // The FluidStack NetworkedObjectCache stays deferred (Phase 4E): currentFluid is round-tripped
+        // through BuildCraftObjectCaches.storeFluid/retrieveFluid stubs, matching the ItemStack helpers.
+        // BCCoreConfig.networkUpdateRate / BCCoreItems.fragileFluidShard are inlined/stubbed rather than
+        // pulling the core module (same approach as the sibling flows).
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/SafeTimeTracker.java",
+                    "buildcraft/api/core/IFluidFilter.java",
+                    "buildcraft/api/core/IFluidHandlerAdv.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/flow/PipeFlowFluids.java"
         }
     }
     main {

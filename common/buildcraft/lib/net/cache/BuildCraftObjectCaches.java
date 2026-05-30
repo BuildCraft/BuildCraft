@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.misc.StackUtil;
@@ -19,8 +21,9 @@ import buildcraft.lib.misc.StackUtil;
 // STUB(R.Chen): full implementation in Phase 4E.
 // The networked-object-cache layer (NetworkedObjectCache / NetworkedItemStackCache /
 // NetworkedFluidStackCache) and the Forge FML lifecycle hooks (Loader / LoaderState / FMLPreInit…)
-// are not yet migrated. Only the ItemStack store/retrieve entry points referenced by PipeFlowItems
-// are exposed; they currently round-trip the stack locally rather than over the cache.
+// are not yet migrated. Only the ItemStack and FluidVariant store/retrieve entry points referenced
+// by PipeFlowItems / PipeFlowFluids are exposed; they currently round-trip the value locally rather
+// than over the cache.
 public class BuildCraftObjectCaches {
 
     /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
@@ -36,5 +39,20 @@ public class BuildCraftObjectCaches {
     /** STUB(R.Chen): returns an empty supplier until the client cache is migrated. */
     public static Supplier<ItemStack> retrieveItemStack(int id) {
         return () -> StackUtil.EMPTY;
+    }
+
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int storeFluid(@Nonnull FluidVariant fluid) {
+        return 0;
+    }
+
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int getFluidId(@Nonnull FluidVariant fluid) {
+        return 0;
+    }
+
+    /** STUB(R.Chen): returns a blank supplier until the client cache is migrated. */
+    public static Supplier<FluidVariant> retrieveFluid(int id) {
+        return FluidVariant::blank;
     }
 }
