@@ -23,24 +23,16 @@
   "entrypoints": {
     "main": [
       "buildcraft.BuildCraftFabric",
-      "TODO: buildcraft.lib.BCLibInitializer",
-      "TODO: buildcraft.core.BCCoreInitializer",
-      "TODO: buildcraft.energy.BCEnergyInitializer",
-      "TODO: buildcraft.transport.BCTransportInitializer",
-      "TODO: buildcraft.factory.BCFactoryInitializer",
-      "TODO: buildcraft.silicon.BCSiliconInitializer",
-      "TODO: buildcraft.builders.BCBuildersInitializer",
-      "TODO: buildcraft.robotics.BCRoboticsInitializer"
+      "buildcraft.lib.BCLibInitializer",
+      "buildcraft.core.BCCoreInitializer",
+      "buildcraft.energy.BCEnergyInitializer",
+      "buildcraft.factory.BCFactoryInitializer",
+      "buildcraft.silicon.BCSiliconInitializer",
+      "buildcraft.builders.BCBuildersInitializer"
     ],
     "client": [
-      "TODO: buildcraft.lib.BCLibClientInitializer",
-      "TODO: buildcraft.core.BCCoreClientInitializer",
-      "TODO: buildcraft.energy.BCEnergyClientInitializer",
-      "TODO: buildcraft.transport.BCTransportClientInitializer",
-      "TODO: buildcraft.factory.BCFactoryClientInitializer",
-      "TODO: buildcraft.silicon.BCSiliconClientInitializer",
-      "TODO: buildcraft.builders.BCBuildersClientInitializer",
-      "TODO: buildcraft.robotics.BCRoboticsClientInitializer"
+      "buildcraft.lib.BCLibClientInitializer",
+      "buildcraft.transport.BCTransportClientInitializer"
     ]
   },
 

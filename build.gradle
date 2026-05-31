@@ -951,7 +951,9 @@ sourceSets {
             // consumed via 'implementation project(...)' — do NOT list them here.
         }
         resources {
-            srcDir "src/main/resources"   // fabric.mod.json + future Fabric assets
+            // src/main/resources (fabric.mod.json + Fabric assets) is already the Java
+            // plugin's default resources dir; re-declaring it here registers a second file
+            // tree over the same dir and makes every entry a duplicate in processResources.
             srcDir "buildcraft_resources" // textures, models, blockstates, recipes
             // Localization: .lang files must be converted to .json before 1.20.1
             // will load them.  They are still included here so the build does not
