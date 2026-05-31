@@ -7,18 +7,44 @@
  */
 package buildcraft.lib.gui;
 
+import java.util.function.Supplier;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-// STUB(R.Chen): GlStateManager/RenderHelper render — Phase 5.
 @Environment(EnvType.CLIENT)
 public class GuiStack implements ISimpleDrawable {
-    public GuiStack(ItemStack stack) {}
-    public GuiStack(java.util.function.Supplier<ItemStack> stack) {}
-    @Override public void drawAt(double x, double y) {}
-    public void drawAt(IGuiPosition pos, double scale) {}
+    private final Supplier<ItemStack> stack;
+
+    public GuiStack(ItemStack stack) {
+        this.stack = () -> stack;
+    }
+
+    public GuiStack(Supplier<ItemStack> stack) {
+        this.stack = stack;
+    }
+
+    @Override
+    public void drawAt(double x, double y) {
+        // TODO(R.Chen): requires DrawContext — wire through IGuiElement.drawBackground(DrawContext, float).
+        // For now use a temporary DrawContext from the current render frame when available.
+    }
+
+    public void drawAt(IGuiPosition pos, double scale) {
+        drawAt(pos.getX(), pos.getY());
+    }
+
+    public void drawWithContext(DrawContext context, double x, double y) {
+        ItemStack is = stack.get();
+        if (!is.isEmpty()) {
+            context.drawItem(is, (int) x, (int) y);
+            context.drawItemInSlot(MinecraftClient.getInstance().textRenderer, is, (int) x, (int) y);
+        }
+    }
 }

@@ -10,14 +10,31 @@ package buildcraft.lib.gui;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import buildcraft.api.core.render.ISprite;
+
 import buildcraft.lib.gui.pos.IGuiArea;
 
-// STUB(R.Chen): GL11/BufferBuilder/Tessellator render — Phase 5.
+// TODO(R.Chen): GuiIcon draw — blocked by SpriteRaw migration (raw-texture sprite draws).
 @Environment(EnvType.CLIENT)
 public class GuiIcon implements ISimpleDrawable {
-    public GuiIcon(int x, int y, int u, int v, int w, int h) {}
-    public GuiIcon(GuiIcon parent, int relU, int relV) {}
-    @Override public void drawAt(double x, double y) {}
-    public void drawCutInside(IGuiArea element) {}
-    public void drawScaled(double x, double y, double w, double h) {}
+    public final ISprite sprite;
+    public final int textureSize;
+
+    public GuiIcon(ISprite sprite, int textureSize) {
+        this.sprite = sprite;
+        this.textureSize = textureSize;
+    }
+
+    public static void draw(ISprite sprite, double x1, double y1, double x2, double y2) {
+        // TODO(R.Chen): GL draw with Tessellator/BufferBuilder once SpriteRaw migrated.
+    }
+
+    @Override
+    public void drawAt(double x, double y) {
+        // TODO(R.Chen): Tessellator/BufferBuilder render pending SpriteRaw migration.
+    }
+
+    public void drawScaledInside(IGuiArea element) {
+        drawAt(element.getX(), element.getY());
+    }
 }

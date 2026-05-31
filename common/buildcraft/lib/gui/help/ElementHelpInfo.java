@@ -10,9 +10,25 @@ package buildcraft.lib.gui.help;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): GUI render — Phase 5.
+import buildcraft.lib.gui.pos.IGuiArea;
+
 @Environment(EnvType.CLIENT)
 public class ElementHelpInfo {
-    public static class HelpPosition {}
-    public ElementHelpInfo(String title, String text) {}
+    public final String title;
+    public final String text;
+
+    public ElementHelpInfo(String title, String text) {
+        this.title = title;
+        this.text = text;
+    }
+
+    public static class HelpPosition {
+        public final ElementHelpInfo info;
+        public final IGuiArea area;
+
+        public HelpPosition(ElementHelpInfo info, IGuiArea area) {
+            this.info = info;
+            this.area = area;
+        }
+    }
 }

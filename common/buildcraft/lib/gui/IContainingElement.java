@@ -12,16 +12,23 @@ import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.DrawContext;
+
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-// STUB(R.Chen): GUI render — Phase 5.
 @Environment(EnvType.CLIENT)
 public interface IContainingElement extends IInteractionElement {
     List<IGuiElement> getChildElements();
     default IGuiPosition getChildElementPosition() { return this; }
     default void calculateSizes() {}
+    @Override default void drawBackground(DrawContext context, float partialTicks) {
+        for (IGuiElement e : getChildElements()) e.drawBackground(context, partialTicks);
+    }
+    @Override default void drawForeground(DrawContext context, float partialTicks) {
+        for (IGuiElement e : getChildElements()) e.drawForeground(context, partialTicks);
+    }
     @Override default void addToolTips(List<ToolTip> tooltips) {
         for (IGuiElement e : getChildElements()) e.addToolTips(tooltips);
     }

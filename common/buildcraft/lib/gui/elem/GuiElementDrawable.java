@@ -10,6 +10,46 @@ package buildcraft.lib.gui.elem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): GUI render — Phase 5.
+import net.minecraft.client.gui.DrawContext;
+
+import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.node.value.NodeConstantBoolean;
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.gui.GuiElementSimple;
+import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.gui.pos.IGuiArea;
+
 @Environment(EnvType.CLIENT)
-public class GuiElementDrawable {}
+public class GuiElementDrawable extends GuiElementSimple {
+    private final ISimpleDrawable drawable;
+    private final INodeBoolean visible;
+    private final boolean foreground;
+
+    public GuiElementDrawable(BuildCraftGui gui, IGuiArea element, ISimpleDrawable drawable, boolean foreground) {
+        this(gui, element, drawable, foreground, NodeConstantBoolean.TRUE);
+    }
+
+    public GuiElementDrawable(BuildCraftGui gui, IGuiArea element, ISimpleDrawable drawable, boolean foreground,
+        INodeBoolean visible) {
+        super(gui, element);
+        this.drawable = drawable;
+        this.visible = visible;
+        this.foreground = foreground;
+    }
+
+    @Override
+    public void drawBackground(DrawContext context, float partialTicks) {
+        if (!foreground) draw();
+    }
+
+    @Override
+    public void drawForeground(DrawContext context, float partialTicks) {
+        if (foreground) draw();
+    }
+
+    private void draw() {
+        if (visible.evaluate()) {
+            drawable.drawAt(this);
+        }
+    }
+}

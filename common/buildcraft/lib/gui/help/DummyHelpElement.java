@@ -11,7 +11,6 @@ import java.util.List;
 
 import buildcraft.lib.gui.IHelpElement;
 
-// STUB(R.Chen): GUI render — Phase 5.
 public class DummyHelpElement implements IHelpElement {
     public static final DummyHelpElement INSTANCE = new DummyHelpElement();
     @Override public void addHelpElements(List<ElementHelpInfo.HelpPosition> elements) {}

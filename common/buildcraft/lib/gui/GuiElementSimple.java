@@ -16,7 +16,6 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiArea;
 
-// STUB(R.Chen): GUI render — Phase 5.
 @Environment(EnvType.CLIENT)
 public class GuiElementSimple implements IGuiElement {
     public final BuildCraftGui gui;

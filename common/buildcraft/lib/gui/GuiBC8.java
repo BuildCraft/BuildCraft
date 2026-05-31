@@ -13,7 +13,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
-// STUB(R.Chen): GUI render — Phase 5. Extends BuildCraftGui (itself a stub).
+import buildcraft.lib.gui.ledger.LedgerHelp;
+import buildcraft.lib.gui.ledger.LedgerOwnership;
+
 @Environment(EnvType.CLIENT)
 public class GuiBC8<T extends ContainerBC_Neptune> extends BuildCraftGui {
     public final T container;
@@ -22,5 +24,17 @@ public class GuiBC8<T extends ContainerBC_Neptune> extends BuildCraftGui {
     public GuiBC8(T container, PlayerInventory inv, Text title) {
         super(container, inv, title);
         this.container = container;
+        standardLedgerInit();
     }
+
+    private void standardLedgerInit() {
+        if (container instanceof ContainerBCTile<?>) {
+            shownElements.add(new LedgerOwnership(this, ((ContainerBCTile<?>) container).tile, true));
+        }
+        if (shouldAddHelpLedger()) {
+            shownElements.add(new LedgerHelp(this, false));
+        }
+    }
+
+    protected boolean shouldAddHelpLedger() { return true; }
 }

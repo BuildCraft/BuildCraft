@@ -10,6 +10,16 @@ package buildcraft.lib.gui.button;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): GUI render — Phase 5.
+// TODO(R.Chen): StandardSpriteButtons — blocked by SpriteRaw migration (raw-texture sprite draws).
 @Environment(EnvType.CLIENT)
-public class StandardSpriteButtons {}
+public class StandardSpriteButtons {
+    public static final GuiButtonDrawable.Builder LARGE_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder SMALL_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder HALF_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder QUARTER_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder EIGHTH_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder LEFT_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder RIGHT_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder LOCK_BUTTON_DRAWABLE = null;
+    public static final GuiButtonDrawable.Builder TINY_BUTTON_DRAWABLE = null;
+}

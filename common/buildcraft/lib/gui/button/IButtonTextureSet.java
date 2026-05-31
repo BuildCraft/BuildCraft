@@ -7,5 +7,17 @@
  */
 package buildcraft.lib.gui.button;
 
-// STUB(R.Chen): GUI render — Phase 5.
-public interface IButtonTextureSet {}
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.util.Identifier;
+
+@Deprecated
+@Environment(EnvType.CLIENT)
+public interface IButtonTextureSet {
+    int getX();
+    int getY();
+    int getHeight();
+    int getWidth();
+    Identifier getTexture();
+}

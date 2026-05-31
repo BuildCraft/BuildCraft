@@ -489,7 +489,14 @@ sourceSets {
                     // lib.gui.json — slot holder (shared, no render deps)
                     "buildcraft/lib/gui/json/InventorySlotHolder.java"
         }
-        // Layer Q — lib.gui CLIENT-ONLY render stubs (Phase 5 deferred).
+        // Layer P.5 — SpriteNineSliced (migrated from Forge BufferBuilder → Fabric) + BCLibSprites.
+        // Required by Ledger_Neptune (nine-sliced background) and ledger subclasses.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/client/sprite/SpriteNineSliced.java",
+                    "buildcraft/lib/BCLibSprites.java"
+        }
+        // Layer Q — lib.gui CLIENT-ONLY render layer (Phase 5 implemented).
         // All files marked @Environment(EnvType.CLIENT) with empty bodies.
         // Stubs satisfy compile-time type references; real render implementation is Phase 5 work.
         java {

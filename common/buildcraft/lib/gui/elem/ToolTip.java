@@ -7,12 +7,75 @@
  */
 package buildcraft.lib.gui.elem;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.RandomAccess;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): FontRenderer/GlStateManager render — Phase 5.
+import com.google.common.collect.ForwardingList;
+
+import buildcraft.lib.misc.LocaleUtil;
+import buildcraft.lib.misc.StringUtilBC;
+
 @Environment(EnvType.CLIENT)
-public class ToolTip {
-    public ToolTip(String... text) {}
-    public ToolTip add(String line) { return this; }
+public class ToolTip extends ForwardingList<String> implements RandomAccess {
+
+    /* If the impl list class does not implement RandomAccess then the interface MUST be removed from this class */
+    private final List<String> delegate = new ArrayList<>();
+    private final long delay;
+    private long mouseOverStart;
+
+    public static ToolTip createLocalized(String... localeKeys) {
+        List<String> allLines = new ArrayList<>();
+        for (String key : localeKeys) {
+            String localized = LocaleUtil.localize(key);
+            allLines.addAll(StringUtilBC.splitIntoLines(localized));
+        }
+        return new ToolTip(allLines);
+    }
+
+    public ToolTip(String... lines) {
+        this.delay = 0;
+        Collections.addAll(delegate, lines);
+    }
+
+    public ToolTip(int delay, String... lines) {
+        this.delay = delay;
+        Collections.addAll(delegate, lines);
+    }
+
+    public ToolTip(List<String> lines) {
+        this.delay = 0;
+        delegate.addAll(lines);
+    }
+
+    @Override
+    protected final List<String> delegate() {
+        return delegate;
+    }
+
+    public ToolTip addLine(String line) {
+        delegate.add(line);
+        return this;
+    }
+
+    public void onTick(boolean mouseOver) {
+        if (delay == 0) return;
+        if (mouseOver) {
+            if (mouseOverStart == 0) mouseOverStart = System.currentTimeMillis();
+        } else {
+            mouseOverStart = 0;
+        }
+    }
+
+    public boolean isReady() {
+        if (delay == 0) return true;
+        if (mouseOverStart == 0) return false;
+        return System.currentTimeMillis() - mouseOverStart >= delay;
+    }
+
+    public void refresh() {}
 }

@@ -15,7 +15,6 @@ import net.fabricmc.api.Environment;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 
-// STUB(R.Chen): GUI render — Phase 5.
 @Environment(EnvType.CLIENT)
 public class GuiElementToolTip extends GuiElementSimple {
     public final ITooltipElement source;
@@ -27,7 +26,8 @@ public class GuiElementToolTip extends GuiElementSimple {
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
-        // STUB(R.Chen): mouse position check deferred — Phase 5
-        source.addToolTips(tooltips);
+        if (contains(gui.mouse)) {
+            source.addToolTips(tooltips);
+        }
     }
 }

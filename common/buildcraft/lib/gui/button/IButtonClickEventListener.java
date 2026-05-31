@@ -7,5 +7,10 @@
  */
 package buildcraft.lib.gui.button;
 
-// STUB(R.Chen): GUI render — Phase 5.
-public interface IButtonClickEventListener {}
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
+public interface IButtonClickEventListener {
+    void handleButtonClick(IButtonClickEventTrigger button, int buttonKey);
+}

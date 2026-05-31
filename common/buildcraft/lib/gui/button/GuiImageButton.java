@@ -10,6 +10,21 @@ package buildcraft.lib.gui.button;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): GUI render — Phase 5.
+import net.minecraft.util.Identifier;
+
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.gui.pos.GuiRectangle;
+
+/** @deprecated Use {@link GuiButtonDrawable} instead. */
+@Deprecated
 @Environment(EnvType.CLIENT)
-public class GuiImageButton {}
+public class GuiImageButton extends GuiAbstractButton {
+    private final Identifier texture;
+
+    public GuiImageButton(BuildCraftGui gui, int id, int x, int y, int size, Identifier texture) {
+        super(gui, "" + id, new GuiRectangle(x, y, size, size));
+        this.texture = texture;
+    }
+
+    // TODO(R.Chen): drawBackground render — DrawContext.drawTexture once atlas/sprite layer is ready.
+}

@@ -10,6 +10,21 @@ package buildcraft.lib.gui.ledger;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): GlStateManager/FontRenderer render — Phase 5.
+import buildcraft.lib.gui.BuildCraftGui;
+import buildcraft.lib.misc.LocaleUtil;
+
 @Environment(EnvType.CLIENT)
-public class LedgerHelp {}
+public class LedgerHelp extends Ledger_Neptune {
+
+    public LedgerHelp(BuildCraftGui gui, boolean expandPositive) {
+        super(gui, 0xFF_CC_99_FF, expandPositive);
+        title = LocaleUtil.localize("gui.ledger.help");
+        calculateMaxSize();
+        // TODO(R.Chen): help ledger open persistence + help element rendering — GuiConfigManager blocked.
+    }
+
+    @Override
+    protected void drawIcon(double x, double y) {
+        // TODO(R.Chen): help icon draw — BCLibSprites.HELP sprite draw helper pending.
+    }
+}

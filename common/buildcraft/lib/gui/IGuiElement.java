@@ -7,19 +7,22 @@
  */
 package buildcraft.lib.gui;
 
+import java.util.List;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.DrawContext;
+
 import buildcraft.lib.gui.pos.IGuiArea;
 
-// STUB(R.Chen): GUI render — Phase 5. Forge @SideOnly → @Environment(EnvType.CLIENT).
 @Environment(EnvType.CLIENT)
 public interface IGuiElement extends IGuiArea, ITooltipElement, IHelpElement {
-    default void drawBackground(float partialTicks) {}
-    default void drawForeground(float partialTicks) {}
+    default void drawBackground(DrawContext context, float partialTicks) {}
+    default void drawForeground(DrawContext context, float partialTicks) {}
     default void tick() {}
-    default String getDebugInfo(java.util.List<String> info) { return toString(); }
-    default java.util.List<IGuiElement> getThisAndChildrenAt(double x, double y) {
+    default String getDebugInfo(List<String> info) { return toString(); }
+    default List<IGuiElement> getThisAndChildrenAt(double x, double y) {
         if (contains(x, y)) return com.google.common.collect.ImmutableList.of(this);
         return com.google.common.collect.ImmutableList.of();
     }
