@@ -1,8 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.silicon.gate;
 
 import java.io.IOException;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
@@ -34,7 +41,7 @@ public class ActionType extends StatementType<ActionWrapper> {
     }
 
     @Override
-    public ActionWrapper readFromNbt(NBTTagCompound nbt) {
+    public ActionWrapper readFromNbt(NbtCompound nbt) {
         if (nbt == null) {
             return null;
         }
@@ -52,13 +59,13 @@ public class ActionType extends StatementType<ActionWrapper> {
     }
 
     @Override
-    public NBTTagCompound writeToNbt(ActionWrapper slot) {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NbtCompound writeToNbt(ActionWrapper slot) {
+        NbtCompound nbt = new NbtCompound();
         if (slot == null) {
             return nbt;
         }
-        nbt.setString("kind", slot.getUniqueTag());
-        nbt.setByte("side", (byte) slot.sourcePart.getIndex());
+        nbt.putString("kind", slot.getUniqueTag());
+        nbt.putByte("side", (byte) slot.sourcePart.getIndex());
         return nbt;
     }
 

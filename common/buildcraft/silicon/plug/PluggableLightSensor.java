@@ -2,79 +2,43 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.silicon.plug;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeEventHandler;
-import buildcraft.api.transport.pipe.PipeEventStatement;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
-import buildcraft.api.transport.pluggable.PluggableModelKey;
 
-import buildcraft.silicon.BCSiliconItems;
-import buildcraft.silicon.BCSiliconStatements;
-import buildcraft.silicon.client.model.key.KeyPlugLightSensor;
-
+/**
+ * STUB(R.Chen): PluggableLightSensor implementation deferred until the full pluggable system
+ * and dependent APIs are migrated to Fabric 1.20.1.
+ */
 public class PluggableLightSensor extends PipePluggable {
 
-    private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
-
-    static {
-        double ll = 2 / 16.0;
-        double lu = 4 / 16.0;
-        double ul = 12 / 16.0;
-        double uu = 14 / 16.0;
-
-        double min = 5 / 16.0;
-        double max = 11 / 16.0;
-
-        BOXES[EnumFacing.DOWN.ordinal()] = new AxisAlignedBB(min, ll, min, max, lu, max);
-        BOXES[EnumFacing.UP.ordinal()] = new AxisAlignedBB(min, ul, min, max, uu, max);
-        BOXES[EnumFacing.NORTH.ordinal()] = new AxisAlignedBB(min, min, ll, max, max, lu);
-        BOXES[EnumFacing.SOUTH.ordinal()] = new AxisAlignedBB(min, min, ul, max, max, uu);
-        BOXES[EnumFacing.WEST.ordinal()] = new AxisAlignedBB(ll, min, min, lu, max, max);
-        BOXES[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(ul, min, min, uu, max, max);
+    public PluggableLightSensor(PluggableDefinition def, IPipeHolder holder, Direction side) {
+        super(def, holder, side);
     }
 
-    public PluggableLightSensor(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
-        super(definition, holder, side);
+    public PluggableLightSensor(PluggableDefinition def, IPipeHolder holder, Direction side, NbtCompound nbt) {
+        super(def, holder, side);
+        // STUB(R.Chen): NBT loading deferred.
     }
 
-    // PipePluggable
-
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return BOXES[side.ordinal()];
+    public PluggableLightSensor(PluggableDefinition def, IPipeHolder holder, Direction side, PacketByteBuf buf) {
+        super(def, holder, side);
+        // STUB(R.Chen): Net loading deferred.
     }
 
     @Override
-    public boolean isBlocking() {
-        return true;
-    }
-
-    @Override
-    public ItemStack getPickStack() {
-        return new ItemStack(BCSiliconItems.plugLightSensor);
-    }
-
-    @Override
-    public PluggableModelKey getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugLightSensor(side);
-        return null;
-    }
-
-    @PipeEventHandler
-    public void addInternalTriggers(PipeEventStatement.AddTriggerInternalSided event) {
-        if (event.side == this.side) {
-            event.triggers.add(BCSiliconStatements.TRIGGER_LIGHT_LOW);
-            event.triggers.add(BCSiliconStatements.TRIGGER_LIGHT_HIGH);
-        }
+    public Box getBoundingBox() {
+        // STUB(R.Chen): Direction-specific bounding box deferred.
+        return new Box(5/16.0, 5/16.0, 5/16.0, 11/16.0, 11/16.0, 11/16.0);
     }
 }

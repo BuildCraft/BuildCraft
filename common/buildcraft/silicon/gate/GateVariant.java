@@ -2,14 +2,15 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.silicon.gate;
 
 import java.util.Objects;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
@@ -32,7 +33,7 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public GateVariant(NBTTagCompound nbt) {
+    public GateVariant(NbtCompound nbt) {
         this.logic = EnumGateLogic.getByOrdinal(nbt.getByte("logic"));
         this.material = EnumGateMaterial.getByOrdinal(nbt.getByte("material"));
         this.modifier = EnumGateModifier.getByOrdinal(nbt.getByte("modifier"));
@@ -42,15 +43,15 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("logic", (byte) logic.ordinal());
-        nbt.setByte("material", (byte) material.ordinal());
-        nbt.setByte("modifier", (byte) modifier.ordinal());
+    public NbtCompound writeToNBT() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putByte("logic", (byte) logic.ordinal());
+        nbt.putByte("material", (byte) material.ordinal());
+        nbt.putByte("modifier", (byte) modifier.ordinal());
         return nbt;
     }
 
-    public GateVariant(PacketBuffer buffer) {
+    public GateVariant(PacketByteBuf buffer) {
         this.logic = EnumGateLogic.getByOrdinal(buffer.readUnsignedByte());
         this.material = EnumGateMaterial.getByOrdinal(buffer.readUnsignedByte());
         this.modifier = EnumGateModifier.getByOrdinal(buffer.readUnsignedByte());
@@ -60,7 +61,7 @@ public class GateVariant {
         this.hash = Objects.hash(logic, material, modifier);
     }
 
-    public void writeToBuffer(PacketBuffer buffer) {
+    public void writeToBuffer(PacketByteBuf buffer) {
         buffer.writeByte(logic.ordinal());
         buffer.writeByte(material.ordinal());
         buffer.writeByte(modifier.ordinal());

@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.block;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -34,5 +41,5 @@ public interface ILocalBlockUpdateSubscriber {
      * @param newState from the block update event
      * @param flags    from the block update event
      */
-    void setWorldUpdated(World world, BlockPos eventPos, IBlockState oldState, IBlockState newState, int flags);
+    void setWorldUpdated(World world, BlockPos eventPos, BlockState oldState, BlockState newState, int flags);
 }

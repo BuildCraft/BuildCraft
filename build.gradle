@@ -849,6 +849,68 @@ sourceSets {
                     "buildcraft/factory/tile/TileAutoWorkbenchItems.java",
                     "buildcraft/factory/tile/TileAutoWorkbenchFluids.java"
         }
+        // Layer AA — silicon module Phase 1: lib additions + gate logic + tile entities.
+        // New lib files:
+        //   AverageLong: NBT method renames (setIntArray→putIntArray).
+        //   ILocalBlockUpdateSubscriber: IBlockState→BlockState.
+        //   LocalBlockUpdateNotifier: IWorldEventListener removed (STUB); structure preserved.
+        //   StatementContext/Wrapper/ActionWrapper/TriggerWrapper: TileEntity→BlockEntity,
+        //     EnumFacing→Direction, ColourUtil.getTextFullTooltip stubbed.
+        //   StatementType/StatementTypeParam/FullStatement: NBTTagCompound→NbtCompound, renames.
+        // Silicon files:
+        //   EnumGateMaterial: Blocks.BRICK_BLOCK→Blocks.BRICKS, NETHER_BRICK→NETHER_BRICKS.
+        //   GateVariant: PacketBuffer→PacketByteBuf, NBT method renames.
+        //   ActionType/TriggerType: NBT method renames.
+        //   GateLogic: full migration (DyeColor, Direction, EnvType, FabricLoader, NbtElement).
+        //   PluggableGate: expression model system stubbed; core wire + readPayload migrated.
+        //   PluggablePulsar: MjAPI/BCTransportConfig/PipeEvent stubbed; NBT migrated.
+        //   ActionPowerPulsar/TriggerLightSensor/TriggerTimer: SideOnly→@Environment, API renames.
+        //   TileLaserTableBase: ITickable→tick()+ticker(), Side→NetSide, NBT renames.
+        //     IngredientStack.extract() stubbed.
+        //   TileAssemblyTable/AdvancedCraftingTable/IntegrationTable: recipe logic stubbed.
+        //   TileChargingTable/TileProgrammingTable_Neptune: 3-arg constructor.
+        //   TileLaser: VolumeUtil.iterateCone stubbed; MjCapabilityHelper deferred;
+        //     MjBattery.writeToNbt/readFromNbt pattern; validate→cancelRemoval.
+        //   BCSiliconInitializer: ModInitializer stub.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/IReference.java",
+                    "buildcraft/lib/misc/data/AverageLong.java",
+                    "buildcraft/lib/block/ILocalBlockUpdateSubscriber.java",
+                    "buildcraft/lib/block/LocalBlockUpdateNotifier.java",
+                    "buildcraft/lib/statement/StatementContext.java",
+                    "buildcraft/lib/statement/StatementWrapper.java",
+                    "buildcraft/lib/statement/ActionWrapper.java",
+                    "buildcraft/lib/statement/TriggerWrapper.java",
+                    "buildcraft/lib/statement/StatementType.java",
+                    "buildcraft/lib/statement/StatementTypeParam.java",
+                    "buildcraft/lib/statement/FullStatement.java",
+                    "buildcraft/silicon/BCSiliconInitializer.java",
+                    "buildcraft/silicon/EnumAssemblyRecipeState.java",
+                    "buildcraft/silicon/BCSiliconStatements.java",
+                    "buildcraft/silicon/BCSiliconSprites.java",
+                    "buildcraft/silicon/BCSiliconPlugs.java",
+                    "buildcraft/silicon/gate/EnumGateLogic.java",
+                    "buildcraft/silicon/gate/EnumGateModifier.java",
+                    "buildcraft/silicon/gate/EnumGateMaterial.java",
+                    "buildcraft/silicon/gate/GateContext.java",
+                    "buildcraft/silicon/gate/GateVariant.java",
+                    "buildcraft/silicon/gate/ActionType.java",
+                    "buildcraft/silicon/gate/TriggerType.java",
+                    "buildcraft/silicon/gate/GateLogic.java",
+                    "buildcraft/silicon/plug/PluggableGate.java",
+                    "buildcraft/silicon/plug/PluggablePulsar.java",
+                    "buildcraft/silicon/statement/ActionPowerPulsar.java",
+                    "buildcraft/silicon/statement/TriggerLightSensor.java",
+                    "buildcraft/silicon/statement/TriggerTimer.java",
+                    "buildcraft/silicon/tile/TileLaserTableBase.java",
+                    "buildcraft/silicon/tile/TileAssemblyTable.java",
+                    "buildcraft/silicon/tile/TileAdvancedCraftingTable.java",
+                    "buildcraft/silicon/tile/TileIntegrationTable.java",
+                    "buildcraft/silicon/tile/TileChargingTable.java",
+                    "buildcraft/silicon/tile/TileProgrammingTable_Neptune.java",
+                    "buildcraft/silicon/tile/TileLaser.java"
+        }
     }
     main {
         java {

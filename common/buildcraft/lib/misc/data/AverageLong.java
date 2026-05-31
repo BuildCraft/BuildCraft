@@ -2,11 +2,12 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.misc.data;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 public class AverageLong {
     private long[] data;
@@ -60,17 +61,17 @@ public class AverageLong {
         tickValue += value;
     }
 
-    public void writeToNbt(NBTTagCompound nbt, String subTag) {
+    public void writeToNbt(NbtCompound nbt, String subTag) {
         int[] ints = new int[precise * 2];
         for (int i = 0; i < precise; i++) {
             long val = data[i];
             ints[i * 2] = (int) val;
             ints[i * 2 + 1] = (int) (val >>> 32);
         }
-        nbt.setIntArray(subTag, ints);
+        nbt.putIntArray(subTag, ints);
     }
 
-    public void readFromNbt(NBTTagCompound nbt, String subTag) {
+    public void readFromNbt(NbtCompound nbt, String subTag) {
         int[] ints = nbt.getIntArray(subTag);
         if (ints.length >= precise * 2) {
             averageRaw = 0;

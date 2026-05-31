@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 package buildcraft.lib.statement;
 
@@ -10,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
@@ -20,7 +22,6 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITrigger;
 
-import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.LocaleUtil;
 
 public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
@@ -76,7 +77,7 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
         return this.delegate.getSprite();
     }
 
-    public TileEntity getNeighbourTile(IStatementContainer source) {
+    public BlockEntity getNeighbourTile(IStatementContainer source) {
         return source.getNeighbourTile(sourcePart.face);
     }
 
@@ -93,7 +94,8 @@ public abstract class StatementWrapper implements IStatement, Comparable<Stateme
         List<String> list = delegate.getTooltip();
         if (sourcePart != EnumPipePart.CENTER) {
             list = new ArrayList<>(list);
-            String translated = ColourUtil.getTextFullTooltip(sourcePart.face);
+            // STUB(R.Chen): ColourUtil.getTextFullTooltip not in libLeaf — use plain face name.
+            String translated = sourcePart.face != null ? sourcePart.face.toString() : "";
             list.add(LocaleUtil.localize("gate.side", translated));
         }
         return list;

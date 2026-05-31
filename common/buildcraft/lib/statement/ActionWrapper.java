@@ -2,8 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.statement;
 
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IAction;
@@ -37,7 +38,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
         return (IAction) delegate;
     }
 
-    public static ActionWrapper wrap(IStatement statement, EnumFacing side) {
+    public static ActionWrapper wrap(IStatement statement, Direction side) {
         if (statement == null) {
             return null;
         } else if (statement instanceof ActionWrapper) {
@@ -109,7 +110,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
     public static class ActionWrapperInternalSided extends ActionWrapper {
         public final IActionInternalSided action;
 
-        public ActionWrapperInternalSided(IActionInternalSided action, @Nonnull EnumFacing side) {
+        public ActionWrapperInternalSided(IActionInternalSided action, @Nonnull Direction side) {
             super(action, EnumPipePart.fromFacing(side));
             this.action = action;
         }
@@ -129,7 +130,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
     public static class ActionWrapperExternal extends ActionWrapper {
         public final IActionExternal action;
 
-        public ActionWrapperExternal(IActionExternal action, @Nonnull EnumFacing side) {
+        public ActionWrapperExternal(IActionExternal action, @Nonnull Direction side) {
             super(action, EnumPipePart.fromFacing(side));
             this.action = action;
         }
@@ -141,7 +142,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
                     return;
                 }
             }
-            TileEntity neighbourTile = getNeighbourTile(source);
+            BlockEntity neighbourTile = getNeighbourTile(source);
             if (neighbourTile == null) {
                 return;
             }

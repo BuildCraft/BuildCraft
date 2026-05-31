@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.statement;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -36,26 +43,26 @@ public class FullStatement<S extends IStatement> implements IReference<S> {
 
     // NBT
 
-    public void readFromNbt(NBTTagCompound nbt) {
-        statement = type.readFromNbt(nbt.getCompoundTag("s"));
+    public void readFromNbt(NbtCompound nbt) {
+        statement = type.readFromNbt(nbt.getCompound("s"));
         if (statement == null) {
             Arrays.fill(params, null);
         } else {
             for (int p = 0; p < params.length; p++) {
-                NBTTagCompound pNbt = nbt.getCompoundTag(Integer.toString(p));
+                NbtCompound pNbt = nbt.getCompound(Integer.toString(p));
                 params[p] = StatementTypeParam.INSTANCE.readFromNbt(pNbt);
             }
         }
     }
 
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NbtCompound writeToNbt() {
+        NbtCompound nbt = new NbtCompound();
         if (statement != null) {
-            nbt.setTag("s", type.writeToNbt(statement));
+            nbt.put("s", type.writeToNbt(statement));
             for (int p = 0; p < params.length; p++) {
                 IStatementParameter param = params[p];
                 if (param != null) {
-                    nbt.setTag(Integer.toString(p), StatementTypeParam.INSTANCE.writeToNbt(param));
+                    nbt.put(Integer.toString(p), StatementTypeParam.INSTANCE.writeToNbt(param));
                 }
             }
         }
