@@ -2,17 +2,17 @@ package buildcraft.lib.client.render.font;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
-public class DelegateFontRenderer extends FontRenderer {
-    public final FontRenderer delegate;
+public class DelegateFontRenderer extends TextRenderer {
+    public final TextRenderer delegate;
 
-    public DelegateFontRenderer(FontRenderer delegate) {
-        super(Minecraft.getMinecraft().gameSettings, new Identifier("textures/font/ascii.png"),
-            Minecraft.getMinecraft().renderEngine, delegate.getUnicodeFlag());
+    public DelegateFontRenderer(TextRenderer delegate) {
+        super(MinecraftClient.getInstance().gameSettings, new Identifier("textures/font/ascii.png"),
+            MinecraftClient.getInstance().renderEngine, delegate.getUnicodeFlag());
         this.delegate = delegate;
     }
 
@@ -27,7 +27,7 @@ public class DelegateFontRenderer extends FontRenderer {
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(ResourceManager resourceManager) {
         delegate.onResourceManagerReload(resourceManager);
     }
 

@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.RegistryConfig;
@@ -73,7 +73,7 @@ public class BCBuilders {
 
     @Mod.EventHandler
     public static void onServerStarting(FMLServerStartingEvent event) {
-        GlobalSavedDataSnapshots.reInit(Side.SERVER);
+        GlobalSavedDataSnapshots.reInit(EnvType.SERVER);
     }
 
     static {

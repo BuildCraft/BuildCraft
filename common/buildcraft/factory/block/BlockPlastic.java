@@ -4,10 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.Material;
+import net.minecraft.state.StateManager;
 import net.minecraft.block.BlockState;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
@@ -39,7 +39,7 @@ public class BlockPlastic extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, DefaultedList<ItemStack> list) {
+    public void getSubBlocks(ItemGroup tab, DefaultedList<ItemStack> list) {
         for (DyeColor dye : DyeColor.values()) {
             list.add(new ItemStack(this, 1, dye.getMetadata()));
         }

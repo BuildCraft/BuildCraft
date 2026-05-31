@@ -18,7 +18,7 @@ import buildcraft.api.inventory.IItemTransactor;
 
 import buildcraft.lib.misc.StackUtil;
 
-// Ported to Fabric 1.20.1 by R.Chen: NonNullList → DefaultedList.
+// Ported to Fabric 1.20.1 by R.Chen: DefaultedList → DefaultedList.
 public enum NoSpaceTransactor implements IItemTransactor {
     INSTANCE;
 

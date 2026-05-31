@@ -5,7 +5,7 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.util.Map;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.text.translation.LanguageMap;
 
@@ -55,7 +55,7 @@ public class ChristmasHandler {
     public static void fmlPreInitClient() {
         fmlPreInit();
         if (isEnabled()) {
-            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager())
+            ((IReloadableResourceManager) MinecraftClient.getInstance().getResourceManager())
                 .registerReloadListener(m -> replaceLangEntries());
         }
     }

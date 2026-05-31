@@ -33,7 +33,7 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.BCLog;
 
-// Ported to Fabric 1.20.1 by R.Chen: all 1.12.2 NBT type names (NBTTagCompound → NbtCompound, etc.)
+// Ported to Fabric 1.20.1 by R.Chen: all 1.12.2 NBT type names (NbtCompound → NbtCompound, etc.)
 // replaced with their Yarn 1.20.1 equivalents; Forge Constants.NBT.* replaced with NbtElement.*_TYPE constants.
 public final class NBTUtilBC {
     @SuppressWarnings("WeakerAccess")

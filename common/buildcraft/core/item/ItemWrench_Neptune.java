@@ -52,14 +52,14 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     @Override
     public ActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         // FIXME: Disabled world check as it doesn't allow us to swing the player's arm!
-        // if (world.isRemote) {
+        // if (world.isClient) {
         // return ActionResult.PASS;
         // }
         BlockState state = world.getBlockState(pos);
         state = state.getActualState(world, pos);
         ActionResult result = CustomRotationHelper.INSTANCE.attemptRotateBlock(world, pos, state, side);
         if (result == ActionResult.SUCCESS) {
-            wrenchUsed(player, hand, player.getHeldItem(hand), new HitResult(new Vec3d(hitX, hitY, hitZ), side, pos));
+            wrenchUsed(player, hand, player.getStackInHand(hand), new HitResult(new Vec3d(hitX, hitY, hitZ), side, pos));
         }
         SoundUtil.playSlideSound(world, pos, state, result);
         return result;

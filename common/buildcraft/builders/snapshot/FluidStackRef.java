@@ -9,24 +9,24 @@ package buildcraft.builders.snapshot;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtString;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidStackRef {
-    private final NbtRef<NBTTagString> fluid;
-    private final NbtRef<NBTTagInt> amount;
+    private final NbtRef<NbtString> fluid;
+    private final NbtRef<NbtInt> amount;
 
-    public FluidStackRef(NbtRef<NBTTagString> fluid, NbtRef<NBTTagInt> amount) {
+    public FluidStackRef(NbtRef<NbtString> fluid, NbtRef<NbtInt> amount) {
         this.fluid = fluid;
         this.amount = amount;
     }
 
-    public FluidStack get(NBTBase nbt) {
+    public FluidStack get(NbtElement nbt) {
         return new FluidStack(
             Objects.requireNonNull(
                 FluidRegistry.getFluid(
@@ -38,7 +38,7 @@ public class FluidStackRef {
             ),
             Optional.ofNullable(amount)
                 .flatMap(ref -> ref.get(nbt))
-                .map(NBTTagInt::getInt)
+                .map(NbtInt::getInt)
                 .orElse(Fluid.BUCKET_VOLUME)
         );
     }

@@ -7,7 +7,7 @@
 package buildcraft.lib.path.task;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,7 +29,7 @@ public enum EnumTraversalExpense {
     }
 
     public static EnumTraversalExpense getFor(World world, BlockPos pos, BlockState state) {
-        if (world.isAirBlock(pos)) {
+        if (world.isAir(pos)) {
             return AIR;
         }
         Material mat = state.getMaterial();

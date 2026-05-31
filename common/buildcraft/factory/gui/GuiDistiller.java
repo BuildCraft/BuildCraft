@@ -6,10 +6,10 @@
 
 package buildcraft.factory.gui;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
+import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -27,8 +27,8 @@ import buildcraft.lib.misc.RenderUtil;
 import buildcraft.factory.container.ContainerDistiller;
 
 public class GuiDistiller extends GuiBC8<ContainerDistiller> {
-    private static final ResourceLocation TEXTURE_BASE
-        = new ResourceLocation("buildcraftfactory:textures/gui/distiller.png");
+    private static final Identifier TEXTURE_BASE
+        = new Identifier("buildcraftfactory:textures/gui/distiller.png");
     private static final int SIZE_X = 176, SIZE_Y = 161;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_TANK_VERTICAL_OVERLAY = new GuiIcon(TEXTURE_BASE, 0, 161, 16, 38);
@@ -119,7 +119,7 @@ public class GuiDistiller extends GuiBC8<ContainerDistiller> {
             int liquidColour = currentLiquid != null ? FluidRenderer.getAverageFluidColour(currentLiquid.getFluid()) : -1;
             int gasColour = currentGas != null ? FluidRenderer.getAverageFluidColour(currentGas.getFluid()) : -1;
 
-            GlStateManager.enableBlend();
+            RenderSystem.enableBlend();
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
             for (int i = 0; i < 10; i++) {
                 distance = drawAnimation(inputColour, gasColour, liquidColour);
@@ -258,7 +258,7 @@ public class GuiDistiller extends GuiBC8<ContainerDistiller> {
             MathUtil.interp(v1, y0, y1), //
             u0, v0, u1, v1
         );
-        GlStateManager.color(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     @Override

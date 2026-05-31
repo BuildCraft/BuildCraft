@@ -25,7 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -141,12 +141,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                 .map(fluidStack -> {
                                     ItemStack stack = FluidUtil.getFilledBucket(fluidStack);
                                     if (!stack.hasTagCompound()) {
-                                        stack.setTagCompound(new NBTTagCompound());
+                                        stack.setTagCompound(new NbtCompound());
                                     }
                                     // noinspection ConstantConditions
-                                    stack.getTagCompound().setTag(
+                                    stack.getTagCompound().put(
                                         FLUID_STACK_KEY,
-                                        fluidStack.writeToNBT(new NBTTagCompound())
+                                        fluidStack.writeToNBT(new NbtCompound())
                                     );
                                     return stack;
                                 })
@@ -201,12 +201,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
         super.cancelPlaceTask(placeTask);
         // noinspection ConstantConditions
         placeTask.items.stream()
-            .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().hasKey(FLUID_STACK_KEY))
+            .filter(stack -> !stack.hasTagCompound() || !stack.getTagCompound().contains(FLUID_STACK_KEY))
             .forEach(stack -> tile.getInvResources().insert(stack, false, false));
         // noinspection ConstantConditions
         placeTask.items.stream()
-            .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().hasKey(FLUID_STACK_KEY))
-            .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompoundTag(FLUID_STACK_KEY)))
+            .filter(stack -> stack.hasTagCompound() && stack.getTagCompound().contains(FLUID_STACK_KEY))
+            .map(stack -> Pair.of(stack.getCount(), stack.getTagCompound().getCompound(FLUID_STACK_KEY)))
             .map(countNbt -> {
                 FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(countNbt.getRight());
                 if (fluidStack != null) {
@@ -235,17 +235,17 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
 
     @Override
     public boolean tick() {
-        if (tile.getWorldBC().isRemote) {
+        if (tile.getWorldBC().isClient) {
             return super.tick();
         }
-        tile.getWorldBC().profiler.startSection("entitiesWithinBox");
+        tile.getWorldBC().profiler.push("entitiesWithinBox");
         List<Entity> entitiesWithinBox = tile.getWorldBC().getEntitiesWithinAABB(
             Entity.class,
             getBuildingInfo().box.getBoundingBox(),
             Objects::nonNull
         );
-        tile.getWorldBC().profiler.endSection();
-        tile.getWorldBC().profiler.startSection("toSpawn");
+        tile.getWorldBC().profiler.pop();
+        tile.getWorldBC().profiler.push("toSpawn");
         List<ISchematicEntity> toSpawn = getBuildingInfo().entities.stream()
             .filter(schematicEntity ->
                 entitiesWithinBox.stream()
@@ -254,9 +254,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     .noneMatch(distance -> distance < MAX_ENTITY_DISTANCE)
             )
             .collect(Collectors.toList());
-        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.pop();
         // Compute needed stacks
-        tile.getWorldBC().profiler.startSection("remainingDisplayRequired");
+        tile.getWorldBC().profiler.push("remainingDisplayRequired");
         remainingDisplayRequired.clear();
         remainingDisplayRequired.addAll(StackUtil.mergeSameItems(
             Stream.concat(
@@ -270,9 +270,9 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                     )
             ).collect(Collectors.toList())
         ));
-        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.pop();
         // Kill not needed entities
-        tile.getWorldBC().profiler.startSection("toKill");
+        tile.getWorldBC().profiler.push("toKill");
         List<Entity> toKill = entitiesWithinBox.stream()
             .filter(entity ->
                 entity != null &&
@@ -292,12 +292,12 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
             if (!tile.getBattery().isFull()) {
                 return false;
             } else {
-                tile.getWorldBC().profiler.startSection("kill");
+                tile.getWorldBC().profiler.push("kill");
                 toKill.forEach(Entity::setDead);
-                tile.getWorldBC().profiler.endSection();
+                tile.getWorldBC().profiler.pop();
             }
         }
-        tile.getWorldBC().profiler.endSection();
+        tile.getWorldBC().profiler.pop();
         // Call superclass method
         if (super.tick()) {
             // Spawn needed entities
@@ -305,7 +305,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                 if (!tile.getBattery().isFull()) {
                     return false;
                 } else {
-                    tile.getWorldBC().profiler.startSection("spawn");
+                    tile.getWorldBC().profiler.push("spawn");
                     toSpawn.stream()
                         .filter(schematicEntity ->
                             tryExtractRequired(
@@ -324,7 +324,7 @@ public class BlueprintBuilder extends SnapshotBuilder<ITileForBlueprintBuilder> 
                                 false
                             )
                         );
-                    tile.getWorldBC().profiler.endSection();
+                    tile.getWorldBC().profiler.pop();
                 }
             }
             return true;

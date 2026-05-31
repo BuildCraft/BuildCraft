@@ -10,9 +10,9 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.init.Blocks;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.RenderHelper;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;

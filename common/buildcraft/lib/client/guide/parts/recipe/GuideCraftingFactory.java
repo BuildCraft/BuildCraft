@@ -10,10 +10,10 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -35,9 +35,9 @@ public class GuideCraftingFactory implements GuidePartFactory {
     public GuideCraftingFactory(Ingredient[][] input, ItemStack output) {
         this.input = new NonNullMatrix<>(input, Ingredient.EMPTY);
         this.output = StackUtil.asNonNull(output);
-        NBTTagList hashNbt = new NBTTagList();
+        NbtList hashNbt = new NbtList();
         for (Ingredient ingredient : this.input) {
-            NBTTagList list = new NBTTagList();
+            NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
                 list.appendTag(stack.serializeNBT());
             }
@@ -63,7 +63,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
     public static GuidePartFactory getFactory(IRecipe recipe) {
         ItemStack output = recipe.getRecipeOutput();
-        NonNullList<Ingredient> input = recipe.getIngredients();
+        DefaultedList<Ingredient> input = recipe.getIngredients();
         if (input == null || input.isEmpty() || output.isEmpty()) {
             return null;
         }
@@ -98,7 +98,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             return ((ItemStack) object).copy();
         }
         if (object instanceof String) {
-            NonNullList<ItemStack> stacks = OreDictionary.getOres((String) object);
+            DefaultedList<ItemStack> stacks = OreDictionary.getOres((String) object);
             // It will be sorted out below
             object = stacks;
         }
@@ -154,17 +154,17 @@ public class GuideCraftingFactory implements GuidePartFactory {
         // Shortcut out of this full itemstack comparison as its really expensive
         if (hash != other.hash) return false;
         if (input.getWidth() != other.input.getWidth() || input.getHeight() != other.input.getHeight()) return false;
-        NBTTagList nbtThis = new NBTTagList();
+        NbtList nbtThis = new NbtList();
         for (Ingredient ingredient : this.input) {
-            NBTTagList list = new NBTTagList();
+            NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
                 list.appendTag(stack.serializeNBT());
             }
             nbtThis.appendTag(list);
         }
-        NBTTagList nbtThat = new NBTTagList();
+        NbtList nbtThat = new NbtList();
         for (Ingredient ingredient : other.input) {
-            NBTTagList list = new NBTTagList();
+            NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
                 list.appendTag(stack.serializeNBT());
             }

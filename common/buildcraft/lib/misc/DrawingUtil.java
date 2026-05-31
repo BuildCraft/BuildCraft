@@ -11,7 +11,7 @@ import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-// org.joml.Vector2i ships with Minecraft 1.20.1 and replaces javax.vecmath.Vector2i
+// org.joml.Vector2i ships with MinecraftClient 1.20.1 and replaces javax.vecmath.Vector2i
 // (removed when Java 3D was dropped). Field names .x/.y are the same.
 import org.joml.Vector2i;
 

@@ -12,8 +12,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -45,7 +45,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(BuildCraftProperties.CONNECTED_MAP.values());
     }
@@ -56,7 +56,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
             facing = Direction.getHorizontal(
                 side.getHorizontalIndex() + 2 + state.getValue(getFacingProperty()).getHorizontalIndex());
         }
-        BlockEntity tile = world.getTileEntity(pos.offset(facing));
+        BlockEntity tile = world.getBlockEntity(pos.offset(facing));
         return tile != null && tile.hasCapability(CapUtil.CAP_ITEMS, facing.getOpposite());
     }
 
@@ -81,7 +81,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
 
     @Override
     public void breakBlock(World world, BlockPos pos, BlockState state) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileQuarry) {
             for (BlockPos blockPos : ((TileQuarry) tile).framePoses) {
                 if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {

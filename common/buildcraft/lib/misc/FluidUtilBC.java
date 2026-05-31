@@ -11,13 +11,13 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.Fluid;
@@ -34,18 +34,18 @@ import buildcraft.lib.fluid.Tank;
 
 public class FluidUtilBC {
 
-    public static void pushFluidAround(IBlockAccess world, BlockPos pos, Tank tank) {
+    public static void pushFluidAround(BlockView world, BlockPos pos, Tank tank) {
         FluidStack potential = tank.drain(tank.getFluidAmount(), false);
         int drained = 0;
         if (potential == null || potential.amount <= 0) {
             return;
         }
         FluidStack working = potential.copy();
-        for (EnumFacing side : EnumFacing.VALUES) {
+        for (Direction side : Direction.VALUES) {
             if (potential.amount <= 0) {
                 break;
             }
-            TileEntity target = world.getTileEntity(pos.offset(side));
+            BlockEntity target = world.getBlockEntity(pos.offset(side));
             if (target == null) {
                 continue;
             }
@@ -149,9 +149,9 @@ public class FluidUtilBC {
         return new FluidStack(drained, accepted);
     }
 
-    public static boolean onTankActivated(EntityPlayer player, BlockPos pos, EnumHand hand,
+    public static boolean onTankActivated(PlayerEntity player, BlockPos pos, Hand hand,
         IFluidHandler fluidHandler) {
-        ItemStack held = player.getHeldItem(hand);
+        ItemStack held = player.getStackInHand(hand);
         if (held.isEmpty()) {
             return false;
         }
@@ -172,7 +172,7 @@ public class FluidUtilBC {
             return false;
         }
         World world = player.world;
-        if (world.isRemote) {
+        if (world.isClient) {
             return true;
         }
         boolean changed = true;

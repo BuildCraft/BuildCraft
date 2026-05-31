@@ -19,7 +19,7 @@ import java.util.Set;
 
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.MinecraftClientClient;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 

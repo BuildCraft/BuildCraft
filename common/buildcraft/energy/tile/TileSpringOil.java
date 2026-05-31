@@ -6,12 +6,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
@@ -23,9 +23,9 @@ import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.core.tile.ITileOilSpring;
 
 // We don't extend TileBC here because we have no need of any of its functions.
-public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSpring {
+public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilSpring {
 
-    private static final ResourceLocation ADVANCEMENT_PUMP_LARGE_OIL_WELL = new ResourceLocation(
+    private static final Identifier ADVANCEMENT_PUMP_LARGE_OIL_WELL = new Identifier(
         "buildcraftfactory:black_gold"
     );
 
@@ -58,9 +58,9 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         super.readFromNBT(nbt);
-        NBTTagList list = nbt.getTagList("pumpProgress", Constants.NBT.TAG_COMPOUND);
+        NbtList list = nbt.getList("pumpProgress", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < list.tagCount(); i++) {
             PlayerPumpInfo info = new PlayerPumpInfo(list.getCompoundTagAt(i));
             pumpProgress.put(info.profile, info);
@@ -68,19 +68,19 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NbtCompound writeToNBT(NbtCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setInteger("totalSources", totalSources);
-        NBTTagList list = new NBTTagList();
+        nbt.putInt("totalSources", totalSources);
+        NbtList list = new NbtList();
         for (PlayerPumpInfo info : pumpProgress.values()) {
             list.appendTag(info.writeToNbt());
         }
-        nbt.setTag("pumpProgress", list);
+        nbt.put("pumpProgress", list);
         return nbt;
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         left.add("totalSources = " + totalSources);
         boolean added = false;
         for (PlayerPumpInfo info : pumpProgress.values()) {
@@ -102,17 +102,17 @@ public class TileSpringOil extends TileEntity implements IDebuggable, ITileOilSp
             this.profile = profile;
         }
 
-        public PlayerPumpInfo(NBTTagCompound nbt) {
-            profile = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("profile"));
+        public PlayerPumpInfo(NbtCompound nbt) {
+            profile = NBTUtil.readGameProfileFromNBT(nbt.getCompound("profile"));
             lastPumpTick = nbt.getLong("lastPumpTick");
-            sourcesPumped = nbt.getInteger("sourcesPumped");
+            sourcesPumped = nbt.getInt("sourcesPumped");
         }
 
-        public NBTTagCompound writeToNbt() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setTag("profile", NBTUtil.writeGameProfile(new NBTTagCompound(), profile));
-            nbt.setLong("lastPumpTick", lastPumpTick);
-            nbt.setInteger("sourcesPumped", sourcesPumped);
+        public NbtCompound writeToNbt() {
+            NbtCompound nbt = new NbtCompound();
+            nbt.put("profile", NBTUtil.writeGameProfile(new NbtCompound(), profile));
+            nbt.putLong("lastPumpTick", lastPumpTick);
+            nbt.putInt("sourcesPumped", sourcesPumped);
             return nbt;
         }
     }

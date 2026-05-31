@@ -13,20 +13,20 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.Formatting;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
@@ -72,14 +72,14 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
 
     /** Creates a tank with the given name and capacity (in milli buckets) with no filter set (so any fluid can go into
      * the tank) */
-    public Tank(@Nonnull String name, int capacity, TileEntity tile) {
+    public Tank(@Nonnull String name, int capacity, BlockEntity tile) {
         this(name, capacity, tile, null);
     }
 
     /** Creates a tank with the given name and capacity (in milli buckets) with the specified filter set. If the filter
      * returns true for a given fluidstack then it will be allowed in the tank. The given fluidstack will NEVER be
      * null. */
-    public Tank(@Nonnull String name, int capacity, TileEntity tile, @Nullable Predicate<FluidStack> filter) {
+    public Tank(@Nonnull String name, int capacity, BlockEntity tile, @Nullable Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;
         this.tile = tile;
@@ -115,22 +115,22 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         return fluidStack != null ? fluidStack.getFluid() : null;
     }
 
-    public NBTTagCompound serializeNBT() {
-        return writeToNBT(new NBTTagCompound());
+    public NbtCompound serializeNBT() {
+        return writeToNBT(new NbtCompound());
     }
 
     @Override
-    public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public final NbtCompound writeToNBT(NbtCompound nbt) {
         super.writeToNBT(nbt);
         writeTankToNBT(nbt);
         return nbt;
     }
 
     @Override
-    public final FluidTank readFromNBT(NBTTagCompound nbt) {
-        if (nbt.hasKey(name)) {
+    public final FluidTank readFromNBT(NbtCompound nbt) {
+        if (nbt.contains(name)) {
             // Old style of saving + loading
-            NBTTagCompound tankData = nbt.getCompoundTag(name);
+            NbtCompound tankData = nbt.getCompound(name);
             super.readFromNBT(tankData);
             readTankFromNBT(tankData);
         } else {
@@ -142,11 +142,11 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
 
     /** Writes some additional information to the nbt, for example {@link SingleUseTank} will write out the filtering
      * fluid. */
-    protected void writeTankToNBT(NBTTagCompound nbt) {}
+    protected void writeTankToNBT(NbtCompound nbt) {}
 
     /** Reads some additional information to the nbt, for example {@link SingleUseTank} will read in the filtering
      * fluid. */
-    protected void readTankFromNBT(NBTTagCompound nbt) {}
+    protected void readTankFromNBT(NbtCompound nbt) {}
 
     public ToolTip getToolTip() {
         return toolTip;
@@ -159,10 +159,10 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         if (fluidStack != null && amount > 0) {
             toolTip.add(fluidStack.getLocalizedName());
         }
-        toolTip.add(TextFormatting.GRAY + LocaleUtil.localizeFluidStaticAmount(amount, getCapacity()));
+        toolTip.add(Formatting.GRAY + LocaleUtil.localizeFluidStaticAmount(amount, getCapacity()));
         FluidStack serverFluid = getFluid();
         if (serverFluid != null && serverFluid.amount > 0) {
-            toolTip.add(TextFormatting.RED + "BUG: Server-side fluid on client!");
+            toolTip.add(Formatting.RED + "BUG: Server-side fluid on client!");
             toolTip.add(serverFluid.getLocalizedName());
             toolTip.add(LocaleUtil.localizeFluidStaticAmount(serverFluid.amount, getCapacity()));
         }
@@ -223,7 +223,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         buffer.writeInt(getFluidAmount());
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void readFromBuffer(PacketBufferBC buffer) {
         if (buffer.readBoolean()) {
             clientFluid = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
@@ -253,14 +253,14 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     }
 
     public void onGuiClicked(ContainerBC_Neptune container) {
-        EntityPlayer player = container.player;
+        PlayerEntity player = container.player;
         ItemStack held = player.inventory.getItemStack();
         if (held.isEmpty()) {
             return;
         }
         ItemStack stack = transferStackToTank(container, held);
         player.inventory.setItemStack(stack);
-        ((EntityPlayerMP) player).updateHeldItem();
+        ((ServerPlayerEntity) player).updateHeldItem();
         player.inventoryContainer.detectAndSendChanges();
         if (player.openContainer != null) {
             player.openContainer.detectAndSendChanges();
@@ -271,10 +271,10 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
      *
      * @return The left over item after attempting to add the stack to this tank. */
     public ItemStack transferStackToTank(ContainerBC_Neptune container, ItemStack stack) {
-        EntityPlayer player = container.player;
+        PlayerEntity player = container.player;
         // first try to fill this tank from the item
 
-        if (player.world.isRemote) {
+        if (player.world.isClient) {
             return stack;
         }
 

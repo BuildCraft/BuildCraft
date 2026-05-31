@@ -16,31 +16,31 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonDeserializer;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import net.minecraftforge.fluids.FluidStack;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class RequiredExtractor {
     @Nonnull
-    public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<ItemStack> extractItemsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
         return Collections.emptyList();
     }
 
     @Nonnull
-    public List<FluidStack> extractFluidsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<FluidStack> extractFluidsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
         return Collections.emptyList();
     }
 
     @Nonnull
-    public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<ItemStack> extractItemsFromEntity(@Nonnull NbtCompound entityNbt) {
         return Collections.emptyList();
     }
 
     @Nonnull
-    public List<FluidStack> extractFluidsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<FluidStack> extractFluidsFromEntity(@Nonnull NbtCompound entityNbt) {
         return Collections.emptyList();
     }
 

@@ -3,7 +3,7 @@
  */
 package buildcraft.lib.misc.data;
 
-// Yarn 1.20.1: net.minecraft.util.EnumFacing → net.minecraft.util.math.Direction
+// Yarn 1.20.1: net.minecraft.util.Direction → net.minecraft.util.math.Direction
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 

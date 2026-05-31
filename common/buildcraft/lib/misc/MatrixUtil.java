@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 
 public class MatrixUtil {
     /** Rotation map for gates */
@@ -81,16 +81,16 @@ public class MatrixUtil {
         return result;
     }
 
-    public static AxisAlignedBB multiply(AxisAlignedBB box, Matrix4f matrix) {
+    public static Box multiply(Box box, Matrix4f matrix) {
         Point3f min = new Point3f(new Point3d(box.minX, box.minY, box.minZ));
         Point3f max = new Point3f(new Point3d(box.maxX, box.maxY, box.maxZ));
         matrix.transform(min);
         matrix.transform(max);
-        return new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z);
+        return new Box(min.x, min.y, min.z, max.x, max.y, max.z);
     }
 
-    public static AxisAlignedBB[] multiplyAll(AxisAlignedBB[] boxes, Matrix4f matrix) {
-        AxisAlignedBB[] result = new AxisAlignedBB[boxes.length];
+    public static Box[] multiplyAll(Box[] boxes, Matrix4f matrix) {
+        Box[] result = new Box[boxes.length];
         for (int i = 0; i < boxes.length; i++) {
             result[i] = multiply(boxes[i], matrix);
         }

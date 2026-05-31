@@ -6,15 +6,15 @@
 
 package buildcraft.lib.item;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
@@ -27,7 +27,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 
 public class ItemGuide extends ItemBC_Neptune {
     private static final String DEFAULT_BOOK = "buildcraftcore:main";
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:guide");
+    private static final Identifier ADVANCEMENT = new Identifier("buildcraftcore:guide");
     private static final String TAG_BOOK_NAME = "BookName";
 
     public ItemGuide(String id) {
@@ -36,14 +36,14 @@ public class ItemGuide extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
-        player.openGui(BCLib.INSTANCE, 0, world, hand == EnumHand.MAIN_HAND ? 0 : 1, 0, 0);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        player.openGui(BCLib.INSTANCE, 0, world, hand == Hand.MAIN_HAND ? 0 : 1, 0, 0);
+        return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> items) {
         for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
             ItemStack stack = new ItemStack(this);
             if (!book.name.toString().equals(ItemGuide.DEFAULT_BOOK)) {
@@ -64,8 +64,8 @@ public class ItemGuide extends ItemBC_Neptune {
     }
 
     public static String getBookName(ItemStack stack) {
-        NBTTagCompound nbt = stack.getTagCompound();
-        if (nbt == null || !nbt.hasKey(TAG_BOOK_NAME, Constants.NBT.TAG_STRING)) {
+        NbtCompound nbt = stack.getTagCompound();
+        if (nbt == null || !nbt.contains(TAG_BOOK_NAME, NbtElement.STRING_TYPE)) {
             // So that existing guide books continue to work
             return ItemGuide.DEFAULT_BOOK;
         }
@@ -73,7 +73,7 @@ public class ItemGuide extends ItemBC_Neptune {
     }
 
     public static void setBookName(ItemStack stack, String book) {
-        NBTTagCompound nbt = NBTUtilBC.getItemData(stack);
-        nbt.setString(TAG_BOOK_NAME, book);
+        NbtCompound nbt = NBTUtilBC.getItemData(stack);
+        nbt.putString(TAG_BOOK_NAME, book);
     }
 }

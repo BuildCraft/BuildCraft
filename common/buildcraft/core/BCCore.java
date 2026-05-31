@@ -7,7 +7,7 @@ package buildcraft.core;
 import java.io.File;
 import java.util.function.Consumer;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 
 import net.minecraftforge.common.MinecraftForge;

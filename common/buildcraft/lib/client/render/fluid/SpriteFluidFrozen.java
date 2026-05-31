@@ -10,18 +10,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.SpriteUtil;
 
-public class SpriteFluidFrozen extends TextureAtlasSprite {
+public class SpriteFluidFrozen extends Sprite {
     /** The source sprite of this fluid. */
     public final Identifier srcLocation;
     private int[][] data = null;
@@ -32,14 +32,14 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
     }
 
     @Override
-    public boolean hasCustomLoader(IResourceManager manager, Identifier location) {
+    public boolean hasCustomLoader(ResourceManager manager, Identifier location) {
         return true;
     }
 
     @Override
-    public boolean load(IResourceManager manager, Identifier location, Function<Identifier, TextureAtlasSprite> textureGetter) {
+    public boolean load(ResourceManager manager, Identifier location, Function<Identifier, Sprite> textureGetter) {
         location = SpriteUtil.transformLocation(srcLocation);
-        TextureAtlasSprite src = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(srcLocation.toString());
+        Sprite src = MinecraftClient.getInstance().getTextureMapBlocks().getTextureExtry(srcLocation.toString());
         if (src == null) {
             BCLog.logger.warn("[lib.fluid] Failed to create a frozen sprite of " + srcLocation.toString() + " as the source sprite wasn't able to be loaded!");
             return true;
@@ -62,7 +62,7 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
                             return true;
                         }
                         src.loadSprite(size, hasAnimation);
-                        src.loadSpriteFrames(resource, Minecraft.getMinecraft().gameSettings.mipmapLevels + 1);
+                        src.loadSpriteFrames(resource, MinecraftClient.getInstance().gameSettings.mipmapLevels + 1);
                     }
                 } catch (IOException io) {
                     io.printStackTrace();
@@ -78,7 +78,7 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
 
             int[][] srcData = src.getFrameTextureData(0);
 
-            data = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+            data = new int[MinecraftClient.getInstance().gameSettings.mipmapLevels + 1][];
             for (int m = 0; m < data.length; m++) {
                 data[m] = new int[width * height / (m + 1) / (m + 1)];
             }

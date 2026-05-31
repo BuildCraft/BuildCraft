@@ -21,11 +21,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.RenderHelper;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -284,9 +284,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int offsetY = 9;
         int sizeX = 213;
         int sizeY = 100;
-        GlStateManager.pushMatrix();
+        RenderSystem.getModelViewStack().push();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.pushMatrix();
+        RenderSystem.getModelViewStack().push();
         GlStateManager.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         int viewportX = (x + offsetX) * scaledResolution.getScaleFactor();
@@ -308,18 +308,18 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             viewportWidth,
             viewportHeight
         );
-        GlStateManager.scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
+        RenderSystem.getModelViewStack().scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 1F, 10000.0F);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.loadIdentity();
         RenderHelper.enableStandardItemLighting();
         GlStateManager.enableRescaleNormal();
-        GlStateManager.rotate(90, 1, 0, 0); // look down
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-positionX, -camY, -positionZ);
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableTexture2D();
+        RenderSystem.getModelViewStack().rotate(90, 1, 0, 0); // look down
+        RenderSystem.getModelViewStack().push();
+        RenderSystem.getModelViewStack().translate(-positionX, -camY, -positionZ);
+        RenderSystem.disableBlend();
+        ;
+        ;
         int minScreenX = (x + offsetX) * scaledResolution.getScaleFactor();
         int minScreenY = (scaledResolution.getScaledHeight() - (y + offsetY)) * scaledResolution.getScaleFactor();
         int maxScreenX = (x + offsetX + sizeX) * scaledResolution.getScaleFactor();
@@ -395,8 +395,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         }
 
         if (found != null) {
-            GlStateManager.disableDepth();
-            GlStateManager.enableBlend();
+            RenderSystem.disableDepthTest();
+            RenderSystem.enableBlend();
             GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
             GlStateManager.glLineWidth(2);
             int r = (int) (((foundColor >> 16) & 0xFF) * 0.7);
@@ -409,12 +409,12 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(builder, found.getX(), found.getY(), found.getZ());
             Tessellator.getInstance().draw();
             GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-            GlStateManager.disableBlend();
-            GlStateManager.enableDepth();
+            RenderSystem.disableBlend();
+            RenderSystem.enableDepthTest();
         }
 
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
+        ;
+        RenderSystem.enableBlend();
 
         for (int i = 0; i < container.tile.layers.length; i++) {
             if (getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() != i) {
@@ -477,19 +477,19 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                 Tessellator.getInstance().draw();
             }
         }
-        GlStateManager.disableBlend();
-        GlStateManager.disableLighting();
-        GlStateManager.enableTexture2D();
+        RenderSystem.disableBlend();
+        ;
+        ;
 
         lastSelected = found;
-        GlStateManager.popMatrix();
+        RenderSystem.getModelViewStack().pop();
         GlStateManager.disableRescaleNormal();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
-        GlStateManager.popMatrix();
+        RenderSystem.getModelViewStack().pop();
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.popMatrix();
+        RenderSystem.getModelViewStack().pop();
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
     }
 }

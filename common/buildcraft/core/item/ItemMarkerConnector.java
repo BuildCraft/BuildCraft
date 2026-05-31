@@ -21,7 +21,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
@@ -56,7 +56,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
     @SuppressWarnings("NullableProblems")
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
                     player.swingArm(hand);
@@ -64,7 +64,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 }
             }
         }
-        return new ActionResult<>(onItemRightClickVolumeBoxes(world, player), player.getHeldItem(hand));
+        return new ActionResult<>(onItemRightClickVolumeBoxes(world, player), player.getStackInHand(hand));
     }
 
     private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, PlayerEntity player) {
@@ -104,7 +104,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
     }
 
     private ActionResult onItemRightClickVolumeBoxes(World world, PlayerEntity player) {
-        if (world.isRemote) {
+        if (world.isClient) {
             return ActionResult.PASS;
         }
 
@@ -170,7 +170,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         .collect(Collectors.toList())
                     ) {
                     for (BlockPos p : PositionUtil.getCorners(volumeBox.box.min(), volumeBox.box.max())) {
-                        HitResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
+                        HitResult ray = new Box(p).calculateIntercept(start, end);
                         if (ray != null) {
                             double dist = ray.hitVec.distanceTo(start);
                             if (bestDist > dist) {

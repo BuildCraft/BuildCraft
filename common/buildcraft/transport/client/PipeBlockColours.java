@@ -10,7 +10,7 @@ package buildcraft.transport.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): PipeBlockColours — Forge IBlockColor / Minecraft.blockColors.registerBlockColorHandler
+// STUB(R.Chen): PipeBlockColours — Forge IBlockColor / MinecraftClient.blockColors.registerBlockColorHandler
 // → Fabric ColorProviderRegistry.BLOCK.register (Phase 5).
 @Environment(EnvType.CLIENT)
 public class PipeBlockColours {

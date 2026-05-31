@@ -22,7 +22,7 @@ public class BCTransportBlocks {
     // (typed BlockFilteredBuffer) once that block lands; nothing in the migrated leaf set references it.
     public static BlockPipeHolder pipeHolder;
 
-    // STUB(R.Chen): the registered BlockEntityType for the pipe tile (was the Forge TileEntity registration).
+    // STUB(R.Chen): the registered BlockEntityType for the pipe tile (was the Forge BlockEntity registration).
     // BlockPipeHolder.createBlockEntity / getTicker reference this; the Phase 4F transport initializer builds it
     // via FabricBlockEntityTypeBuilder.create(TilePipeHolder::new, pipeHolder) and assigns it here.
     public static BlockEntityType<TilePipeHolder> pipeHolderTile;

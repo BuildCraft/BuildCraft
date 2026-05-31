@@ -1,12 +1,12 @@
 package buildcraft.energy.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
@@ -52,7 +52,7 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
     @Override
     @Deprecated
     public BlockFaceShape getBlockFaceShape(BlockView world, BlockState state, BlockPos pos, Direction side) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileDynamoMJ) {
             TileDynamoMJ engine = (TileDynamoMJ) tile;
             if (side == engine.getCurrentDirection().getOpposite()) {
@@ -67,7 +67,7 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
     @Override
     @Deprecated
     public boolean isSideSolid(BlockState base_state, BlockView world, BlockPos pos, Direction side) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileDynamoMJ) {
             TileDynamoMJ engine = (TileDynamoMJ) tile;
             return side == engine.getCurrentDirection().getOpposite();
@@ -77,15 +77,15 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
 
     @Override
     @Deprecated
-    public EnumBlockRenderType getRenderType(BlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
-        if (world.isRemote) return;
-        BlockEntity tile = world.getTileEntity(pos);
+        if (world.isClient) return;
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileDynamoMJ) {
             TileDynamoMJ engine = (TileDynamoMJ) tile;
             engine.rotateIfInvalid();
@@ -96,7 +96,7 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
 
     @Override
     public ActionResult attemptRotation(World world, BlockPos pos, BlockState state, Direction sideWrenched) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileDynamoMJ) {
             TileDynamoMJ engine = (TileDynamoMJ) tile;
             return engine.attemptRotation();

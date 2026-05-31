@@ -16,15 +16,15 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
 
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -73,7 +73,7 @@ public final class RegistrationHelper {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public final void onModelRegistry(ModelRegistryEvent event) {
         for (Item item : items) {
             if (item instanceof IItemBuildCraft) {
@@ -105,7 +105,7 @@ public final class RegistrationHelper {
                 String[] oldRegNames = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
                 MigrationManager.INSTANCE.addItemMigration(item, oldRegNames);
                 if (TagManager.hasTag(id, EnumTagType.OREDICT_NAME)) {
-                    oredictItems.put(TagManager.getTag(id, EnumTagType.OREDICT_NAME), item);
+                    oredictItems.put(TagManager.get(id, EnumTagType.OREDICT_NAME), item);
                 }
             }
         }
@@ -134,7 +134,7 @@ public final class RegistrationHelper {
                 String[] oldRegNames = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
                 MigrationManager.INSTANCE.addBlockMigration(block, oldRegNames);
                 if (TagManager.hasTag(id, EnumTagType.OREDICT_NAME)) {
-                    oredictBlocks.put(TagManager.getTag(id, EnumTagType.OREDICT_NAME), block);
+                    oredictBlocks.put(TagManager.get(id, EnumTagType.OREDICT_NAME), block);
                 }
             }
         }
@@ -169,8 +169,8 @@ public final class RegistrationHelper {
         return added;
     }
 
-    public void registerTile(Class<? extends TileEntity> clazz, String id) {
-        String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
+    public void registerTile(Class<? extends BlockEntity> clazz, String id) {
+        String regName = TagManager.get(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntity(clazz, regName);
     }

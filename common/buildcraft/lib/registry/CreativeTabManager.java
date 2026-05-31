@@ -22,7 +22,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
- * Forge {@code CreativeTabs} → Fabric {@link ItemGroup}.
+ * Forge {@code ItemGroup} → Fabric {@link ItemGroup}.
  *
  * In 1.20.1 creative tabs are registry entries built via {@link FabricItemGroup#builder()} and
  * registered into {@link Registries#ITEM_GROUP}. The mutable icon of the legacy {@code CreativeTabBC}

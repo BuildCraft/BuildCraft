@@ -4,9 +4,9 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -14,7 +14,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 public class BCRecipeShapeless extends ShapelessOreRecipe {
     private final boolean enabled;
 
-    public BCRecipeShapeless(ResourceLocation group, NonNullList<Ingredient> input, @Nonnull ItemStack result, boolean enabled) {
+    public BCRecipeShapeless(Identifier group, DefaultedList<Ingredient> input, @Nonnull ItemStack result, boolean enabled) {
         super(group, input, enabled ? result : ItemStack.EMPTY);
         this.enabled = enabled;
 }
@@ -26,8 +26,8 @@ public class BCRecipeShapeless extends ShapelessOreRecipe {
 
     @Nonnull
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return enabled ? super.getIngredients() : NonNullList.create();
+    public DefaultedList<Ingredient> getIngredients() {
+        return enabled ? super.getIngredients() : DefaultedList.create();
     }
 
     @Override

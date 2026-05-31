@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -110,11 +110,11 @@ public class GuiDynamoMJ extends GuiBC8<ContainerDynamoMJ> {
         itemRender.renderItemAndEffectIntoGUI(new ItemStack(BCCoreItems.gearIron), x + 60, y + 22);
         itemRender.renderItemAndEffectIntoGUI(new ItemStack(BCCoreItems.gearGold), x + 83, y + 22);
 
-        GlStateManager.disableDepth();
-        GlStateManager.color(1, 1, 1, 0.65f);
+        RenderSystem.disableDepthTest();
+        RenderSystem.setShaderColor(1, 1, 1, 0.65f);
         ICON_OVERLAY.drawAt(mainGui.rootElement.offset(39, 18));
-        GlStateManager.color(1, 1, 1, 1f);
-        GlStateManager.enableDepth();
+        RenderSystem.setShaderColor(1, 1, 1, 1f);
+        RenderSystem.enableDepthTest();
     }
 
     @Override

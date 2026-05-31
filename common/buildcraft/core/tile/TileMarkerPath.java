@@ -45,7 +45,7 @@ public class TileMarkerPath extends TileMarker<PathConnection> implements IPathP
     }
 
     public void reverseDirection() {
-        if (world.isRemote) {
+        if (world.isClient) {
             return;
         }
         PathConnection connection = getCurrentConnection();

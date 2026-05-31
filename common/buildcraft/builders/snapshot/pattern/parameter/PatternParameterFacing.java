@@ -12,11 +12,11 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -31,39 +31,39 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterFacing implements IStatementParameter {
-    DOWN(EnumFacing.DOWN),
-    UP(EnumFacing.UP),
-    NORTH(EnumFacing.NORTH),
-    SOUTH(EnumFacing.SOUTH),
-    WEST(EnumFacing.WEST),
-    EAST(EnumFacing.EAST);
+    DOWN(Direction.DOWN),
+    UP(Direction.UP),
+    NORTH(Direction.NORTH),
+    SOUTH(Direction.SOUTH),
+    WEST(Direction.WEST),
+    EAST(Direction.EAST);
 
-    public final EnumFacing face;
+    public final Direction face;
 
-    private static final Map<EnumFacing, PatternParameterFacing> faceToParam;
+    private static final Map<Direction, PatternParameterFacing> faceToParam;
 
     static {
-        faceToParam = new EnumMap<>(EnumFacing.class);
+        faceToParam = new EnumMap<>(Direction.class);
         for (PatternParameterFacing param : values()) {
             faceToParam.put(param.face, param);
         }
     }
 
-    PatternParameterFacing(EnumFacing face) {
+    PatternParameterFacing(Direction face) {
         this.face = face;
     }
 
-    public static PatternParameterFacing readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterFacing readFromNbt(NbtCompound nbt) {
         return values()[MathUtil.clamp(nbt.getByte("v"), 0, 6)];
     }
 
-    public static PatternParameterFacing get(EnumFacing face) {
+    public static PatternParameterFacing get(Direction face) {
         return faceToParam.get(face);
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("v", (byte) ordinal());
+    public void writeToNbt(NbtCompound nbt) {
+        nbt.putByte("v", (byte) ordinal());
     }
 
     @Override
@@ -72,7 +72,7 @@ public enum PatternParameterFacing implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
         return BCBuildersSprites.PARAM_FACE.get(face);
     }

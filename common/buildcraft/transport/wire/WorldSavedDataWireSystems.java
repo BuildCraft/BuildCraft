@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 // Yarn 1.20.1 renames (mirrors WorldSavedDataVolumeBoxes):
-//   WorldSavedData         → PersistentState        NBTTagCompound → NbtCompound   NBTTagList → NbtList
-//   EntityPlayerMP         → ServerPlayerEntity      TileEntity     → BlockEntity   EnumDyeColor → DyeColor
-//   world.getTileEntity    → world.getBlockEntity    world.isRemote → world.isClient
+//   WorldSavedData         → PersistentState        NbtCompound → NbtCompound   NbtList → NbtList
+//   ServerPlayerEntity         → ServerPlayerEntity      BlockEntity     → BlockEntity   DyeColor → DyeColor
+//   world.getTileEntity    → world.getBlockEntity    world.isClient → world.isClient
 //   MapStorage.getOrLoadData → ServerWorld.getPersistentStateManager()
 //                              .getOrCreate(Function<NbtCompound,T>, Supplier<T>, String)
-//   Constants.NBT.TAG_COMPOUND → NbtElement.COMPOUND_TYPE
+//   NbtElement.COMPOUND_TYPE → NbtElement.COMPOUND_TYPE
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -148,7 +148,7 @@ public class WorldSavedDataWireSystems extends PersistentState {
             });
         }
         // STUB(R.Chen): per-player wire sync deferred to Phase 5 with the BC networking layer. The original
-        // loop walked world.getPlayers(EntityPlayerMP.class, ...) and pushed MessageWireSystems /
+        // loop walked world.getPlayers(ServerPlayerEntity.class, ...) and pushed MessageWireSystems /
         // MessageWireSystemsPowered through MessageManager.sendTo(); neither message is migrated yet.
         if(structureChanged || !changedSystems.isEmpty()) {
             markDirty();

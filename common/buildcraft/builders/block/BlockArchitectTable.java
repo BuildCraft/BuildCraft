@@ -6,8 +6,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -25,7 +25,7 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileArchitectTable;
 
 public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final IProperty<Boolean> PROP_VALID = BuildCraftProperties.VALID;
+    public static final Property<Boolean> PROP_VALID = BuildCraftProperties.VALID;
 
     private static final int META_VALID_INDEX = 4;
 
@@ -35,7 +35,7 @@ public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWi
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.add(PROP_VALID);
     }
@@ -59,7 +59,7 @@ public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWi
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCBuildersGuis.ARCHITECT.openGUI(player, pos);
         }
         return true;

@@ -21,11 +21,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 
 // Ported to Fabric 1.20.1 by R.Chen:
-//   - NonNullList → DefaultedList (create() → of(), withSize() → ofSize()).
+//   - DefaultedList → DefaultedList (create() → of(), withSize() → ofSize()).
 //   - ItemStack.areItemsEqual + areItemStackTagsEqual → ItemStack.canCombine.
 //   - getMaxStackSize/getCount/grow → getMaxCount/getCount/increment.
 //   - serializeNBT()/getMetadata() → getNbt() (Yarn).
-// STUB(R.Chen): the OreDictionary-, IBlockState-, IngredientStack-/StackDefinition-, and IList-based
+// STUB(R.Chen): the OreDictionary-, BlockState-, IngredientStack-/StackDefinition-, and IList-based
 //   helpers (isCraftingEquivalent, getItemStackForState, isMatchingItem variants, contains(StackDefinition…),
 //   registerMatchingPredicate, stripNonFunctionNbt, …) are dropped until the Forge OreDictionary →
 //   Fabric tag layer and api.recipes/api.items are migrated (Phase 4E).

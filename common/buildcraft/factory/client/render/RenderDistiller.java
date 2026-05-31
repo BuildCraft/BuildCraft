@@ -11,22 +11,22 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
+import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
+import net.minecraft.client.render.RenderHelper;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.MutableQuad;
@@ -43,12 +43,12 @@ import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.BCFactoryModels;
 import buildcraft.factory.tile.TileDistiller_BC8;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
-    private static final Map<EnumFacing, TankRenderSizes> TANK_SIZES = new EnumMap<>(EnumFacing.class);
+    private static final Map<Direction, TankRenderSizes> TANK_SIZES = new EnumMap<>(Direction.class);
 
     static {
-        EnumFacing face = EnumFacing.WEST;
+        Direction face = Direction.WEST;
         TankSize tankIn = new TankSize(0, 0, 4, 8, 16, 12).shrink(1 / 64.0);
         TankSize tankGasOut = new TankSize(8, 8, 0, 16, 16, 16).shrink(1 / 64.0);
         TankSize tankLiquidOut = new TankSize(8, 0, 0, 16, 8, 16).shrink(1 / 64.0);
@@ -65,23 +65,23 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         float alpha) {
         super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
 
-        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        BlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() != BCFactoryBlocks.distiller) {
             return;
         }
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("bc");
-        profiler.startSection("distiller");
+        Profiler profiler = MinecraftClient.getInstance().getProfiler();
+        profiler.push("bc");
+        profiler.push("distiller");
 
         int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), 0);
-        EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        Direction face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
         TankRenderSizes sizes = TANK_SIZES.get(face);
 
         // gl state setup
         RenderHelper.disableStandardItemLighting();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.enableBlend();
+        MinecraftClient.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        RenderSystem.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
@@ -90,15 +90,15 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
             bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
             bb.setTranslation(x, y, z);
 
-            profiler.startSection("model");
-            profiler.startSection("compute");
+            profiler.push("model");
+            profiler.push("compute");
             if (tile.clientModelData.hasNoNodes()) {
                 tile.clientModelData.setNodes(BCFactoryModels.DISTILLER.createTickableNodes());
             }
             tile.setClientModelVariables(partialTicks);
             tile.clientModelData.refresh();
             MutableQuad[] quads = BCFactoryModels.DISTILLER.getCutoutQuads();
-            profiler.endStartSection("render");
+            profiler.swap("render");
 
             MutableQuad copy = new MutableQuad(0, null);
             int lightc = combinedLight;
@@ -111,8 +111,8 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
                 copy.render(bb);
             }
 
-            profiler.endSection();
-            profiler.endStartSection("fluid");
+            profiler.pop();
+            profiler.swap("fluid");
 
             renderTank(sizes.tankIn, tile.smoothedTankIn, combinedLight, partialTicks, bb);
             renderTank(sizes.tankOutGas, tile.smoothedTankGasOut, combinedLight, partialTicks, bb);
@@ -120,16 +120,16 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
 
             // buffer finish
             bb.setTranslation(0, 0, 0);
-            profiler.endStartSection("draw");
+            profiler.swap("draw");
             tess.tessellator.draw();
         }
 
         // gl state finish
         RenderHelper.enableStandardItemLighting();
 
-        profiler.endSection();
-        profiler.endSection();
-        profiler.endSection();
+        profiler.pop();
+        profiler.pop();
+        profiler.pop();
     }
 
     public static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks,

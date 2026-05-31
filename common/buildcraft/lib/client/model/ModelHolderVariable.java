@@ -34,7 +34,7 @@ import buildcraft.lib.expression.node.value.ITickableNode;
 /**
  * STUB(R.Chen): client model — Phase 5.
  *
- * The Forge original resolved sprites via {@code Minecraft.getMinecraft().getTextureMapBlocks()}
+ * The Forge original resolved sprites via {@code MinecraftClient.getInstance().getTextureMapBlocks()}
  * during ModelBakeEvent. In Fabric 1.20.1 sprite resolution goes through a Fabric atlas pipeline.
  * The public API surface (fields, getCutoutQuads/getTranslucentQuads) is preserved so callers
  * compile. Sprite lookup stubs return null; baking produces empty arrays until Phase 5.

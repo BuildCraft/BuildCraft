@@ -6,12 +6,12 @@
  */
 package buildcraft.core;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -51,7 +51,7 @@ public class BCCoreRecipes {
             builder.setResult(cleanPaintbrush);
             builder.register();
 
-            for (EnumDyeColor colour : EnumDyeColor.values()) {
+            for (DyeColor colour : DyeColor.values()) {
                 ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
                 ItemStack out = brush.save();
 
@@ -59,7 +59,7 @@ public class BCCoreRecipes {
                     cleanPaintbrush, //
                     ColourUtil.getDyeName(colour),//
                 };
-                ResourceLocation group = BCModules.CORE.createLocation("paintbrush_colouring");
+                Identifier group = BCModules.CORE.createLocation("paintbrush_colouring");
                 ShapelessOreRecipe recipe = new ShapelessOreRecipe(group, out, inputs);
                 recipe.setRegistryName(BCModules.CORE.createLocation("paintbrush_" + colour.getName()));
                 event.getRegistry().register(recipe);
@@ -71,7 +71,7 @@ public class BCCoreRecipes {
         // long mjCost = 2_000 * MjAPI.MJ;
         // ImmutableSet<StackDefinition> required = ImmutableSet.of(//
         // ArrayStackFilter.definition(8, Items.PAPER), //
-        // OreStackFilter.definition(ColourUtil.getDyeName(EnumDyeColor.GREEN)), //
+        // OreStackFilter.definition(ColourUtil.getDyeName(DyeColor.GREEN)), //
         // OreStackFilter.definition("dustRedstone")//
         // );
         // BuildcraftRecipeRegistry.assemblyRecipes

@@ -6,7 +6,7 @@
 
 package buildcraft.robotics;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 
 import buildcraft.lib.registry.RegistrationHelper;
 

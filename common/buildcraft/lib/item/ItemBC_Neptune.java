@@ -8,7 +8,7 @@
 package buildcraft.lib.item;
 
 // Yarn 1.20.1: Item constructor now takes Item.Settings instead of no-arg.
-// CreativeTabs / NonNullList dropped — Fabric creative tabs use ItemGroupEvents in ModInitializer.
+// ItemGroup / DefaultedList dropped — Fabric creative tabs use ItemGroupEvents in ModInitializer.
 import net.minecraft.item.Item;
 
 public class ItemBC_Neptune extends Item implements IItemBuildCraft {

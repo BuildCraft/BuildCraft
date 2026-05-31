@@ -10,7 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.DyeColor;
@@ -27,13 +27,13 @@ public class VanillaPaintHandlers {
         registerDoubleTypedHandler(Blocks.HARDENED_CLAY, Blocks.STAINED_HARDENED_CLAY, BlockColored.COLOR);
     }
 
-    private static void registerDoubleTypedHandler(Block clear, Block dyed, IProperty<DyeColor> colourProp) {
+    private static void registerDoubleTypedHandler(Block clear, Block dyed, Property<DyeColor> colourProp) {
         ICustomPaintHandler handler = createDoubleTypedPainter(clear, dyed, colourProp);
         CustomPaintHelper.INSTANCE.registerHandler(clear, handler);
         CustomPaintHelper.INSTANCE.registerHandler(dyed, handler);
     }
 
-    public static ICustomPaintHandler createDoubleTypedPainter(Block clear, Block dyed, IProperty<DyeColor> colourProp) {
+    public static ICustomPaintHandler createDoubleTypedPainter(Block clear, Block dyed, Property<DyeColor> colourProp) {
         return (world, pos, state, hitPos, hitSide, to) -> {
             if (state.getBlock() == clear) {
                 // We are currently clear

@@ -17,7 +17,7 @@ import net.minecraft.util.math.Direction.Axis;
 import buildcraft.lib.misc.data.AxisOrder.Inversion;
 
 // Forge→Fabric migration notes (R.Chen):
-//   net.minecraft.util.EnumFacing.Axis → net.minecraft.util.math.Direction.Axis
+//   net.minecraft.util.Direction.Axis → net.minecraft.util.math.Direction.Axis
 public enum EnumAxisOrder {
     XYZ(Axis.X, Axis.Y, Axis.Z),
     XZY(Axis.X, Axis.Z, Axis.Y),

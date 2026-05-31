@@ -12,7 +12,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -52,7 +52,7 @@ public class OreStackFilter implements IStackFilter {
     }
 
     @Override
-    public NonNullList<ItemStack> getExamples() {
+    public DefaultedList<ItemStack> getExamples() {
         return Arrays.stream(ores).map(OreDictionary::getOres).flatMap(Collection::stream).distinct().collect(StackUtil.nonNullListCollector());
     }
 

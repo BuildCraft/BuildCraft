@@ -7,7 +7,7 @@
 package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -29,7 +29,7 @@ public class ArrayFluidFilter implements IFluidFilter {
         fluids = iFluids;
     }
 
-    public ArrayFluidFilter(NonNullList<ItemStack> stacks) {
+    public ArrayFluidFilter(DefaultedList<ItemStack> stacks) {
         fluids = new FluidStack[stacks.size()];
 
         for (int i = 0; i < stacks.size(); ++i) {

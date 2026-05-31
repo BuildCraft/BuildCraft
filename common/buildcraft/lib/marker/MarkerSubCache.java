@@ -20,12 +20,12 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
@@ -46,12 +46,12 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     private final Map<BlockPos, Optional<TileMarker<C>>> tileCache = new ConcurrentHashMap<>();
 
     public MarkerSubCache(World world, int cacheId) {
-        this.isServer = !world.isRemote;
+        this.isServer = !world.isClient;
         this.dimensionId = world.provider.getDimension();
         this.cacheId = cacheId;
     }
 
-    public void onPlayerJoinWorld(EntityPlayerMP player) {
+    public void onPlayerJoinWorld(ServerPlayerEntity player) {
         if (isServer) {// Sanity Check
             // Send ALL loaded markers
             if (!tileCache.isEmpty()) {
@@ -290,10 +290,10 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
 
     public abstract ImmutableList<BlockPos> getValidConnections(BlockPos from);
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public abstract LaserType getPossibleLaserType();
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public final void handleMessageMain(MessageMarker message) {
         if (handleMessage(message)) {
             return;
@@ -314,6 +314,6 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     protected abstract boolean handleMessage(MessageMarker message);
 }

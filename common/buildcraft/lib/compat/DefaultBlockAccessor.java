@@ -27,7 +27,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     public BlockEntity getTile(World world, BlockPos pos, boolean force) {
         if (direct | force) {
             if (force || world.isBlockLoaded(pos)) {
-                return world.getTileEntity(pos);
+                return world.getBlockEntity(pos);
             }
             return null;
         } else {
@@ -35,7 +35,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
             if (chunk == null) {
                 return null;
             }
-            return chunk.getTileEntity(pos, force ? EnumCreateEntityType.IMMEDIATE : EnumCreateEntityType.CHECK);
+            return chunk.getBlockEntity(pos, force ? EnumCreateEntityType.IMMEDIATE : EnumCreateEntityType.CHECK);
         }
     }
 

@@ -8,7 +8,7 @@ package buildcraft.factory.client.render;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 

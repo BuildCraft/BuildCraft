@@ -9,10 +9,10 @@ package buildcraft.builders.snapshot.pattern.parameter;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -37,7 +37,7 @@ public enum PatternParameterYDir implements IStatementParameter {
         this.up = up;
     }
 
-    public static PatternParameterYDir readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterYDir readFromNbt(NbtCompound nbt) {
         if (nbt.getBoolean("up")) {
             return UP;
         }
@@ -45,8 +45,8 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setBoolean("up", up);
+    public void writeToNbt(NbtCompound nbt) {
+        nbt.putBoolean("up", up);
     }
 
     @Override
@@ -87,7 +87,7 @@ public enum PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
         return up ? BCBuildersSprites.PARAM_STAIRS_UP : BCBuildersSprites.PARAM_STAIRS_DOWN;
     }

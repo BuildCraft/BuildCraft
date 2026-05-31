@@ -1,7 +1,7 @@
 package buildcraft.lib.compat;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -10,11 +10,11 @@ import net.minecraftforge.fml.common.Loader;
 public class CompatManager {
     public static final ISoftBlockAccessor blockAccessor;
 
-    public static TileEntity getTile(World world, BlockPos pos, boolean force) {
+    public static BlockEntity getTile(World world, BlockPos pos, boolean force) {
         return blockAccessor.getTile(world, pos, force);
     }
 
-    public static IBlockState getState(World world, BlockPos pos, boolean force) {
+    public static BlockState getState(World world, BlockPos pos, boolean force) {
         return blockAccessor.getState(world, pos, force);
     }
 

@@ -18,16 +18,16 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.client.render.RenderLayer;
 
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.animation.FastTESR;
@@ -68,13 +68,13 @@ public class RenderUtil {
 
     public static void registerBlockColour(@Nullable Block block, IBlockColor colour) {
         if (block != null) {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(colour, block);
+            MinecraftClient.getInstance().getBlockColors().registerBlockColorHandler(colour, block);
         }
     }
 
     public static void registerItemColour(@Nullable Item item, IItemColor colour) {
         if (item != null) {
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(colour, item);
+            MinecraftClient.getInstance().getItemColors().registerItemColorHandler(colour, item);
         }
     }
 
@@ -84,7 +84,7 @@ public class RenderUtil {
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
 
-        GlStateManager.color(red, green, blue);
+        RenderSystem.setShaderColor(red, green, blue);
     }
 
     /** Takes ARGB */
@@ -94,7 +94,7 @@ public class RenderUtil {
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
 
-        GlStateManager.color(red, green, blue, alpha);
+        RenderSystem.setShaderColor(red, green, blue, alpha);
     }
 
     public static int swapARGBforABGR(int argb) {
@@ -106,14 +106,14 @@ public class RenderUtil {
     }
 
     public static boolean isRenderingTranslucent() {
-        return MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.TRANSLUCENT
+        return MinecraftForgeClient.getRenderLayer() == RenderLayer.TRANSLUCENT
             || MinecraftForgeClient.getRenderPass() == 1;
     }
 
     /** @return true if this thread is the main minecraft thread, used for all client side game logic and (by default)
      *         tile entity rendering. */
     public static boolean isMainRenderThread() {
-        return Minecraft.getMinecraft().isCallingFromMinecraftThread();
+        return MinecraftClient.getInstance().isCallingFromMinecraftThread();
     }
 
     /** @return The first unused {@link Tessellator} for the current thread that uses the given vertex format. (Unused =

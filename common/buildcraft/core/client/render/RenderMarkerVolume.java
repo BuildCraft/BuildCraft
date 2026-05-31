@@ -8,9 +8,9 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.RenderHelper;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
@@ -44,13 +44,13 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
     public void render(TileMarkerVolume marker, double tileX, double tileY, double tileZ, float partialTicks, int destroyStage, float alpha) {
         if (marker == null || !marker.isShowingSignals()) return;
 
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("marker");
-        Minecraft.getMinecraft().mcProfiler.startSection("volume");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("marker");
+        MinecraftClient.getInstance().getProfiler().push("volume");
 
-        DetachedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().player, partialTicks);
+        DetachedRenderer.fromWorldOriginPre(MinecraftClient.getInstance().player, partialTicks);
         RenderHelper.disableStandardItemLighting();
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        MinecraftClient.getInstance().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         VolumeConnection volume = marker.getCurrentConnection();
         Set<Axis> taken = volume == null ? ImmutableSet.of() : volume.getConnectedAxis();
@@ -67,9 +67,9 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         RenderHelper.enableStandardItemLighting();
         DetachedRenderer.fromWorldOriginPost();
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
     private static void renderLaser(Vec3d min, Vec3d max, Axis axis) {

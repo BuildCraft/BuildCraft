@@ -35,7 +35,7 @@ import buildcraft.transport.pipe.PluggableHolder;
  * STUB(R.Chen): Expression model system (FunctionContext, ContextInfo, ModelVariableData,
  * NodeVariable*, BooleanPossibilities) is not in libLeaf — all model code removed.
  * STUB(R.Chen): BCSiliconItems, BCSiliconGuis, ItemGateCopier, AdvancementUtil deferred.
- * STUB(R.Chen): AxisAlignedBB → Box (net.minecraft.util.math.Box); direction-specific BOXES array
+ * STUB(R.Chen): Box → Box (net.minecraft.util.math.Box); direction-specific BOXES array
  * deferred until BlockEntity/rendering phase.
  */
 public class PluggableGate extends PipePluggable implements IWireEmitter {

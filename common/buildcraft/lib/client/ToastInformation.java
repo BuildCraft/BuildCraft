@@ -2,7 +2,7 @@ package buildcraft.lib.client;
 
 import net.minecraft.client.gui.toasts.GuiToast;
 import net.minecraft.client.gui.toasts.IToast;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import buildcraft.lib.gui.ISimpleDrawable;
 import buildcraft.lib.misc.LocaleUtil;
@@ -26,7 +26,7 @@ public class ToastInformation implements IToast {
     @Override
     public Visibility draw(GuiToast toastGui, long delta) {
         toastGui.getMinecraft().getTextureManager().bindTexture(TEXTURE_TOASTS);
-        GlStateManager.color(1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F);
         toastGui.drawTexturedModalRect(0, 0, 0, 0, 160, 32);
         int x = 10;
         if (icon != null) {

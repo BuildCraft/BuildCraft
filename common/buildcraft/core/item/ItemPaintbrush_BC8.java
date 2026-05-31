@@ -9,24 +9,24 @@ import javax.annotation.Nonnull;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.blocks.CustomPaintHelper;
 
@@ -49,24 +49,24 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> subItems) {
         for (int i = 0; i < 17; i++) {
             subItems.add(new ItemStack(this, 1, i));
         }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    @Environment(EnvType.CLIENT)
+    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
         addVariant(variants, 0, "clean");
-        for (EnumDyeColor colour : EnumDyeColor.values()) {
+        for (DyeColor colour : DyeColor.values()) {
             addVariant(variants, colour.getMetadata() + 1, colour.getName());
         }
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = StackUtil.asNonNull(player.getHeldItem(hand));
+    public ActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = StackUtil.asNonNull(player.getStackInHand(hand));
         Brush brush = new Brush(stack);
         Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
         if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing, player)) {
@@ -76,9 +76,9 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             }
             // We just changed the damage NBT value
             player.inventoryContainer.detectAndSendChanges();
-            return EnumActionResult.SUCCESS;
+            return ActionResult.SUCCESS;
         }
-        return EnumActionResult.FAIL;
+        return ActionResult.FAIL;
     }
 
     public Brush getBrushFromStack(ItemStack stack) {
@@ -96,8 +96,8 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public FontRenderer getFontRenderer(ItemStack stack) {
+    @Environment(EnvType.CLIENT)
+    public TextRenderer getFontRenderer(ItemStack stack) {
         return SpecialColourFontRenderer.INSTANCE;
     }
 
@@ -136,10 +136,10 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
 
     /** Delegate class for handling */
     public class Brush {
-        public EnumDyeColor colour;
+        public DyeColor colour;
         public int usesLeft;
 
-        public Brush(EnumDyeColor colour) {
+        public Brush(DyeColor colour) {
             this.colour = colour;
             usesLeft = MAX_USES;
         }
@@ -147,8 +147,8 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         public Brush(ItemStack stack) {
             int meta = stack.getMetadata();
             if (meta > 0 && meta <= 16) {
-                colour = EnumDyeColor.byMetadata(meta - 1);
-                NBTTagCompound nbt = stack.getTagCompound();
+                colour = DyeColor.byMetadata(meta - 1);
+                NbtCompound nbt = stack.getTagCompound();
                 if (nbt == null) {
                     usesLeft = MAX_USES;
                 } else {
@@ -171,12 +171,12 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
                 stack = new ItemStack(ItemPaintbrush_BC8.this, 1, getMeta());
             }
             if (usesLeft != MAX_USES && colour != null) {
-                NBTTagCompound nbt = stack.getTagCompound();
+                NbtCompound nbt = stack.getTagCompound();
                 if (nbt == null) {
-                    nbt = new NBTTagCompound();
+                    nbt = new NbtCompound();
                     stack.setTagCompound(nbt);
                 }
-                nbt.setByte(DAMAGE, (byte) (MAX_USES - usesLeft));
+                nbt.putByte(DAMAGE, (byte) (MAX_USES - usesLeft));
             }
             return stack == existing ? StackUtil.EMPTY : stack;
         }
@@ -185,14 +185,14 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             return (usesLeft <= 0 || colour == null) ? 0 : colour.getMetadata() + 1;
         }
 
-        public boolean useOnBlock(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing side, EntityPlayer player) {
+        public boolean useOnBlock(World world, BlockPos pos, BlockState state, Vec3d hitPos, Direction side, PlayerEntity player) {
             if (colour != null && usesLeft <= 0) {
                 return false;
             }
 
-            EnumActionResult result = CustomPaintHelper.INSTANCE.attemptPaintBlock(world, pos, state, hitPos, side, colour);
+            ActionResult result = CustomPaintHelper.INSTANCE.attemptPaintBlock(world, pos, state, hitPos, side, colour);
 
-            if (result == EnumActionResult.SUCCESS) {
+            if (result == ActionResult.SUCCESS) {
                 ParticleUtil.showChangeColour(world, hitPos, colour);
                 SoundUtil.playChangeColour(world, pos, colour);
 

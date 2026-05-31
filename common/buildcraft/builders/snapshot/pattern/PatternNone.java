@@ -1,7 +1,7 @@
 package buildcraft.builders.snapshot.pattern;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
@@ -17,7 +17,7 @@ public class PatternNone extends Pattern implements IFillerPatternShape {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public SpriteHolder getSprite() {
         return BCBuildersSprites.FILLER_NONE;
     }

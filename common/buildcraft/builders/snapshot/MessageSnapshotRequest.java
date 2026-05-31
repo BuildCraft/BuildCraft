@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -36,7 +36,7 @@ public class MessageSnapshotRequest implements IMessage {
     }
 
     public static final IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> HANDLER = (message, ctx) -> {
-        Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshot(message.key);
+        Snapshot snapshot = GlobalSavedDataSnapshots.get(EnvType.SERVER).getSnapshot(message.key);
         return snapshot != null ? new MessageSnapshotResponse(snapshot) : null;
     };
 }

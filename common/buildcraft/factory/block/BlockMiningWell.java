@@ -6,7 +6,7 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.World;
 

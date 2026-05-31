@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
-// STUB(R.Chen): the Forge FakePlayer machinery (IFakePlayerProvider / FakePlayerBC / WorldServer) is
+// STUB(R.Chen): the Forge FakePlayer machinery (IFakePlayerProvider / FakePlayerBC / ServerWorld) is
 // deferred until a Fabric fake-player implementation lands. Only NULL_PROFILE — the default owner
 // GameProfile used by TileBC_Neptune — is retained here.
 public enum FakePlayerProvider {

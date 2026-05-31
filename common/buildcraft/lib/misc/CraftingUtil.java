@@ -9,7 +9,7 @@ package buildcraft.lib.misc;
 import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;

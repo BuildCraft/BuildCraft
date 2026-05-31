@@ -27,7 +27,7 @@ import net.minecraft.init.Bootstrap;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.profiler.Profiler;
 
 import buildcraft.api.data.NbtSquishConstants;
@@ -58,8 +58,8 @@ class NbtSquishMapWriter {
     }
 
     private void write(DataOutput to) throws IOException {
-        profiler.startSection("write");
-        profiler.startSection("flags");
+        profiler.push("write");
+        profiler.push("flags");
         WrittenType type = map.getWrittenType();
 
         type.writeType(to);
@@ -90,7 +90,7 @@ class NbtSquishMapWriter {
         if (debug) log("\nUsed flags = " + Integer.toBinaryString(flags));
         to.writeInt(flags);
 
-        profiler.endStartSection("bytes");
+        profiler.swap("bytes");
         if (!bytes.isEmpty()) {
             if (debug) log("\nByte dictionary size = " + bytes.size());
             if (sort) bytes.sort();
@@ -99,7 +99,7 @@ class NbtSquishMapWriter {
                 to.writeByte(b);
             }
         }
-        profiler.endStartSection("shorts");
+        profiler.swap("shorts");
         if (!shorts.isEmpty()) {
             if (debug) log("\nShort dictionary size = " + shorts.size());
             if (sort) shorts.sort();
@@ -108,7 +108,7 @@ class NbtSquishMapWriter {
                 to.writeShort(s);
             }
         }
-        profiler.endStartSection("integers");
+        profiler.swap("integers");
         if (!ints.isEmpty()) {
             if (debug) log("\nInt dictionary size = " + ints.size());
             if (sort) ints.sort();
@@ -117,7 +117,7 @@ class NbtSquishMapWriter {
                 to.writeInt(i);
             }
         }
-        profiler.endStartSection("longs");
+        profiler.swap("longs");
         if (!longs.isEmpty()) {
             if (debug) log("\nLong dictionary size = " + longs.size());
             if (sort) longs.sort();
@@ -126,7 +126,7 @@ class NbtSquishMapWriter {
                 to.writeLong(l);
             }
         }
-        profiler.endStartSection("floats");
+        profiler.swap("floats");
         if (!floats.isEmpty()) {
             if (debug) log("\nFloat dictionary size = " + floats.size());
             if (sort) floats.sort();
@@ -135,7 +135,7 @@ class NbtSquishMapWriter {
                 to.writeFloat(f);
             }
         }
-        profiler.endStartSection("doubles");
+        profiler.swap("doubles");
         if (!doubles.isEmpty()) {
             if (debug) log("\nDouble dictionary size = " + doubles.size());
             if (sort) doubles.sort();
@@ -144,7 +144,7 @@ class NbtSquishMapWriter {
                 to.writeDouble(d);
             }
         }
-        profiler.endStartSection("byte_arrays");
+        profiler.swap("byte_arrays");
         if (!byteArrays.isEmpty()) {
             if (debug) log("\nByte Array dictionary size = " + byteArrays.size());
             writeVarInt(to, byteArrays.size());
@@ -155,7 +155,7 @@ class NbtSquishMapWriter {
                 }
             }
         }
-        profiler.endStartSection("int_arrays");
+        profiler.swap("int_arrays");
         if (!intArrays.isEmpty()) {
             if (debug) log("\nInt Array dictionary size = " + intArrays.size());
             writeVarInt(to, intArrays.size());
@@ -166,7 +166,7 @@ class NbtSquishMapWriter {
                 }
             }
         }
-        profiler.endStartSection("strings");
+        profiler.swap("strings");
         if (!strings.isEmpty()) {
             if (debug) log("\nString dictionary size = " + strings.size());
             if (sort) Collections.sort(strings);
@@ -179,7 +179,7 @@ class NbtSquishMapWriter {
                 to.write(stringBytes);
             }
         }
-        profiler.endStartSection("complex");
+        profiler.swap("complex");
         if (!complex.isEmpty()) {
             if (debug) log("\nComplex dictionary size = " + complex.size());
             writeVarInt(to, complex.size());
@@ -193,11 +193,11 @@ class NbtSquishMapWriter {
                 }
             }
         }
-        profiler.endSection();
-        profiler.endSection();
+        profiler.pop();
+        profiler.pop();
     }
 
-    /** Similar to {@link PacketBuffer#writeVarInt(int)} */
+    /** Similar to {@link PacketByteBuf#writeVarInt(int)} */
     private static void writeVarInt(DataOutput to, int input) throws IOException {
         while ((input & -128) != 0) {
             to.writeByte((input & 0x7f) | 0x80);
@@ -218,77 +218,77 @@ class NbtSquishMapWriter {
 
     private boolean shouldPackList(NbtList list) {
         if (packList != null) return packList;
-        profiler.startSection("should_pack");
+        profiler.push("should_pack");
         TIntHashSet indexes = new TIntHashSet();
         for (int i = 0; i < list.tagCount(); i++) {
             indexes.add(map.indexOfTag(list.get(i)));
         }
-        profiler.endSection();
+        profiler.pop();
         return indexes.size() * 2 < list.tagCount();
     }
 
     private void writeCompound(WrittenType type, NbtCompound compound, DataOutput to) throws IOException {
-        profiler.startSection("compound");
+        profiler.push("compound");
         WrittenType stringType = WrittenType.getForSize(map.strings.size());
         if (debug) log("\n  Compound tag count = " + compound.getSize());
         to.writeByte(NbtSquishConstants.COMPLEX_COMPOUND);
         writeVarInt(to, compound.getSize());
         for (String key : compound.getKeySet()) {
-            profiler.startSection("entry");
-            NbtElement nbt = compound.getTag(key);
-            profiler.startSection("index_value");
+            profiler.push("entry");
+            NbtElement nbt = compound.get(key);
+            profiler.push("index_value");
             int index = map.indexOfTag(nbt);
-            profiler.endSection();
+            profiler.pop();
             if (debug) log("\n             \"" + key + "\" -> " + index + " (" + safeToString(nbt) + ")");
-            profiler.startSection("index_key");
+            profiler.push("index_key");
             stringType.writeIndex(to, map.strings.indexOf(key));
-            profiler.endSection();
+            profiler.pop();
             type.writeIndex(to, index);
-            profiler.endSection();
+            profiler.pop();
         }
-        profiler.endSection();
+        profiler.pop();
     }
 
     private void writeListNormal(WrittenType type, DataOutput to, NbtList list) throws IOException {
-        profiler.startSection("list_normal");
+        profiler.push("list_normal");
         to.writeByte(NbtSquishConstants.COMPLEX_LIST);
         writeVarInt(to, list.tagCount());
         for (int i = 0; i < list.tagCount(); i++) {
-            profiler.startSection("entry");
+            profiler.push("entry");
             if (i % 100 == 0) {
                 if (debug) log("\n   List items " + i + " to " + Math.min(i + 99, list.tagCount()));
             }
-            profiler.startSection("index");
+            profiler.push("index");
             int index = map.indexOfTag(list.get(i));
-            profiler.endSection();
+            profiler.pop();
             type.writeIndex(to, index);
-            profiler.endSection();
+            profiler.pop();
         }
-        profiler.endSection();
+        profiler.pop();
     }
 
     private void writeListPacked(WrittenType type, DataOutput to, NbtList list) throws IOException {
-        profiler.startSection("list_packed");
+        profiler.push("list_packed");
         to.writeByte(NbtSquishConstants.COMPLEX_LIST_PACKED);
-        profiler.startSection("header");
-        profiler.startSection("init");
+        profiler.push("header");
+        profiler.push("init");
         int[] data = new int[list.tagCount()];
         TIntIntHashMap indexes = new TIntIntHashMap();
         for (int i = 0; i < list.tagCount(); i++) {
-            profiler.startSection("entry");
-            profiler.startSection("index");
+            profiler.push("entry");
+            profiler.push("index");
             int index = map.indexOfTag(list.get(i));
-            profiler.endSection();
+            profiler.pop();
             data[i] = index;
             if (!indexes.increment(index)) {
                 indexes.put(index, 1);
             }
-            profiler.endSection();
+            profiler.pop();
         }
         // First try to make a simple table
 
         // First sort the indexes into highest count first
-        profiler.endStartSection("sort");
+        profiler.swap("sort");
         List<IndexEntry> entries = new ArrayList<>();
         for (int index : indexes.keys()) {
             int count = indexes.get(index);
@@ -298,7 +298,7 @@ class NbtSquishMapWriter {
         entries.sort(Comparator.reverseOrder());
         if (debug) log("\n " + entries.size() + " List entries");
         writeVarInt(to, entries.size());
-        profiler.endStartSection("write");
+        profiler.swap("write");
 
         TIntArrayList sortedIndexes = new TIntArrayList();
         int i = 0;
@@ -317,44 +317,44 @@ class NbtSquishMapWriter {
         TIntArrayList nextData = new TIntArrayList();
         nextData.add(data);
         writeVarInt(to, data.length);
-        profiler.endSection();
-        profiler.endStartSection("contents");
+        profiler.pop();
+        profiler.swap("contents");
         for (int b = 1; !nextData.isEmpty(); b++) {
-            profiler.startSection("entry");
+            profiler.push("entry");
             CompactingBitSet bitset = new CompactingBitSet(b);
             bitset.ensureCapacityValues(nextData.size());
             TIntArrayList nextNextData = new TIntArrayList();
             int maxVal = (1 << b) - 1;
-            profiler.startSection("iter");
+            profiler.push("iter");
             for (int d : nextData.toArray()) {
-                // profiler.startSection("entry");
-                // profiler.startSection("index");
+                // profiler.push("entry");
+                // profiler.push("index");
                 int index = sortedIndexes.indexOf(d);
-                // profiler.endSection();
+                // profiler.pop();
                 if (index < maxVal) {
-                    // profiler.startSection("bitset_append");
+                    // profiler.push("bitset_append");
                     bitset.append(index);
-                    // profiler.endSection();
+                    // profiler.pop();
                 } else {
-                    // profiler.startSection("bitset_append");
+                    // profiler.push("bitset_append");
                     bitset.append(maxVal);
-                    // profiler.endStartSection("next_add");
+                    // profiler.swap("next_add");
                     nextNextData.add(d);
-                    // profiler.endSection();
+                    // profiler.pop();
                 }
-                // profiler.endSection();
+                // profiler.pop();
             }
-            profiler.endSection();
+            profiler.pop();
             sortedIndexes.remove(0, Math.min(sortedIndexes.size(), maxVal));
             byte[] bitsetBytes = bitset.getBytes();
             if (debug) log("\n List bitset #" + (bitset.bits - 1));
             writeVarInt(to, bitsetBytes.length);
             to.write(bitsetBytes);
             nextData = nextNextData;
-            profiler.endSection();
+            profiler.pop();
         }
-        profiler.endSection();
-        profiler.endSection();
+        profiler.pop();
+        profiler.pop();
     }
 
     public static String safeToString(NbtElement base) {

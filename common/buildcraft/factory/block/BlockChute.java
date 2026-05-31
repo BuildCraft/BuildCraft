@@ -9,8 +9,8 @@ package buildcraft.factory.block;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -29,7 +29,7 @@ import buildcraft.factory.BCFactoryGuis;
 import buildcraft.factory.tile.TileChute;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final Map<Direction, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
+    public static final Map<Direction, Property<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
     public BlockChute(Material material, String id) {
         super(material, id);
@@ -43,7 +43,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCFactoryGuis.CHUTE.openGUI(player, pos);
         }
         return true;
@@ -60,7 +60,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(CONNECTED_MAP.values());
     }

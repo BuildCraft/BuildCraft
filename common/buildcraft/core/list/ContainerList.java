@@ -10,11 +10,11 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
@@ -62,7 +62,7 @@ public class ContainerList extends ContainerBC_Neptune {
         }
     }
 
-    public ContainerList(EntityPlayer iPlayer) {
+    public ContainerList(PlayerEntity iPlayer) {
         super(iPlayer);
 
         lines = ListHandler.getLines(getListItemStack());
@@ -80,18 +80,18 @@ public class ContainerList extends ContainerBC_Neptune {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    public boolean canInteractWith(PlayerEntity player) {
         return !getListItemStack().isEmpty();
     }
 
     @Nonnull
     public ItemStack getListItemStack() {
-        ItemStack toTry = player.getHeldItemMainhand();
+        ItemStack toTry = player.getMainHandStack();
         if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
 
-        toTry = player.getHeldItemOffhand();
+        toTry = player.getOffHandStack();
         if (!toTry.isEmpty() && toTry.getItem() instanceof ItemList_BC8) {
             return toTry;
         }
@@ -106,7 +106,7 @@ public class ContainerList extends ContainerBC_Neptune {
     public void switchButton(final int lineIndex, final int button) {
         lines[lineIndex].toggleOption(button);
 
-        if (player.world.isRemote) {
+        if (player.world.isClient) {
             sendMessage(ID_BUTTON, (buffer) -> {
                 buffer.writeByte(lineIndex);
                 buffer.writeByte(button);
@@ -127,7 +127,7 @@ public class ContainerList extends ContainerBC_Neptune {
     public void setLabel(final String text) {
         BCCoreItems.list.setName(getListItemStack(), text);
 
-        if (player.world.isRemote) {
+        if (player.world.isClient) {
             sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));
         }
     }
@@ -135,7 +135,7 @@ public class ContainerList extends ContainerBC_Neptune {
     @Override
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+        if (side == EnvType.SERVER) {
             if (id == ID_BUTTON) {
                 int lineIndex = buffer.readUnsignedByte();
                 int button = buffer.readUnsignedByte();

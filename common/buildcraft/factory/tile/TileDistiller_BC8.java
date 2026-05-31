@@ -39,8 +39,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 //   BCCoreConfig.networkUpdateRate → STUB inline constant
 //   ElementHelpInfo            → STUB (lib.gui.help not fully wired for Tank)
 //   CapUtil.CAP_FLUIDS/TilesAPI.CAP_HAS_WORK → STUB (Phase 4F)
-//   NBTTagCompound             → NbtCompound
-//   EnumFacing                 → Direction
+//   NbtCompound             → NbtCompound
+//   Direction                 → Direction
 //   Side                       → NetSide
 public class TileDistiller_BC8 extends TileBC_Neptune implements IDebuggable {
 

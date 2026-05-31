@@ -8,21 +8,21 @@ package buildcraft.lib.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.entity.EntityPlayerSP;
 
 public abstract class HudRenderer {
-    protected abstract void renderImpl(Minecraft mc, EntityPlayerSP player);
+    protected abstract void renderImpl(MinecraftClient mc, EntityPlayerSP player);
 
-    protected abstract boolean shouldRender(Minecraft mc, EntityPlayerSP player);
+    protected abstract boolean shouldRender(MinecraftClient mc, EntityPlayerSP player);
 
     protected void setupTransforms() {}
 
-    public static void moveToHeldStack(Minecraft mc, int slot) {
+    public static void moveToHeldStack(MinecraftClient mc, int slot) {
 
     }
 
-    public final void render(Minecraft mc, EntityPlayerSP player) {
+    public final void render(MinecraftClient mc, EntityPlayerSP player) {
         if (shouldRender(mc, player)) {
             GL11.glPushMatrix();
             setupTransforms();

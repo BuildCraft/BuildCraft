@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import net.minecraft.item.Item;
-// Yarn 1.20.1: net.minecraft.util.ResourceLocation → net.minecraft.util.Identifier
+// Yarn 1.20.1: net.minecraft.util.Identifier → net.minecraft.util.Identifier
 import net.minecraft.util.Identifier;
 // Forge ForgeRegistries.ITEMS → vanilla Registries.ITEM
 import net.minecraft.registry.Registries;

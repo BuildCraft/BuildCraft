@@ -8,7 +8,7 @@ package buildcraft.core.item;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IEngineType;
@@ -32,7 +32,7 @@ public class ItemEngine_BC8<E extends Enum<E> & IEngineType> extends ItemBlockBC
     }
 
     @Override
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
         for (E type : engineBlock.getEngineProperty().getAllowedValues()) {
             int index = type.ordinal();
             addVariant(variants, index, type.getItemModelLocation());

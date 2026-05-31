@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.fml.common.Loader;
 
@@ -81,7 +81,7 @@ public class SimpleScript {
             if (json == null) {
                 json = script.loadJson(name);
             }
-            ResourceLocation id = new ResourceLocation(script.domain, name);
+            Identifier id = new Identifier(script.domain, name);
             return ImmutableList.of(new ScriptActionAdd(id, json));
         });
         functions.put("remove", script -> {
@@ -107,7 +107,7 @@ public class SimpleScript {
             if (json == null) {
                 json = script.loadJson(toAdd);
             }
-            ResourceLocation id = new ResourceLocation(script.domain, toAdd);
+            Identifier id = new Identifier(script.domain, toAdd);
             return ImmutableList.of(new ScriptActionReplace(toRemove, id, json, false));
         });
         functions.put("modify", script -> {
@@ -125,7 +125,7 @@ public class SimpleScript {
             if (json == null) {
                 json = script.loadJson(toAdd);
             }
-            ResourceLocation id = new ResourceLocation(script.domain, toAdd);
+            Identifier id = new Identifier(script.domain, toAdd);
             return ImmutableList.of(new ScriptActionReplace(toRemove, id, json, true));
         });
     }
@@ -997,18 +997,18 @@ public class SimpleScript {
     }
 
     public static class ScriptActionRemove extends ScriptAction {
-        public final ResourceLocation name;
+        public final Identifier name;
 
         public ScriptActionRemove(String name) {
-            this.name = new ResourceLocation(name);
+            this.name = new Identifier(name);
         }
     }
 
     public static class ScriptActionAdd extends ScriptAction {
-        public final ResourceLocation name;
+        public final Identifier name;
         public final JsonObject json;
 
-        public ScriptActionAdd(ResourceLocation name, JsonObject json) {
+        public ScriptActionAdd(Identifier name, JsonObject json) {
             this.name = name;
             this.json = json;
         }
@@ -1020,12 +1020,12 @@ public class SimpleScript {
     }
 
     public static class ScriptActionReplace extends ScriptAction {
-        public final ResourceLocation toReplace, name;
+        public final Identifier toReplace, name;
         public final boolean inheritTags;
         public final JsonObject json;
 
-        public ScriptActionReplace(String toReplace, ResourceLocation name, JsonObject json, boolean inheritTags) {
-            this.toReplace = new ResourceLocation(toReplace);
+        public ScriptActionReplace(String toReplace, Identifier name, JsonObject json, boolean inheritTags) {
+            this.toReplace = new Identifier(toReplace);
             this.name = name;
             this.json = json;
             this.inheritTags = inheritTags;

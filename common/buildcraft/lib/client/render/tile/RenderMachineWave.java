@@ -6,22 +6,22 @@
 
 package buildcraft.lib.client.render.tile;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.MutableVertex;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RenderMachineWave {
     private static final double SIZE = 1 / 16.0;
 
     public final MutableVertex centerStart = new MutableVertex();
     public double height = 4 / 16.0;
     public int length = 6;
-    public EnumFacing direction = EnumFacing.NORTH;
+    public Direction direction = Direction.NORTH;
 
     public RenderMachineWave() {
         // TODO Auto-generated constructor stub

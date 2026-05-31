@@ -4,15 +4,15 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
@@ -38,8 +38,8 @@ public abstract class BCFactoryProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+    public Object getServerGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
+        BlockEntity tile = world.getBlockEntity(new BlockPos(x, y, z));
         if (ID == BCFactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
             if (tile instanceof TileAutoWorkbenchItems) {
                 TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;
@@ -66,7 +66,7 @@ public abstract class BCFactoryProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
         return null;
     }
 
@@ -80,16 +80,16 @@ public abstract class BCFactoryProxy implements IGuiHandler {
     }
 
     @SuppressWarnings("unused")
-    @SideOnly(Side.SERVER)
+    @Environment(EnvType.SERVER)
     public static class ServerProxy extends BCFactoryProxy {
     }
 
     @SuppressWarnings("unused")
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class ClientProxy extends BCFactoryProxy {
         @Override
-        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-            TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+        public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
+            BlockEntity tile = world.getBlockEntity(new BlockPos(x, y, z));
             if (ID == BCFactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
                 if (tile instanceof TileAutoWorkbenchItems) {
                     TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;

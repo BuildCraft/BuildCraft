@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibConfig;
@@ -50,7 +50,7 @@ public class GuidePageContents extends GuidePageBase {
     public GuidePageContents(GuiGuide gui) {
         super(gui);
         loadMainGui();
-        FontRenderer fr = new ConfigurableFontRenderer(gui.mc.fontRenderer).disableShadow();
+        TextRenderer fr = new ConfigurableFontRenderer(gui.mc.fontRenderer).disableShadow();
         searchText = new GuiTextField(0, fr, 0, 0, 80, fr.FONT_HEIGHT + 5);
         searchText.setEnableBackgroundDrawing(false);
         searchText.setTextColor(0xFF_00_00_00);
@@ -159,7 +159,7 @@ public class GuidePageContents extends GuidePageBase {
             int _y = y + (height - _height) / 2;
 
             if (gui.bookData.loadedMods.size() > 0) {
-                drawCenteredText(TextFormatting.BOLD + "Loaded Mods:", x, _y, width);
+                drawCenteredText(Formatting.BOLD + "Loaded Mods:", x, _y, width);
                 _y += perLineHeight;
                 for (String text : gui.bookData.loadedMods) {
                     drawCenteredText(text, x, _y, width);
@@ -167,7 +167,7 @@ public class GuidePageContents extends GuidePageBase {
                 }
             }
             if (gui.bookData.loadedOther.size() > 0) {
-                drawCenteredText(TextFormatting.BOLD + "Loaded Resource Packs:", x, _y, width);
+                drawCenteredText(Formatting.BOLD + "Loaded Resource Packs:", x, _y, width);
                 _y += perLineHeight;
                 for (String text : gui.bookData.loadedOther) {
                     drawCenteredText(text, x, _y, width);

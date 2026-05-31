@@ -31,13 +31,13 @@ import buildcraft.lib.tile.TileBC_Neptune;
 //   ITickable.update()         → tick() + static ticker()
 //   Tank/FluidSmoother/Fluid   → STUB (Transfer-API, Phase 4E)
 //   IRefineryRecipeManager     → STUB (api.recipes not in libLeaf)
-//   EnumFacing                 → Direction
-//   NBTTagCompound             → NbtCompound
+//   Direction                 → Direction
+//   NbtCompound             → NbtCompound
 //   Side                       → NetSide
 //   ICustomRotationHandler     → STUB (api.blocks not in libLeaf)
-//   EnumParticleTypes / Minecraft.getMinecraft() → STUB (@Environment client only)
+//   EnumParticleTypes / MinecraftClient.getInstance() → STUB (@Environment client only)
 //   ExchangeSection inner classes: all fluid/recipe logic STUBbed (Phase 4E)
-//   findAdjacentExchangers: EnumFacing.rotateY() → Direction helper (Phase 4E)
+//   findAdjacentExchangers: Direction.rotateY() → Direction helper (Phase 4E)
 public class TileHeatExchange extends TileBC_Neptune implements IDebuggable {
 
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchanger");

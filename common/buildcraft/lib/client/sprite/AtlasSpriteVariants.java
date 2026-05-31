@@ -14,8 +14,8 @@ import java.util.function.IntSupplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
@@ -36,7 +36,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
 
     private final List<Identifier> variantNames;
     private final IntSupplier currentIndexFunction;
-    private final TextureAtlasSprite[] variants;
+    private final Sprite[] variants;
     private int currentIndex = -1;
 
     public AtlasSpriteVariants(List<Identifier> variantNames, IntSupplier currentIndexFunction) {
@@ -45,7 +45,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
             throw new IllegalArgumentException("Not enough names!");
         }
         this.variantNames = processNames(variantNames);
-        this.variants = new TextureAtlasSprite[variantNames.size()];
+        this.variants = new Sprite[variantNames.size()];
         this.currentIndexFunction = currentIndexFunction;
     }
 
@@ -61,7 +61,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
         return builder.build();
     }
 
-    public static TextureAtlasSprite createForConfig(Identifier baseName) {
+    public static Sprite createForConfig(Identifier baseName) {
         if (baseName.getResourceDomain().startsWith("minecraft")) {
             // Vanilla sprites never have colourblind variants, so don't bother
             // This is mostly just a fix for optifine compat as this shouldn't be a problem normally.
@@ -84,8 +84,8 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
     }
 
     @Override
-    public boolean load(IResourceManager manager, Identifier location,
-        Function<Identifier, TextureAtlasSprite> textureGetter) {
+    public boolean load(ResourceManager manager, Identifier location,
+        Function<Identifier, Sprite> textureGetter) {
         for (int i = 0; i < variantNames.size(); i++) {
             Identifier loc = variantNames.get(i);
             variants[i] = loadSprite(manager, getIconName(), loc, i == 0);
@@ -101,7 +101,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
             for (int i = 0; i < variantNames.size(); i++) {
                 Identifier loc = variantNames.get(i);
                 if (ReloadUtil.getSourceTypesFor(changed, loc).contains(SourceType.FILE)) {
-                    TextureAtlasSprite s = loadSprite(getIconName(), loc, i == 0);
+                    Sprite s = loadSprite(getIconName(), loc, i == 0);
                     if (s != null) {
                         if (s.getIconWidth() == width && s.getIconHeight() == height) {
                             variants[i] = s;
@@ -117,7 +117,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
         if (currentIndex < 0 || currentIndex >= variants.length) {
             currentIndex = 0;
         }
-        TextureAtlasSprite sprite = variants[currentIndex];
+        Sprite sprite = variants[currentIndex];
         if (sprite == null) {
             sprite = variants[0];
             currentIndex = 0;

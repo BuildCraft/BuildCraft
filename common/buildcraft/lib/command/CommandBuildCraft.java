@@ -1,6 +1,6 @@
 package buildcraft.lib.command;
 
-import net.minecraft.command.ICommandSender;
+import net.minecraft.server.command.ServerCommandSource;
 
 import net.minecraftforge.server.command.CommandTreeBase;
 

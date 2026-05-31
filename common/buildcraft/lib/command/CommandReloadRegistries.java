@@ -1,8 +1,8 @@
 package buildcraft.lib.command;
 
-import net.minecraft.command.CommandBase;
+import com.mojang.brigadier.Command;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.MinecraftServer;
 
 import buildcraft.lib.script.ReloadableRegistryManager;

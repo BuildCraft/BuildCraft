@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 
 // Yarn 1.20.1 renames:
 //   WorldSavedData          → PersistentState
-//   NBTTagCompound          → NbtCompound
-//   EntityPlayer            → PlayerEntity
-//   AxisAlignedBB           → net.minecraft.util.math.Box
+//   NbtCompound          → NbtCompound
+//   PlayerEntity            → PlayerEntity
+//   Box           → net.minecraft.util.math.Box
 //   World#isRemote          → World#isClient
 //   new BlockPos(Vec3d)     → BlockPos.ofFloored(Vec3d)
 //   player.getEyePos()      replaces getPositionVector().addVector(0, getEyeHeight(), 0)

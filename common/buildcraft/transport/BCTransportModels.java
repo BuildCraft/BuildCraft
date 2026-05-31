@@ -10,7 +10,7 @@ package buildcraft.transport;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): model registration (Forge ModelLoader/ModelBakeEvent/IBakedModel) → Fabric FRAPI Phase 5.
+// STUB(R.Chen): model registration (Forge ModelLoader/ModelBakeEvent/BakedModel) → Fabric FRAPI Phase 5.
 // ModelHolderStatic/Variable, IPluggableStaticBaker fields and registerModels() restored in Phase 5.
 @Environment(EnvType.CLIENT)
 public class BCTransportModels {

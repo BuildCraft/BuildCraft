@@ -74,13 +74,13 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()              → tick() driven by {@link #ticker()} (BlockEntityTicker)
-//   IBlockState                     → BlockState
-//   EntityLivingBase                → LivingEntity
-//   EnumFacing / EnumFacing.Axis    → Direction / Direction.Axis
-//   ResourceLocation                → Identifier
-//   NBTTagCompound                  → NbtCompound; readFromNBT/writeToNBT → readNbt/writeNbt (void)
-//   WorldServer                     → ServerWorld
-//   world.isRemote                  → world.isClient
+//   BlockState                     → BlockState
+//   LivingEntity                → LivingEntity
+//   Direction / Direction.Axis    → Direction / Direction.Axis
+//   Identifier                → Identifier
+//   NbtCompound                  → NbtCompound; readFromNBT/writeToNBT → readNbt/writeNbt (void)
+//   ServerWorld                     → ServerWorld
+//   world.isClient                  → world.isClient
 //   world.isAirBlock                → world.isAir
 //   world.isOutsideBuildHeight      → world.isOutOfHeightLimit
 //   world.sendBlockBreakProgress    → world.setBlockBreakingInfo
@@ -434,7 +434,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
 
     public void tick() {
         if (drillPos == null) {
-            // STUB(R.Chen): collision boxes (AxisAlignedBB) deferred; entity-collision rendering not migrated.
+            // STUB(R.Chen): collision boxes (Box) deferred; entity-collision rendering not migrated.
         }
 
         if (world.isClient) {
@@ -597,7 +597,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
     }
 
     /** @return The (currently empty) entity-collision boxes for the drill arm.
-     *  STUB(R.Chen): collision boxes (Forge AxisAlignedBB / BoundingBoxUtil) deferred to the client/physics
+     *  STUB(R.Chen): collision boxes (Forge Box / BoundingBoxUtil) deferred to the client/physics
      *  render pass; returns an empty list so entities pass through the drill until then. */
     public List<net.minecraft.util.math.Box> getCollisionBoxes() {
         return Collections.emptyList();
@@ -698,7 +698,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetSide.SERVER) {
+        if (side == NetEnvType.SERVER) {
             if (id == NET_RENDER_DATA) {
                 frameBox.writeData(buffer);
                 miningBox.writeData(buffer);
@@ -723,7 +723,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 frameBox.readData(buffer);
                 miningBox.readData(buffer);

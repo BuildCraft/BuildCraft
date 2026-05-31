@@ -34,11 +34,11 @@ import buildcraft.lib.tile.TileBC_Neptune;
 //   Tank (lib.fluid)         → STUB (Transfer-API, Phase 4E)
 //   buildQueue/canFill/canSearch/update fluid logic → STUB (Phase 4E)
 //   FakePlayer/BuildCraftAPI.fakePlayerProvider → STUB (Phase 4E)
-//   EnumFacing               → Direction
-//   NBTTagCompound           → NbtCompound
+//   Direction               → Direction
+//   NbtCompound           → NbtCompound
 //   MessageContext           → Object
 //   Side                     → NetSide
-//   NBTPrimitive/NBTTagByteArray open-sides decode → simplified to BitSet pattern
+//   NBTPrimitive/NbtByteArray open-sides decode → simplified to BitSet pattern
 public class TileFloodGate extends TileBC_Neptune implements IDebuggable {
     private static final int[] REBUILD_DELAYS = { 16, 32, 64, 128, 256 };
 
@@ -110,7 +110,7 @@ public class TileFloodGate extends TileBC_Neptune implements IDebuggable {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetSide.SERVER && id == NET_RENDER_DATA) {
+        if (side == NetEnvType.SERVER && id == NET_RENDER_DATA) {
             // Encode openSides as a 6-bit bitmask (one bit per Direction ordinal).
             byte b = 0;
             for (Direction face : Direction.values()) {
@@ -125,7 +125,7 @@ public class TileFloodGate extends TileBC_Neptune implements IDebuggable {
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetSide.CLIENT && id == NET_RENDER_DATA) {
+        if (side == NetEnvType.CLIENT && id == NET_RENDER_DATA) {
             byte b = buffer.readByte();
             EnumSet<Direction> newSides = EnumSet.noneOf(Direction.class);
             for (Direction face : Direction.values()) {

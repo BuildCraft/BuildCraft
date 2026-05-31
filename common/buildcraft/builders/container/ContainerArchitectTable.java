@@ -8,10 +8,10 @@ package buildcraft.builders.container;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.ContainerBC_Neptune;
@@ -27,7 +27,7 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("architect_table");
     private static final int ID_NAME = IDS.allocId("NAME");
 
-    public ContainerArchitectTable(EntityPlayer player, TileArchitectTable tile) {
+    public ContainerArchitectTable(PlayerEntity player, TileArchitectTable tile) {
         super(player, tile);
         addFullPlayerInventory(88, 84);
 
@@ -47,7 +47,7 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
     @Override
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+        if (side == EnvType.SERVER) {
             if (id == ID_NAME) {
                 tile.name = buffer.readString();
                 tile.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);

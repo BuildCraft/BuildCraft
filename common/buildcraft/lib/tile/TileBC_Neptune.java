@@ -211,7 +211,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
                     .blockPosToString(getPos()) + ")"
             );
         }
-        return BlockUtil.getTileEntity(getWorld(), getPos().offset(offset), true);
+        return BlockUtil.getBlockEntity(getWorld(), getPos().offset(offset), true);
     }
 
     /** @param offset The position of the {@link BlockEntity} to retrieve, <i>relative</i> to this
@@ -232,7 +232,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
                     .blockPosToString(getPos()) + ")"
             );
         }
-        return BlockUtil.getTileEntity(world, pos, true);
+        return BlockUtil.getBlockEntity(world, pos, true);
     }
 
     public final WorldChunk getContainingChunk() {
@@ -265,7 +265,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         return !hasWorld();
     }
 
-    // STUB(R.Chen): Forge's shouldRefresh(World, BlockPos, IBlockState, IBlockState) controlled whether a
+    // STUB(R.Chen): Forge's shouldRefresh(World, BlockPos, BlockState, BlockState) controlled whether a
     // BlockEntity survived a blockstate change. Fabric/vanilla has no such hook — the BlockEntity is kept as
     // long as the new block still has the same BlockEntityType. No replacement override is required here.
 
@@ -357,7 +357,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         tileCache.invalidate();
     }
 
-    // STUB(R.Chen): Forge hasCapability(Capability, EnumFacing) / getCapability(Capability, EnumFacing)
+    // STUB(R.Chen): Forge hasCapability(Capability, Direction) / getCapability(Capability, Direction)
     // removed. Capability exposure is now via the Transfer API: register ItemStorage.SIDED /
     // FluidStorage.SIDED / EnergyStorage.SIDED lookups against this BlockEntity's type in the
     // ModInitializer, delegating to itemManager / tankManager / the MJ storage. Subclasses provide the
@@ -495,7 +495,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public final MessageUpdateTile createNetworkUpdate(final int id) {
         if (hasWorld()) {
             // TODO(R.Chen): replace the Forge "Side" discriminator with a Fabric-native NetSide enum.
-            final NetSide side = world.isClient ? NetSide.CLIENT : NetSide.SERVER;
+            final NetSide side = world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER;
             return createMessage(id, (buffer) -> writePayload(id, buffer, side));
         } else {
             BCLog.logger.warn("Did not have a world at " + pos + "!");
@@ -560,7 +560,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public NbtCompound toInitialChunkDataNbt() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeShort(NET_RENDER_DATA);
-        writePayload(NET_RENDER_DATA, new PacketBufferBC(buf), world.isClient ? NetSide.CLIENT : NetSide.SERVER);
+        writePayload(NET_RENDER_DATA, new PacketBufferBC(buf), world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER);
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
 
@@ -569,7 +569,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         return nbt;
     }
 
-    // TODO(R.Chen): Forge handleUpdateTag(NBTTagCompound) was invoked separately from readNbt for the
+    // TODO(R.Chen): Forge handleUpdateTag(NbtCompound) was invoked separately from readNbt for the
     // render-data path. Vanilla 1.20.1 instead routes the chunk-data NBT through readNbt. Until the client
     // packet handler in BCNetworkManager is wired to call this explicitly, render-data sync may not arrive.
     public void handleUpdateTag(NbtCompound tag) {
@@ -590,7 +590,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         try {
             int id = buf.readUnsignedShort();
             PacketBufferBC buffer = new PacketBufferBC(buf);
-            readPayload(id, buffer, world.isClient ? NetSide.CLIENT : NetSide.SERVER, null);
+            readPayload(id, buffer, world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
             MessageUtil.ensureEmpty(buffer, world.isClient, getClass() + ", id = " + getIdAllocator().getNameFor(id));
             spawnReceiveParticles(id);
@@ -622,13 +622,13 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         throws IOException {
         int id = buffer.readUnsignedShort();
         // STUB(R.Chen): side must come from the Fabric receiver context; defaulting to the world side for now.
-        NetSide side = world.isClient ? NetSide.CLIENT : NetSide.SERVER;
+        NetSide side = world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER;
         readPayload(id, buffer, side, ctx);
 
         // Make sure that we actually read the entire message rather than just discarding it
         MessageUtil.ensureEmpty(buffer, world.isClient, getClass() + ", id = " + getIdAllocator().getNameFor(id));
 
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             spawnReceiveParticles(id);
         }
         return null;
@@ -646,11 +646,11 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
 
             writePayload(NET_RENDER_DATA, buffer, side);
 
-            if (side == NetSide.SERVER) {
+            if (side == NetEnvType.SERVER) {
                 MessageUtil.writeGameProfile(buffer, owner);
             }
         }
-        if (side == NetSide.SERVER) {
+        if (side == NetEnvType.SERVER) {
             if (id == NET_RENDER_DATA) {
                 deltaManager.writeDeltaState(false, buffer);
             } else if (id == NET_GUI_DATA) {
@@ -667,11 +667,11 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side, ctx);
 
-            if (side == NetSide.CLIENT) {
+            if (side == NetEnvType.CLIENT) {
                 owner = MessageUtil.readGameProfile(buffer);
             }
         }
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(

@@ -6,9 +6,9 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.math.Direction;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -53,7 +53,7 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_DIRECTION = FUNCTION_CONTEXT.putVariableObject("direction", Direction.class);
     }
 
-    private final TextureAtlasSprite particle;
+    private final Sprite particle;
     private final List<List<BakedQuad>> cache = new ArrayList<>();
 
     public ModelHeatExchange() {
@@ -67,7 +67,7 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_DIRECTION.value = Direction.NORTH;
 
         if (BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads().length == 0) {
-            particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+            particle = MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite();
         } else {
             particle = BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()[0].toBakedItem().getSprite();
         }
@@ -93,7 +93,7 @@ public class ModelHeatExchange extends ModelItemSimple {
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public Sprite getParticleTexture() {
         return particle;
     }
 

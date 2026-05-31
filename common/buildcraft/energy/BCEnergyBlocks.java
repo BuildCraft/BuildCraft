@@ -6,7 +6,7 @@
 
 package buildcraft.energy;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumSpring;

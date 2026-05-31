@@ -30,7 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.misc.data.SingleCache;
 import buildcraft.lib.nbt.NbtSquisher;
@@ -74,7 +74,7 @@ public class GlobalSavedDataSnapshots {
     }
 
     public static GlobalSavedDataSnapshots get(World world) {
-        return get(world.isRemote ? Side.CLIENT : Side.SERVER);
+        return get(world.isClient ? EnvType.CLIENT : EnvType.SERVER);
     }
 
     private Pair<Snapshot, File> readSnapshot(Snapshot.Key key) {

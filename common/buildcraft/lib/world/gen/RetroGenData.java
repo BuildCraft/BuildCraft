@@ -17,9 +17,9 @@ import java.util.Set;
 import gnu.trove.list.array.TByteArrayList;
 import gnu.trove.map.hash.TObjectByteHashMap;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -42,10 +42,10 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         gennedChunks.clear();
 
-        NBTTagList registry = nbt.getTagList("registry", Constants.NBT.TAG_STRING);
+        NbtList registry = nbt.getList("registry", NbtElement.STRING_TYPE);
         String[] names = new String[registry.tagCount()];
         for (int i = 0; i < registry.tagCount(); i++) {
             names[i] = registry.getStringTagAt(i);
@@ -58,7 +58,7 @@ public class RetroGenData extends WorldSavedData {
             }
         }
 
-        NBTTagCompound data = nbt.getCompoundTag("data");
+        NbtCompound data = nbt.getCompound("data");
         for (String key : data.getKeySet()) {
             ChunkPos pos = deserializeChunkPos(key);
             if (pos == null) {
@@ -105,22 +105,22 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NbtCompound writeToNBT(NbtCompound nbt) {
         Set<String> allNames = new HashSet<>();
         for (Set<String> used : gennedChunks.values()) {
             allNames.addAll(used);
         }
         TObjectByteHashMap<String> map = new TObjectByteHashMap<>();
         List<String> list = new ArrayList<>(allNames);
-        NBTTagList registry = new NBTTagList();
+        NbtList registry = new NbtList();
         for (int i = 0; i < list.size(); i++) {
             String name = list.get(i);
             map.put(name, (byte) i);
-            registry.appendTag(new NBTTagString(name));
+            registry.appendTag(new NbtString(name));
         }
-        nbt.setTag("registry", registry);
+        nbt.put("registry", registry);
 
-        NBTTagCompound data = new NBTTagCompound();
+        NbtCompound data = new NbtCompound();
         for (Entry<ChunkPos, Set<String>> entry : gennedChunks.entrySet()) {
             String key = serializeChunkPos(entry.getKey());
             Set<String> names = entry.getValue();
@@ -129,9 +129,9 @@ public class RetroGenData extends WorldSavedData {
                 byte b = map.get(s);
                 ids.add(b);
             }
-            data.setByteArray(key, ids.toArray());
+            data.putByteArray(key, ids.toArray());
         }
-        nbt.setTag("data", data);
+        nbt.put("data", data);
 
         return nbt;
     }

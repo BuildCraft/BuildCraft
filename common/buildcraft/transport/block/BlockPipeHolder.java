@@ -182,7 +182,7 @@ public class BlockPipeHolder extends BlockBCBase_Neptune implements BlockEntityP
     @Nullable
     public PipeRayTraceResult rayTrace(World world, BlockPos pos, PlayerEntity player) {
         Vec3d start = player.getEyePos();
-        // STUB(R.Chen): Forge read the exact reach from EntityPlayerMP.interactionManager.getBlockReachDistance();
+        // STUB(R.Chen): Forge read the exact reach from ServerPlayerEntity.interactionManager.getBlockReachDistance();
         // Yarn's ServerPlayerInteractionManager does not expose it, so the vanilla 5-block reach is used.
         double reachDistance = 5;
         Vec3d end = start.add(player.getRotationVec(1.0F).normalize().multiply(reachDistance));
@@ -460,7 +460,7 @@ public class BlockPipeHolder extends BlockBCBase_Neptune implements BlockEntityP
 
     // Paint
     // STUB(R.Chen): was @Override of ICustomPaintHandler.attemptPaint — that API interface is still Forge-form
-    // (EnumActionResult/EnumDyeColor) and unmigrated, so the implements clause is dropped and this is kept as a
+    // (ActionResult/DyeColor) and unmigrated, so the implements clause is dropped and this is kept as a
     // plain method (no @Override). Re-add the interface + its registration in Phase 4F. Logic is preserved.
     public ActionResult attemptPaint(World world, BlockPos pos, BlockState state, Vec3d hitPos,
         @Nullable Direction hitSide, @Nullable DyeColor paintColour) {
@@ -498,10 +498,10 @@ public class BlockPipeHolder extends BlockBCBase_Neptune implements BlockEntityP
     @Environment(EnvType.CLIENT)
     public static void spawnLandingParticles(TilePipeHolder tile, double x, double y, double z, int number) {
         // STUB(R.Chen): pipe-flow landing particle spawn restored with the client render layer in Phase 5
-        // (Forge used ParticleBlockDust + Minecraft.effectRenderer; needs the migrated pipe/pluggable sprites).
+        // (Forge used ParticleBlockDust + MinecraftClient.effectRenderer; needs the migrated pipe/pluggable sprites).
     }
 
-    /** Carries the Forge {@code RayTraceResult.subHit} sub-part index, which Yarn's {@link BlockHitResult} lacks.
+    /** Carries the Forge {@code HitResult.subHit} sub-part index, which Yarn's {@link BlockHitResult} lacks.
      * 0 = pipe centre; 1..6 = pipe connection on {@code DIRECTIONS[subHit-1]}; 7..12 = pluggable on that face;
      * 13..20 = wire part; 21+ = wire-between; 400 = full-block fallback. */
     public static final class PipeRayTraceResult extends BlockHitResult {

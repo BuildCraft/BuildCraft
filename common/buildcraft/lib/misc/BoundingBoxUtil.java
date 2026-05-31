@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Direction.AxisDirection;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -21,22 +21,22 @@ import buildcraft.api.core.IBox;
 
 import buildcraft.lib.misc.data.Box;
 
-/** Various methods operating on (and creating) {@link AxisAlignedBB} */
+/** Various methods operating on (and creating) {@link Box} */
 public class BoundingBoxUtil {
 
-    /** Creates an {@link AxisAlignedBB} from a block pos and a box. Note that additional must NOT be null, but the box
+    /** Creates an {@link Box} from a block pos and a box. Note that additional must NOT be null, but the box
      * can be. */
-    public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box) {
+    public static Box makeFrom(BlockPos additional, @Nullable IBox box) {
         if (box == null) {
-            return new AxisAlignedBB(additional);
+            return new Box(additional);
         } else {
             BlockPos min = VecUtil.min(box.min(), additional);
             BlockPos max = VecUtil.max(box.max(), additional);
-            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+            return new Box(min, max.add(VecUtil.POS_ONE));
         }
     }
 
-    public static AxisAlignedBB makeFrom(BlockPos primary, BlockPos... additional) {
+    public static Box makeFrom(BlockPos primary, BlockPos... additional) {
         Box box = new Box(primary, primary);
         for (BlockPos a : additional) {
             box.extendToEncompass(a);
@@ -44,9 +44,9 @@ public class BoundingBoxUtil {
         return box.getBoundingBox();
     }
 
-    /** Creates an {@link AxisAlignedBB} from a block pos and 2 boxes Note that additional must NOT be null, but (either
+    /** Creates an {@link Box} from a block pos and 2 boxes Note that additional must NOT be null, but (either
      * of) the boxes can be. */
-    public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box1, @Nullable IBox box2) {
+    public static Box makeFrom(BlockPos additional, @Nullable IBox box1, @Nullable IBox box2) {
         if (box1 == null) {
             return makeFrom(additional, box2);
         } else if (box2 == null) {
@@ -54,23 +54,23 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box1.min(), box2.min(), additional);
             BlockPos max = VecUtil.max(box1.max(), box2.max(), additional);
-            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+            return new Box(min, max.add(VecUtil.POS_ONE));
         }
     }
 
-    public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
-        return new AxisAlignedBB(from.x, from.y, from.z, to.x, to.y, to.z);
+    public static Box makeFrom(Vec3d from, Vec3d to) {
+        return new Box(from.x, from.y, from.z, to.x, to.y, to.z);
     }
 
-    public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
+    public static Box makeFrom(Vec3d from, Vec3d to, double radius) {
         return makeFrom(from, to).grow(radius);
     }
 
-    public static AxisAlignedBB makeAround(Vec3d around, double radius) {
-        return new AxisAlignedBB(around.x, around.y, around.z, around.x, around.y, around.z).grow(radius);
+    public static Box makeAround(Vec3d around, double radius) {
+        return new Box(around.x, around.y, around.z, around.x, around.y, around.z).grow(radius);
     }
 
-    public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
+    public static Box makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
         BlockPos min = box == null ? pos : VecUtil.min(box.min(), pos);
         BlockPos max = box == null ? pos : VecUtil.max(box.max(), pos);
         if (additional != null) {
@@ -79,11 +79,11 @@ public class BoundingBoxUtil {
                 max = VecUtil.max(max, p);
             }
         }
-        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+        return new Box(min, max.add(VecUtil.POS_ONE));
     }
 
     /** Creates a box that extrudes from the specified face of the given block position. */
-    public static AxisAlignedBB extrudeFace(BlockPos pos, Direction face, double depth) {
+    public static Box extrudeFace(BlockPos pos, Direction face, double depth) {
         Vec3d from = new Vec3d(pos);
         Vec3d to = new Vec3d(pos).addVector(1, 1, 1);
 

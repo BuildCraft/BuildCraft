@@ -6,19 +6,19 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
+import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
+import net.minecraft.client.render.RenderHelper;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -41,7 +41,7 @@ import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionEnd;
 import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionStart;
 
 public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchange> {
-    private static final Map<EnumFacing, TankSideData> TANK_SIDES = new EnumMap<>(EnumFacing.class);
+    private static final Map<Direction, TankSideData> TANK_SIDES = new EnumMap<>(Direction.class);
     private static final TankSize TANK_BOTTOM, TANK_TOP;
 
     static {
@@ -51,7 +51,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         TankSize start = new TankSize(0, 4, 4, 2, 12, 12).shrink(0, s, s);
         TankSize end = new TankSize(14, 4, 4, 16, 12, 12).shrink(0, s, s);
         TankSideData sides = new TankSideData(start, end);
-        EnumFacing face = EnumFacing.EAST;
+        Direction face = Direction.EAST;
         for (int i = 0; i < 4; i++) {
             TANK_SIDES.put(face, sides);
             face = face.rotateY();
@@ -84,21 +84,21 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         ExchangeSectionStart section = (ExchangeSectionStart) tile.getSection();
         ExchangeSectionEnd sectionEnd = section.getEndSection();
 
-        IBlockState state = tile.getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
+        BlockState state = tile.getCurrentStateForBlock(BCFactoryBlocks.heatExchange);
         if (state == null) {
             return;
         }
 
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("bc");
-        profiler.startSection("heat_exchange");
+        Profiler profiler = MinecraftClient.getInstance().getProfiler();
+        profiler.push("bc");
+        profiler.push("heat_exchange");
 
         int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), 0);
 
         // gl state setup
         RenderHelper.disableStandardItemLighting();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.enableBlend();
+        MinecraftClient.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        RenderSystem.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
@@ -107,9 +107,9 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
             bb.setTranslation(x, y, z);
 
-            profiler.startSection("tank");
+            profiler.push("tank");
 
-            EnumFacing face = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
+            Direction face = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
             TankSideData sideTank = TANK_SIDES.get(face);
 
             renderTank(TANK_BOTTOM, section.smoothedTankInput, combinedLight, partialTicks, bb);
@@ -125,7 +125,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
                 bb.setTranslation(x, y, z);
             }
 
-            profiler.endStartSection("flow");
+            profiler.swap("flow");
 
             if (middles > 0 && sectionEnd != null) {
                 EnumProgressState progressState = section.getProgressState();
@@ -160,16 +160,16 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
 
             // buffer finish
             bb.setTranslation(0, 0, 0);
-            profiler.endStartSection("draw");
+            profiler.swap("draw");
             tess.tessellator.draw();
         }
 
         // gl state finish
         RenderHelper.enableStandardItemLighting();
 
-        profiler.endSection();
-        profiler.endSection();
-        profiler.endSection();
+        profiler.pop();
+        profiler.pop();
+        profiler.pop();
     }
 
     private static void renderTank(TankSize size, FluidSmoother tank, int combinedLight, float partialTicks,
@@ -185,9 +185,9 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             size.max, bb, null);
     }
 
-    private static void renderFlow(Vec3d diff, EnumFacing face, BufferBuilder bb, double s, double e, FluidStack fluid,
+    private static void renderFlow(Vec3d diff, Direction face, BufferBuilder bb, double s, double e, FluidStack fluid,
         int point, float partialTicks) {
-        double tickTime = Minecraft.getMinecraft().world.getTotalWorldTime();
+        double tickTime = MinecraftClient.getInstance().world.getTotalWorldTime();
         double offset = (tickTime + partialTicks) % 31 / 31.0;
         if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
             offset = -offset;

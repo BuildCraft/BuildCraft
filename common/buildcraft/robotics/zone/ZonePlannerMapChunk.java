@@ -8,7 +8,7 @@ package buildcraft.robotics.zone;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -32,7 +32,7 @@ public class ZonePlannerMapChunk {
         }
     }
 
-    public ZonePlannerMapChunk(PacketBuffer buffer) {
+    public ZonePlannerMapChunk(PacketByteBuf buffer) {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 int posY = buffer.readInt();
@@ -44,7 +44,7 @@ public class ZonePlannerMapChunk {
         }
     }
 
-    public void write(PacketBuffer buffer) {
+    public void write(PacketByteBuf buffer) {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 MapColourData colour = data[x][z];

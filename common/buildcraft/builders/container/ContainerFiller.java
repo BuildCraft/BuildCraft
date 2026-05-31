@@ -8,10 +8,10 @@ package buildcraft.builders.container;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.api.filler.IFillerPattern;
 
@@ -31,7 +31,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
         (statement, paramIndex) -> onStatementChange()
     );
 
-    public ContainerFiller(EntityPlayer player, TileFiller tile) {
+    public ContainerFiller(PlayerEntity player, TileFiller tile) {
         super(player, tile);
 
         addFullPlayerInventory(153);
@@ -46,7 +46,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
     }
 
     @Override
-    public EntityPlayer getPlayer() {
+    public PlayerEntity getPlayer() {
         return player;
     }
 
@@ -78,11 +78,11 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
     public void valuesChanged() {
         if (tile.addon != null) {
             tile.addon.updateBuildingInfo();
-            if (!player.world.isRemote) {
+            if (!player.world.isClient) {
                 WorldSavedDataVolumeBoxes.get(getPlayer().world).markDirty();
             }
         }
-        if (!player.world.isRemote) {
+        if (!player.world.isClient) {
             tile.onStatementChange();
         }
     }

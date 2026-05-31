@@ -16,8 +16,8 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 
 // Yarn 1.20.1 renames:
-//   EntityPlayer → PlayerEntity, EnumFacing → Direction, AxisAlignedBB → net.minecraft.util.math.Box,
-//   RayTraceResult#calculateIntercept → Box#raycast (returns Optional<Vec3d>)
+//   PlayerEntity → PlayerEntity, Direction → Direction, Box → net.minecraft.util.math.Box,
+//   HitResult#calculateIntercept → Box#raycast (returns Optional<Vec3d>)
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;

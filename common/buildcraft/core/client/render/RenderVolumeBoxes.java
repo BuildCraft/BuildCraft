@@ -8,10 +8,10 @@ package buildcraft.core.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.client.render.DetachedRenderer;
@@ -30,7 +30,7 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     @SuppressWarnings("unchecked")
     @Override
     public void render(PlayerEntity player, float partialTicks) {
-        GlStateManager.enableBlend();
+        RenderSystem.enableBlend();
 
         BufferBuilder bb = Tessellator.getInstance().getBuffer();
 
@@ -58,6 +58,6 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
 
         Tessellator.getInstance().draw();
 
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
     }
 }

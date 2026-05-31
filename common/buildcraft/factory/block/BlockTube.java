@@ -6,10 +6,10 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -19,7 +19,7 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.factory.tile.TileMiner;
 
 public class BlockTube extends BlockBCBase_Neptune {
-    private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 16 / 16D, 12 / 16D);
+    private static final Box BOUNDING_BOX = new Box(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 16 / 16D, 12 / 16D);
 
     public BlockTube(Material material, String id) {
         super(material, id);
@@ -42,7 +42,7 @@ public class BlockTube extends BlockBCBase_Neptune {
         // noinspection StatementWithEmptyBody
         while (world.getBlockState(currentPos = currentPos.up()).getBlock() == this) {
         }
-        if (!(world.getTileEntity(currentPos) instanceof TileMiner)) {
+        if (!(world.getBlockEntity(currentPos) instanceof TileMiner)) {
             return super.removedByPlayer(state, world, pos, player, willHarvest);
         } else {
             return false;
@@ -50,7 +50,7 @@ public class BlockTube extends BlockBCBase_Neptune {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(BlockState state, BlockView source, BlockPos pos) {
+    public Box getBoundingBox(BlockState state, BlockView source, BlockPos pos) {
         return BOUNDING_BOX;
     }
 }

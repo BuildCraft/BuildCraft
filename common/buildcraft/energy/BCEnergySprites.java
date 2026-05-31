@@ -6,8 +6,8 @@
 
 package buildcraft.energy;
 
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -37,14 +37,14 @@ public class BCEnergySprites {
             return;
         }
 
-        ResourceLocation[][] fromSprites = new ResourceLocation[3][2];
+        Identifier[][] fromSprites = new Identifier[3][2];
         for (int h = 0; h < 3; h++) {
-            fromSprites[h][0] = new ResourceLocation("buildcraftenergy:blocks/fluids/heat_" + h + "_still");
-            fromSprites[h][1] = new ResourceLocation("buildcraftenergy:blocks/fluids/heat_" + h + "_flow");
+            fromSprites[h][0] = new Identifier("buildcraftenergy:blocks/fluids/heat_" + h + "_still");
+            fromSprites[h][1] = new Identifier("buildcraftenergy:blocks/fluids/heat_" + h + "_flow");
         }
 
         for (BCFluid f : BCEnergyFluids.allFluids) {
-            ResourceLocation[] sprites = fromSprites[f.getHeatValue()];
+            Identifier[] sprites = fromSprites[f.getHeatValue()];
             map.setTextureEntry(new AtlasSpriteFluid(f.getStill().toString(), sprites[0], f));
             map.setTextureEntry(new AtlasSpriteFluid(f.getFlowing().toString(), sprites[1], f));
         }

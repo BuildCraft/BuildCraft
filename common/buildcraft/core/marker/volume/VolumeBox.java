@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 import io.netty.buffer.Unpooled;
 
 // Yarn 1.20.1 renames:
-//   EntityPlayer → PlayerEntity, NBTTagCompound → NbtCompound, NBTUtil → NbtHelper,
-//   ResourceLocation → Identifier, World#getPlayerEntityByUUID → EntityView#getPlayerByUuid
+//   PlayerEntity → PlayerEntity, NbtCompound → NbtCompound, NBTUtil → NbtHelper,
+//   Identifier → Identifier, World#getPlayerEntityByUUID → EntityView#getPlayerByUuid
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;

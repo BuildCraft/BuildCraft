@@ -7,7 +7,7 @@
 package buildcraft.lib.client.guide.parts;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
@@ -84,7 +84,7 @@ public abstract class GuidePart {
     /** Renders a raw line at the position, lowering it appropriately */
     protected void renderTextLine(String text, int x, int y, int colour) {
         fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
-        GlStateManager.color(1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1);
     }
 
     /** @param current The current position to render from

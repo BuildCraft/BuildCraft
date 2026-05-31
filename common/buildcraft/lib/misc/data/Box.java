@@ -17,8 +17,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Objects;
 
 // Yarn 1.20.1 renames:
-//   NBTTagCompound → NbtCompound, PacketBuffer → PacketByteBuf, TileEntity → BlockEntity
-//   AxisAlignedBB → net.minecraft.util.math.Box (referenced fully-qualified below to avoid clashing
+//   NbtCompound → NbtCompound, PacketByteBuf → PacketByteBuf, BlockEntity → BlockEntity
+//   Box → net.minecraft.util.math.Box (referenced fully-qualified below to avoid clashing
 //   with this class's own name)
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -34,7 +34,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
-/** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
+/** MUTABLE integer variant of Box, with a few BC-specific methods */
 public class Box implements IBox {
 
     // STUB(R.Chen): client-side laser render cache (laserData / lastMin / lastMax / lastType)

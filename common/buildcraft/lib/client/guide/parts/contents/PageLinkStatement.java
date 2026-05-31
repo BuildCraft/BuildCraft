@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
 import buildcraft.api.statements.IStatement;
 
@@ -35,7 +35,7 @@ public class PageLinkStatement extends PageLink {
         } else {
             this.tooltip = tip;
             String joinedTooltip = tip.stream().collect(Collectors.joining(" ", "", ""));
-            this.searchText = TextFormatting.getTextWithoutFormattingCodes(joinedTooltip).toLowerCase(Locale.ROOT);
+            this.searchText = Formatting.getTextWithoutFormattingCodes(joinedTooltip).toLowerCase(Locale.ROOT);
         }
     }
 

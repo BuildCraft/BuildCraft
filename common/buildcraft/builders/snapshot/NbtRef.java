@@ -20,8 +20,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NbtByteArray;
+import net.minecraft.nbt.NbtIntArray;
 import net.minecraft.nbt.NbtList;
 
 import buildcraft.lib.misc.NBTUtilBC;
@@ -69,7 +69,7 @@ public class NbtRef<N extends NbtElement> {
             // noinspection unchecked
             Class<? extends NbtElement> nClass = (Class<? extends NbtElement>)
                 ((ParameterizedType) type.getType()).getActualTypeArguments()[0];
-            if (nClass == NBTTagByteArray.class || nClass == NBTTagIntArray.class || nClass == NbtList.class) {
+            if (nClass == NbtByteArray.class || nClass == NbtIntArray.class || nClass == NbtList.class) {
                 return new TypeAdapter<T>() {
                     @Override
                     public void write(JsonWriter out, T value) throws IOException {

@@ -135,7 +135,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // return ((ItemStack) object).copy();
     // }
     // if (object instanceof String) {
-    // NonNullList<ItemStack> stacks = OreDictionary.getOres((String) object);
+    // DefaultedList<ItemStack> stacks = OreDictionary.getOres((String) object);
     // // It will be sorted out below
     // object = stacks;
     // }
@@ -151,7 +151,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // if (first instanceof ItemStack) {
     // // Technically a safe cast as the first one WAS an Item Stack and we never add to the list
     // @SuppressWarnings("unchecked")
-    // NonNullList<ItemStack> stacks = (NonNullList<ItemStack>) list;
+    // DefaultedList<ItemStack> stacks = (DefaultedList<ItemStack>) list;
     // if (stacks.size() == 0) {
     // return StackUtil.EMPTY;
     // }

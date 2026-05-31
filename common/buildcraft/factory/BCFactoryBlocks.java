@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 
 import buildcraft.lib.registry.RegistrationHelper;
 

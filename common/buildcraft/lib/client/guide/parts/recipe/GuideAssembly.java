@@ -9,8 +9,8 @@ package buildcraft.lib.client.guide.parts.recipe;
 import java.util.Arrays;
 import java.util.Collections;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.RenderHelper;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartItem;

@@ -18,10 +18,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Rotation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
@@ -58,39 +58,39 @@ public class Blueprint extends Snapshot {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = super.serializeNBT();
-        nbt.setTag("palette", NBTUtilBC.writeCompoundList(palette.stream().map(SchematicBlockManager::writeToNBT)));
-        NBTTagList list = new NBTTagList();
+    public NbtCompound serializeNBT() {
+        NbtCompound nbt = super.serializeNBT();
+        nbt.put("palette", NBTUtilBC.writeCompoundList(palette.stream().map(SchematicBlockManager::writeToNBT)));
+        NbtList list = new NbtList();
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    list.appendTag(new NBTTagInt(data[posToIndex(x, y, z)]));
+                    list.appendTag(new NbtInt(data[posToIndex(x, y, z)]));
                 }
             }
         }
-        nbt.setTag("data", list);
-        nbt.setTag("entities", NBTUtilBC.writeCompoundList(entities.stream().map(SchematicEntityManager::writeToNBT)));
+        nbt.put("data", list);
+        nbt.put("entities", NBTUtilBC.writeCompoundList(entities.stream().map(SchematicEntityManager::writeToNBT)));
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+    public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         palette.clear();
-        for (NBTTagCompound schematicBlockTag :
-            NBTUtilBC.readCompoundList(nbt.getTag("palette")).collect(Collectors.toList())) {
+        for (NbtCompound schematicBlockTag :
+            NBTUtilBC.readCompoundList(nbt.get("palette")).collect(Collectors.toList())) {
             // TODO: Allow reading blueprints partially - invalid elements should be replaced with air
             // (Although this needs to add a "pass-through" ISchematicBlock that will store the
-            // invalid NBTTagCompound and show up in the tooltip as an error, so that we can migrate
+            // invalid NbtCompound and show up in the tooltip as an error, so that we can migrate
             // schematics through mod additions/deletions)
             palette.add(SchematicBlockManager.readFromNBT(schematicBlockTag));
         }
         data = new int[Snapshot.getDataSize(size)];
-        NBTTagList serializedDataList = nbt.hasKey("data", Constants.NBT.TAG_LIST)
-            ? nbt.getTagList("data", Constants.NBT.TAG_INT)
+        NbtList serializedDataList = nbt.contains("data", NbtElement.LIST_TYPE)
+            ? nbt.getList("data", NbtElement.INT_TYPE)
             : null;
-        int[] serializedDataIntArray = nbt.hasKey("data", Constants.NBT.TAG_INT_ARRAY)
+        int[] serializedDataIntArray = nbt.contains("data", NbtElement.INT_TYPE_ARRAY)
             ? nbt.getIntArray("data")
             : null;
         if (serializedDataIntArray == null && serializedDataList == null) {
@@ -115,8 +115,8 @@ public class Blueprint extends Snapshot {
                 }
             }
         }
-        for (NBTTagCompound schematicEntityTag :
-            NBTUtilBC.readCompoundList(nbt.getTag("entities")).collect(Collectors.toList())) {
+        for (NbtCompound schematicEntityTag :
+            NBTUtilBC.readCompoundList(nbt.get("entities")).collect(Collectors.toList())) {
             entities.add(SchematicEntityManager.readFromNBT(schematicEntityTag));
         }
     }

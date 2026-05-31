@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.DyeColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.Direction;
@@ -63,7 +63,7 @@ public class BCLibConfig {
 
     /** If true then {@link AtlasSpriteVariants#createForConfig(net.minecraft.util.Identifier)} will retun
      * {@link AtlasSpriteSwappable}, allowing for instant reloads when switching between colourblind modes and other
-     * changable things. If false it will return a normal {@link TextureAtlasSprite}. Disabling this might help if you
+     * changable things. If false it will return a normal {@link Sprite}. Disabling this might help if you
      * get sprite issues with mods like optifine. */
     public static boolean useSwappableSprites = true;
 

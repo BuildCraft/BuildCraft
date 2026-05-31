@@ -24,7 +24,7 @@ import buildcraft.lib.net.BCNetworkManager;
 import buildcraft.lib.net.MessageManager;
 import buildcraft.lib.net.MessageUpdateTile;
 
-// STUB(R.Chen): the bulk of the Forge MessageUtil (PacketBuffer array helpers, block-state (de)serialise,
+// STUB(R.Chen): the bulk of the Forge MessageUtil (PacketByteBuf array helpers, block-state (de)serialise,
 // the DelayedList client-send queue, and the Forge PlayerChunkMap watcher iteration) is deferred. Only the
 // send helpers + GameProfile (de)serialise + ensureEmpty used by TileBC_Neptune are migrated. The watcher
 // broadcast now routes through BCNetworkManager's Fabric PlayerLookup.tracking helper.

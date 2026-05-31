@@ -57,7 +57,7 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
 
     @Override
     public void update() {
-        if (world.isRemote) {
+        if (world.isClient) {
             return;
         }
         if (!invSnapshot.getStackInSlot(0).isEmpty() &&
@@ -71,11 +71,11 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
                     try {
                         ISchematicBlock from = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicFrom.getStackInSlot(0))
-                                .getCompoundTag(ItemSchematicSingle.NBT_KEY)
+                                .getCompound(ItemSchematicSingle.NBT_KEY)
                         );
                         ISchematicBlock to = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicTo.getStackInSlot(0))
-                                .getCompoundTag(ItemSchematicSingle.NBT_KEY)
+                                .getCompound(ItemSchematicSingle.NBT_KEY)
                         );
                         Blueprint newBlueprint = blueprint.copy();
                         newBlueprint.replace(from, to);

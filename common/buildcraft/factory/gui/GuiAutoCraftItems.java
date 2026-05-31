@@ -12,15 +12,15 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiButtonImage;
 import net.minecraft.client.gui.recipebook.GuiRecipeBook;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.RenderHelper;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
@@ -38,12 +38,12 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.factory.container.ContainerAutoCraftItems;
 
 public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implements IRecipeShownListener {
-    private static final ResourceLocation TEXTURE_BASE =
-        new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
-    private static final ResourceLocation TEXTURE_MISC =
-        new ResourceLocation("buildcraftlib:textures/gui/misc_slots.png");
-    private static final ResourceLocation VANILLA_CRAFTING_TABLE =
-        new ResourceLocation("textures/gui/container/crafting_table.png");
+    private static final Identifier TEXTURE_BASE =
+        new Identifier("buildcraftfactory:textures/gui/autobench_item.png");
+    private static final Identifier TEXTURE_MISC =
+        new Identifier("buildcraftlib:textures/gui/misc_slots.png");
+    private static final Identifier VANILLA_CRAFTING_TABLE =
+        new Identifier("textures/gui/container/crafting_table.png");
     private static final int SIZE_X = 176, SIZE_Y = 197;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_FILTER_OVERLAY_SAME = new GuiIcon(TEXTURE_MISC, 54, 0, 18, 18);
@@ -173,7 +173,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
             });
             RenderHelper.disableStandardItemLighting();
 
-            GlStateManager.disableDepth();
+            RenderSystem.disableDepthTest();
             forEachFilter((slot, filterStack) -> {
                 ItemStack real = slot.getStack();
                 final GuiIcon icon;
@@ -186,7 +186,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
                 int y = slot.yPos + (int) mainGui.rootElement.getY();
                 icon.drawAt(x - 1, y - 1);
             });
-            GlStateManager.enableDepth();
+            RenderSystem.enableDepthTest();
         }
     }
 

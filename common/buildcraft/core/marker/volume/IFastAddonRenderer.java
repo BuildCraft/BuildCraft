@@ -13,7 +13,7 @@ import net.fabricmc.api.Environment;
 
 // Yarn 1.20.1: net.minecraft.client.renderer.BufferBuilder → net.minecraft.client.render.BufferBuilder
 import net.minecraft.client.render.BufferBuilder;
-// Yarn 1.20.1: EntityPlayer → PlayerEntity
+// Yarn 1.20.1: PlayerEntity → PlayerEntity
 import net.minecraft.entity.player.PlayerEntity;
 
 @Environment(EnvType.CLIENT)

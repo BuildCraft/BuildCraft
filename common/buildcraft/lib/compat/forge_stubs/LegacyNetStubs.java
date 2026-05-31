@@ -22,7 +22,7 @@ package buildcraft.lib.compat.forge_stubs;
  *   common/buildcraft/lib/net/MessageDebugResponse.java  — needs full migration (depends on ClientDebuggables)
  *   common/buildcraft/lib/net/IPayloadReceiver.java      — uses Forge MessageContext; replace context with sender info
  *   common/buildcraft/lib/net/IPayloadWriter.java        — no Forge deps; can move to libLeaf when PacketBufferBC is ported
- *   common/buildcraft/lib/net/PacketBufferBC.java        — extends Forge's PacketBuffer; on Yarn it would extend PacketByteBuf
+ *   common/buildcraft/lib/net/PacketBufferBC.java        — extends Forge's PacketByteBuf; on Yarn it would extend PacketByteBuf
  *   common/buildcraft/lib/delta/DeltaManager.java        — pure logic; depends on PacketBufferBC + IPayloadWriter
  *   common/buildcraft/lib/delta/DeltaInt.java            — uses Forge {@code Constants} for NBT tag IDs; trivial swap to {@link net.minecraft.nbt.NbtElement}
  *

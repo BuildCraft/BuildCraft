@@ -58,7 +58,7 @@ public class HashUtil {
         }
         // Test the method -- just in case
         NbtCompound nbt = new NbtCompound();
-        nbt.setInteger("test", 42);
+        nbt.putInt("test", 42);
         computeHash(nbt);
     }
 
@@ -113,7 +113,7 @@ public class HashUtil {
     private static void writeStableCompound(NbtCompound nbt, DataOutput out) throws IOException {
         TreeMap<String, NbtElement> entries = new TreeMap<>();
         for (String key : nbt.getKeySet()) {
-            entries.put(key, nbt.getTag(key));
+            entries.put(key, nbt.get(key));
         }
         for (String key : entries.keySet()) {
             NbtElement tag = entries.get(key);

@@ -11,8 +11,8 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -68,12 +68,12 @@ public class CapUtil {
         // By default storing and creating are illegal operations, as we don't necessarily have good default impl's
         IStorage<T> ourStorage = new IStorage<T>() {
             @Override
-            public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
+            public NbtElement writeNBT(Capability<T> capability, T instance, Direction side) {
                 throw new IllegalStateException("You must provide your own implementations of " + clazz);
             }
 
             @Override
-            public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<T> capability, T instance, Direction side, NbtElement nbt) {
                 throw new IllegalStateException("You must provide your own implementations of " + clazz);
             }
         };
@@ -86,7 +86,7 @@ public class CapUtil {
     /** Attempts to fetch the given capability from the given provider, or returns null if either of those two are
      * null. */
     @Nullable
-    public static <T> T getCapability(ICapabilityProvider provider, Capability<T> capability, EnumFacing facing) {
+    public static <T> T getCapability(ICapabilityProvider provider, Capability<T> capability, Direction facing) {
         if (provider == null || capability == null) {
             return null;
         }

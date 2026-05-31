@@ -8,11 +8,11 @@ import java.util.Locale;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.util.DyeColor;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.item.ItemBlockBCMulti;
 import buildcraft.lib.misc.ColourUtil;
@@ -36,9 +36,9 @@ public class ItemPlastic extends ItemBlockBCMulti {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
-        for (EnumDyeColor colour : EnumDyeColor.values()) {
+    @Environment(EnvType.CLIENT)
+    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+        for (DyeColor colour : DyeColor.values()) {
             addVariant(variants, colour.getMetadata(), colour.getName());
         }
     }

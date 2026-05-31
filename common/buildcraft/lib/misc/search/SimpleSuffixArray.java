@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiler.Profiler;
 
 import buildcraft.api.core.BCLog;
 

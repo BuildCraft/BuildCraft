@@ -10,11 +10,11 @@ import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
@@ -61,7 +61,7 @@ public class MessageContainer implements IMessage {
     public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) -> {
         try {
             int id = message.windowId;
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+            PlayerEntity player = BCLibProxy.getProxy().getPlayerForContext(ctx);
             if (player != null && player.openContainer instanceof ContainerBC_Neptune
                 && player.openContainer.windowId == id) {
                 ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
@@ -69,7 +69,7 @@ public class MessageContainer implements IMessage {
 
                 // error checking
                 String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
+                MessageUtil.ensureEmpty(message.payload, ctx.side == EnvType.CLIENT, extra);
             }
             return null;
         } catch (IOException e) {

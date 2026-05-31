@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -31,7 +31,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.factory.tile.TileFloodGate;
 
 public class BlockFloodGate extends BlockBCTile_Neptune {
-    public static final Map<Direction, IProperty<Boolean>> CONNECTED_MAP;
+    public static final Map<Direction, Property<Boolean>> CONNECTED_MAP;
 
     static {
         CONNECTED_MAP = new HashMap<>(BuildCraftProperties.CONNECTED_MAP);
@@ -43,7 +43,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(CONNECTED_MAP.values());
     }
@@ -55,7 +55,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
 
     @Override
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFloodGate) {
             for (Direction side : CONNECTED_MAP.keySet()) {
                 state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
@@ -67,11 +67,11 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction side, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand);
+        ItemStack heldItem = player.getStackInHand(hand);
         if (heldItem.getItem() instanceof IToolWrench) {
-            if (!world.isRemote) {
+            if (!world.isClient) {
                 if (side != Direction.UP) {
-                    BlockEntity tile = world.getTileEntity(pos);
+                    BlockEntity tile = world.getBlockEntity(pos);
                     if (tile instanceof TileFloodGate) {
                         if (CONNECTED_MAP.containsKey(side)) {
                             TileFloodGate floodGate = (TileFloodGate) tile;

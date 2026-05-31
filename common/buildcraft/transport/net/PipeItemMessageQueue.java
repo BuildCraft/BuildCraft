@@ -16,7 +16,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 // STUB(R.Chen): full implementation in Phase 4E.
-// The server-side per-player batching relies on Forge's WorldServer / PlayerChunkMap /
+// The server-side per-player batching relies on Forge's ServerWorld / PlayerChunkMap /
 // PlayerChunkMapEntry (replaced by ServerWorld + ServerChunkManager#threadedAnvilChunkStorage in
 // Yarn) and on MessageManager, none of which are migrated yet. Calls are accepted and silently
 // dropped so the item-flow producer keeps compiling; no packets are sent until Phase 4E.

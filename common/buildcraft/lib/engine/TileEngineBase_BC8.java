@@ -136,7 +136,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 isPumping = buffer.readBoolean();
                 currentDirection = buffer.readEnumValue(Direction.class);
@@ -158,7 +158,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetSide.SERVER) {
+        if (side == NetEnvType.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(isPumping);
                 buffer.writeEnumValue(currentDirection);
@@ -490,7 +490,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
     //
     // @Override
     // public void doWork(PowerHandler workProvider) {
-    // if (worldObj.isRemote) {
+    // if (worldObj.isClient) {
     // return;
     // }
     //
@@ -617,7 +617,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
         return getReceiverToPower(next, side);
     }
 
-    // STUB(R.Chen): Forge getCapability(Capability<T>, EnumFacing) override removed. The MJ receiver
+    // STUB(R.Chen): Forge getCapability(Capability<T>, Direction) override removed. The MJ receiver
     // capability (mjCaps) must be exposed via an EnergyStorage.SIDED Transfer API lookup, restricted to
     // currentDirection, registered against the owning BlockEntityType in the ModInitializer.
 
@@ -672,7 +672,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
         return currentDirection;
     }
 
-    // TODO(R.Chen): IDebuggable (buildcraft.api.tiles) is un-migrated and still declares EnumFacing; this
+    // TODO(R.Chen): IDebuggable (buildcraft.api.tiles) is un-migrated and still declares Direction; this
     // override signature uses Direction and will only match once that API is ported.
     @Override
     public void getDebugInfo(List<String> left, List<String> right, Direction side) {

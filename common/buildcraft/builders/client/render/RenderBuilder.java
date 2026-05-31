@@ -10,8 +10,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -31,16 +31,16 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
 
     @Override
     public void renderTileEntityFast(@Nonnull TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("builder");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("builder");
 
         buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
-        Minecraft.getMinecraft().mcProfiler.startSection("box");
+        MinecraftClient.getInstance().getProfiler().push("box");
         Box box = tile.getBox();
         LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, buffer, true);
 
-        Minecraft.getMinecraft().mcProfiler.endStartSection("path");
+        MinecraftClient.getInstance().getProfiler().swap("path");
 
         List<BlockPos> path = tile.path;
         if (path != null) {
@@ -58,7 +58,7 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
             }
         }
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
 
         buffer.setTranslation(0, 0, 0);
 
@@ -66,8 +66,8 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
             RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, buffer);
         }
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
     private static Vec3d offset(Vec3d from, Vec3d to) {

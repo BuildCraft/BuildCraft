@@ -8,18 +8,18 @@ package buildcraft.lib.client.render.tile;
 
 import javax.vecmath.Point3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.texture.Sprite;
 
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.MutableVertex;
 
 /** A variable sized element (like LED) that can render somewhere in a TESR. Passing a resolver instance will let you
  * modify the location, colour, lightmap, and size of the single element. This does not allow for different textures. */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RenderPartCube {
     /** The centre of this element. */
     public final MutableVertex center = new MutableVertex();
@@ -35,7 +35,7 @@ public class RenderPartCube {
     }
 
     public void setWhiteTex() {
-        TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
+        Sprite sprite = ModelLoader.White.INSTANCE;
         // Reset the vertex so that edits don't spill out to other tiles.
         center.texf(sprite.getInterpolatedU(8), sprite.getInterpolatedV(8));
     }
@@ -89,10 +89,10 @@ public class RenderPartCube {
         // -- COLOR_4UB // colour
         // -- TEX_2F // texture
         // -- TEX_2S // lightmap
-        vb.pos(x, y, z);
+        vb.vertex(x, y, z);
         center.renderColour(vb);
         center.renderTex(vb);
         center.renderLightMap(vb);
-        vb.endVertex();
+        vb.next();
     }
 }

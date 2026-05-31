@@ -51,7 +51,7 @@ public class BCBuildersSchematics {
             @Override
             public List<ItemStack> computeRequiredItems() {
                 return Collections.singletonList(ItemBanner.makeBanner(
-                    DyeColor.byDyeDamage(tileNbt.getInteger("Base")), tileNbt.getTagList("Patterns", 10)));
+                    DyeColor.byDyeDamage(tileNbt.getInt("Base")), tileNbt.getList("Patterns", 10)));
             }
         };
     }

@@ -46,7 +46,7 @@ public class Template extends Snapshot {
     @Override
     public NbtCompound serializeNBT() {
         NbtCompound nbt = super.serializeNBT();
-        nbt.setByteArray("data", data.toByteArray());
+        nbt.putByteArray("data", data.toByteArray());
         return nbt;
     }
 

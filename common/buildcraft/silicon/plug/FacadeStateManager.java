@@ -9,7 +9,7 @@ package buildcraft.silicon.plug;
 
 /**
  * STUB(R.Chen): FacadeStateManager implementation deferred until FacadeAPI and FacadeStateManager
- * are migrated to Fabric 1.20.1 (depends on IBlockState → BlockState full migration,
+ * are migrated to Fabric 1.20.1 (depends on BlockState → BlockState full migration,
  * forge registry equivalents, and facade NBT/network serialisation).
  */
 public class FacadeStateManager {

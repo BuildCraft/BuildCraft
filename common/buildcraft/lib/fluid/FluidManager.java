@@ -9,7 +9,7 @@ package buildcraft.lib.fluid;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -18,8 +18,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.registry.RegistrationHelper;
 
@@ -50,7 +50,7 @@ public class FluidManager {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void onModelBake(ModelBakeEvent event) {
         for (BCFluidBlock fluid : fluidBlocks) {
             event.getModelManager().getBlockModelShapes().registerBlockWithStateMapper(fluid,

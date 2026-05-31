@@ -24,9 +24,9 @@ import buildcraft.lib.mj.MjBatteryReceiver;
 // Forge→Fabric migration notes (R.Chen):
 //   IWorldEventListener       → STUB: world event listener deferred (WorldEventListenerAdapter
 //                               not yet in libLeaf; polling via SafeTimeTracker used instead).
-//   WorldServer               → ServerWorld
-//   IBlockState               → BlockState
-//   world.isAirBlock(pos)     → world.isAir(pos)
+//   ServerWorld               → ServerWorld
+//   BlockState               → BlockState
+//   world.isAir(pos)     → world.isAir(pos)
 //   world.isOutsideBuildHeight→ world.isOutOfHeightLimit(pos)
 //   world.sendBlockBreakProgress → world.setBlockBreakingInfo
 //   BlockUtil.computeBlockBreakPower / breakBlockAndGetDrops / isUnbreakableBlock / getFluidWithFlowing

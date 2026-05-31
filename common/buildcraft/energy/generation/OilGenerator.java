@@ -8,10 +8,10 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEnd;
@@ -78,7 +78,7 @@ public class OilGenerator {
             return;
         }
 
-        world.profiler.startSection("bc_oil");
+        world.profiler.push("bc_oil");
         int x = chunkX * 16 + 8;
         int z = chunkZ * 16 + 8;
         BlockPos min = new BlockPos(x, 0, z);
@@ -88,10 +88,10 @@ public class OilGenerator {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {
                 int cx = chunkX + cdx;
                 int cz = chunkZ + cdz;
-                world.profiler.startSection("scan");
+                world.profiler.push("scan");
                 List<OilGenStructure> structures = getStructures(world, cx, cz, cdx == 0 && cdz == 0);
                 OilGenStructure.Spring spring = null;
-                world.profiler.endStartSection("gen");
+                world.profiler.swap("gen");
                 for (OilGenStructure struct : structures) {
                     struct.generate(world, box);
                     if (struct instanceof OilGenStructure.Spring) {
@@ -105,10 +105,10 @@ public class OilGenerator {
                     }
                     spring.generate(world, count);
                 }
-                world.profiler.endSection();
+                world.profiler.pop();
             }
         }
-        world.profiler.endSection();
+        world.profiler.pop();
     }
 
     public static List<OilGenStructure> getStructures(World world, int cx, int cz) {
@@ -247,8 +247,8 @@ public class OilGenerator {
     }
 
     private static String toStr(World world) {
-        if (world instanceof WorldServer) {
-            WorldServer ws = (WorldServer) world;
+        if (world instanceof ServerWorld) {
+            ServerWorld ws = (ServerWorld) world;
             return ws.getChunkSaveLocation().getName();
         }
         return world.toString();

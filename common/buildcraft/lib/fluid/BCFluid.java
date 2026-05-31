@@ -7,7 +7,7 @@
 package buildcraft.lib.fluid;
 
 import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,7 +23,7 @@ public class BCFluid extends Fluid {
     private boolean heatable;
     private String blockName;
 
-    public BCFluid(String fluidName, ResourceLocation still, ResourceLocation flowing) {
+    public BCFluid(String fluidName, Identifier still, Identifier flowing) {
         super(fluidName, still, flowing);
         blockName = fluidName;
     }

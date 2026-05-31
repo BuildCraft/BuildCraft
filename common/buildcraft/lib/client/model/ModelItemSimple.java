@@ -27,7 +27,7 @@ import net.minecraft.util.math.random.Random;
 /**
  * STUB(R.Chen): client model — Phase 5.
  *
- * The Forge original implemented {@code IBakedModel} using {@code ItemCameraTransforms} /
+ * The Forge original implemented {@code BakedModel} using {@code ItemCameraTransforms} /
  * {@code ItemTransformVec3f} (LWJGL Vector3f Euler angles). In Fabric 1.20.1 the equivalent is
  * {@code BakedModel} + {@code ModelTransformation} (JOML Quaternionf). Mapping Euler-angle
  * definitions to Quaternionf is non-trivial and is deferred to Phase 5. The static

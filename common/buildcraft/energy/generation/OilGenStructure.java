@@ -285,7 +285,7 @@ public abstract class OilGenStructure {
             BlockState state = BCCoreBlocks.spring.getDefaultState();
             state = state.withProperty(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
             world.setBlockState(pos, state);
-            BlockEntity tile = world.getTileEntity(pos);
+            BlockEntity tile = world.getBlockEntity(pos);
             TileSpringOil spring;
             if (tile instanceof TileSpringOil) {
                 spring = (TileSpringOil) tile;

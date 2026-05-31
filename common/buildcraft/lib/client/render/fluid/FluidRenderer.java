@@ -12,17 +12,17 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -30,8 +30,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.GuiUtil;
@@ -45,10 +45,10 @@ import buildcraft.lib.misc.VecUtil;
  * call this from the main client thread. */
 // TODO: thread safety (per thread context?)
 // Perhaps move this into IModelRenderer? And that way we get the buffer, force shaders to cope with fluids (?!), etc
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class FluidRenderer {
 
-    private static final EnumMap<FluidSpriteType, Map<String, TextureAtlasSprite>> fluidSprites
+    private static final EnumMap<FluidSpriteType, Map<String, Sprite>> fluidSprites
         = new EnumMap<>(FluidSpriteType.class);
     public static final MutableVertex vertex = new MutableVertex();
     private static final boolean[] DEFAULT_FACES = { true, true, true, true, true, true };
@@ -57,7 +57,7 @@ public class FluidRenderer {
 
     // Cached fields that prevent lots of arguments on most methods
     private static BufferBuilder bb;
-    private static TextureAtlasSprite sprite;
+    private static Sprite sprite;
     private static TexMap texmap;
     private static boolean invertU, invertV;
     private static double xTexDiff, yTexDiff, zTexDiff;
@@ -74,10 +74,10 @@ public class FluidRenderer {
         for (FluidSpriteType type : FluidSpriteType.values()) {
             fluidSprites.get(type).clear();
         }
-        Map<ResourceLocation, SpriteFluidFrozen> spritesStitched = new HashMap<>();
+        Map<Identifier, SpriteFluidFrozen> spritesStitched = new HashMap<>();
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            ResourceLocation still = fluid.getStill();
-            ResourceLocation flowing = fluid.getFlowing();
+            Identifier still = fluid.getStill();
+            Identifier flowing = fluid.getFlowing();
             if (still == null || flowing == null) {
                 throw new IllegalStateException(
                     "Encountered a fluid with a null still sprite! (" + fluid.getName() + " - "
@@ -102,7 +102,7 @@ public class FluidRenderer {
 
     public static void onTextureStitchPost(TextureMap map) {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            ResourceLocation still = fluid.getStill();
+            Identifier still = fluid.getStill();
             if (still == null) {
                 throw new IllegalStateException(
                     "Encountered a fluid with a null still sprite! (" + fluid.getName() + " - "
@@ -110,7 +110,7 @@ public class FluidRenderer {
                 );
             }
 
-            TextureAtlasSprite sprite = map.getAtlasSprite(still.toString());
+            Sprite sprite = map.getAtlasSprite(still.toString());
             if (sprite == null || sprite == map.getMissingSprite()) {
                 continue;
             }
@@ -163,7 +163,7 @@ public class FluidRenderer {
      * @param max The maximum coordinate that the tank will be rendered to.
      * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
-     *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns.
+     *            faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns.
      * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, BufferBuilder, boolean[]) */
     public static void renderFluid(
         FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, BufferBuilder bbIn, boolean[] sideRender
@@ -181,7 +181,7 @@ public class FluidRenderer {
      * @param max The maximum coordinate that the tank will be rendered to.
      * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
-     *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
+     *            faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns. */
     public static void renderFluid(
         FluidSpriteType type, FluidStack fluid, int cap, Vec3d min, Vec3d max, BufferBuilder bbIn, boolean[] sideRender
     ) {
@@ -200,7 +200,7 @@ public class FluidRenderer {
      * @param max The maximum coordinate that the tank will be rendered to.
      * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
-     *            faces will be rendered. The indexes are determined by what {@link EnumFacing#ordinal()} returns. */
+     *            faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns. */
     public static void renderFluid(
         FluidSpriteType type, FluidStack fluid, double amount, double cap, Vec3d min, Vec3d max, BufferBuilder bbIn,
         boolean[] sideRender
@@ -208,8 +208,8 @@ public class FluidRenderer {
         if (fluid == null || fluid.getFluid() == null || amount <= 0) {
             return;
         }
-        Profiler prof = Minecraft.getMinecraft().mcProfiler;
-        prof.startSection("fluid");
+        Profiler prof = MinecraftClient.getInstance().getProfiler();
+        prof.push("fluid");
         if (sideRender == null) {
             sideRender = DEFAULT_FACES;
         }
@@ -273,14 +273,14 @@ public class FluidRenderer {
         // TODO: Enable/disable inversion for the correct faces
         invertU = false;
         invertV = false;
-        if (sideRender[EnumFacing.UP.ordinal()]) {
+        if (sideRender[Direction.UP.ordinal()]) {
             vertex(xs, yb, zb);
             vertex(xb, yb, zb);
             vertex(xb, yb, zs);
             vertex(xs, yb, zs);
         }
 
-        if (sideRender[EnumFacing.DOWN.ordinal()]) {
+        if (sideRender[Direction.DOWN.ordinal()]) {
             vertex(xs, ys, zs);
             vertex(xb, ys, zs);
             vertex(xb, ys, zb);
@@ -288,14 +288,14 @@ public class FluidRenderer {
         }
 
         texmap = TexMap.ZY;
-        if (sideRender[EnumFacing.WEST.ordinal()]) {
+        if (sideRender[Direction.WEST.ordinal()]) {
             vertex(xs, ys, zs);
             vertex(xs, ys, zb);
             vertex(xs, yb, zb);
             vertex(xs, yb, zs);
         }
 
-        if (sideRender[EnumFacing.EAST.ordinal()]) {
+        if (sideRender[Direction.EAST.ordinal()]) {
             vertex(xb, yb, zs);
             vertex(xb, yb, zb);
             vertex(xb, ys, zb);
@@ -303,14 +303,14 @@ public class FluidRenderer {
         }
 
         texmap = TexMap.XY;
-        if (sideRender[EnumFacing.NORTH.ordinal()]) {
+        if (sideRender[Direction.NORTH.ordinal()]) {
             vertex(xs, yb, zs);
             vertex(xb, yb, zs);
             vertex(xb, ys, zs);
             vertex(xs, ys, zs);
         }
 
-        if (sideRender[EnumFacing.SOUTH.ordinal()]) {
+        if (sideRender[Direction.SOUTH.ordinal()]) {
             vertex(xs, ys, zb);
             vertex(xb, ys, zb);
             vertex(xb, yb, zb);
@@ -320,18 +320,18 @@ public class FluidRenderer {
         sprite = null;
         texmap = null;
         bb = null;
-        prof.endSection();
+        prof.pop();
     }
 
-    public static TextureAtlasSprite getFluidSprite(FluidSpriteType type, FluidStack fluid) {
+    public static Sprite getFluidSprite(FluidSpriteType type, FluidStack fluid) {
         return getFluidSprite(type, fluid.getFluid());
     }
 
-    public static TextureAtlasSprite getFluidSprite(FluidSpriteType type, Fluid fluid) {
+    public static Sprite getFluidSprite(FluidSpriteType type, Fluid fluid) {
         if (fluid == null) {
             return SpriteUtil.missingSprite();
         }
-        TextureAtlasSprite s = fluidSprites.get(type).get(fluid.getName());
+        Sprite s = fluidSprites.get(type).get(fluid.getName());
         return s != null ? s : SpriteUtil.missingSprite();
     }
 
@@ -352,9 +352,9 @@ public class FluidRenderer {
 
         sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid().getName());
         if (sprite == null) {
-            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+            sprite = MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite();
         }
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        MinecraftClient.getInstance().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         RenderUtil.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 
         Tessellator tess = Tessellator.getInstance();
@@ -427,7 +427,7 @@ public class FluidRenderer {
         }
 
         tess.draw();
-        GlStateManager.color(1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1);
         sprite = null;
         bb = null;
     }
@@ -435,9 +435,9 @@ public class FluidRenderer {
     private static void guiVertex(double x, double y, double u, double v) {
         float ru = sprite.getInterpolatedU(u);
         float rv = sprite.getInterpolatedV(v);
-        bb.pos(x, y, 0);
-        bb.tex(ru, rv);
-        bb.endVertex();
+        bb.vertex(x, y, 0);
+        bb.texture(ru, rv);
+        bb.next();
     }
 
     /** Used to keep track of what position maps to what texture co-ord.

@@ -11,19 +11,19 @@ import java.util.Locale;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.enums.EnumSnapshotType;
 
@@ -45,8 +45,8 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     public ItemStack getUsed(EnumSnapshotType snapshotType, Header header) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("header", header.serializeNBT());
+        NbtCompound nbt = new NbtCompound();
+        nbt.put("header", header.serializeNBT());
         ItemStack stack = new ItemStack(this, 1, EnumItemSnapshotType.get(snapshotType, true).ordinal());
         stack.setTagCompound(nbt);
         return stack;
@@ -55,10 +55,10 @@ public class ItemSnapshot extends ItemBC_Neptune {
     public Header getHeader(ItemStack stack) {
         if (stack.getItem() instanceof ItemSnapshot) {
             if (EnumItemSnapshotType.getFromStack(stack).used) {
-                NBTTagCompound nbt = stack.getTagCompound();
+                NbtCompound nbt = stack.getTagCompound();
                 if (nbt != null) {
-                    if (nbt.hasKey("header", Constants.NBT.TAG_COMPOUND)) {
-                        return new Header(nbt.getCompoundTag("header"));
+                    if (nbt.contains("header", NbtElement.COMPOUND_TYPE)) {
+                        return new Header(nbt.getCompound("header"));
                     }
                 }
             }
@@ -72,14 +72,14 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> subItems) {
         subItems.add(getClean(EnumSnapshotType.BLUEPRINT));
         subItems.add(getClean(EnumSnapshotType.TEMPLATE));
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    @Environment(EnvType.CLIENT)
+    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
         for (EnumItemSnapshotType type : EnumItemSnapshotType.values()) {
             addVariant(variants, type.ordinal(), type.getName());
         }
@@ -94,15 +94,15 @@ public class ItemSnapshot extends ItemBC_Neptune {
         return "item.templateItem";
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, TooltipContext flag) {
         Snapshot.Header header = getHeader(stack);
         if (header == null) {
             tooltip.add(LocaleUtil.localize("item.blueprint.blank"));
         } else {
             tooltip.add(header.name);
-            EntityPlayer owner = header.getOwnerPlayer(world);
+            PlayerEntity owner = header.getOwnerPlayer(world);
             if (owner != null) {
                 tooltip.add(LocaleUtil.localize("item.blueprint.author") + " " + owner.getName());
             }

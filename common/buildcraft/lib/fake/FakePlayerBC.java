@@ -8,13 +8,13 @@ package buildcraft.lib.fake;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.world.WorldServer;
+import net.minecraft.block.entity.BlockEntitySign;
+import net.minecraft.server.world.ServerWorld;
 
 import net.minecraftforge.common.util.FakePlayer;
 
 public class FakePlayerBC extends FakePlayer {
-    public FakePlayerBC(WorldServer world, GameProfile name) {
+    public FakePlayerBC(ServerWorld world, GameProfile name) {
         super(world, name);
     }
 

@@ -6,8 +6,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -28,7 +28,7 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileBuilder;
 
 public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final IProperty<EnumOptionalSnapshotType> SNAPSHOT_TYPE = BuildCraftProperties.SNAPSHOT_TYPE;
+    public static final Property<EnumOptionalSnapshotType> SNAPSHOT_TYPE = BuildCraftProperties.SNAPSHOT_TYPE;
 
     public BlockBuilder(Material material, String id) {
         super(material, id);
@@ -38,14 +38,14 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
     // BlockState
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.add(SNAPSHOT_TYPE);
     }
 
     @Override
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBuilder) {
             return state
                     .withProperty(
@@ -65,7 +65,7 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCBuildersGuis.BUILDER.openGUI(player, pos);
         }
         return true;
@@ -73,7 +73,7 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
 
     @Override
     public boolean canBeRotated(World world, BlockPos pos, BlockState state) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         return !(tile instanceof TileBuilder) || ((TileBuilder) tile).getBuilder() == null;
     }
 }

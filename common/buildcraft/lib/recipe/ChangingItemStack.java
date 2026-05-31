@@ -8,10 +8,10 @@ package buildcraft.lib.recipe;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -25,7 +25,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
     /** Creates a stack list that iterates through all of the given stacks. This does NOT check possible variants.
      * 
      * @param stacks The list to iterate through. */
-    public ChangingItemStack(NonNullList<ItemStack> stacks) {
+    public ChangingItemStack(DefaultedList<ItemStack> stacks) {
         super(makeListArray(stacks));
     }
 
@@ -41,7 +41,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
         this(OreDictionary.getOres(oreId));
     }
 
-    private static ItemStackKey[] makeListArray(NonNullList<ItemStack> stacks) {
+    private static ItemStackKey[] makeListArray(DefaultedList<ItemStack> stacks) {
         return makeStackArray(stacks.toArray(new ItemStack[0]));
     }
 
@@ -50,8 +50,8 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
             return new ItemStackKey[] { ItemStackKey.EMPTY };
         }
         if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-            NonNullList<ItemStack> subs = NonNullList.create();
-            stack.getItem().getSubItems(CreativeTabs.SEARCH, subs);
+            DefaultedList<ItemStack> subs = DefaultedList.create();
+            stack.getItem().getSubItems(ItemGroup.SEARCH, subs);
             return makeListArray(subs);
         } else {
             return new ItemStackKey[] { new ItemStackKey(stack) };

@@ -34,7 +34,7 @@ public class ContainerDistiller extends ContainerBCTile<TileDistiller_BC8> {
     public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         // The only slots are player slots -- try to interact with the tank
 
-        if (!player.world.isRemote) {
+        if (!player.world.isClient) {
             Slot slot = inventorySlots.get(index);
             ItemStack stack = slot.getStack();
             ItemStack original = stack.copy();

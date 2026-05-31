@@ -8,9 +8,9 @@ package buildcraft.lib.client.render.tile;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.util.profiler.Profiler;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
@@ -22,14 +22,14 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
 
     @Override
     public void renderTileEntityFast(@Nonnull T engine, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder vb) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("bc");
-        profiler.startSection("engine");
+        Profiler profiler = MinecraftClient.getInstance().getProfiler();
+        profiler.push("bc");
+        profiler.push("engine");
 
-        profiler.startSection("compute");
+        profiler.push("compute");
         vb.setTranslation(x, y, z);
         MutableQuad[] quads = getEngineModel(engine, partialTicks);
-        profiler.endStartSection("render");
+        profiler.swap("render");
         MutableQuad copy = new MutableQuad(0, null);
         int lightc = engine.getWorld().getCombinedLight(engine.getPos(), 0);
         int light_block = (lightc >> 4) & 15;
@@ -42,9 +42,9 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
         }
         vb.setTranslation(0, 0, 0);
 
-        profiler.endSection();
-        profiler.endSection();
-        profiler.endSection();
+        profiler.pop();
+        profiler.pop();
+        profiler.pop();
     }
 
     protected abstract MutableQuad[] getEngineModel(T engine, float partialTicks);

@@ -8,10 +8,10 @@ package buildcraft.builders.container;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.ContainerBC_Neptune;
@@ -28,7 +28,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("electronic_library");
     private static final int ID_SELECTED = IDS.allocId("SELECTED");
 
-    public ContainerElectronicLibrary(EntityPlayer player, TileElectronicLibrary tile) {
+    public ContainerElectronicLibrary(PlayerEntity player, TileElectronicLibrary tile) {
         super(player, tile);
         addFullPlayerInventory(138);
 
@@ -56,7 +56,7 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
     @Override
     public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+        if (side == EnvType.SERVER) {
             if (id == ID_SELECTED) {
                 if (buffer.readBoolean()) {
                     tile.selected = new Snapshot.Key(buffer);

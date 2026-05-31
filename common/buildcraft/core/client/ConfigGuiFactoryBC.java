@@ -9,7 +9,7 @@ package buildcraft.core.client;
 import java.util.ArrayList;
 import java.util.Set;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
@@ -41,7 +41,7 @@ public class ConfigGuiFactoryBC implements IModGuiFactory {
     public ConfigGuiFactoryBC() {}
 
     @Override
-    public void initialize(Minecraft minecraftInstance) {
+    public void initialize(MinecraftClient minecraftInstance) {
         // We don't need to do anything
     }
 

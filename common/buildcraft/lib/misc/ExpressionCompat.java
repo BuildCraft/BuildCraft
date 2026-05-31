@@ -24,7 +24,7 @@ public class ExpressionCompat {
 
     public static final FunctionContext RENDERING = DefaultContexts.RENDERING;
 
-    // Minecraft Types
+    // MinecraftClient Types
     public static final NodeType<Axis> ENUM_AXIS;
     public static final NodeType<Direction> ENUM_FACING;
     public static final NodeType<DyeColor> ENUM_DYE_COLOUR;

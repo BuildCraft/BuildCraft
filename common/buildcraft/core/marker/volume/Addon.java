@@ -14,7 +14,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 // Yarn 1.20.1 renames:
-//   EntityPlayer → PlayerEntity, NBTTagCompound → NbtCompound, AxisAlignedBB → net.minecraft.util.math.Box
+//   PlayerEntity → PlayerEntity, NbtCompound → NbtCompound, Box → net.minecraft.util.math.Box
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;

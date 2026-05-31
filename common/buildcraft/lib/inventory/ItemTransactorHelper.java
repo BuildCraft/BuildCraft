@@ -20,7 +20,7 @@ import buildcraft.api.transport.IInjectable;
 
 // STUB(R.Chen): full implementation in Phase 4E.
 // The Forge ICapabilityProvider / IItemHandler / IInventory / ISidedInventory wrappers and the
-// entity transactors (EntityItem / EntityArrow) all depend on the Transfer-API item layer and the
+// entity transactors (ItemEntity / EntityArrow) all depend on the Transfer-API item layer and the
 // inventory wrapper classes which are not yet migrated. Only the three entry points referenced by
 // PipeFlowItems are exposed here, returning the no-space fallbacks so callers behave as "nothing
 // connected" until the real routing is wired up.

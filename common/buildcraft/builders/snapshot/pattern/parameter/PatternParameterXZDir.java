@@ -12,12 +12,12 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -31,45 +31,45 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.builders.BCBuildersSprites;
 
 public enum PatternParameterXZDir implements IStatementParameter {
-    WEST(EnumFacing.WEST),
-    EAST(EnumFacing.EAST),
-    NORTH(EnumFacing.NORTH),
-    SOUTH(EnumFacing.SOUTH);
+    WEST(Direction.WEST),
+    EAST(Direction.EAST),
+    NORTH(Direction.NORTH),
+    SOUTH(Direction.SOUTH);
 
     private static final PatternParameterXZDir[] POSSIBLE_ORDER =
         { null, null, NORTH, null, EAST, null, SOUTH, null, WEST };
 
-    private static final Map<EnumFacing, PatternParameterXZDir> map;
+    private static final Map<Direction, PatternParameterXZDir> map;
 
     static {
-        map = new EnumMap<>(EnumFacing.class);
+        map = new EnumMap<>(Direction.class);
         for (PatternParameterXZDir param : values()) {
             map.put(param.dir, param);
         }
     }
 
-    public final EnumFacing dir;
+    public final Direction dir;
 
-    PatternParameterXZDir(EnumFacing dir) {
+    PatternParameterXZDir(Direction dir) {
         this.dir = dir;
     }
 
-    public static PatternParameterXZDir get(EnumFacing face) {
+    public static PatternParameterXZDir get(Direction face) {
         PatternParameterXZDir param = map.get(face);
         if (param == null) {
-            throw new IllegalArgumentException("Can only accept horizontal EnumFacing's (was given " + face + ")");
+            throw new IllegalArgumentException("Can only accept horizontal Direction's (was given " + face + ")");
         }
         return param;
     }
 
-    public static PatternParameterXZDir readFromNbt(NBTTagCompound nbt) {
-        EnumFacing dir;
-        if (nbt.hasKey("dir", Constants.NBT.TAG_ANY_NUMERIC)) {
+    public static PatternParameterXZDir readFromNbt(NbtCompound nbt) {
+        Direction dir;
+        if (nbt.contains("dir", Constants.NBT.TAG_ANY_NUMERIC)) {
             // Older versions
             int d = nbt.getByte("dir") + 2;
-            dir = EnumFacing.getHorizontal(d);
+            dir = Direction.getHorizontal(d);
         } else {
-            dir = EnumFacing.getHorizontal(nbt.getByte("d"));
+            dir = Direction.getHorizontal(nbt.getByte("d"));
         }
         PatternParameterXZDir param = map.get(dir);
         if (param == null) {
@@ -79,8 +79,8 @@ public enum PatternParameterXZDir implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("d", (byte) dir.getHorizontalIndex());
+    public void writeToNbt(NbtCompound nbt) {
+        nbt.putByte("d", (byte) dir.getHorizontalIndex());
     }
 
     @Override
@@ -89,7 +89,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
         return BCBuildersSprites.PARAM_XZ_DIR.get(dir);
     }

@@ -26,12 +26,12 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableList;
 
 // Yarn 1.20.1 renames:
-//   EntityPlayerMP        → ServerPlayerEntity   NBTTagCompound → NbtCompound   NBTTagList → NbtList
-//   PacketBuffer          → PacketByteBuf        TileEntity     → BlockEntity   EnumFacing → Direction
-//   EnumDyeColor          → DyeColor             WorldServer    → ServerWorld
-//   world.getTileEntity   → world.getBlockEntity     EnumFacing.getFront(i) → Direction.byId(i)
+//   ServerPlayerEntity        → ServerPlayerEntity   NbtCompound → NbtCompound   NbtList → NbtList
+//   PacketByteBuf          → PacketByteBuf        BlockEntity     → BlockEntity   Direction → Direction
+//   DyeColor          → DyeColor             ServerWorld    → ServerWorld
+//   world.getTileEntity   → world.getBlockEntity     Direction.getFront(i) → Direction.byId(i)
 //   color.getMetadata()   → color.getId()        emitterSide.getIndex() → emitterSide.getId()
-//   Constants.NBT.TAG_COMPOUND → NbtElement.COMPOUND_TYPE
+//   NbtElement.COMPOUND_TYPE → NbtElement.COMPOUND_TYPE
 //   MessageUtil.read/writeBlockPos → PacketByteBuf native readBlockPos()/writeBlockPos()
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -211,7 +211,7 @@ public final class WireSystem {
 
     // STUB(R.Chen): server→client wire sync (MessageWireSystems / MessageWireSystemsPowered) is deferred to
     // Phase 5 with the rest of the BC networking layer, so the per-player visibility check has no caller yet.
-    // The Forge WorldServer.getPlayerChunkMap().getEntry(...).containsPlayer(player) path maps to Yarn's
+    // The Forge ServerWorld.getPlayerChunkMap().getEntry(...).containsPlayer(player) path maps to Yarn's
     // ServerChunkManager.threadedAnvilChunkStorage — restore it when the broadcast is reinstated.
     public boolean isPlayerWatching(ServerPlayerEntity player) {
         return false;

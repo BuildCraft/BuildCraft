@@ -9,12 +9,12 @@ package buildcraft.lib.misc;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.ActionResult;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -25,7 +25,7 @@ public class SoundUtil {
         playBlockPlace(world, pos, world.getBlockState(pos));
     }
 
-    public static void playBlockPlace(World world, BlockPos pos, IBlockState state) {
+    public static void playBlockPlace(World world, BlockPos pos, BlockState state) {
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
@@ -36,7 +36,7 @@ public class SoundUtil {
         playBlockBreak(world, pos, world.getBlockState(pos));
     }
 
-    public static void playBlockBreak(World world, BlockPos pos, IBlockState state) {
+    public static void playBlockBreak(World world, BlockPos pos, BlockState state) {
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
@@ -49,7 +49,7 @@ public class SoundUtil {
         world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 0.2f, pitch);
     }
 
-    public static void playChangeColour(World world, BlockPos pos, @Nullable EnumDyeColor colour) {
+    public static void playChangeColour(World world, BlockPos pos, @Nullable DyeColor colour) {
         SoundType soundType = SoundType.SLIME;
         final SoundEvent soundEvent;
         if (colour == null) {
@@ -68,19 +68,19 @@ public class SoundUtil {
         playSlideSound(world, pos, world.getBlockState(pos));
     }
 
-    public static void playSlideSound(World world, BlockPos pos, EnumActionResult result) {
+    public static void playSlideSound(World world, BlockPos pos, ActionResult result) {
         playSlideSound(world, pos, world.getBlockState(pos), result);
     }
 
-    public static void playSlideSound(World world, BlockPos pos, IBlockState state) {
-        playSlideSound(world, pos, state, EnumActionResult.SUCCESS);
+    public static void playSlideSound(World world, BlockPos pos, BlockState state) {
+        playSlideSound(world, pos, state, ActionResult.SUCCESS);
     }
 
-    public static void playSlideSound(World world, BlockPos pos, IBlockState state, EnumActionResult result) {
-        if (result == EnumActionResult.PASS) return;
+    public static void playSlideSound(World world, BlockPos pos, BlockState state, ActionResult result) {
+        if (result == ActionResult.PASS) return;
         SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         SoundEvent event;
-        if (result == EnumActionResult.SUCCESS) {
+        if (result == ActionResult.SUCCESS) {
             event = SoundEvents.BLOCK_PISTON_CONTRACT;
         } else {
             event = SoundEvents.BLOCK_PISTON_EXTEND;

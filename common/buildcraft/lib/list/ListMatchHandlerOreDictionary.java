@@ -10,12 +10,12 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;
@@ -96,17 +96,17 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         return s;
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
+    public DefaultedList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
-        NonNullList<ItemStack> stacks = NonNullList.create();
+        DefaultedList<ItemStack> stacks = DefaultedList.create();
 
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
-                NonNullList<ItemStack> tempStack = NonNullList.create();
-                stack.getItem().getSubItems(CreativeTabs.SEARCH, tempStack);
+                DefaultedList<ItemStack> tempStack = DefaultedList.create();
+                stack.getItem().getSubItems(ItemGroup.SEARCH, tempStack);
                 for (ItemStack is : tempStack) {
                     if (is.getItem() == stack.getItem()) {
                         stacks.add(is);
@@ -138,7 +138,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
 
-        NonNullList<ItemStack> wildcard = NonNullList.create();
+        DefaultedList<ItemStack> wildcard = DefaultedList.create();
 
         for (ItemStack is : stacks) {
             if (is != null && is.getItemDamage() == OreDictionary.WILDCARD_VALUE && is.getHasSubtypes()) {
@@ -146,8 +146,8 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
         for (ItemStack is : wildcard) {
-            NonNullList<ItemStack> wll = NonNullList.create();
-            is.getItem().getSubItems(CreativeTabs.MISC, wll);
+            DefaultedList<ItemStack> wll = DefaultedList.create();
+            is.getItem().getSubItems(ItemGroup.MISC, wll);
             if (wll.size() > 0) {
                 stacks.remove(is);
                 stacks.addAll(wll);

@@ -34,9 +34,9 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 //   IAutoCraft               → STUB (blocked by WorkbenchCrafting)
 //   IMjRedstoneReceiver      → MjCapabilityHelper (MjBatteryReceiver) used instead
 //   IHasWork                 → STUB (TilesAPI.CAP_HAS_WORK deferred, Phase 4F)
-//   NBTTagCompound           → NbtCompound
+//   NbtCompound           → NbtCompound
 //   Side                     → NetSide
-//   ResourceLocation         → Identifier
+//   Identifier         → Identifier
 //   crafting/power logic     → STUB (WorkbenchCrafting not in libLeaf)
 public abstract class TileAutoWorkbenchBase extends TileBC_Neptune {
 

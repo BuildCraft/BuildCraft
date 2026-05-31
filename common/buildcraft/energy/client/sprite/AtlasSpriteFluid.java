@@ -8,8 +8,8 @@ package buildcraft.energy.client.sprite;
 
 import java.util.function.Function;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
@@ -32,9 +32,9 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     }
 
     @Override
-    public boolean load(IResourceManager manager, Identifier location, Function<Identifier, TextureAtlasSprite> textureGetter) {
+    public boolean load(ResourceManager manager, Identifier location, Function<Identifier, Sprite> textureGetter) {
         Identifier from = SpriteUtil.transformLocation(fromName);
-        TextureAtlasSprite sprite = loadSprite(manager, from.toString(), from, true);
+        Sprite sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
             return true;
@@ -46,7 +46,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
         return false;
     }
 
-    private void recolourFrame(TextureAtlasSprite sprite, int f) {
+    private void recolourFrame(Sprite sprite, int f) {
         int[][] frameData = sprite.getFrameTextureData(f);
         if (frameData != null) {
             // frameData[0] is mipmap 0

@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -21,8 +21,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.ModelItemSimple;
@@ -55,7 +55,7 @@ public class BCFactoryModels {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void onModelRegistry(ModelRegistryEvent event) {
         if (BCFactoryBlocks.heatExchange != null) {
             ModelLoader.setCustomStateMapper(
@@ -63,8 +63,8 @@ public class BCFactoryModels {
                 new StateMapperBase() {
                     @Nonnull
                     @Override
-                    protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                        return new ModelResourceLocation("buildcraftfactory:heat_exchange#normal");
+                    protected ModelIdentifier getModelResourceLocation(@Nonnull BlockState state) {
+                        return new ModelIdentifier("buildcraftfactory:heat_exchange#normal");
                     }
                 }
             );
@@ -82,11 +82,11 @@ public class BCFactoryModels {
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
         event.getModelRegistry().putObject(
-            new ModelResourceLocation("buildcraftfactory:heat_exchange#normal"),
+            new ModelIdentifier("buildcraftfactory:heat_exchange#normal"),
             new ModelHeatExchange()
         );
         event.getModelRegistry().putObject(
-            new ModelResourceLocation("buildcraftfactory:heat_exchange#inventory"),
+            new ModelIdentifier("buildcraftfactory:heat_exchange#inventory"),
             new ModelItemSimple(
                 Arrays.stream(BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads())
                     .map(MutableQuad::multShade)

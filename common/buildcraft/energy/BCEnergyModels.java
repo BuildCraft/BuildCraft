@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -20,8 +20,8 @@ import net.minecraftforge.client.model.ModelFluid;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
@@ -46,7 +46,7 @@ import buildcraft.energy.tile.TileEngineStone_BC8;
 public class BCEnergyModels {
     private static final NodeVariableDouble ENGINE_PROGRESS;
     private static final NodeVariableObject<EnumPowerStage> ENGINE_STAGE;
-    private static final NodeVariableObject<EnumFacing> ENGINE_FACING;
+    private static final NodeVariableObject<Direction> ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_STONE;
     private static final ModelHolderVariable ENGINE_IRON;
@@ -57,7 +57,7 @@ public class BCEnergyModels {
         FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
-        ENGINE_FACING = fnCtx.putVariableObject("direction", EnumFacing.class);
+        ENGINE_FACING = fnCtx.putVariableObject("direction", Direction.class);
         // TODO: Item models from "item/engine_stone.json"
         ENGINE_STONE = new ModelHolderVariable(
             "buildcraftenergy:models/block/engine_stone.json",
@@ -82,7 +82,7 @@ public class BCEnergyModels {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void onModelRegistry(ModelRegistryEvent event) {
         for (BCFluid fluid : BCEnergyFluids.allFluids) {
             ModelLoader.setCustomStateMapper(fluid.getBlock(), b -> Collections.emptyMap());
@@ -93,13 +93,13 @@ public class BCEnergyModels {
     public static void onModelBake(ModelBakeEvent event) {
         ENGINE_PROGRESS.value = 0.2;
         ENGINE_STAGE.value = EnumPowerStage.BLUE;
-        ENGINE_FACING.value = EnumFacing.UP;
+        ENGINE_FACING.value = Direction.UP;
         ModelVariableData varData = new ModelVariableData();
         varData.setNodes(ENGINE_STONE.createTickableNodes());
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelResourceLocation(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_STONE.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -112,7 +112,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelResourceLocation(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_IRON.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -125,7 +125,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelResourceLocation(EnumEngineType.RF.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(EnumEngineType.RF.getItemModelLocation(), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_RF.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -138,7 +138,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelResourceLocation("buildcraftenergy:mj_dynamo", "inventory"),
+            new ModelIdentifier("buildcraftenergy:mj_dynamo", "inventory"),
             new ModelItemSimple(
                 Arrays.stream(MJ_DYNAMO.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -150,7 +150,7 @@ public class BCEnergyModels {
         for (BCFluid fluid : BCEnergyFluids.allFluids) {
             ModelFluid modelFluid = new ModelFluid(fluid);
             event.getModelRegistry().putObject(
-                new ModelResourceLocation("buildcraftenergy:fluid_block_" + fluid.getBlockName()),
+                new ModelIdentifier("buildcraftenergy:fluid_block_" + fluid.getBlockName()),
                 modelFluid.bake(
                     modelFluid.getDefaultState(),
                     DefaultVertexFormats.ITEM,

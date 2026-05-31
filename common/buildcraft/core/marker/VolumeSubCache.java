@@ -10,13 +10,13 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.marker.MarkerCache;
@@ -78,13 +78,13 @@ public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
     @Override
     public ImmutableList<BlockPos> getValidConnections(BlockPos from) {
         VolumeConnection existing = getConnection(from);
-        Set<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
+        Set<Axis> taken = EnumSet.noneOf(Direction.Axis.class);
         if (existing != null) {
             taken.addAll(existing.getConnectedAxis());
         }
 
         ImmutableList.Builder<BlockPos> valids = ImmutableList.builder();
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (taken.contains(face.getAxis())) continue;
             for (int i = 1; i <= BCCoreConfig.markerMaxDistance; i++) {
                 BlockPos toTry = from.offset(face, i);
@@ -99,13 +99,13 @@ public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public LaserType getPossibleLaserType() {
         return BuildCraftLaserManager.MARKER_VOLUME_POSSIBLE;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     protected boolean handleMessage(MessageMarker message) {
         List<BlockPos> positions = message.positions;
         if (message.connection) {

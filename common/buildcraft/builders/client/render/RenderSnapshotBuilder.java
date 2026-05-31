@@ -10,15 +10,15 @@ import java.util.Collections;
 
 import javax.vecmath.Point3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.render.ItemRenderUtil;
@@ -32,7 +32,7 @@ import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
 import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.core.client.BuildCraftLaserManager;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RenderSnapshotBuilder {
     public static <T extends ITileForSnapshotBuilder> void render(
             SnapshotBuilder<T> snapshotBuilder,
@@ -58,7 +58,7 @@ public class RenderSnapshotBuilder {
                     z - tilePos.getZ() + pos.z,
                     item,
                     world.getCombinedLight(new BlockPos(pos), 0),
-                    EnumFacing.SOUTH,
+                    Direction.SOUTH,
                     bb
                 );
             }
@@ -74,7 +74,7 @@ public class RenderSnapshotBuilder {
             bb.setTranslation(x - tilePos.getX(), y - tilePos.getY(), z - tilePos.getZ());
 
             int i = 0;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : Direction.VALUES) {
                 ModelUtil.createFace(
                     face,
                     new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.MinecraftClientClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 

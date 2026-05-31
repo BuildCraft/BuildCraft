@@ -10,7 +10,7 @@ package buildcraft.transport.client.model;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): ModelPipe — Forge IBakedModel/ICustomModelLoader → Fabric FRAPI Phase 5.
+// STUB(R.Chen): ModelPipe — Forge BakedModel/ICustomModelLoader → Fabric FRAPI Phase 5.
 @Environment(EnvType.CLIENT)
 public class ModelPipe {
     // STUB Phase 5

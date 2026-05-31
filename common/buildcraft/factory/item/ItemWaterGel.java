@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -34,7 +34,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+        ItemStack stack = player.getStackInHand(hand);
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec();
         Vec3d end = start.add(look.scale(7));
@@ -58,7 +58,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
                 SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL,//
                 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
-        if (!world.isRemote) {
+        if (!world.isClient) {
             world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
             world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.waterGel, 200);
 

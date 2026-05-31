@@ -8,7 +8,7 @@ package buildcraft.core.item;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ModelIdentifier;
 
 import buildcraft.lib.item.ItemBlockBCMulti;
 
@@ -22,7 +22,7 @@ public class ItemBlockSpring extends ItemBlockBCMulti {
     }
 
     @Override
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
         for(int i = 0; i < NAMES.length; i++) {
             addVariant(variants, i, "");
         }

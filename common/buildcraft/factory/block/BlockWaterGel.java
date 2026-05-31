@@ -18,9 +18,9 @@ import java.util.Set;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.StateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.block.Blocks;
@@ -93,7 +93,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
         }
     }
 
-    public static final PropertyEnum<GelStage> PROP_STAGE = PropertyEnum.create("stage", GelStage.class);
+    public static final EnumProperty<GelStage> PROP_STAGE = EnumProperty.create("stage", GelStage.class);
 
     public BlockWaterGel(Material material, String id) {
         super(material, id);

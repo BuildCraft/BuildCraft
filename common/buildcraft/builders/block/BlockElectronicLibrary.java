@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -32,7 +32,7 @@ public class BlockElectronicLibrary extends BlockBCTile_Neptune implements IBloc
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCBuildersGuis.LIBRARY.openGUI(player, pos);
         }
         return true;

@@ -13,14 +13,14 @@ import net.fabricmc.api.Environment;
 import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pipe.PipeFaceTex;
 
-// STUB(R.Chen): PipeBaseModelGenStandard (419 LOC) — Forge IBakedModel/IFaceBakery/TextureAtlasSprite
+// STUB(R.Chen): PipeBaseModelGenStandard (419 LOC) — Forge BakedModel/IFaceBakery/Sprite
 // → Fabric FRAPI MutableQuadView Phase 5. getItemSprites() stub used by block-particle effects.
 @Environment(EnvType.CLIENT)
 public class PipeBaseModelGenStandard implements IPipeBaseModelGen {
 
     public static final PipeBaseModelGenStandard INSTANCE = new PipeBaseModelGenStandard();
 
-    // STUB(R.Chen): Phase 5 — Forge TextureAtlasSprite → net.minecraft.client.texture.Sprite.
+    // STUB(R.Chen): Phase 5 — Forge Sprite → net.minecraft.client.texture.Sprite.
     public net.minecraft.client.texture.Sprite[] getItemSprites(PipeDefinition def) {
         return new net.minecraft.client.texture.Sprite[0]; // STUB
     }

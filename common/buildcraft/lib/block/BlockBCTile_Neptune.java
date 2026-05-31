@@ -7,7 +7,7 @@ package buildcraft.lib.block;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +39,7 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
 
     @Override
     public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onExplode(explosion);
@@ -49,7 +49,7 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
 
     @Override
     public void breakBlock(World world, BlockPos pos, BlockState state) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onRemove();
@@ -60,7 +60,7 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer,
         ItemStack stack) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onPlacedBy(placer, stack);
@@ -71,7 +71,7 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction facing, float hitX, float hitY, float hitZ) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             return tileBC.onActivated(player, hand, facing, hitX, hitY, hitZ);
@@ -82,7 +82,7 @@ public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune {
     @Override
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBC_Neptune) {
             TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onNeighbourBlockChanged(block, fromPos);

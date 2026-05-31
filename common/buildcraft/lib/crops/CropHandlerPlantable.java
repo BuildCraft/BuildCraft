@@ -14,15 +14,15 @@ import net.minecraft.block.BlockMelon;
 import net.minecraft.block.BlockMushroom;
 import net.minecraft.block.BlockNetherWart;
 import net.minecraft.block.BlockTallGrass;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.IPlantable;
@@ -52,24 +52,24 @@ public enum CropHandlerPlantable implements ICropHandler {
 
     @Override
     public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         if (seed.getItem() instanceof IPlantable) {
             Block block = state.getBlock();
-            return block.canSustainPlant(state, world, pos, EnumFacing.UP, (IPlantable) seed.getItem()) && world.isAirBlock(pos.up());
+            return block.canSustainPlant(state, world, pos, Direction.UP, (IPlantable) seed.getItem()) && world.isAir(pos.up());
         } else {
             Block block = state.getBlock();
             IPlantable plantable = (IPlantable) ((ItemBlock) seed.getItem()).getBlock();
-            return block.canSustainPlant(state, world, pos, EnumFacing.UP, plantable) && block != ((ItemBlock) seed.getItem()).getBlock() && world.isAirBlock(pos.up());
+            return block.canSustainPlant(state, world, pos, Direction.UP, plantable) && block != ((ItemBlock) seed.getItem()).getBlock() && world.isAir(pos.up());
         }
     }
 
     @Override
-    public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
-        return BlockUtil.useItemOnBlock(world, player, seed, pos, EnumFacing.UP);
+    public boolean plantCrop(World world, PlayerEntity player, ItemStack seed, BlockPos pos) {
+        return BlockUtil.useItemOnBlock(world, player, seed, pos, Direction.UP);
     }
 
     @Override
-    public boolean isMature(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+    public boolean isMature(BlockView blockAccess, BlockState state, BlockPos pos) {
         Block block = state.getBlock();
         if (block instanceof BlockFlower || block instanceof BlockTallGrass || block instanceof BlockMelon || block instanceof BlockMushroom || block instanceof BlockDoublePlant
             || block == Blocks.PUMPKIN) {
@@ -87,10 +87,10 @@ public enum CropHandlerPlantable implements ICropHandler {
     }
 
     @Override
-    public boolean harvestCrop(World world, BlockPos pos, NonNullList<ItemStack> drops) {
-//        if (!world.isRemote) {
-//            IBlockState state = world.getBlockState(pos);
-//            if (BlockUtil.breakBlock((WorldServer) world, pos, drops, pos)) {
+    public boolean harvestCrop(World world, BlockPos pos, DefaultedList<ItemStack> drops) {
+//        if (!world.isClient) {
+//            BlockState state = world.getBlockState(pos);
+//            if (BlockUtil.breakBlock((ServerWorld) world, pos, drops, pos)) {
 //                SoundUtil.playBlockBreak(world, pos, state);
 //                return true;
 //            }

@@ -17,10 +17,10 @@ import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Direction.AxisDirection;
 
 // Forge→Fabric migration notes (R.Chen):
-//   EnumFacing → Direction; EnumFacing.Axis/AxisDirection → Direction.Axis/AxisDirection
-//   EnumFacing.getFacingFromAxis(dir, axis) → Direction.from(axis, dir)
+//   Direction → Direction; Direction.Axis/AxisDirection → Direction.Axis/AxisDirection
+//   Direction.getFacingFromAxis(dir, axis) → Direction.from(axis, dir)
 //   facing.getAxisDirection() → facing.getDirection()
-//   NBTTagCompound → NbtCompound; nbt.setString → nbt.putString
+//   NbtCompound → NbtCompound; nbt.setString → nbt.putString
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;
 

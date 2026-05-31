@@ -209,27 +209,27 @@ public class MutableQuad {
                 return this;
             }
             case 1: {
-                Vector2f t = vertex_0.tex();
-                vertex_0.texv(vertex_1.tex());
-                vertex_1.texv(vertex_2.tex());
-                vertex_2.texv(vertex_3.tex());
+                Vector2f t = vertex_0.texture();
+                vertex_0.texv(vertex_1.texture());
+                vertex_1.texv(vertex_2.texture());
+                vertex_2.texv(vertex_3.texture());
                 vertex_3.texv(t);
                 return this;
             }
             case 2: {
-                Vector2f t0 = vertex_0.tex();
-                Vector2f t1 = vertex_1.tex();
-                vertex_0.texv(vertex_2.tex());
-                vertex_1.texv(vertex_3.tex());
+                Vector2f t0 = vertex_0.texture();
+                Vector2f t1 = vertex_1.texture();
+                vertex_0.texv(vertex_2.texture());
+                vertex_1.texv(vertex_3.texture());
                 vertex_2.texv(t0);
                 vertex_3.texv(t1);
                 return this;
             }
             case 3: {
-                Vector2f t = vertex_3.tex();
-                vertex_3.texv(vertex_2.tex());
-                vertex_2.texv(vertex_1.tex());
-                vertex_1.texv(vertex_0.tex());
+                Vector2f t = vertex_3.texture();
+                vertex_3.texv(vertex_2.texture());
+                vertex_2.texv(vertex_1.texture());
+                vertex_1.texv(vertex_0.texture());
                 vertex_0.texv(t);
                 return this;
             }

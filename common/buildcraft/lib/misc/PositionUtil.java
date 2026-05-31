@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-// Yarn 1.20.1: EnumFacing → Direction, EnumFacing.Axis → Direction.Axis, Rotation → BlockRotation
+// Yarn 1.20.1: Direction → Direction, Direction.Axis → Direction.Axis, Rotation → BlockRotation
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;

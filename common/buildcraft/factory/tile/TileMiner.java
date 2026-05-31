@@ -39,14 +39,14 @@ import buildcraft.lib.tile.TileBC_Neptune;
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()        → tick() + static ticker() wired in the owning Block.getTicker()
 //   Side / @SideOnly          → NetSide / @Environment(EnvType.*)
-//   NBTTagCompound            → NbtCompound (Yarn rename)
+//   NbtCompound            → NbtCompound (Yarn rename)
 //   NBTUtil.createPosTag      → NbtHelper.fromBlockPos
 //   NBTUtil.getPosFromTag     → NbtHelper.toBlockPos
 //   world.getTotalWorldTime() → world.getTime()
-//   world.isRemote            → world.isClient
+//   world.isClient            → world.isClient
 //   world.rand                → world.random
 //   world.setBlockToAir       → world.removeBlock(pos, false)
-//   AxisAlignedBB / INFINITE  → Fabric render bounds are handled via BuiltinModelItemRenderer / BER
+//   Box / INFINITE  → Fabric render bounds are handled via BuiltinModelItemRenderer / BER
 //   BCCoreConfig.miningMaxDepth→ MINING_MAX_DEPTH stub constant
 //   BCFactoryBlocks.tube      → isTubeBlock() stub (returns false until BCFactoryBlocks is in libLeaf)
 //   TilesAPI.CAP_HAS_WORK     → Forge capability — commented out (deferred to Phase 4F)
@@ -219,7 +219,7 @@ public abstract class TileMiner extends TileBC_Neptune implements IDebuggable {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetSide.SERVER) {
+        if (side == NetEnvType.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
                 buffer.writeInt(wantedLength);
@@ -236,7 +236,7 @@ public abstract class TileMiner extends TileBC_Neptune implements IDebuggable {
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, /* STUB(R.Chen): MessageContext */ Object ctx)
         throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
                 currentLength = lastLength = wantedLength = buffer.readInt();

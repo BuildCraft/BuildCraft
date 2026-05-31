@@ -8,17 +8,17 @@ package buildcraft.factory.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
+import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
+import net.minecraft.client.render.RenderHelper;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -46,13 +46,13 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         if (forRender == null) {
             return;
         }
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("tank");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("tank");
 
         // gl state setup
         RenderHelper.disableStandardItemLighting();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.enableBlend();
+        MinecraftClient.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        RenderSystem.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
@@ -62,10 +62,10 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
             bb.setTranslation(x, y, z);
 
             boolean[] sideRender = { true, true, true, true, true, true };
-            boolean connectedUp = isFullyConnected(tile, EnumFacing.UP, partialTicks);
-            boolean connectedDown = isFullyConnected(tile, EnumFacing.DOWN, partialTicks);
-            sideRender[EnumFacing.DOWN.ordinal()] = !connectedDown;
-            sideRender[EnumFacing.UP.ordinal()] = !connectedUp;
+            boolean connectedUp = isFullyConnected(tile, Direction.UP, partialTicks);
+            boolean connectedDown = isFullyConnected(tile, Direction.DOWN, partialTicks);
+            sideRender[Direction.DOWN.ordinal()] = !connectedDown;
+            sideRender[Direction.UP.ordinal()] = !connectedUp;
 
             Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
             Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
@@ -86,13 +86,13 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         // gl state finish
         RenderHelper.enableStandardItemLighting();
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    private static boolean isFullyConnected(TileTank thisTank, EnumFacing face, float partialTicks) {
+    private static boolean isFullyConnected(TileTank thisTank, Direction face, float partialTicks) {
         BlockPos pos = thisTank.getPos().offset(face);
-        TileEntity oTile = thisTank.getWorld().getTileEntity(pos);
+        BlockEntity oTile = thisTank.getWorld().getBlockEntity(pos);
         if (oTile instanceof TileTank) {
             TileTank oTank = (TileTank) oTile;
             if (!TileTank.canTanksConnect(thisTank, oTank, face)) {
@@ -112,7 +112,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
             if (fluid.getFluid().isGaseous(fluid)) {
                 face = face.getOpposite();
             }
-            return forRender.amount >= oTank.tank.getCapacity() || face == EnumFacing.UP;
+            return forRender.amount >= oTank.tank.getCapacity() || face == Direction.UP;
         } else {
             return false;
         }

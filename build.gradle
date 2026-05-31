@@ -1052,7 +1052,7 @@ processResources {
 // ---------------------------------------------------------------------------
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
-    options.compilerArgs << "-Xmaxerrs" << "2000"
+    options.compilerArgs << "-Xmaxerrs" << "9999"
     // Suppress all lint warnings during the migration.  The Forge-era source
     // generates thousands of warnings against 1.20.1 APIs.  Re-enable per module
     // after each module's porting pass is complete.

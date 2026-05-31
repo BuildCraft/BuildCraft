@@ -77,7 +77,7 @@ public enum PatternParameterAxis implements IStatementParameter {
 
     @Override
     public void writeToNbt(NbtCompound nbt) {
-        nbt.setByte("a", (byte) ordinal());
+        nbt.putByte("a", (byte) ordinal());
     }
 
     @SuppressWarnings("SuspiciousNameCombination")

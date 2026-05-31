@@ -7,11 +7,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,8 +21,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.items.IItemFluidShard;
 
@@ -43,12 +43,12 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, NbtCompound nbt) {
         return new FragileFluidHandler(stack);
     }
 
     @Override
-    protected void addSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> items) {
         // Never allow this to be displayed in a creative tab -- we don't want to list every single fluid...
     }
 
@@ -76,11 +76,11 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         return LocaleUtil.localize(getUnlocalizedName() + ".name", localized);
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, TooltipContext flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        NBTTagCompound fluidTag = stack.getSubCompound("fluid");
+        NbtCompound fluidTag = stack.getSubCompound("fluid");
         if (fluidTag != null) {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
             if (fluid != null && fluid.amount > 0) {
@@ -90,7 +90,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     }
 
     @Override
-    public void addFluidDrops(NonNullList<ItemStack> toDrop, FluidStack fluid) {
+    public void addFluidDrops(DefaultedList<ItemStack> toDrop, FluidStack fluid) {
         if (fluid == null) {
             return;
         }
@@ -113,8 +113,8 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     }
 
     static void setFluid(ItemStack container, FluidStack fluid) {
-        NBTTagCompound nbt = NBTUtilBC.getItemData(container);
-        nbt.setTag("fluid", fluid.writeToNBT(new NBTTagCompound()));
+        NbtCompound nbt = NBTUtilBC.getItemData(container);
+        nbt.put("fluid", fluid.writeToNBT(new NbtCompound()));
     }
 
     @Nullable
@@ -122,7 +122,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         if (container.isEmpty()) {
             return null;
         }
-        NBTTagCompound fluidNbt = container.getSubCompound("fluid");
+        NbtCompound fluidNbt = container.getSubCompound("fluid");
         if (fluidNbt == null) {
             return null;
         }
@@ -139,12 +139,12 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        public boolean hasCapability(Capability<?> capability, Direction facing) {
             return getCapability(capability, facing) != null;
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        public <T> T getCapability(Capability<T> capability, Direction facing) {
             if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY
                 || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
                 return (T) this;

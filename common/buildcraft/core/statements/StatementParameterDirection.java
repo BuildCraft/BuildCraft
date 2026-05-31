@@ -11,16 +11,16 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.Identifier;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.render.ISprite;
@@ -36,21 +36,21 @@ import buildcraft.lib.misc.StackUtil;
 @Deprecated
 public class StatementParameterDirection implements IStatementParameter {
 
-    @SideOnly(Side.CLIENT)
-    private static TextureAtlasSprite[] sprites;
+    @Environment(EnvType.CLIENT)
+    private static Sprite[] sprites;
 
     @Nullable
-    private EnumFacing direction = null;
+    private Direction direction = null;
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void registerIcons(TextureMap map) {
-        sprites = new TextureAtlasSprite[] {
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west")),
-            map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"))
+        sprites = new Sprite[] {
+            map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_down")),
+            map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_up")),
+            map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_north")),
+            map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_south")),
+            map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_west")),
+            map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_east"))
         };
     }
 
@@ -58,12 +58,12 @@ public class StatementParameterDirection implements IStatementParameter {
 
     }
 
-    public StatementParameterDirection(EnumFacing face) {
+    public StatementParameterDirection(Direction face) {
         this.direction = face;
     }
 
     @Nullable
-    public EnumFacing getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
@@ -74,9 +74,9 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
-        EnumFacing dir = getDirection();
+        Direction dir = getDirection();
         if (dir == null) {
             return null;
         } else {
@@ -90,16 +90,16 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
+    public void writeToNbt(NbtCompound nbt) {
         if (direction != null) {
-            nbt.setByte("direction", (byte) direction.ordinal());
+            nbt.putByte("direction", (byte) direction.ordinal());
         }
     }
 
 //    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        if (nbt.hasKey("direction")) {
-            direction = EnumFacing.VALUES[nbt.getByte("direction")];
+    public void readFromNBT(NbtCompound nbt) {
+        if (nbt.contains("direction")) {
+            direction = Direction.VALUES[nbt.getByte("direction")];
         } else {
             direction = null;
         }
@@ -121,7 +121,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        EnumFacing dir = getDirection();
+        Direction dir = getDirection();
         if (dir == null) {
             return "";
         } else {
@@ -137,7 +137,7 @@ public class StatementParameterDirection implements IStatementParameter {
     @Override
     public IStatementParameter rotateLeft() {
         StatementParameterDirection d = new StatementParameterDirection();
-        EnumFacing dir = d.getDirection();
+        Direction dir = d.getDirection();
         if (dir != null && dir.getAxis() != Axis.Y) {
             d.direction = dir.rotateY();
         }

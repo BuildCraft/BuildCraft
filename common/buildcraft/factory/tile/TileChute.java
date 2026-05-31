@@ -33,15 +33,15 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()         → tick() + static ticker()
-//   EntityItem                 → ItemEntity
-//   EntityLivingBase           → LivingEntity
-//   EnumFacing                 → Direction
-//   NBTTagCompound             → NbtCompound
-//   AxisAlignedBB              → Box
-//   IBlockAccess               → BlockView
+//   ItemEntity                 → ItemEntity
+//   LivingEntity           → LivingEntity
+//   Direction                 → Direction
+//   NbtCompound             → NbtCompound
+//   Box              → Box
+//   BlockView               → BlockView
 //   world.getTileEntity        → world.getBlockEntity
 //   EntitySelectors.IS_ALIVE   → EntityPredicates.VALID_ENTITY
-//   ResourceLocation           → Identifier
+//   Identifier           → Identifier
 //   ICapabilityProvider        → Object
 //   pickupItems/putInNearInventories: TransactorEntityItem + BoundingBoxUtil not in libLeaf — STUBbed.
 //   TilesAPI.CAP_HAS_WORK      → deferred (Phase 4F)

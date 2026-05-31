@@ -20,9 +20,9 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
@@ -103,7 +103,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
     }
 
     private static boolean checkRecipeUses(IRecipe recipe, @Nonnull ItemStack target) {
-        NonNullList<Ingredient> ingrediants = recipe.getIngredients();
+        DefaultedList<Ingredient> ingrediants = recipe.getIngredients();
         if (ingrediants.isEmpty()) {
             if (recipe instanceof IRecipeViewable) {
                 // TODO!

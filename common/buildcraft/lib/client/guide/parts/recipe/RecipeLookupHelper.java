@@ -14,7 +14,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiler.Profiler;
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 
@@ -30,12 +30,12 @@ public class RecipeLookupHelper {
     public static List<GuidePartFactory> getAllUsages(@Nonnull ItemStack stack, Profiler prof) {
         List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : handlerTypes.values()) {
-            prof.startSection(handler.getClass().getName().replace('.', '/'));
+            prof.push(handler.getClass().getName().replace('.', '/'));
             List<GuidePartFactory> recipes = handler.getUsages(stack);
             if (recipes != null) {
                 list.addAll(recipes);
             }
-            prof.endSection();
+            prof.pop();
         }
         return list;
     }
@@ -43,12 +43,12 @@ public class RecipeLookupHelper {
     public static List<GuidePartFactory> getAllRecipes(@Nonnull ItemStack stack, Profiler prof) {
         List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : handlerTypes.values()) {
-            prof.startSection(handler.getClass().getName().replace('.', '/'));
+            prof.push(handler.getClass().getName().replace('.', '/'));
             List<GuidePartFactory> recipes = handler.getRecipes(stack);
             if (recipes != null) {
                 list.addAll(recipes);
             }
-            prof.endSection();
+            prof.pop();
         }
         return list;
     }

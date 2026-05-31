@@ -8,8 +8,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -27,7 +27,7 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileFiller;
 
 public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing {
-    // public static final IProperty<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
+    // public static final Property<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
     public BlockFiller(Material material, String id) {
         super(material, id);
@@ -37,14 +37,14 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     // BlockState
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         // properties.add(PATTERN);
     }
 
     @Override
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
             // return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
@@ -62,13 +62,13 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction side, float hitX, float hitY, float hitZ) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFiller) {
             if (!((TileFiller) tile).hasBox()) {
                 return false;
             }
         }
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCBuildersGuis.FILLER.openGUI(player, pos);
         }
         return true;

@@ -16,19 +16,19 @@ import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -59,13 +59,13 @@ public class GuiUtil {
     /** @return The relative screen width. (Relative - changes with both the window size and the game setting "gui
      *         scale".) */
     public static int getScreenWidth() {
-        return Minecraft.getMinecraft().currentScreen.width;
+        return MinecraftClient.getInstance().currentScreen.width;
     }
 
     /** @return The relative screen height. (Relative - changes with both the window size and the game setting "gui
      *         scale".) */
     public static int getScreenHeight() {
-        return Minecraft.getMinecraft().currentScreen.height;
+        return MinecraftClient.getInstance().currentScreen.height;
     }
 
     public static IGuiArea moveRectangleToCentre(GuiRectangle area) {
@@ -115,7 +115,7 @@ public class GuiUtil {
 
     public static void drawItemStackAt(ItemStack stack, int x, int y) {
         RenderHelper.enableGUIStandardItemLighting();
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         RenderItem itemRender = mc.getRenderItem();
         itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
         itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
@@ -127,7 +127,7 @@ public class GuiUtil {
         double draw(D drawable, double x, double y);
     }
 
-    /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer)}, except that we
+    /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, TextRenderer)}, except that we
      * return the height of the box that was drawn. Draws a tooltip box on the screen with text in it. Automatically
      * positions the box relative to the mouse to match Mojang's implementation. Automatically wraps text when there is
      * not enough space on the screen to display the text without wrapping. Can have a maximum width set to avoid
@@ -142,12 +142,12 @@ public class GuiUtil {
      *            width.
      * @param font the font for drawing the text in the tooltip box */
     public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
-        final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
+        final int screenWidth, final int screenHeight, final int maxTextWidth, TextRenderer font) {
         if (!textLines.isEmpty()) {
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
+            ;
+            RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
 
             for (String textLine : textLines) {
@@ -256,8 +256,8 @@ public class GuiUtil {
                 tooltipY += 10;
             }
 
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepth();
+            ;
+            RenderSystem.enableDepthTest();
             RenderHelper.enableStandardItemLighting();
             GlStateManager.enableRescaleNormal();
             return tooltipHeight + 5;
@@ -299,7 +299,7 @@ public class GuiUtil {
         int v = MathHelper.floor(textureY);
         int w = MathHelper.floor(width);
         int h = MathHelper.floor(height);
-        Gui gui = Minecraft.getMinecraft().currentScreen;
+        Gui gui = MinecraftClient.getInstance().currentScreen;
         gui.drawTexturedModalRect(x, y, u, v, w, h);
     }
 
@@ -385,7 +385,7 @@ public class GuiUtil {
     }
 
     private static void scissor0(double x, double y, double width, double height) {
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         ScaledResolution res = new ScaledResolution(mc);
         double scaleW = mc.displayWidth / res.getScaledWidth_double();
         double scaleH = mc.displayHeight / res.getScaledHeight_double();
@@ -438,14 +438,14 @@ public class GuiUtil {
         }
 
         for (int i = 1; i < list.size(); ++i) {
-            list.set(i, TextFormatting.GRAY + list.get(i));
+            list.set(i, Formatting.GRAY + list.get(i));
         }
 
         return list;
     }
 
     public static List<String> getUnFormattedTooltip(ItemStack stack) {
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
         if (list.isEmpty()) {
             return Collections.singletonList(getStackDisplayName(stack));
@@ -466,8 +466,8 @@ public class GuiUtil {
         return name;
     }
 
-    private static ITooltipFlag getTooltipFlags() {
-        boolean adv = Minecraft.getMinecraft().gameSettings.advancedItemTooltips;
+    private static TooltipContext getTooltipFlags() {
+        boolean adv = MinecraftClient.getInstance().gameSettings.advancedItemTooltips;
         return adv ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
     }
 

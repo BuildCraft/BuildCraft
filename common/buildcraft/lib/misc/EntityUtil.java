@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntitySpectralArrow;
@@ -18,7 +18,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
@@ -34,8 +34,8 @@ public class EntityUtil {
     public static DefaultedList<ItemStack> collectItems(World world, Vec3d around, double radius) {
         DefaultedList<ItemStack> stacks = DefaultedList.create();
 
-        AxisAlignedBB aabb = BoundingBoxUtil.makeAround(around, radius);
-        for (EntityItem ent : world.getEntitiesWithinAABB(EntityItem.class, aabb)) {
+        Box aabb = BoundingBoxUtil.makeAround(around, radius);
+        for (ItemEntity ent : world.getEntitiesWithinAABB(ItemEntity.class, aabb)) {
             if (!ent.isDead) {
                 ent.isDead = true;
                 stacks.add(ent.getItem());
@@ -53,11 +53,11 @@ public class EntityUtil {
     }
 
     public static Hand getWrenchHand(LivingEntity entity) {
-        ItemStack stack = entity.getHeldItemMainhand();
+        ItemStack stack = entity.getMainHandStack();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             return Hand.MAIN_HAND;
         }
-        stack = entity.getHeldItemOffhand();
+        stack = entity.getOffHandStack();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             return Hand.OFF_HAND;
         }
@@ -65,13 +65,13 @@ public class EntityUtil {
     }
 
     public static void activateWrench(PlayerEntity player, HitResult trace) {
-        ItemStack stack = player.getHeldItemMainhand();
+        ItemStack stack = player.getMainHandStack();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, Hand.MAIN_HAND, stack, trace);
             return;
         }
-        stack = player.getHeldItemOffhand();
+        stack = player.getOffHandStack();
         if (!stack.isEmpty() && stack.getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, Hand.OFF_HAND, stack, trace);

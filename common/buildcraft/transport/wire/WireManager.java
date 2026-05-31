@@ -17,10 +17,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 // Yarn 1.20.1 renames:
-//   EnumDyeColor → DyeColor   EnumFacing → Direction   NBTTagCompound → NbtCompound
-//   TileEntity   → BlockEntity   world.isRemote → world.isClient   getTileEntity → getBlockEntity
-//   @SideOnly(Side.CLIENT) → @Environment(EnvType.CLIENT)   Side → EnvType   MessageContext → Object (stub)
-//   EnumDyeColor.byMetadata(i) → DyeColor.byId(i)   color.getMetadata() → color.getId()
+//   DyeColor → DyeColor   Direction → Direction   NbtCompound → NbtCompound
+//   BlockEntity   → BlockEntity   world.isClient → world.isClient   getTileEntity → getBlockEntity
+//   @Environment(EnvType.CLIENT) → @Environment(EnvType.CLIENT)   Side → EnvType   MessageContext → Object (stub)
+//   DyeColor.byMetadata(i) → DyeColor.byId(i)   color.getMetadata() → color.getId()
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

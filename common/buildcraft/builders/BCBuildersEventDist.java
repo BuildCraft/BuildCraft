@@ -14,9 +14,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -25,8 +25,8 @@ import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.schematics.ISchematicBlock;
 
@@ -81,7 +81,7 @@ public enum BCBuildersEventDist {
                 iter.remove();
                 continue;
             }
-            for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
+            for (Box aabb : quarry.getCollisionBoxes()) {
                 if (event.getAabb().intersects(aabb)) {
                     event.getCollisionBoxesList().add(aabb);
                 }
@@ -90,7 +90,7 @@ public enum BCBuildersEventDist {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
         Snapshot snapshot = null;
         ItemStack stack = event.getStack();
@@ -142,10 +142,10 @@ public enum BCBuildersEventDist {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     @SubscribeEvent
     public void onTickClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && !Minecraft.getMinecraft().isGamePaused()) {
+        if (event.phase == TickEvent.Phase.END && !MinecraftClient.getInstance().isGamePaused()) {
             ClientArchitectTables.tick();
         }
     }

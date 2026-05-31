@@ -14,14 +14,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -32,17 +32,17 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.RotationUtil;
 
 public class BlockFrame extends BlockBCBase_Neptune {
-    public static final Map<Direction, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
+    public static final Map<Direction, Property<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
-    public static final AxisAlignedBB BASE_AABB = new AxisAlignedBB(4 / 16D, 4 / 16D, 4 / 16D, 12 / 16D, 12 / 16D, 12 / 16D);
-    public static final AxisAlignedBB CONNECTION_AABB = new AxisAlignedBB(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 4 / 16D, 12 / 16D);
+    public static final Box BASE_AABB = new Box(4 / 16D, 4 / 16D, 4 / 16D, 12 / 16D, 12 / 16D, 12 / 16D);
+    public static final Box CONNECTION_AABB = new Box(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 4 / 16D, 12 / 16D);
 
     public BlockFrame(Material material, String id) {
         super(material, id);
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(CONNECTED_MAP.values());
     }
@@ -57,8 +57,8 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
+    public RenderLayer getBlockLayer() {
+        return RenderLayer.CUTOUT;
     }
 
     @Override
@@ -86,9 +86,9 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(BlockState state, BlockView world, BlockPos pos) {
+    public Box getBoundingBox(BlockState state, BlockView world, BlockPos pos) {
         BlockState actualState = state.getActualState(world, pos);
-        AtomicReference<AxisAlignedBB> box = new AtomicReference<>(BASE_AABB);
+        AtomicReference<Box> box = new AtomicReference<>(BASE_AABB);
         CONNECTED_MAP.forEach((side, property) -> {
             if (actualState.getValue(property)) {
                 box.set(box.get().union(RotationUtil.rotateAABB(CONNECTION_AABB, side)));
@@ -98,7 +98,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     @Override
-    public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
+    public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, Box entityBox, List<Box> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
         BlockState actualState = state.getActualState(world, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, BASE_AABB);
         CONNECTED_MAP.keySet().stream()

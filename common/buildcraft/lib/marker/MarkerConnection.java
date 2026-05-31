@@ -15,10 +15,10 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.tile.TileMarker;
 
@@ -36,7 +36,7 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
 
     public abstract Collection<BlockPos> getMarkerPositions();
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public abstract void renderInWorld();
 
     public void getDebugInfo(BlockPos caller, List<String> left) {
@@ -49,17 +49,17 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
             TileMarker<C> marker = subCache.getMarker(pos);
             String s = "  " + pos + " [";
             if (marker == null) {
-                s += TextFormatting.RED + "U";
+                s += Formatting.RED + "U";
             } else {
-                s += TextFormatting.GREEN + "L";
+                s += Formatting.GREEN + "L";
             }
             if (pos.equals(caller)) {
-                s += TextFormatting.BLACK + "S";
+                s += Formatting.BLACK + "S";
             } else {
-                s += TextFormatting.AQUA + "C";
+                s += Formatting.AQUA + "C";
             }
             s += getTypeInfo(pos, marker);
-            s += TextFormatting.RESET + "]";
+            s += Formatting.RESET + "]";
             left.add(s);
         }
     }

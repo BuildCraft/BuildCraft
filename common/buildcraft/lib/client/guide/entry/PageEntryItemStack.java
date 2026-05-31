@@ -11,13 +11,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -80,23 +80,23 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
         }
 
         for (Item item : ForgeRegistries.ITEMS) {
-            ResourceLocation regName = item.getRegistryName();
+            Identifier regName = item.getRegistryName();
             if (regName == null || (limitDomains && !domains.contains(regName.getResourceDomain()))) {
                 continue;
             }
             if (!GuideManager.INSTANCE.objectsAdded.add(item)) {
                 continue;
             }
-            NonNullList<ItemStack> stacks = NonNullList.create();
-            prof.startSection("search");
-            item.getSubItems(CreativeTabs.SEARCH, stacks);
-            prof.endStartSection("itr_search");
+            DefaultedList<ItemStack> stacks = DefaultedList.create();
+            prof.push("search");
+            item.getSubItems(ItemGroup.SEARCH, stacks);
+            prof.swap("itr_search");
             if (stacks.size() > 200) {
                 // Likely a "super-item" which is constructed from a different registry
                 // and so it has thousands of useless permutations
                 // Instead lets replace it with a custom tooltip
                 consumer.addChild(TAGS, PageLinkItemPermutations.create(false, stacks, prof));
-                prof.endSection();
+                prof.pop();
                 BCLog.logger.info(
                     "[lib.guide] Squished " + regName + " and all of it's " + stacks.size()
                         + " variants down into one page entry."
@@ -115,7 +115,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                     );
                 }
             }
-            prof.endSection();
+            prof.pop();
         }
     }
 
@@ -130,7 +130,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
     }
 
     @Override
-    public OptionallyDisabled<PageEntry<ItemStackValueFilter>> deserialize(ResourceLocation name, JsonObject json,
+    public OptionallyDisabled<PageEntry<ItemStackValueFilter>> deserialize(Identifier name, JsonObject json,
         JsonDeserializationContext ctx) {
         JsonElement jStack = json.get("stack");
         if (jStack == null) {
@@ -151,7 +151,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 if (str.startsWith("(") && str.endsWith(")")) {
                     str = str.substring(1, str.length() - 1);
                 }
-                ResourceLocation loc = new ResourceLocation(str);
+                Identifier loc = new Identifier(str);
                 Item item = ForgeRegistries.ITEMS.getValue(loc);
                 if (item == null) {
                     if (RegistryConfig.hasItemBeenDisabled(loc)) {

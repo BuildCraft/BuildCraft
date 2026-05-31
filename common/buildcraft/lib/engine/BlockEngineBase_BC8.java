@@ -14,16 +14,16 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.state.StateManager;
 import net.minecraft.block.BlockState;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -64,7 +64,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
         return new ItemStack(this, 1, type.ordinal());
     }
 
-    public abstract IProperty<E> getEngineProperty();
+    public abstract Property<E> getEngineProperty();
 
     public abstract E getEngineType(int meta);
 
@@ -108,7 +108,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     public BlockFaceShape getBlockFaceShape(BlockView world, BlockState state, BlockPos pos, Direction side) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             if (side == engine.currentDirection.getOpposite()) {
@@ -122,7 +122,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     public boolean isSideSolid(BlockState base_state, BlockView world, BlockPos pos, Direction side) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             return side == engine.currentDirection.getOpposite();
@@ -131,8 +131,8 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(BlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -148,7 +148,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, DefaultedList<ItemStack> list) {
+    public void getSubBlocks(ItemGroup tab, DefaultedList<ItemStack> list) {
         for (E engine : getEngineProperty().getAllowedValues()) {
             if (engineTileConstructors.containsKey(engine)) {
                 list.add(new ItemStack(this, 1, engine.ordinal()));
@@ -164,8 +164,8 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     @Override
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
-        if (world.isRemote) return;
-        BlockEntity tile = world.getTileEntity(pos);
+        if (world.isClient) return;
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             engine.rotateIfInvalid();
@@ -176,7 +176,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Override
     public ActionResult attemptRotation(World world, BlockPos pos, BlockState state, Direction sideWrenched) {
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             return engine.attemptRotation();

@@ -17,11 +17,11 @@ import com.google.common.collect.Queues;
 
 import org.lwjgl.input.Keyboard;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -203,7 +203,7 @@ public class GuiGuide extends GuiScreen {
     private GuiGuide(@Nullable GuideBook book) {
         this.book = book;
         this.bookData = book != null ? book.data : GuideManager.BOOK_ALL_DATA;
-        mc = Minecraft.getMinecraft();
+        mc = MinecraftClient.getInstance();
         openPage(new GuidePageContents(this));
     }
 
@@ -493,7 +493,7 @@ public class GuiGuide extends GuiScreen {
         }
 
         // Reset the colour
-        GlStateManager.color(1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1);
         if (tooltipStack != null) {
             renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
         } else if (!tooltips.isEmpty()) {

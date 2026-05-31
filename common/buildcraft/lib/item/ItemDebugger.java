@@ -24,10 +24,10 @@ public class ItemDebugger extends ItemBC_Neptune {
 
     @Override
     public ActionResult onItemUseFirst(PlayerEntity player, World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, Hand hand) {
-        if (world.isRemote) {
+        if (world.isClient) {
             return ActionResult.PASS;
         }
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile == null) {
             return ActionResult.FAIL;
         }
@@ -40,7 +40,7 @@ public class ItemDebugger extends ItemBC_Neptune {
 
     public static boolean isShowDebugInfo(PlayerEntity player) {
         return player.capabilities.isCreativeMode ||
-            player.getHeldItem(Hand.MAIN_HAND).getItem() instanceof ItemDebugger ||
-            player.getHeldItem(Hand.OFF_HAND).getItem() instanceof ItemDebugger;
+            player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof ItemDebugger ||
+            player.getStackInHand(Hand.OFF_HAND).getItem() instanceof ItemDebugger;
     }
 }

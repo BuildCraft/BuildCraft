@@ -34,12 +34,12 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
         markerPositions.clear();
         markerConnections.clear();
 
-        NbtList positionList = (NbtList) nbt.getTag("positions");
+        NbtList positionList = (NbtList) nbt.get("positions");
         for (int i = 0; i < positionList.tagCount(); i++) {
             markerPositions.add(NBTUtilBC.readBlockPos(positionList.get(i)));
         }
 
-        NbtList connectionList = (NbtList) nbt.getTag("connections");
+        NbtList connectionList = (NbtList) nbt.get("connections");
         for (int i = 0; i < connectionList.tagCount(); i++) {
             positionList = (NbtList) connectionList.get(i);
             List<BlockPos> inner = new ArrayList<>();
@@ -79,7 +79,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
         for (BlockPos p : markerPositions) {
             positionList.appendTag(NBTUtilBC.writeBlockPos(p));
         }
-        nbt.setTag("positions", positionList);
+        nbt.put("positions", positionList);
 
         NbtList connectionList = new NbtList();
         for (List<BlockPos> connection : markerConnections) {
@@ -89,7 +89,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
             }
             connectionList.appendTag(inner);
         }
-        nbt.setTag("connections", connectionList);
+        nbt.put("connections", connectionList);
 
         if (DEBUG_FULL) {
             BCLog.logger.info("[lib.marker.full] Writing to NBT (" + mapName + ")");

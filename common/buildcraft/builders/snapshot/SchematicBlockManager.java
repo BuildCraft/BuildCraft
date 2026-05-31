@@ -43,14 +43,14 @@ public class SchematicBlockManager {
     @Nonnull
     public static <S extends ISchematicBlock> NbtCompound writeToNBT(S schematicBlock) {
         NbtCompound schematicBlockTag = new NbtCompound();
-        schematicBlockTag.setString(
+        schematicBlockTag.putString(
             "name",
             SchematicBlockFactoryRegistry
                 .getFactoryByInstance(schematicBlock)
                 .name
                 .toString()
         );
-        schematicBlockTag.setTag("data", schematicBlock.serializeNBT());
+        schematicBlockTag.put("data", schematicBlock.serializeNBT());
         return schematicBlockTag;
     }
 
@@ -62,7 +62,7 @@ public class SchematicBlockManager {
             throw new InvalidInputDataException("Unknown schematic type " + name);
         }
         ISchematicBlock schematicBlock = factory.supplier.get();
-        NbtCompound data = schematicBlockTag.getCompoundTag("data");
+        NbtCompound data = schematicBlockTag.getCompound("data");
         try {
             schematicBlock.deserializeNBT(data);
             return schematicBlock;

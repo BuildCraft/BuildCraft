@@ -33,7 +33,7 @@ public final class StringUtilBC {
     }
 
     // STUB(R.Chen): formatStringForWhite/Black + compareBasicReadable removed — they depend on the
-    // unmigrated ColourUtil and Forge TextFormatting. fluidToString removed — depends on Forge FluidStack.
+    // unmigrated ColourUtil and Forge Formatting. fluidToString removed — depends on Forge FluidStack.
     // Restore once ColourUtil and the Transfer-API fluid layer are migrated.
 
     public static String blockPosToString(BlockPos pos) {

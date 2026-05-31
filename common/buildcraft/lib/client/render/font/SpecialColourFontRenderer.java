@@ -2,9 +2,9 @@ package buildcraft.lib.client.render.font;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Formatting;
@@ -13,12 +13,12 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.misc.ColourUtil;
 
-public class SpecialColourFontRenderer extends FontRenderer {
+public class SpecialColourFontRenderer extends TextRenderer {
     public static final SpecialColourFontRenderer INSTANCE = new SpecialColourFontRenderer();
 
     private SpecialColourFontRenderer() {
-        super(Minecraft.getMinecraft().gameSettings, new Identifier("textures/font/ascii.png"),
-            Minecraft.getMinecraft().renderEngine, false);
+        super(MinecraftClient.getInstance().gameSettings, new Identifier("textures/font/ascii.png"),
+            MinecraftClient.getInstance().renderEngine, false);
     }
 
     @Override
@@ -67,14 +67,14 @@ public class SpecialColourFontRenderer extends FontRenderer {
         return (int) x;
     }
 
-    private static FontRenderer getRealRenderer() {
-        return Minecraft.getMinecraft().fontRenderer;
+    private static TextRenderer getRealRenderer() {
+        return MinecraftClient.getInstance().fontRenderer;
     }
 
     // Delegate methods (To ensure we have the exact same behaviour as the normal font renderer)
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(ResourceManager resourceManager) {
         // NO-OP
     }
 

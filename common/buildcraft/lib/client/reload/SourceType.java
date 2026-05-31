@@ -6,8 +6,8 @@
 
 package buildcraft.lib.client.reload;
 
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.texture.Sprite;
 
 import net.minecraftforge.client.model.IModel;
 
@@ -24,9 +24,9 @@ public enum SourceType {
     /** A configuration option has changed. As configs are handled by forge these won't be preceded by a {@link #FILE}
      * change. */
     CONFIG,
-    /** A {@link TextureAtlasSprite} object has changed its data. */
+    /** A {@link Sprite} object has changed its data. */
     SPRITE,
-    /** An {@link IBakedModel} or {@link IModel} or other model storage object has changed. */
+    /** An {@link BakedModel} or {@link IModel} or other model storage object has changed. */
     MODEL;
 
     public static final SourceType[] VALUES = values();

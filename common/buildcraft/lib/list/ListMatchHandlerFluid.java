@@ -11,10 +11,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -34,8 +34,8 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
         }
         isBuilt = true;
         for (Item item : Item.REGISTRY) {
-            NonNullList<ItemStack> stacks = NonNullList.create();
-            item.getSubItems(CreativeTabs.SEARCH, stacks);
+            DefaultedList<ItemStack> stacks = DefaultedList.create();
+            item.getSubItems(ItemGroup.SEARCH, stacks);
             for (ItemStack toTry : stacks) {
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(toTry);
                 if (fluidHandler != null && fluidHandler.drain(1, false) == null) {
@@ -82,12 +82,12 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
+    public DefaultedList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         buildClientExampleList();
         if (type == Type.MATERIAL) {
             FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {
-                NonNullList<ItemStack> examples = NonNullList.create();
+                DefaultedList<ItemStack> examples = DefaultedList.create();
 
                 for (ItemStack potentialHolder : clientExampleHolders) {
                     potentialHolder = potentialHolder.copy();
@@ -103,7 +103,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack.copy());
 
             if (fluidHandler != null) {
-                NonNullList<ItemStack> examples = NonNullList.create();
+                DefaultedList<ItemStack> examples = DefaultedList.create();
                 examples.add(stack);
                 FluidStack contained = fluidHandler.drain(Integer.MAX_VALUE, true);
                 if (contained != null) {

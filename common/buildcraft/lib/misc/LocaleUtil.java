@@ -21,7 +21,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
 
 // STUB(R.Chen): Forge-dependent methods (localizeColour, localizeFacing, localizeFluid*, localizeRf*,
-// localizeRfFlow, formatRf, localize(key, args)) stripped. BCLibConfig / I18n / IFluidTank / EnumDyeColor
+// localizeRfFlow, formatRf, localize(key, args)) stripped. BCLibConfig / I18n / IFluidTank / DyeColor
 // deps removed. Only MJ-related and heat helpers remain for TileEngineBase_BC8 / debug info rendering.
 // TODO(R.Chen): restore full localization once I18n is ported (net.minecraft.client.resource.language.I18n).
 public class LocaleUtil {

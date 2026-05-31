@@ -14,8 +14,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -94,9 +94,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry, Profiler prof)
+    public GuidePageFactory loadPage(BufferedReader reader, Identifier name, PageEntry<?> entry, Profiler prof)
         throws IOException {
-        prof.startSection("md");
+        prof.push("md");
         StringBuilder replaced = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -107,7 +107,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         }
 
         BufferedReader nReader = new BufferedReader(new StringReader(replaced.toString()));
-        prof.endSection();
+        prof.pop();
         return XmlPageLoader.INSTANCE.loadPage(nReader, name, entry, prof);
     }
 

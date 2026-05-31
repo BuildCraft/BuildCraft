@@ -10,8 +10,8 @@ package buildcraft.transport.pipe;
 import java.io.IOException;
 
 // Yarn 1.20.1 renames:
-//   NBTTagCompound → NbtCompound   PacketBuffer → PacketByteBuf   EnumFacing → Direction
-//   ResourceLocation → Identifier   Side → EnvType   MessageContext → Object (stub)
+//   NbtCompound → NbtCompound   PacketByteBuf → PacketByteBuf   Direction → Direction
+//   Identifier → Identifier   Side → EnvType   MessageContext → Object (stub)
 //   nbt.setString/setTag → putString/put   getCompoundTag → getCompound   hasNoTags → isEmpty
 // STUB(R.Chen): full implementation after BlockPipeHolder (this class is circular with TilePipeHolder, and
 //   both move into the same migration layer). Networking pruned only where the pluggable network API itself is

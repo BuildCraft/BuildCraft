@@ -89,7 +89,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void writePayload(int id, PacketBufferBC buffer, TileBC_Neptune.NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == TileBC_Neptune.NetSide.SERVER) {
+        if (side == TileBC_Neptune.NetEnvType.SERVER) {
             if (id == NET_GUI_TICK) {
                 buffer.writeLong(power);
                 double avg = avgPower.getAverage();
@@ -105,7 +105,7 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
     @Override
     public void readPayload(int id, PacketBufferBC buffer, TileBC_Neptune.NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == TileBC_Neptune.NetSide.CLIENT) {
+        if (side == TileBC_Neptune.NetEnvType.CLIENT) {
             if (id == NET_GUI_TICK) {
                 power = buffer.readLong();
                 avgPowerClient = buffer.readInt() * MJ_FLOW_ROUND;

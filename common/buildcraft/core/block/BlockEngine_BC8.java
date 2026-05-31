@@ -5,8 +5,8 @@
 // TODO(R.Chen): blocked by lib.engine.BlockEngineBase_BC8 (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.Material;
+import net.minecraft.state.property.Property;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
@@ -21,7 +21,7 @@ public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
     }
 
     @Override
-    public IProperty<EnumEngineType> getEngineProperty() {
+    public Property<EnumEngineType> getEngineProperty() {
         return BuildCraftProperties.ENGINE_TYPE;
     }
 
@@ -32,6 +32,6 @@ public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
 
     @Override
     public String getUnlocalizedName(EnumEngineType engine) {
-        return TagManager.getTag("block.engine.bc." + engine.unlocalizedTag, EnumTagType.UNLOCALIZED_NAME);
+        return TagManager.get("block.engine.bc." + engine.unlocalizedTag, EnumTagType.UNLOCALIZED_NAME);
     }
 }

@@ -13,12 +13,12 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -55,13 +55,13 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
                 )
             )
         );
-        GlStateManager.enableBlend();
+        RenderSystem.enableBlend();
         BufferBuilder bb = Tessellator.getInstance().getBuffer();
         bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         for (ChunkPos chunkPos : chunkPoses) {
             DebugRenderHelper.renderAABB(
                 bb,
-                new AxisAlignedBB(
+                new Box(
                     chunkPos.getXStart() + 0.5D,
                     tile.frameBox.min().getY() + 0.5D,
                     chunkPos.getZStart() + 0.5D,
@@ -73,6 +73,6 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
             );
         }
         Tessellator.getInstance().draw();
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
     }
 }

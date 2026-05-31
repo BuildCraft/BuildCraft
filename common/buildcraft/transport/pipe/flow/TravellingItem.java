@@ -25,9 +25,9 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 
 // Ported to Fabric 1.20.1 by R.Chen:
-//   - EnumDyeColor → DyeColor (byMetadata/getMetadata → byId/getId).
-//   - EnumFacing → Direction (VALUES → values()).
-//   - NBTTagCompound → NbtCompound (getInteger/setX → getInt/putX, getCompoundTag → getCompound,
+//   - DyeColor → DyeColor (byMetadata/getMetadata → byId/getId).
+//   - Direction → Direction (VALUES → values()).
+//   - NbtCompound → NbtCompound (getInteger/setX → getInt/putX, getCompoundTag → getCompound,
 //     getTag → get, setTag → put; serializeNBT → writeNbt; new ItemStack(nbt) → ItemStack.fromNbt).
 //   - new Vec3d(BlockPos) → Vec3d.ofCenter / Vec3d.of; addVector → add.
 public class TravellingItem {

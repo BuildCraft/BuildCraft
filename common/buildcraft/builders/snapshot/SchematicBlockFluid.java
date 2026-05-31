@@ -16,11 +16,11 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -34,7 +34,7 @@ import buildcraft.api.schematics.SchematicBlockContext;
 import buildcraft.lib.misc.BlockUtil;
 
 public class SchematicBlockFluid implements ISchematicBlock {
-    private IBlockState blockState;
+    private BlockState blockState;
     private boolean isFlowing;
 
     @SuppressWarnings("unused")
@@ -53,8 +53,8 @@ public class SchematicBlockFluid implements ISchematicBlock {
     @Nonnull
     @Override
     public Set<BlockPos> getRequiredBlockOffsets() {
-        return Stream.concat(Arrays.stream(EnumFacing.HORIZONTALS), Stream.of(EnumFacing.DOWN))
-            .map(EnumFacing::getDirectionVec)
+        return Stream.concat(Arrays.stream(Direction.HORIZONTALS), Stream.of(Direction.DOWN))
+            .map(Direction::getDirectionVec)
             .map(BlockPos::new)
             .collect(Collectors.toSet());
     }
@@ -78,7 +78,7 @@ public class SchematicBlockFluid implements ISchematicBlock {
 
     @Override
     public boolean canBuild(World world, BlockPos blockPos) {
-        return world.isAirBlock(blockPos) ||
+        return world.isAir(blockPos) ||
             BlockUtil.getFluidWithFlowing(world, blockPos) == BlockUtil.getFluidWithFlowing(blockState.getBlock()) &&
                 BlockUtil.getFluid(world, blockPos) == null;
     }
@@ -90,8 +90,8 @@ public class SchematicBlockFluid implements ISchematicBlock {
         }
         if (world.setBlockState(blockPos, blockState, 11)) {
             Stream.concat(
-                Stream.of(EnumFacing.VALUES)
-                    .map(EnumFacing::getDirectionVec)
+                Stream.of(Direction.VALUES)
+                    .map(Direction::getDirectionVec)
                     .map(BlockPos::new),
                 Stream.of(BlockPos.ORIGIN)
             )
@@ -113,16 +113,16 @@ public class SchematicBlockFluid implements ISchematicBlock {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("blockState", NBTUtil.writeBlockState(new NBTTagCompound(), blockState));
-        nbt.setBoolean("isFlowing", isFlowing);
+    public NbtCompound serializeNBT() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.put("blockState", NBTUtil.writeBlockState(new NbtCompound(), blockState));
+        nbt.putBoolean("isFlowing", isFlowing);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        blockState = NBTUtil.readBlockState(nbt.getCompoundTag("blockState"));
+    public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
+        blockState = NBTUtil.readBlockState(nbt.getCompound("blockState"));
         isFlowing = nbt.getBoolean("isFlowing");
     }
 

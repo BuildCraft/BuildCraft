@@ -5,7 +5,7 @@
  */
 
 // TODO(R.Chen): Fabric migration DEFERRED — blocked by unmigrated api.transport.pluggable
-//               (IPluggableRegistry, PluggableDefinition → Direction/PacketBuffer/IPipeHolder chain).
+//               (IPluggableRegistry, PluggableDefinition → Direction/PacketByteBuf/IPipeHolder chain).
 //               Forge-free otherwise; only needs Identifier → Identifier once transport lands.
 package buildcraft.lib.registry;
 

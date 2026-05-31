@@ -6,14 +6,14 @@
 
 package buildcraft.lib.fluid;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Material;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.BlockFluidClassic;
@@ -32,11 +32,11 @@ public class BCFluidBlock extends BlockFluidClassic {
         displacements.put(Blocks.LAVA, displaceLava);
         displacements.put(Blocks.FLOWING_LAVA, displaceLava);
 
-        renderLayer = BlockRenderLayer.SOLID;
+        renderLayer = RenderLayer.SOLID;
     }
 
     @Override
-    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity, double yToTest, Material material, boolean testingHead) {
+    public Boolean isEntityInsideMaterial(BlockView world, BlockPos pos, BlockState state, Entity entity, double yToTest, Material material, boolean testingHead) {
         if (material == Material.WATER) {
             return true;
         }
@@ -44,17 +44,17 @@ public class BCFluidBlock extends BlockFluidClassic {
     }
 
     @Override
-    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
+    public int getFlammability(BlockView world, BlockPos pos, Direction face) {
         return blockMaterial.getCanBurn() ? 200 : 0;
     }
 
     @Override
-    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
+    public int getFireSpreadSpeed(BlockView world, BlockPos pos, Direction face) {
         return blockMaterial.getCanBurn() ? 200 : 0;
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, BlockState state, Entity entityIn) {
         if (sticky) {
             entityIn.setInWeb();
         }

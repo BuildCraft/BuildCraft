@@ -10,16 +10,16 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import com.mojang.blaze3d.systems.RenderSystem;
 
-/** Implements a font that delegates to Minecraft's own {@link FontRenderer} */
+/** Implements a font that delegates to MinecraftClient's own {@link TextRenderer} */
 public enum MinecraftFont implements IFontRenderer {
     INSTANCE;
 
-    private static FontRenderer getFontRenderer() {
-        return Minecraft.getMinecraft().fontRenderer;
+    private static TextRenderer getFontRenderer() {
+        return MinecraftClient.getInstance().fontRenderer;
     }
 
     @Override
@@ -41,7 +41,7 @@ public enum MinecraftFont implements IFontRenderer {
     public int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered, float scale) {
         boolean _scale = scale != 1;
         if (_scale) {
-            GlStateManager.pushMatrix();
+            RenderSystem.getModelViewStack().push();
             GL11.glScaled(scale, scale, 1);
             x = (int) (x / scale);
             y = (int) (y / scale);
@@ -51,9 +51,9 @@ public enum MinecraftFont implements IFontRenderer {
         }
         int v = getFontRenderer().drawString(text, x, y, colour, shadow);
         v -= x;
-        GlStateManager.color(1f, 1f, 1f);
+        RenderSystem.setShaderColor(1f, 1f, 1f);
         if (_scale) {
-            GlStateManager.popMatrix();
+            RenderSystem.getModelViewStack().pop();
             v = (int) (v * scale);
         }
         return v;

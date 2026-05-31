@@ -11,15 +11,15 @@ import javax.annotation.Nullable;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.items.IItemHandler;
 
@@ -38,7 +38,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
 
     public static final Container CONTAINER_EVENT_HANDLER = new ContainerNullEventHandler();
 
-    private final TileEntity tile;
+    private final BlockEntity tile;
     private final ItemHandlerSimple invBlueprint;
     private final ItemHandlerSimple invMaterials;
     private final ItemHandlerSimple invResult;
@@ -84,7 +84,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
 
     /** @return True if anything changed, false otherwise */
     public boolean tick() {
-        if (tile.getWorld().isRemote) {
+        if (tile.getWorld().isClient) {
             throw new IllegalStateException("Never call this on the client side!");
         }
         if (isBlueprintDirty) {
@@ -94,7 +94,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
                 recipeType = null;
             } else {
                 assumedResult = currentRecipe.getCraftingResult(this);
-                NonNullList<Ingredient> ingredients = currentRecipe.getIngredients();
+                DefaultedList<Ingredient> ingredients = currentRecipe.getIngredients();
                 if (ingredients.isEmpty()) {
                     recipeType = EnumRecipeType.EXACT_STACKS;
                 } else {
@@ -219,7 +219,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
         if (!leftover.isEmpty()) {
             InventoryUtil.addToBestAcceptor(tile.getWorld(), tile.getPos(), null, leftover);
         }
-        NonNullList<ItemStack> remainingStacks = currentRecipe.getRemainingItems(this);
+        DefaultedList<ItemStack> remainingStacks = currentRecipe.getRemainingItems(this);
         for (int s = 0; s < remainingStacks.size(); s++) {
             ItemStack inSlot = getStackInSlot(s);
             ItemStack remaining = remainingStacks.get(s);
@@ -276,7 +276,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
 
     static class ContainerNullEventHandler extends Container {
         @Override
-        public boolean canInteractWith(EntityPlayer playerIn) {
+        public boolean canInteractWith(PlayerEntity playerIn) {
             return false;
         }
 

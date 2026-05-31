@@ -29,11 +29,11 @@ import buildcraft.lib.tile.TileBC_Neptune;
 //   FluidStack/FluidTankProperties/IFluidHandlerAdv → STUB (Transfer-API, Phase 4E)
 //   Tank/FluidSmoother         → STUB (Phase 4E)
 //   IFluidFilter/IFluidHandlerAdv → STUB (api.core not fully in libLeaf)
-//   onActivated(EntityPlayer)  → onActivated(PlayerEntity) in TileBC_Neptune (already migrated)
-//   onPlacedBy(EntityLivingBase) → onPlacedBy(LivingEntity) in TileBC_Neptune
-//   EntityPlayer               → PlayerEntity
-//   EnumFacing                 → Direction
-//   NBTTagCompound             → NbtCompound
+//   onActivated(PlayerEntity)  → onActivated(PlayerEntity) in TileBC_Neptune (already migrated)
+//   onPlacedBy(LivingEntity) → onPlacedBy(LivingEntity) in TileBC_Neptune
+//   PlayerEntity               → PlayerEntity
+//   Direction                 → Direction
+//   NbtCompound             → NbtCompound
 //   Side                       → NetSide
 //   balanceTankFluids / getTanks → STUB (Tank not in libLeaf)
 public class TileTank extends TileBC_Neptune implements IDebuggable {

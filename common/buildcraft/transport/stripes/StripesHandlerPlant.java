@@ -8,8 +8,8 @@
 
 package buildcraft.transport.stripes;
 
-// STUB(R.Chen): StripesHandlerPlant — CropManager API still uses Forge types (EntityPlayer, IBlockState,
-// IBlockAccess). Deferred to Phase 4E when CropManager is migrated to Fabric.
+// STUB(R.Chen): StripesHandlerPlant — CropManager API still uses Forge types (PlayerEntity, BlockState,
+// BlockView). Deferred to Phase 4E when CropManager is migrated to Fabric.
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,7 @@ public enum StripesHandlerPlant implements IStripesHandlerItem {
                           ItemStack stack,
                           PlayerEntity player,
                           IStripesActivator activator) {
-        // STUB(R.Chen): CropManager uses Forge EntityPlayer — deferred to Phase 4E.
+        // STUB(R.Chen): CropManager uses Forge PlayerEntity — deferred to Phase 4E.
         return false;
     }
 }

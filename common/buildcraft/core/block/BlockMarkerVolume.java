@@ -8,7 +8,7 @@ package buildcraft.core.block;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -43,10 +43,10 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     }
 
     private static void checkSignalState(World world, BlockPos pos) {
-        if (world.isRemote) {
+        if (world.isClient) {
             return;
         }
-        BlockEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileMarkerVolume) {
             TileMarkerVolume volume = (TileMarkerVolume) tile;
 
@@ -61,8 +61,8 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
-            BlockEntity tile = world.getTileEntity(pos);
+        if (!world.isClient) {
+            BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof TileMarkerVolume) {
                 TileMarkerVolume volume = (TileMarkerVolume) tile;
 

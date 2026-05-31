@@ -201,7 +201,7 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder idTex(String both) {
-            return id(both).tex(both);
+            return id(both).texture(both);
         }
 
         public DefinitionBuilder id(String post) {

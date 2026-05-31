@@ -15,8 +15,8 @@ import java.util.UUID;
 //   net.minecraft.advancements.Advancement       → net.minecraft.advancement.Advancement
 //   AdvancementManager (Forge accessor)           → net.minecraft.server.ServerAdvancementLoader
 //   PlayerAdvancements                            → net.minecraft.advancement.PlayerAdvancementTracker
-//   EntityPlayer / EntityPlayerMP                 → PlayerEntity / ServerPlayerEntity
-//   ResourceLocation                              → Identifier
+//   PlayerEntity / ServerPlayerEntity                 → PlayerEntity / ServerPlayerEntity
+//   Identifier                              → Identifier
 //   playerMP.getServerWorld()                     → ServerPlayerEntity.getServerWorld()
 //   world.getAdvancementManager()                 → server.getAdvancementLoader()
 //   loader.getAdvancement(name)                   → loader.get(Identifier)

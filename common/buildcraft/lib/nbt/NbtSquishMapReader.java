@@ -18,7 +18,7 @@ import gnu.trove.list.array.TIntArrayList;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.PacketByteBuf;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.data.NbtSquishConstants;
@@ -131,7 +131,7 @@ class NbtSquishMapReader {
         return map;
     }
 
-    /** Similar to {@link PacketBuffer#readVarInt()} */
+    /** Similar to {@link PacketByteBuf#readVarInt()} */
     private static int readVarInt(DataInput in) throws IOException {
         int value = 0;
         int bytesRead = 0;
@@ -161,7 +161,7 @@ class NbtSquishMapReader {
         for (int i = 0; i < count; i++) {
             String key = map.getStringForReading(stringType.readIndex(in));
             NbtElement value = map.getTagForReading(type.readIndex(in));
-            nbt.setTag(key, value.copy());
+            nbt.put(key, value.copy());
         }
         return nbt;
     }

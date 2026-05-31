@@ -10,12 +10,12 @@ package buildcraft.core.marker.volume;
 import org.apache.commons.lang3.tuple.Pair;
 
 // Yarn 1.20.1 renames:
-//   EntityPlayer         → PlayerEntity
-//   EnumHand             → Hand
+//   PlayerEntity         → PlayerEntity
+//   Hand             → Hand
 //   ActionResult<T>      → TypedActionResult<T>
-//   EnumActionResult     → ActionResult   (enum values: PASS, SUCCESS, FAIL, CONSUME)
+//   ActionResult     → ActionResult   (enum values: PASS, SUCCESS, FAIL, CONSUME)
 //   World#isRemote       → World#isClient
-//   player.getHeldItem() → player.getStackInHand()
+//   player.getStackInHand() → player.getStackInHand()
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

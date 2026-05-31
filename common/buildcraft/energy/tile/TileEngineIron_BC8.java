@@ -31,12 +31,12 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.energy.BCEnergyGuis;
 
 // Forge→Fabric migration notes (R.Chen):
-//   EntityPlayer / EnumFacing / EnumHand     → PlayerEntity / Direction / Hand
-//   NBTTagCompound / readFromNBT/writeToNBT  → NbtCompound / readNbt/writeNbt
+//   PlayerEntity / Direction / Hand     → PlayerEntity / Direction / Hand
+//   NbtCompound / readFromNBT/writeToNBT  → NbtCompound / readNbt/writeNbt
 //   nbt.setInteger/setDouble                 → nbt.putInt/putDouble
-//   Side.CLIENT / Side.SERVER                → NetSide.CLIENT / NetSide.SERVER
+//   EnvType.CLIENT / EnvType.SERVER                → NetEnvType.CLIENT / NetEnvType.SERVER
 //   MessageContext                           → Object ctx
-//   world.isRemote                           → world.isClient
+//   world.isClient                           → world.isClient
 //   player.getHeldItem                       → player.getStackInHand
 //   EntityUtil.getWrenchHand                 → STUB (not yet in libLeaf)
 //   Tank / FluidStack / IFluidHandlerAdv     → STUB — entire fluid fuel system deferred until
@@ -67,7 +67,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         //               Transfer-API FluidStorage.SIDED registration deferred to BCEnergyInitializer.
     }
 
-    // TileEntity overrides
+    // BlockEntity overrides
 
     @Override
     public void writeNbt(NbtCompound nbt) {
@@ -88,7 +88,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 // STUB(R.Chen): tankManager.readData(buffer) — deferred until fluid layer lands.
             }
@@ -98,7 +98,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetSide.SERVER) {
+        if (side == NetEnvType.SERVER) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 // STUB(R.Chen): tankManager.writeData(buffer) — deferred until fluid layer lands.
             }

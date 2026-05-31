@@ -8,7 +8,7 @@ package buildcraft.builders.block;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -37,7 +37,7 @@ public class BlockReplacer extends BlockBCTile_Neptune implements IBlockWithFaci
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
         Direction side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCBuildersGuis.REPLACER.openGUI(player, pos);
         }
         return true;

@@ -6,7 +6,7 @@
 
 package buildcraft.core;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,23 +24,23 @@ public enum BCCoreEventDist {
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.world != null && !event.world.isRemote && event.world.getMinecraftServer() != null) {
+        if (event.world != null && !event.world.isClient && event.world.getMinecraftServer() != null) {
             WorldSavedDataVolumeBoxes.get(event.world).tick();
         }
     }
 
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        if (event.getEntity() instanceof EntityPlayerMP) {
+        if (event.getEntity() instanceof ServerPlayerEntity) {
             // Delay sending join messages to player as it makes it work when in single-player
             MessageUtil.doDelayedServer(() ->
                 MessageManager.sendTo(
                     new MessageVolumeBoxes(WorldSavedDataVolumeBoxes.get(event.getEntity().world).volumeBoxes),
-                    (EntityPlayerMP) event.getEntity()
+                    (ServerPlayerEntity) event.getEntity()
                 )
             );
-            WorldSavedDataVolumeBoxes.get(((EntityPlayerMP) event.getEntity()).world).volumeBoxes.stream()
-                .filter(volumeBox -> volumeBox.isPausedEditingBy((EntityPlayerMP) event.getEntity()))
+            WorldSavedDataVolumeBoxes.get(((ServerPlayerEntity) event.getEntity()).world).volumeBoxes.stream()
+                .filter(volumeBox -> volumeBox.isPausedEditingBy((ServerPlayerEntity) event.getEntity()))
                 .forEach(VolumeBox::resumeEditing);
         }
     }

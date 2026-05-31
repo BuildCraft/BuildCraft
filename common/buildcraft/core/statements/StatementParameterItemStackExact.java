@@ -71,13 +71,13 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         if (stack != null) {
             NbtCompound tagCompound = new NbtCompound();
             stack.writeToNBT(tagCompound);
-            compound.setTag("stack", tagCompound);
+            compound.put("stack", tagCompound);
         }
     }
 
     public static StatementParameterItemStackExact readFromNbt(NbtCompound nbt) {
         StatementParameterItemStackExact param = new StatementParameterItemStackExact();
-        param.stack = new ItemStack(nbt.getCompoundTag("stack"));
+        param.stack = new ItemStack(nbt.getCompound("stack"));
         return param;
     }
 

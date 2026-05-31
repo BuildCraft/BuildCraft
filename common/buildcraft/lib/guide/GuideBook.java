@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.text.Text;
 
 import buildcraft.api.registry.IScriptableRegistry.ISimpleEntryDeserializer;
 
@@ -17,19 +17,19 @@ public final class GuideBook {
 
     public final Identifier name;
     public final Identifier itemIcon;
-    public final ITextComponent title;
+    public final Text title;
     public final boolean appendAllEntries;
     // TODO: Mod/resource pack display options!
     public final GuideContentsData data = new GuideContentsData(this);
 
     private static GuideBook deserialize(Identifier name, JsonObject json, JsonDeserializationContext ctx) {
         Identifier itemIcon = new Identifier("buildcraftcore:guide_main");
-        ITextComponent title = JsonUtil.getTextComponent(json, "title", "");
+        Text title = JsonUtil.getTextComponent(json, "title", "");
         boolean addAll = JsonUtils.getBoolean(json, "all_entries", true);
         return new GuideBook(name, itemIcon, title, addAll);
     }
 
-    public GuideBook(Identifier name, Identifier itemIcon, ITextComponent title, boolean appendAllEntries) {
+    public GuideBook(Identifier name, Identifier itemIcon, Text title, boolean appendAllEntries) {
         this.name = name;
         this.itemIcon = itemIcon;
         this.title = title;

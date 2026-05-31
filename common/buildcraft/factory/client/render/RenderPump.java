@@ -8,10 +8,10 @@ package buildcraft.factory.client.render;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 
@@ -53,7 +53,7 @@ public class RenderPump extends FastTESR<TilePump> {
         LED_POWER = new RenderPartCube[4];
         LED_STATUS = new RenderPartCube[4];
         for (int i = 0; i < 4; i++) {
-            EnumFacing facing = EnumFacing.getHorizontal(i);
+            Direction facing = Direction.getHorizontal(i);
 
             final int dX, dZ;
             final double ledX, ledZ;
@@ -62,7 +62,7 @@ public class RenderPump extends FastTESR<TilePump> {
                 dX = 0;
                 dZ = facing.getAxisDirection().getOffset();
                 ledZ = 0.5;
-                if (facing == EnumFacing.EAST) {
+                if (facing == Direction.EAST) {
                     ledX = 15.6 / 16.0;
                 } else {
                     ledX = 0.4 / 16.0;
@@ -71,7 +71,7 @@ public class RenderPump extends FastTESR<TilePump> {
                 dX = -facing.getAxisDirection().getOffset();
                 dZ = 0;
                 ledX = 0.5;
-                if (facing == EnumFacing.SOUTH) {
+                if (facing == Direction.SOUTH) {
                     ledZ = 15.6 / 16.0;
                 } else {
                     ledZ = 0.4 / 16.0;
@@ -107,8 +107,8 @@ public class RenderPump extends FastTESR<TilePump> {
 
     @Override
     public void renderTileEntityFast(@Nonnull TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("pump");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("pump");
 
         buffer.setTranslation(x, y, z);
 
@@ -121,7 +121,7 @@ public class RenderPump extends FastTESR<TilePump> {
 
         for (int i = 0; i < 4; i++) {
             // Get the light level of a direction
-            EnumFacing dir = EnumFacing.getHorizontal(i);
+            Direction dir = Direction.getHorizontal(i);
             BlockPos pos = tile.getPos().offset(dir);
             int block = tile.getWorld().getLightFor(EnumSkyBlock.BLOCK, pos);
             int sky = tile.getWorld().getLightFor(EnumSkyBlock.SKY, pos);
@@ -140,8 +140,8 @@ public class RenderPump extends FastTESR<TilePump> {
 
         tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
     @Override

@@ -10,8 +10,8 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -48,10 +48,10 @@ public enum CoreTriggerProvider implements ITriggerProvider {
 
     @Override
     public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container,
-        @Nonnull EnumFacing side) {}
+        @Nonnull Direction side) {}
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull Direction side, BlockEntity tile) {
 
         if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);

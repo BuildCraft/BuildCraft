@@ -15,10 +15,10 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.block.entity.BlockEntitySkull;
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.render.ISprite;
@@ -40,7 +40,7 @@ public class SpriteUtil {
     }
 
     public static void bindTexture(Identifier identifier) {
-        Minecraft.getMinecraft().renderEngine.bindTexture(identifier);
+        MinecraftClient.getInstance().renderEngine.bindTexture(identifier);
     }
 
     /** Transforms the given {@link Identifier}, adding ".png" to the end and prepending that
@@ -60,7 +60,7 @@ public class SpriteUtil {
         if (profile == null) {
             return null;
         }
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
 
         if (CACHED.containsKey(profile) && CACHED.get(profile) == null && Math.random() >= 0.99) {
             CACHED.remove(profile);
@@ -114,7 +114,7 @@ public class SpriteUtil {
         return new SpriteRaw(loc, 40, 8, 8, 8, 64);
     }
 
-    public static TextureAtlasSprite missingSprite() {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+    public static Sprite missingSprite() {
+        return MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite();
     }
 }

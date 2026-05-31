@@ -8,16 +8,16 @@ package buildcraft.lib.client.sprite;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.math.MathHelper;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class DynamicTextureBC {
     public final int width, height;
     private final int[] colorMap;
@@ -96,8 +96,8 @@ public class DynamicTextureBC {
     }
 
     private static void vertexUV(BufferBuilder bb, double x, double y, double z, double u, double v) {
-        bb.pos(x, y, z);
-        bb.tex(u, v);
-        bb.endVertex();
+        bb.vertex(x, y, z);
+        bb.texture(u, v);
+        bb.next();
     }
 }

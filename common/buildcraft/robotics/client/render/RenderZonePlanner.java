@@ -15,13 +15,13 @@ import com.google.common.cache.RemovalNotification;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.render.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
@@ -56,8 +56,8 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
     @Override
     public final void render(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage,
         float alpha) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("zone");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("zone");
 
         double offset = 0.001;
         double minX = 3 / 16D - offset;
@@ -82,11 +82,11 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
             texture.updateTexture();
             texture.bindGlTexture();
             GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.disableTexture2D();
+            ;
             GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-            GlStateManager.disableBlend();
+            RenderSystem.disableBlend();
             GlStateManager.disableCull();
-            if (Minecraft.isAmbientOcclusionEnabled()) {
+            if (MinecraftClient.isAmbientOcclusionEnabled()) {
                 GlStateManager.shadeModel(GL11.GL_SMOOTH);
             } else {
                 GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -138,8 +138,8 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         }
         RenderHelper.enableStandardItemLighting();
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
     private static DynamicTextureBC getTexture(TileZonePlanner tile, Direction side) {

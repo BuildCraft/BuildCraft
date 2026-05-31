@@ -96,7 +96,7 @@ public class MutableVertex {
         return this;
     }
 
-    // BakedQuad serialization — 8 ints per vertex in Minecraft 1.20.1 BLOCK format:
+    // BakedQuad serialization — 8 ints per vertex in MinecraftClient 1.20.1 BLOCK format:
     //   [0-2] position xyz (float as int)
     //   [3]   colour RGBA
     //   [4-5] tex uv (float as int)

@@ -19,8 +19,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 
 // Forge→Fabric migration notes (R.Chen):
-//   TileEntity                → BlockEntity
-//   EnumFacing.HORIZONTALS    → Direction.Type.HORIZONTAL
+//   BlockEntity                → BlockEntity
+//   Direction.HORIZONTALS    → Direction.Type.HORIZONTAL
 //   The BCLibConfig.ChunkLoaderLevel gating referenced in the old javadoc is deferred until BCLibConfig
 //   lands; see ChunkLoaderManager.canLoadFor for the temporary always-permit behaviour.
 /** This should be implemented by {@link BlockEntity}s that wish to be chunk-loaded by buildcraft lib. Note that tiles

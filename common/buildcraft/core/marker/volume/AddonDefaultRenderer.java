@@ -13,7 +13,7 @@ import net.fabricmc.api.Environment;
 // STUB(R.Chen): client render Phase 5.
 // Yarn 1.20.1:
 //   BufferBuilder          → net.minecraft.client.render.BufferBuilder
-//   TextureAtlasSprite     → net.minecraft.client.texture.Sprite
+//   Sprite     → net.minecraft.client.texture.Sprite
 //   ModelLoader.White      → no Fabric equivalent; use RenderSystem / solid-white approach instead.
 // The original vertex-building calls (builder.pos/color/tex/lightmap/endVertex) map to
 // VertexConsumer.vertex/color/texture/light/next in Fabric's render pipeline; deferred to Phase 5.
@@ -28,7 +28,7 @@ public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer
     }
 
     public AddonDefaultRenderer(Object sprite) {
-        // STUB(R.Chen): TextureAtlasSprite → net.minecraft.client.texture.Sprite (Phase 5).
+        // STUB(R.Chen): Sprite → net.minecraft.client.texture.Sprite (Phase 5).
     }
 
     @Override

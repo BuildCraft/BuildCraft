@@ -62,7 +62,7 @@ public final class BCNetworkManager {
                 // STUB(R.Chen): route to TileBC_Neptune.receivePayload on the player's server world.
                 // Currently a no-op so the channel is wired but inert.
                 BuildCraftFabric.LOGGER.debug(
-                    "[BCNetwork] (server) UpdateTile @ {} from {}", packet.pos(), player.getName().getString()
+                    "[BCNetwork] (server) UpdateTile @ {} from {}", packet.vertex(), player.getName().getString()
                 );
             }
         );
@@ -78,7 +78,7 @@ public final class BCNetworkManager {
             UpdateTilePayload.TYPE,
             (packet, player, responseSender) -> {
                 // STUB(R.Chen): route to TileBC_Neptune.receivePayload on the client world.
-                BuildCraftFabric.LOGGER.debug("[BCNetwork] (client) UpdateTile @ {}", packet.pos());
+                BuildCraftFabric.LOGGER.debug("[BCNetwork] (client) UpdateTile @ {}", packet.vertex());
             }
         );
     }

@@ -11,7 +11,7 @@ package buildcraft.core.marker.volume;
 import java.util.HashMap;
 import java.util.Map;
 
-// Yarn 1.20.1: net.minecraft.util.ResourceLocation → net.minecraft.util.Identifier
+// Yarn 1.20.1: net.minecraft.util.Identifier → net.minecraft.util.Identifier
 import net.minecraft.util.Identifier;
 
 public enum AddonsRegistry {

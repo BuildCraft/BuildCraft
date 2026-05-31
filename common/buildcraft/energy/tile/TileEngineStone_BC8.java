@@ -37,16 +37,16 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.energy.BCEnergyGuis;
 
 // Forge→Fabric migration notes (R.Chen):
-//   EntityPlayer                 → PlayerEntity
-//   EnumFacing                   → Direction
-//   EnumHand                     → Hand
-//   NBTTagCompound                → NbtCompound
+//   PlayerEntity                 → PlayerEntity
+//   Direction                   → Direction
+//   Hand                     → Hand
+//   NbtCompound                → NbtCompound
 //   readFromNBT / writeToNBT     → readNbt / writeNbt
 //   nbt.setInteger/setLong        → nbt.putInt/putLong
 //   nbt.getInteger                → nbt.getInt
 //   IItemHandlerModifiable handler → Object handler (stub)
 //   TileEntityFurnace.getItemBurnTime → STUB (returns 0; see TODO below)
-//   world.isRemote               → world.isClient
+//   world.isClient               → world.isClient
 //   InventoryUtil.addToBestAcceptor → STUB (not yet in migrated InventoryUtil)
 //   BCEnergyGuis.ENGINE_STONE.openGUI → stub (GUI deferred)
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
@@ -74,7 +74,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
         return isForceInserting || getItemBurnTime(stack) > 0;
     }
 
-    // TileEntity overrides
+    // BlockEntity overrides
 
     @Override
     public void readNbt(NbtCompound nbt) {

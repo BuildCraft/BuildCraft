@@ -12,16 +12,16 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
@@ -35,11 +35,11 @@ public final class ListHandler {
     public static final int HEIGHT = 2;
 
     public static class Line {
-        public final NonNullList<ItemStack> stacks;
+        public final DefaultedList<ItemStack> stacks;
         public boolean precise, byType, byMaterial;
 
         public Line() {
-            stacks = NonNullList.withSize(WIDTH, StackUtil.EMPTY);
+            stacks = DefaultedList.withSize(WIDTH, StackUtil.EMPTY);
         }
 
         /** Checks to see if this line is completely blank, and no data would be lost if this line was not saved. */
@@ -123,11 +123,11 @@ public final class ListHandler {
                 : ListMatchHandler.Type.MATERIAL;
         }
 
-        public static Line fromNBT(NBTTagCompound data) {
+        public static Line fromNBT(NbtCompound data) {
             Line line = new Line();
 
-            if (data != null && data.hasKey("st")) {
-                NBTTagList l = data.getTagList("st", 10);
+            if (data != null && data.contains("st")) {
+                NbtList l = data.getList("st", 10);
                 for (int i = 0; i < l.tagCount(); i++) {
                     line.stacks.set(i, new ItemStack(l.getCompoundTagAt(i)));
                 }
@@ -140,20 +140,20 @@ public final class ListHandler {
             return line;
         }
 
-        public NBTTagCompound toNBT() {
-            NBTTagCompound data = new NBTTagCompound();
-            NBTTagList stackList = new NBTTagList();
+        public NbtCompound toNBT() {
+            NbtCompound data = new NbtCompound();
+            NbtList stackList = new NbtList();
             for (ItemStack stack1 : stacks) {
-                NBTTagCompound stack = new NBTTagCompound();
+                NbtCompound stack = new NbtCompound();
                 if (stack1 != null) {
                     stack1.writeToNBT(stack);
                 }
                 stackList.appendTag(stack);
             }
-            data.setTag("st", stackList);
-            data.setBoolean("Fp", precise);
-            data.setBoolean("Ft", byType);
-            data.setBoolean("Fm", byMaterial);
+            data.put("st", stackList);
+            data.putBoolean("Fp", precise);
+            data.putBoolean("Ft", byType);
+            data.putBoolean("Fm", byMaterial);
             return data;
         }
 
@@ -178,19 +178,19 @@ public final class ListHandler {
             }
         }
 
-        @SideOnly(Side.CLIENT)
-        public NonNullList<ItemStack> getExamples() {
+        @Environment(EnvType.CLIENT)
+        public DefaultedList<ItemStack> getExamples() {
             ItemStack firstStack = stacks.get(0);
             if (firstStack.isEmpty()) {
-                return NonNullList.withSize(0, StackUtil.EMPTY);
+                return DefaultedList.withSize(0, StackUtil.EMPTY);
             }
-            NonNullList<ItemStack> stackList = NonNullList.create();
+            DefaultedList<ItemStack> stackList = DefaultedList.create();
             List<ListMatchHandler> handlers = ListRegistry.getHandlers();
             List<ListMatchHandler> handlersCustom = new ArrayList<>();
             ListMatchHandler.Type type = getSortingType();
             for (ListMatchHandler h : handlers) {
                 if (h.isValidSource(type, firstStack)) {
-                    NonNullList<ItemStack> examples = h.getClientExamples(type, firstStack);
+                    DefaultedList<ItemStack> examples = h.getClientExamples(type, firstStack);
                     if (examples != null) {
                         stackList.addAll(examples);
                     } else {
@@ -200,8 +200,8 @@ public final class ListHandler {
             }
             if (handlersCustom.size() > 0) {
                 for (Item i : ForgeRegistries.ITEMS) {
-                    NonNullList<ItemStack> examples = NonNullList.create();
-                    i.getSubItems(CreativeTabs.SEARCH, examples);
+                    DefaultedList<ItemStack> examples = DefaultedList.create();
+                    i.getSubItems(ItemGroup.SEARCH, examples);
                     for (ItemStack s : examples) {
                         for (ListMatchHandler mh : handlersCustom) {
                             if (mh.matches(type, firstStack, s, false)) {
@@ -238,9 +238,9 @@ public final class ListHandler {
     }
 
     public static Line[] getLines(@Nonnull ItemStack item) {
-        NBTTagCompound data = NBTUtilBC.getItemData(item);
-        if (data.hasKey("written") && data.hasKey("lines")) {
-            NBTTagList list = data.getTagList("lines", 10);
+        NbtCompound data = NBTUtilBC.getItemData(item);
+        if (data.contains("written") && data.contains("lines")) {
+            NbtList list = data.getList("lines", 10);
             Line[] lines = new Line[list.tagCount()];
             for (int i = 0; i < lines.length; i++) {
                 lines[i] = Line.fromNBT(list.getCompoundTagAt(i));
@@ -266,15 +266,15 @@ public final class ListHandler {
         }
 
         if (hasLine) {
-            NBTTagCompound data = NBTUtilBC.getItemData(stackList);
-            data.setBoolean("written", true);
-            NBTTagList lineList = new NBTTagList();
+            NbtCompound data = NBTUtilBC.getItemData(stackList);
+            data.putBoolean("written", true);
+            NbtList lineList = new NbtList();
             for (Line saving : lines) {
                 lineList.appendTag(saving.toNBT());
             }
-            data.setTag("lines", lineList);
+            data.put("lines", lineList);
         } else if (stackList.hasTagCompound()) {
-            NBTTagCompound data = NBTUtilBC.getItemData(stackList);
+            NbtCompound data = NBTUtilBC.getItemData(stackList);
             // No non-default lines, we can remove the old NBT data
             data.removeTag("written");
             data.removeTag("lines");
@@ -286,9 +286,9 @@ public final class ListHandler {
     }
 
     public static boolean matches(@Nonnull ItemStack stackList, @Nonnull ItemStack item) {
-        NBTTagCompound data = NBTUtilBC.getItemData(stackList);
-        if (data.hasKey("written") && data.hasKey("lines")) {
-            NBTTagList list = data.getTagList("lines", 10);
+        NbtCompound data = NBTUtilBC.getItemData(stackList);
+        if (data.contains("written") && data.contains("lines")) {
+            NbtList list = data.getList("lines", 10);
             for (int i = 0; i < list.tagCount(); i++) {
                 Line line = Line.fromNBT(list.getCompoundTagAt(i));
                 if (line.matches(item)) {

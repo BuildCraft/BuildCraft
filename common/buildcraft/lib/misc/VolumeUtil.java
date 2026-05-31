@@ -33,7 +33,7 @@ public class VolumeUtil {
             unknown.removeAll(allVisible);
             boolean visible = true;
             for (BlockPos p : unknown) {
-                if (world.isAirBlock(p)) {
+                if (world.isAir(p)) {
                     allVisible.add(p);
                 } else {
                     visible = false;

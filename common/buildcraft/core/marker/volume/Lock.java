@@ -18,8 +18,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 // Yarn 1.20.1 renames:
-//   NBTTagCompound → NbtCompound, NBTUtil → NbtHelper, PacketBuffer → PacketByteBuf,
-//   ResourceLocation → Identifier, Block.REGISTRY → Registries.BLOCK
+//   NbtCompound → NbtCompound, NBTUtil → NbtHelper, PacketByteBuf → PacketByteBuf,
+//   Identifier → Identifier, Block.REGISTRY → Registries.BLOCK
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;

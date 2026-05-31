@@ -20,9 +20,9 @@ import javax.annotation.Nonnull;
 
 // Yarn 1.20.1 renames:
 //   ITickable.update()        → BlockEntityTicker pattern (tick() + static ticker())
-//   EnumFacing → Direction     EnumDyeColor → DyeColor     NBTTagCompound → NbtCompound
-//   ResourceLocation → Identifier   EntityLivingBase → LivingEntity   EntityPlayer → PlayerEntity
-//   TileEntity → BlockEntity    world.isRemote → world.isClient   getTileEntity → getBlockEntity
+//   Direction → Direction     DyeColor → DyeColor     NbtCompound → NbtCompound
+//   Identifier → Identifier   LivingEntity → LivingEntity   PlayerEntity → PlayerEntity
+//   BlockEntity → BlockEntity    world.isClient → world.isClient   getTileEntity → getBlockEntity
 //   writeToNBT/readFromNBT(returns) → void writeNbt/readNbt(super-called)
 //   invalidate()/validate()    → markRemoved()/cancelRemoval()
 //   notifyNeighborsOfStateChange(pos, block, x) → updateNeighborsAlways(pos, block)
@@ -125,7 +125,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     /** Converts the tile-level {@link NetSide} discriminator to the {@link EnvType} expected by the pipe /
      * flow / pluggable / wire payload methods (which were migrated against EnvType, not NetSide). */
     private static EnvType toEnv(NetSide side) {
-        return side == NetSide.SERVER ? EnvType.SERVER : EnvType.CLIENT;
+        return side == NetEnvType.SERVER ? EnvType.SERVER : EnvType.CLIENT;
     }
 
     /** STUB(R.Chen): was {@code BCModules.SILICON.isLoaded()} (Forge Loader). BCModules carries heavy Forge
@@ -176,7 +176,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     //       tile.pipe != null ? tile.pipe.flow.getEnergyStorage(dir) : null, TYPE);
     //
     // Each lambda first consults the pluggable on that side (getCapability/isBlocking), mirroring the old
-    // getCapability(Capability, EnumFacing) precedence, then falls through to the pipe + connected neighbour.
+    // getCapability(Capability, Direction) precedence, then falls through to the pipe + connected neighbour.
     // Left unwired here because the pipe-flow storages and the BlockEntityType are themselves Phase-4F work.
     public static void registerCapabilities() {
         // STUB(R.Chen): wired in Phase 4F once the BlockEntityType + flow storages exist.
@@ -368,7 +368,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
         EnvType env = toEnv(side);
-        if (side == NetSide.SERVER) {
+        if (side == NetEnvType.SERVER) {
             if (id == NET_RENDER_DATA) {
                 if (pipe == null) {
                     buffer.writeBoolean(false);
@@ -410,7 +410,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, /* STUB(R.Chen): MessageContext */ Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         EnvType env = toEnv(side);
-        if (side == NetSide.CLIENT) {
+        if (side == NetEnvType.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
                     pipe = new Pipe(this, buffer, ctx);
@@ -624,7 +624,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     }
 
     // Caps
-    // STUB(R.Chen): the Forge getCapability(Capability<T>, EnumFacing) override is removed — TileBC_Neptune
+    // STUB(R.Chen): the Forge getCapability(Capability<T>, Direction) override is removed — TileBC_Neptune
     // no longer models capabilities through a getCapability method. The per-side precedence (pluggable →
     // pipe → super) is reproduced by the Fabric BlockApiLookup providers documented in registerCapabilities().
 

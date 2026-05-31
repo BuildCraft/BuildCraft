@@ -2,7 +2,7 @@ package buildcraft.lib.fluid;
 
 import java.util.List;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -33,7 +33,7 @@ public class FluidSmoother implements IDebuggable {
             if (world == null) {
                 return;
             }
-            data = world.isRemote ? new _Client() : new _Server();
+            data = world.isClient ? new _Client() : new _Server();
         }
         data.tick(world);
     }
@@ -61,7 +61,7 @@ public class FluidSmoother implements IDebuggable {
     }
 
     public void resetSmoothing(World world) {
-        if (data == null && world.isRemote) {
+        if (data == null && world.isClient) {
             data = new _Client();
         }
         if (data instanceof _Client) {
@@ -109,7 +109,7 @@ public class FluidSmoother implements IDebuggable {
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         if (data != null) {
             data.getDebugInfo(left, right, side);
         }
@@ -170,7 +170,7 @@ public class FluidSmoother implements IDebuggable {
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        public void getDebugInfo(List<String> left, List<String> right, Direction side) {
             String contents = (tank.getFluid() != null) ? "Something" : "Nothing";
             left.add("current = " + tank.getFluidAmount() + " of " + contents);
             left.add("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing"));
@@ -213,7 +213,7 @@ public class FluidSmoother implements IDebuggable {
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        public void getDebugInfo(List<String> left, List<String> right, Direction side) {
             left.add("shown = " + amount + ", target = " + target);
             left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = "
                 + (lastMessage - lastMessageMinus1));

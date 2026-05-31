@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.block.entity.BlockEntity;
@@ -28,7 +28,7 @@ public class ClientDebuggables {
 
     @Nullable
     public static IDebuggable getDebuggableObject(HitResult mouseOver) {
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.gameSettings.reducedDebugInfo ||
             mc.player.hasReducedDebug() ||
             !mc.gameSettings.showDebugInfo ||
@@ -45,7 +45,7 @@ public class ClientDebuggables {
         }
         if (type == HitResult.Type.BLOCK) {
             BlockPos pos = mouseOver.getBlockPos();
-            BlockEntity tile = world.getTileEntity(pos);
+            BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof IDebuggable) {
                 return (IDebuggable) tile;
             }

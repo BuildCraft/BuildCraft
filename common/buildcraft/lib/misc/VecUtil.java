@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 // javax.vecmath.* → org.joml.* (Tuple3f/Vector3f → Vector3f)
 import org.joml.Vector3f;
 
-// Yarn 1.20.1: net.minecraft.util.EnumFacing → net.minecraft.util.math.Direction
+// Yarn 1.20.1: net.minecraft.util.Direction → net.minecraft.util.math.Direction
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Direction.AxisDirection;
