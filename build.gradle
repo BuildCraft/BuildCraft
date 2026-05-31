@@ -924,6 +924,23 @@ sourceSets {
                     "buildcraft/energy/tile/TileEngineIron_BC8.java",
                     "buildcraft/energy/tile/TileEngineRF.java"
         }
+        // Layer AC — builders module Phase 1: entry point + TileQuarry (priority).
+        // Adds the Quarry's data/chunk-loading dependency closure to libLeaf:
+        //   - lib.misc.data.{EnumAxisOrder, AxisOrder, BoxIterator} — Yarn-migrated scan-order helpers
+        //   - lib.chunkload.{IChunkLoadingTile, ChunkLoaderManager} — Forge ticket system → ServerWorld.setChunkForced
+        // BlockUtil (already in libLeaf) gains stub helpers (uniqueBlockPosComparator, getFluidWithFlowing,
+        // computeBlockBreakPower, breakBlockAndGetDrops). Other builders tiles + the snapshot/schematic
+        // system are deferred (heavy snapshot coupling).
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/EnumAxisOrder.java",
+                    "buildcraft/lib/misc/data/AxisOrder.java",
+                    "buildcraft/lib/misc/data/BoxIterator.java",
+                    "buildcraft/lib/chunkload/IChunkLoadingTile.java",
+                    "buildcraft/lib/chunkload/ChunkLoaderManager.java",
+                    "buildcraft/builders/BCBuildersInitializer.java",
+                    "buildcraft/builders/tile/TileQuarry.java"
+        }
     }
     main {
         java {

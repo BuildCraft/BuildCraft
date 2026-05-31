@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.misc.data;
@@ -9,11 +11,16 @@ package buildcraft.lib.misc.data;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
 
+// Forge→Fabric migration notes (R.Chen):
+//   EnumFacing → Direction; EnumFacing.Axis/AxisDirection → Direction.Axis/AxisDirection
+//   EnumFacing.getFacingFromAxis(dir, axis) → Direction.from(axis, dir)
+//   facing.getAxisDirection() → facing.getDirection()
+//   NBTTagCompound → NbtCompound; nbt.setString → nbt.putString
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;
 
@@ -29,7 +36,7 @@ public class AxisOrder {
 
     public final EnumAxisOrder order;
     public final Inversion inversion;
-    public final EnumFacing first, second, third;
+    public final Direction first, second, third;
 
     /** Creates an axis order that will scan axis in the order given, going in the directions specified by
      * positiveFirst, positiveSecond and positiveThird. If all are true then it will start at the smallest one and end
@@ -37,22 +44,22 @@ public class AxisOrder {
     private AxisOrder(EnumAxisOrder order, Inversion inv) {
         this.order = order;
         this.inversion = inv;
-        first = EnumFacing.getFacingFromAxis(inv.first, order.first);
-        second = EnumFacing.getFacingFromAxis(inv.second, order.second);
-        third = EnumFacing.getFacingFromAxis(inv.third, order.third);
+        first = Direction.from(order.first, inv.first);
+        second = Direction.from(order.second, inv.second);
+        third = Direction.from(order.third, inv.third);
     }
 
-    public static AxisOrder readNbt(NBTTagCompound nbt) {
+    public static AxisOrder readNbt(NbtCompound nbt) {
         return getFor(//
                 EnumAxisOrder.getOrder(nbt.getString("order")),//
                 Inversion.getFor(nbt.getString("inversion"))//
         );
     }
 
-    public NBTTagCompound writeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("order", order.name());
-        nbt.setString("inversion", inversion.name());
+    public NbtCompound writeNBT() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putString("order", order.name());
+        nbt.putString("inversion", inversion.name());
         return nbt;
     }
 
@@ -118,8 +125,8 @@ public class AxisOrder {
             throw new Error("Unknown char " + charAt);
         }
 
-        public static Inversion getFor(EnumFacing first, EnumFacing second, EnumFacing third) {
-            return getFor(first.getAxisDirection(), second.getAxisDirection(), third.getAxisDirection());
+        public static Inversion getFor(Direction first, Direction second, Direction third) {
+            return getFor(first.getDirection(), second.getDirection(), third.getDirection());
         }
 
         public static Inversion getFor(AxisDirection first, AxisDirection second, AxisDirection third) {
