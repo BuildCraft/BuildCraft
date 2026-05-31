@@ -33,6 +33,16 @@ public class ItemHandlerManager {
         return new ItemHandlerSimple(size, defaultCallback);
     }
 
+    public ItemHandlerSimple addInvHandler(String name, int size, StackInsertionChecker checker,
+        EnumAccess access, Object... args) {
+        return new ItemHandlerSimple(size, checker, StackInsertionFunction.getDefaultInserter(), defaultCallback);
+    }
+
+    public ItemHandlerSimple addInvHandler(String name, int size, StackInsertionChecker checker,
+        StackInsertionFunction inserter, EnumAccess access) {
+        return new ItemHandlerSimple(size, checker, inserter, defaultCallback);
+    }
+
     public <T extends ItemHandlerSimple> T addInvHandler(String name, T handler, EnumAccess access,
         Object... args) {
         return handler;

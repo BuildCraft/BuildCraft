@@ -911,6 +911,19 @@ sourceSets {
                     "buildcraft/silicon/tile/TileProgrammingTable_Neptune.java",
                     "buildcraft/silicon/tile/TileLaser.java"
         }
+        // Layer AB — energy module Phase 1: entry point + three engine tile entities.
+        // EngineConnector added here (needed by all three tiles via createConnector()).
+        // TileDynamoMJ / TileSpringOil deferred (TileDynamoMJ needs Tank / FluidStack;
+        // TileSpringOil needs ITileOilSpring + generation API — both blocked until fluid layer lands).
+        java {
+            srcDir "common"
+            include "buildcraft/lib/engine/EngineConnector.java",
+                    "buildcraft/energy/BCEnergyGuis.java",
+                    "buildcraft/energy/BCEnergyInitializer.java",
+                    "buildcraft/energy/tile/TileEngineStone_BC8.java",
+                    "buildcraft/energy/tile/TileEngineIron_BC8.java",
+                    "buildcraft/energy/tile/TileEngineRF.java"
+        }
     }
     main {
         java {

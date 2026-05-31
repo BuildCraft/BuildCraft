@@ -2,131 +2,105 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.energy.tile;
 
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IFluidHandlerAdv;
-import buildcraft.api.fuels.BuildcraftFuelRegistry;
-import buildcraft.api.fuels.IFuel;
-import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
-import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.pipe.IItemPipe;
 
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.fluid.Tank;
-import buildcraft.lib.fluid.TankProperties;
-import buildcraft.lib.gui.help.ElementHelpInfo;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.EntityUtil;
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.energy.BCEnergyGuis;
 
+// Forge→Fabric migration notes (R.Chen):
+//   EntityPlayer / EnumFacing / EnumHand     → PlayerEntity / Direction / Hand
+//   NBTTagCompound / readFromNBT/writeToNBT  → NbtCompound / readNbt/writeNbt
+//   nbt.setInteger/setDouble                 → nbt.putInt/putDouble
+//   Side.CLIENT / Side.SERVER                → NetSide.CLIENT / NetSide.SERVER
+//   MessageContext                           → Object ctx
+//   world.isRemote                           → world.isClient
+//   player.getHeldItem                       → player.getStackInHand
+//   EntityUtil.getWrenchHand                 → STUB (not yet in libLeaf)
+//   Tank / FluidStack / IFluidHandlerAdv     → STUB — entire fluid fuel system deferred until
+//                                              Transfer-API fluid layer lands (Phase fluid)
+//   BuildcraftFuelRegistry / IFuel           → STUB — fuel API uses FluidStack; deferred
+//   caps.addCapabilityInstance               → removed (CapabilityHelper stub has no such method)
+//   tankManager.addAll / readData / writeData → removed (TankManager stub)
 public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     public static final int MAX_FLUID = 10_000;
 
     public static final double COOLDOWN_RATE = 0.05;
     public static final int MAX_COOLANT_PER_TICK = 40;
 
-    public final Tank tankFuel = new Tank("fuel", MAX_FLUID, this, this::isValidFuel);
-    public final Tank tankCoolant = new Tank("coolant", MAX_FLUID, this, this::isValidCoolant) {
-        @Override
-        protected FluidGetResult map(ItemStack stack, int space) {
-            ISolidCoolant coolant = BuildcraftFuelRegistry.coolant.getSolidCoolant(stack);
-            if (coolant == null) {
-                return super.map(stack, space);
-            }
-            FluidStack fluidCoolant = coolant.getFluidFromSolidCoolant(stack);
-            if (fluidCoolant == null || fluidCoolant.amount <= 0 || fluidCoolant.amount > space) {
-                return super.map(stack, space);
-            }
-            return new FluidGetResult(StackUtil.EMPTY, fluidCoolant);
-        }
-    };
-    public final Tank tankResidue = new Tank("residue", MAX_FLUID, this, this::isResidue);
-    private final IFluidHandlerAdv fluidHandler = new InternalFluidHandler();
+    // STUB(R.Chen): tankFuel / tankCoolant / tankResidue / fluidHandler removed.
+    // Fluid fuel system entirely deferred until Transfer-API fluid layer (Tank.java, FluidStack)
+    // and the buildcraft.api.fuels (IFuel, BuildcraftFuelRegistry) are ported to Fabric.
 
     private int penaltyCooling = 0;
     private boolean lastPowered = false;
     private double burnTime;
     private double residueAmount = 0;
-    private IFuel currentFuel;
+    // STUB(R.Chen): IFuel currentFuel removed — depends on FluidStack (Forge). Deferred.
 
-    public TileEngineIron_BC8() {
-        tankManager.addAll(tankFuel, tankCoolant, tankResidue);
-
-        // TODO: Auto list of example fuels!
-        tankFuel.helpInfo = new ElementHelpInfo(tankFuel.helpInfo.title, 0xFF_FF_33_33, Tank.DEFAULT_HELP_KEY, null,
-            "buildcraft.help.tank.fuel");
-
-        // TODO: Auto list of example coolants!
-        tankCoolant.helpInfo = new ElementHelpInfo(tankCoolant.helpInfo.title, 0xFF_55_55_FF, Tank.DEFAULT_HELP_KEY,
-            null, "buildcraft.help.tank.coolant");
-
-        tankResidue.helpInfo = new ElementHelpInfo(tankResidue.helpInfo.title, 0xFF_AA_33_AA, Tank.DEFAULT_HELP_KEY,
-            null, "buildcraft.help.tank.residue");
-
-        caps.addCapabilityInstance(CapUtil.CAP_FLUIDS, fluidHandler, EnumPipePart.VALUES);
+    public TileEngineIron_BC8(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+        // STUB(R.Chen): tankManager.addAll(tankFuel, tankCoolant, tankResidue) — deferred.
+        // STUB(R.Chen): caps.addCapabilityInstance(CAP_FLUIDS, fluidHandler, ...) — removed;
+        //               Transfer-API FluidStorage.SIDED registration deferred to BCEnergyInitializer.
     }
 
     // TileEntity overrides
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setInteger("penaltyCooling", penaltyCooling);
-        nbt.setDouble("burnTime", burnTime);
-        nbt.setDouble("residueAmount", residueAmount);
-        return nbt;
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.putInt("penaltyCooling", penaltyCooling);
+        nbt.putDouble("burnTime", burnTime);
+        nbt.putDouble("residueAmount", residueAmount);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        penaltyCooling = nbt.getInteger("penaltyCooling");
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        penaltyCooling = nbt.getInt("penaltyCooling");
         burnTime = nbt.getDouble("burnTime");
         residueAmount = Math.max(0, nbt.getDouble("residueAmount"));
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
-                tankManager.readData(buffer);
+                // STUB(R.Chen): tankManager.readData(buffer) — deferred until fluid layer lands.
             }
         }
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == Side.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
-                tankManager.writeData(buffer);
+                // STUB(R.Chen): tankManager.writeData(buffer) — deferred until fluid layer lands.
             }
         }
     }
@@ -134,21 +108,18 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     // TileEngineBase overrides
 
     @Override
-    public boolean onActivated(EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY,
-        float hitZ) {
-        ItemStack current = player.getHeldItem(hand).copy();
+    public boolean onActivated(PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
+        ItemStack current = player.getStackInHand(hand).copy();
         if (super.onActivated(player, hand, side, hitX, hitY, hitZ)) {
             return true;
         }
         if (!current.isEmpty()) {
-            if (EntityUtil.getWrenchHand(player) != null) {
-                return false;
-            }
+            // STUB(R.Chen): EntityUtil.getWrenchHand not yet in libLeaf; wrench check disabled.
             if (current.getItem() instanceof IItemPipe) {
                 return false;
             }
         }
-        if (!world.isRemote) {
+        if (!world.isClient) {
             BCEnergyGuis.ENGINE_IRON.openGUI(player, getPos());
         }
         return true;
@@ -178,118 +149,22 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public boolean isBurning() {
-        FluidStack fuel = tankFuel.getFluid();
-        return fuel != null && fuel.amount > 0 && penaltyCooling == 0 && isRedstonePowered;
+        // STUB(R.Chen): tankFuel removed — fluid fuel system deferred to Transfer-API fluid pass.
+        return false;
     }
 
     @Override
     protected void burn() {
-        final FluidStack fuel = this.tankFuel.getFluid();
-        if (currentFuel == null || !currentFuel.getFluid().isFluidEqual(fuel)) {
-            currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel);
-        }
-
-        if (fuel == null || currentFuel == null) {
-            return;
-        }
-
-        if (penaltyCooling <= 0) {
-            if (isRedstonePowered) {
-                lastPowered = true;
-
-                if (burnTime > 0 || fuel.amount > 0) {
-                    if (burnTime > 0) {
-                        burnTime--;
-                    }
-                    if (burnTime <= 0) {
-                        if (fuel.amount > 0) {
-                            fuel.amount--;
-                            burnTime += currentFuel.getTotalBurningTime() / 1000.0;
-
-                            // If we also produce residue then put it out too
-                            if (currentFuel instanceof IDirtyFuel) {
-                                IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
-                                FluidStack residueFluid = dirtyFuel.getResidue().copy();
-                                residueAmount += residueFluid.amount / 1000.0;
-                                if (residueAmount >= 1) {
-                                    residueFluid.amount = MathHelper.floor(residueAmount);
-                                    residueAmount -= tankResidue.fill(residueFluid, true);
-                                } else if (tankResidue.getFluid() == null) {
-                                    residueFluid.amount = 0;
-                                    tankResidue.setFluid(residueFluid);
-                                }
-                            }
-                        } else {
-                            tankFuel.setFluid(null);
-                            currentFuel = null;
-                            currentOutput = 0;
-                            return;
-                        }
-                    }
-                    currentOutput = currentFuel.getPowerPerCycle(); // Comment out for constant power
-                    addPower(currentFuel.getPowerPerCycle());
-                    heat += currentFuel.getPowerPerCycle() * HEAT_PER_MJ / MjAPI.MJ;// * getBiomeTempScalar();
-                }
-            } else if (lastPowered) {
-                lastPowered = false;
-                penaltyCooling = 10;
-                // 10 tick of penalty on top of the cooling
-            }
-        }
-
-        if (burnTime <= 0 && fuel.amount <= 0) {
-            tankFuel.setFluid(null);
-        }
+        // STUB(R.Chen): fluid fuel system entirely deferred — Tank / FluidStack / IFuel not in libLeaf.
     }
 
     @Override
     public void updateHeatLevel() {
-        double target;
+        // Cooling logic preserved sans coolant-fluid drain (Tank not available yet).
         if (heat > MIN_HEAT && (penaltyCooling > 0 || !isRedstonePowered)) {
             heat -= COOLDOWN_RATE;
-            target = MIN_HEAT;
-        } else if (heat > IDEAL_HEAT) {
-            target = IDEAL_HEAT;
-        } else {
-            target = heat;
         }
-
-        if (target != heat) {
-            // coolEngine(target)
-            {
-                double coolingBuffer = 0;
-                double extraHeat = heat - target;
-
-                if (extraHeat > 0) {
-                    // fillCoolingBuffer();
-                    {
-                        if (tankCoolant.getFluidAmount() > 0) {
-                            float coolPerMb =
-                                BuildcraftFuelRegistry.coolant.getDegreesPerMb(tankCoolant.getFluid(), (float) heat);
-                            if (coolPerMb > 0) {
-                                int coolantAmount = Math.min(MAX_COOLANT_PER_TICK, tankCoolant.getFluidAmount());
-                                float cooling = coolPerMb;
-                                // cooling /= getBiomeTempScalar();
-                                coolingBuffer += coolantAmount * cooling;
-                                tankCoolant.drain(coolantAmount, true);
-                            }
-                        }
-                    }
-                    // end
-                }
-
-                // if (coolingBuffer >= extraHeat) {
-                // coolingBuffer -= extraHeat;
-                // heat -= extraHeat;
-                // return;
-                // }
-
-                heat -= coolingBuffer;
-                coolingBuffer = 0.0f;
-            }
-            // end
-            getPowerStage();
-        }
+        // STUB(R.Chen): tankCoolant drain removed — BuildcraftFuelRegistry.coolant deferred.
 
         if (heat <= MIN_HEAT && penaltyCooling > 0) {
             penaltyCooling--;
@@ -298,6 +173,8 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
         if (heat <= MIN_HEAT) {
             heat = MIN_HEAT;
         }
+
+        getPowerStage();
     }
 
     @Override
@@ -332,68 +209,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public long getCurrentOutput() {
-        if (currentFuel == null) {
-            return 0;
-        } else {
-            return currentFuel.getPowerPerCycle();
-        }
-    }
-
-    // Fluid related
-
-    private boolean isValidFuel(FluidStack fluid) {
-        return BuildcraftFuelRegistry.fuel.getFuel(fluid) != null;
-    }
-
-    private boolean isValidCoolant(FluidStack fluid) {
-        return BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null;
-    }
-
-    private boolean isResidue(FluidStack fluid) {
-        // If this is the client then we don't have a current fuel- just trust the server that its correct
-        if (world != null && world.isRemote) {
-            return true;
-        }
-        if (currentFuel instanceof IDirtyFuel) {
-            return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
-        }
-        return false;
-    }
-
-    private class InternalFluidHandler implements IFluidHandlerAdv {
-        private final IFluidTankProperties[] properties = { //
-            new TankProperties(tankFuel, true, false), //
-            new TankProperties(tankCoolant, true, false), //
-            new TankProperties(tankResidue, false, true),//
-        };
-
-        @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return properties;
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            int filled = tankFuel.fill(resource, doFill);
-            if (filled == 0) {
-                filled = tankCoolant.fill(resource, doFill);
-            }
-            return filled;
-        }
-
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            return tankResidue.drain(resource, doDrain);
-        }
-
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            return tankResidue.drain(maxDrain, doDrain);
-        }
-
-        @Override
-        public FluidStack drain(IFluidFilter filter, int maxDrain, boolean doDrain) {
-            return tankResidue.drain(filter, maxDrain, doDrain);
-        }
+        // STUB(R.Chen): currentFuel (IFuel/FluidStack) removed — returns 0 until fluid layer lands.
+        return 0;
     }
 }
