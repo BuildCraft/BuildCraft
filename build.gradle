@@ -133,6 +133,8 @@ sourceSets {
                     "buildcraft/lib/mj/IMJReceiver.java",
                     "buildcraft/lib/mj/IMJRedstoneReceiver.java",
                     "buildcraft/lib/mj/MJEnergyStorage.java",
+                    "buildcraft/lib/mj/MjBatteryReceiver.java",
+                    "buildcraft/lib/mj/MjRedstoneBatteryReceiver.java",
                     "buildcraft/lib/compat/BCItemStorage.java",
                     "buildcraft/lib/compat/BCFluidStorage.java",
                     // Middle-layer migration (unblock TileBC_Neptune) — zero-Forge / Easy
@@ -821,6 +823,31 @@ sourceSets {
                     "buildcraft/transport/gui/GuiDiamondWoodPipe.java",
                     "buildcraft/transport/gui/GuiEmzuliPipe_BC8.java",
                     "buildcraft/transport/gui/GuiFilteredBuffer.java"
+        }
+        // Layer Z — factory module Phase 1: entry point + all 9 tile entities.
+        // BCFactoryInitializer: full ModInitializer stub (all registration deferred).
+        // TileMiner: ITickable→tick()+ticker(), Forge NBT/net/side APIs fully migrated;
+        //            BCFactoryBlocks.tube and BCCoreConfig.miningMaxDepth stubbed.
+        // TileMiningWell: mining logic stubbed (BlockUtil Phase 4E).
+        // TilePump/TileFloodGate: BFS fluid logic stubbed (Tank/FluidVariant Phase 4E).
+        // TileChute: item pickup stubbed (BoundingBoxUtil/TransactorEntityItem Phase 4E).
+        // TileDistiller_BC8/TileHeatExchange: recipe + fluid logic stubbed (Phase 4E).
+        // TileTank: fluid storage stubbed (Phase 4E).
+        // TileAutoWorkbenchBase/Items/Fluids: WorkbenchCrafting stubbed (Phase 4E).
+        java {
+            srcDir "common"
+            include "buildcraft/factory/BCFactoryInitializer.java",
+                    "buildcraft/factory/tile/TileMiner.java",
+                    "buildcraft/factory/tile/TileMiningWell.java",
+                    "buildcraft/factory/tile/TilePump.java",
+                    "buildcraft/factory/tile/TileFloodGate.java",
+                    "buildcraft/factory/tile/TileChute.java",
+                    "buildcraft/factory/tile/TileDistiller_BC8.java",
+                    "buildcraft/factory/tile/TileHeatExchange.java",
+                    "buildcraft/factory/tile/TileTank.java",
+                    "buildcraft/factory/tile/TileAutoWorkbenchBase.java",
+                    "buildcraft/factory/tile/TileAutoWorkbenchItems.java",
+                    "buildcraft/factory/tile/TileAutoWorkbenchFluids.java"
         }
     }
     main {
