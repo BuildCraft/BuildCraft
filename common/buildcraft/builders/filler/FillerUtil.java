@@ -6,7 +6,7 @@
 
 package buildcraft.builders.filler;
 
-import net.minecraft.util.Rotation;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.filler.IFillerPattern;

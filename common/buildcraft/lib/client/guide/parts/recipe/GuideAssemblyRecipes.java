@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.recipes.AssemblyRecipe;
@@ -58,7 +58,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
 
     private static GuideAssemblyFactory getFactory(AssemblyRecipe recipe, ItemStack output) {
         ChangingItemStack[] stacks = recipe.getInputsFor(output).stream().map(definition -> {
-                NonNullList<ItemStack> items = Arrays.stream(definition.ingredient.getMatchingStacks()).map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
+                DefaultedList<ItemStack> items = Arrays.stream(definition.ingredient.getMatchingStacks()).map(ItemStack::copy).collect(StackUtil.nonNullListCollector());
                 items.forEach(stack -> stack.setCount(definition.count));
                 return items;
         }).map(ChangingItemStack::new).toArray(ChangingItemStack[]::new);

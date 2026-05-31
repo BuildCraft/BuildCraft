@@ -7,15 +7,15 @@
 package buildcraft.factory.item;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.Blocks;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -33,20 +33,20 @@ public class ItemWaterGel extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d look = player.getLookVec();
         Vec3d end = start.add(look.scale(7));
-        RayTraceResult ray = world.rayTraceBlocks(start, end, true, false, true);
+        HitResult ray = world.rayTraceBlocks(start, end, true, false, true);
 
         if (ray == null || ray.getBlockPos() == null) {
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
+            return new ActionResult<>(ActionResult.FAIL, stack);
         }
 
         Block b = world.getBlockState(ray.getBlockPos()).getBlock();
         if (b != Blocks.WATER) {
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
+            return new ActionResult<>(ActionResult.FAIL, stack);
         }
 
         if (!player.capabilities.isCreativeMode) {
@@ -70,7 +70,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         // player.addStat(StatList.getObjectUseStats(this));
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResult.SUCCESS, stack);
     }
 
 }

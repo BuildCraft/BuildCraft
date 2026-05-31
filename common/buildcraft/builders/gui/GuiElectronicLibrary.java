@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -25,8 +25,8 @@ import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Snapshot.Header;
 
 public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
-    private static final ResourceLocation TEXTURE_BASE =
-        new ResourceLocation("buildcraftbuilders:textures/gui/electronic_library.png");
+    private static final Identifier TEXTURE_BASE =
+        new Identifier("buildcraftbuilders:textures/gui/electronic_library.png");
     private static final int SIZE_X = 244, SIZE_Y = 220;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS_DOWN = new GuiIcon(TEXTURE_BASE, 234, 240, 22, 16);

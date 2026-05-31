@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -13,7 +13,7 @@ import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.robotics.tile.TileZonePlanner;
 
 public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
-    public ContainerZonePlanner(EntityPlayer player, TileZonePlanner tile) {
+    public ContainerZonePlanner(PlayerEntity player, TileZonePlanner tile) {
         super(player, tile);
         addFullPlayerInventory(88, 146);
 

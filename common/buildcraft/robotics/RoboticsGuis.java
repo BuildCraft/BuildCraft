@@ -4,17 +4,17 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 public enum RoboticsGuis {
     ZONE_PLANTER;
 
-    public void openGUI(EntityPlayer player) {
+    public void openGUI(PlayerEntity player) {
         player.openGui(BCRobotics.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
     }
 
-    public void openGUI(EntityPlayer player, BlockPos pos) {
+    public void openGUI(PlayerEntity player, BlockPos pos) {
         player.openGui(BCRobotics.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
 }

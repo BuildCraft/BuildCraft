@@ -2,9 +2,9 @@ package buildcraft.energy.generation;
 
 import java.util.function.Predicate;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -230,7 +230,7 @@ public abstract class OilGenStructure {
             BlockPos worldTop = new BlockPos(start.getX(), segment + 16, start.getZ());
             for (int y = segment; y >= start.getY(); y--) {
                 worldTop = worldTop.down();
-                IBlockState state = world.getBlockState(worldTop);
+                BlockState state = world.getBlockState(worldTop);
                 if (state.getBlock().isAir(state, world, worldTop)) {
                     continue;
                 }
@@ -282,10 +282,10 @@ public abstract class OilGenStructure {
         }
 
         public void generate(World world, int count) {
-            IBlockState state = BCCoreBlocks.spring.getDefaultState();
+            BlockState state = BCCoreBlocks.spring.getDefaultState();
             state = state.withProperty(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
             world.setBlockState(pos, state);
-            TileEntity tile = world.getTileEntity(pos);
+            BlockEntity tile = world.getTileEntity(pos);
             TileSpringOil spring;
             if (tile instanceof TileSpringOil) {
                 spring = (TileSpringOil) tile;

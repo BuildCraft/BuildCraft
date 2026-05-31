@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.IStackFilter;
 
@@ -19,10 +19,10 @@ import buildcraft.lib.misc.StackUtil;
 public final class SidedInventoryWrapper extends AbstractInvItemTransactor {
     private final ISidedInventory sided;
     private final InventoryWrapper normal;
-    private final EnumFacing face;
+    private final Direction face;
     private final int[] slots;
 
-    public SidedInventoryWrapper(ISidedInventory sided, EnumFacing face) {
+    public SidedInventoryWrapper(ISidedInventory sided, Direction face) {
         this.sided = sided;
         this.normal = new InventoryWrapper(sided);
         this.face = face;

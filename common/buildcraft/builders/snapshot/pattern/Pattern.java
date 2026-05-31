@@ -1,7 +1,7 @@
 package buildcraft.builders.snapshot.pattern;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -30,7 +30,7 @@ public abstract class Pattern extends BCStatement implements IFillerPattern, IAc
     }
 
     @Override
-    public void actionActivate(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
+    public void actionActivate(BlockEntity target, Direction side, IStatementContainer source, IStatementParameter[] parameters) {
         if (source instanceof IFillerStatementContainer) {
             ((IFillerStatementContainer) source).setPattern(this, parameters);
         } else if (target instanceof IFillerStatementContainer) {

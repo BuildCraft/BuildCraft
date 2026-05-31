@@ -7,11 +7,11 @@
 package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -27,17 +27,17 @@ public class BlockTube extends BlockBCBase_Neptune {
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest) {
         BlockPos currentPos = pos;
         // noinspection StatementWithEmptyBody
         while (world.getBlockState(currentPos = currentPos.up()).getBlock() == this) {
@@ -50,7 +50,7 @@ public class BlockTube extends BlockBCBase_Neptune {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(BlockState state, BlockView source, BlockPos pos) {
         return BOUNDING_BOX;
     }
 }

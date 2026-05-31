@@ -6,7 +6,7 @@
 
 package buildcraft.factory.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -16,7 +16,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.factory.container.ContainerTank;
 
 public class GuiTank extends GuiBC8<ContainerTank> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/tank.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftfactory:textures/gui/tank.png");
     private static final int SIZE_X = 176, SIZE_Y = 181;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 64);

@@ -18,16 +18,16 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
@@ -78,13 +78,13 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
+    public int getMetaFromState(BlockState state) {
         E type = state.getValue(getEngineProperty());
         return type.ordinal();
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
+    public BlockState getStateFromMeta(int meta) {
         E engineType = getEngineType(meta);
         return getDefaultState().withProperty(getEngineProperty(), engineType);
     }
@@ -92,23 +92,23 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // Misc Block Overrides
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
+    public boolean isFullBlock(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(BlockState state) {
         return false;
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
+    public BlockFaceShape getBlockFaceShape(BlockView world, BlockState state, BlockPos pos, Direction side) {
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             if (side == engine.currentDirection.getOpposite()) {
@@ -121,8 +121,8 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
+    public boolean isSideSolid(BlockState base_state, BlockView world, BlockPos pos, Direction side) {
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             return side == engine.currentDirection.getOpposite();
@@ -131,12 +131,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(BlockState state) {
         return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         E engineType = state.getValue(getEngineProperty());
         Supplier<? extends TileEngineBase_BC8> constructor = engineTileConstructors.get(engineType);
         if (constructor == null) {
@@ -148,7 +148,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(CreativeTabs tab, DefaultedList<ItemStack> list) {
         for (E engine : getEngineProperty().getAllowedValues()) {
             if (engineTileConstructors.containsKey(engine)) {
                 list.add(new ItemStack(this, 1, engine.ordinal()));
@@ -157,15 +157,15 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
+    public int damageDropped(BlockState state) {
         return state.getValue(getEngineProperty()).ordinal();
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
         if (world.isRemote) return;
-        TileEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             engine.rotateIfInvalid();
@@ -175,12 +175,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // ICustomRotationHandler
 
     @Override
-    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        TileEntity tile = world.getTileEntity(pos);
+    public ActionResult attemptRotation(World world, BlockPos pos, BlockState state, Direction sideWrenched) {
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             return engine.attemptRotation();
         }
-        return EnumActionResult.FAIL;
+        return ActionResult.FAIL;
     }
 }

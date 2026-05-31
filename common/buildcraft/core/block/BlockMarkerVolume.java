@@ -9,11 +9,11 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -28,17 +28,17 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World worldIn, BlockState state) {
         return new TileMarkerVolume();
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         checkSignalState(world, pos);
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+    public void updateTick(World world, BlockPos pos, BlockState state, Random rand) {
         checkSignalState(world, pos);
     }
 
@@ -46,7 +46,7 @@ public class BlockMarkerVolume extends BlockMarkerBase {
         if (world.isRemote) {
             return;
         }
-        TileEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileMarkerVolume) {
             TileMarkerVolume volume = (TileMarkerVolume) tile;
 
@@ -59,10 +59,10 @@ public class BlockMarkerVolume extends BlockMarkerBase {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
+            BlockEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileMarkerVolume) {
                 TileMarkerVolume volume = (TileMarkerVolume) tile;
 

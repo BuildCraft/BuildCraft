@@ -7,15 +7,15 @@
 package buildcraft.lib.crops;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.api.crops.CropManager;
@@ -32,23 +32,23 @@ public enum CropHandlerReeds implements ICropHandler {
 
     @Override
     public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        return block.canSustainPlant(state, world, pos, EnumFacing.UP, Blocks.REEDS) && block != Blocks.REEDS && world.isAirBlock(pos.up());
+        return block.canSustainPlant(state, world, pos, Direction.UP, Blocks.REEDS) && block != Blocks.REEDS && world.isAirBlock(pos.up());
     }
 
     @Override
-    public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
+    public boolean plantCrop(World world, PlayerEntity player, ItemStack seed, BlockPos pos) {
         return CropManager.getDefaultHandler().plantCrop(world, player, seed, pos);
     }
 
     @Override
-    public boolean isMature(IBlockAccess access, IBlockState state, BlockPos pos) {
+    public boolean isMature(BlockView access, BlockState state, BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean harvestCrop(World world, BlockPos pos, NonNullList<ItemStack> drops) {
+    public boolean harvestCrop(World world, BlockPos pos, DefaultedList<ItemStack> drops) {
         return false;
     }
 }

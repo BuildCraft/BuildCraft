@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -12,7 +12,7 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.factory.container.ContainerChute;
 
 public class GuiChute extends GuiBC8<ContainerChute> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/chute.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftfactory:textures/gui/chute.png");
     private static final int SIZE_X = 176, SIZE_Y = 153;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 

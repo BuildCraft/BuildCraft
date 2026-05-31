@@ -6,8 +6,8 @@
 
 package buildcraft.builders.snapshot;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -56,12 +56,12 @@ public final class SchematicBlockAir implements ISchematicBlock {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        return new NBTTagCompound();
+    public NbtCompound serializeNBT() {
+        return new NbtCompound();
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+    public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
     }
 
     @Override

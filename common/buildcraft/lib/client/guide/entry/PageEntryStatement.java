@@ -9,9 +9,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 import buildcraft.api.statements.IAction;
@@ -59,7 +59,7 @@ public class PageEntryStatement extends PageValueType<IStatement> {
     }
 
     @Override
-    public OptionallyDisabled<PageEntry<IStatement>> deserialize(ResourceLocation name, JsonObject json,
+    public OptionallyDisabled<PageEntry<IStatement>> deserialize(Identifier name, JsonObject json,
         JsonDeserializationContext ctx) {
         String stmntName = JsonUtils.getString(json, "statement");
         IStatement stmnt = StatementManager.statements.get(stmntName);

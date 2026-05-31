@@ -8,9 +8,9 @@ package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.IInjectable;
 
@@ -18,13 +18,13 @@ public enum NoSpaceInjectable implements IInjectable {
     INSTANCE;
 
     @Override
-    public boolean canInjectItems(EnumFacing from) {
+    public boolean canInjectItems(Direction from) {
         return false;
     }
 
     @Nonnull
     @Override
-    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor color, double speed) {
+    public ItemStack injectItem(@Nonnull ItemStack stack, boolean doAdd, Direction from, DyeColor color, double speed) {
         return stack;
     }
 }

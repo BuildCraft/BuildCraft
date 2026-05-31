@@ -7,7 +7,7 @@ package buildcraft.builders.gui;
 import java.io.IOException;
 
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -16,7 +16,7 @@ import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.builders.container.ContainerArchitectTable;
 
 public class GuiArchitectTable extends GuiBC8<ContainerArchitectTable> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/architect.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftbuilders:textures/gui/architect.png");
     private static final int SIZE_X = 256, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS = new GuiIcon(TEXTURE_BASE, 0, 166, 24, 17);

@@ -6,7 +6,7 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.marker.MarkerCache;
@@ -17,7 +17,7 @@ public enum MarkerRenderer implements IDetachedRenderer {
     INSTANCE;
 
     @Override
-    public void render(EntityPlayer player, float partialTicks) {
+    public void render(PlayerEntity player, float partialTicks) {
         for (MarkerCache<? extends MarkerSubCache<?>> cache : MarkerCache.CACHES) {
             for (MarkerConnection<?> connection : cache.getSubCache(player.world).getConnections()) {
                 connection.renderInWorld();

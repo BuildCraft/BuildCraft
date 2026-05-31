@@ -8,7 +8,7 @@ package buildcraft.lib.tile;
 
 import java.util.List;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.tiles.IDebuggable;
 
@@ -63,7 +63,7 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         C current = getCurrentConnection();
         MarkerSubCache<C> cache = getLocalCache();
         left.add("Exists = " + (cache.getMarker(getPos()) == this));

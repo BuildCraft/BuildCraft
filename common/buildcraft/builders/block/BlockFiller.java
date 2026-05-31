@@ -10,13 +10,13 @@ import java.util.List;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
@@ -43,8 +43,8 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+    public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
             // return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
@@ -55,14 +55,14 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     // Others
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileFiller();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(pos);
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
+        BlockEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFiller) {
             if (!((TileFiller) tile).hasBox()) {
                 return false;
@@ -75,7 +75,7 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
     }
 
     @Override
-    public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
+    public boolean canBeRotated(World world, BlockPos pos, BlockState state) {
         return false;
     }
 }

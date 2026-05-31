@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -61,7 +61,7 @@ public class NetworkedItemStackCache extends NetworkedObjectCache<ItemStack> {
             buffer.writeBoolean(true);
             buffer.writeShort(Item.getIdFromItem(obj.getItem()));
             buffer.writeShort(obj.getMetadata());
-            NBTTagCompound tag = null;
+            NbtCompound tag = null;
             if (obj.getItem().isDamageable() || obj.getItem().getShareTag()) {
                 tag = obj.getItem().getNBTShareTag(obj);
             }

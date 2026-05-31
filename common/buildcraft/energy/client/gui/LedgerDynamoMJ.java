@@ -6,7 +6,7 @@
 
 package buildcraft.energy.client.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.render.ISprite;
 
@@ -40,7 +40,7 @@ public class LedgerDynamoMJ extends Ledger_Neptune {
         appendText(() -> LocaleUtil.localizeHeat(engine.getHeat()), TEXT_COLOUR);
         calculateMaxSize();
 
-        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:engine"),
+        setOpenProperty(GuiConfigManager.getOrAddBoolean(new Identifier("buildcraftlib:engine"),
             "ledger.power.is_open", false));
     }
 

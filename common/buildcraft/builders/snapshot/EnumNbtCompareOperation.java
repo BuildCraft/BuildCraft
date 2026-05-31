@@ -13,20 +13,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NbtElement;
 
 import buildcraft.lib.misc.JsonUtil;
 
 public enum EnumNbtCompareOperation {
     EQ("=") {
         @Override
-        public boolean compare(NBTBase a, NBTBase b) {
-            return Objects.equals(GSON.toJson(a, NBTBase.class), GSON.toJson(b, NBTBase.class));
+        public boolean compare(NbtElement a, NbtElement b) {
+            return Objects.equals(GSON.toJson(a, NbtElement.class), GSON.toJson(b, NbtElement.class));
         }
     },
     NQE("!=") {
         @Override
-        public boolean compare(NBTBase a, NBTBase b) {
+        public boolean compare(NbtElement a, NbtElement b) {
             return !EQ.compare(a, b);
         }
     };
@@ -46,7 +46,7 @@ public enum EnumNbtCompareOperation {
             .orElseThrow(() -> new IllegalArgumentException("Compare operation not found"));
     }
 
-    public abstract boolean compare(NBTBase a, NBTBase b);
+    public abstract boolean compare(NbtElement a, NbtElement b);
 
     public static final JsonDeserializer<EnumNbtCompareOperation> DESERIALIZER = (json, typeOfT, context) ->
         byName(json.getAsJsonPrimitive().getAsString());

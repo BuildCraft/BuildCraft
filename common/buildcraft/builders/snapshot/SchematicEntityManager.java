@@ -10,8 +10,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
@@ -41,8 +41,8 @@ public class SchematicEntityManager {
     }
 
     @Nonnull
-    public static <S extends ISchematicEntity> NBTTagCompound writeToNBT(S schematicEntity) {
-        NBTTagCompound schematicEntityTag = new NBTTagCompound();
+    public static <S extends ISchematicEntity> NbtCompound writeToNBT(S schematicEntity) {
+        NbtCompound schematicEntityTag = new NbtCompound();
         schematicEntityTag.setString(
             "name",
             SchematicEntityFactoryRegistry
@@ -55,14 +55,14 @@ public class SchematicEntityManager {
     }
 
     @Nonnull
-    public static ISchematicEntity readFromNBT(NBTTagCompound schematicEntityTag) throws InvalidInputDataException {
-        ResourceLocation name = new ResourceLocation(schematicEntityTag.getString("name"));
+    public static ISchematicEntity readFromNBT(NbtCompound schematicEntityTag) throws InvalidInputDataException {
+        Identifier name = new Identifier(schematicEntityTag.getString("name"));
         SchematicEntityFactory<?> factory = SchematicEntityFactoryRegistry.getFactoryByName(name);
         if (factory == null) {
             throw new InvalidInputDataException("Unknown schematic type " + name);
         }
         ISchematicEntity schematicEntity = factory.supplier.get();
-        NBTTagCompound data = schematicEntityTag.getCompoundTag("data");
+        NbtCompound data = schematicEntityTag.getCompoundTag("data");
         try {
             schematicEntity.deserializeNBT(data);
             return schematicEntity;

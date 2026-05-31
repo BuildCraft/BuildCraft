@@ -14,7 +14,7 @@ import javax.vecmath.Point2i;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
@@ -76,7 +76,7 @@ public class ZoneChunk {
         return builder.build();
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
+    public void writeToNBT(NbtCompound nbt) {
         nbt.setBoolean("fullSet", fullSet);
 
         if (property != null) {
@@ -84,7 +84,7 @@ public class ZoneChunk {
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         fullSet = nbt.getBoolean("fullSet");
 
         if (nbt.hasKey("bits")) {

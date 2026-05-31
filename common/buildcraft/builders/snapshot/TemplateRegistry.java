@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,7 +36,7 @@ public enum TemplateRegistry implements ITemplateRegistry {
     }
 
     @Override
-    public boolean handle(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
+    public boolean handle(World world, BlockPos pos, PlayerEntity player, ItemStack stack) {
         for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (ITemplateHandler handler : handlers.get(priority)) {
                 if (handler.handle(world, pos, player, stack)) {

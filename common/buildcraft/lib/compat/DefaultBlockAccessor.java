@@ -2,9 +2,9 @@ package buildcraft.lib.compat;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -24,7 +24,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
 
     @Override
     @Nullable
-    public TileEntity getTile(World world, BlockPos pos, boolean force) {
+    public BlockEntity getTile(World world, BlockPos pos, boolean force) {
         if (direct | force) {
             if (force || world.isBlockLoaded(pos)) {
                 return world.getTileEntity(pos);
@@ -40,7 +40,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     }
 
     @Override
-    public IBlockState getState(World world, BlockPos pos, boolean force) {
+    public BlockState getState(World world, BlockPos pos, boolean force) {
         if (direct | force) {
             if (force || world.isBlockLoaded(pos)) {
                 return world.getBlockState(pos);

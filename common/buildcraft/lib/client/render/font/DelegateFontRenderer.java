@@ -5,13 +5,13 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 public class DelegateFontRenderer extends FontRenderer {
     public final FontRenderer delegate;
 
     public DelegateFontRenderer(FontRenderer delegate) {
-        super(Minecraft.getMinecraft().gameSettings, new ResourceLocation("textures/font/ascii.png"),
+        super(Minecraft.getMinecraft().gameSettings, new Identifier("textures/font/ascii.png"),
             Minecraft.getMinecraft().renderEngine, delegate.getUnicodeFlag());
         this.delegate = delegate;
     }

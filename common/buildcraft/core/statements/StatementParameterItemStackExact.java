@@ -11,7 +11,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -67,15 +67,15 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound compound) {
+    public void writeToNbt(NbtCompound compound) {
         if (stack != null) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
+            NbtCompound tagCompound = new NbtCompound();
             stack.writeToNBT(tagCompound);
             compound.setTag("stack", tagCompound);
         }
     }
 
-    public static StatementParameterItemStackExact readFromNbt(NBTTagCompound nbt) {
+    public static StatementParameterItemStackExact readFromNbt(NbtCompound nbt) {
         StatementParameterItemStackExact param = new StatementParameterItemStackExact();
         param.stack = new ItemStack(nbt.getCompoundTag("stack"));
         return param;

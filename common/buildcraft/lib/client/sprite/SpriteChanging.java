@@ -3,7 +3,7 @@ package buildcraft.lib.client.sprite;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.render.ISprite;
 
@@ -24,7 +24,7 @@ public class SpriteChanging implements ISprite {
 
     @Override
     public void bindTexture() {
-        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(location.get()));
+        Minecraft.getMinecraft().renderEngine.bindTexture(new Identifier(location.get()));
     }
 
     @Override

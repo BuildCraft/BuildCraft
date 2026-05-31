@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.DyeColor;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.Formatting;
 
 import buildcraft.api.mj.IMjToRfStatus;
 import buildcraft.api.mj.MjRfConversion;
@@ -34,9 +34,9 @@ public class BCLibConfig {
 
     public static File guiConfigFile = null;
 
-    /** If true then items and blocks will display the colour of an item (one of {@link EnumDyeColor}) with the correct
-     * {@link TextFormatting} colour value.<br>
-     * This changes the behaviour of {@link ColourUtil#convertColourToTextFormat(EnumDyeColor)}. */
+    /** If true then items and blocks will display the colour of an item (one of {@link DyeColor}) with the correct
+     * {@link Formatting} colour value.<br>
+     * This changes the behaviour of {@link ColourUtil#convertColourToTextFormat(DyeColor)}. */
     public static boolean useColouredLabels = true;
 
     /** If this and {@link #useColouredLabels} is true then only colours which strongly contrast with the base colour
@@ -61,7 +61,7 @@ public class BCLibConfig {
      * than "60mB/t") */
     public static boolean useLongLocalizedName = false;
 
-    /** If true then {@link AtlasSpriteVariants#createForConfig(net.minecraft.util.ResourceLocation)} will retun
+    /** If true then {@link AtlasSpriteVariants#createForConfig(net.minecraft.util.Identifier)} will retun
      * {@link AtlasSpriteSwappable}, allowing for instant reloads when switching between colourblind modes and other
      * changable things. If false it will return a normal {@link TextureAtlasSprite}. Disabling this might help if you
      * get sprite issues with mods like optifine. */
@@ -133,24 +133,24 @@ public class BCLibConfig {
     public enum RenderRotation {
         DISABLED {
             @Override
-            public EnumFacing changeFacing(EnumFacing dir) {
-                return EnumFacing.EAST;
+            public Direction changeFacing(Direction dir) {
+                return Direction.EAST;
             }
         },
         HORIZONTALS_ONLY {
             @Override
-            public EnumFacing changeFacing(EnumFacing dir) {
-                return dir.getAxis() == Axis.Y ? EnumFacing.EAST : dir;
+            public Direction changeFacing(Direction dir) {
+                return dir.getAxis() == Axis.Y ? Direction.EAST : dir;
             }
         },
         ENABLED {
             @Override
-            public EnumFacing changeFacing(EnumFacing dir) {
+            public Direction changeFacing(Direction dir) {
                 return dir;
             }
         };
 
-        public abstract EnumFacing changeFacing(EnumFacing dir);
+        public abstract Direction changeFacing(Direction dir);
     }
 
     public enum ChunkLoaderType {
@@ -169,15 +169,15 @@ public class BCLibConfig {
         /** No automatic chunkloading is done. */
         NONE,
 
-        /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
+        /** {@link BlockEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
          * return {@link buildcraft.lib.chunkload.IChunkLoadingTile.LoadType#HARD} */
         STRICT_TILES,
 
-        /** {@link TileEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
+        /** {@link BlockEntity}'s that implement the {@link IChunkLoadingTile} interface will be loaded, provided they
          * DON'T return null. */
         SELF_TILES,
 
-        /** All {@link TileEntity}'s in the world. */
+        /** All {@link BlockEntity}'s in the world. */
         ALL_TILES;
 
         public boolean canLoad(LoadType loadType) {

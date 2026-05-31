@@ -1,6 +1,6 @@
 package buildcraft.builders.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
@@ -14,7 +14,7 @@ import buildcraft.builders.container.ContainerFillerPlanner;
 import buildcraft.builders.filler.FillerStatementContext;
 
 public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
-    private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler_planner.json");
+    private static final Identifier LOCATION = new Identifier("buildcraftbuilders:gui/filler_planner.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
 
     public GuiFillerPlanner(ContainerFillerPlanner container) {

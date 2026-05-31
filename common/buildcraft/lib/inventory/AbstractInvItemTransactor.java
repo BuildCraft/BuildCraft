@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import gnu.trove.list.array.TIntArrayList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
@@ -108,7 +108,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
     }
 
     @Override
-    public NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate) {
+    public DefaultedList<ItemStack> insert(DefaultedList<ItemStack> stacks, boolean simulate) {
         // WARNING: SLOW IMPL
         return stacks;
     }

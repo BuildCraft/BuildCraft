@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -19,7 +19,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 public class EngineBlockMapper implements IBlockGuidePageMapper {
     @Override
-    public String getFor(World world, BlockPos pos, IBlockState state) {
+    public String getFor(World world, BlockPos pos, BlockState state) {
         EnumEngineType type = state.getValue(BuildCraftProperties.ENGINE_TYPE);
         return "engine_" + type.unlocalizedTag;
     }

@@ -26,9 +26,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
@@ -47,7 +47,7 @@ import buildcraft.robotics.zone.ZonePlannerMapDataClient;
 import buildcraft.robotics.zone.ZonePlannerMapRenderer;
 
 public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftrobotics:textures/gui/zone_planner.png");
     private static final int SIZE_X = 256, SIZE_Y = 228;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS_INPUT = new GuiIcon(TEXTURE_BASE, 9, 228, 28, 9);
@@ -456,7 +456,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 } else {
                                     continue;
                                 }
-                                int color = EnumDyeColor.byMetadata(i).getColorValue();
+                                int color = DyeColor.byMetadata(i).getColorValue();
                                 int r = (color >> 16) & 0xFF;
                                 int g = (color >> 8) & 0xFF;
                                 int b = (color >> 0) & 0xFF;

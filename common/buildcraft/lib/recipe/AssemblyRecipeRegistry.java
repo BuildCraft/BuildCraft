@@ -14,13 +14,13 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.recipes.AssemblyRecipe;
 
 public class AssemblyRecipeRegistry  {
-    public static final Map<ResourceLocation, AssemblyRecipe> REGISTRY = new HashMap<>();
+    public static final Map<Identifier, AssemblyRecipe> REGISTRY = new HashMap<>();
 
     public static void register(AssemblyRecipe recipe) {
         REGISTRY.put(recipe.getRegistryName(), recipe);
@@ -28,7 +28,7 @@ public class AssemblyRecipeRegistry  {
 
 
     @Nonnull
-    public static List<AssemblyRecipe> getRecipesFor(@Nonnull NonNullList<ItemStack> possibleIn) {
+    public static List<AssemblyRecipe> getRecipesFor(@Nonnull DefaultedList<ItemStack> possibleIn) {
         List<AssemblyRecipe> all = new ArrayList<>();
         for (AssemblyRecipe ar : REGISTRY.values()) {
             if (!ar.getOutputs(possibleIn).isEmpty()) {

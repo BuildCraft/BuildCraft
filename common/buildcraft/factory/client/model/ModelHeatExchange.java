@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.model.ModelItemSimple;
@@ -36,7 +36,7 @@ public class ModelHeatExchange extends ModelItemSimple {
     public static final NodeVariableBoolean VAR_CONNECTED_UP;
     public static final NodeVariableBoolean VAR_CONNECTED_DOWN;
     public static final NodeVariableObject<EnumExchangePart> VAR_PART;
-    public static final NodeVariableObject<EnumFacing> VAR_DIRECTION;
+    public static final NodeVariableObject<Direction> VAR_DIRECTION;
 
     static {
         TYPE_EXCHANGE_PART = new NodeType<>("HeatExchangePart", EnumExchangePart.MIDDLE);
@@ -50,7 +50,7 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_CONNECTED_UP = FUNCTION_CONTEXT.putVariableBoolean("connected_up");
         VAR_CONNECTED_DOWN = FUNCTION_CONTEXT.putVariableBoolean("connected_down");
         VAR_PART = FUNCTION_CONTEXT.putVariableObject("part", EnumExchangePart.class);
-        VAR_DIRECTION = FUNCTION_CONTEXT.putVariableObject("direction", EnumFacing.class);
+        VAR_DIRECTION = FUNCTION_CONTEXT.putVariableObject("direction", Direction.class);
     }
 
     private final TextureAtlasSprite particle;
@@ -64,7 +64,7 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_CONNECTED_LEFT.value = false;
         VAR_CONNECTED_RIGHT.value = false;
         VAR_PART.value = EnumExchangePart.MIDDLE;
-        VAR_DIRECTION.value = EnumFacing.NORTH;
+        VAR_DIRECTION.value = Direction.NORTH;
 
         if (BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads().length == 0) {
             particle = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
@@ -80,7 +80,7 @@ public class ModelHeatExchange extends ModelItemSimple {
             VAR_CONNECTED_UP.value = connectedUpDown && part == EnumExchangePart.END;
             VAR_CONNECTED_DOWN.value = connectedUpDown && part == EnumExchangePart.START;
             VAR_PART.value = part;
-            VAR_DIRECTION.value = EnumFacing.getHorizontal((i / 8) & 3);
+            VAR_DIRECTION.value = Direction.getHorizontal((i / 8) & 3);
             List<BakedQuad> quads = new ArrayList<>();
 
             for (MutableQuad quad : BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()) {
@@ -98,14 +98,14 @@ public class ModelHeatExchange extends ModelItemSimple {
     }
 
     @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    public List<BakedQuad> getQuads(BlockState state, Direction side, long rand) {
         if (side != null) {
             return ImmutableList.of();
         }
         return cache.get(getIndexOf(state));
     }
 
-    private static int getIndexOf(IBlockState state) {
+    private static int getIndexOf(BlockState state) {
         return (state.getValue(BlockHeatExchange.PROP_CONNECTED_LEFT) ? 1 : 0)//
             | (state.getValue(BlockHeatExchange.PROP_CONNECTED_RIGHT) ? 2 : 0)//
             | (state.getValue(BlockHeatExchange.PROP_CONNECTED_Y) ? 4 : 0)//

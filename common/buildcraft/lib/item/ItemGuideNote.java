@@ -1,10 +1,10 @@
 package buildcraft.lib.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 import buildcraft.lib.BCLib;
@@ -27,8 +27,8 @@ public class ItemGuideNote extends ItemBC_Neptune {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         player.openGui(BCLib.INSTANCE, 1, world, 0, 0, 0);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(ActionResult.SUCCESS, player.getHeldItem(hand));
     }
 }

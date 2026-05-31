@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.recipes.IngredientStack;
@@ -23,7 +23,7 @@ public class IntegrationRecipeBasic extends IntegrationRecipe {
     protected final ImmutableList<IngredientStack> toIntegrate;
     protected final @Nonnull ItemStack output;
 
-    public IntegrationRecipeBasic(ResourceLocation name, long requiredMicroJoules, IngredientStack target, List<IngredientStack> toIntegrate, @Nonnull ItemStack output) {
+    public IntegrationRecipeBasic(Identifier name, long requiredMicroJoules, IngredientStack target, List<IngredientStack> toIntegrate, @Nonnull ItemStack output) {
         super(name);
         this.requiredMicroJoules = requiredMicroJoules;
         this.target = target;
@@ -36,11 +36,11 @@ public class IntegrationRecipeBasic extends IntegrationRecipe {
     }
 
 
-    protected boolean matches(@Nonnull ItemStack target, NonNullList<ItemStack> toIntegrate) {
+    protected boolean matches(@Nonnull ItemStack target, DefaultedList<ItemStack> toIntegrate) {
         if (!StackUtil.contains(this.target, target)) {
             return false;
         }
-        NonNullList<ItemStack> toIntegrateCopy = toIntegrate.stream().filter(stack -> !stack.isEmpty()).collect(StackUtil.nonNullListCollector());
+        DefaultedList<ItemStack> toIntegrateCopy = toIntegrate.stream().filter(stack -> !stack.isEmpty()).collect(StackUtil.nonNullListCollector());
         boolean stackMatches = this.toIntegrate.stream().allMatch((definition) -> {
             boolean matches = false;
             Iterator<ItemStack> iterator = toIntegrateCopy.iterator();
@@ -58,7 +58,7 @@ public class IntegrationRecipeBasic extends IntegrationRecipe {
     }
 
     @Override
-    public ItemStack getOutput(@Nonnull ItemStack target, NonNullList<ItemStack> toIntegrate) {
+    public ItemStack getOutput(@Nonnull ItemStack target, DefaultedList<ItemStack> toIntegrate) {
         return matches(target, toIntegrate) ? output : ItemStack.EMPTY;
     }
 

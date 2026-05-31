@@ -8,8 +8,8 @@ package buildcraft.lib.misc;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -19,7 +19,7 @@ import buildcraft.lib.particle.ParticlePipes;
 import buildcraft.lib.particle.ParticlePosition;
 
 public class ParticleUtil {
-    public static void showChangeColour(World world, Vec3d pos, @Nullable EnumDyeColor colour) {
+    public static void showChangeColour(World world, Vec3d pos, @Nullable DyeColor colour) {
         if (colour == null) {
             showWaterParticles(world, pos);
         }
@@ -29,7 +29,7 @@ public class ParticleUtil {
 
     }
 
-    public static void showTempPower(World world, BlockPos pos, EnumFacing face, long microJoules) {
+    public static void showTempPower(World world, BlockPos pos, Direction face, long microJoules) {
         double x = pos.getX() + 0.5 + face.getFrontOffsetX() * 0.5;
         double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;
         double z = pos.getZ() + 0.5 + face.getFrontOffsetZ() * 0.5;

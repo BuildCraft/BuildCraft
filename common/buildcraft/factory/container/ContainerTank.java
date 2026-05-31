@@ -6,7 +6,7 @@
 
 package buildcraft.factory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -18,7 +18,7 @@ import buildcraft.factory.tile.TileTank;
 public class ContainerTank extends ContainerBCTile<TileTank> {
     public final WidgetFluidTank widgetTank;
 
-    public ContainerTank(EntityPlayer player, TileTank tank) {
+    public ContainerTank(PlayerEntity player, TileTank tank) {
         super(player, tank);
 
         addFullPlayerInventory(99);
@@ -27,7 +27,7 @@ public class ContainerTank extends ContainerBCTile<TileTank> {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         // The only slots are player slots -- try to interact with the tank
 
         if (!player.world.isRemote) {

@@ -9,9 +9,9 @@ package buildcraft.lib.world;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +22,8 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
     @Override
     public void notifyBlockUpdate(@Nonnull World world,
                                   @Nonnull BlockPos pos,
-                                  @Nonnull IBlockState oldState,
-                                  @Nonnull IBlockState newState,
+                                  @Nonnull BlockState oldState,
+                                  @Nonnull BlockState newState,
                                   int flags) {
     }
 
@@ -36,7 +36,7 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
     }
 
     @Override
-    public void playSoundToAllNearExcept(@Nullable EntityPlayer player,
+    public void playSoundToAllNearExcept(@Nullable PlayerEntity player,
                                          @Nonnull SoundEvent sound,
                                          @Nonnull SoundCategory category,
                                          double x,
@@ -88,7 +88,7 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
     }
 
     @Override
-    public void playEvent(@Nullable EntityPlayer player, int type, @Nonnull BlockPos blockPos, int data) {
+    public void playEvent(@Nullable PlayerEntity player, int type, @Nonnull BlockPos blockPos, int data) {
     }
 
     @Override

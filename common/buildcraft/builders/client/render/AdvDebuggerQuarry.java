@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
@@ -38,7 +38,7 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
     }
 
     @Override
-    public void render(EntityPlayer player, float partialTicks) {
+    public void render(PlayerEntity player, float partialTicks) {
         TileQuarry tile = tileReference.get();
         if (tile == null || !tile.frameBox.isInitialized()) {
             return;

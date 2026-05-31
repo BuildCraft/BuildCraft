@@ -11,8 +11,8 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.InvalidInputDataException;
@@ -44,14 +44,14 @@ public class Template extends Snapshot {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = super.serializeNBT();
+    public NbtCompound serializeNBT() {
+        NbtCompound nbt = super.serializeNBT();
         nbt.setByteArray("data", data.toByteArray());
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+    public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
         super.deserializeNBT(nbt);
         data = BitSet.valueOf(nbt.getByteArray("data"));
         if (data.length() > getDataSize()) {

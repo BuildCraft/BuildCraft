@@ -19,14 +19,14 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NbtList;
 
 import buildcraft.lib.misc.NBTUtilBC;
 
-public class NbtRef<N extends NBTBase> {
+public class NbtRef<N extends NbtElement> {
     private final EnumType type;
     private final NbtPath path;
     private final N value;
@@ -37,7 +37,7 @@ public class NbtRef<N extends NBTBase> {
         this.value = value;
     }
 
-    public Optional<N> get(NBTBase nbt) {
+    public Optional<N> get(NbtElement nbt) {
         if (type == EnumType.BY_PATH) {
             // noinspection unchecked
             return NBTUtilBC.toOptional((N) path.get(nbt));
@@ -67,9 +67,9 @@ public class NbtRef<N extends NBTBase> {
                 return null;
             }
             // noinspection unchecked
-            Class<? extends NBTBase> nClass = (Class<? extends NBTBase>)
+            Class<? extends NbtElement> nClass = (Class<? extends NbtElement>)
                 ((ParameterizedType) type.getType()).getActualTypeArguments()[0];
-            if (nClass == NBTTagByteArray.class || nClass == NBTTagIntArray.class || nClass == NBTTagList.class) {
+            if (nClass == NBTTagByteArray.class || nClass == NBTTagIntArray.class || nClass == NbtList.class) {
                 return new TypeAdapter<T>() {
                     @Override
                     public void write(JsonWriter out, T value) throws IOException {
@@ -90,7 +90,7 @@ public class NbtRef<N extends NBTBase> {
                         } else {
                             // noinspection unchecked
                             return (T) EnumType.BY_VALUE.create(
-                                gson.<NBTBase>fromJson(in, nClass)
+                                gson.<NbtElement>fromJson(in, nClass)
                             );
                         }
                     }
@@ -112,7 +112,7 @@ public class NbtRef<N extends NBTBase> {
                         } else {
                             // noinspection unchecked
                             return (T) EnumType.BY_VALUE.create(
-                                gson.<NBTBase>fromJson(in, nClass)
+                                gson.<NbtElement>fromJson(in, nClass)
                             );
                         }
                     }
@@ -130,7 +130,7 @@ public class NbtRef<N extends NBTBase> {
         },
         BY_VALUE {
             @Override
-            public <N extends NBTBase> NbtRef<N> create(N value) {
+            public <N extends NbtElement> NbtRef<N> create(N value) {
                 return new NbtRef<>(this, null, value);
             }
         };
@@ -139,7 +139,7 @@ public class NbtRef<N extends NBTBase> {
             throw new UnsupportedOperationException();
         }
 
-        public <N extends NBTBase> NbtRef<N> create(N value) {
+        public <N extends NbtElement> NbtRef<N> create(N value) {
             throw new UnsupportedOperationException();
         }
     }

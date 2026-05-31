@@ -16,7 +16,7 @@ import javax.vecmath.Point2i;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -110,13 +110,13 @@ public class ZonePlan implements IZone {
         return chunkMapping;
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
+    public void writeToNBT(NbtCompound nbt) {
         nbt.setTag(
                 "chunkMapping",
                 NBTUtilBC.writeCompoundList(
                         chunkMapping.entrySet().stream()
                                 .map(entry -> {
-                                    NBTTagCompound zoneChunkTag = new NBTTagCompound();
+                                    NbtCompound zoneChunkTag = new NbtCompound();
                                     entry.getValue().writeToNBT(zoneChunkTag);
                                     zoneChunkTag.setInteger("chunkX", entry.getKey().x);
                                     zoneChunkTag.setInteger("chunkZ", entry.getKey().z);
@@ -126,7 +126,7 @@ public class ZonePlan implements IZone {
         );
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         NBTUtilBC.readCompoundList(nbt.getTag("chunkMapping"))
                 .forEach(zoneChunkTag -> {
                     ZoneChunk chunk = new ZoneChunk();

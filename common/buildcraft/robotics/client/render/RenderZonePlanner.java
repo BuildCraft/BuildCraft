@@ -14,7 +14,7 @@ import com.google.common.cache.RemovalNotification;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,7 +22,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -67,11 +67,11 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         double minZ = -offset;
         double maxZ = 1 + offset;
 
-        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        BlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() != BCRoboticsBlocks.zonePlanner) {
             return;
         }
-        EnumFacing side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+        Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
         DynamicTextureBC texture = getTexture(tile, side);
         if (texture == null) {
@@ -142,7 +142,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
-    private static DynamicTextureBC getTexture(TileZonePlanner tile, EnumFacing side) {
+    private static DynamicTextureBC getTexture(TileZonePlanner tile, Direction side) {
         if (TEXTURES.getIfPresent(new WorldPos(tile)) == null) {
             DynamicTextureBC texture = createTexture(tile, side);
             if (texture != null) {
@@ -152,7 +152,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         return TEXTURES.getIfPresent(new WorldPos(tile));
     }
 
-    private static DynamicTextureBC createTexture(TileZonePlanner tile, EnumFacing side) {
+    private static DynamicTextureBC createTexture(TileZonePlanner tile, Direction side) {
         DynamicTextureBC texture = new DynamicTextureBC(TEXTURE_WIDTH, TEXTURE_HEIGHT);
         for (int textureX = 0; textureX < TEXTURE_WIDTH; textureX++) {
             for (int textureY = 0; textureY < TEXTURE_HEIGHT; textureY++) {

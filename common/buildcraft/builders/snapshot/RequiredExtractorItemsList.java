@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.lib.misc.NBTUtilBC;
 
@@ -25,7 +25,7 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromBlock(@Nonnull IBlockState blockState, @Nullable NBTTagCompound tileNbt) {
+    public List<ItemStack> extractItemsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
         return Optional.ofNullable(path.get(tileNbt))
             .map(NBTUtilBC::readCompoundList)
             .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))
@@ -35,7 +35,7 @@ public class RequiredExtractorItemsList extends RequiredExtractor {
 
     @Nonnull
     @Override
-    public List<ItemStack> extractItemsFromEntity(@Nonnull NBTTagCompound entityNbt) {
+    public List<ItemStack> extractItemsFromEntity(@Nonnull NbtCompound entityNbt) {
         return Optional.ofNullable(path.get(entityNbt))
             .map(NBTUtilBC::readCompoundList)
             .map(stream -> stream.map(ItemStack::new).collect(Collectors.toList()))

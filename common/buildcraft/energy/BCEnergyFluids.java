@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.BCModules;
 
@@ -107,8 +107,8 @@ public class BCEnergyFluids {
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
         String fluidTexture = "buildcraftenergy:blocks/fluids/" + name + "_heat_" + heat;
-        BCFluid def = new BCFluid(fullName, new ResourceLocation(fluidTexture + "_still"),
-            new ResourceLocation(fluidTexture + "_flow"));
+        BCFluid def = new BCFluid(fullName, new Identifier(fluidTexture + "_still"),
+            new Identifier(fluidTexture + "_flow"));
         def.setBlockName(name + "_heat_" + heat);
         def.setMapColour(getMapColor(texDark));
         def.setFlammable(flammable);

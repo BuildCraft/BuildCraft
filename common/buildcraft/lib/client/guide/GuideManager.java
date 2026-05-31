@@ -30,8 +30,8 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.Language;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
@@ -81,10 +81,10 @@ public enum GuideManager implements IResourceManagerReloadListener {
     /** The keys are the partial paths, not the full ones!
      * <p>
      * For example a partial path might be "buildcraftcore:wrench.md" and the */
-    private final Map<ResourceLocation, GuidePageFactory> pages = new HashMap<>();
+    private final Map<Identifier, GuidePageFactory> pages = new HashMap<>();
     private final Map<ItemStack, GuidePageFactory> generatedPages = new HashMap<>();
 
-    /** Internal use only! Use {@link #addChild(ResourceLocation, JsonTypeTags, PageLink)} instead! */
+    /** Internal use only! Use {@link #addChild(Identifier, JsonTypeTags, PageLink)} instead! */
     public ISuffixArray<PageLink> quickSearcher;
     /** Every {@link PageLink} that has been added to {@link #quickSearcher}. */
     private final Set<PageLink> pageLinksAdded = new HashSet<>();
@@ -224,14 +224,14 @@ public enum GuideManager implements IResourceManagerReloadListener {
 
     private void loadLangInternal(IResourceManager resourceManager, String lang, Profiler prof) {
         ProfilerBC p = new ProfilerBC(prof);
-        main_iteration: for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE
+        main_iteration: for (Entry<Identifier, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE
             .getReloadableEntryMap().entrySet()) {
-            ResourceLocation entryKey = mapEntry.getKey();
+            Identifier entryKey = mapEntry.getKey();
             String domain = entryKey.getResourceDomain();
             String path = "compat/buildcraft/guide/" + lang + "/" + entryKey.getResourcePath();
 
             for (Entry<String, IPageLoader> entry : PAGE_LOADERS.entrySet()) {
-                ResourceLocation fLoc = new ResourceLocation(domain, path + "." + entry.getKey());
+                Identifier fLoc = new Identifier(domain, path + "." + entry.getKey());
 
                 try (IProfilerSection s = p.start("get_resource"); InputStream stream = resourceManager.getResource(
                     fLoc
@@ -281,9 +281,9 @@ public enum GuideManager implements IResourceManagerReloadListener {
         pageLinksAdded.clear();
         prof.endStartSection("add_pages");
 
-        for (Entry<ResourceLocation, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
+        for (Entry<Identifier, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
             .entrySet()) {
-            ResourceLocation partialLocation = mapEntry.getKey();
+            Identifier partialLocation = mapEntry.getKey();
             GuidePageFactory entryFactory = GuideManager.INSTANCE.getFactoryFor(partialLocation);
 
             PageEntry<?> entry = mapEntry.getValue();
@@ -358,7 +358,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
     }
 
-    private void addChild(ResourceLocation bookType, JsonTypeTags tags, PageLink page) {
+    private void addChild(Identifier bookType, JsonTypeTags tags, PageLink page) {
         if (pageLinksAdded.add(page)) {
             quickSearcher.add(page, page.getSearchName());
         }
@@ -401,7 +401,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     @Nullable
-    public GuidePageFactory getFactoryFor(ResourceLocation partialLocation) {
+    public GuidePageFactory getFactoryFor(Identifier partialLocation) {
         return pages.get(partialLocation);
     }
 
@@ -418,8 +418,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
         return getFactoryFor(getEntryFor(value));
     }
 
-    public static ResourceLocation getEntryFor(Object obj) {
-        for (Entry<ResourceLocation, PageEntry<?>> entry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
+    public static Identifier getEntryFor(Object obj) {
+        for (Entry<Identifier, PageEntry<?>> entry : GuidePageRegistry.INSTANCE.getReloadableEntryMap()
             .entrySet()) {
             if (entry.getValue().matches(obj)) {
                 return entry.getKey();
@@ -438,7 +438,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
         // we will also need to ensure we don't generate groups or recipes multiple times.
         // Although we do need to generate the info for it first and cache it?
         // Also the "Recipes" chapter title needs a JEI integration button!
-        ResourceLocation entry = getEntryFor(stack);
+        Identifier entry = getEntryFor(stack);
         if (entry != null) {
             GuidePageFactory factory = getFactoryFor(entry);
             if (factory != null) {

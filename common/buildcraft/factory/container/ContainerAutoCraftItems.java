@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -18,7 +18,7 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
 
     public final SlotBase[] materialSlots;
 
-    public ContainerAutoCraftItems(EntityPlayer player, TileAutoWorkbenchItems tile) {
+    public ContainerAutoCraftItems(PlayerEntity player, TileAutoWorkbenchItems tile) {
         super(player, tile);
 
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 124, 35));

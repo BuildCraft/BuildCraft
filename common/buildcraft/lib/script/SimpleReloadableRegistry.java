@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.registry.IReloadableRegistry;
 import buildcraft.api.registry.IReloadableRegistryManager;
@@ -19,7 +19,7 @@ import buildcraft.api.registry.IReloadableRegistryManager;
 public class SimpleReloadableRegistry<E> implements IReloadableRegistry<E> {
     public final IReloadableRegistryManager manager;
     public final List<E> permanent = new ArrayList<>();
-    public final Map<ResourceLocation, E> reloadable = new HashMap<>();
+    public final Map<Identifier, E> reloadable = new HashMap<>();
 
     public SimpleReloadableRegistry(IReloadableRegistryManager manager) {
         this.manager = manager;
@@ -46,7 +46,7 @@ public class SimpleReloadableRegistry<E> implements IReloadableRegistry<E> {
     }
 
     @Override
-    public Map<ResourceLocation, E> getReloadableEntryMap() {
+    public Map<Identifier, E> getReloadableEntryMap() {
         return reloadable;
     }
 

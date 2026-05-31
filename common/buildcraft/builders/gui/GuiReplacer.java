@@ -9,7 +9,7 @@ package buildcraft.builders.gui;
 import java.io.IOException;
 
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -19,7 +19,7 @@ import buildcraft.builders.container.ContainerReplacer;
 import buildcraft.builders.snapshot.ClientSnapshots;
 
 public class GuiReplacer extends GuiBC8<ContainerReplacer> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/replacer.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftbuilders:textures/gui/replacer.png");
     private static final int SIZE_X = 176, SIZE_Y = 241;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 

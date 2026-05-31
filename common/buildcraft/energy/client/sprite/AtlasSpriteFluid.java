@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
 
@@ -19,11 +19,11 @@ import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.SpriteUtil;
 
 public class AtlasSpriteFluid extends AtlasSpriteSwappable {
-    final ResourceLocation fromName;
+    final Identifier fromName;
     final BCFluid fluid;
     final int colourLight, colourDark;
 
-    public AtlasSpriteFluid(String baseName, ResourceLocation fromName, BCFluid fluid) {
+    public AtlasSpriteFluid(String baseName, Identifier fromName, BCFluid fluid) {
         super(baseName);
         this.fromName = fromName;
         this.fluid = fluid;
@@ -32,8 +32,8 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     }
 
     @Override
-    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
-        ResourceLocation from = SpriteUtil.transformLocation(fromName);
+    public boolean load(IResourceManager manager, Identifier location, Function<Identifier, TextureAtlasSprite> textureGetter) {
+        Identifier from = SpriteUtil.transformLocation(fromName);
         TextureAtlasSprite sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");

@@ -9,7 +9,7 @@ package buildcraft.builders.container;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.enums.EnumSnapshotType;
@@ -24,7 +24,7 @@ import buildcraft.builders.tile.TileBuilder;
 public class ContainerBuilder extends ContainerBCTile<TileBuilder> {
     public final List<WidgetFluidTank> widgetTanks;
 
-    public ContainerBuilder(EntityPlayer player, TileBuilder tile) {
+    public ContainerBuilder(PlayerEntity player, TileBuilder tile) {
         super(player, tile);
 
         addFullPlayerInventory(140);

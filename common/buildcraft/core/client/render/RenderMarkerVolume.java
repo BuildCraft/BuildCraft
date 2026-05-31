@@ -12,8 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.client.render.DetachedRenderer;
@@ -56,7 +56,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         Set<Axis> taken = volume == null ? ImmutableSet.of() : volume.getConnectedAxis();
 
         Vec3d start = VecUtil.add(VEC_HALF, marker.getPos());
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.VALUES) {
             if (taken.contains(face.getAxis())) {
                 continue;
             }
@@ -73,25 +73,25 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
     }
 
     private static void renderLaser(Vec3d min, Vec3d max, Axis axis) {
-        EnumFacing faceForMin = VecUtil.getFacing(axis, true);
-        EnumFacing faceForMax = VecUtil.getFacing(axis, false);
+        Direction faceForMin = VecUtil.getFacing(axis, true);
+        Direction faceForMax = VecUtil.getFacing(axis, false);
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
         LaserData_BC8 data = new LaserData_BC8(LASER_TYPE, one, two, SCALE);
         LaserRenderer_BC8.renderLaserStatic(data);
     }
 
-    private static Vec3d offset(Vec3d vec, EnumFacing face) {
+    private static Vec3d offset(Vec3d vec, Direction face) {
         double by = 1 / 16.0;
-        if (face == EnumFacing.DOWN) {
+        if (face == Direction.DOWN) {
             return vec.addVector(0, -by, 0);
-        } else if (face == EnumFacing.UP) {
+        } else if (face == Direction.UP) {
             return vec.addVector(0, by, 0);
-        } else if (face == EnumFacing.EAST) {
+        } else if (face == Direction.EAST) {
             return vec.addVector(by, 0, 0);
-        } else if (face == EnumFacing.WEST) {
+        } else if (face == Direction.WEST) {
             return vec.addVector(-by, 0, 0);
-        } else if (face == EnumFacing.SOUTH) {
+        } else if (face == Direction.SOUTH) {
             return vec.addVector(0, 0, by);
         } else {// North
             return vec.addVector(0, 0, -by);

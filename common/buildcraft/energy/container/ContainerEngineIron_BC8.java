@@ -6,7 +6,7 @@
 
 package buildcraft.energy.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -20,7 +20,7 @@ public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8>
     public final WidgetFluidTank widgetTankCoolant;
     public final WidgetFluidTank widgetTankResidue;
 
-    public ContainerEngineIron_BC8(EntityPlayer player, TileEngineIron_BC8 engine) {
+    public ContainerEngineIron_BC8(PlayerEntity player, TileEngineIron_BC8 engine) {
         super(player, engine);
 
         addFullPlayerInventory(95);
@@ -31,7 +31,7 @@ public class ContainerEngineIron_BC8 extends ContainerBCTile<TileEngineIron_BC8>
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         // The only slots are player slots -- try to interact with all of the tanks
 
         if (!player.world.isRemote) {

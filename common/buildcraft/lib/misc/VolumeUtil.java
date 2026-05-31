@@ -11,20 +11,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /** Provides methods for iterating over a specific volume in a world. */
 public class VolumeUtil {
-    public static void iterateCone(World world, BlockPos start, EnumFacing direction, int distance, boolean edges, VolumeIterator iter) {
+    public static void iterateCone(World world, BlockPos start, Direction direction, int distance, boolean edges, VolumeIterator iter) {
         Cone cone = edges ? Cone.SQUARE : Cone.SQUARE;
         iterateVolume(world, start, direction, distance, cone, iter);
     }
 
-    public static void iterateVolume(World world, BlockPos start, EnumFacing direction, int distance, VolumeProducer producer, VolumeIterator iter) {
+    public static void iterateVolume(World world, BlockPos start, Direction direction, int distance, VolumeProducer producer, VolumeIterator iter) {
         List<VisiblePos> volume = producer.getVolume(world, start, direction, distance);
         Set<BlockPos> allVisible = new HashSet<>();
         allVisible.add(start);
@@ -55,7 +55,7 @@ public class VolumeUtil {
     }
 
     public interface VolumeProducer {
-        List<VisiblePos> getVolume(World world, BlockPos start, EnumFacing direction, int distance);
+        List<VisiblePos> getVolume(World world, BlockPos start, Direction direction, int distance);
     }
 
     public enum Cone implements VolumeProducer {
@@ -69,7 +69,7 @@ public class VolumeUtil {
         }
 
         @Override
-        public List<VisiblePos> getVolume(World world, BlockPos start, EnumFacing direction, int distance) {
+        public List<VisiblePos> getVolume(World world, BlockPos start, Direction direction, int distance) {
             List<VisiblePos> list = new ArrayList<>();
             final Axis axisI, axisJ;
             switch (direction.getAxis()) {
@@ -87,8 +87,8 @@ public class VolumeUtil {
                     axisJ = Axis.Y;
                     break;
             }
-            EnumFacing faceI = EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axisI);
-            EnumFacing faceJ = EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axisJ);
+            Direction faceI = Direction.getFacingFromAxis(AxisDirection.POSITIVE, axisI);
+            Direction faceJ = Direction.getFacingFromAxis(AxisDirection.POSITIVE, axisJ);
 
             BlockPos coneCenter = start;
             for (int d = 0; d < distance; d++) {

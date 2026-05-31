@@ -7,7 +7,7 @@
 package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
@@ -22,7 +22,7 @@ public class BlockMiningWell extends BlockBCTile_Neptune implements IBlockWithFa
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World worldIn, BlockState state) {
         return new TileMiningWell();
     }
 }

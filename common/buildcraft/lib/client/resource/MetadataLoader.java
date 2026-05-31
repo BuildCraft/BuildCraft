@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.MetadataSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 /** Alternate metadata loader for {@link IResource#getMetadata(String)} */
 public class MetadataLoader {
@@ -27,7 +27,7 @@ public class MetadataLoader {
 
     /** @param samePack If true, then only the data in the same resource pack will be returned. */
     @Nullable
-    public static DataMetadataSection getData(ResourceLocation location, boolean samePack) {
+    public static DataMetadataSection getData(Identifier location, boolean samePack) {
         IResourceManager resManager = Minecraft.getMinecraft().getResourceManager();
         register();
         try {

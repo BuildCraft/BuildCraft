@@ -11,28 +11,28 @@ import java.util.Optional;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtString;
 
 public class ItemStackRef {
-    private final NbtRef<NBTTagString> item;
-    private final NbtRef<NBTTagInt> amount;
-    private final NbtRef<NBTTagInt> meta;
-    private final NbtRef<NBTTagCompound> tagCompound;
+    private final NbtRef<NbtString> item;
+    private final NbtRef<NbtInt> amount;
+    private final NbtRef<NbtInt> meta;
+    private final NbtRef<NbtCompound> tagCompound;
 
-    public ItemStackRef(NbtRef<NBTTagString> item,
-                        NbtRef<NBTTagInt> amount,
-                        NbtRef<NBTTagInt> meta,
-                        NbtRef<NBTTagCompound> tagCompound) {
+    public ItemStackRef(NbtRef<NbtString> item,
+                        NbtRef<NbtInt> amount,
+                        NbtRef<NbtInt> meta,
+                        NbtRef<NbtCompound> tagCompound) {
         this.item = item;
         this.amount = amount;
         this.meta = meta;
         this.tagCompound = tagCompound;
     }
 
-    public ItemStack get(NBTBase nbt) {
+    public ItemStack get(NbtElement nbt) {
         ItemStack itemStack = new ItemStack(
             Objects.requireNonNull(
                 Item.getByNameOrId(
@@ -44,11 +44,11 @@ public class ItemStackRef {
             ),
             Optional.ofNullable(amount)
                 .flatMap(ref -> ref.get(nbt))
-                .map(NBTTagInt::getInt)
+                .map(NbtInt::getInt)
                 .orElse(1),
             Optional.ofNullable(meta)
                 .flatMap(ref -> ref.get(nbt))
-                .map(NBTTagInt::getInt)
+                .map(NbtInt::getInt)
                 .orElse(0)
         );
         Optional.ofNullable(tagCompound)

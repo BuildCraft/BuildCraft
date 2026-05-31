@@ -7,7 +7,7 @@ package buildcraft.core.item;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 
@@ -26,7 +26,7 @@ public class ItemEngine_BC8<E extends Enum<E> & IEngineType> extends ItemBlockBC
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        IBlockState state = engineBlock.getStateFromMeta(stack == null ? 0 : stack.getItemDamage());
+        BlockState state = engineBlock.getStateFromMeta(stack == null ? 0 : stack.getItemDamage());
         E engine = state.getValue(engineBlock.getEngineProperty());
         return "tile." + engineBlock.getUnlocalizedName(engine);
     }

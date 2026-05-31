@@ -6,7 +6,7 @@
 
 package buildcraft.energy.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -15,7 +15,7 @@ import buildcraft.energy.tile.TileDynamoMJ;
 
 public class ContainerDynamoMJ extends ContainerBCTile<TileDynamoMJ> {
 
-    public ContainerDynamoMJ(EntityPlayer player, TileDynamoMJ engine) {
+    public ContainerDynamoMJ(PlayerEntity player, TileDynamoMJ engine) {
         super(player, engine);
 
         addFullPlayerInventory(95);

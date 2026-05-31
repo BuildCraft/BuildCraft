@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.io.IOUtils;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.lib.nbt.NbtSquisher;
 
@@ -60,7 +60,7 @@ public class ZipFileHelper {
         return ImmutableSet.copyOf(entries.keySet());
     }
 
-    public void addNbtEntry(String name, String comment, NBTTagCompound nbt, int type) {
+    public void addNbtEntry(String name, String comment, NbtCompound nbt, int type) {
         comments.put(name, comment);
         entries.put(name, NbtSquisher.squish(nbt, type));
     }
@@ -70,7 +70,7 @@ public class ZipFileHelper {
         entries.put(name, text.getBytes(StandardCharsets.UTF_8));
     }
 
-    public NBTTagCompound getNbtEntry(String name) throws IOException {
+    public NbtCompound getNbtEntry(String name) throws IOException {
         byte[] bytes = entries.get(name);
         if (bytes == null) {
             throw new IOException("No bytes for entry " + name);

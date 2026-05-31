@@ -1,6 +1,6 @@
 package buildcraft.builders.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.tiles.IControllable.Mode;
@@ -19,7 +19,7 @@ import buildcraft.builders.filler.FillerStatementContext;
 import buildcraft.core.BCCoreSprites;
 
 public class GuiFiller extends GuiBC8<ContainerFiller> {
-    private static final ResourceLocation LOCATION = new ResourceLocation("buildcraftbuilders:gui/filler.json");
+    private static final Identifier LOCATION = new Identifier("buildcraftbuilders:gui/filler.json");
     private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
     private static final SpriteDelegate SPRITE_CONTROL_MODE = new SpriteDelegate();
 

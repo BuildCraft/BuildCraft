@@ -16,10 +16,10 @@ import javax.annotation.Nonnull;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.lists.ListMatchHandler;
 
@@ -41,18 +41,18 @@ import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.list.ContainerList.WidgetListSlot;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
-    private static final ResourceLocation TEXTURE_BASE =
-        new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
+    private static final Identifier TEXTURE_BASE =
+        new Identifier("buildcraftcore:textures/gui/list_new.png");
     private static final int SIZE_X = 176, SIZE_Y = 191;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_HIGHLIGHT = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 16);
     private static final GuiIcon ICON_ONE_STACK = new GuiIcon(TEXTURE_BASE, 0, 191, 20, 20);
     private static final int BUTTON_COUNT = 3;
 
-    private final Map<Integer, Map<ListMatchHandler.Type, NonNullList<ItemStack>>> exampleCache = new HashMap<>();
+    private final Map<Integer, Map<ListMatchHandler.Type, DefaultedList<ItemStack>>> exampleCache = new HashMap<>();
     private GuiTextField textField;
 
-    public GuiList(EntityPlayer iPlayer) {
+    public GuiList(PlayerEntity iPlayer) {
         super(new ContainerList(iPlayer));
         xSize = SIZE_X;
         ySize = SIZE_Y;
@@ -91,7 +91,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         if (shouldDrawHighlight()) {
                             return super.getStack();
                         } else {
-                            NonNullList<ItemStack> data = GuiList.this.getExamplesList(listSlot.lineIndex,
+                            DefaultedList<ItemStack> data = GuiList.this.getExamplesList(listSlot.lineIndex,
                                 container.lines[listSlot.lineIndex].getSortingType());
                             if (data.size() >= listSlot.slotIndex) {
                                 return data.get(listSlot.slotIndex - 1);
@@ -218,21 +218,21 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     private void clearExamplesCache(int lineId) {
-        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList = exampleCache.get(lineId);
+        Map<ListMatchHandler.Type, DefaultedList<ItemStack>> exampleList = exampleCache.get(lineId);
         if (exampleList != null) {
             exampleList.clear();
         }
     }
 
-    private NonNullList<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
-        Map<ListMatchHandler.Type, NonNullList<ItemStack>> exampleList =
+    private DefaultedList<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
+        Map<ListMatchHandler.Type, DefaultedList<ItemStack>> exampleList =
             exampleCache.computeIfAbsent(lineId, k -> new EnumMap<>(ListMatchHandler.Type.class));
 
         if (!exampleList.containsKey(type)) {
-            NonNullList<ItemStack> examples = container.lines[lineId].getExamples();
+            DefaultedList<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks.get(0);
             if (!input.isEmpty()) {
-                NonNullList<ItemStack> repetitions = NonNullList.create();
+                DefaultedList<ItemStack> repetitions = DefaultedList.create();
                 for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);

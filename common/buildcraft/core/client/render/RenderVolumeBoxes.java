@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -29,7 +29,7 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void render(EntityPlayer player, float partialTicks) {
+    public void render(PlayerEntity player, float partialTicks) {
         GlStateManager.enableBlend();
 
         BufferBuilder bb = Tessellator.getInstance().getBuffer();

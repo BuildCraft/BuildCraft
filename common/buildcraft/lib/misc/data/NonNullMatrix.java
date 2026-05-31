@@ -10,24 +10,24 @@ import java.util.AbstractList;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 /** Defines a non-null 2 dimensional matrix, where the width and height are known at creation time. Note that this
  * matrix cannot be resized. */
 public class NonNullMatrix<T> extends AbstractList<T> {
-    private final NonNullList<T> internalList;
+    private final DefaultedList<T> internalList;
     private final int width, height;
 
     public NonNullMatrix(int width, int height, @Nonnull T fill) {
         this.width = width;
         this.height = height;
-        internalList = NonNullList.withSize(width * height, fill);
+        internalList = DefaultedList.withSize(width * height, fill);
     }
 
     public NonNullMatrix(int width, int height, IEntryFiller<T> filler) {
         this.width = width;
         this.height = height;
-        internalList = NonNullList.withSize(width * height, filler.getEntry(0, 0));
+        internalList = DefaultedList.withSize(width * height, filler.getEntry(0, 0));
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 internalList.set(flatIndexOf(x, y), filler.getEntry(x, y));
@@ -45,7 +45,7 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     public NonNullMatrix(T[][] from, @Nonnull T nullReplacer) {
         this.width = from.length;
         this.height = width == 0 ? 0 : from[0].length;
-        internalList = NonNullList.withSize(width * height, nullReplacer);
+        internalList = DefaultedList.withSize(width * height, nullReplacer);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 T val = from[x][y];

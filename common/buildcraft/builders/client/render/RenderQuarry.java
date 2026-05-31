@@ -15,8 +15,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -183,7 +183,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                     : -1 /* not possible */;
                 double xProgress = -1;
                 double zProgress = -1;
-                EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+                Direction side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
                 BlockPos firstPos = tile.getPos().offset(side);
                 switch (side) {
                     case SOUTH:

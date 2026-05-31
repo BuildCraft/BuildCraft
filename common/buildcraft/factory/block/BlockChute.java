@@ -11,12 +11,12 @@ import java.util.Map;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
@@ -29,20 +29,20 @@ import buildcraft.factory.BCFactoryGuis;
 import buildcraft.factory.tile.TileChute;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
+    public static final Map<Direction, IProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
     public BlockChute(Material material, String id) {
         super(material, id);
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileChute();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             BCFactoryGuis.CHUTE.openGUI(player, pos);
         }
@@ -50,12 +50,12 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(BlockState state) {
         return false;
     }
 
@@ -66,8 +66,8 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        for (EnumFacing side : EnumFacing.VALUES) {
+    public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
+        for (Direction side : Direction.VALUES) {
             state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty())
                 && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
         }

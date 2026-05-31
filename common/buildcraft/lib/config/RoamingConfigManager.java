@@ -12,24 +12,24 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.BCLibProxy;
 
 @Deprecated
 public class RoamingConfigManager extends StreamConfigManager {
-    private static final Map<ResourceLocation, RoamingConfigManager> instances = new HashMap<>();
-    private final ResourceLocation identifier;
+    private static final Map<Identifier, RoamingConfigManager> instances = new HashMap<>();
+    private final Identifier identifier;
     private Boolean cacheExists = null;
 
-    public static RoamingConfigManager getOrCreateDefault(ResourceLocation identifier) {
+    public static RoamingConfigManager getOrCreateDefault(Identifier identifier) {
         if (!instances.containsKey(identifier)) {
             instances.put(identifier, new RoamingConfigManager(identifier));
         }
         return instances.get(identifier);
     }
 
-    public RoamingConfigManager(ResourceLocation identifier) {
+    public RoamingConfigManager(Identifier identifier) {
         this.identifier = identifier;
     }
 

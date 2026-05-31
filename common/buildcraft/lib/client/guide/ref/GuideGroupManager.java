@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
@@ -27,7 +27,7 @@ import buildcraft.lib.client.guide.entry.PageValueType;
 
 public class GuideGroupManager {
     public static final List<PageValueType<?>> knownTypes = new ArrayList<>();
-    public static final Map<ResourceLocation, GuideGroupSet> sets = new HashMap<>();
+    public static final Map<Identifier, GuideGroupSet> sets = new HashMap<>();
 
     private static final Map<Class<?>, PageValueType<?>> knownClasses = new WeakHashMap<>();
     private static final Map<Class<?>, Function<Object, PageValue<?>>> transformers = new WeakHashMap<>();
@@ -192,17 +192,17 @@ public class GuideGroupManager {
     // Internals
 
     @Nullable
-    public static GuideGroupSet get(ResourceLocation group) {
+    public static GuideGroupSet get(Identifier group) {
         return sets.get(group);
     }
 
     @Nullable
     public static GuideGroupSet get(String domain, String group) {
-        return get(new ResourceLocation(domain, group));
+        return get(new Identifier(domain, group));
     }
 
     public static GuideGroupSet getOrCreate(String domain, String group) {
-        return sets.computeIfAbsent(new ResourceLocation(domain, group), GuideGroupSet::new);
+        return sets.computeIfAbsent(new Identifier(domain, group), GuideGroupSet::new);
     }
 
     // Basic adders
