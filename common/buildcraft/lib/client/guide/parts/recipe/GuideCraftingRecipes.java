@@ -12,6 +12,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +28,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.ItemStackKey;
@@ -38,11 +41,11 @@ public enum GuideCraftingRecipes implements IStackRecipes {
 
     private static final boolean USE_INDEX = true;
 
-    private Map<Item, Set<IRecipe>> inputIndexMap, outputIndexMap;
+    private Map<Item, Set<net.minecraft.recipe.CraftingRecipe>> inputIndexMap, outputIndexMap;
 
     @Override
     public List<GuidePartFactory> getUsages(@Nonnull ItemStack target) {
-        final Iterable<IRecipe> recipes;
+        final Iterable<net.minecraft.recipe.CraftingRecipe> recipes;
         if (USE_INDEX) {
             generateInputIndex();
             recipes = inputIndexMap.get(target.getItem());
@@ -54,7 +57,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         }
 
         List<GuidePartFactory> list = new ArrayList<>();
-        for (IRecipe recipe : recipes) {
+        for (net.minecraft.recipe.CraftingRecipe recipe : recipes) {
             if (checkRecipeUses(recipe, target)) {
                 GuidePartFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {
@@ -75,26 +78,26 @@ public enum GuideCraftingRecipes implements IStackRecipes {
     private void generateInputIndex() {
         if (inputIndexMap == null) {
             inputIndexMap = new IdentityHashMap<>();
-            for (IRecipe recipe : ForgeRegistries.RECIPES) {
+            for (net.minecraft.recipe.CraftingRecipe recipe : ForgeRegistries.RECIPES) {
                 generateInputIndex0(recipe);
             }
         }
     }
 
-    private void generateInputIndex0(IRecipe recipe) {
+    private void generateInputIndex0(net.minecraft.recipe.CraftingRecipe recipe) {
         for (Ingredient ing : recipe.getIngredients()) {
             generateIngredientIndex(recipe, ing, inputIndexMap);
         }
     }
 
-    private static void generateIngredientIndex(IRecipe recipe, Ingredient ing, Map<Item, Set<IRecipe>> indexMap) {
+    private static void generateIngredientIndex(net.minecraft.recipe.CraftingRecipe recipe, Ingredient ing, Map<Item, Set<net.minecraft.recipe.CraftingRecipe>> indexMap) {
         for (ItemStack stack : ing.getMatchingStacks()) {
             appendIndex(stack, recipe, indexMap);
         }
     }
 
-    private static void appendIndex(ItemStack stack, IRecipe recipe, Map<Item, Set<IRecipe>> indexMap) {
-        Set<IRecipe> list = indexMap.get(stack.getItem());
+    private static void appendIndex(ItemStack stack, net.minecraft.recipe.CraftingRecipe recipe, Map<Item, Set<net.minecraft.recipe.CraftingRecipe>> indexMap) {
+        Set<net.minecraft.recipe.CraftingRecipe> list = indexMap.get(stack.getItem());
         if (list == null) {
             list = new LinkedHashSet<>();
             indexMap.put(stack.getItem(), list);
@@ -102,7 +105,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         list.add(recipe);
     }
 
-    private static boolean checkRecipeUses(IRecipe recipe, @Nonnull ItemStack target) {
+    private static boolean checkRecipeUses(net.minecraft.recipe.CraftingRecipe recipe, @Nonnull ItemStack target) {
         DefaultedList<Ingredient> ingrediants = recipe.getIngredients();
         if (ingrediants.isEmpty()) {
             if (recipe instanceof IRecipeViewable) {
@@ -134,7 +137,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
 
     @Override
     public List<GuidePartFactory> getRecipes(@Nonnull ItemStack target) {
-        final Iterable<IRecipe> recipes;
+        final Iterable<net.minecraft.recipe.CraftingRecipe> recipes;
         if (USE_INDEX) {
             generateOutputIndex();
             recipes = outputIndexMap.get(target.getItem());
@@ -147,7 +150,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         }
 
         List<GuidePartFactory> list = new ArrayList<>();
-        for (IRecipe recipe : recipes) {
+        for (net.minecraft.recipe.CraftingRecipe recipe : recipes) {
             if (checkRecipeOutputs(recipe, target)) {
                 GuidePartFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {
@@ -161,13 +164,13 @@ public enum GuideCraftingRecipes implements IStackRecipes {
     private void generateOutputIndex() {
         if (outputIndexMap == null) {
             outputIndexMap = new IdentityHashMap<>();
-            for (IRecipe recipe : ForgeRegistries.RECIPES) {
+            for (net.minecraft.recipe.CraftingRecipe recipe : ForgeRegistries.RECIPES) {
                 generateOutputIndex0(recipe);
             }
         }
     }
 
-    private void generateOutputIndex0(IRecipe recipe) {
+    private void generateOutputIndex0(net.minecraft.recipe.CraftingRecipe recipe) {
         if (recipe instanceof IRecipeViewable) {
             ChangingItemStack changing = ((IRecipeViewable) recipe).getRecipeOutputs();
             for (ItemStackKey stack : changing.getOptions()) {
@@ -184,7 +187,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         }
     }
 
-    private static boolean checkRecipeOutputs(IRecipe recipe, ItemStack target) {
+    private static boolean checkRecipeOutputs(net.minecraft.recipe.CraftingRecipe recipe, ItemStack target) {
         if (recipe instanceof IRecipeViewable) {
             ChangingItemStack changing = ((IRecipeViewable) recipe).getRecipeOutputs();
             if (changing.matches(target)) {
@@ -192,7 +195,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
             }
         } else {
             ItemStack out = StackUtil.asNonNull(recipe.getRecipeOutput());
-            if (OreDictionary.itemMatches(target, out, false) || OreDictionary.itemMatches(out, target, false)) {
+            if (OreDictionaryStub.itemMatches(target, out, false) || OreDictionaryStub.itemMatches(out, target, false)) {
                 return true;
             }
         }

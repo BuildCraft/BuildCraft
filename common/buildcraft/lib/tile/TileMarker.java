@@ -43,7 +43,7 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
         getLocalCache().unloadMarker(getPos());
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void invalidate() {
         super.invalidate();
         // getLocalCache().removeMarker(getPos());

@@ -97,7 +97,7 @@ public class GuiDynamoMJ extends GuiBC8<ContainerDynamoMJ> {
         });
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
         double rfHeight = 60.0 * container.tile.getCurrentRF() / TileEngineRF.MAX_RF;
@@ -117,16 +117,16 @@ public class GuiDynamoMJ extends GuiBC8<ContainerDynamoMJ> {
         RenderSystem.enableDepthTest();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.mjDynamo.name");
-        int strWidth = fontRenderer.getStringWidth(str);
+        int strWidth = fontRenderer.getWidth(str);
         double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
         double titleY = mainGui.rootElement.getY() + 6;
-        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), str, (int) titleX, (int) titleY, 0x404040);
 
         double invX = mainGui.rootElement.getX() + 8;
         double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
+        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), LocaleUtil.localize("gui.getInventory()"), (int) invX, (int) invY, 0x404040);
     }
 }

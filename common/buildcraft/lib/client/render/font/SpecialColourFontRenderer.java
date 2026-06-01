@@ -17,11 +17,11 @@ public class SpecialColourFontRenderer extends TextRenderer {
     public static final SpecialColourFontRenderer INSTANCE = new SpecialColourFontRenderer();
 
     private SpecialColourFontRenderer() {
-        super(MinecraftClient.getInstance().gameSettings, new Identifier("textures/font/ascii.png"),
+        super(MinecraftClient.getInstance().options, new Identifier("textures/font/ascii.png"),
             MinecraftClient.getInstance().renderEngine, false);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int drawString(String text, float x, float y, int color, boolean dropShadow) {
 
         int next = text.indexOf(ColourUtil.COLOUR_SPECIAL_START);
@@ -49,7 +49,7 @@ public class SpecialColourFontRenderer extends TextRenderer {
             int thisColour = color;
             try {
                 int ord = Integer.parseInt(Character.toString(c), 16);
-                thisColour = ColourUtil.getLightHex(DyeColor.byMetadata(ord));
+                thisColour = ColourUtil.getLightHex(DyeColor.byId(ord));
             } catch (NumberFormatException nfe) {
                 BCLog.logger
                     .warn("[lib.font] Invalid colour string for SpecialColourFontRenderer! " + nfe.getMessage());
@@ -73,62 +73,62 @@ public class SpecialColourFontRenderer extends TextRenderer {
 
     // Delegate methods (To ensure we have the exact same behaviour as the normal font renderer)
 
-    @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void reload(ResourceManager resourceManager) {
         // NO-OP
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getStringWidth(String text) {
-        return getRealRenderer().getStringWidth(text);
+        return getRealRenderer().getWidth(text);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getCharWidth(char character) {
         return getRealRenderer().getCharWidth(character);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String trimStringToWidth(String text, int width) {
         return getRealRenderer().trimStringToWidth(text, width);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String trimStringToWidth(String text, int width, boolean reverse) {
         return getRealRenderer().trimStringToWidth(text, width, reverse);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getWordWrappedHeight(String str, int maxLength) {
         return getRealRenderer().getWordWrappedHeight(str, maxLength);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void setUnicodeFlag(boolean unicodeFlagIn) {
         getRealRenderer().setUnicodeFlag(unicodeFlagIn);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean getUnicodeFlag() {
         return getRealRenderer().getUnicodeFlag();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void setBidiFlag(boolean bidiFlagIn) {
         getRealRenderer().setBidiFlag(bidiFlagIn);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public List<String> listFormattedStringToWidth(String str, int wrapWidth) {
         return getRealRenderer().listFormattedStringToWidth(str, wrapWidth);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean getBidiFlag() {
         return getRealRenderer().getBidiFlag();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getColorCode(char character) {
         return getRealRenderer().getColorCode(character);
     }

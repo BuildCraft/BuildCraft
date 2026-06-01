@@ -26,9 +26,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidRegistryBC;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.IFluidTank;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -39,6 +39,8 @@ import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.misc.VecUtil;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 /** Can render 3D fluid cuboid's, up to 1x1x1 in size. Note that they *must* be contained within the 1x1x1 block space -
  * you can't use this to render off large multiblocks. Not thread safe -- this uses static variables so you should only
@@ -75,13 +77,13 @@ public class FluidRenderer {
             fluidSprites.get(type).clear();
         }
         Map<Identifier, SpriteFluidFrozen> spritesStitched = new HashMap<>();
-        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+        for (Fluid fluid : FluidRegistryBC.getRegisteredFluids().values()) {
             Identifier still = fluid.getStill();
             Identifier flowing = fluid.getFlowing();
             if (still == null || flowing == null) {
                 throw new IllegalStateException(
-                    "Encountered a fluid with a null still sprite! (" + fluid.getName() + " - "
-                        + FluidRegistry.getDefaultFluidName(fluid) + ")"
+                    "Encountered a fluid with a null still sprite! (" + buildcraft.lib.compat.FluidRegistryBC.getFluidName(fluid) + " - "
+                        + FluidRegistryBC.getDefaultFluidName(fluid) + ")"
                 );
             }
             if (spritesStitched.containsKey(still)) {
@@ -101,12 +103,12 @@ public class FluidRenderer {
     }
 
     public static void onTextureStitchPost(TextureMap map) {
-        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+        for (Fluid fluid : FluidRegistryBC.getRegisteredFluids().values()) {
             Identifier still = fluid.getStill();
             if (still == null) {
                 throw new IllegalStateException(
-                    "Encountered a fluid with a null still sprite! (" + fluid.getName() + " - "
-                        + FluidRegistry.getDefaultFluidName(fluid) + ")"
+                    "Encountered a fluid with a null still sprite! (" + buildcraft.lib.compat.FluidRegistryBC.getFluidName(fluid) + " - "
+                        + FluidRegistryBC.getDefaultFluidName(fluid) + ")"
                 );
             }
 
@@ -164,7 +166,7 @@ public class FluidRenderer {
      * @param bbIn The {@link BufferBuilder} that the fluid will be rendered into.
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns.
-     * @see #renderFluid(FluidSpriteType, FluidStack, double, double, Vec3d, Vec3d, BufferBuilder, boolean[]) */
+     * @see #renderFluid(FluidSpriteType, FluidStackBC, double, double, Vec3d, Vec3d, BufferBuilder, boolean[]) */
     public static void renderFluid(
         FluidSpriteType type, IFluidTank tank, Vec3d min, Vec3d max, BufferBuilder bbIn, boolean[] sideRender
     ) {
@@ -183,7 +185,7 @@ public class FluidRenderer {
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns. */
     public static void renderFluid(
-        FluidSpriteType type, FluidStack fluid, int cap, Vec3d min, Vec3d max, BufferBuilder bbIn, boolean[] sideRender
+        FluidSpriteType type, FluidStackBC fluid, int cap, Vec3d min, Vec3d max, BufferBuilder bbIn, boolean[] sideRender
     ) {
         renderFluid(type, fluid, fluid == null ? 0 : fluid.amount, cap, min, max, bbIn, sideRender);
     }
@@ -202,7 +204,7 @@ public class FluidRenderer {
      * @param sideRender A size 6 boolean array that determines if the face will be rendered. If it is null then all
      *            faces will be rendered. The indexes are determined by what {@link Direction#ordinal()} returns. */
     public static void renderFluid(
-        FluidSpriteType type, FluidStack fluid, double amount, double cap, Vec3d min, Vec3d max, BufferBuilder bbIn,
+        FluidSpriteType type, FluidStackBC fluid, double amount, double cap, Vec3d min, Vec3d max, BufferBuilder bbIn,
         boolean[] sideRender
     ) {
         if (fluid == null || fluid.getFluid() == null || amount <= 0) {
@@ -323,7 +325,7 @@ public class FluidRenderer {
         prof.pop();
     }
 
-    public static Sprite getFluidSprite(FluidSpriteType type, FluidStack fluid) {
+    public static Sprite getFluidSprite(FluidSpriteType type, FluidStackBC fluid) {
         return getFluidSprite(type, fluid.getFluid());
     }
 
@@ -346,20 +348,20 @@ public class FluidRenderer {
         vertex.renderAsBlock(bb);
     }
 
-    /** Fills up the given region with the fluids texture, repeated. Ignores the value of {@link FluidStack#amount}. Use
+    /** Fills up the given region with the fluids texture, repeated. Ignores the value of {@link FluidStackBC#amount}. Use
      * {@link GuiUtil}'s fluid drawing methods in preference to this. */
-    public static void drawFluidForGui(FluidStack fluid, double startX, double startY, double endX, double endY) {
+    public static void drawFluidForGui(FluidStackBC fluid, double startX, double startY, double endX, double endY) {
 
         sprite = FluidRenderer.fluidSprites.get(FluidSpriteType.STILL).get(fluid.getFluid().getName());
         if (sprite == null) {
             sprite = MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite();
         }
-        MinecraftClient.getInstance().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         RenderUtil.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 
         Tessellator tess = Tessellator.getInstance();
         bb = tess.getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX);
 
         // draw all the full sprites
 
@@ -427,7 +429,7 @@ public class FluidRenderer {
         }
 
         tess.draw();
-        RenderSystem.setShaderColor(1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1.0F);
         sprite = null;
         bb = null;
     }
@@ -491,7 +493,7 @@ public class FluidRenderer {
         }
 
         public TankSize shrink(double x, double y, double z) {
-            return new TankSize(min.addVector(x, y, z), max.subtract(x, y, z));
+            return new TankSize(min.add(x, y, z), max.subtract(x, y, z));
         }
 
         public TankSize shink(Vec3d by) {

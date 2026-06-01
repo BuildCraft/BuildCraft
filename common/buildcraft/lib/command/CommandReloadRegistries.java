@@ -11,17 +11,17 @@ public class CommandReloadRegistries extends CommandBase {
 
     public CommandReloadRegistries() {}
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getName() {
         return "reload";
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getUsage(ICommandSender sender) {
         return "command.buildcraft.reload";
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         ReloadableRegistryManager.DATA_PACKS.reloadAll();
     }

@@ -8,15 +8,16 @@ package buildcraft.lib.particle;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
 // This *might* be useful in the future - although I don't really know.
 @Deprecated
 public class ParticlePipeManager {
-    private static final TIntObjectHashMap<Supplier<IParticlePositionPipe>> PIPE_TYPES = new TIntObjectHashMap<>();
+    private static final HashMap<Integer, Supplier<IParticlePositionPipe>> PIPE_TYPES = new TIntObjectHashMap<>();
 
     static {
         // Just use ints rather than a full registry - its simpler

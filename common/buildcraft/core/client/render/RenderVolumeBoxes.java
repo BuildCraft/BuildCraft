@@ -23,18 +23,20 @@ import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     @SuppressWarnings("unchecked")
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(PlayerEntity player, float partialTicks) {
         RenderSystem.enableBlend();
 
         BufferBuilder bb = Tessellator.getInstance().getBuffer();
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
 
         ClientVolumeBoxes.INSTANCE.volumeBoxes.forEach(volumeBox -> {
             LaserType type;

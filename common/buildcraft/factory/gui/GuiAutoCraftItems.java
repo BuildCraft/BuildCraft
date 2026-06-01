@@ -16,7 +16,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.RenderHelper;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.Ingredient;
@@ -72,7 +72,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         mainGui.shownElements.add(new LedgerHelp(mainGui, true));
     }
 
-    private void sendRecipe(IRecipe recipe) {
+    private void sendRecipe(net.minecraft.recipe.CraftingRecipe recipe) {
         List<ItemStack> stacks = new ArrayList<>(9);
 
         int maxX = recipe instanceof IShapedRecipe ? ((IShapedRecipe) recipe).getRecipeWidth() : 3;
@@ -113,21 +113,21 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void initGui() {
         super.initGui();
         widthTooNarrow = this.width < SIZE_X + 176;
         if (recipeBook != null) {
             InventoryCrafting invCraft = container.tile.getWorkbenchCrafting();
             recipeBook.func_194303_a(width, height, mc, widthTooNarrow, invCraft);
-            guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
+            x = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
             recipeButton =
-                new GuiButtonImage(10, guiLeft + 5, height / 2 - 66, 20, 18, 0, 168, 19, VANILLA_CRAFTING_TABLE);
+                new GuiButtonImage(10, x + 5, height / 2 - 66, 20, 18, 0, 168, 19, VANILLA_CRAFTING_TABLE);
             buttonList.add(this.recipeButton);
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateScreen() {
         super.updateScreen();
         if (recipeBook != null) {
@@ -135,7 +135,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (recipeBook == null) {
             super.drawScreen(mouseX, mouseY, partialTicks);
@@ -149,13 +149,13 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         } else {
             super.drawScreen(mouseX, mouseY, partialTicks);
             recipeBook.render(mouseX, mouseY, partialTicks);
-            recipeBook.renderGhostRecipe(this.guiLeft, this.guiTop, true, partialTicks);
+            recipeBook.renderGhostRecipe(this.x, this.y, true, partialTicks);
         }
 
-        recipeBook.renderTooltip(this.guiLeft, this.guiTop, mouseX, mouseY);
+        recipeBook.renderTooltip(this.x, this.y, mouseX, mouseY);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
 
@@ -216,17 +216,17 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         void iterate(SlotBase drawSlot, ItemStack filterStack);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button == recipeButton && recipeBook != null) {
             recipeBook.initVisuals(widthTooNarrow, container.tile.getWorkbenchCrafting());
             recipeBook.toggleVisibility();
-            guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
-            recipeButton.setPosition(this.guiLeft + 5, this.height / 2 - 66);
+            x = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
+            recipeButton.setPosition(this.x + 5, this.height / 2 - 66);
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if (recipeBook == null) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -239,7 +239,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (recipeBook == null) {
             super.keyTyped(typedChar, keyCode);
@@ -250,7 +250,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void handleMouseClick(Slot slot, int slotId, int mouseButton, ClickType type) {
         super.handleMouseClick(slot, slotId, mouseButton, type);
         if (recipeBook != null) {
@@ -258,7 +258,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected boolean isPointInRegion(int rectX, int rectY, int rectWidth, int rectHeight, int pointX, int pointY) {
         if (recipeBook == null) {
             return super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
@@ -267,17 +267,17 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
             && super.isPointInRegion(rectX, rectY, rectWidth, rectHeight, pointX, pointY);
     }
 
-    @Override
-    protected boolean hasClickedOutside(int mouseX, int mouseY, int _guiLeft, int _guiTop) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    protected boolean hasClickedOutside(int mouseX, int mouseY, int _x, int _y) {
         if (recipeBook == null) {
-            return super.hasClickedOutside(mouseX, mouseY, _guiLeft, _guiTop);
+            return super.hasClickedOutside(mouseX, mouseY, _x, _y);
         }
         boolean flag =
-            mouseX < _guiLeft || mouseY < _guiTop || mouseX >= _guiLeft + xSize || mouseY >= _guiTop + this.ySize;
-        return recipeBook.hasClickedOutside(mouseX, mouseY, guiLeft, guiTop, xSize, ySize) && flag;
+            mouseX < _x || mouseY < _y || mouseX >= _x + xSize || mouseY >= _y + this.ySize;
+        return recipeBook.hasClickedOutside(mouseX, mouseY, x, y, xSize, ySize) && flag;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void onGuiClosed() {
         if (recipeBook != null) {
             recipeBook.removed();
@@ -294,7 +294,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> implement
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public GuiRecipeBook func_194310_f() {
         return recipeBook;
     }

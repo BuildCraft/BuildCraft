@@ -24,6 +24,7 @@ import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
 import buildcraft.lib.client.sprite.DynamicTextureBC;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.RenderUtil;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 public class GuideFont implements IFontRenderer {
 
@@ -63,7 +64,7 @@ public class GuideFont implements IFontRenderer {
         text = ColourUtil.stripAllFormatCodes(text);
         MinecraftClient mc = MinecraftClient.getInstance();
         ScaledResolution res = new ScaledResolution(mc);
-        double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+        double scaleFactor = mc.getWindow().getWidth() / res.getScaledWidth_double();
 
         g2d.setColor(new Color(0, 0, 0, 255));
         g2d.fillRect(0, 0, 512, 512);
@@ -104,7 +105,7 @@ public class GuideFont implements IFontRenderer {
             (int) (rect.getWidth()), (int) (rect.getHeight() + 1));
         // tex.draw(x, y, 0);
         RenderSystem.getModelViewStack().pop();
-        RenderSystem.setShaderColor(1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1.0F);
         RenderSystem.enableDepthTest();
 
         return (int) rect.getWidth();
@@ -135,7 +136,7 @@ public class GuideFont implements IFontRenderer {
             this.defaultShadow = shadow;
             MinecraftClient mc = MinecraftClient.getInstance();
             ScaledResolution res = new ScaledResolution(mc);
-            double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+            double scaleFactor = mc.getWindow().getWidth() / res.getScaledWidth_double();
 
             Font f2 = font.font.deriveFont(font.font.getSize2D() * scale * (float) scaleFactor);
 

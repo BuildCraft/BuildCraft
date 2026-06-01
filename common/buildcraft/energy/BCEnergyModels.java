@@ -19,7 +19,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelFluid;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -42,6 +42,7 @@ import buildcraft.energy.tile.TileDynamoMJ;
 import buildcraft.energy.tile.TileEngineIron_BC8;
 import buildcraft.energy.tile.TileEngineRF;
 import buildcraft.energy.tile.TileEngineStone_BC8;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class BCEnergyModels {
     private static final NodeVariableDouble ENGINE_PROGRESS;
@@ -78,10 +79,10 @@ public class BCEnergyModels {
     }
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCEnergyModels.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCEnergyModels.class);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void onModelRegistry(ModelRegistryEvent event) {
         for (BCFluid fluid : BCEnergyFluids.allFluids) {
@@ -89,7 +90,7 @@ public class BCEnergyModels {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onModelBake(ModelBakeEvent event) {
         ENGINE_PROGRESS.value = 0.2;
         ENGINE_STAGE.value = EnumPowerStage.BLUE;
@@ -99,7 +100,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelIdentifier(EnumEngineType.STONE.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier(EnumEngineType.STONE.getItemModelLocation()), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_STONE.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -112,7 +113,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelIdentifier(EnumEngineType.IRON.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier(EnumEngineType.IRON.getItemModelLocation()), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_IRON.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -125,7 +126,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelIdentifier(EnumEngineType.RF.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier(EnumEngineType.RF.getItemModelLocation()), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_RF.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -138,7 +139,7 @@ public class BCEnergyModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelIdentifier("buildcraftenergy:mj_dynamo", "inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier(new net.minecraft.util.Identifier("buildcraftenergy:mj_dynamo"), "inventory"), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(MJ_DYNAMO.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -150,7 +151,7 @@ public class BCEnergyModels {
         for (BCFluid fluid : BCEnergyFluids.allFluids) {
             ModelFluid modelFluid = new ModelFluid(fluid);
             event.getModelRegistry().putObject(
-                new ModelIdentifier("buildcraftenergy:fluid_block_" + fluid.getBlockName()),
+                new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftenergy:fluid_block_" + fluid.getBlockName(), "inventory")),
                 modelFluid.bake(
                     modelFluid.getDefaultState(),
                     DefaultVertexFormats.ITEM,

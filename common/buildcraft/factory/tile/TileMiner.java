@@ -35,6 +35,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.data.IdAllocator;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()        → tick() + static ticker() wired in the owning Block.getTicker()
@@ -219,7 +220,7 @@ public abstract class TileMiner extends TileBC_Neptune implements IDebuggable {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
                 buffer.writeInt(wantedLength);
@@ -236,7 +237,7 @@ public abstract class TileMiner extends TileBC_Neptune implements IDebuggable {
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, /* STUB(R.Chen): MessageContext */ Object ctx)
         throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side, ctx);
                 currentLength = lastLength = wantedLength = buffer.readInt();

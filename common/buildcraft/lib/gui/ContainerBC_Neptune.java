@@ -111,7 +111,7 @@ public abstract class ContainerBC_Neptune extends ScreenHandler {
         Slot slot = this.slots.get(index);
         Slot firstSlot = this.slots.get(0);
         int playerInventorySize = 36;
-        boolean playerInventoryFirst = firstSlot.inventory instanceof PlayerInventory;
+        boolean playerInventoryFirst = firstSlot.getInventory() instanceof PlayerInventory;
 
         if (slot != null && slot.hasStack()) {
             ItemStack itemstack1 = slot.getStack();

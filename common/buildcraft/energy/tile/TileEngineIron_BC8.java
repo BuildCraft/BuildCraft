@@ -29,12 +29,13 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.energy.BCEnergyGuis;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   PlayerEntity / Direction / Hand     → PlayerEntity / Direction / Hand
 //   NbtCompound / readFromNBT/writeToNBT  → NbtCompound / readNbt/writeNbt
 //   nbt.setInteger/setDouble                 → nbt.putInt/putDouble
-//   EnvType.CLIENT / EnvType.SERVER                → NetEnvType.CLIENT / NetEnvType.SERVER
+//   EnvType.CLIENT / EnvType.SERVER                → NetSide.CLIENT / NetSide.SERVER
 //   MessageContext                           → Object ctx
 //   world.isClient                           → world.isClient
 //   player.getHeldItem                       → player.getStackInHand
@@ -88,7 +89,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 // STUB(R.Chen): tankManager.readData(buffer) — deferred until fluid layer lands.
             }
@@ -98,7 +99,7 @@ public class TileEngineIron_BC8 extends TileEngineBase_BC8 {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 // STUB(R.Chen): tankManager.writeData(buffer) — deferred until fluid layer lands.
             }

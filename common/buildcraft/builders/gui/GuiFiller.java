@@ -1,6 +1,7 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.util.Identifier;
+import java.util.Map;
 
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.tiles.IControllable.Mode;
@@ -38,7 +39,7 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
         TypedKeyMap<String, Object> properties = json.properties;
         FunctionContext context = json.context;
 
-        properties.put("filler.inventory", new InventorySlotHolder(container, container.tile.invResources));
+        properties.put("filler.getInventory()", new InventorySlotHolder(container, container.tile.invResources));
         properties.put("statement.container", container.tile);
         properties.put("controllable", container.tile);
         properties.put("controllable.sprite", SPRITE_CONTROL_MODE);
@@ -64,7 +65,7 @@ public class GuiFiller extends GuiBC8<ContainerFiller> {
             (IButtonClickEventListener) (b, k) -> container.tile.sendCanExcavate(b.isButtonActive()));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateScreen() {
         super.updateScreen();
         IFillerPattern pattern = container.getPatternStatementClient().get();

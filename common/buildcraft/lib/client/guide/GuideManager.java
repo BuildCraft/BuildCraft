@@ -26,7 +26,7 @@ import com.google.common.base.Stopwatch;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceManagerReloadListener;
+import net.minecraft.resource.SynchronousResourceReloader;
 import net.minecraft.client.resources.Language;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -68,7 +68,7 @@ import buildcraft.lib.misc.search.ISuffixArray;
 import buildcraft.lib.misc.search.SimpleSuffixArray;
 import buildcraft.lib.misc.search.VanillaSuffixArray;
 
-public enum GuideManager implements IResourceManagerReloadListener {
+public enum GuideManager implements SynchronousResourceReloader {
     INSTANCE;
 
     public static final String DEFAULT_LANG = "en_us";
@@ -114,8 +114,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
         }
     }
 
-    @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void reload(ResourceManager resourceManager) {
         reload(resourceManager);
     }
 
@@ -136,7 +136,7 @@ public enum GuideManager implements IResourceManagerReloadListener {
     }
 
     private void reload0(ResourceManager resourceManager) {
-        Profiler prof = new Profiler();
+        Profiler prof = net.minecraft.util.profiler.DummyProfiler.INSTANCE;
         prof.profilingEnabled = DEBUG;
         prof.push("root");
         prof.push("reload");
@@ -227,8 +227,8 @@ public enum GuideManager implements IResourceManagerReloadListener {
         main_iteration: for (Entry<Identifier, PageEntry<?>> mapEntry : GuidePageRegistry.INSTANCE
             .getReloadableEntryMap().entrySet()) {
             Identifier entryKey = mapEntry.getKey();
-            String domain = entryKey.getResourceDomain();
-            String path = "compat/buildcraft/guide/" + lang + "/" + entryKey.getResourcePath();
+            String domain = entryKey.getNamespace();
+            String path = "compat/buildcraft/guide/" + lang + "/" + entryKey.getPath();
 
             for (Entry<String, IPageLoader> entry : PAGE_LOADERS.entrySet()) {
                 Identifier fLoc = new Identifier(domain, path + "." + entry.getKey());

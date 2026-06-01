@@ -14,7 +14,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -37,7 +38,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
     public static final Box BASE_AABB = new Box(4 / 16D, 4 / 16D, 4 / 16D, 12 / 16D, 12 / 16D, 12 / 16D);
     public static final Box CONNECTION_AABB = new Box(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 4 / 16D, 12 / 16D);
 
-    public BlockFrame(Material material, String id) {
+    public BlockFrame(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -47,31 +48,31 @@ public class BlockFrame extends BlockBCBase_Neptune {
         properties.addAll(CONNECTED_MAP.values());
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         for (Direction side : CONNECTED_MAP.keySet()) {
             Block block = world.getBlockState(pos.offset(side)).getBlock();
-            state = state.withProperty(CONNECTED_MAP.get(side), block instanceof BlockFrame || block instanceof BlockQuarry);
+            state = state.with(CONNECTED_MAP.get(side), block instanceof BlockFrame || block instanceof BlockQuarry);
         }
         return state;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public RenderLayer getBlockLayer() {
-        return RenderLayer.CUTOUT;
+        return RenderLayer.getCutout();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean shouldSideBeRendered(BlockState state, BlockView world, BlockPos pos, Direction side) {
         BlockState actualState = state.getActualState(world, pos);
         Direction[] facings = CONNECTED_MAP.keySet().stream()
@@ -85,7 +86,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Box getBoundingBox(BlockState state, BlockView world, BlockPos pos) {
         BlockState actualState = state.getActualState(world, pos);
         AtomicReference<Box> box = new AtomicReference<>(BASE_AABB);
@@ -97,7 +98,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
         return box.get();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, Box entityBox, List<Box> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
         BlockState actualState = state.getActualState(world, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, BASE_AABB);
@@ -107,7 +108,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
                 .forEach(box -> addCollisionBoxToList(pos, entityBox, collidingBoxes, box));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public List<ItemStack> getDrops(BlockView world, BlockPos pos, BlockState state, int fortune) {
         return Collections.emptyList();
     }

@@ -6,8 +6,10 @@
 package buildcraft.core.item;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.font.TextRenderer;
@@ -48,23 +50,23 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         setHasSubtypes(true);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> subItems) {
         for (int i = 0; i < 17; i++) {
-            subItems.add(new ItemStack(this, 1, i));
+            subItems.add(new ItemStack(this, 1));
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         addVariant(variants, 0, "clean");
         for (DyeColor colour : DyeColor.values()) {
-            addVariant(variants, colour.getMetadata() + 1, colour.getName());
+            addVariant(variants, colour.getId() + 1, colour.getName());
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = StackUtil.asNonNull(player.getStackInHand(hand));
         Brush brush = new Brush(stack);
@@ -85,7 +87,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         return new Brush(stack);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getItemStackDisplayName(ItemStack stack) {
         Brush brush = getBrushFromStack(stack);
         String colourComponent = "";
@@ -95,41 +97,41 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         return colourComponent + super.getItemStackDisplayName(stack);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public TextRenderer getFontRenderer(ItemStack stack) {
         return SpecialColourFontRenderer.INSTANCE;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getDamage(ItemStack stack) {
         Brush brush = new Brush(stack);
         return MAX_USES - brush.usesLeft;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void setDamage(ItemStack stack, int damage) {
         // Explicitly disallow this- some core use cases mistake this for metadata and fail
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isDamaged(ItemStack stack) {
         Brush brush = new Brush(stack);
         return brush.colour != null && brush.usesLeft < MAX_USES;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean showDurabilityBar(ItemStack stack) {
         return isDamaged(stack);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public double getDurabilityForDisplay(ItemStack stack) {
         Brush brush = new Brush(stack);
         return 1 - (brush.usesLeft / (double) MAX_USES);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getMetadata(ItemStack stack) {
         return super.getDamage(stack);
     }
@@ -145,10 +147,10 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         }
 
         public Brush(ItemStack stack) {
-            int meta = stack.getMetadata();
+            int meta = stack.getId();
             if (meta > 0 && meta <= 16) {
-                colour = DyeColor.byMetadata(meta - 1);
-                NbtCompound nbt = stack.getTagCompound();
+                colour = DyeColor.byId(meta - 1);
+                NbtCompound nbt = stack.getNbt();
                 if (nbt == null) {
                     usesLeft = MAX_USES;
                 } else {
@@ -167,11 +169,11 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         @Nonnull
         public ItemStack save(@Nonnull ItemStack existing) {
             ItemStack stack = existing;
-            if (existing.isEmpty() || existing.getMetadata() != getMeta()) {
-                stack = new ItemStack(ItemPaintbrush_BC8.this, 1, getMeta());
+            if (existing.isEmpty() || existing.getId() != getMeta()) {
+                stack = new ItemStack(ItemPaintbrush_BC8.this, 1);
             }
             if (usesLeft != MAX_USES && colour != null) {
-                NbtCompound nbt = stack.getTagCompound();
+                NbtCompound nbt = stack.getNbt();
                 if (nbt == null) {
                     nbt = new NbtCompound();
                     stack.setTagCompound(nbt);
@@ -182,7 +184,7 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         }
 
         public int getMeta() {
-            return (usesLeft <= 0 || colour == null) ? 0 : colour.getMetadata() + 1;
+            return (usesLeft <= 0 || colour == null) ? 0 : colour.getId() + 1;
         }
 
         public boolean useOnBlock(World world, BlockPos pos, BlockState state, Vec3d hitPos, Direction side, PlayerEntity player) {

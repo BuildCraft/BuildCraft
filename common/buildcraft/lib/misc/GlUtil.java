@@ -24,15 +24,15 @@ public class GlUtil {
     public static void saveDepthBuffer() {
         MinecraftClient.getInstance().getProfiler().push("Save depth buffer");
         depthBuffer = BufferUtils.createByteBuffer(
-            MinecraftClient.getInstance().displayWidth
-                * MinecraftClient.getInstance().displayHeight
+            MinecraftClient.getInstance().getWindow().getWidth()
+                * MinecraftClient.getInstance().getWindow().getHeight()
                 * Float.BYTES
         );
         GL11.glReadPixels(
             0,
             0,
-            MinecraftClient.getInstance().displayWidth,
-            MinecraftClient.getInstance().displayHeight,
+            MinecraftClient.getInstance().getWindow().getWidth(),
+            MinecraftClient.getInstance().getWindow().getHeight(),
             GL11.GL_DEPTH_COMPONENT,
             GL11.GL_FLOAT,
             depthBuffer
@@ -46,8 +46,8 @@ public class GlUtil {
         GL11.glRasterPos2i(0, 0);
         GL14.glWindowPos2i(0, 0);
         GL11.glDrawPixels(
-            MinecraftClient.getInstance().displayWidth,
-            MinecraftClient.getInstance().displayHeight,
+            MinecraftClient.getInstance().getWindow().getWidth(),
+            MinecraftClient.getInstance().getWindow().getHeight(),
             GL11.GL_DEPTH_COMPONENT,
             GL11.GL_FLOAT,
             depthBuffer

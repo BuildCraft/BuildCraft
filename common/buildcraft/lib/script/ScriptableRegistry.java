@@ -28,7 +28,6 @@ import com.google.gson.JsonSyntaxException;
 
 import org.apache.commons.io.IOUtils;
 
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.Identifier;
 
 import net.minecraftforge.fml.common.Loader;
@@ -336,7 +335,7 @@ public class ScriptableRegistry<E> extends SimpleReloadableRegistry<E> implement
     private void loadReloadable(Identifier name, Gson gson, JsonObject json) throws JsonSyntaxException {
         String type = "";
         if (json.has("type")) {
-            type = JsonUtils.getString(json, "type");
+            type = json.get("type").getAsString();
         }
         IEntryDeserializer<? extends E> deserializer = getCustomDeserializers().get(type);
         if (deserializer != null) {

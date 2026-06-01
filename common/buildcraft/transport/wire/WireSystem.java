@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
 //   PacketByteBuf          → PacketByteBuf        BlockEntity     → BlockEntity   Direction → Direction
 //   DyeColor          → DyeColor             ServerWorld    → ServerWorld
 //   world.getTileEntity   → world.getBlockEntity     Direction.getFront(i) → Direction.byId(i)
-//   color.getMetadata()   → color.getId()        emitterSide.getIndex() → emitterSide.getId()
+//   color.getId()   → color.getId()        emitterSide.getIndex() → emitterSide.getId()
 //   NbtElement.COMPOUND_TYPE → NbtElement.COMPOUND_TYPE
 //   MessageUtil.read/writeBlockPos → PacketByteBuf native readBlockPos()/writeBlockPos()
 import net.minecraft.block.entity.BlockEntity;
@@ -152,7 +152,7 @@ public final class WireSystem {
 
             if (!walked.contains(element)) {
                 if (!holdersCache.containsKey(element.blockPos)) {
-                    BlockEntity tile = wireSystems.world.getBlockEntity(element.blockPos);
+                    BlockEntity tile = wireSystems.getWorld().getBlockEntity(element.blockPos);
                     IPipeHolder holder = null;
                     if (tile instanceof IPipeHolder) {
                         holder = (IPipeHolder) tile;
@@ -172,7 +172,7 @@ public final class WireSystem {
                             DyeColor colorButFinal = tempColor; //damn you java
                             wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this && wireSystem.color == colorButFinal).forEach(wireSystems::removeWireSystem);
                             elementBuilder.add(element);
-                            queue.addAll(getConnectedElementsOfElement(wireSystems.world, element));
+                            queue.addAll(getConnectedElementsOfElement(wireSystems.getWorld(), element));
                             Arrays.stream(Direction.values()).forEach(side -> queue.add(new WireElement(element.blockPos, side)));
                         }
                     } else if (element.type == WireElement.Type.EMITTER_SIDE) {

@@ -24,7 +24,7 @@ public class TriggerEnginePowerStage extends BCStatement implements ITriggerExte
     public final EnumPowerStage stage;
 
     public TriggerEnginePowerStage(EnumPowerStage stage) {
-        super("buildcraft:engine.stage." + stage.getName());
+        super("buildcraft:engine.stage." + stage.asString());
         this.stage = stage;
     }
 
@@ -34,7 +34,7 @@ public class TriggerEnginePowerStage extends BCStatement implements ITriggerExte
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.engine." + stage.getName());
+        return LocaleUtil.localize("gate.trigger.engine." + stage.asString());
     }
 
     @Override

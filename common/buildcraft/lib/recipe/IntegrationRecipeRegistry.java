@@ -8,6 +8,7 @@ package buildcraft.lib.recipe;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 

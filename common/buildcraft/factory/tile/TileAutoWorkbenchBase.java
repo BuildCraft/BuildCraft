@@ -27,6 +27,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerFiltered;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()       → tick() + static ticker()

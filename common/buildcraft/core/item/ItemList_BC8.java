@@ -6,17 +6,18 @@
 package buildcraft.core.item;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringUtils;
@@ -43,26 +44,26 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
         setMaxStackSize(1);
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
         BCCoreGuis.LIST.openGUI(player);
         return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         addVariant(variants, 0, "clean");
         addVariant(variants, 1, "used");
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getMetadata(ItemStack stack) {
         return ListHandler.hasItems(StackUtil.asNonNull(stack)) ? 1 : 0;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public void addInformation(ItemStack stack, World world, List<String> tooltip, TooltipContext flag) {
         String name = getName(StackUtil.asNonNull(stack));

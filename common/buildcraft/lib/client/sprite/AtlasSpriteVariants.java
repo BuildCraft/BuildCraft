@@ -31,7 +31,7 @@ import buildcraft.lib.misc.SpriteUtil;
 /** A type of {@link AtlasSpriteSwappable} that will switch between multiple different */
 public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReloadable {
     public static final IVariantType VARIANT_COLOUR_BLIND =
-        loc -> ImmutableList.of(loc, new Identifier(loc.getResourceDomain(), loc.getResourcePath() + "_cb"));
+        loc -> ImmutableList.of(loc, new Identifier(loc.getNamespace(), loc.getPath() + "_cb"));
     public static final IntSupplier INDEX_COLOUR_BLIND = () -> BCLibConfig.colourBlindMode ? 1 : 0;
 
     private final List<Identifier> variantNames;
@@ -62,7 +62,7 @@ public class AtlasSpriteVariants extends AtlasSpriteSwappable implements IReload
     }
 
     public static Sprite createForConfig(Identifier baseName) {
-        if (baseName.getResourceDomain().startsWith("minecraft")) {
+        if (baseName.getNamespace().startsWith("minecraft")) {
             // Vanilla sprites never have colourblind variants, so don't bother
             // This is mostly just a fix for optifine compat as this shouldn't be a problem normally.
             return makeAtlasSprite(baseName);

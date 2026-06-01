@@ -50,7 +50,7 @@ public class SchematicBlockManager {
                 .name
                 .toString()
         );
-        schematicBlockTag.put("data", schematicBlock.serializeNBT());
+        schematicBlockTag.put("data", schematicBlock.createNbt());
         return schematicBlockTag;
     }
 

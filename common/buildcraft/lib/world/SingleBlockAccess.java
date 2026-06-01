@@ -26,12 +26,12 @@ public class SingleBlockAccess implements BlockView {
         this.state = state;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockEntity getTileEntity(BlockPos pos) {
         return null;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getCombinedLight(BlockPos pos, int lightValue) {
         return lightValue << 4;
     }
@@ -42,26 +42,36 @@ public class SingleBlockAccess implements BlockView {
     }
 
     @Override
+    public net.minecraft.fluid.FluidState getFluidState(BlockPos pos) {
+        return getBlockState(pos).getFluidState();
+    }
+
+    @Override
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        return null;
+    }
+
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isAirBlock(BlockPos pos) {
         return getBlockState(pos).getBlock().isAir(state, this, pos);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Biome getBiome(BlockPos pos) {
         return Biomes.PLAINS;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getStrongPower(BlockPos pos, Direction direction) {
         return 0;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public WorldType getWorldType() {
         return WorldType.DEBUG_ALL_BLOCK_STATES;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
         if (POS.equals(pos)) {
             return _default;

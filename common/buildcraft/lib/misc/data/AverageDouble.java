@@ -56,7 +56,8 @@ public class AverageDouble implements INBTSerializable<NbtCompound> {
         tickValue += value;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         NbtCompound nbt = new NbtCompound();
         nbt.putInt("pos", pos);

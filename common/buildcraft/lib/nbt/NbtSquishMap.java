@@ -9,13 +9,8 @@ package buildcraft.lib.nbt;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TFloatArrayList;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.list.array.TShortArrayList;
 
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtByte;
@@ -42,16 +37,16 @@ public class NbtSquishMap {
 
     // I'm not completely convinced that this one is necessary.
     // However it completes the set so, meh
-    final TByteArrayList bytes = new TByteArrayList();
+    final ArrayList<Byte> bytes = new ArrayList<Byte>();
 
-    final TShortArrayList shorts = new TShortArrayList();
-    final TIntArrayList ints = new TIntArrayList();
-    final TLongArrayList longs = new TLongArrayList();
-    final TFloatArrayList floats = new TFloatArrayList();
-    final TDoubleArrayList doubles = new TDoubleArrayList();
+    final ArrayList<Short> shorts = new ArrayList<Short>();
+    final ArrayList<Integer> ints = new ArrayList<Integer>();
+    final ArrayList<Long> longs = new ArrayList<Long>();
+    final ArrayList<Float> floats = new ArrayList<Float>();
+    final ArrayList<Double> doubles = new ArrayList<Double>();
 
-    final List<TByteArrayList> byteArrays = new ArrayList<>();
-    final List<TIntArrayList> intArrays = new ArrayList<>();
+    final List<ArrayList<Byte>> byteArrays = new ArrayList<>();
+    final List<ArrayList<Integer>> intArrays = new ArrayList<>();
 
     final List<String> strings = new ArrayList<>();
     final List<NbtElement> complex = new ArrayList<>();
@@ -96,20 +91,20 @@ public class NbtSquishMap {
             }
         } else if (nbt instanceof NbtByteArray) {
             byte[] val = ((NbtByteArray) nbt).getByteArray();
-            TByteArrayList array = new TByteArrayList(val);
+            ArrayList<Byte> array = new ArrayList<Byte>(val);
             if (!byteArrays.contains(array)) {
                 byteArrays.add(array);
             }
         } else if (nbt instanceof NbtIntArray) {
             int[] val = ((NbtIntArray) nbt).getIntArray();
-            TIntArrayList array = new TIntArrayList(val);
+            ArrayList<Integer> array = new ArrayList<Integer>(val);
             if (!intArrays.contains(array)) {
                 intArrays.add(array);
             }
         } else if (nbt instanceof NbtList) {
             NbtList list = (NbtList) nbt;
             if (!complex.contains(list)) {
-                for (int i = 0; i < list.tagCount(); i++) {
+                for (int i = 0; i < list.size(); i++) {
                     addTag(list.get(i));
                 }
                 complex.add(list);
@@ -164,14 +159,14 @@ public class NbtSquishMap {
         }
         if (nbt instanceof NbtByteArray) {
             byte[] val = ((NbtByteArray) nbt).getByteArray();
-            TByteArrayList array = new TByteArrayList(val);
+            ArrayList<Byte> array = new ArrayList<Byte>(val);
             return offset + byteArrays.indexOf(array);
         } else {
             offset += byteArrays.size();
         }
         if (nbt instanceof NbtIntArray) {
             int[] val = ((NbtIntArray) nbt).getIntArray();
-            TIntArrayList array = new TIntArrayList(val);
+            ArrayList<Integer> array = new ArrayList<Integer>(val);
             return offset + intArrays.indexOf(array);
         } else {
             offset += intArrays.size();
@@ -204,7 +199,7 @@ public class NbtSquishMap {
         index -= shorts.size();
 
         if (index < ints.size()) {
-            return new NbtInt(ints.get(index));
+            return NbtInt.of(ints.get(index));
         }
         index -= ints.size();
 
@@ -224,12 +219,15 @@ public class NbtSquishMap {
         index -= doubles.size();
 
         if (index < byteArrays.size()) {
-            return new NbtByteArray(byteArrays.get(index).toArray());
+            ArrayList<Byte> src = byteArrays.get(index);
+            byte[] arr = new byte[src.size()];
+            for (int i = 0; i < src.size(); i++) arr[i] = src.get(i);
+            return new NbtByteArray(arr);
         }
         index -= byteArrays.size();
 
         if (index < intArrays.size()) {
-            return new NbtIntArray(intArrays.get(index).toArray());
+            return new NbtIntArray(intArrays.get(index).stream().mapToInt(Integer::intValue).toArray());
         }
         index -= intArrays.size();
 

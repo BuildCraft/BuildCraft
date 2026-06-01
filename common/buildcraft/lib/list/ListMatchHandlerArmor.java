@@ -7,6 +7,7 @@
 package buildcraft.lib.list;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 

@@ -153,13 +153,13 @@ public abstract class GuideChapter extends GuidePart {
         IFontRenderer font = gui.getCurrentFont();
         String text = chapter.text;
         float hoverWidth = getHoverWidth(partialTicks);
-        float width = font.getStringWidth(text) + hoverWidth;
+        float width = font.getWidth(text) + hoverWidth;
         int colour = getColour();
 
         int baseY = drawCentral ? ((int) GuiGuide.FLOATING_CHAPTER_MENU.getY() + 6) : gui.minY;
         int y = baseY + (font.getMaxFontHeight() + 8) * (yIndex + 1);
         boolean hasChildren = !children.isEmpty();
-        float _width = font.getStringWidth(text) + 12 + hoverWidth + (hasChildren ? 16 : 0);
+        float _width = font.getWidth(text) + 12 + hoverWidth + (hasChildren ? 16 : 0);
         int fullHeight = font.getFontHeight(text) + 6;
         int childHeight = 0;
 
@@ -260,7 +260,7 @@ public abstract class GuideChapter extends GuidePart {
         String text = chapter.text;
         float hoverWidth = getHoverWidth(0);
         final float realHoverWidth = hoverWidth;
-        int width = (int) (font.getStringWidth(text) + hoverWidth) + (children.isEmpty() ? 0 : 16);
+        int width = (int) (font.getWidth(text) + hoverWidth) + (children.isEmpty() ? 0 : 16);
 
         int chapterIndex = 0;
 

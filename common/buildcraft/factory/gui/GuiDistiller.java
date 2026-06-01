@@ -11,7 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
 import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
 import net.minecraft.util.Identifier;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IRefineryRecipeManager.IDistillationRecipe;
@@ -25,6 +25,7 @@ import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.RenderUtil;
 
 import buildcraft.factory.container.ContainerDistiller;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 public class GuiDistiller extends GuiBC8<ContainerDistiller> {
     private static final Identifier TEXTURE_BASE
@@ -88,15 +89,15 @@ public class GuiDistiller extends GuiBC8<ContainerDistiller> {
         );
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
 
         boolean isOn = container.tile.isActive();
 
-        FluidStack currentInput = container.tile.tankIn.getFluidForRender();
-        FluidStack currentGas = container.tile.tankGasOut.getFluidForRender();
-        FluidStack currentLiquid = container.tile.tankLiquidOut.getFluidForRender();
+        FluidStackBC currentInput = container.tile.tankIn.getFluidForRender();
+        FluidStackBC currentGas = container.tile.tankGasOut.getFluidForRender();
+        FluidStackBC currentLiquid = container.tile.tankLiquidOut.getFluidForRender();
 
         if (isOn) {
 
@@ -261,15 +262,15 @@ public class GuiDistiller extends GuiBC8<ContainerDistiller> {
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.distiller.name");
         double titleX = mainGui.rootElement.getX() + 6;
         double titleY = mainGui.rootElement.getY() + 6;
-        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), str, (int) titleX, (int) titleY, 0x404040);
 
         double invX = mainGui.rootElement.getX() + 8;
         double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
+        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), LocaleUtil.localize("gui.getInventory()"), (int) invX, (int) invY, 0x404040);
     }
 }

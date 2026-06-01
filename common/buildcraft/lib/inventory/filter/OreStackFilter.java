@@ -8,13 +8,15 @@ package buildcraft.lib.inventory.filter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.recipes.StackDefinition;
@@ -32,14 +34,14 @@ public class OreStackFilter implements IStackFilter {
 
     @Override
     public boolean matches(@Nonnull ItemStack stack) {
-        int[] ids = OreDictionary.getOreIDs(stack);
+        int[] ids = OreDictionaryStub.getOreIDs(stack);
 
         if (ids.length == 0) {
             return false;
         }
 
         for (String ore : ores) {
-            int expected = OreDictionary.getOreID(ore);
+            int expected = OreDictionaryStub.getOreID(ore);
 
             for (int id : ids) {
                 if (id == expected) {
@@ -53,7 +55,7 @@ public class OreStackFilter implements IStackFilter {
 
     @Override
     public DefaultedList<ItemStack> getExamples() {
-        return Arrays.stream(ores).map(OreDictionary::getOres).flatMap(Collection::stream).distinct().collect(StackUtil.nonNullListCollector());
+        return Arrays.stream(ores).map(OreDictionaryStub::getOres).flatMap(Collection::stream).distinct().collect(StackUtil.nonNullListCollector());
     }
 
     public static StackDefinition definition(int count, String... ores) {

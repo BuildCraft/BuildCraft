@@ -108,14 +108,14 @@ public class BCLib {
         BuildCraftObjectCaches.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
 
-        MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
-        MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(FluidManager.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(FluidManager.class);
 
-        // Set max chunk limit for quarries: 1 chunk for quarry itself and 5 * 5 chunks square for working area
-        ForgeChunkManager.getConfig().get(MODID, "maximumChunksPerTicket", 26);
-        ForgeChunkManager.syncConfigDefaults();
-        ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
+        // STUB(R.Chen): ForgeChunkManager replaced by ChunkLoaderManager (Fabric forced chunks)
+        // ForgeChunkManager.getConfig().get(MODID, "maximumChunksPerTicket", 26);
+        // ForgeChunkManager.syncConfigDefaults();
+        // ForgeChunkManager.setForcedChunkLoadingCallback(BCLib.INSTANCE, ChunkLoaderManager::rebindTickets);
     }
 
     public static Error throwBadClass(Error e, Class<?> cls) throws Error {

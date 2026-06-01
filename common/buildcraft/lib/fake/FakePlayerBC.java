@@ -18,7 +18,7 @@ public class FakePlayerBC extends FakePlayer {
         super(world, name);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void openEditSign(TileEntitySign signTile) {
         // TODO: Put this in forge!
     }

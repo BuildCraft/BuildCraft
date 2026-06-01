@@ -21,6 +21,7 @@ import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import net.minecraft.block.BlockSoundGroup;
 
 public class BlockDecoration extends BlockBCBase_Neptune {
     public static final Property<EnumDecoratedBlock> DECORATED_TYPE = BuildCraftProperties.DECORATED_BLOCK;

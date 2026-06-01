@@ -40,17 +40,17 @@ public class VanillaPaintHandlers {
                 if (to == null) {
                     return ActionResult.FAIL;
                 }
-                BlockState painted = dyed.getDefaultState().withProperty(colourProp, to);
+                BlockState painted = dyed.getDefaultState().with(colourProp, to);
                 world.setBlockState(pos, painted);
                 return ActionResult.SUCCESS;
             } else if (state.getBlock() == dyed) {
-                if (to == state.getValue(colourProp)) {
+                if (to == state.get(colourProp)) {
                     return ActionResult.FAIL;
                 }
                 if (to == null) {
                     state = clear.getDefaultState();
                 } else {
-                    state = state.withProperty(colourProp, to);
+                    state = state.with(colourProp, to);
                 }
                 world.setBlockState(pos, state);
                 return ActionResult.SUCCESS;

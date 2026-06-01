@@ -37,7 +37,7 @@ public final class GuideGroupSet {
     }
 
     public String getTitle(GroupDirection dir) {
-        String post = group.getResourceDomain() + "." + group.getResourcePath();
+        String post = group.getNamespace() + "." + group.getPath();
         return LocaleUtil.localize(dir.localePrefix + post);
     }
 

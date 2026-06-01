@@ -5,8 +5,9 @@
 package buildcraft.factory.item;
 
 import java.util.Locale;
+import java.util.Map;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.DyeColor;
@@ -35,11 +36,11 @@ public class ItemPlastic extends ItemBlockBCMulti {
         return switched;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for (DyeColor colour : DyeColor.values()) {
-            addVariant(variants, colour.getMetadata(), colour.getName());
+            addVariant(variants, colour.getId(), colour.getName());
         }
     }
 }

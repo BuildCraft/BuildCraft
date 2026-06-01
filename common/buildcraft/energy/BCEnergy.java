@@ -6,7 +6,7 @@ package buildcraft.energy;
 
 import java.util.function.Consumer;
 
-import net.minecraftforge.fluids.FluidRegistry;
+import buildcraft.lib.compat.FluidRegistryBC;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -34,7 +34,7 @@ public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
 
     static {
-        FluidRegistry.enableUniversalBucket();
+        FluidRegistryBC.enableUniversalBucket();
     }
 
     @Mod.Instance(MODID)

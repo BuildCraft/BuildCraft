@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 //   Box           → net.minecraft.util.math.Box
 //   World#isRemote          → World#isClient
 //   new BlockPos(Vec3d)     → BlockPos.ofFloored(Vec3d)
-//   player.getEyePos()      replaces getPositionVector().addVector(0, getEyeHeight(), 0)
+//   player.getEyePos()      replaces getPositionVector().add(0, getEyeHeight(), 0)
 //   player.getLookVec()     → player.getRotationVector()
 //   Vec3d.scale()           → Vec3d.multiply()
 //   MapStorage.getOrLoadData → ServerWorld.getPersistentStateManager()
@@ -39,6 +39,7 @@ public class WorldSavedDataVolumeBoxes extends PersistentState {
     private static final String DATA_NAME = "buildcraft_volume_boxes";
 
     public final World world;
+    public World getWorld() { return world; }
     public final List<VolumeBox> volumeBoxes = new ArrayList<>();
 
     public WorldSavedDataVolumeBoxes(World world) {
@@ -72,7 +73,7 @@ public class WorldSavedDataVolumeBoxes extends PersistentState {
                 net.minecraft.util.math.Box oldAabb = vb.box.getBoundingBox();
                 vb.box.reset();
                 vb.box.extendToEncompass(vb.getHeld());
-                // player.getEyePos() replaces getPositionVector().addVector(0, getEyeHeight(), 0)
+                // player.getEyePos() replaces getPositionVector().add(0, getEyeHeight(), 0)
                 BlockPos lookingAt = BlockPos.ofFloored(
                     player.getEyePos()
                         .add(player.getRotationVector().multiply(vb.getDist()))
@@ -100,7 +101,7 @@ public class WorldSavedDataVolumeBoxes extends PersistentState {
     @Override
     public void markDirty() {
         super.markDirty();
-        // TODO(R.Chen): use PlayerLookup.world(serverWorld) for dimension-scoped broadcast once
+        // TODO(R.Chen): use PlayerLookup.getWorld()(serverWorld) for dimension-scoped broadcast once
         // BCNetworkManager exposes a sendToWorld helper; sendToAll is a safe over-send for now.
         if (world instanceof ServerWorld serverWorld) {
             BCNetworkManager.sendToAll(MessageVolumeBoxes.of(volumeBoxes), serverWorld.getServer());

@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 // Yarn 1.20.1 renames:
 //   PlayerEntity         → PlayerEntity
 //   Hand             → Hand
-//   ActionResult<T>      → TypedActionResult<T>
+//   TypedActionResult<T>      → TypedActionResult<T>
 //   ActionResult     → ActionResult   (enum values: PASS, SUCCESS, FAIL, CONSUME)
 //   World#isRemote       → World#isClient
 //   player.getStackInHand() → player.getStackInHand()

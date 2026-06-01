@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
@@ -36,7 +37,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
         Map<ItemStack, ItemStack> recipes, old = FurnaceRecipes.instance().getSmeltingList();
         recipes = new TreeMap<>(Comparator.comparing(ItemStack::getDisplayName));
         recipes.putAll(old);
-        if (stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+        if (stack.getId() == OreDictionaryStub.WILDCARD_VALUE) {
             List<GuidePartFactory> list = new ArrayList<>();
             for (Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
                 if (StackUtil.doesEitherStackMatch(stack, StackUtil.asNonNull(recipe.getValue()))//

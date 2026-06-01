@@ -24,7 +24,7 @@ public class SpriteChanging implements ISprite {
 
     @Override
     public void bindTexture() {
-        MinecraftClient.getInstance().renderEngine.bindTexture(new Identifier(location.get()));
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, new Identifier(location.get()));
     }
 
     @Override

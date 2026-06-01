@@ -44,14 +44,14 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
         "schematicFrom",
         1,
         (slot, stack) -> stack.getItem() instanceof ItemSchematicSingle &&
-            stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED,
+            stack.getDamage() == ItemSchematicSingle.DAMAGE_USED,
         ItemHandlerManager.EnumAccess.NONE
     );
     public final ItemHandlerSimple invSchematicTo = itemManager.addInvHandler(
         "schematicTo",
         1,
         (slot, stack) -> stack.getItem() instanceof ItemSchematicSingle &&
-            stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED,
+            stack.getDamage() == ItemSchematicSingle.DAMAGE_USED,
         ItemHandlerManager.EnumAccess.NONE
     );
 

@@ -35,16 +35,16 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
         markerConnections.clear();
 
         NbtList positionList = (NbtList) nbt.get("positions");
-        for (int i = 0; i < positionList.tagCount(); i++) {
+        for (int i = 0; i < positionList.size(); i++) {
             markerPositions.add(NBTUtilBC.readBlockPos(positionList.get(i)));
         }
 
         NbtList connectionList = (NbtList) nbt.get("connections");
-        for (int i = 0; i < connectionList.tagCount(); i++) {
+        for (int i = 0; i < connectionList.size(); i++) {
             positionList = (NbtList) connectionList.get(i);
             List<BlockPos> inner = new ArrayList<>();
             markerConnections.add(inner);
-            for (int j = 0; j < positionList.tagCount(); j++) {
+            for (int j = 0; j < positionList.size(); j++) {
                 inner.add(NBTUtilBC.readBlockPos(positionList.get(j)));
             }
         }

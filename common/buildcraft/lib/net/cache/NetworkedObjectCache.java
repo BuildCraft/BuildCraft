@@ -11,11 +11,14 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.core.BCDebugging;
@@ -189,8 +192,8 @@ public abstract class NetworkedObjectCache<T> {
             serverIdToObject.put(id, copy);
             if (DEBUG_CPLX) {
                 String toString;
-                if (copy instanceof FluidStack) {
-                    FluidStack fluid = (FluidStack) copy;
+                if (copy instanceof FluidStackBC) {
+                    FluidStackBC fluid = (FluidStackBC) copy;
                     toString = fluid.getUnlocalizedName();
                 } else {
                     toString = copy.toString();
@@ -251,8 +254,8 @@ public abstract class NetworkedObjectCache<T> {
         if (DEBUG_CPLX) {
             T read = link.actual;
             String toString;
-            if (read instanceof FluidStack) {
-                FluidStack fluid = (FluidStack) read;
+            if (read instanceof FluidStackBC) {
+                FluidStackBC fluid = (FluidStackBC) read;
                 toString = fluid.getUnlocalizedName();
             } else {
                 toString = read.toString();

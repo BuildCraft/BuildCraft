@@ -10,6 +10,7 @@ package buildcraft.transport.container;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.Map;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DyeColor;

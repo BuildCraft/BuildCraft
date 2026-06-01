@@ -65,6 +65,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 
 import buildcraft.transport.BCTransportStatements;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 

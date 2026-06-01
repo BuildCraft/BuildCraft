@@ -38,7 +38,7 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
-                addSlotToContainer(new SlotBase(tile.invResources, sx + sy * 9, sx * 18 + 8, sy * 18 + 40));
+                addSlot(new SlotBase(tile.invResources, sx + sy * 9, sx * 18 + 8, sy * 18 + 40));
             }
         }
 
@@ -78,17 +78,17 @@ public class ContainerFiller extends ContainerBCTile<TileFiller> implements ICon
     public void valuesChanged() {
         if (tile.addon != null) {
             tile.addon.updateBuildingInfo();
-            if (!player.world.isClient) {
+            if (!player.getWorld().isClient) {
                 WorldSavedDataVolumeBoxes.get(getPlayer().world).markDirty();
             }
         }
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             tile.onStatementChange();
         }
     }
 
     @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetSide side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         IContainerFilling.super.readMessage(id, buffer, side, ctx);
     }

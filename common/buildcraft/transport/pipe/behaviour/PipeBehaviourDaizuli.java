@@ -27,6 +27,7 @@ import buildcraft.api.transport.pipe.PipeEventItem;
 import buildcraft.api.transport.pipe.PipeEventStatement;
 
 import buildcraft.lib.misc.NBTUtilBC;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
     private DyeColor colour = DyeColor.WHITE;

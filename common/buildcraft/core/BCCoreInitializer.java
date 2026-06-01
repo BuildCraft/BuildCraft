@@ -10,6 +10,7 @@ package buildcraft.core;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import buildcraft.BuildCraftFabric;
 import buildcraft.lib.BCLibInitializer;
@@ -52,7 +53,7 @@ public class BCCoreInitializer implements ModInitializer {
         // STUB(R.Chen): BCCoreBlocks/Items/Statements.preInit() + BCCoreRecipes —
         //               unblock once lib.block / lib.item / lib.registry land.
         // STUB(R.Chen): NetworkRegistry GUI handler — port to ExtendedScreenHandlerType.
-        // STUB(R.Chen): OreDictionary.registerOre("craftingTableWood", ...) — port to
+        // STUB(R.Chen): OreDictionaryStub.registerOre("craftingTableWood", ...) — port to
         //               Fabric item tags (c:crafting_tables / data-driven tag json).
 
         // --- Forge init (BCCore.init) -----------------------------------------

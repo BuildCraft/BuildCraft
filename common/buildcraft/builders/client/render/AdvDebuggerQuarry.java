@@ -27,6 +27,8 @@ import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.debug.DebugRenderHelper;
 
 import buildcraft.builders.tile.TileQuarry;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
     private static final int COLOUR_CHUNK = 0x55_99_FF_99;
@@ -37,7 +39,7 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
         tileReference = new WeakReference<>(tile);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(PlayerEntity player, float partialTicks) {
         TileQuarry tile = tileReference.get();
         if (tile == null || !tile.frameBox.isInitialized()) {
@@ -57,7 +59,7 @@ public class AdvDebuggerQuarry implements DetachedRenderer.IDetachedRenderer {
         );
         RenderSystem.enableBlend();
         BufferBuilder bb = Tessellator.getInstance().getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
         for (ChunkPos chunkPos : chunkPoses) {
             DebugRenderHelper.renderAABB(
                 bb,

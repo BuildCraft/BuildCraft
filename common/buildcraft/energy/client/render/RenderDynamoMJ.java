@@ -14,7 +14,7 @@ import buildcraft.energy.tile.TileDynamoMJ;
 public class RenderDynamoMJ extends FastTESR<TileDynamoMJ> {
     public static final RenderDynamoMJ INSTANCE = new RenderDynamoMJ();
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(
         TileDynamoMJ engine, double x, double y, double z, float partialTicks, int destroyStage, float partial,
         BufferBuilder vb
@@ -24,7 +24,7 @@ public class RenderDynamoMJ extends FastTESR<TileDynamoMJ> {
         profiler.push("engine");
 
         profiler.push("compute");
-        vb.setTranslation(x, y, z);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: vb.setTranslation(x, y, z);
         MutableQuad[] quads = BCEnergyModels.getMjDynamoQuads(engine, partialTicks);
         profiler.swap("render");
         MutableQuad copy = new MutableQuad(0, null);
@@ -37,7 +37,7 @@ public class RenderDynamoMJ extends FastTESR<TileDynamoMJ> {
             copy.multShade();
             copy.render(vb);
         }
-        vb.setTranslation(0, 0, 0);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: vb.setTranslation(0, 0, 0);
 
         profiler.pop();
         profiler.pop();

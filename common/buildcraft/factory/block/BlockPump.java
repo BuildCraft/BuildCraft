@@ -6,7 +6,8 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.World;
 
@@ -16,7 +17,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.factory.tile.TilePump;
 
 public class BlockPump extends BlockBCTile_Neptune {
-    public BlockPump(Material material, String id) {
+    public BlockPump(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

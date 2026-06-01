@@ -15,7 +15,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.Identifier;
 
@@ -81,13 +80,13 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
 
         for (Item item : ForgeRegistries.ITEMS) {
             Identifier regName = item.getRegistryName();
-            if (regName == null || (limitDomains && !domains.contains(regName.getResourceDomain()))) {
+            if (regName == null || (limitDomains && !domains.contains(regName.getNamespace()))) {
                 continue;
             }
             if (!GuideManager.INSTANCE.objectsAdded.add(item)) {
                 continue;
             }
-            DefaultedList<ItemStack> stacks = DefaultedList.create();
+            DefaultedList<ItemStack> stacks = DefaultedList.of();
             prof.push("search");
             item.getSubItems(ItemGroup.SEARCH, stacks);
             prof.swap("itr_search");
@@ -111,7 +110,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 } catch (RuntimeException e) {
                     throw new Error(
                         "Failed to create a page link for " + item.getRegistryName() + " " + item.getClass() + " ("
-                            + stack.serializeNBT() + ")", e
+                            + stack.createNbt() + ")", e
                     );
                 }
             }
@@ -141,7 +140,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
         final ItemStack stack;
         final boolean matchMeta, matchNbt;
         if (jStack.isJsonPrimitive()) {
-            String str = JsonUtils.getString(jStack, "stack");
+            String str = jStack.get("stack").getAsString();
             if (str.startsWith("{") && str.endsWith("}")) {
                 stack = MarkdownPageLoader.loadComplexItemStack(str.substring(1, str.length() - 1));
                 stack.setCount(1);
@@ -202,7 +201,7 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
                 return false;
             }
             if (entry.matchMeta) {
-                if (base.getMetadata() != test.getMetadata()) {
+                if (base.getId() != test.getId()) {
                     return false;
                 }
             }
@@ -229,6 +228,6 @@ public class PageEntryItemStack extends PageValueType<ItemStackValueFilter> {
 
     @Override
     public void addPageEntries(ItemStackValueFilter value, GuiGuide gui, List<GuidePart> parts) {
-        XmlPageLoader.appendAllCrafting(value.stack.baseStack, parts, gui, new Profiler());
+        XmlPageLoader.appendAllCrafting(value.stack.baseStack, parts, gui, net.minecraft.util.profiler.DummyProfiler.INSTANCE);
     }
 }

@@ -23,6 +23,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.tile.TileElectronicLibrary;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLibrary> {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("electronic_library");
@@ -32,11 +33,11 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         super(player, tile);
         addFullPlayerInventory(138);
 
-        addSlotToContainer(new SlotOutput(tile.invDownOut, 0, 175, 57));
-        addSlotToContainer(new SlotBase(tile.invDownIn, 0, 219, 57));
+        addSlot(new SlotOutput(tile.invDownOut, 0, 175, 57));
+        addSlot(new SlotBase(tile.invDownIn, 0, 219, 57));
 
-        addSlotToContainer(new SlotBase(tile.invUpIn, 0, 175, 79));
-        addSlotToContainer(new SlotOutput(tile.invUpOut, 0, 219, 79));
+        addSlot(new SlotBase(tile.invUpIn, 0, 175, 79));
+        addSlot(new SlotOutput(tile.invUpOut, 0, 219, 79));
     }
 
     @Override
@@ -53,10 +54,10 @@ public class ContainerElectronicLibrary extends ContainerBCTile<TileElectronicLi
         });
     }
 
-    @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void readMessage(int id, PacketBufferBC buffer, NetSide side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == ID_SELECTED) {
                 if (buffer.readBoolean()) {
                     tile.selected = new Snapshot.Key(buffer);

@@ -6,7 +6,7 @@
 
 package buildcraft.lib.fluid;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TankProperties implements IFluidTankProperties {
@@ -20,8 +20,8 @@ public class TankProperties implements IFluidTankProperties {
     }
 
     @Override
-    public FluidStack getContents() {
-        FluidStack current = tank.getFluid();
+    public FluidStackBC getContents() {
+        FluidStackBC current = tank.getFluid();
         return current == null ? null : current.copy();
     }
 
@@ -40,13 +40,13 @@ public class TankProperties implements IFluidTankProperties {
         return canDrain;
     }
 
-    @Override
-    public boolean canFillFluidType(FluidStack fluidStack) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean canFillFluidType(FluidStackBC fluidStack) {
         return canFill() && tank.canFillFluidType(fluidStack);
     }
 
-    @Override
-    public boolean canDrainFluidType(FluidStack fluidStack) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean canDrainFluidType(FluidStackBC fluidStack) {
         return canDrain();
     }
 }

@@ -34,7 +34,7 @@ public class ParticleUtil {
         double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;
         double z = pos.getZ() + 0.5 + face.getFrontOffsetZ() * 0.5;
 
-        Vec3d startingMotion = new Vec3d(face.getDirectionVec());
+        Vec3d startingMotion = new Vec3d(face.getDirectionVec().getX(), face.getDirectionVec().getY(), face.getDirectionVec().getZ());
         startingMotion = VecUtil.scale(startingMotion, 0.05);
 
         ParticlePosition nPos = new ParticlePosition(new Vec3d(x, y, z), startingMotion);

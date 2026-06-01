@@ -16,6 +16,8 @@ import net.minecraft.util.math.MathHelper;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.render.VertexFormat;
 
 @Environment(EnvType.CLIENT)
 public class DynamicTextureBC {
@@ -87,7 +89,7 @@ public class DynamicTextureBC {
         float f1 = 1F / heightPow2;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bb = tessellator.getBuffer();
-        bb.begin(GL11.GL_QUADS, bb.getVertexFormat());
+        bb.begin(VertexFormat.DrawMode.QUADS, bb.getVertexFormat());
         vertexUV(bb, screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
         vertexUV(bb, screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
         vertexUV(bb, screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);

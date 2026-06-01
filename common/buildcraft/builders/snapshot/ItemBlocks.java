@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemBlockSpecial;
 
 public class ItemBlocks {
@@ -22,7 +22,7 @@ public class ItemBlocks {
 
     static {
         StreamSupport.stream(Item.REGISTRY.spliterator(), false)
-            .filter(item -> item instanceof ItemBlock || item instanceof ItemBlockSpecial)
+            .filter(item -> item instanceof BlockItem || item instanceof ItemBlockSpecial)
             .forEach(ItemBlocks::add);
         add(
             Items.BED,

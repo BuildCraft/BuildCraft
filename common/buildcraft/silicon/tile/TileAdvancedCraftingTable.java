@@ -21,6 +21,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 /**
  * STUB(R.Chen): IAutoCraft removed; WorkbenchCrafting not in libLeaf — crafting logic deferred

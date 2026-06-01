@@ -70,16 +70,16 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
     public RenderMiningWell() {}
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         MinecraftClient.getInstance().getProfiler().push("bc");
         MinecraftClient.getInstance().getProfiler().push("miner");
 
-        buffer.setTranslation(x, y, z);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(x, y, z);
         Direction facing = Direction.NORTH;
         BlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() == BCFactoryBlocks.miningWell) {
-            facing = state.getValue(BuildCraftProperties.BLOCK_FACING);
+            facing = state.get(BuildCraftProperties.BLOCK_FACING);
         }
 
         final int dX, dZ;
@@ -87,7 +87,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
         if (facing.getAxis() == Axis.X) {
             dX = 0;
-            dZ = facing.getAxisDirection().getOffset();
+            dZ = facing.getDirection().getOffset();
             ledZ = 0.5;
             if (facing == Direction.EAST) {
                 ledX = 15.8 / 16.0;
@@ -95,7 +95,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
                 ledX = 0.2 / 16.0;
             }
         } else {
-            dX = -facing.getAxisDirection().getOffset();
+            dX = -facing.getDirection().getOffset();
             dZ = 0;
             ledX = 0.5;
             if (facing == Direction.SOUTH) {
@@ -130,7 +130,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
         MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileMiningWell tile) {
         return true;
     }

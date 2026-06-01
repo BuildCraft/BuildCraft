@@ -9,10 +9,11 @@ package buildcraft.core.item;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
@@ -22,7 +23,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -54,21 +55,21 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         setHasSubtypes(true);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getItemStackLimit(ItemStack stack) {
         return MapLocationType.getFromStack(StackUtil.asNonNull(stack)) == MapLocationType.CLEAN ? 16 : 1;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for (MapLocationType type : MapLocationType.values()) {
             addVariant(variants, type.meta, type.name().toLowerCase(Locale.ROOT));
         }
     }
 
     @Environment(EnvType.CLIENT)
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void addInformation(ItemStack stack, World world, List<String> strings, TooltipContext flag) {
         stack = StackUtil.asNonNull(stack);
         NbtCompound cpt = NBTUtilBC.getItemData(stack);
@@ -87,7 +88,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int x = cpt.getInt("x");
                     int y = cpt.getInt("y");
                     int z = cpt.getInt("z");
-                    Direction side = Direction.VALUES[cpt.getByte("side")];
+                    Direction side = Direction.values()[cpt.getByte("side")];
 
                     strings.add(LocaleUtil.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
                 }
@@ -113,11 +114,11 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                 if (cpt.contains("path")) {
                     NbtList pathNBT = (NbtList) cpt.get("path");
 
-                    if (pathNBT.tagCount() > 0) {
+                    if (pathNBT.size() > 0) {
                         BlockPos first = NBTUtilBC.readBlockPos(pathNBT.get(0));
                         if (first != null) {
                             strings.add("{"+
-                                StringUtilBC.blockPosToString(first) + "}, (+" + (pathNBT.tagCount() - 1) + " elements)");
+                                StringUtilBC.blockPosToString(first) + "}, (+" + (pathNBT.size() - 1) + " elements)");
                         }
                     }
                 }
@@ -132,21 +133,21 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         if (world.isClient) {
-            return new ActionResult<>(ActionResult.PASS, stack);
+            return TypedActionResult.pass(stack);
         }
         if (player.isSneaking()) {
             return clearMarkerData(StackUtil.asNonNull(stack));
         }
-        return new ActionResult<>(ActionResult.PASS, stack);
+        return TypedActionResult.pass(stack);
     }
 
-    private static ActionResult<ItemStack> clearMarkerData(@Nonnull ItemStack stack) {
+    private static TypedActionResult<ItemStack> clearMarkerData(@Nonnull ItemStack stack) {
         if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
-            return new ActionResult<>(ActionResult.PASS, stack);
+            return TypedActionResult.pass(stack);
         }
         NbtCompound nbt = NBTUtilBC.getItemData(stack);
         for (String key : STORAGE_TAGS) {
@@ -156,10 +157,10 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             stack.setTagCompound(null);
         }
         MapLocationType.CLEAN.setToStack(stack);
-        return new ActionResult<>(ActionResult.SUCCESS, stack);
+        return TypedActionResult.success(stack);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ActionResult onItemUseFirst(PlayerEntity player, World world, BlockPos pos, Direction side, float hitX,
         float hitY, float hitZ, Hand hand) {
         if (world.isClient) {
@@ -259,7 +260,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
 
     public static Direction getPointFace(@Nonnull ItemStack stack) {
         NbtCompound cpt = NBTUtilBC.getItemData(stack);
-        return Direction.VALUES[cpt.getByte("side")];
+        return Direction.values()[cpt.getByte("side")];
     }
 
     @Override
@@ -285,7 +286,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         MapLocationType type = MapLocationType.getFromStack(item);
 
         if (type == MapLocationType.SPOT) {
-            return Direction.VALUES[cpt.getByte("side")];
+            return Direction.values()[cpt.getByte("side")];
         } else {
             return null;
         }
@@ -335,7 +336,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             case PATH_REPEATING: {
                 List<BlockPos> indexList = new ArrayList<>();
                 NbtList pathNBT = (NbtList) cpt.get("path");
-                for (int i = 0; i < pathNBT.tagCount(); i++) {
+                for (int i = 0; i < pathNBT.size(); i++) {
                     BlockPos pos = NBTUtilBC.readBlockPos(pathNBT.get(i));
                     if (pos != null) {
                         indexList.add(pos);

@@ -99,7 +99,7 @@ public class StatementParameterDirection implements IStatementParameter {
 //    @Override
     public void readFromNBT(NbtCompound nbt) {
         if (nbt.contains("direction")) {
-            direction = Direction.VALUES[nbt.getByte("direction")];
+            direction = Direction.values()[nbt.getByte("direction")];
         } else {
             direction = null;
         }

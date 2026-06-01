@@ -14,13 +14,14 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -47,7 +48,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
 
     public MarkerSubCache(World world, int cacheId) {
         this.isServer = !world.isClient;
-        this.dimensionId = world.provider.getDimension();
+        this.dimensionId = System.identityHashCode(world);
         this.cacheId = cacheId;
     }
 

@@ -7,6 +7,7 @@
 package buildcraft.lib.misc.data;
 
 import java.util.AbstractList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 

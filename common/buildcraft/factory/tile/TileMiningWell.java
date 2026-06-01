@@ -39,7 +39,7 @@ public class TileMiningWell extends TileMiner {
 
     // STUB(R.Chen): IWorldEventListener (WorldEventListenerAdapter) not yet migrated.
     // The Fabric WorldEventListener interface requires many method implementations;
-    // WorldEventListenerAdapter will be ported in a dedicated lib.world pass.
+    // WorldEventListenerAdapter will be ported in a dedicated lib.getWorld() pass.
     // Until then, shouldCheck is set only via the SafeTimeTracker polling path below.
 
     public TileMiningWell(BlockEntityType<?> type, BlockPos pos, BlockState state) {

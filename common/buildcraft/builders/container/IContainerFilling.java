@@ -23,6 +23,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.statement.FullStatement;
 
 import buildcraft.builders.filler.FillerType;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public interface IContainerFilling {
     PlayerEntity getPlayer();
@@ -67,8 +68,8 @@ public interface IContainerFilling {
         sendData();
     }
 
-    default void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        if (side == EnvType.SERVER) {
+    default void readMessage(int id, PacketBufferBC buffer, NetSide side, MessageContext ctx) throws IOException {
+        if (side == NetSide.SERVER) {
             if (id == ContainerBC_Neptune.NET_DATA) {
                 if (isLocked()) {
                     new FullStatement<>(
@@ -84,7 +85,7 @@ public interface IContainerFilling {
                 valuesChanged();
                 sendData();
             }
-        } else if (side == EnvType.CLIENT) {
+        } else if (side == NetSide.CLIENT) {
             if (id == ContainerBC_Neptune.NET_DATA) {
                 getPatternStatement().readFromBuffer(buffer);
                 setInverted(buffer.readBoolean());

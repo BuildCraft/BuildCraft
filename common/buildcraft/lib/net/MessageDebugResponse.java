@@ -28,7 +28,7 @@ public class MessageDebugResponse implements IMessage {
         this.right.addAll(right);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         buf.writeInt(left.size());
@@ -37,7 +37,7 @@ public class MessageDebugResponse implements IMessage {
         right.forEach(buf::writeString);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         IntStream.range(0, buf.readInt())

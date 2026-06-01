@@ -45,6 +45,7 @@ import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemSnapshot;
 import buildcraft.builders.snapshot.GlobalSavedDataSnapshots;
 import buildcraft.builders.snapshot.Snapshot;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("library");
@@ -91,7 +92,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     public final DeltaInt deltaProgressUp = deltaManager.addDelta("progressUp", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
     private final Map<Pair<UUID, Snapshot.Key>, List<byte[]>> upSnapshotsParts = new HashMap<>();
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invDownIn) {
@@ -163,9 +164,9 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     // 3. server adds snapshot to its database
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(selected != null);
                 if (selected != null) {
@@ -199,9 +200,9 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
                     selected = new Snapshot.Key(buffer);
@@ -265,7 +266,7 @@ public class TileElectronicLibrary extends TileBC_Neptune implements ITickable {
                 }
             }
         }
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_UP) {
                 UUID playerId = buffer.readUniqueId();
                 Snapshot.Key key = new Snapshot.Key(buffer);

@@ -13,17 +13,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TFloatArrayList;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.list.array.TShortArrayList;
-import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.set.hash.TIntHashSet;
+import java.util.HashMap;
+import java.util.HashSet;
 
-import net.minecraft.init.Bootstrap;
+// STUB: Bootstrap removed in 1.20
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -64,14 +60,14 @@ class NbtSquishMapWriter {
 
         type.writeType(to);
 
-        TByteArrayList bytes = map.bytes;
-        TShortArrayList shorts = map.shorts;
-        TIntArrayList ints = map.ints;
-        TLongArrayList longs = map.longs;
-        TFloatArrayList floats = map.floats;
-        TDoubleArrayList doubles = map.doubles;
-        List<TByteArrayList> byteArrays = map.byteArrays;
-        List<TIntArrayList> intArrays = map.intArrays;
+        ArrayList<Byte> bytes = map.bytes;
+        ArrayList<Short> shorts = map.shorts;
+        ArrayList<Integer> ints = map.ints;
+        ArrayList<Long> longs = map.longs;
+        ArrayList<Float> floats = map.floats;
+        ArrayList<Double> doubles = map.doubles;
+        List<ArrayList<Byte>> byteArrays = map.byteArrays;
+        List<ArrayList<Integer>> intArrays = map.intArrays;
         List<String> strings = map.strings;
         List<NbtElement> complex = map.complex;
 
@@ -93,54 +89,54 @@ class NbtSquishMapWriter {
         profiler.swap("bytes");
         if (!bytes.isEmpty()) {
             if (debug) log("\nByte dictionary size = " + bytes.size());
-            if (sort) bytes.sort();
+            if (sort) Collections.sort(bytes);
             writeVarInt(to, bytes.size());
-            for (byte b : bytes.toArray()) {
+            for (byte b : bytes) {
                 to.writeByte(b);
             }
         }
         profiler.swap("shorts");
         if (!shorts.isEmpty()) {
             if (debug) log("\nShort dictionary size = " + shorts.size());
-            if (sort) shorts.sort();
+            if (sort) Collections.sort(shorts);
             writeVarInt(to, shorts.size());
-            for (short s : shorts.toArray()) {
+            for (short s : shorts) {
                 to.writeShort(s);
             }
         }
         profiler.swap("integers");
         if (!ints.isEmpty()) {
             if (debug) log("\nInt dictionary size = " + ints.size());
-            if (sort) ints.sort();
+            if (sort) Collections.sort(ints);
             writeVarInt(to, ints.size());
-            for (int i : ints.toArray()) {
+            for (int i : ints) {
                 to.writeInt(i);
             }
         }
         profiler.swap("longs");
         if (!longs.isEmpty()) {
             if (debug) log("\nLong dictionary size = " + longs.size());
-            if (sort) longs.sort();
+            if (sort) Collections.sort(longs);
             writeVarInt(to, longs.size());
-            for (long l : longs.toArray()) {
+            for (long l : longs) {
                 to.writeLong(l);
             }
         }
         profiler.swap("floats");
         if (!floats.isEmpty()) {
             if (debug) log("\nFloat dictionary size = " + floats.size());
-            if (sort) floats.sort();
+            if (sort) Collections.sort(floats);
             writeVarInt(to, floats.size());
-            for (float f : floats.toArray()) {
+            for (float f : floats) {
                 to.writeFloat(f);
             }
         }
         profiler.swap("doubles");
         if (!doubles.isEmpty()) {
             if (debug) log("\nDouble dictionary size = " + doubles.size());
-            if (sort) doubles.sort();
+            if (sort) Collections.sort(doubles);
             writeVarInt(to, doubles.size());
-            for (double d : doubles.toArray()) {
+            for (double d : doubles) {
                 to.writeDouble(d);
             }
         }
@@ -148,9 +144,9 @@ class NbtSquishMapWriter {
         if (!byteArrays.isEmpty()) {
             if (debug) log("\nByte Array dictionary size = " + byteArrays.size());
             writeVarInt(to, byteArrays.size());
-            for (TByteArrayList ba : byteArrays) {
+            for (ArrayList<Byte> ba : byteArrays) {
                 to.writeShort(ba.size());
-                for (byte b : ba.toArray()) {
+                for (byte b : ba) {
                     to.writeByte(b);
                 }
             }
@@ -159,9 +155,9 @@ class NbtSquishMapWriter {
         if (!intArrays.isEmpty()) {
             if (debug) log("\nInt Array dictionary size = " + intArrays.size());
             writeVarInt(to, intArrays.size());
-            for (TIntArrayList ia : intArrays) {
+            for (ArrayList<Integer> ia : intArrays) {
                 to.writeShort(ia.size());
-                for (int i : ia.toArray()) {
+                for (int i : ia) {
                     to.writeInt(i);
                 }
             }
@@ -208,7 +204,7 @@ class NbtSquishMapWriter {
 
     private void writeList(WrittenType type, NbtList list, DataOutput to) throws IOException {
         boolean pack = shouldPackList(list);
-        if (debug) log("\n  List tag count = " + list.tagCount() + ", writing it " + (pack ? "PACKED" : "NORMAL"));
+        if (debug) log("\n  List tag count = " + list.size() + ", writing it " + (pack ? "PACKED" : "NORMAL"));
         if (pack) {
             writeListPacked(type, to, list);
         } else {
@@ -219,20 +215,20 @@ class NbtSquishMapWriter {
     private boolean shouldPackList(NbtList list) {
         if (packList != null) return packList;
         profiler.push("should_pack");
-        TIntHashSet indexes = new TIntHashSet();
-        for (int i = 0; i < list.tagCount(); i++) {
+        HashSet<Integer> indexes = new HashSet<Integer>();
+        for (int i = 0; i < list.size(); i++) {
             indexes.add(map.indexOfTag(list.get(i)));
         }
         profiler.pop();
-        return indexes.size() * 2 < list.tagCount();
+        return indexes.size() * 2 < list.size();
     }
 
     private void writeCompound(WrittenType type, NbtCompound compound, DataOutput to) throws IOException {
         profiler.push("compound");
         WrittenType stringType = WrittenType.getForSize(map.strings.size());
-        if (debug) log("\n  Compound tag count = " + compound.getSize());
+        if (debug) log("\n  Compound tag count = " + compound.size());
         to.writeByte(NbtSquishConstants.COMPLEX_COMPOUND);
-        writeVarInt(to, compound.getSize());
+        writeVarInt(to, compound.size());
         for (String key : compound.getKeySet()) {
             profiler.push("entry");
             NbtElement nbt = compound.get(key);
@@ -252,11 +248,11 @@ class NbtSquishMapWriter {
     private void writeListNormal(WrittenType type, DataOutput to, NbtList list) throws IOException {
         profiler.push("list_normal");
         to.writeByte(NbtSquishConstants.COMPLEX_LIST);
-        writeVarInt(to, list.tagCount());
-        for (int i = 0; i < list.tagCount(); i++) {
+        writeVarInt(to, list.size());
+        for (int i = 0; i < list.size(); i++) {
             profiler.push("entry");
             if (i % 100 == 0) {
-                if (debug) log("\n   List items " + i + " to " + Math.min(i + 99, list.tagCount()));
+                if (debug) log("\n   List items " + i + " to " + Math.min(i + 99, list.size()));
             }
             profiler.push("index");
             int index = map.indexOfTag(list.get(i));
@@ -272,17 +268,15 @@ class NbtSquishMapWriter {
         to.writeByte(NbtSquishConstants.COMPLEX_LIST_PACKED);
         profiler.push("header");
         profiler.push("init");
-        int[] data = new int[list.tagCount()];
-        TIntIntHashMap indexes = new TIntIntHashMap();
-        for (int i = 0; i < list.tagCount(); i++) {
+        int[] data = new int[list.size()];
+        HashMap<Integer, Integer> indexes = new HashMap<Integer, Integer>();
+        for (int i = 0; i < list.size(); i++) {
             profiler.push("entry");
             profiler.push("index");
             int index = map.indexOfTag(list.get(i));
             profiler.pop();
             data[i] = index;
-            if (!indexes.increment(index)) {
-                indexes.put(index, 1);
-            }
+            indexes.put(index, indexes.getOrDefault(index, 0) + 1);
             profiler.pop();
         }
         // First try to make a simple table
@@ -290,7 +284,7 @@ class NbtSquishMapWriter {
         // First sort the indexes into highest count first
         profiler.swap("sort");
         List<IndexEntry> entries = new ArrayList<>();
-        for (int index : indexes.keys()) {
+        for (int index : indexes.keySet()) {
             int count = indexes.get(index);
             IndexEntry entry = new IndexEntry(index, count);
             entries.add(entry);
@@ -300,7 +294,7 @@ class NbtSquishMapWriter {
         writeVarInt(to, entries.size());
         profiler.swap("write");
 
-        TIntArrayList sortedIndexes = new TIntArrayList();
+        ArrayList<Integer> sortedIndexes = new ArrayList<Integer>();
         int i = 0;
         for (IndexEntry entry : entries) {
             final int j = i;
@@ -314,8 +308,9 @@ class NbtSquishMapWriter {
             i++;
         }
 
-        TIntArrayList nextData = new TIntArrayList();
-        nextData.add(data);
+        ArrayList<Integer> nextData = new ArrayList<Integer>();
+        // TODO(R.Chen): verify Trove→JDK behavior — was add(int[]) for bulk add
+        for (int x : data) nextData.add(x);
         writeVarInt(to, data.length);
         profiler.pop();
         profiler.swap("contents");
@@ -323,10 +318,10 @@ class NbtSquishMapWriter {
             profiler.push("entry");
             CompactingBitSet bitset = new CompactingBitSet(b);
             bitset.ensureCapacityValues(nextData.size());
-            TIntArrayList nextNextData = new TIntArrayList();
+            ArrayList<Integer> nextNextData = new ArrayList<Integer>();
             int maxVal = (1 << b) - 1;
             profiler.push("iter");
-            for (int d : nextData.toArray()) {
+            for (int d : nextData) {
                 // profiler.push("entry");
                 // profiler.push("index");
                 int index = sortedIndexes.indexOf(d);

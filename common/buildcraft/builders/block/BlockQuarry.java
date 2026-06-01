@@ -11,8 +11,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.block.Material;
+import net.minecraft.block.BlockSoundGroup;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -40,7 +41,7 @@ import buildcraft.builders.tile.TileQuarry;
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
     private static final Identifier ADVANCEMENT = new Identifier("buildcraftbuilders:shaping_the_world");
 
-    public BlockQuarry(Material material, String id) {
+    public BlockQuarry(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -53,18 +54,18 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
     private boolean isConnected(BlockView world, BlockPos pos, BlockState state, Direction side) {
         Direction facing = side;
         if (Arrays.asList(Direction.HORIZONTALS).contains(facing)) {
-            facing = Direction.getHorizontal(
-                side.getHorizontalIndex() + 2 + state.getValue(getFacingProperty()).getHorizontalIndex());
+            facing = Direction.fromHorizontal(
+                side.getHorizontalIndex() + 2 + state.get(getFacingProperty()).getHorizontalIndex());
         }
         BlockEntity tile = world.getBlockEntity(pos.offset(facing));
         return tile != null && tile.hasCapability(CapUtil.CAP_ITEMS, facing.getOpposite());
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             state =
-                state.withProperty(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected(world, pos, state, face));
+                state.with(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected(world, pos, state, face));
         }
         return state;
     }
@@ -92,9 +93,9 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         super.breakBlock(world, pos, state);
     }
 
-    @Override
-    public SoundType getSoundType(BlockState state, World world, BlockPos pos, @Nullable Entity entity) {
-        return SoundType.ANVIL;
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockSoundGroup getSoundType(BlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+        return BlockSoundGroup.ANVIL;
     }
 
     @Override

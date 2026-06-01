@@ -22,7 +22,7 @@ public class GuiChute extends GuiBC8<ContainerChute> {
         ySize = SIZE_Y;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
     }

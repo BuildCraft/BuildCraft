@@ -83,8 +83,8 @@ public abstract class GuidePart {
 
     /** Renders a raw line at the position, lowering it appropriately */
     protected void renderTextLine(String text, int x, int y, int colour) {
-        fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
-        RenderSystem.setShaderColor(1, 1, 1);
+        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
+        RenderSystem.setShaderColor(1, 1, 1, 1.0F);
     }
 
     /** @param current The current position to render from
@@ -149,7 +149,7 @@ public abstract class GuidePart {
             boolean render = current.page == pageRenderIndex;
 
             int _y = y + current.pixel;
-            int _w = fontRenderer.getStringWidth(text);
+            int _w = fontRenderer.getWidth(text);
             GuiRectangle rect = new GuiRectangle(_x, _y - 2, _w, neededSpace + 3);
             wasHovered |= rect.contains(gui.mouse);
             if (render) {
@@ -160,7 +160,7 @@ public abstract class GuidePart {
                     }
                     renderTooltip();
                 }
-                fontRenderer.drawString(text, _x, _y, 0);
+                fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), text, _x, _y, 0);
             }
 
             next = strings.length == 1 ? null : strings[1];

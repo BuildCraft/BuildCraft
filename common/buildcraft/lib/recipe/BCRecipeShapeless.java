@@ -1,6 +1,7 @@
 package buildcraft.lib.recipe;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -19,18 +20,18 @@ public class BCRecipeShapeless extends ShapelessOreRecipe {
         this.enabled = enabled;
 }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean matches(@Nonnull InventoryCrafting inventory, @Nonnull World world) {
         return enabled && super.matches(inventory, world);
     }
 
     @Nonnull
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public DefaultedList<Ingredient> getIngredients() {
-        return enabled ? super.getIngredients() : DefaultedList.create();
+        return enabled ? super.getIngredients() : DefaultedList.of();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isDynamic() {
         return !enabled;
     }

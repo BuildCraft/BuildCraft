@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Direction;

@@ -5,7 +5,8 @@
 // TODO(R.Chen): blocked by lib.engine.BlockEngineBase_BC8 (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 
 import buildcraft.api.enums.EnumEngineType;
@@ -16,7 +17,7 @@ import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
-    public BlockEngine_BC8(Material material, String id) {
+    public BlockEngine_BC8(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

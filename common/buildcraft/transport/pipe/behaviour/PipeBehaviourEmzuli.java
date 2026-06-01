@@ -9,6 +9,7 @@
 package buildcraft.transport.pipe.behaviour;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.DyeColor;

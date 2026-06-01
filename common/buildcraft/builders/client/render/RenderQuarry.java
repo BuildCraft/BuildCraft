@@ -33,6 +33,8 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.core.client.BuildCraftLaserManager;
+import com.mojang.blaze3d.platform.GlStateManager;
+import buildcraft.lib.misc.GlStateManagerCompat;
 
 public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static final LaserData_BC8.LaserType FRAME;
@@ -73,7 +75,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         Profiler profiler = MinecraftClient.getInstance().getProfiler();
         profiler.push("bc");
@@ -86,9 +88,9 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
         RenderSystem.enableBlend();
 
         if (MinecraftClient.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManagerCompat.shadeModel(GL11.GL_SMOOTH);
         } else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
+            GlStateManagerCompat.shadeModel(GL11.GL_FLAT);
         }
 
         RenderSystem.getModelViewStack().push();
@@ -228,9 +230,9 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 ItemStack stack = new ItemStack(BCBuildersBlocks.frame);
 
                 RenderHelper.disableStandardItemLighting();
-                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+                GlStateManagerCompat.setActiveTexture(OpenGlHelper.lightmapTexUnit);
                 ;
-                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+                GlStateManagerCompat.setActiveTexture(OpenGlHelper.defaultTexUnit);
                 RenderSystem.getModelViewStack().push();
                 RenderSystem.getModelViewStack().translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
                 RenderSystem.getModelViewStack().push();
@@ -248,7 +250,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
         profiler.pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileQuarry tile) {
         return true;
     }

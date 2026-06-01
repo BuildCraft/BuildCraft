@@ -22,6 +22,7 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 /**
  * STUB(R.Chen): IntegrationRecipe/IntegrationRecipeRegistry not in libLeaf — recipe logic deferred.

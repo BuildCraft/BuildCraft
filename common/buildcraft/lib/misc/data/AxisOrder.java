@@ -19,7 +19,7 @@ import net.minecraft.util.math.Direction.AxisDirection;
 // Forge→Fabric migration notes (R.Chen):
 //   Direction → Direction; Direction.Axis/AxisDirection → Direction.Axis/AxisDirection
 //   Direction.getFacingFromAxis(dir, axis) → Direction.from(axis, dir)
-//   facing.getAxisDirection() → facing.getDirection()
+//   facing.getDirection() → facing.getDirection()
 //   NbtCompound → NbtCompound; nbt.setString → nbt.putString
 public class AxisOrder {
     private static final Table<EnumAxisOrder, Inversion, AxisOrder> allOrders;

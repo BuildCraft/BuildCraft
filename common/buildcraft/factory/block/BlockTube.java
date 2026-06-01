@@ -6,7 +6,8 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
@@ -21,22 +22,22 @@ import buildcraft.factory.tile.TileMiner;
 public class BlockTube extends BlockBCBase_Neptune {
     private static final Box BOUNDING_BOX = new Box(4 / 16D, 0 / 16D, 4 / 16D, 12 / 16D, 16 / 16D, 12 / 16D);
 
-    public BlockTube(Material material, String id) {
+    public BlockTube(AbstractBlock.Settings material, String id) {
         super(material, id);
         setBlockUnbreakable();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest) {
         BlockPos currentPos = pos;
         // noinspection StatementWithEmptyBody
@@ -49,7 +50,7 @@ public class BlockTube extends BlockBCBase_Neptune {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Box getBoundingBox(BlockState state, BlockView source, BlockPos pos) {
         return BOUNDING_BOX;
     }

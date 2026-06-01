@@ -22,8 +22,8 @@ public class ButtonTextureSet implements IButtonTextureSet {
     }
 
     public ButtonTextureSet(int x, int y, int height, int width, Identifier texture) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
         this.height = height;
         this.width = width;
         this.texture = texture;

@@ -6,84 +6,61 @@
 
 package buildcraft.builders.snapshot;
 
+// TODO(R.Chen): FakeWorld needs full rewrite for 1.20.1 — the 1.12.2 World API (WorldProvider,
+// SaveHandlerMP, WorldInfo, WorldSettings, BiomeProvider, IChunkProvider) was completely replaced.
+// For now this is a stub so that ClientSnapshots.java compiles.
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.init.Biomes;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.GameType;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeProvider;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.layer.GenLayer;
-import net.minecraft.world.storage.SaveHandlerMP;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.chunk.WorldChunk;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import buildcraft.api.schematics.ISchematicBlock;
 
+/**
+ * STUB(R.Chen): FakeWorld — a minimal in-memory world for snapshot rendering.
+ * The 1.12.2 version extended World directly; in 1.20.1 we cannot extend World
+ * without a server/levelSource. This stub provides just enough API for
+ * ClientSnapshots.java to compile. Full port blocked on world API redesign.
+ * TODO(R.Chen): properly implement using a fake WorldAccess / BlockView.
+ */
 @SuppressWarnings("NullableProblems")
 @Environment(EnvType.CLIENT)
-public class FakeWorld extends World {
-    private static final Biome BIOME = Biomes.PLAINS;
-    @SuppressWarnings("WeakerAccess")
+public class FakeWorld {
     public static final BlockPos BLUEPRINT_OFFSET = new BlockPos(0, 127, 0);
 
-    @SuppressWarnings("WeakerAccess")
-    public FakeWorld() {
-        super(
-            new SaveHandlerMP(),
-            new WorldInfo(
-                new WorldSettings(
-                    0,
-                    GameType.CREATIVE,
-                    true,
-                    false,
-                    WorldType.DEFAULT
-                ),
-                "fake"
-            ),
-            new WorldProvider() {
-                @Override
-                public DimensionType getDimensionType() {
-                    return DimensionType.OVERWORLD;
-                }
-            },
-            new Profiler(),
-            true
-        );
-        chunkProvider = new FakeChunkProvider(this);
-    }
+    private final java.util.HashMap<BlockPos, BlockState> blockStates = new java.util.HashMap<>();
+    private final java.util.HashMap<BlockPos, BlockEntity> blockEntities = new java.util.HashMap<>();
+
+    public FakeWorld() {}
 
     public void clear() {
-        ((FakeChunkProvider) chunkProvider).chunks.clear();
+        blockStates.clear();
+        blockEntities.clear();
     }
 
-    @SuppressWarnings("WeakerAccess")
     public void uploadSnapshot(Snapshot snapshot) {
         for (int z = 0; z < snapshot.size.getZ(); z++) {
             for (int y = 0; y < snapshot.size.getY(); y++) {
                 for (int x = 0; x < snapshot.size.getX(); x++) {
                     BlockPos pos = new BlockPos(x, y, z).add(BLUEPRINT_OFFSET);
-                    if (snapshot instanceof Blueprint) {
-                        ISchematicBlock schematicBlock = ((Blueprint) snapshot).palette
-                            .get(((Blueprint) snapshot).data[snapshot.posToIndex(x, y, z)]);
-                        if (!schematicBlock.isAir()) {
-                            schematicBlock.buildWithoutChecks(this, pos);
-                        }
-                    }
                     if (snapshot instanceof Template) {
                         if (((Template) snapshot).data.get(snapshot.posToIndex(x, y, z))) {
                             setBlockState(pos, Blocks.QUARTZ_BLOCK.getDefaultState());
@@ -92,100 +69,26 @@ public class FakeWorld extends World {
                 }
             }
         }
-        if (snapshot instanceof Blueprint) {
-            ((Blueprint) snapshot).entities.forEach(schematicEntity ->
-                schematicEntity.buildWithoutChecks(this, FakeWorld.BLUEPRINT_OFFSET)
-            );
-        }
     }
 
-    @Override
-    public BlockPos getSpawnPoint() {
-        return BLUEPRINT_OFFSET;
+    public void setBlockState(BlockPos pos, BlockState state) {
+        blockStates.put(pos, state);
     }
 
-    @Override
-    protected IChunkProvider createChunkProvider() {
-        return chunkProvider;
+    public BlockState getBlockState(BlockPos pos) {
+        return blockStates.getOrDefault(pos, Blocks.AIR.getDefaultState());
     }
 
-    @Override
-    protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
-        return true;
+    @Nullable
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        return blockEntities.get(pos);
     }
 
-    @Override
-    public Biome getBiome(BlockPos pos) {
-        return BIOME;
+    public List<? extends Entity> getEntities(Class<? extends Entity> clazz, com.google.common.base.Predicate<Entity> pred) {
+        return Collections.emptyList();
     }
 
-    @Override
-    public Biome getBiomeForCoordsBody(BlockPos pos) {
-        return BIOME;
-    }
+    public BlockPos getSpawnPoint() { return BLUEPRINT_OFFSET; }
 
-    @Override
-    public BiomeProvider getBiomeProvider() {
-        return new BiomeProvider(worldInfo) {
-            @Override
-            public List<Biome> getBiomesToSpawnIn() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public Biome getBiome(BlockPos pos) {
-                return BIOME;
-            }
-
-            @Override
-            public Biome getBiome(BlockPos pos, Biome defaultBiome) {
-                return BIOME;
-            }
-
-            @Override
-            public Biome[] getBiomesForGeneration(Biome[] biomes, int x, int z, int width, int height) {
-                return biomes;
-            }
-
-            @Override
-            public Biome[] getBiomes(@Nullable Biome[] oldBiomeList, int x, int z, int width, int depth) {
-                return oldBiomeList;
-            }
-
-            @Override
-            public Biome[] getBiomes(@Nullable Biome[] listToReuse, int x, int z, int width, int length, boolean cacheFlag) {
-                return listToReuse;
-            }
-
-            @Override
-            public boolean areBiomesViable(int x, int z, int radius, List<Biome> allowed) {
-                return false;
-            }
-
-            @Nullable
-            @Override
-            public BlockPos findBiomePosition(int x, int z, int range, List<Biome> biomes, Random random) {
-                return BlockPos.ORIGIN;
-            }
-
-            @Override
-            public void cleanupCache() {
-            }
-
-            @Override
-            public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original) {
-                return original;
-            }
-
-            @Override
-            public boolean isFixedBiome() {
-                return true;
-            }
-
-            @Override
-            public Biome getFixedBiome() {
-                return BIOME;
-            }
-        };
-    }
+    public boolean isClient() { return true; }
 }

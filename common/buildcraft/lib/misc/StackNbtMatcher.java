@@ -26,8 +26,8 @@ public class StackNbtMatcher implements StackMatchingPredicate {
 
     @Override
     public boolean isMatching(@Nonnull ItemStack base, @Nonnull ItemStack comparison) {
-        NbtCompound baseNBT = base.getTagCompound();
-        NbtCompound comparisonNBT = comparison.getTagCompound();
+        NbtCompound baseNBT = base.getNbt();
+        NbtCompound comparisonNBT = comparison.getNbt();
 
         for (String key : keys) {
             NbtElement baseValue = baseNBT != null ? baseNBT.get(key) : null;

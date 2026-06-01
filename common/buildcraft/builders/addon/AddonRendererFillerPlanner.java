@@ -44,13 +44,13 @@ public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFille
                     )
                 )
             )
-            .filter(player.world::isAirBlock)
+            .filter(player.getWorld()::isAirBlock)
             .map(BlockPos.MutableBlockPos::toImmutable)
             .collect(Collectors.toCollection(ArrayList::new));
         MinecraftClient.getInstance().getProfiler().pop();
 
         MinecraftClient.getInstance().getProfiler().push("sort");
-        list.sort(Comparator.<BlockPos>comparingDouble(p -> player.getPositionVector().squareDistanceTo(new Vec3d(p))).reversed());
+        list.sort(Comparator.<BlockPos>comparingDouble(p -> player.getPos().squareDistanceTo(new Vec3d(p.getX(), p.getY(), p.getZ()))).reversed());
         MinecraftClient.getInstance().getProfiler().pop();
 
         MinecraftClient.getInstance().getProfiler().push("render");
@@ -58,35 +58,35 @@ public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFille
             Box bb = new Box(p, p.add(1, 1, 1)).grow(-0.1);
             Sprite s = ModelLoader.White.INSTANCE;
 
-            vb.vertex(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMinV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.minY, bb.minZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.minY, bb.minZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMinV()).lightmap(240, 0).next();
+            vb.vertex(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.minY, bb.minZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.minY, bb.minZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMinV()).light(240, 0).next();
 
-            vb.vertex(bb.minX, bb.minY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMinV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.minY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMinV()).lightmap(240, 0).next();
+            vb.vertex(bb.minX, bb.minY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.minY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.maxY, bb.maxZ).color(204, 204, 204, 127).texture(s.getMaxU(), s.getMinV()).light(240, 0).next();
 
-            vb.vertex(bb.minX, bb.minY, bb.minZ).color(127, 127, 127, 127).texture(s.getMinU(), s.getMinV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.minY, bb.minZ).color(127, 127, 127, 127).texture(s.getMinU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.minY, bb.maxZ).color(127, 127, 127, 127).texture(s.getMaxU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.minY, bb.maxZ).color(127, 127, 127, 127).texture(s.getMaxU(), s.getMinV()).lightmap(240, 0).next();
+            vb.vertex(bb.minX, bb.minY, bb.minZ).color(127, 127, 127, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.minY, bb.minZ).color(127, 127, 127, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.minY, bb.maxZ).color(127, 127, 127, 127).texture(s.getMaxU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.minY, bb.maxZ).color(127, 127, 127, 127).texture(s.getMaxU(), s.getMinV()).light(240, 0).next();
 
-            vb.vertex(bb.minX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).texture(s.getMinU(), s.getMinV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).texture(s.getMinU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(255, 255, 255, 127).texture(s.getMaxU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.maxY, bb.minZ).color(255, 255, 255, 127).texture(s.getMaxU(), s.getMinV()).lightmap(240, 0).next();
+            vb.vertex(bb.minX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.maxY, bb.maxZ).color(255, 255, 255, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(255, 255, 255, 127).texture(s.getMaxU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.maxY, bb.minZ).color(255, 255, 255, 127).texture(s.getMaxU(), s.getMinV()).light(240, 0).next();
 
-            vb.vertex(bb.minX, bb.minY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMinV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.maxY, bb.minZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.minX, bb.minY, bb.minZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMinV()).lightmap(240, 0).next();
+            vb.vertex(bb.minX, bb.minY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.maxY, bb.minZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.minX, bb.minY, bb.minZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMinV()).light(240, 0).next();
 
-            vb.vertex(bb.maxX, bb.minY, bb.minZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMinV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMaxV()).lightmap(240, 0).next();
-            vb.vertex(bb.maxX, bb.minY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMinV()).lightmap(240, 0).next();
+            vb.vertex(bb.maxX, bb.minY, bb.minZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(153, 153, 153, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.maxY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMaxV()).light(240, 0).next();
+            vb.vertex(bb.maxX, bb.minY, bb.maxZ).color(153, 153, 153, 127).texture(s.getMaxU(), s.getMinV()).light(240, 0).next();
         }
         MinecraftClient.getInstance().getProfiler().pop();
 

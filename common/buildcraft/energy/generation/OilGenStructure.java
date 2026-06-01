@@ -283,7 +283,7 @@ public abstract class OilGenStructure {
 
         public void generate(World world, int count) {
             BlockState state = BCCoreBlocks.spring.getDefaultState();
-            state = state.withProperty(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
+            state = state.with(BlockSpring.SPRING_TYPE, EnumSpring.OIL);
             world.setBlockState(pos, state);
             BlockEntity tile = world.getBlockEntity(pos);
             TileSpringOil spring;

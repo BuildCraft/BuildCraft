@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
 
 import org.apache.logging.log4j.Level;
 
@@ -51,7 +49,7 @@ public class BCEnergyConfig {
     public static double mediumOilGenProb;
     public static double largeOilGenProb;
 
-    public static final TIntSet excludedDimensions = new TIntHashSet();
+    public static final Set<Integer> excludedDimensions = new HashSet<Integer>();
     /** If false then {@link #excludedDimensions} should be treated as a whitelist rather than a blacklist. */
     public static boolean excludedDimensionsIsBlackList;
     public static final Set<Identifier> excessiveBiomes = new HashSet<>();

@@ -25,12 +25,12 @@ public class MessageSnapshotRequest implements IMessage {
         this.key = key;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         key.writeToByteBuf(new PacketBufferBC(buf));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         key = new Snapshot.Key(new PacketBufferBC(buf));
     }

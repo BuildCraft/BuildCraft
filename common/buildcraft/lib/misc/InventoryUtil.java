@@ -7,6 +7,7 @@
 package buildcraft.lib.misc;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.entity.ItemEntity;

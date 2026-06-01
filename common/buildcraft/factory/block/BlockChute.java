@@ -9,7 +9,8 @@ package buildcraft.factory.block;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +32,7 @@ import buildcraft.factory.tile.TileChute;
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final Map<Direction, Property<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
-    public BlockChute(Material material, String id) {
+    public BlockChute(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -49,12 +50,12 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
@@ -65,10 +66,10 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
         properties.addAll(CONNECTED_MAP.values());
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
-        for (Direction side : Direction.VALUES) {
-            state = state.withProperty(CONNECTED_MAP.get(side), side != state.getValue(getFacingProperty())
+        for (Direction side : Direction.values()) {
+            state = state.with(CONNECTED_MAP.get(side), side != state.get(getFacingProperty())
                 && TileChute.hasInventoryAtPosition(world, pos.offset(side), side));
         }
         return state;

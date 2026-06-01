@@ -38,12 +38,12 @@ public abstract class AtlasSpriteSwappable extends Sprite {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean hasAnimationMetadata() {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateAnimation() {
         if (current == null) {
             copyFrom(MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite());
@@ -80,7 +80,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
                 this.width = other.getIconWidth();
                 this.height = other.getIconHeight();
             }
-            generateMipmaps(MinecraftClient.getInstance().gameSettings.mipmapLevels);
+            generateMipmaps(MinecraftClient.getInstance().options.mipmapLevels.getValue());
             needsSwapping = true;
             return true;
         }
@@ -89,7 +89,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
 
     /** Actually loads the given location. Note that subclasses should override this, and possibly call
      * {@link #loadSprite(ResourceManager, String, Identifier, boolean)} to load all of the possible variants. */
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean load(ResourceManager manager, Identifier location,
         Function<Identifier, Sprite> textureGetter) {
         Sprite sprite = loadSprite(manager, super.getIconName(), location, true);
@@ -113,7 +113,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
             try (IResource iresource = manager.getResource(location)) {
                 boolean flag = iresource.getMetadata("animation") != null;
                 sprite.loadSprite(pngsizeinfo, flag);
-                sprite.loadSpriteFrames(iresource, MinecraftClient.getInstance().gameSettings.mipmapLevels + 1);
+                sprite.loadSpriteFrames(iresource, MinecraftClient.getInstance().options.mipmapLevels.getValue() + 1);
                 return sprite;
             }
         } catch (IOException io) {
@@ -125,12 +125,12 @@ public abstract class AtlasSpriteSwappable extends Sprite {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean hasCustomLoader(ResourceManager manager, Identifier location) {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void generateMipmaps(int level) {
         if (current != null) {
             current.generateMipmaps(level);
@@ -139,7 +139,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
 
     // Overrides
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getFrameCount() {
         if (current == null) {
             return 0;
@@ -147,7 +147,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
         return current.getFrameCount();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void copyFrom(Sprite from) {
         super.copyFrom(from);
         if (current == null) {
@@ -157,7 +157,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int[][] getFrameTextureData(int index) {
         if (current == null) {
             return new int[1][1];
@@ -165,7 +165,7 @@ public abstract class AtlasSpriteSwappable extends Sprite {
         return current.getFrameTextureData(index);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void setFramesTextureData(List<int[][]> newFramesTextureData) {
         // NO-OP
     }

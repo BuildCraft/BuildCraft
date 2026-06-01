@@ -9,7 +9,7 @@ package buildcraft.lib.tile.item;
 
 import net.minecraft.item.ItemStack;
 
-// TODO(R.Chen): IItemHandlerFiltered (api.inventory) dropped — Forge IItemHandler parent not migrated.
+// TODO(R.Chen): IItemHandlerFiltered (api.getInventory()) dropped — Forge IItemHandler parent not migrated.
 // Restore the interface once the full item-handler Transfer-API pass lands.
 public class ItemHandlerFiltered extends ItemHandlerSimple {
 

@@ -31,7 +31,7 @@ public final class PageLinkItemPermutations extends PageLink {
         return gui -> {
             List<GuidePart> parts = new ArrayList<>();
 
-            Profiler prof = new Profiler();
+            Profiler prof = net.minecraft.util.profiler.DummyProfiler.INSTANCE;
             prof.profilingEnabled = true;
             for (ItemStack stack : permutations) {
                 parts.add(PageLinkItemStack.create(true, stack, prof).createGuidePart(gui));

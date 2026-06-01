@@ -2,59 +2,23 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.fluid;
 
-import java.util.ArrayList;
-import java.util.List;
+// STUB(R.Chen): FluidManager is deeply Forge-dependent (BlockFluidClassic, FluidRegistry, BCMaterialFluid).
+// Full rewrite required to use Fabric fluid registration. Stubbed to compile-only for now.
+// TODO(R.Chen): re-implement with Fabric fluid blocks (net.fabricmc.fabric.api.block.v1.FabricBlockSettings,
+//               Fabric fluid API, etc.) after BCFluid / BCFluidBlock are fully migrated.
 
-import net.minecraft.block.Material;
-import net.minecraft.client.renderer.block.statemap.StateMap;
+public final class FluidManager {
 
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+    private FluidManager() {}
 
-import buildcraft.lib.registry.RegistrationHelper;
-
-public class FluidManager {
-
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
-    private static final List<BCFluidBlock> fluidBlocks = new ArrayList<>();
-
-    /** Should only ever be called during pre-init */
+    /** STUB: no-op until Fabric fluid block registration is implemented. */
     public static <F extends BCFluid> F register(F fluid) {
-
-        if (!Loader.instance().isInState(LoaderState.PREINITIALIZATION)) {
-            throw new IllegalStateException("Can only call this during pre-init!");
-        }
-
-        FluidRegistry.registerFluid(fluid);
-
-        Material material = new BCMaterialFluid(fluid.getMapColour(), fluid.isFlammable());
-        BCFluidBlock block = new BCFluidBlock(fluid, material);
-        block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getBlockName());
-        block.setUnlocalizedName("blockFluid_" + fluid.getBlockName());
-        block.setLightOpacity(fluid.getLightOpacity());
-        HELPER.addForcedBlock(block);
-        fluid.setBlock(block);
-        FluidRegistry.addBucketForFluid(fluid);
-        fluidBlocks.add(block);
+        // TODO(R.Chen): register fluid and fluid block via Fabric APIs
         return fluid;
-    }
-
-    @SubscribeEvent
-    @Environment(EnvType.CLIENT)
-    public static void onModelBake(ModelBakeEvent event) {
-        for (BCFluidBlock fluid : fluidBlocks) {
-            event.getModelManager().getBlockModelShapes().registerBlockWithStateMapper(fluid,
-                new StateMap.Builder().ignore(BlockFluidBase.LEVEL).build());
-        }
     }
 }

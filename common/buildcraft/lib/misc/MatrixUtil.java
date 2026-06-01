@@ -26,7 +26,7 @@ public class MatrixUtil {
 
     static {
         ImmutableMap.Builder<Direction, Matrix4f> builder = ImmutableMap.builder();
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             Matrix4f mat = new Matrix4f();
             mat.setIdentity();
 
@@ -34,7 +34,7 @@ public class MatrixUtil {
                 builder.put(face, mat);
                 continue;
             }
-            mat.setTranslation(new Vector3f(0.5f, 0.5f, 0.5f));
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: mat.setTranslation(new Vector3f(0.5f, 0.5f, 0.5f));
             Matrix4f m2 = new Matrix4f();
             m2.setIdentity();
 
@@ -57,7 +57,7 @@ public class MatrixUtil {
             }
 
             m2.setIdentity();
-            m2.setTranslation(new Vector3f(-0.5f, -0.5f, -0.5f));
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: m2.setTranslation(new Vector3f(-0.5f, -0.5f, -0.5f));
             mat.mul(m2);
             builder.put(face, mat);
         }

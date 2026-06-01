@@ -32,7 +32,7 @@ public class SpriteUtil {
     private static final Map<GameProfile, GameProfile> CACHED = new HashMap<>();
 
     public static void bindBlockTextureMap() {
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        bindTexture(net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
     }
 
     public static void bindTexture(String identifier) {
@@ -40,13 +40,13 @@ public class SpriteUtil {
     }
 
     public static void bindTexture(Identifier identifier) {
-        MinecraftClient.getInstance().renderEngine.bindTexture(identifier);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, identifier);
     }
 
     /** Transforms the given {@link Identifier}, adding ".png" to the end and prepending that
      * {@link Identifier#getResourcePath()} with "textures/", just like what {@link TextureMap} does. */
     public static Identifier transformLocation(Identifier location) {
-        return new Identifier(location.getResourceDomain(), "textures/" + location.getResourcePath() + ".png");
+        return new Identifier(location.getNamespace(), "textures/" + location.getPath() + ".png");
     }
 
     @Nullable

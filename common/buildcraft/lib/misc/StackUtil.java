@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,9 +26,9 @@ import net.minecraft.util.collection.DefaultedList;
 //   - ItemStack.areItemsEqual + areItemStackTagsEqual → ItemStack.canCombine.
 //   - getMaxStackSize/getCount/grow → getMaxCount/getCount/increment.
 //   - serializeNBT()/getMetadata() → getNbt() (Yarn).
-// STUB(R.Chen): the OreDictionary-, BlockState-, IngredientStack-/StackDefinition-, and IList-based
+// STUB(R.Chen): the OreDictionaryStub-, BlockState-, IngredientStack-/StackDefinition-, and IList-based
 //   helpers (isCraftingEquivalent, getItemStackForState, isMatchingItem variants, contains(StackDefinition…),
-//   registerMatchingPredicate, stripNonFunctionNbt, …) are dropped until the Forge OreDictionary →
+//   registerMatchingPredicate, stripNonFunctionNbt, …) are dropped until the Forge OreDictionaryStub →
 //   Fabric tag layer and api.recipes/api.items are migrated (Phase 4E).
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {

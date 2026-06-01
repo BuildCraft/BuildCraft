@@ -6,8 +6,8 @@ public class AreaCallable implements IGuiArea {
     public final DoubleSupplier x, y, width, height;
 
     public AreaCallable(DoubleSupplier x, DoubleSupplier y, DoubleSupplier width, DoubleSupplier height) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
         this.width = width;
         this.height = height;
     }

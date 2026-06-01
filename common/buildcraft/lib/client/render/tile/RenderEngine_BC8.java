@@ -20,14 +20,14 @@ import buildcraft.lib.engine.TileEngineBase_BC8;
 public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends FastTESR<T> {
     // TODO: Cache the model!
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(@Nonnull T engine, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder vb) {
         Profiler profiler = MinecraftClient.getInstance().getProfiler();
         profiler.push("bc");
         profiler.push("engine");
 
         profiler.push("compute");
-        vb.setTranslation(x, y, z);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: vb.setTranslation(x, y, z);
         MutableQuad[] quads = getEngineModel(engine, partialTicks);
         profiler.swap("render");
         MutableQuad copy = new MutableQuad(0, null);
@@ -40,7 +40,7 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
             copy.multShade();
             copy.render(vb);
         }
-        vb.setTranslation(0, 0, 0);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: vb.setTranslation(0, 0, 0);
 
         profiler.pop();
         profiler.pop();

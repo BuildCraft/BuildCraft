@@ -17,8 +17,9 @@ import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.Material;
+import net.minecraft.block.BlockSoundGroup;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.StateManager;
 import net.minecraft.block.BlockState;
@@ -27,7 +28,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -37,7 +38,7 @@ import buildcraft.lib.misc.SoundUtil;
 import buildcraft.factory.BCFactoryItems;
 
 public class BlockWaterGel extends BlockBCBase_Neptune {
-    public enum GelStage implements IStringSerializable {
+    public enum GelStage implements StringIdentifiable {
         SPREAD_0(0.3f, true, 3),
         SPREAD_1(0.4f, true, 3),
         SPREAD_2(0.6f, true, 3),
@@ -48,14 +49,14 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
 
         public static final GelStage[] VALUES = values();
 
-        public final SoundType soundType;
+        public final BlockSoundGroup soundType;
         public final String modelName = name().toLowerCase(Locale.ROOT);
         public final boolean spreading;
         public final float hardness;
 
         GelStage(float pitch, boolean spreading, float hardness) {
-            this.soundType = new SoundType(//
-                SoundType.SLIME.volume, //
+            this.soundType = new BlockSoundGroup(//
+                BlockSoundGroup.SLIME_BLOCK.volume, //
                 pitch, //
                 SoundEvents.BLOCK_SLIME_BREAK, //
                 SoundEvents.BLOCK_SLIME_STEP, //
@@ -67,7 +68,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
             this.hardness = hardness;
         }
 
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         public String getName() {
             return modelName;
         }
@@ -95,41 +96,38 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
 
     public static final EnumProperty<GelStage> PROP_STAGE = EnumProperty.create("stage", GelStage.class);
 
-    public BlockWaterGel(Material material, String id) {
+    public BlockWaterGel(AbstractBlock.Settings material, String id) {
         super(material, id);
-        setSoundType(SoundType.SLIME);
+        setSoundType(BlockSoundGroup.SLIME_BLOCK);
     }
 
     // BlockState
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, PROP_STAGE);
-    }
+        // TODO(R.Chen): Forge createBlockState() → override appendProperties() instead.
 
-    @Override
+@Override
     public BlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(PROP_STAGE, GelStage.fromMeta(meta & 7));
+        return getDefaultState().with(PROP_STAGE, GelStage.fromMeta(meta & 7));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getMetaFromState(BlockState state) {
-        return state.getValue(PROP_STAGE).getMeta();
+        return state.get(PROP_STAGE).getMeta();
     }
 
     // Logic
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateTick(World world, BlockPos pos, BlockState state, Random rand) {
-        GelStage stage = state.getValue(PROP_STAGE);
+        GelStage stage = state.get(PROP_STAGE);
         GelStage next = stage.next();
-        BlockState nextState = state.withProperty(PROP_STAGE, next);
+        BlockState nextState = state.with(PROP_STAGE, next);
         if (stage.spreading) {
             Deque<BlockPos> openQueue = new ArrayDeque<>();
             Set<BlockPos> seenSet = new HashSet<>();
             List<BlockPos> changeable = new ArrayList<>();
             List<Direction> faces = new ArrayList<>();
-            Collections.addAll(faces, Direction.VALUES);
+            Collections.addAll(faces, Direction.values());
             Collections.shuffle(faces);
             seenSet.add(pos);
             for (Direction face : faces) {
@@ -179,7 +177,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
     }
 
     private static boolean notTouchingWater(World world, BlockPos pos) {
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             if (isWater(world, pos.offset(face))) {
                 return false;
             }
@@ -202,26 +200,26 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
 
     // Misc
 
-    @Override
-    public SoundType getSoundType(BlockState state, World world, BlockPos pos, Entity entity) {
-        GelStage stage = state.getValue(PROP_STAGE);
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockSoundGroup getSoundType(BlockState state, World world, BlockPos pos, Entity entity) {
+        GelStage stage = state.get(PROP_STAGE);
         return stage.soundType;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public float getBlockHardness(BlockState state, World world, BlockPos pos) {
-        GelStage stage = state.getValue(PROP_STAGE);
+        GelStage stage = state.get(PROP_STAGE);
         return stage.hardness;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Item getItemDropped(BlockState state, Random rand, int fortune) {
         return BCFactoryItems.gelledWater;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int quantityDropped(BlockState state, int fortune, Random random) {
-        GelStage stage = state.getValue(PROP_STAGE);
+        GelStage stage = state.get(PROP_STAGE);
         if (stage.spreading) {
             return random.nextInt(2) + 1;
         } else {

@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,7 +39,7 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
         CONNECTED_MAP.remove(Direction.UP);
     }
 
-    public BlockFloodGate(Material material, String id) {
+    public BlockFloodGate(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -53,12 +54,12 @@ public class BlockFloodGate extends BlockBCTile_Neptune {
         return new TileFloodGate();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFloodGate) {
             for (Direction side : CONNECTED_MAP.keySet()) {
-                state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
+                state = state.with(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
             }
         }
         return state;

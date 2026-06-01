@@ -71,6 +71,7 @@ import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()              → tick() driven by {@link #ticker()} (BlockEntityTicker)
@@ -618,7 +619,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
                     type -> type.clazz == currentTask.getClass()
                 ).findFirst().orElseThrow(IllegalStateException::new).ordinal()
             );
-            nbt.put("currentTaskData", currentTask.serializeNBT());
+            nbt.put("currentTaskData", currentTask.createNbt());
         }
         if (drillPos != null) {
             nbt.put("drillPos", NBTUtilBC.writeVec3d(drillPos));
@@ -698,7 +699,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 frameBox.writeData(buffer);
                 miningBox.writeData(buffer);
@@ -723,7 +724,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 frameBox.readData(buffer);
                 miningBox.readData(buffer);
@@ -881,7 +882,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
 
         @Override
         NbtCompound serializeNBT() {
-            NbtCompound nbt = super.serializeNBT();
+            NbtCompound nbt = super.createNbt();
             nbt.put("breakPos", NBTUtilBC.writeBlockPos(breakPos));
             return nbt;
         }
@@ -985,7 +986,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
 
         @Override
         NbtCompound serializeNBT() {
-            NbtCompound nbt = super.serializeNBT();
+            NbtCompound nbt = super.createNbt();
             nbt.put("framePos", NBTUtilBC.writeBlockPos(framePos));
             return nbt;
         }
@@ -1056,7 +1057,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
 
         @Override
         NbtCompound serializeNBT() {
-            NbtCompound nbt = super.serializeNBT();
+            NbtCompound nbt = super.createNbt();
             nbt.put("from", NBTUtilBC.writeVec3d(from));
             nbt.put("to", NBTUtilBC.writeVec3d(to));
             return nbt;

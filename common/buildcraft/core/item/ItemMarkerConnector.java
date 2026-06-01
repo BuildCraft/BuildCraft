@@ -9,6 +9,7 @@ package buildcraft.core.item;
 
 import java.util.Iterator;
 import java.util.stream.Collectors;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
@@ -17,7 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -54,8 +55,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
     }
 
     @SuppressWarnings("NullableProblems")
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
@@ -69,7 +70,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
 
     private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, PlayerEntity player) {
         MarkerLineInteraction best = null;
-        Vec3d playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+        Vec3d playerPos = player.getEyePos();
         Vec3d playerLook = player.getLookVec();
         for (BlockPos marker : cache.getAllMarkers()) {
             ImmutableList<BlockPos> possibles = cache.getValidConnections(marker);
@@ -98,7 +99,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         return new MarkerLineInteraction(
             a,
             b,
-            player.getPositionVector().addVector(0, player.getEyeHeight(), 0),
+            player.getEyePos(),
             player.getLookVec()
         ).didInteract();
     }
@@ -112,7 +113,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
 
         VolumeBox currentEditing = volumeBoxes.getCurrentEditing(player);
 
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+        Vec3d start = player.getEyePos();
         Vec3d end = start.add(player.getLookVec().scale(4));
 
         Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(

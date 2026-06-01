@@ -8,8 +8,9 @@ package buildcraft.builders.item;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
@@ -17,7 +18,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
@@ -33,6 +34,7 @@ import buildcraft.lib.misc.LocaleUtil;
 
 import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.Snapshot.Header;
+import net.minecraft.nbt.NbtElement;
 
 public class ItemSnapshot extends ItemBC_Neptune {
     public ItemSnapshot(String id) {
@@ -41,13 +43,13 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     public ItemStack getClean(EnumSnapshotType snapshotType) {
-        return new ItemStack(this, 1, EnumItemSnapshotType.get(snapshotType, false).ordinal());
+        return new ItemStack(this, 1);
     }
 
     public ItemStack getUsed(EnumSnapshotType snapshotType, Header header) {
         NbtCompound nbt = new NbtCompound();
-        nbt.put("header", header.serializeNBT());
-        ItemStack stack = new ItemStack(this, 1, EnumItemSnapshotType.get(snapshotType, true).ordinal());
+        nbt.put("header", header.createNbt());
+        ItemStack stack = new ItemStack(this, 1);
         stack.setTagCompound(nbt);
         return stack;
     }
@@ -55,7 +57,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
     public Header getHeader(ItemStack stack) {
         if (stack.getItem() instanceof ItemSnapshot) {
             if (EnumItemSnapshotType.getFromStack(stack).used) {
-                NbtCompound nbt = stack.getTagCompound();
+                NbtCompound nbt = stack.getNbt();
                 if (nbt != null) {
                     if (nbt.contains("header", NbtElement.COMPOUND_TYPE)) {
                         return new Header(nbt.getCompound("header"));
@@ -66,26 +68,26 @@ public class ItemSnapshot extends ItemBC_Neptune {
         return null;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getItemStackLimit(ItemStack stack) {
         return EnumItemSnapshotType.getFromStack(stack).used ? 1 : 16;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> subItems) {
         subItems.add(getClean(EnumSnapshotType.BLUEPRINT));
         subItems.add(getClean(EnumSnapshotType.TEMPLATE));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for (EnumItemSnapshotType type : EnumItemSnapshotType.values()) {
             addVariant(variants, type.ordinal(), type.getName());
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getUnlocalizedName(ItemStack stack) {
         EnumItemSnapshotType type = EnumItemSnapshotType.getFromStack(stack);
         if (type.snapshotType == EnumSnapshotType.BLUEPRINT) {
@@ -95,7 +97,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
     }
 
     @Environment(EnvType.CLIENT)
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void addInformation(ItemStack stack, World world, List<String> tooltip, TooltipContext flag) {
         Snapshot.Header header = getHeader(stack);
         if (header == null) {
@@ -114,7 +116,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
         }
     }
 
-    public enum EnumItemSnapshotType implements IStringSerializable {
+    public enum EnumItemSnapshotType implements StringIdentifiable {
         TEMPLATE_CLEAN(EnumSnapshotType.TEMPLATE, false),
         TEMPLATE_USED(EnumSnapshotType.TEMPLATE, true),
         BLUEPRINT_CLEAN(EnumSnapshotType.BLUEPRINT, false),
@@ -128,7 +130,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
             this.used = used;
         }
 
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         public String getName() {
             return name().toLowerCase(Locale.ROOT);
         }
@@ -144,7 +146,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
         }
 
         public static EnumItemSnapshotType getFromStack(ItemStack stack) {
-            return values()[Math.abs(stack.getMetadata()) % values().length];
+            return values()[Math.abs(stack.getId()) % values().length];
         }
     }
 }

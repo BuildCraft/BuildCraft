@@ -10,6 +10,7 @@ package buildcraft.transport.pipe.flow;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +30,7 @@ import buildcraft.lib.misc.VecUtil;
 //   - Direction → Direction (VALUES → values()).
 //   - NbtCompound → NbtCompound (getInteger/setX → getInt/putX, getCompoundTag → getCompound,
 //     getTag → get, setTag → put; serializeNBT → writeNbt; new ItemStack(nbt) → ItemStack.fromNbt).
-//   - new Vec3d(BlockPos) → Vec3d.ofCenter / Vec3d.of; addVector → add.
+//   - new Vec3d(BlockPos.getX(), BlockPos.getY(), BlockPos.getZ()) → Vec3d.ofCenter / Vec3d.of; addVector → add.
 public class TravellingItem {
     // Client fields - public for rendering
     @Nonnull

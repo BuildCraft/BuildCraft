@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.HashMap;
+import java.util.List;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -66,7 +68,7 @@ public enum BCBuildersEventDist {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public synchronized void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
         Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(event.getWorld());
         if (quarries == null) {
@@ -89,7 +91,7 @@ public enum BCBuildersEventDist {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public void onRenderTooltipPostText(RenderTooltipEvent.PostText event) {
         Snapshot snapshot = null;
@@ -143,7 +145,7 @@ public enum BCBuildersEventDist {
     }
 
     @Environment(EnvType.CLIENT)
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public void onTickClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END && !MinecraftClient.getInstance().isGamePaused()) {
             ClientArchitectTables.tick();

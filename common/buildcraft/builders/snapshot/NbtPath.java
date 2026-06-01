@@ -119,7 +119,7 @@ public class NbtPath {
             } catch (NumberFormatException e) {
                 return NBTUtilBC.NBT_NULL;
             }
-            if (key >= 0 && key < tag.tagCount()) {
+            if (key >= 0 && key < tag.size()) {
                 return new NbtPath(elements.subList(1, elements.size())).get(tag.get(key));
             } else {
                 return NBTUtilBC.NBT_NULL;
@@ -153,7 +153,7 @@ public class NbtPath {
                 return NBTUtilBC.NBT_NULL;
             }
             if (key >= 0 && key < tag.getIntArray().length) {
-                return new NbtInt(tag.getIntArray()[key]);
+                return NbtInt.of(tag.getIntArray()[key]);
             } else {
                 return NBTUtilBC.NBT_NULL;
             }

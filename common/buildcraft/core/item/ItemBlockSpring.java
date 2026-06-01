@@ -6,7 +6,8 @@
 // TODO(R.Chen): blocked by lib.item.ItemBlockBCMulti (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.item;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.client.util.ModelIdentifier;
 
@@ -21,8 +22,8 @@ public class ItemBlockSpring extends ItemBlockBCMulti {
         super(block, NAMES);
     }
 
-    @Override
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for(int i = 0; i < NAMES.length; i++) {
             addVariant(variants, i, "");
         }

@@ -35,7 +35,7 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune implements ICont
         super(player);
         Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(
             player,
-            BCCoreProxy.getProxy().getVolumeBoxes(player.world)
+            BCCoreProxy.getProxy().getVolumeBoxes(player.getWorld())
         );
         addon = Optional.ofNullable(selectingVolumeBoxAndSlot.getLeft())
             .map(volumeBox -> volumeBox.addons.get(selectingVolumeBoxAndSlot.getRight()))
@@ -72,19 +72,19 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune implements ICont
     @Override
     public void valuesChanged() {
         addon.updateBuildingInfo();
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             WorldSavedDataVolumeBoxes.get(getPlayer().world).markDirty();
         }
     }
 
     @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readMessage(int id, PacketBufferBC buffer, NetSide side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
         IContainerFilling.super.readMessage(id, buffer, side, ctx);
     }
 
     @SuppressWarnings("NullableProblems")
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean canInteractWith(PlayerEntity player) {
         return true;
     }

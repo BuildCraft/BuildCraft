@@ -30,7 +30,7 @@ public class BCConfigElement extends ConfigElement {
         isProp = true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public List<IConfigElement> getChildElements() {
         if (!isProp) {
             List<IConfigElement> elements = new ArrayList<>();

@@ -7,7 +7,7 @@
 package buildcraft.factory.container;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Slot;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
@@ -26,11 +26,11 @@ public class ContainerTank extends ContainerBCTile<TileTank> {
         widgetTank = addWidget(new WidgetFluidTank(this, tank.tank));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         // The only slots are player slots -- try to interact with the tank
 
-        if (!player.world.isClient) {
+        if (!player.getWorld().isClient) {
             Slot slot = inventorySlots.get(index);
             ItemStack stack = slot.getStack();
             ItemStack original = stack.copy();

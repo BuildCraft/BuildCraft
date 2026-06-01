@@ -4,7 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -20,7 +21,7 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileElectronicLibrary;
 
 public class BlockElectronicLibrary extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockElectronicLibrary(Material material, String id) {
+    public BlockElectronicLibrary(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

@@ -6,7 +6,8 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -22,7 +23,7 @@ import buildcraft.factory.tile.TileAutoWorkbenchFluids;
 
 public class BlockAutoWorkbenchFluids extends BlockBCTile_Neptune {
 
-    public BlockAutoWorkbenchFluids(Material material, String id) {
+    public BlockAutoWorkbenchFluids(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

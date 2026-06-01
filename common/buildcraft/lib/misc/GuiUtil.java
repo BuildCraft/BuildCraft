@@ -30,7 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.Formatting;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import buildcraft.api.core.BCLog;
@@ -46,6 +46,8 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.platform.GlStateManager;
+import buildcraft.lib.misc.GlStateManagerCompat;
 
 public class GuiUtil {
 
@@ -144,14 +146,14 @@ public class GuiUtil {
     public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
         final int screenWidth, final int screenHeight, final int maxTextWidth, TextRenderer font) {
         if (!textLines.isEmpty()) {
-            GlStateManager.disableRescaleNormal();
+            GlStateManagerCompat.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
             ;
             RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
 
             for (String textLine : textLines) {
-                int textLineWidth = font.getStringWidth(textLine);
+                int textLineWidth = font.getWidth(textLine);
 
                 if (textLineWidth > tooltipTextWidth) {
                     tooltipTextWidth = textLineWidth;
@@ -191,7 +193,7 @@ public class GuiUtil {
                     }
 
                     for (String line : wrappedLine) {
-                        int lineWidth = font.getStringWidth(line);
+                        int lineWidth = font.getWidth(line);
                         if (lineWidth > wrappedTooltipWidth) {
                             wrappedTooltipWidth = lineWidth;
                         }
@@ -259,7 +261,7 @@ public class GuiUtil {
             ;
             RenderSystem.enableDepthTest();
             RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableRescaleNormal();
+            GlStateManagerCompat.enableRescaleNormal();
             return tooltipHeight + 5;
         }
         return 0;
@@ -307,12 +309,12 @@ public class GuiUtil {
         drawFluid(position, tank.getFluidForRender(), tank.getCapacity());
     }
 
-    public static void drawFluid(IGuiArea position, FluidStack fluid, int capacity) {
+    public static void drawFluid(IGuiArea position, FluidStackBC fluid, int capacity) {
         if (fluid == null || fluid.amount <= 0) return;
         drawFluid(position, fluid, fluid.amount, capacity);
     }
 
-    public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
+    public static void drawFluid(IGuiArea position, FluidStackBC fluid, int amount, int capacity) {
         if (fluid == null || amount <= 0) return;
 
         double height = amount * position.getHeight() / capacity;
@@ -387,10 +389,10 @@ public class GuiUtil {
     private static void scissor0(double x, double y, double width, double height) {
         MinecraftClient mc = MinecraftClient.getInstance();
         ScaledResolution res = new ScaledResolution(mc);
-        double scaleW = mc.displayWidth / res.getScaledWidth_double();
-        double scaleH = mc.displayHeight / res.getScaledHeight_double();
+        double scaleW = mc.getWindow().getWidth() / res.getScaledWidth_double();
+        double scaleH = mc.getWindow().getHeight() / res.getScaledHeight_double();
         int rx = (int) (x * scaleW);
-        int ry = (int) (mc.displayHeight - (y + height) * scaleH);
+        int ry = (int) (mc.getWindow().getHeight() - (y + height) * scaleH);
         GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
     }
 
@@ -459,7 +461,7 @@ public class GuiUtil {
             // Temp workaround for headcrumbs
             // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
             Item item = stack.getItem();
-            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
+            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.createNbt() + ")";
             BCLog.logger.warn("[lib.guide] Found null display name! " + info);
             name = "!!NULL stack.getDisplayName(): " + info;
         }
@@ -467,7 +469,7 @@ public class GuiUtil {
     }
 
     private static TooltipContext getTooltipFlags() {
-        boolean adv = MinecraftClient.getInstance().gameSettings.advancedItemTooltips;
+        boolean adv = MinecraftClient.getInstance().options.advancedItemTooltips;
         return adv ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
     }
 

@@ -29,6 +29,7 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()         → tick() + static ticker()
@@ -107,7 +108,7 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements IDebuggable {
     @Override
     public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        // STUB(R.Chen): tankManager.serializeNBT() deferred — Tank not in libLeaf.
+        // STUB(R.Chen): tankManager.createNbt() deferred — Tank not in libLeaf.
         nbt.put("battery", mjBattery.writeToNbt());
         nbt.putLong("distillPower", distillPower);
         // STUB(R.Chen): powerAvg.writeToNbt deferred.

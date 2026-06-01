@@ -26,18 +26,18 @@ public class ItemBlockBCMulti extends ItemBlockBC_Neptune {
 
     public ItemBlockBCMulti(BlockBCBase_Neptune block, final String[] namesByMeta) {
         this(block, stack -> {
-            int meta = stack.getMetadata();
+            int meta = stack.getId();
             if (meta < 0 || meta >= namesByMeta.length) meta = 0;
             return namesByMeta[meta];
         });
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getMetadata(int damage) {
         return damage;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getUnlocalizedName(ItemStack stack) {
         return super.getUnlocalizedName() + "." + this.nameFunction.apply(stack);
     }

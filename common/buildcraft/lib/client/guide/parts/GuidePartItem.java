@@ -29,14 +29,14 @@ public abstract class GuidePartItem extends GuidePart {
 
     protected void drawItemStack(ItemStack stack, int x, int y) {
         if (stack != null && !stack.isEmpty()) {
-            RenderSystem.setShaderColor(1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1.0F);
             TextRenderer fr = MinecraftClient.getInstance().fontRenderer;
             gui.mc.getRenderItem().renderItemIntoGUI(stack, x, y);
             gui.mc.getRenderItem().renderItemOverlays(fr, stack, x, y);
             if (STACK_RECT.offset(x, y).contains(gui.mouse)) {
                 gui.tooltipStack = stack;
             }
-            RenderSystem.setShaderColor(1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1.0F);
         }
     }
 

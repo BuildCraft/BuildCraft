@@ -39,6 +39,10 @@ import buildcraft.robotics.tile.TileZonePlanner;
 import buildcraft.robotics.zone.ZonePlannerMapChunk;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
 import buildcraft.robotics.zone.ZonePlannerMapDataClient;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import buildcraft.lib.misc.GlStateManagerCompat;
+import net.minecraft.client.render.VertexFormat;
 
 public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner> {
     private static final Cache<WorldPos, DynamicTextureBC> TEXTURES = CacheBuilder.newBuilder()
@@ -53,7 +57,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public final void render(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage,
         float alpha) {
         MinecraftClient.getInstance().getProfiler().push("bc");
@@ -71,7 +75,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         if (state.getBlock() != BCRoboticsBlocks.zonePlanner) {
             return;
         }
-        Direction side = state.getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+        Direction side = state.get(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
         DynamicTextureBC texture = getTexture(tile, side);
         if (texture == null) {
@@ -81,19 +85,19 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
             BufferBuilder buffer = tessellator.tessellator.getBuffer();
             texture.updateTexture();
             texture.bindGlTexture();
-            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManagerCompat.setActiveTexture(OpenGlHelper.lightmapTexUnit);
             ;
-            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+            GlStateManagerCompat.setActiveTexture(OpenGlHelper.defaultTexUnit);
             RenderSystem.disableBlend();
             GlStateManager.disableCull();
             if (MinecraftClient.isAmbientOcclusionEnabled()) {
-                GlStateManager.shadeModel(GL11.GL_SMOOTH);
+                GlStateManagerCompat.shadeModel(GL11.GL_SMOOTH);
             } else {
-                GlStateManager.shadeModel(GL11.GL_FLAT);
+                GlStateManagerCompat.shadeModel(GL11.GL_FLAT);
             }
 
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            buffer.setTranslation(x, y, z);
+            buffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(x, y, z);
 
             Vec3d min;
             Vec3d max;
@@ -133,7 +137,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
             vertex.positiond(max.x, max.y, max.z).texf(maxU, maxV).render(buffer);
             vertex.positiond(min.x, max.y, min.z).texf(minU, maxV).render(buffer);
 
-            buffer.setTranslation(0, 0, 0);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(0, 0, 0);
             tessellator.tessellator.draw();
         }
         RenderHelper.enableStandardItemLighting();

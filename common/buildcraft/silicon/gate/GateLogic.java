@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Set;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -60,6 +61,7 @@ import buildcraft.lib.statement.TriggerWrapper.TriggerWrapperInternalSided;
 
 import buildcraft.silicon.plug.PluggableGate;
 import buildcraft.transport.wire.WorldSavedDataWireSystems;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
 
@@ -228,7 +230,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
             (isAction ? s.action : s.trigger).readFromBuffer(buffer);
             return;
         }
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_ID_RESOLVE) {
                 readBoolArray(buffer, triggerOn);
                 readBoolArray(buffer, actionOn);

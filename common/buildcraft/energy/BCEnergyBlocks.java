@@ -6,7 +6,8 @@
 
 package buildcraft.energy;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumSpring;
@@ -39,7 +40,7 @@ public class BCEnergyBlocks {
         }
 
         if (BCEnergyConfig.enableMjDynamo) {
-            mjDynamo = HELPER.addForcedBlock(new BlockDynamoMJ(Material.IRON, "block.mj_dynamo"));
+            mjDynamo = HELPER.addForcedBlock(new BlockDynamoMJ(MaterialBC.IRON, "block.mj_dynamo"));
             HELPER.addForcedItem(new ItemBlockBC_Neptune(mjDynamo));
             HELPER.registerTile(TileDynamoMJ.class, "tile.mj_dynamo");
         }

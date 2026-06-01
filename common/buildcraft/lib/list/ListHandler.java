@@ -109,7 +109,7 @@ public final class ListHandler {
                 for (ItemStack s : stacks) {
                     if (s != null && StackUtil.isMatchingItem(s, target, true, precise)) {
                         // If precise, re-check damage
-                        if (!precise || s.getItemDamage() == target.getItemDamage()) {
+                        if (!precise || s.getDamage() == target.getDamage()) {
                             return true;
                         }
                     }
@@ -128,7 +128,7 @@ public final class ListHandler {
 
             if (data != null && data.contains("st")) {
                 NbtList l = data.getList("st", 10);
-                for (int i = 0; i < l.tagCount(); i++) {
+                for (int i = 0; i < l.size(); i++) {
                     line.stacks.set(i, new ItemStack(l.getCompoundTagAt(i)));
                 }
 
@@ -184,7 +184,7 @@ public final class ListHandler {
             if (firstStack.isEmpty()) {
                 return DefaultedList.withSize(0, StackUtil.EMPTY);
             }
-            DefaultedList<ItemStack> stackList = DefaultedList.create();
+            DefaultedList<ItemStack> stackList = DefaultedList.of();
             List<ListMatchHandler> handlers = ListRegistry.getHandlers();
             List<ListMatchHandler> handlersCustom = new ArrayList<>();
             ListMatchHandler.Type type = getSortingType();
@@ -200,7 +200,7 @@ public final class ListHandler {
             }
             if (handlersCustom.size() > 0) {
                 for (Item i : ForgeRegistries.ITEMS) {
-                    DefaultedList<ItemStack> examples = DefaultedList.create();
+                    DefaultedList<ItemStack> examples = DefaultedList.of();
                     i.getSubItems(ItemGroup.SEARCH, examples);
                     for (ItemStack s : examples) {
                         for (ListMatchHandler mh : handlersCustom) {
@@ -241,7 +241,7 @@ public final class ListHandler {
         NbtCompound data = NBTUtilBC.getItemData(item);
         if (data.contains("written") && data.contains("lines")) {
             NbtList list = data.getList("lines", 10);
-            Line[] lines = new Line[list.tagCount()];
+            Line[] lines = new Line[list.size()];
             for (int i = 0; i < lines.length; i++) {
                 lines[i] = Line.fromNBT(list.getCompoundTagAt(i));
             }
@@ -289,7 +289,7 @@ public final class ListHandler {
         NbtCompound data = NBTUtilBC.getItemData(stackList);
         if (data.contains("written") && data.contains("lines")) {
             NbtList list = data.getList("lines", 10);
-            for (int i = 0; i < list.tagCount(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 Line line = Line.fromNBT(list.getCompoundTagAt(i));
                 if (line.matches(item)) {
                     return true;

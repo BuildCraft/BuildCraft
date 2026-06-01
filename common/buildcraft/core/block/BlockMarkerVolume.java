@@ -8,7 +8,8 @@ package buildcraft.core.block;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -23,7 +24,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.core.tile.TileMarkerVolume;
 
 public class BlockMarkerVolume extends BlockMarkerBase {
-    public BlockMarkerVolume(Material material, String id) {
+    public BlockMarkerVolume(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -37,7 +38,7 @@ public class BlockMarkerVolume extends BlockMarkerBase {
         checkSignalState(world, pos);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateTick(World world, BlockPos pos, BlockState state, Random rand) {
         checkSignalState(world, pos);
     }

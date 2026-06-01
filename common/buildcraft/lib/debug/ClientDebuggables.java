@@ -29,9 +29,9 @@ public class ClientDebuggables {
     @Nullable
     public static IDebuggable getDebuggableObject(HitResult mouseOver) {
         MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.gameSettings.reducedDebugInfo ||
+        if (mc.options.reducedDebugInfo ||
             mc.player.hasReducedDebug() ||
-            !mc.gameSettings.showDebugInfo ||
+            !mc.options.showDebugInfo ||
             !ItemDebugger.isShowDebugInfo(mc.player)) {
             return null;
         }
@@ -39,7 +39,7 @@ public class ClientDebuggables {
             return null;
         }
         HitResult.Type type = mouseOver.typeOfHit;
-        WorldClient world = mc.world;
+        WorldClient world = mc.getWorld();
         if (world == null) {
             return null;
         }

@@ -28,6 +28,7 @@ import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class ContainerList extends ContainerBC_Neptune {
     // Network ID's
@@ -56,7 +57,7 @@ public class ContainerList extends ContainerBC_Neptune {
             this.slotIndex = slotIndex;
         }
 
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         protected void onSetStack() {
             ContainerList.this.setStack(lineIndex, slotIndex, getStack());
         }
@@ -79,7 +80,7 @@ public class ContainerList extends ContainerBC_Neptune {
         addFullPlayerInventory(103);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean canInteractWith(PlayerEntity player) {
         return !getListItemStack().isEmpty();
     }
@@ -106,7 +107,7 @@ public class ContainerList extends ContainerBC_Neptune {
     public void switchButton(final int lineIndex, final int button) {
         lines[lineIndex].toggleOption(button);
 
-        if (player.world.isClient) {
+        if (player.getWorld().isClient) {
             sendMessage(ID_BUTTON, (buffer) -> {
                 buffer.writeByte(lineIndex);
                 buffer.writeByte(button);
@@ -127,15 +128,15 @@ public class ContainerList extends ContainerBC_Neptune {
     public void setLabel(final String text) {
         BCCoreItems.list.setName(getListItemStack(), text);
 
-        if (player.world.isClient) {
+        if (player.getWorld().isClient) {
             sendMessage(ID_LABEL, (buffer) -> buffer.writeString(text));
         }
     }
 
-    @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void readMessage(int id, PacketBufferBC buffer, NetSide side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == ID_BUTTON) {
                 int lineIndex = buffer.readUnsignedByte();
                 int button = buffer.readUnsignedByte();

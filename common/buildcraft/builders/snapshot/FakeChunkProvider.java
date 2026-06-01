@@ -24,12 +24,12 @@ public class FakeChunkProvider implements IChunkProvider {
     }
 
     @Nullable
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Chunk getLoadedChunk(int x, int z) {
         ChunkPos chunkPos = new ChunkPos(x, z);
         if (!chunks.containsKey(chunkPos)) {
             chunks.put(chunkPos, new Chunk(world, x, z) {
-                @Override
+                // @Override -- removed: method does not exist in Fabric 1.20.1
                 public void generateSkylightMap() {
                 }
             });
@@ -37,17 +37,17 @@ public class FakeChunkProvider implements IChunkProvider {
         return chunks.get(chunkPos);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Chunk provideChunk(int x, int z) {
         return getLoadedChunk(x, z);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean tick() {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String makeString() {
         return "fake";
     }

@@ -32,6 +32,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import buildcraft.lib.net.MessageManager;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import buildcraft.lib.misc.GlStateManagerCompat;
+import net.minecraft.client.render.VertexFormat;
 
 public enum ClientSnapshots {
     INSTANCE;
@@ -80,39 +84,37 @@ public enum ClientSnapshots {
                 public void reset() {
                 }
             };
-            localBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            localBuffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
             for (int z = 0; z < snapshot.size.getZ(); z++) {
                 for (int y = 0; y < snapshot.size.getY(); y++) {
                     for (int x = 0; x < snapshot.size.getX(); x++) {
                         BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
-                        localBuffer.setTranslation(
-                            -FakeWorld.BLUEPRINT_OFFSET.getX(),
-                            -FakeWorld.BLUEPRINT_OFFSET.getY(),
-                            -FakeWorld.BLUEPRINT_OFFSET.getZ()
-                        );
+                        // TODO(R.Chen): setTranslation removed — use MatrixStack instead:
+                        // localBuffer.setTranslation(-FakeWorld.BLUEPRINT_OFFSET.getX(),
+                        //     -FakeWorld.BLUEPRINT_OFFSET.getY(), -FakeWorld.BLUEPRINT_OFFSET.getZ());
                         MinecraftClient.getInstance().getBlockRendererDispatcher().renderBlock(
                             world.getBlockState(pos),
                             pos,
                             world,
                             localBuffer
                         );
-                        localBuffer.setTranslation(0, 0, 0);
+                        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: localBuffer.setTranslation(0, 0, 0);
                     }
                 }
             }
             localBuffer.finishDrawing();
             return localBuffer;
         });
-        GlStateManager.pushAttrib();
+        GlStateManagerCompat.pushAttrib();
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
         RenderSystem.getModelViewStack().push();
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManagerCompat.matrixMode(GL11.GL_PROJECTION);
         RenderSystem.getModelViewStack().push();
-        GlStateManager.loadIdentity();
+        GlStateManagerCompat.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(MinecraftClient.getInstance());
         int viewportX = offsetX * scaledResolution.getScaleFactor();
-        int viewportY = MinecraftClient.getInstance().displayHeight - (sizeY + offsetY) * scaledResolution.getScaleFactor();
+        int viewportY = MinecraftClient.getInstance().getWindow().getHeight() - (sizeY + offsetY) * scaledResolution.getScaleFactor();
         int viewportWidth = sizeX * scaledResolution.getScaleFactor();
         int viewportHeight = sizeY * scaledResolution.getScaleFactor();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -124,7 +126,7 @@ public enum ClientSnapshots {
         );
         GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.viewport(
+        GlStateManagerCompat.viewport(
             viewportX,
             viewportY,
             viewportWidth,
@@ -132,9 +134,9 @@ public enum ClientSnapshots {
         );
         RenderSystem.getModelViewStack().scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 0.1F, 1000.0F);
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.loadIdentity();
-        GlStateManager.enableRescaleNormal();
+        GlStateManagerCompat.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManagerCompat.loadIdentity();
+        GlStateManagerCompat.enableRescaleNormal();
         RenderSystem.getModelViewStack().push();
         int snapshotSize = Math.max(Math.max(snapshot.size.getX(), snapshot.size.getY()), snapshot.size.getY());
         RenderSystem.getModelViewStack().translate(0, 0, -snapshotSize * 2F - 3);
@@ -142,7 +144,7 @@ public enum ClientSnapshots {
         RenderSystem.getModelViewStack().rotate((System.currentTimeMillis() % 3600) / 10F, 0, 1, 0);
         RenderSystem.getModelViewStack().translate(-snapshot.size.getX() / 2F, -snapshot.size.getY() / 2F, -snapshot.size.getZ() / 2F);
         RenderSystem.getModelViewStack().translate(0, snapshotSize * 0.1F, 0);
-        MinecraftClient.getInstance().getRenderManager().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         new WorldVertexBufferUploader().draw(bufferBuilder);
         if (snapshotSize < 32) {
             TileEntityRendererDispatcher.instance.preDrawBatch();
@@ -150,7 +152,7 @@ public enum ClientSnapshots {
                 for (int y = 0; y < snapshot.size.getY(); y++) {
                     for (int x = 0; x < snapshot.size.getX(); x++) {
                         BlockPos pos = new BlockPos(x, y, z).add(FakeWorld.BLUEPRINT_OFFSET);
-                        GlStateManager.pushAttrib();
+                        GlStateManagerCompat.pushAttrib();
                         // noinspection ConstantConditions
                         TileEntityRendererDispatcher.instance.render(
                             world.getBlockEntity(pos),
@@ -159,7 +161,7 @@ public enum ClientSnapshots {
                             pos.getZ() - FakeWorld.BLUEPRINT_OFFSET.getZ(),
                             0
                         );
-                        GlStateManager.popAttrib();
+                        GlStateManagerCompat.popAttrib();
                     }
                 }
             }
@@ -167,8 +169,8 @@ public enum ClientSnapshots {
         }
         // noinspection Guava
         for (Entity entity : world.getEntities(Entity.class, Predicates.alwaysTrue())) {
-            Vec3d pos = entity.getPositionVector();
-            GlStateManager.pushAttrib();
+            Vec3d pos = entity.getPos();
+            GlStateManagerCompat.pushAttrib();
             MinecraftClient.getInstance().getRenderManager().renderEntity(
                 entity,
                 pos.x - FakeWorld.BLUEPRINT_OFFSET.getX(),
@@ -178,17 +180,17 @@ public enum ClientSnapshots {
                 0,
                 true
             );
-            GlStateManager.popAttrib();
+            GlStateManagerCompat.popAttrib();
         }
         RenderSystem.getModelViewStack().pop();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.viewport(0, 0, MinecraftClient.getInstance().displayWidth, MinecraftClient.getInstance().displayHeight);
+        GlStateManagerCompat.disableRescaleNormal();
+        GlStateManagerCompat.matrixMode(GL11.GL_PROJECTION);
+        GlStateManagerCompat.viewport(0, 0, MinecraftClient.getInstance().getWindow().getWidth(), MinecraftClient.getInstance().getWindow().getHeight());
         RenderSystem.getModelViewStack().pop();
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManagerCompat.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.disableBlend();
         RenderSystem.disableDepthTest();
-        GlStateManager.popAttrib();
+        GlStateManagerCompat.popAttrib();
     }
 }

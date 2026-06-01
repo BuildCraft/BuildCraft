@@ -12,8 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TIntArrayList;
 
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtCompound;
@@ -82,7 +80,7 @@ class NbtSquishMapReader {
             int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
                 int arraySize = in.readUnsignedShort();
-                TByteArrayList list = new TByteArrayList();
+                ArrayList<Byte> list = new ArrayList<Byte>();
                 for (int j = 0; j < arraySize; j++) {
                     list.add(in.readByte());
                 }
@@ -94,7 +92,7 @@ class NbtSquishMapReader {
             int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
                 int arraySize = in.readUnsignedShort();
-                TIntArrayList list = new TIntArrayList();
+                ArrayList<Integer> list = new ArrayList<Integer>();
                 for (int j = 0; j < arraySize; j++) {
                     list.add(in.readInt());
                 }
@@ -188,7 +186,7 @@ class NbtSquishMapReader {
             dictionary.add(nbt);
         }
         List<NbtElement> list = new ArrayList<>();
-        TIntArrayList left = new TIntArrayList();
+        ArrayList<Integer> left = new ArrayList<Integer>();
         int bits = 1;
         int entries = readVarInt(in);
 
@@ -203,10 +201,10 @@ class NbtSquishMapReader {
             in.readFully(bitsetData);
             DecompactingBitSet decompactor = new DecompactingBitSet(bits, bitsetData);
 
-            TIntArrayList nextLeft = new TIntArrayList();
+            ArrayList<Integer> nextLeft = new ArrayList<Integer>();
 
             int maxVal = (1 << bits) - 1;
-            for (int i : left.toArray()) {
+            for (int i : left) {
                 int index = decompactor.next();
                 if (index < maxVal) {
                     list.set(i, dictionary.get(index));

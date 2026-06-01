@@ -24,7 +24,7 @@ public enum MinecraftFont implements IFontRenderer {
 
     @Override
     public int getStringWidth(String text) {
-        return getFontRenderer().getStringWidth(text);
+        return getFontRenderer().getWidth(text);
     }
 
     @Override
@@ -51,7 +51,7 @@ public enum MinecraftFont implements IFontRenderer {
         }
         int v = getFontRenderer().drawString(text, x, y, colour, shadow);
         v -= x;
-        RenderSystem.setShaderColor(1f, 1f, 1f);
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1.0F);
         if (_scale) {
             RenderSystem.getModelViewStack().pop();
             v = (int) (v * scale);

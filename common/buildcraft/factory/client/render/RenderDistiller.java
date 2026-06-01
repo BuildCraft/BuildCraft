@@ -42,6 +42,9 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.BCFactoryModels;
 import buildcraft.factory.tile.TileDistiller_BC8;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 @Environment(EnvType.CLIENT)
 public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8> {
@@ -60,7 +63,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(TileDistiller_BC8 tile, double x, double y, double z, float partialTicks, int destroyStage,
         float alpha) {
         super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
@@ -75,20 +78,20 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         profiler.push("distiller");
 
         int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), 0);
-        Direction face = state.getValue(BlockBCBase_Neptune.PROP_FACING);
+        Direction face = state.get(BlockBCBase_Neptune.PROP_FACING);
         TankRenderSizes sizes = TANK_SIZES.get(face);
 
         // gl state setup
         RenderHelper.disableStandardItemLighting();
-        MinecraftClient.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         RenderSystem.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
         try (AutoTessellator tess = RenderUtil.getThreadLocalUnusedTessellator()) {
             BufferBuilder bb = tess.tessellator.getBuffer();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            bb.setTranslation(x, y, z);
+            bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x, y, z);
 
             profiler.push("model");
             profiler.push("compute");
@@ -119,7 +122,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
             renderTank(sizes.tankOutLiquid, tile.smoothedTankLiquidOut, combinedLight, partialTicks, bb);
 
             // buffer finish
-            bb.setTranslation(0, 0, 0);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
             profiler.swap("draw");
             tess.tessellator.draw();
         }
@@ -172,7 +175,7 @@ public class RenderDistiller extends TileEntitySpecialRenderer<TileDistiller_BC8
         }
 
         public Size shrink(double by) {
-            return new Size(min.addVector(by, by, by), max.subtract(by, by, by));
+            return new Size(min.add(by, by, by), max.subtract(by, by, by));
         }
 
         public Size rotateY() {

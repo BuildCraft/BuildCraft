@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.fluid.BCFluid;
@@ -20,10 +20,10 @@ import buildcraft.energy.client.sprite.AtlasSpriteFluid;
 
 public class BCEnergySprites {
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCEnergySprites.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCEnergySprites.class);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
 

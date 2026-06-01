@@ -7,6 +7,8 @@
 package buildcraft.lib.inventory.filter;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
@@ -15,7 +17,7 @@ import buildcraft.api.core.IStackFilter;
 
 import buildcraft.lib.misc.StackUtil;
 
-/** Returns true if the stack matches any one one of the filter stacks. Checks the OreDictionary and wildcards. */
+/** Returns true if the stack matches any one one of the filter stacks. Checks the OreDictionaryStub and wildcards. */
 public class CraftingFilter implements IStackFilter {
 
     private final DefaultedList<ItemStack> stacks;

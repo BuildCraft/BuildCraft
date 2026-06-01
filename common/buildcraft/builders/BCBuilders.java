@@ -54,7 +54,7 @@ public class BCBuilders {
 
         BCBuildersProxy.getProxy().fmlPreInit();
 
-        MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
     }
 
     @Mod.EventHandler

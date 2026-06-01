@@ -9,6 +9,7 @@
 package buildcraft.lib.client.model;
 
 import java.util.Set;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 

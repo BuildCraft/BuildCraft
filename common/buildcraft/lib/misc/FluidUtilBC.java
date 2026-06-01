@@ -20,8 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -35,13 +35,13 @@ import buildcraft.lib.fluid.Tank;
 public class FluidUtilBC {
 
     public static void pushFluidAround(BlockView world, BlockPos pos, Tank tank) {
-        FluidStack potential = tank.drain(tank.getFluidAmount(), false);
+        FluidStackBC potential = tank.drain(tank.getFluidAmount(), false);
         int drained = 0;
         if (potential == null || potential.amount <= 0) {
             return;
         }
-        FluidStack working = potential.copy();
-        for (Direction side : Direction.VALUES) {
+        FluidStackBC working = potential.copy();
+        for (Direction side : Direction.values()) {
             if (potential.amount <= 0) {
                 break;
             }
@@ -60,7 +60,7 @@ public class FluidUtilBC {
             }
         }
         if (drained > 0) {
-            FluidStack actuallyDrained = tank.drain(drained, true);
+            FluidStackBC actuallyDrained = tank.drain(drained, true);
             if (actuallyDrained == null || actuallyDrained.amount != drained) {
                 String strWorking = StringUtilBC.fluidToString(working);
                 String strActual = StringUtilBC.fluidToString(actuallyDrained);
@@ -70,11 +70,11 @@ public class FluidUtilBC {
         }
     }
 
-    public static List<FluidStack> mergeSameFluids(List<FluidStack> fluids) {
-        List<FluidStack> stacks = new ArrayList<>();
+    public static List<FluidStackBC> mergeSameFluids(List<FluidStackBC> fluids) {
+        List<FluidStackBC> stacks = new ArrayList<>();
         fluids.forEach(toAdd -> {
             boolean found = false;
-            for (FluidStack stack : stacks) {
+            for (FluidStackBC stack : stacks) {
                 if (stack.isFluidEqual(toAdd)) {
                     stack.amount += toAdd.amount;
                     found = true;
@@ -87,7 +87,7 @@ public class FluidUtilBC {
         return stacks;
     }
 
-    public static boolean areFluidStackEqual(FluidStack a, FluidStack b) {
+    public static boolean areFluidStackEqual(FluidStackBC a, FluidStackBC b) {
         return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
     }
 
@@ -95,23 +95,23 @@ public class FluidUtilBC {
         if (a == null || b == null) {
             return a == b;
         }
-        return a.getName().equals(b.getName());
+        return buildcraft.lib.compat.FluidRegistryBC.getFluidName(a).equals(buildcraft.lib.compat.FluidRegistryBC.getFluidName(b));
     }
 
     /** @return The fluidstack that was moved, or null if no fluid was moved. */
     @Nullable
-    public static FluidStack move(IFluidHandler from, IFluidHandler to) {
+    public static FluidStackBC move(IFluidHandler from, IFluidHandler to) {
         return move(from, to, Integer.MAX_VALUE);
     }
 
     /** @param max The maximum amount of fluid to move.
      * @return The fluidstack that was moved, or null if no fluid was moved. */
     @Nullable
-    public static FluidStack move(IFluidHandler from, IFluidHandler to, int max) {
+    public static FluidStackBC move(IFluidHandler from, IFluidHandler to, int max) {
         if (from == null || to == null) {
             return null;
         }
-        FluidStack toDrainPotential;
+        FluidStackBC toDrainPotential;
         if (from instanceof IFluidHandlerAdv) {
             IFluidFilter filter = f -> to.fill(f, false) > 0;
             toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, false);
@@ -125,14 +125,14 @@ public class FluidUtilBC {
         if (accepted <= 0) {
             return null;
         }
-        FluidStack toDrain = new FluidStack(toDrainPotential, accepted);
+        FluidStackBC toDrain = new FluidStackBC(toDrainPotential, accepted);
         if (accepted < toDrainPotential.amount) {
             toDrainPotential = from.drain(toDrain, false);
             if (toDrainPotential == null || toDrainPotential.amount < accepted) {
                 return null;
             }
         }
-        FluidStack drained = from.drain(toDrain.copy(), true);
+        FluidStackBC drained = from.drain(toDrain.copy(), true);
         if (drained == null || toDrain.amount != drained.amount || !toDrain.isFluidEqual(drained)) {
             String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
             detail += ",\npotential drain = " + StringUtilBC.fluidToString(toDrainPotential) + ")";
@@ -146,7 +146,7 @@ public class FluidUtilBC {
             String detail = "(actually accepted = " + actuallyAccepted + ", accepted = " + accepted + ")";
             throw new IllegalStateException("Mismatched IFluidHandler implementations!\n" + detail);
         }
-        return new FluidStack(drained, accepted);
+        return new FluidStackBC(drained, accepted);
     }
 
     public static boolean onTankActivated(PlayerEntity player, BlockPos pos, Hand hand,
@@ -171,12 +171,12 @@ public class FluidUtilBC {
         if (flItem == null) {
             return false;
         }
-        World world = player.world;
+        World world = player.getWorld();
         if (world.isClient) {
             return true;
         }
         boolean changed = true;
-        FluidStack moved;
+        FluidStackBC moved;
         if ((moved = FluidUtilBC.move(flItem, fluidHandler)) != null) {
             SoundUtil.playBucketEmpty(world, pos, moved);
         } else if ((moved = FluidUtilBC.move(fluidHandler, flItem)) != null) {

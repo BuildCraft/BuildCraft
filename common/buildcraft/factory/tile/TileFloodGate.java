@@ -27,6 +27,7 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   ITickable.update()       → tick() + static ticker()
@@ -110,7 +111,7 @@ public class TileFloodGate extends TileBC_Neptune implements IDebuggable {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetEnvType.SERVER && id == NET_RENDER_DATA) {
+        if (side == NetSide.SERVER && id == NET_RENDER_DATA) {
             // Encode openSides as a 6-bit bitmask (one bit per Direction ordinal).
             byte b = 0;
             for (Direction face : Direction.values()) {
@@ -125,7 +126,7 @@ public class TileFloodGate extends TileBC_Neptune implements IDebuggable {
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetEnvType.CLIENT && id == NET_RENDER_DATA) {
+        if (side == NetSide.CLIENT && id == NET_RENDER_DATA) {
             byte b = buffer.readByte();
             EnumSet<Direction> newSides = EnumSet.noneOf(Direction.class);
             for (Direction face : Direction.values()) {

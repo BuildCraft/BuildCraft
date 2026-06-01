@@ -2,6 +2,7 @@ package buildcraft.lib.client.guide.entry;
 
 import java.util.List;
 import java.util.TreeMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -10,7 +11,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
@@ -61,7 +61,7 @@ public class PageEntryStatement extends PageValueType<IStatement> {
     @Override
     public OptionallyDisabled<PageEntry<IStatement>> deserialize(Identifier name, JsonObject json,
         JsonDeserializationContext ctx) {
-        String stmntName = JsonUtils.getString(json, "statement");
+        String stmntName = json.get("statement").getAsString();
         IStatement stmnt = StatementManager.statements.get(stmntName);
         if (stmnt == null) {
             throw new JsonSyntaxException("Unknown statement '" + stmntName + "'");

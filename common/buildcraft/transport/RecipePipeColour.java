@@ -7,7 +7,7 @@
  */
 package buildcraft.transport;
 
-// STUB(R.Chen): custom RecipePipeColour (Forge IRecipe/IRecipeViewable) → Fabric Recipe<Inventory>
+// STUB(R.Chen): custom RecipePipeColour (Forge net.minecraft.recipe.CraftingRecipe/IRecipeViewable) → Fabric Recipe<Inventory>
 // in Phase 4E data-gen. Pipe-colour crafting deferred.
 public class RecipePipeColour {
     public static void register() {} // STUB

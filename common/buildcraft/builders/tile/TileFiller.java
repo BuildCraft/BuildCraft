@@ -21,7 +21,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -71,6 +70,7 @@ import buildcraft.core.marker.volume.EnumAddonSlot;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TileFiller extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, IFillerStatementContainer, IControllable {
@@ -129,7 +129,7 @@ public class TileFiller extends TileBC_Neptune
         }
         BlockState blockState = world.getBlockState(pos);
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
-        BlockPos offsetPos = pos.offset(blockState.getValue(BlockBCBase_Neptune.PROP_FACING).getOpposite());
+        BlockPos offsetPos = pos.offset(blockState.get(BlockBCBase_Neptune.PROP_FACING).getOpposite());
         VolumeBox volumeBox = volumeBoxes.getVolumeBoxAt(offsetPos);
         BlockEntity tile = world.getBlockEntity(offsetPos);
         if (volumeBox != null) {
@@ -182,7 +182,7 @@ public class TileFiller extends TileBC_Neptune
         sendNetworkUpdate(NET_RENDER_DATA);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void onSlotChange(IItemHandlerModifiable handler,
                                 int slot,
                                 @Nonnull ItemStack before,
@@ -215,22 +215,22 @@ public class TileFiller extends TileBC_Neptune
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::tick);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void validate() {
         super.validate();
         builder.validate();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void invalidate() {
         super.invalidate();
         builder.invalidate();
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 builder.writeToByteBuf(buffer);
                 writePayload(NET_BOX, buffer, side);
@@ -261,9 +261,9 @@ public class TileFiller extends TileBC_Neptune
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 builder.readFromByteBuf(buffer);
                 readPayload(NET_BOX, buffer, side, ctx);
@@ -299,7 +299,7 @@ public class TileFiller extends TileBC_Neptune
                 patternStatement.readFromBuffer(buffer);
             }
         }
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
                 sendNetworkGuiUpdate(NET_CAN_EXCAVATE);
@@ -337,7 +337,7 @@ public class TileFiller extends TileBC_Neptune
     @Override
     public NbtCompound writeToNBT(NbtCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.put("battery", battery.serializeNBT());
+        nbt.put("battery", battery.createNbt());
         nbt.putBoolean("canExcavate", canExcavate);
         nbt.putBoolean("inverted", inverted);
         nbt.putBoolean("finished", finished);
@@ -350,7 +350,7 @@ public class TileFiller extends TileBC_Neptune
         }
         nbt.putBoolean("markerBox", markerBox);
         nbt.put("patternStatement", patternStatement.writeToNbt());
-        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.put("builder", builder.serializeNBT()));
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.put("builder", builder.createNbt()));
         return nbt;
     }
 
@@ -380,20 +380,20 @@ public class TileFiller extends TileBC_Neptune
 
     // Rendering
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public boolean hasFastRenderer() {
         return true;
     }
 
     @Nonnull
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public Box getRenderBoundingBox() {
         return BoundingBoxUtil.makeFrom(pos, addon != null ? addon.volumeBox.box : box);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;

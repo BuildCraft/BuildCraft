@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Direction.AxisDirection;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -84,11 +83,11 @@ public class BoundingBoxUtil {
 
     /** Creates a box that extrudes from the specified face of the given block position. */
     public static Box extrudeFace(BlockPos pos, Direction face, double depth) {
-        Vec3d from = new Vec3d(pos);
-        Vec3d to = new Vec3d(pos).addVector(1, 1, 1);
+        Vec3d from = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+        Vec3d to = new Vec3d(pos.getX(), pos.getY(), pos.getZ()).add(1, 1, 1);
 
         Axis axis = face.getAxis();
-        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
+        if (face.getDirection() == AxisDirection.POSITIVE) {
             from = VecUtil.replaceValue(from, axis, VecUtil.getValue(from, axis) + 1);
             to = VecUtil.replaceValue(to, axis, VecUtil.getValue(to, axis) + depth);
         } else {

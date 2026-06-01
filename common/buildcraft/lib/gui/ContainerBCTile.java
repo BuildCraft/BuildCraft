@@ -23,6 +23,11 @@ public abstract class ContainerBCTile<T extends TileBC_Neptune> extends Containe
         }
     }
 
+    /** Forge-compat 2-arg constructor: syncId defaults to 0. */
+    public ContainerBCTile(PlayerEntity player, T tile) {
+        this(player, 0, tile);
+    }
+
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);

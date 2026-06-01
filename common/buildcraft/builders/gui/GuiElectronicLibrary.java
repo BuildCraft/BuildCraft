@@ -58,7 +58,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
         drawProgress(RECT_PROGRESS_DOWN, ICON_PROGRESS_DOWN, -container.tile.deltaProgressDown.getDynamic(partialTicks), 1);
@@ -89,7 +89,7 @@ public class GuiElectronicLibrary extends GuiBC8<ContainerElectronicLibrary> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         AtomicBoolean found = new AtomicBoolean(false);
         iterateSnapshots((i, rect, key) -> {

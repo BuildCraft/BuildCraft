@@ -100,7 +100,7 @@ public class FormatString {
             FormatSegment segment = segments[segmentIndex];
 
             // TODO: Ensure that this segment doesn't join with the NEXT segment as a word!
-            int width = font.getStringWidth(segment.toFormatString());
+            int width = font.getWidth(segment.toFormatString());
             if (width + widthUsed <= maxWidth) {
                 thisLine.add(segment);
                 widthUsed += width;
@@ -115,7 +115,7 @@ public class FormatString {
                             continue;
                         }
                         String subText = text.substring(0, i);
-                        int w = font.getStringWidth(subText);
+                        int w = font.getWidth(subText);
                         if (w + widthUsed <= maxWidth) {
                             allowedLength = i;
                             break outer;

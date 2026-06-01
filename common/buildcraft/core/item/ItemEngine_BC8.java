@@ -5,7 +5,8 @@
 // TODO(R.Chen): blocked by lib.item.ItemBlockBCMulti + lib.engine.BlockEngineBase_BC8 (not yet migrated)
 package buildcraft.core.item;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ModelIdentifier;
@@ -20,19 +21,19 @@ public class ItemEngine_BC8<E extends Enum<E> & IEngineType> extends ItemBlockBC
     private final BlockEngineBase_BC8<E> engineBlock;
 
     public ItemEngine_BC8(BlockEngineBase_BC8<E> block) {
-        super(block, (stack) -> block.getUnlocalizedName(block.getEngineType(stack.getItemDamage())));
+        super(block, (stack) -> block.getUnlocalizedName(block.getEngineType(stack.getDamage())));
         engineBlock = block;
     }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        BlockState state = engineBlock.getStateFromMeta(stack == null ? 0 : stack.getItemDamage());
-        E engine = state.getValue(engineBlock.getEngineProperty());
+        BlockState state = engineBlock.getStateFromMeta(stack == null ? 0 : stack.getDamage());
+        E engine = state.get(engineBlock.getEngineProperty());
         return "tile." + engineBlock.getUnlocalizedName(engine);
     }
 
-    @Override
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for (E type : engineBlock.getEngineProperty().getAllowedValues()) {
             int index = type.ordinal();
             addVariant(variants, index, type.getItemModelLocation());

@@ -11,11 +11,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import java.util.List;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -24,6 +25,7 @@ import buildcraft.lib.guide.GuideBook;
 import buildcraft.lib.guide.GuideBookRegistry;
 import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.nbt.NbtElement;
 
 public class ItemGuide extends ItemBC_Neptune {
     private static final String DEFAULT_BOOK = "buildcraftcore:main";
@@ -35,14 +37,14 @@ public class ItemGuide extends ItemBC_Neptune {
         setContainerItem(this);
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
         player.openGui(BCLib.INSTANCE, 0, world, hand == Hand.MAIN_HAND ? 0 : 1, 0, 0);
         return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> items) {
         for (GuideBook book : GuideBookRegistry.INSTANCE.getAllEntries()) {
             ItemStack stack = new ItemStack(this);
@@ -53,7 +55,7 @@ public class ItemGuide extends ItemBC_Neptune {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getItemStackDisplayName(ItemStack stack) {
         String bookName = getBookName(stack);
         GuideBook book = GuideBookRegistry.INSTANCE.getBook(bookName);
@@ -64,7 +66,7 @@ public class ItemGuide extends ItemBC_Neptune {
     }
 
     public static String getBookName(ItemStack stack) {
-        NbtCompound nbt = stack.getTagCompound();
+        NbtCompound nbt = stack.getNbt();
         if (nbt == null || !nbt.contains(TAG_BOOK_NAME, NbtElement.STRING_TYPE)) {
             // So that existing guide books continue to work
             return ItemGuide.DEFAULT_BOOK;

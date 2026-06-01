@@ -11,12 +11,20 @@ import java.util.List;
 public interface IFontRenderer {
     int getStringWidth(String text);
 
+    /** 1.20.1 compat alias for {@link #getStringWidth(String)}. */
+    default int getWidth(String text) { return getStringWidth(text); }
+
     int getFontHeight(String text);
 
     int getMaxFontHeight();
 
     default int drawString(String text, int x, int y, int colour) {
         return drawString(text, x, y, colour, false, false, 1);
+    }
+
+    /** Fabric 1.20.1 compat: draw(MatrixStack, String, int, int, int) → delegates to drawString. */
+    default int draw(net.minecraft.client.util.math.MatrixStack matrices, String text, int x, int y, int colour) {
+        return drawString(text, x, y, colour);
     }
 
     default int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered) {

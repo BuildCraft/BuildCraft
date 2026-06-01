@@ -5,6 +5,7 @@
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +18,7 @@ import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.BCLog;
 
@@ -39,7 +40,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         for (Ingredient ingredient : this.input) {
             NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.serializeNBT());
+                list.appendTag(stack.createNbt());
             }
             hashNbt.appendTag(list);
         }
@@ -47,8 +48,8 @@ public class GuideCraftingFactory implements GuidePartFactory {
     }
 
     public static GuidePartFactory create(@Nonnull ItemStack stack) {
-        for (IRecipe recipe : ForgeRegistries.RECIPES) {
-            if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
+        for (net.minecraft.recipe.CraftingRecipe recipe : ForgeRegistries.RECIPES) {
+            if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
                 GuidePartFactory val = getFactory(recipe);
                 if (val != null) {
                     return val;
@@ -61,7 +62,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         return null;
     }
 
-    public static GuidePartFactory getFactory(IRecipe recipe) {
+    public static GuidePartFactory getFactory(net.minecraft.recipe.CraftingRecipe recipe) {
         ItemStack output = recipe.getRecipeOutput();
         DefaultedList<Ingredient> input = recipe.getIngredients();
         if (input == null || input.isEmpty() || output.isEmpty()) {
@@ -98,7 +99,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             return ((ItemStack) object).copy();
         }
         if (object instanceof String) {
-            DefaultedList<ItemStack> stacks = OreDictionary.getOres((String) object);
+            DefaultedList<ItemStack> stacks = OreDictionaryStub.getOres((String) object);
             // It will be sorted out below
             object = stacks;
         }
@@ -158,7 +159,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         for (Ingredient ingredient : this.input) {
             NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.serializeNBT());
+                list.appendTag(stack.createNbt());
             }
             nbtThis.appendTag(list);
         }
@@ -166,7 +167,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
         for (Ingredient ingredient : other.input) {
             NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.serializeNBT());
+                list.appendTag(stack.createNbt());
             }
             nbtThat.appendTag(list);
         }

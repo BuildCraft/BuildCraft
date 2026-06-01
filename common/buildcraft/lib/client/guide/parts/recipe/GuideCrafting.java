@@ -21,6 +21,8 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.misc.data.NonNullMatrix;
 import buildcraft.lib.recipe.ChangingItemStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+import buildcraft.lib.misc.GlStateManagerCompat;
 
 public class GuideCrafting extends GuidePartItem {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
@@ -87,7 +89,7 @@ public class GuideCrafting extends GuidePartItem {
         if (current.page == index) {
             CRAFTING_GRID.drawAt(x, y);
             // Render the item
-            GlStateManager.enableRescaleNormal();
+            GlStateManagerCompat.enableRescaleNormal();
             RenderHelper.enableGUIStandardItemLighting();
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
@@ -99,7 +101,7 @@ public class GuideCrafting extends GuidePartItem {
             drawItemStack(output.get(), x + (int) OUT_POSITION.x, y + (int) OUT_POSITION.y);
 
             RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableRescaleNormal();
+            GlStateManagerCompat.disableRescaleNormal();
         }
         current = current.nextLine(PIXEL_HEIGHT, height);
         return current;

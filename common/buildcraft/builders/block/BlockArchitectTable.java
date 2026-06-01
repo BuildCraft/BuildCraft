@@ -6,7 +6,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,9 +30,9 @@ public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWi
 
     private static final int META_VALID_INDEX = 4;
 
-    public BlockArchitectTable(Material material, String id) {
+    public BlockArchitectTable(AbstractBlock.Settings material, String id) {
         super(material, id);
-        setDefaultState(getDefaultState().withProperty(PROP_VALID, Boolean.TRUE));
+        setDefaultState(getDefaultState().with(PROP_VALID, Boolean.TRUE));
     }
 
     @Override
@@ -40,16 +41,16 @@ public class BlockArchitectTable extends BlockBCTile_Neptune implements IBlockWi
         properties.add(PROP_VALID);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getStateFromMeta(int meta) {
         BlockState state = super.getStateFromMeta(meta);
-        state = state.withProperty(PROP_VALID, (meta & META_VALID_INDEX) == 0);
+        state = state.with(PROP_VALID, (meta & META_VALID_INDEX) == 0);
         return state;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getMetaFromState(BlockState state) {
-        return super.getMetaFromState(state) | (state.getValue(PROP_VALID) ? 0 : META_VALID_INDEX);
+        return super.getMetaFromState(state) | (state.get(PROP_VALID) ? 0 : META_VALID_INDEX);
     }
 
     @Override

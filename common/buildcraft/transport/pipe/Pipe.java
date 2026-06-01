@@ -11,6 +11,7 @@ package buildcraft.transport.pipe;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -45,6 +46,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 
 import buildcraft.transport.client.model.key.PipeModelKey;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public final class Pipe implements IPipe, IDebuggable {
     private static final float DEFAULT_CONNECTION_DISTANCE = 0.25f;
@@ -324,7 +326,7 @@ public final class Pipe implements IPipe, IDebuggable {
         Item item = (Item) PipeApi.pipeRegistry.getItemForPipe(definition);
         if (item != null) {
             // TODO(R.Chen): item metadata dropped in 1.20 — encode pipe colour via NBT/components.
-            // Was: new ItemStack(item, 1, colour == null ? 0 : 1 + colour.ordinal()).
+            // Was: new ItemStack(item, 1).
             toDrop.add(new ItemStack(item, 1));
         }
         flow.addDrops(toDrop, fortune);

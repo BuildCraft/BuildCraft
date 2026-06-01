@@ -26,13 +26,13 @@ public class MessageZoneMapResponse implements IMessage {
         this.data = data;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         key = new ZonePlannerMapChunkKey(buf);
         data = new ZonePlannerMapChunk(new PacketByteBuf(buf));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         key.toBytes(buf);
         data.write(new PacketByteBuf(buf));

@@ -9,6 +9,7 @@ package buildcraft.lib.tile.item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
+import java.util.List;
 
 // STUB(R.Chen): the full Forge IItemHandler/IItemHandlerModifiable manager (named slot groups, insertion
 // filters, capability provider wiring, the ItemHandlerSimple/Wrapped* family) is deferred to the
@@ -54,6 +55,11 @@ public class ItemHandlerManager {
 
     public NbtCompound serializeNBT() {
         return new NbtCompound();
+    }
+
+    /** Forge-compat alias for {@link #serializeNBT()}. */
+    public NbtCompound createNbt() {
+        return serializeNBT();
     }
 
     public void deserializeNBT(NbtCompound nbt) {

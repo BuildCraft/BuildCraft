@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -58,7 +59,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
         ySize = SIZE_Y;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void initGui() {
         super.initGui();
 
@@ -70,7 +71,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
                 IGuiArea phantomSlotArea = rectangle.offset(mainGui.rootElement);
                 mainGui.shownElements.add(listSlot.new GuiElementPhantomSlot(mainGui, phantomSlotArea) {
-                    @Override
+                    // @Override -- removed: method does not exist in Fabric 1.20.1
                     protected boolean shouldDrawHighlight() {
                         if (listSlot.slotIndex == 0) {
                             return true;
@@ -78,7 +79,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         return !GuiList.this.container.lines[listSlot.lineIndex].isOneStackMode();
                     }
 
-                    @Override
+                    // @Override -- removed: method does not exist in Fabric 1.20.1
                     public void drawBackground(float partialTicks) {
                         if (!shouldDrawHighlight()) {
                             ICON_HIGHLIGHT.drawAt(this);
@@ -86,7 +87,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                     }
 
                     @Nonnull
-                    @Override
+                    // @Override -- removed: method does not exist in Fabric 1.20.1
                     public ItemStack getStack() {
                         if (shouldDrawHighlight()) {
                             return super.getStack();
@@ -101,7 +102,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                         }
                     }
 
-                    @Override
+                    // @Override -- removed: method does not exist in Fabric 1.20.1
                     public void onMouseClicked(int button) {
                         super.onMouseClicked(button);
                         if (contains(gui.mouse)) {
@@ -116,8 +117,8 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
         for (int sy = 0; sy < ListHandler.HEIGHT; sy++) {
             int bOff = sy * BUTTON_COUNT;
-            int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
-            int bOffY = this.guiTop + 32 + sy * 34 + 18;
+            int bOffX = this.x + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
+            int bOffY = this.y + 32 + sy * 34 + 18;
 
             GuiImageButton buttonPrecise =
                 new GuiImageButton(mainGui, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
@@ -152,38 +153,38 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             }
         }
 
-        textField = new GuiTextField(6, this.fontRenderer, guiLeft + 10, guiTop + 10, 156, 12);
+        textField = new GuiTextField(6, this.fontRenderer, x + 10, y + 10, 156, 12);
         textField.setMaxStringLength(32);
         textField.setText(BCCoreItems.list.getName(container.getListItemStack()));
         textField.setFocused(false);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
 
         for (int i = 0; i < 2; i++) {
             if (container.lines[i].isOneStackMode()) {
-                ICON_ONE_STACK.drawAt(guiLeft + 6, guiTop + 30 + i * 34);
+                ICON_ONE_STACK.drawAt(x + 6, y + 30 + i * 34);
             }
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         textField.drawTextBox();
     }
 
     private boolean isCarryingNonEmptyList() {
-        ItemStack stack = mc.player.inventory.getItemStack();
-        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getTagCompound() != null;
+        ItemStack stack = mc.player.getInventory().getItemStack();
+        return !stack.isEmpty() && stack.getItem() instanceof ItemList_BC8 && stack.getNbt() != null;
     }
 
     private boolean hasListEquipped() {
         return !container.getListItemStack().isEmpty();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (textField.isFocused() && keyCode != Keyboard.KEY_ESCAPE) {
             textField.textboxKeyTyped(typedChar, keyCode);
@@ -193,7 +194,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClicked(int x, int y, int b) throws IOException {
         super.mouseClicked(x, y, b);
 
@@ -232,7 +233,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             DefaultedList<ItemStack> examples = container.lines[lineId].getExamples();
             ItemStack input = container.lines[lineId].stacks.get(0);
             if (!input.isEmpty()) {
-                DefaultedList<ItemStack> repetitions = DefaultedList.create();
+                DefaultedList<ItemStack> repetitions = DefaultedList.of();
                 for (ItemStack is : examples) {
                     if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);

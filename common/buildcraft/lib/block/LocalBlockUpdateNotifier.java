@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.HashMap;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

@@ -29,6 +29,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.data.XorShift128Random;
+import net.minecraft.block.BlockSoundGroup;
 
 public class BlockSpring extends BlockBCBase_Neptune implements BlockEntityProvider {
     public static final Property<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;

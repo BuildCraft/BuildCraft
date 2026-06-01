@@ -24,7 +24,7 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.render.RenderHelper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.texture.SpriteAtlasTexture;
@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.ReportedException;
@@ -58,12 +58,12 @@ public class ItemRenderUtil {
     private static final ItemEntity dummyEntityItem = new ItemEntity(null);
     private static final RenderEntityItem customItemRenderer =
         new RenderEntityItem(MinecraftClient.getInstance().getRenderManager(), MinecraftClient.getInstance().getRenderItem()) {
-            @Override
+            // @Override -- removed: method does not exist in Fabric 1.20.1
             public boolean shouldSpreadItems() {
                 return false;
             }
 
-            @Override
+            // @Override -- removed: method does not exist in Fabric 1.20.1
             public boolean shouldBob() {
                 return false;
             }
@@ -98,7 +98,7 @@ public class ItemRenderUtil {
         // This is broken - some stacks render too big but some render way too small.
         // Also not all stacks are centered :/
 
-        if (stack.getItem() instanceof ItemBlock) {
+        if (stack.getItem() instanceof BlockItem) {
             dummyEntityItem.hoverStart = 0;
         } else {
             // Items are rotated by 45 degrees
@@ -137,8 +137,8 @@ public class ItemRenderUtil {
             category.addCrashSection("Stack Count", stackCount);
             category.addDetail("Item Class", () -> "" + stack.getItem().getClass());
             category.addDetail("Item ID", () -> "" + ForgeRegistries.ITEMS.getKey(stack.getItem()));
-            category.addDetail("Item Meta", () -> "" + stack.getMetadata());
-            category.addDetail("Item NBT", () -> "" + stack.getTagCompound());
+            category.addDetail("Item Meta", () -> "" + stack.getId());
+            category.addDetail("Item NBT", () -> "" + stack.getNbt());
             throw new ReportedException(report);
         }
     }
@@ -165,12 +165,12 @@ public class ItemRenderUtil {
 
             for (int i = 0; i < itemModelCount; i++) {
                 if (i == 0) {
-                    bb.setTranslation(x, y, z);
+                    // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x, y, z);
                 } else {
                     float dx = (modelOffsetRandom.nextFloat() * 2.0F - 1.0F) * 0.08F;
                     float dy = (modelOffsetRandom.nextFloat() * 2.0F - 1.0F) * 0.08F;
                     float dz = (modelOffsetRandom.nextFloat() * 2.0F - 1.0F) * 0.08F;
-                    bb.setTranslation(x + dx, y + dy, z + dz);
+                    // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x + dx, y + dy, z + dz);
                 }
 
                 float scale = 0.30f;
@@ -199,13 +199,13 @@ public class ItemRenderUtil {
                 }
             }
 
-            bb.setTranslation(0, 0, 0);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
             return;
         }
 
         if (!inBatch) {
             inBatch = true;
-            MinecraftClient.getInstance().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
             GL11.glPushMatrix();
             GL11.glTranslated(x, y, z);
             GL11.glScaled(0.3, 0.3, 0.3);
@@ -225,8 +225,8 @@ public class ItemRenderUtil {
             if (regName == null) {
                 seed = 127;
             } else {
-                int regNameSeed = regName.getResourceDomain().hashCode() ^ regName.getResourcePath().hashCode();
-                seed = (regNameSeed & 0x7F_FF_FF_FF) | (((long) stack.getMetadata()) << 32);
+                int regNameSeed = regName.getNamespace().hashCode() ^ regName.getPath().hashCode();
+                seed = (regNameSeed & 0x7F_FF_FF_FF) | (((long) stack.getId()) << 32);
             }
         }
         modelOffsetRandom.setSeed(seed);

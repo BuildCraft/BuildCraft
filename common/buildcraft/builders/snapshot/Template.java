@@ -44,8 +44,9 @@ public class Template extends Snapshot {
     }
 
     @Override
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
-        NbtCompound nbt = super.serializeNBT();
+        NbtCompound nbt = super.createNbt();
         nbt.putByteArray("data", data.toByteArray());
         return nbt;
     }
@@ -69,7 +70,7 @@ public class Template extends Snapshot {
     }
 
     public class BuildingInfo extends Snapshot.BuildingInfo {
-        public BuildingInfo(BlockPos basePos, Rotation rotation) {
+        public BuildingInfo(BlockPos basePos, net.minecraft.util.BlockRotation rotation) {
             super(basePos, rotation);
         }
 

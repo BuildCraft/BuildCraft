@@ -8,7 +8,8 @@ package buildcraft.factory.block;
 
 import java.util.List;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -35,7 +36,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     private static final Property<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     private static final Box BOUNDING_BOX = new Box(2 / 16D, 0 / 16D, 2 / 16D, 14 / 16D, 16 / 16D, 14 / 16D);
 
-    public BlockTank(Material material, String id) {
+    public BlockTank(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -51,44 +52,44 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
     }
 
     @Environment(EnvType.CLIENT)
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public RenderLayer getBlockLayer() {
-        return RenderLayer.CUTOUT;
+        return RenderLayer.getCutout();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Box getBoundingBox(BlockState state, BlockView world, BlockPos pos) {
         return BOUNDING_BOX;
     }
 
     @Environment(EnvType.CLIENT)
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean shouldSideBeRendered(BlockState state, BlockView world, BlockPos pos, Direction side) {
         return side.getAxis() != Axis.Y || !(world.getBlockState(pos.offset(side)).getBlock() instanceof ITankBlockConnector);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         boolean isTankBelow = world.getBlockState(pos.down()).getBlock() instanceof ITankBlockConnector;
-        return state.withProperty(JOINED_BELOW, isTankBelow);
+        return state.with(JOINED_BELOW, isTankBelow);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean hasComparatorInputOverride(BlockState state) {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getComparatorInputOverride(BlockState blockState, World world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileTank) {

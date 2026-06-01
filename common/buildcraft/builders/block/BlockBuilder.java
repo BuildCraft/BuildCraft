@@ -6,7 +6,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,9 +31,9 @@ import buildcraft.builders.tile.TileBuilder;
 public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final Property<EnumOptionalSnapshotType> SNAPSHOT_TYPE = BuildCraftProperties.SNAPSHOT_TYPE;
 
-    public BlockBuilder(Material material, String id) {
+    public BlockBuilder(AbstractBlock.Settings material, String id) {
         super(material, id);
-        setDefaultState(getDefaultState().withProperty(SNAPSHOT_TYPE, EnumOptionalSnapshotType.NONE));
+        setDefaultState(getDefaultState().with(SNAPSHOT_TYPE, EnumOptionalSnapshotType.NONE));
     }
 
     // BlockState
@@ -43,12 +44,12 @@ public class BlockBuilder extends BlockBCTile_Neptune implements IBlockWithFacin
         properties.add(SNAPSHOT_TYPE);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileBuilder) {
             return state
-                    .withProperty(
+                    .with(
                             SNAPSHOT_TYPE,
                             EnumOptionalSnapshotType.fromNullable(((TileBuilder) tile).snapshotType)
                     );

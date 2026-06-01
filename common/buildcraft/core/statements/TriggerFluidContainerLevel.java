@@ -11,7 +11,7 @@ import java.util.Locale;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -62,7 +62,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
         if (handler == null) {
             return false;
         }
-        FluidStack searchedFluid = null;
+        FluidStackBC searchedFluid = null;
 
         if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack() .isEmpty()) {
             searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
@@ -80,7 +80,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
             if (tankProperties == null) {
                 continue;
             }
-            FluidStack fluid = tankProperties.getContents();
+            FluidStackBC fluid = tankProperties.getContents();
             if (fluid == null) {
                 return searchedFluid == null || handler.fill(searchedFluid, false) > 0;
             }

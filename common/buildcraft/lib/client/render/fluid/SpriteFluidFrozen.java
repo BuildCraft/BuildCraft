@@ -31,12 +31,12 @@ public class SpriteFluidFrozen extends Sprite {
         this.srcLocation = srcLocation;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean hasCustomLoader(ResourceManager manager, Identifier location) {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean load(ResourceManager manager, Identifier location, Function<Identifier, Sprite> textureGetter) {
         location = SpriteUtil.transformLocation(srcLocation);
         Sprite src = MinecraftClient.getInstance().getTextureMapBlocks().getTextureExtry(srcLocation.toString());
@@ -62,7 +62,7 @@ public class SpriteFluidFrozen extends Sprite {
                             return true;
                         }
                         src.loadSprite(size, hasAnimation);
-                        src.loadSpriteFrames(resource, MinecraftClient.getInstance().gameSettings.mipmapLevels + 1);
+                        src.loadSpriteFrames(resource, MinecraftClient.getInstance().options.mipmapLevels.getValue() + 1);
                     }
                 } catch (IOException io) {
                     io.printStackTrace();
@@ -78,7 +78,7 @@ public class SpriteFluidFrozen extends Sprite {
 
             int[][] srcData = src.getFrameTextureData(0);
 
-            data = new int[MinecraftClient.getInstance().gameSettings.mipmapLevels + 1][];
+            data = new int[MinecraftClient.getInstance().options.mipmapLevels.getValue() + 1][];
             for (int m = 0; m < data.length; m++) {
                 data[m] = new int[width * height / (m + 1) / (m + 1)];
             }
@@ -102,22 +102,22 @@ public class SpriteFluidFrozen extends Sprite {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getFrameCount() {
         return data == null ? 0 : 1;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int[][] getFrameTextureData(int index) {
         return data;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public float getInterpolatedU(double u) {
         return super.getInterpolatedU(u / 2 + 4);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public float getInterpolatedV(double v) {
         return super.getInterpolatedV(v / 2 + 4);
     }

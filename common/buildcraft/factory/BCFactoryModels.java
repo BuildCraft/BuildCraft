@@ -20,7 +20,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -51,10 +51,10 @@ public class BCFactoryModels {
     );
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCFactoryModels.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCFactoryModels.class);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void onModelRegistry(ModelRegistryEvent event) {
         if (BCFactoryBlocks.heatExchange != null) {
@@ -62,9 +62,9 @@ public class BCFactoryModels {
                 BCFactoryBlocks.heatExchange,
                 new StateMapperBase() {
                     @Nonnull
-                    @Override
+                    // @Override -- removed: method does not exist in Fabric 1.20.1
                     protected ModelIdentifier getModelResourceLocation(@Nonnull BlockState state) {
-                        return new ModelIdentifier("buildcraftfactory:heat_exchange#normal");
+                        return new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftfactory:heat_exchange"), "normal");
                     }
                 }
             );
@@ -79,14 +79,14 @@ public class BCFactoryModels {
         ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchange.class, new RenderHeatExchange());
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onModelBake(ModelBakeEvent event) {
         event.getModelRegistry().putObject(
-            new ModelIdentifier("buildcraftfactory:heat_exchange#normal"),
+            new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftfactory:heat_exchange"), "normal"),
             new ModelHeatExchange()
         );
         event.getModelRegistry().putObject(
-            new ModelIdentifier("buildcraftfactory:heat_exchange#inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftfactory:heat_exchange"), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads())
                     .map(MutableQuad::multShade)

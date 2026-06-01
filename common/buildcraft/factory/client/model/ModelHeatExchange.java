@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.math.Direction;
 
@@ -80,7 +80,7 @@ public class ModelHeatExchange extends ModelItemSimple {
             VAR_CONNECTED_UP.value = connectedUpDown && part == EnumExchangePart.END;
             VAR_CONNECTED_DOWN.value = connectedUpDown && part == EnumExchangePart.START;
             VAR_PART.value = part;
-            VAR_DIRECTION.value = Direction.getHorizontal((i / 8) & 3);
+            VAR_DIRECTION.value = Direction.fromHorizontal((i / 8) & 3);
             List<BakedQuad> quads = new ArrayList<>();
 
             for (MutableQuad quad : BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()) {
@@ -92,12 +92,12 @@ public class ModelHeatExchange extends ModelItemSimple {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Sprite getParticleTexture() {
         return particle;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public List<BakedQuad> getQuads(BlockState state, Direction side, long rand) {
         if (side != null) {
             return ImmutableList.of();
@@ -106,11 +106,11 @@ public class ModelHeatExchange extends ModelItemSimple {
     }
 
     private static int getIndexOf(BlockState state) {
-        return (state.getValue(BlockHeatExchange.PROP_CONNECTED_LEFT) ? 1 : 0)//
-            | (state.getValue(BlockHeatExchange.PROP_CONNECTED_RIGHT) ? 2 : 0)//
-            | (state.getValue(BlockHeatExchange.PROP_CONNECTED_Y) ? 4 : 0)//
-            | (state.getValue(BlockBCBase_Neptune.PROP_FACING).getHorizontalIndex() * 8)//
-            | (state.getValue(BlockHeatExchange.PROP_PART).ordinal() * 8 * 4)//
+        return (state.get(BlockHeatExchange.PROP_CONNECTED_LEFT) ? 1 : 0)//
+            | (state.get(BlockHeatExchange.PROP_CONNECTED_RIGHT) ? 2 : 0)//
+            | (state.get(BlockHeatExchange.PROP_CONNECTED_Y) ? 4 : 0)//
+            | (state.get(BlockBCBase_Neptune.PROP_FACING).getHorizontalIndex() * 8)//
+            | (state.get(BlockHeatExchange.PROP_PART).ordinal() * 8 * 4)//
         ;
     }
 }

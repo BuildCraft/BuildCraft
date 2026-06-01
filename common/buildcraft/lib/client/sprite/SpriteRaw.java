@@ -34,7 +34,7 @@ public class SpriteRaw implements ISprite {
 
     @Override
     public void bindTexture() {
-        MinecraftClient.getInstance().renderEngine.bindTexture(location);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, location);
     }
 
     @Override

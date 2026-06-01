@@ -26,4 +26,8 @@ public class ContainerGate extends ScreenHandler {
     public boolean canUse(PlayerEntity player) {
         return true;
     }
+    @Override
+    public net.minecraft.item.ItemStack quickMove(net.minecraft.entity.player.PlayerEntity player, int index) {
+        return net.minecraft.item.ItemStack.EMPTY;
+    }
 }

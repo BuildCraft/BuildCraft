@@ -26,11 +26,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -75,6 +74,7 @@ import buildcraft.builders.snapshot.Snapshot;
 import buildcraft.builders.snapshot.SnapshotBuilder;
 import buildcraft.builders.snapshot.Template;
 import buildcraft.builders.snapshot.TemplateBuilder;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TileBuilder extends TileBC_Neptune
     implements ITickable, IDebuggable, ITileForTemplateBuilder, ITileForBlueprintBuilder {
@@ -109,7 +109,7 @@ public class TileBuilder extends TileBC_Neptune
     @SuppressWarnings("WeakerAccess")
     public BlueprintBuilder blueprintBuilder = new BlueprintBuilder(this);
     private Box currentBox = new Box();
-    private Rotation rotation = null;
+    private net.minecraft.util.BlockRotation rotation = null;
 
     private boolean isDone = false;
 
@@ -132,7 +132,7 @@ public class TileBuilder extends TileBC_Neptune
         return IDS;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack before,
         @Nonnull ItemStack after) {
         if (!world.isClient) {
@@ -158,14 +158,14 @@ public class TileBuilder extends TileBC_Neptune
         super.onSlotChange(handler, slot, before, after);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void validate() {
         super.validate();
         templateBuilder.validate();
         blueprintBuilder.validate();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void invalidate() {
         super.invalidate();
         templateBuilder.invalidate();
@@ -236,10 +236,10 @@ public class TileBuilder extends TileBC_Neptune
 
     @Override
     public void update() {
-        world.profiler.push("main");
-        world.profiler.push("power");
+        world.getProfiler().push("main");
+        world.getProfiler().push("power");
         battery.tick(getWorld(), getPos());
-        world.profiler.swap("builder");
+        world.getProfiler().swap("builder");
         SnapshotBuilder<?> builder = getBuilder();
         if (builder != null) {
             isDone = builder.tick();
@@ -255,18 +255,18 @@ public class TileBuilder extends TileBC_Neptune
                 }
             }
         }
-        world.profiler.swap("net_update");
+        world.getProfiler().swap("net_update");
         sendNetworkUpdate(NET_RENDER_DATA); // FIXME
-        world.profiler.pop();
-        world.profiler.pop();
+        world.getProfiler().pop();
+        world.getProfiler().pop();
     }
 
     // Networking
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeInt(path == null ? 0 : path.size());
                 if (path != null) {
@@ -295,9 +295,9 @@ public class TileBuilder extends TileBC_Neptune
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 path = new ArrayList<>();
                 int pathSize = buffer.readInt();
@@ -333,7 +333,7 @@ public class TileBuilder extends TileBC_Neptune
                 }
             }
         }
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_CAN_EXCAVATE) {
                 canExcavate = buffer.readBoolean();
                 sendNetworkUpdate(NET_CAN_EXCAVATE);
@@ -356,7 +356,7 @@ public class TileBuilder extends TileBC_Neptune
         nbt.put("basePoses", NBTUtilBC.writeCompoundList(basePoses.stream().map(NBTUtil::createPosTag)));
         nbt.putBoolean("canExcavate", canExcavate);
         nbt.put("rotation", NBTUtilBC.writeEnum(rotation));
-        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.put("builder", builder.serializeNBT()));
+        Optional.ofNullable(getBuilder()).ifPresent(builder -> nbt.put("builder", builder.createNbt()));
         return nbt;
     }
 
@@ -370,7 +370,7 @@ public class TileBuilder extends TileBC_Neptune
         basePoses = NBTUtilBC.readCompoundList(nbt.get("basePoses")).map(NBTUtil::getPosFromTag)
             .collect(Collectors.toList());
         canExcavate = nbt.getBoolean("canExcavate");
-        rotation = NBTUtilBC.readEnum(nbt.get("rotation"), Rotation.class);
+        rotation = NBTUtilBC.readEnum(nbt.get("rotation"), net.minecraft.util.BlockRotation.class);
         if (nbt.contains("builder")) {
             updateSnapshot(false);
             Optional.ofNullable(getBuilder())
@@ -385,20 +385,20 @@ public class TileBuilder extends TileBC_Neptune
         return currentBox;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public boolean hasFastRenderer() {
         return true;
     }
 
     @Nonnull
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public Box getRenderBoundingBox() {
         return BoundingBoxUtil.makeFrom(getPos(), getBox(), path);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;

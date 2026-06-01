@@ -30,8 +30,19 @@ public class MessageManager {
         BCNetworkManager.sendToServer(message);
     }
 
+    /** Forge-compat overload for legacy IMessage types not yet migrated to FabricPacket. */
+    @Environment(EnvType.CLIENT)
+    public static void sendToServer(Object message) {
+        // TODO(R.Chen): migrate callers to FabricPacket
+    }
+
     /** Legacy: {@code MessageManager.sendTo(msg, playerMP)}. */
     public static <T extends FabricPacket> void sendTo(T message, ServerPlayerEntity player) {
         BCNetworkManager.sendTo(message, player);
+    }
+
+    /** Forge-compat overload for legacy IMessage types. */
+    public static void sendTo(Object message, ServerPlayerEntity player) {
+        // TODO(R.Chen): migrate callers to FabricPacket
     }
 }

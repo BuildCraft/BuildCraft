@@ -14,29 +14,30 @@ import net.minecraftforge.common.ForgeVersion.Status;
 import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCLib;
+import net.minecraft.text.Text;
 
 public class CommandVersion extends CommandBase {
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getName() {
         return "version";
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getUsage(ICommandSender sender) {
         return "command.buildcraft.buildcraft.version.help";
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getRequiredPermissionLevel() {
         return 0;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         ForgeVersion.CheckResult result = ForgeVersion.getResult(BCLib.MOD_CONTAINER);
         if (result.status == Status.FAILED) {
-            sender.sendMessage(new TranslatableText("command.buildcraft.version.failed"));
+            sender.sendMessage(Text.translatable("command.buildcraft.version.failed"));
             return;
         }
 
@@ -59,10 +60,10 @@ public class CommandVersion extends CommandBase {
         }
 
         Object[] textArgs = { currentVersion, ForgeVersion.mcVersion, result.target.toString() };
-        sender.sendMessage(new TranslatableText("command.buildcraft.version", textArgs).setStyle(style));
+        sender.sendMessage(Text.translatable("command.buildcraft.version", textArgs).setStyle(style));
 
         if (currentVersion.contains("-pre")) {
-            sender.sendMessage(new TranslatableText("command.buildcraft.version.prerelease"));
+            sender.sendMessage(Text.translatable("command.buildcraft.version.prerelease"));
         }
     }
 }

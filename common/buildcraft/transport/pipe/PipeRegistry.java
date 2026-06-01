@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,7 +54,7 @@ public enum PipeRegistry implements IPipeRegistry {
     public IItemPipe createItemForPipe(PipeDefinition definition) {
         // STUB(R.Chen): item creation deferred — blocked by transport.item.ItemPipeHolder
         // (extends BlockItem, pulls in BCTransportBlocks.pipeHolder / BlockPipeHolder) and
-        // lib.registry.RegistrationHelper (Forge RegistryEvent / OreDictionary / GameRegistry).
+        // lib.registry.RegistrationHelper (Forge RegistryEvent / OreDictionaryStub / GameRegistry).
         // Restore once those migrate. The definition→item map (setItemForPipe/getItemForPipe)
         // and the lookup half (registerPipe/getDefinition/loadDefinition) remain fully functional.
         throw new UnsupportedOperationException("createItemForPipe is not yet migrated to Fabric");

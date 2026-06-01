@@ -6,7 +6,8 @@
 
 package buildcraft.robotics.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -22,7 +23,7 @@ import buildcraft.robotics.RoboticsGuis;
 import buildcraft.robotics.tile.TileZonePlanner;
 
 public class BlockZonePlanner extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockZonePlanner(Material material, String id) {
+    public BlockZonePlanner(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

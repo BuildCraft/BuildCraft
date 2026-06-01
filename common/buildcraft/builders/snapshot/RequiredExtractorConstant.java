@@ -19,7 +19,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 @SuppressWarnings("WeakerAccess")
 public class RequiredExtractorConstant extends RequiredExtractor {
@@ -40,7 +40,7 @@ public class RequiredExtractorConstant extends RequiredExtractor {
 
     @Nonnull
     @Override
-    public List<FluidStack> extractFluidsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
+    public List<FluidStackBC> extractFluidsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
         return Collections.unmodifiableList(
             fluidRefs.stream()
                 .map(ref -> ref.get(tileNbt))
@@ -60,7 +60,7 @@ public class RequiredExtractorConstant extends RequiredExtractor {
 
     @Nonnull
     @Override
-    public List<FluidStack> extractFluidsFromEntity(@Nonnull NbtCompound entityNbt) {
+    public List<FluidStackBC> extractFluidsFromEntity(@Nonnull NbtCompound entityNbt) {
         return Collections.unmodifiableList(
             fluidRefs.stream()
                 .map(ref -> ref.get(entityNbt))

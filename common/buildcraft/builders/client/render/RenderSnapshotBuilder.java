@@ -71,10 +71,10 @@ public class RenderSnapshotBuilder {
                 robotPos = snapshotBuilder.prevRobotPos.add(robotPos.subtract(snapshotBuilder.prevRobotPos).scale(partialTicks));
             }
 
-            bb.setTranslation(x - tilePos.getX(), y - tilePos.getY(), z - tilePos.getZ());
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x - tilePos.getX(), y - tilePos.getY(), z - tilePos.getZ());
 
             int i = 0;
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 ModelUtil.createFace(
                     face,
                     new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
@@ -102,7 +102,7 @@ public class RenderSnapshotBuilder {
                             ) * (BuildCraftLaserManager.POWERS.length - 1)
                         )],
                         robotPos.subtract(new Vec3d(0, 0.27, 0)),
-                        new Vec3d(breakTask.pos).add(VecUtil.VEC_HALF),
+                        new Vec3d(breakTask.pos.getX(), breakTask.pos.getY(), breakTask.pos.getZ()).add(VecUtil.VEC_HALF),
                         1 / 16D
                     ),
                     bb
@@ -110,6 +110,6 @@ public class RenderSnapshotBuilder {
             }
         }
 
-        bb.setTranslation(0, 0, 0);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
     }
 }

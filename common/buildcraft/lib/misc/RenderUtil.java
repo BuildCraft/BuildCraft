@@ -68,13 +68,13 @@ public class RenderUtil {
 
     public static void registerBlockColour(@Nullable Block block, IBlockColor colour) {
         if (block != null) {
-            MinecraftClient.getInstance().getBlockColors().registerBlockColorHandler(colour, block);
+            MinecraftClient.getInstance().getBlockColors().register(colour, block);
         }
     }
 
     public static void registerItemColour(@Nullable Item item, IItemColor colour) {
         if (item != null) {
-            MinecraftClient.getInstance().getItemColors().registerItemColorHandler(colour, item);
+            MinecraftClient.getInstance().getItemColors().register(colour, item);
         }
     }
 
@@ -84,7 +84,7 @@ public class RenderUtil {
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
 
-        RenderSystem.setShaderColor(red, green, blue);
+        RenderSystem.setShaderColor(red, green, blue, 1.0F);
     }
 
     /** Takes ARGB */
@@ -106,8 +106,8 @@ public class RenderUtil {
     }
 
     public static boolean isRenderingTranslucent() {
-        return MinecraftForgeClient.getRenderLayer() == RenderLayer.TRANSLUCENT
-            || MinecraftForgeClient.getRenderPass() == 1;
+        // TODO(R.Chen): MinecraftForgeClient.getRenderLayer/Pass removed — check via render layer context
+        return false;
     }
 
     /** @return true if this thread is the main minecraft thread, used for all client side game logic and (by default)

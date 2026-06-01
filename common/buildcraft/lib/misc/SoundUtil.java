@@ -8,9 +8,9 @@ package buildcraft.lib.misc;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.SoundType;
+import net.minecraft.block.BlockSoundGroup;
 import net.minecraft.block.BlockState;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.ActionResult;
 import net.minecraft.sound.SoundCategory;
@@ -18,7 +18,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 public class SoundUtil {
     public static void playBlockPlace(World world, BlockPos pos) {
@@ -26,7 +26,7 @@ public class SoundUtil {
     }
 
     public static void playBlockPlace(World world, BlockPos pos, BlockState state) {
-        SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
+        BlockSoundGroup soundType = state.getBlock().getSoundGroup(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundType.getPlaceSound(), SoundCategory.BLOCKS, volume, pitch);
@@ -37,7 +37,7 @@ public class SoundUtil {
     }
 
     public static void playBlockBreak(World world, BlockPos pos, BlockState state) {
-        SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
+        BlockSoundGroup soundType = state.getBlock().getSoundGroup(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, volume, pitch);
@@ -50,7 +50,7 @@ public class SoundUtil {
     }
 
     public static void playChangeColour(World world, BlockPos pos, @Nullable DyeColor colour) {
-        SoundType soundType = SoundType.SLIME;
+        BlockSoundGroup soundType = BlockSoundGroup.SLIME_BLOCK;
         final SoundEvent soundEvent;
         if (colour == null) {
             soundEvent = SoundEvents.ITEM_BUCKET_EMPTY;
@@ -78,7 +78,7 @@ public class SoundUtil {
 
     public static void playSlideSound(World world, BlockPos pos, BlockState state, ActionResult result) {
         if (result == ActionResult.PASS) return;
-        SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
+        BlockSoundGroup soundType = state.getBlock().getSoundGroup(state, world, pos, null);
         SoundEvent event;
         if (result == ActionResult.SUCCESS) {
             event = SoundEvents.BLOCK_PISTON_CONTRACT;
@@ -90,12 +90,12 @@ public class SoundUtil {
         world.playSound(null, pos, event, SoundCategory.BLOCKS, volume, pitch);
     }
 
-    public static void playBucketEmpty(World world, BlockPos pos, FluidStack moved) {
+    public static void playBucketEmpty(World world, BlockPos pos, FluidStackBC moved) {
         SoundEvent sound = moved.getFluid().getEmptySound(moved);
         world.playSound(null, pos, sound, SoundCategory.PLAYERS, 1, 1);
     }
 
-    public static void playBucketFill(World world, BlockPos pos, FluidStack moved) {
+    public static void playBucketFill(World world, BlockPos pos, FluidStackBC moved) {
         SoundEvent sound = moved.getFluid().getFillSound(moved);
         world.playSound(null, pos, sound, SoundCategory.PLAYERS, 1, 1);
     }

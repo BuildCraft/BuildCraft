@@ -18,7 +18,7 @@ import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderArchitectTable extends TileEntitySpecialRenderer<TileArchitectTable> {
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(TileArchitectTable tile, double x, double y, double z, float partialTicks, int destroyStage,
         float partial) {
         if (!tile.markerBox) {
@@ -42,7 +42,7 @@ public class RenderArchitectTable extends TileEntitySpecialRenderer<TileArchitec
         MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileArchitectTable te) {
         return true;
     }

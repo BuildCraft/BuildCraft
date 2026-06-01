@@ -3,7 +3,7 @@ package buildcraft.lib.item;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
@@ -26,8 +26,8 @@ public class ItemGuideNote extends ItemBC_Neptune {
         return stack;
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         player.openGui(BCLib.INSTANCE, 1, world, 0, 0, 0);
         return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }

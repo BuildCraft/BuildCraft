@@ -29,7 +29,7 @@ import net.minecraft.util.Formatting;
 
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
@@ -67,7 +67,7 @@ public class RenderTickListener {
             { { 0.5, 0.9, 0.5 }, { 0.5, 1.2, 0.2 } }, // Forth arrow part (-Z)
         };
 
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             Matrix4f matrix = MatrixUtil.rotateTowardsFace(Direction.UP, face);
             Vec3d[][] arr = new Vec3d[5][2];
             for (int i = 0; i < 5; i++) {
@@ -86,7 +86,7 @@ public class RenderTickListener {
         DIFF_HEADER_FORMATTING = Formatting.AQUA + "" + Formatting.BOLD;
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void renderOverlay(RenderGameOverlayEvent.Text event) {
         MinecraftClient mc = MinecraftClient.getInstance();
         IDebuggable debuggable = ClientDebuggables.getDebuggableObject(mc.objectMouseOver);
@@ -129,7 +129,7 @@ public class RenderTickListener {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void renderLast(RenderWorldLastEvent event) {
         float partialTicks = event.getPartialTicks();
         renderHeldItemInWorld(partialTicks);
@@ -143,7 +143,7 @@ public class RenderTickListener {
         }
         ItemStack mainHand = StackUtil.asNonNull(player.getMainHandStack());
         ItemStack offHand = StackUtil.asNonNull(player.getOffHandStack());
-        WorldClient world = mc.world;
+        WorldClient world = mc.getWorld();
 
         mc.getProfiler().push("bc");
         mc.getProfiler().push("renderWorld");

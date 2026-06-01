@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeSet;
+import java.util.Set;
 
 import buildcraft.api.core.BCLog;
 

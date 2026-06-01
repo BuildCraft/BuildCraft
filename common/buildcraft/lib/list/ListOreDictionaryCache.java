@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 public final class ListOreDictionaryCache {
     public static final ListOreDictionaryCache INSTANCE = new ListOreDictionaryCache();
@@ -91,7 +92,7 @@ public final class ListOreDictionaryCache {
             return;
         }
 
-        int oreID = OreDictionary.getOreID(name);
+        int oreID = OreDictionaryStub.getOreID(name);
 
         addToNamingCache(getType(name), oreID);
         addToNamingCache(getMaterial(name), oreID);

@@ -7,6 +7,7 @@
 package buildcraft.lib.client.guide.block;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
 
@@ -20,7 +21,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 public class EngineBlockMapper implements IBlockGuidePageMapper {
     @Override
     public String getFor(World world, BlockPos pos, BlockState state) {
-        EnumEngineType type = state.getValue(BuildCraftProperties.ENGINE_TYPE);
+        EnumEngineType type = state.get(BuildCraftProperties.ENGINE_TYPE);
         return "engine_" + type.unlocalizedTag;
     }
 

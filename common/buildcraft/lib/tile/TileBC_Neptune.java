@@ -9,6 +9,8 @@ package buildcraft.lib.tile;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -153,6 +155,18 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public TileBC_Neptune(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         caps.addProvider(itemManager);
+    }
+
+    /**
+     * Forge-compat no-arg constructor. Used by unmigrated subclasses that haven't yet adopted the
+     * (BlockEntityType, BlockPos, BlockState) signature. Uses BlockEntityType.SIGN as a placeholder
+     * type that is always registered. WILL FAIL at runtime — subclasses must migrate.
+     * TODO(R.Chen): remove once all subclasses pass their registered BlockEntityType.
+     */
+    @SuppressWarnings("unchecked")
+    public TileBC_Neptune() {
+        this((BlockEntityType<?>) BlockEntityType.SIGN, BlockPos.ORIGIN,
+             net.minecraft.block.Blocks.OAK_SIGN.getDefaultState());
     }
 
     // ##################################################
@@ -495,7 +509,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public final MessageUpdateTile createNetworkUpdate(final int id) {
         if (hasWorld()) {
             // TODO(R.Chen): replace the Forge "Side" discriminator with a Fabric-native NetSide enum.
-            final NetSide side = world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER;
+            final NetSide side = world.isClient ? NetSide.CLIENT : NetSide.SERVER;
             return createMessage(id, (buffer) -> writePayload(id, buffer, side));
         } else {
             BCLog.logger.warn("Did not have a world at " + pos + "!");
@@ -560,7 +574,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public NbtCompound toInitialChunkDataNbt() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeShort(NET_RENDER_DATA);
-        writePayload(NET_RENDER_DATA, new PacketBufferBC(buf), world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER);
+        writePayload(NET_RENDER_DATA, new PacketBufferBC(buf), world.isClient ? NetSide.CLIENT : NetSide.SERVER);
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
 
@@ -590,7 +604,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         try {
             int id = buf.readUnsignedShort();
             PacketBufferBC buffer = new PacketBufferBC(buf);
-            readPayload(id, buffer, world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER, null);
+            readPayload(id, buffer, world.isClient ? NetSide.CLIENT : NetSide.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
             MessageUtil.ensureEmpty(buffer, world.isClient, getClass() + ", id = " + getIdAllocator().getNameFor(id));
             spawnReceiveParticles(id);
@@ -622,13 +636,13 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         throws IOException {
         int id = buffer.readUnsignedShort();
         // STUB(R.Chen): side must come from the Fabric receiver context; defaulting to the world side for now.
-        NetSide side = world.isClient ? NetEnvType.CLIENT : NetEnvType.SERVER;
+        NetSide side = world.isClient ? NetSide.CLIENT : NetSide.SERVER;
         readPayload(id, buffer, side, ctx);
 
         // Make sure that we actually read the entire message rather than just discarding it
         MessageUtil.ensureEmpty(buffer, world.isClient, getClass() + ", id = " + getIdAllocator().getNameFor(id));
 
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             spawnReceiveParticles(id);
         }
         return null;
@@ -646,11 +660,11 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
 
             writePayload(NET_RENDER_DATA, buffer, side);
 
-            if (side == NetEnvType.SERVER) {
+            if (side == NetSide.SERVER) {
                 MessageUtil.writeGameProfile(buffer, owner);
             }
         }
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 deltaManager.writeDeltaState(false, buffer);
             } else if (id == NET_GUI_DATA) {
@@ -667,11 +681,11 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side, ctx);
 
-            if (side == NetEnvType.CLIENT) {
+            if (side == NetSide.CLIENT) {
                 owner = MessageUtil.readGameProfile(buffer);
             }
         }
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
             else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(
@@ -697,10 +711,23 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     //
     // ######################
 
+    /**
+     * Forge-compat hook called from {@link #readNbt(NbtCompound)}. Unmigrated subclasses override
+     * this instead of {@code readNbt}. Migrated subclasses should override {@code readNbt} directly.
+     */
+    public void readFromNBT(NbtCompound nbt) {}
+
+    /**
+     * Forge-compat hook called from {@link #writeNbt(NbtCompound)}. Unmigrated subclasses override
+     * this instead of {@code writeNbt}. Migrated subclasses should override {@code writeNbt} directly.
+     */
+    public NbtCompound writeToNBT(NbtCompound nbt) { return nbt; }
+
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         migrateOldNBT(nbt.getInt("data-version"), nbt);
+        readFromNBT(nbt);
         deltaManager.readFromNBT(nbt.getCompound("deltas"));
         if (nbt.contains("owner")) {
             owner = NbtHelper.toGameProfile(nbt.getCompound("owner"));
@@ -728,6 +755,7 @@ public abstract class TileBC_Neptune extends BlockEntity implements IPayloadRece
     public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         nbt.putInt("data-version", BCVersion.CURRENT.dataVersion);
+        writeToNBT(nbt);
         nbt.put("deltas", deltaManager.writeToNBT());
         if (owner != null && owner.isComplete() && owner != FakePlayerProvider.NULL_PROFILE) {
             nbt.put("owner", NbtHelper.writeGameProfile(new NbtCompound(), owner));

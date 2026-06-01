@@ -35,14 +35,14 @@ public class MessageDebugRequest implements IMessage {
         this.side = side;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         buf.writeBlockPos(pos);
         buf.writeEnumValue(side);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buffer) {
         PacketBufferBC buf = PacketBufferBC.asPacketBufferBc(buffer);
         pos = buf.readBlockPos();
@@ -54,7 +54,7 @@ public class MessageDebugRequest implements IMessage {
         if (!ItemDebugger.isShowDebugInfo(player)) {
             return new MessageDebugResponse();
         }
-        BlockEntity tile = player.world.getBlockEntity(message.pos);
+        BlockEntity tile = player.getWorld().getBlockEntity(message.pos);
         if (tile instanceof IDebuggable) {
             List<String> left = new ArrayList<>();
             List<String> right = new ArrayList<>();

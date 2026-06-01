@@ -4,7 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.client.util.ModelIdentifier;
 
@@ -30,9 +31,9 @@ public class ItemBlockDecorated extends ItemBlockBCMulti {
         return names;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelIdentifier> variants) {
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for (EnumDecoratedBlock type : EnumDecoratedBlock.VALUES) {
             addVariant(variants, type.ordinal(), type.getName());
         }

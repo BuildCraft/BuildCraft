@@ -35,7 +35,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
     public TriggerInventory(State state) {
         super(
             "buildcraft:inventory." + state.name().toLowerCase(Locale.ROOT),
-            "buildcraft.inventory." + state.name().toLowerCase(Locale.ROOT)
+            "buildcraft.getInventory()." + state.name().toLowerCase(Locale.ROOT)
         );
         this.state = state;
     }
@@ -52,7 +52,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT));
+        return LocaleUtil.localize("gate.trigger.getInventory()." + state.name().toLowerCase(Locale.ROOT));
     }
 
     @Override

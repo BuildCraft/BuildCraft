@@ -4,7 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 
 import buildcraft.lib.registry.RegistrationHelper;
 
@@ -36,14 +37,14 @@ public class BCBuildersBlocks {
     public static BlockQuarry quarry;
 
     public static void fmlPreInit() {
-        filler = HELPER.addBlockAndItem(new BlockFiller(Material.IRON, "block.filler"));
-        builder = HELPER.addBlockAndItem(new BlockBuilder(Material.IRON, "block.builder"));
-        architect = HELPER.addBlockAndItem(new BlockArchitectTable(Material.IRON, "block.architect"));
-        library = HELPER.addBlockAndItem(new BlockElectronicLibrary(Material.IRON, "block.library"));
-        replacer = HELPER.addBlockAndItem(new BlockReplacer(Material.IRON, "block.replacer"));
+        filler = HELPER.addBlockAndItem(new BlockFiller(MaterialBC.IRON, "block.filler"));
+        builder = HELPER.addBlockAndItem(new BlockBuilder(MaterialBC.IRON, "block.builder"));
+        architect = HELPER.addBlockAndItem(new BlockArchitectTable(MaterialBC.IRON, "block.architect"));
+        library = HELPER.addBlockAndItem(new BlockElectronicLibrary(MaterialBC.IRON, "block.library"));
+        replacer = HELPER.addBlockAndItem(new BlockReplacer(MaterialBC.IRON, "block.replacer"));
 
-        frame = HELPER.addBlockAndItem(new BlockFrame(Material.IRON, "block.frame"));
-        quarry = HELPER.addBlockAndItem(new BlockQuarry(Material.IRON, "block.quarry"));
+        frame = HELPER.addBlockAndItem(new BlockFrame(MaterialBC.IRON, "block.frame"));
+        quarry = HELPER.addBlockAndItem(new BlockQuarry(MaterialBC.IRON, "block.quarry"));
     }
 
     public static void fmlInit() {

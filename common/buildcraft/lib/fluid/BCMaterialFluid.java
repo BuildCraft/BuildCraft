@@ -17,7 +17,7 @@ public class BCMaterialFluid extends MaterialLiquid {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean blocksMovement() {
         return true;
     }

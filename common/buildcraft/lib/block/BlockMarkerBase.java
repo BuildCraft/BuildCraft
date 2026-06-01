@@ -8,7 +8,8 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.state.StateManager;
 import net.minecraft.block.BlockState;
@@ -49,85 +50,82 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
         BOUNDING_BOXES.put(Direction.WEST, new Box(ih, nw, nw, 1, pw, pw));
     }
 
-    public BlockMarkerBase(Material material, String id) {
+    public BlockMarkerBase(AbstractBlock.Settings material, String id) {
         super(material, id);
         setHardness(0.25f);
 
         BlockState defaultState = getDefaultState();
-        defaultState = defaultState.withProperty(BuildCraftProperties.BLOCK_FACING_6, Direction.UP);
-        defaultState = defaultState.withProperty(BuildCraftProperties.ACTIVE, false);
+        defaultState = defaultState.with(BuildCraftProperties.BLOCK_FACING_6, Direction.UP);
+        defaultState = defaultState.with(BuildCraftProperties.ACTIVE, false);
         setDefaultState(defaultState);
     }
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, BuildCraftProperties.BLOCK_FACING_6, BuildCraftProperties.ACTIVE);
-    }
+        // TODO(R.Chen): Forge createBlockState() → override appendProperties() instead.
 
-    @Override
+@Override
     public int getMetaFromState(BlockState state) {
-        return state.getValue(BuildCraftProperties.BLOCK_FACING_6).getIndex();
+        return state.get(BuildCraftProperties.BLOCK_FACING_6).getIndex();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(BuildCraftProperties.BLOCK_FACING_6, Direction.getFront(meta));
+        return getDefaultState().with(BuildCraftProperties.BLOCK_FACING_6, Direction.getFront(meta));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileMarker) {
             TileMarker<?> marker = (TileMarker<?>) tile;
-            state = state.withProperty(BuildCraftProperties.ACTIVE, marker.isActiveForRender());
+            state = state.with(BuildCraftProperties.ACTIVE, marker.isActiveForRender());
         }
         return state;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public RenderLayer getBlockLayer() {
-        return RenderLayer.CUTOUT;
+        return RenderLayer.getCutout();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Box getCollisionBoundingBox(BlockState state, BlockView world, BlockPos pos) {
         return null;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Box getBoundingBox(BlockState state, BlockView source, BlockPos pos) {
-        return BOUNDING_BOXES.get(state.getValue(BuildCraftProperties.BLOCK_FACING_6));
+        return BOUNDING_BOXES.get(state.get(BuildCraftProperties.BLOCK_FACING_6));
     }
     
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer, Hand hand) {
         BlockState state = getDefaultState();
-        state = state.withProperty(BuildCraftProperties.BLOCK_FACING_6, facing);
+        state = state.with(BuildCraftProperties.BLOCK_FACING_6, facing);
         return state;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean canPlaceBlockOnSide(World world, BlockPos pos, Direction side) {
         return world.isSideSolid(pos.offset(side.getOpposite()), side);
     }
     
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if (state.getBlock() != this) {
             return;
         }
-        Direction sideOn = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
+        Direction sideOn = state.get(BuildCraftProperties.BLOCK_FACING_6);
         if (!canPlaceBlockOnSide(world, pos, sideOn)) {
             world.destroyBlock(pos, true);
         }

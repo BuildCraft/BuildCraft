@@ -176,8 +176,8 @@ public class GuidePageContents extends GuidePageBase {
             }
         }
         if (index % 2 == 0) {
-            searchText.x = x + 23;
-            searchText.y = y - 16;
+            searchText.setX(x + 23);
+            searchText.setY(y - 16);
             if (!searchText.isFocused() && searchText.getText().isEmpty()) {
                 GuiGuide.SEARCH_TAB_CLOSED.drawAt(x + 8, y - 20);
                 GuiGuide.SEARCH_ICON.drawAt(x + 8, y - 19);
@@ -221,7 +221,7 @@ public class GuidePageContents extends GuidePageBase {
 
     private void drawCenteredText(String text, int x, int y, int width) {
         IFontRenderer f = getFontRenderer();
-        int fWidth = f.getStringWidth(text);
+        int fWidth = f.getWidth(text);
         f.drawString(text, (x + (width - fWidth) / 2), y, 0);
     }
 
@@ -257,7 +257,7 @@ public class GuidePageContents extends GuidePageBase {
             if (index == 0) {
                 IFontRenderer f = getFontRenderer();
                 String text = XmlPageLoader.SHOW_LORE ? "Show Lore [x]" : "Show Lore [ ]";
-                int fWidth = f.getStringWidth(text);
+                int fWidth = f.getWidth(text);
                 GuiRectangle rect;
                 rect = new GuiRectangle(x + (width - fWidth) / 2, y + height - 52, fWidth, f.getFontHeight(text));
                 if (rect.contains(mouseX, mouseY)) {
@@ -265,7 +265,7 @@ public class GuidePageContents extends GuidePageBase {
                 }
 
                 text = XmlPageLoader.SHOW_HINTS ? "Show Hints [x]" : "Show Hints [ ]";
-                fWidth = f.getStringWidth(text);
+                fWidth = f.getWidth(text);
                 rect = new GuiRectangle(x + (width - fWidth) / 2, y + height - 38, fWidth, f.getFontHeight(text));
                 if (rect.contains(mouseX, mouseY)) {
                     XmlPageLoader.SHOW_HINTS = !XmlPageLoader.SHOW_HINTS;

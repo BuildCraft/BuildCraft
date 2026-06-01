@@ -6,7 +6,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.core.BCLog;
 
@@ -42,7 +42,7 @@ public class BCEnergyWorldGen {
         }
         if (BCCoreConfig.worldGen) {
             if (BCEnergyConfig.enableOilGeneration) {
-                MinecraftForge.EVENT_BUS.register(OilGenerator.class);
+                // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(OilGenerator.class);
                 BCLog.logger.info("[energy.oilgen] Registered the oil spout generator");
             } else {
                 BCLog.logger.info("[energy.oilgen] Not registering the oil spout generator, as it has been disabled by the config file.");
@@ -58,7 +58,7 @@ public class BCEnergyWorldGen {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
         if (BCEnergyConfig.enableOilDesertBiome) {
             event.getRegistry().register(new BiomeOilOcean());

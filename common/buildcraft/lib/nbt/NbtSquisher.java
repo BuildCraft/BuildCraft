@@ -24,7 +24,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.profiler.Profiler;
@@ -33,9 +32,10 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.data.NbtSquishConstants;
+import net.minecraft.nbt.NbtElement;
 
 public class NbtSquisher {
-    public static final Profiler profiler = new Profiler();
+    public static final Profiler profiler = net.minecraft.util.profiler.DummyProfiler.INSTANCE;
     /** Used by testing classes to replace ByteBuf instances with PrintingByteBuf -- but we don't have that
      * class in main because it makes checkstyle complain. */
     public static Function<ByteBuf, PacketByteBuf> debugBuffer = null;
@@ -86,13 +86,13 @@ public class NbtSquisher {
         to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_1);
         to.write(NbtSquishConstants.BUILDCRAFT_MAGIC_2);
         to.write(TYPE_MC_GZIP);
-        CompressedStreamTools.writeCompressed(nbt, to);
+        net.minecraft.nbt.NbtIo.writeCompressed(nbt, to);
     }
 
     public static void squishVanillaUncompressed(NbtCompound nbt, DataOutput to) throws IOException {
         to.writeShort(NbtSquishConstants.BUILDCRAFT_MAGIC);
         to.write(TYPE_MC);
-        CompressedStreamTools.write(nbt, to);
+        net.minecraft.nbt.NbtIo.write(nbt, to);
     }
 
     public static void squishBuildCraftV1(NbtCompound nbt, OutputStream to) throws IOException {
@@ -131,9 +131,9 @@ public class NbtSquisher {
             // Defiantly a BC stream
             int type = stream.read();
             if (type == TYPE_MC) {
-                return CompressedStreamTools.read(new DataInputStream(stream));
+                return net.minecraft.nbt.NbtIo.read(new DataInputStream(stream));
             } else if (type == TYPE_MC_GZIP) {
-                return CompressedStreamTools.readCompressed(stream);
+                return net.minecraft.nbt.NbtIo.readCompressed(stream);
             } else if (type == TYPE_BC_1) {
                 return readBuildCraftV1Direct(new DataInputStream(stream));
             } else if (type == TYPE_BC_1_GZIP) {
@@ -145,7 +145,7 @@ public class NbtSquisher {
             // Defiantly a GZIP stream
             // Assume its a vanilla file
             stream.reset();
-            return CompressedStreamTools.readCompressed(stream);
+            return net.minecraft.nbt.NbtIo.readCompressed(stream);
         }
         // Its not a new BC style nbt, try to red it as if it was an older style nbt
         // Reset + mark the same point, this time we only want to reset back 1 or 2 bytes
@@ -154,9 +154,9 @@ public class NbtSquisher {
         int type = stream.read();
 
         if (type == TYPE_MC) {
-            return CompressedStreamTools.read(new DataInputStream(stream));
+            return net.minecraft.nbt.NbtIo.read(new DataInputStream(stream));
         } else if (type == TYPE_MC_GZIP) {
-            return CompressedStreamTools.readCompressed(stream);
+            return net.minecraft.nbt.NbtIo.readCompressed(stream);
         } else if (type == TYPE_BC_1) {
             return readBuildCraftV1Direct(new DataInputStream(stream));
         } else if (type == TYPE_BC_1_GZIP) {
@@ -164,7 +164,7 @@ public class NbtSquisher {
         } else if (type == NbtElement.COMPOUND_TYPE) {
             // Assume vanilla, but reset back to the first byte as vanilla needs
             stream.reset();
-            return CompressedStreamTools.read(new DataInputStream(stream));
+            return net.minecraft.nbt.NbtIo.read(new DataInputStream(stream));
         } else {
             throw new InvalidInputDataException("Cannot handle unknown saved NBT type " + type);
         }

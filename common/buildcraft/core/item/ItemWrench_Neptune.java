@@ -44,12 +44,12 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
         player.swingArm(hand);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean doesSneakBypassUse(ItemStack stack, BlockView world, BlockPos pos, PlayerEntity player) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         // FIXME: Disabled world check as it doesn't allow us to swing the player's arm!
         // if (world.isClient) {

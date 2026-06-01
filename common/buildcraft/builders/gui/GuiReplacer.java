@@ -31,35 +31,35 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
         ySize = SIZE_Y;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void initGui() {
         super.initGui();
-        nameField = new GuiTextField(0, fontRenderer, guiLeft + 30, guiTop + 117, 138, 12);
+        nameField = new GuiTextField(0, fontRenderer, x + 30, y + 117, 138, 12);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
         ClientSnapshots.INSTANCE.renderSnapshot(
             BCBuildersItems.snapshot.getHeader(container.tile.invSnapshot.getStackInSlot(0)),
-            guiLeft + 8,
-            guiTop + 9,
+            x + 8,
+            y + 9,
             160,
             100
         );
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         nameField.drawTextBox();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateScreen() {
         nameField.updateCursorCounter();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         boolean typed = false;
         if (nameField.isFocused()) {
@@ -71,7 +71,7 @@ public class GuiReplacer extends GuiBC8<ContainerReplacer> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         nameField.mouseClicked(mouseX, mouseY, mouseButton);

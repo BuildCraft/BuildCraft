@@ -31,7 +31,7 @@ public final class SchematicBlockAir implements ISchematicBlock {
     }
 
     @Override
-    public SchematicBlockAir getRotated(Rotation rotation) {
+    public SchematicBlockAir getRotated(net.minecraft.util.BlockRotation rotation) {
         return SchematicBlockManager.createCleanCopy(this);
     }
 
@@ -55,7 +55,8 @@ public final class SchematicBlockAir implements ISchematicBlock {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         return new NbtCompound();
     }

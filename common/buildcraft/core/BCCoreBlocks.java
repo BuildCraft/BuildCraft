@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
 
 import buildcraft.api.enums.EnumEngineType;
 
@@ -40,13 +40,13 @@ public class BCCoreBlocks {
     public static void preInit() {
         spring = HELPER.addBlockAndItem(new BlockSpring("block.spring"), ItemBlockSpring::new);
         decorated = HELPER.addBlockAndItem(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
-        markerVolume = HELPER.addBlockAndItem(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
-        markerPath = HELPER.addBlockAndItem(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
+        markerVolume = HELPER.addBlockAndItem(new BlockMarkerVolume(MaterialBC.CIRCUITS, "block.marker.volume"));
+        markerPath = HELPER.addBlockAndItem(new BlockMarkerPath(MaterialBC.CIRCUITS, "block.marker.path"));
         if (BCLib.DEV) {
-            powerTester = HELPER.addBlockAndItem(new BlockPowerConsumerTester(Material.IRON, "block.power_tester"));
+            powerTester = HELPER.addBlockAndItem(new BlockPowerConsumerTester(MaterialBC.IRON, "block.power_tester"));
         }
 
-        engine = HELPER.addBlockAndItem(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8::new);
+        engine = HELPER.addBlockAndItem(new BlockEngine_BC8(MaterialBC.IRON, "block.engine.bc"), ItemEngine_BC8::new);
         if (engine != null) {
             engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
             engine.registerEngine(EnumEngineType.CREATIVE, TileEngineCreative::new);

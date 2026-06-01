@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -87,12 +89,12 @@ public class MiniChunkGraph {
 
         public void requestAllConnected(World world) {
             // Request all first, and THEN wait for all of them.
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (!neighbours.containsKey(face)) {
                     MiniChunkCache.requestGraph(world, min.offset(face, 16));
                 }
             }
-            for (Direction face : Direction.VALUES) {
+            for (Direction face : Direction.values()) {
                 if (!neighbours.containsKey(face)) {
                     MiniChunkCache.requestAndWait(world, min.offset(face, 16));
                 }

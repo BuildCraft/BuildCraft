@@ -7,6 +7,7 @@
 package buildcraft.lib.misc;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -28,11 +29,11 @@ import buildcraft.api.tools.IToolWrench;
 
 public class EntityUtil {
     public static DefaultedList<ItemStack> collectItems(World world, BlockPos around, double radius) {
-        return collectItems(world, new Vec3d(around).addVector(0.5, 0.5, 0.5), radius);
+        return collectItems(world, new Vec3d(around.getX(), around.getY(), around.getZ()).add(0.5, 0.5, 0.5), radius);
     }
 
     public static DefaultedList<ItemStack> collectItems(World world, Vec3d around, double radius) {
-        DefaultedList<ItemStack> stacks = DefaultedList.create();
+        DefaultedList<ItemStack> stacks = DefaultedList.of();
 
         Box aabb = BoundingBoxUtil.makeAround(around, radius);
         for (ItemEntity ent : world.getEntitiesWithinAABB(ItemEntity.class, aabb)) {

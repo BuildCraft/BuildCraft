@@ -7,19 +7,19 @@
 package buildcraft.builders.client.render;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.render.HudRenderer;
 
 public class HudSingleSchematic extends HudRenderer {
     @Override
-    protected void renderImpl(MinecraftClient mc, EntityPlayerSP player) {
+    protected void renderImpl(MinecraftClient mc, ClientPlayerEntity player) {
 
     }
 
     @Override
-    protected boolean shouldRender(MinecraftClient mc, EntityPlayerSP player) {
+    protected boolean shouldRender(MinecraftClient mc, ClientPlayerEntity player) {
         ItemStack stack = player.getMainHandStack();
         return false;
     }

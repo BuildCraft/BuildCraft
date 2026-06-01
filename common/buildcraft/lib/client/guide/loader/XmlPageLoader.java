@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Formatting;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
@@ -779,9 +780,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                 int meta = Integer.parseInt(data.trim());
                 if (meta == -1) {
                     // Use oredict
-                    meta = OreDictionary.WILDCARD_VALUE;
+                    meta = OreDictionaryStub.WILDCARD_VALUE;
                 }
-                stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
+                stack = new ItemStack(stack.getItem(), stack.getCount());
             } catch (NumberFormatException nfe) {
                 BCLog.logger.warn("[lib.guide.loader.xml] " + data + " was not a valid number: " + nfe.getMessage());
             }

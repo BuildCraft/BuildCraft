@@ -24,7 +24,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -70,6 +69,7 @@ import buildcraft.builders.snapshot.Template;
 import buildcraft.core.marker.volume.Lock;
 import buildcraft.core.marker.volume.VolumeBox;
 import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("architect");
@@ -117,12 +117,12 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     @Override
     public void onPlacedBy(LivingEntity placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (placer.world.isClient) {
+        if (placer.getWorld().isClient) {
             return;
         }
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
         BlockState blockState = world.getBlockState(pos);
-        BlockPos offsetPos = pos.offset(blockState.getValue(BlockArchitectTable.PROP_FACING).getOpposite());
+        BlockPos offsetPos = pos.offset(blockState.get(BlockArchitectTable.PROP_FACING).getOpposite());
         VolumeBox volumeBox = volumeBoxes.getVolumeBoxAt(offsetPos);
         BlockEntity tile = world.getBlockEntity(offsetPos);
         if (volumeBox != null) {
@@ -153,7 +153,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
         } else {
             isValid = false;
             BlockState state = world.getBlockState(pos);
-            state = state.withProperty(BlockArchitectTable.PROP_VALID, Boolean.FALSE);
+            state = state.with(BlockArchitectTable.PROP_VALID, Boolean.FALSE);
             world.setBlockState(pos, state);
         }
     }
@@ -312,9 +312,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 writePayload(NET_BOX, buffer, side);
                 buffer.writeString(name);
@@ -326,9 +326,9 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 readPayload(NET_BOX, buffer, side, ctx);
                 name = buffer.readString();
@@ -385,13 +385,13 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
     // Rendering
 
     @Nonnull
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public Box getRenderBoundingBox() {
         return BoundingBoxUtil.makeFrom(pos, box);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;

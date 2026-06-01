@@ -6,30 +6,25 @@
 
 package buildcraft.lib.misc;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.recipe.Recipe;
+import net.minecraft.inventory.RecipeInputInventory;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public final class CraftingUtil {
 
-    /**
-     * Deactivate constructor
-     */
-    private CraftingUtil() {
-    }
+    private CraftingUtil() {}
 
-    public static IRecipe findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World) {
-            List<IRecipe> recipes = GameRegistry.findRegistry(IRecipe.class).getValues();
-            for (IRecipe recipe : recipes) {
-                if (recipe.matches(par1InventoryCrafting, par2World)) {
-                    return recipe;
-                }
-            }
-            return null;
-
+    @Nullable
+    public static CraftingRecipe findMatchingRecipe(RecipeInputInventory inv, World world) {
+        // TODO(R.Chen): verify recipe lookup via RecipeManager
+        if (world == null || world.getRecipeManager() == null) return null;
+        return world.getRecipeManager()
+            .getFirstMatch(RecipeType.CRAFTING, inv, world)
+            .map(match -> match.value())
+            .orElse(null);
     }
 }

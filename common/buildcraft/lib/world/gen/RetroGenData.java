@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.map.hash.TObjectByteHashMap;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -27,6 +25,7 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import net.minecraft.nbt.NbtElement;
 
 public class RetroGenData extends WorldSavedData {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.gen.retro");
@@ -46,8 +45,8 @@ public class RetroGenData extends WorldSavedData {
         gennedChunks.clear();
 
         NbtList registry = nbt.getList("registry", NbtElement.STRING_TYPE);
-        String[] names = new String[registry.tagCount()];
-        for (int i = 0; i < registry.tagCount(); i++) {
+        String[] names = new String[registry.size()];
+        for (int i = 0; i < registry.size(); i++) {
             names[i] = registry.getStringTagAt(i);
         }
 
@@ -110,7 +109,7 @@ public class RetroGenData extends WorldSavedData {
         for (Set<String> used : gennedChunks.values()) {
             allNames.addAll(used);
         }
-        TObjectByteHashMap<String> map = new TObjectByteHashMap<>();
+        HashMap<String, Byte> map = new HashMap<>();
         List<String> list = new ArrayList<>(allNames);
         NbtList registry = new NbtList();
         for (int i = 0; i < list.size(); i++) {
@@ -124,12 +123,14 @@ public class RetroGenData extends WorldSavedData {
         for (Entry<ChunkPos, Set<String>> entry : gennedChunks.entrySet()) {
             String key = serializeChunkPos(entry.getKey());
             Set<String> names = entry.getValue();
-            TByteArrayList ids = new TByteArrayList();
+            ArrayList<Byte> ids = new ArrayList<Byte>();
             for (String s : names) {
                 byte b = map.get(s);
                 ids.add(b);
             }
-            data.putByteArray(key, ids.toArray());
+            byte[] arr = new byte[ids.size()];
+            for (int i = 0; i < ids.size(); i++) arr[i] = ids.get(i);
+            data.putByteArray(key, arr);
         }
         nbt.put("data", data);
 

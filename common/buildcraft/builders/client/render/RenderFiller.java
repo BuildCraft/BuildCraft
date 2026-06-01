@@ -21,7 +21,7 @@ import buildcraft.core.client.BuildCraftLaserManager;
 @Environment(EnvType.CLIENT)
 public class RenderFiller extends FastTESR<TileFiller> {
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(TileFiller tile, double x, double y, double z, float partialTicks,
         int destroyStage, float partial, BufferBuilder bb) {
         MinecraftClient.getInstance().getProfiler().push("bc");
@@ -35,9 +35,9 @@ public class RenderFiller extends FastTESR<TileFiller> {
 
         MinecraftClient.getInstance().getProfiler().push("box");
         if (tile.markerBox) {
-            bb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
             LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, bb, true);
-            bb.setTranslation(0, 0, 0);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
         }
         MinecraftClient.getInstance().getProfiler().pop();
 
@@ -45,7 +45,7 @@ public class RenderFiller extends FastTESR<TileFiller> {
         MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileFiller te) {
         return true;
     }

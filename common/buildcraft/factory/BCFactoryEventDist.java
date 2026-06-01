@@ -7,7 +7,7 @@
 package buildcraft.factory;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -17,7 +17,7 @@ import buildcraft.factory.client.render.RenderPump;
 public enum BCFactoryEventDist {
     INSTANCE;
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public void textureStitchPost(TextureStitchEvent.Post event) {
         RenderPump.textureStitchPost();

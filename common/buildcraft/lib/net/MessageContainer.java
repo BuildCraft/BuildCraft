@@ -19,6 +19,7 @@ import net.fabricmc.api.EnvType;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class MessageContainer implements IMessage {
 
@@ -40,7 +41,7 @@ public class MessageContainer implements IMessage {
     // USHORT - PAYLOAD_SIZE->"size"
     // BYTE[size] - PAYLOAD
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         windowId = buf.readInt();
         msgId = buf.readUnsignedShort();
@@ -49,7 +50,7 @@ public class MessageContainer implements IMessage {
         payload = new PacketBufferBC(read);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeShort(msgId);
@@ -69,7 +70,7 @@ public class MessageContainer implements IMessage {
 
                 // error checking
                 String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                MessageUtil.ensureEmpty(message.payload, ctx.side == EnvType.CLIENT, extra);
+                MessageUtil.ensureEmpty(message.payload, ctx.side == NetSide.CLIENT, extra);
             }
             return null;
         } catch (IOException e) {

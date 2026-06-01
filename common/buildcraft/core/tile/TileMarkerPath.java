@@ -5,6 +5,7 @@
 package buildcraft.core.tile;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import net.minecraft.util.math.BlockPos;
 

@@ -20,7 +20,7 @@ import java.util.Set;
 //   DyeColor → DyeColor   Direction → Direction   NbtCompound → NbtCompound
 //   BlockEntity   → BlockEntity   world.isClient → world.isClient   getTileEntity → getBlockEntity
 //   @Environment(EnvType.CLIENT) → @Environment(EnvType.CLIENT)   Side → EnvType   MessageContext → Object (stub)
-//   DyeColor.byMetadata(i) → DyeColor.byId(i)   color.getMetadata() → color.getId()
+//   DyeColor.byId(i) → DyeColor.byId(i)   color.getId() → color.getId()
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -35,6 +35,7 @@ import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.IPipeHolder;
 
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;

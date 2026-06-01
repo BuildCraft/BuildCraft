@@ -22,7 +22,7 @@ public class ItemDebugger extends ItemBC_Neptune {
         super(id);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ActionResult onItemUseFirst(PlayerEntity player, World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, Hand hand) {
         if (world.isClient) {
             return ActionResult.PASS;

@@ -24,8 +24,8 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -39,15 +39,15 @@ public class SchematicBlockFluid implements ISchematicBlock {
 
     @SuppressWarnings("unused")
     public static boolean predicate(SchematicBlockContext context) {
-        return BlockUtil.getFluidWithFlowing(context.world, context.pos) != null &&
-            (BlockUtil.getFluid(context.world, context.pos) == null ||
-                BlockUtil.getFluidWithoutFlowing(context.world.getBlockState(context.pos)) != null);
+        return BlockUtil.getFluidWithFlowing(context.getWorld(), context.pos) != null &&
+            (BlockUtil.getFluid(context.getWorld(), context.pos) == null ||
+                BlockUtil.getFluidWithoutFlowing(context.getWorld().getBlockState(context.pos)) != null);
     }
 
     @Override
     public void init(SchematicBlockContext context) {
         blockState = context.blockState;
-        isFlowing = BlockUtil.getFluid(context.world, context.pos) == null;
+        isFlowing = BlockUtil.getFluid(context.getWorld(), context.pos) == null;
     }
 
     @Nonnull
@@ -61,15 +61,15 @@ public class SchematicBlockFluid implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids() {
+    public List<FluidStackBC> computeRequiredFluids() {
         return Optional.ofNullable(BlockUtil.getFluidWithoutFlowing(blockState))
-            .map(fluid -> new FluidStack(fluid, Fluid.BUCKET_VOLUME))
+            .map(fluid -> new FluidStackBC(fluid, Fluid.BUCKET_VOLUME))
             .map(Collections::singletonList)
             .orElseGet(Collections::emptyList);
     }
 
     @Override
-    public SchematicBlockFluid getRotated(Rotation rotation) {
+    public SchematicBlockFluid getRotated(net.minecraft.util.BlockRotation rotation) {
         SchematicBlockFluid schematicBlock = SchematicBlockManager.createCleanCopy(this);
         schematicBlock.blockState = blockState;
         schematicBlock.isFlowing = isFlowing;
@@ -90,7 +90,7 @@ public class SchematicBlockFluid implements ISchematicBlock {
         }
         if (world.setBlockState(blockPos, blockState, 11)) {
             Stream.concat(
-                Stream.of(Direction.VALUES)
+                Stream.of(Direction.values())
                     .map(Direction::getDirectionVec)
                     .map(BlockPos::new),
                 Stream.of(BlockPos.ORIGIN)
@@ -112,17 +112,18 @@ public class SchematicBlockFluid implements ISchematicBlock {
         return isFlowing || BlockUtil.blockStatesEqual(blockState, world.getBlockState(blockPos));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         NbtCompound nbt = new NbtCompound();
-        nbt.put("blockState", NBTUtil.writeBlockState(new NbtCompound(), blockState));
+        nbt.put("blockState", net.minecraft.nbt.NbtHelper.fromBlockState(blockState));
         nbt.putBoolean("isFlowing", isFlowing);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
-        blockState = NBTUtil.readBlockState(nbt.getCompound("blockState"));
+        blockState = net.minecraft.nbt.NbtHelper.toBlockState(nbt.getCompound("blockState"));
         isFlowing = nbt.getBoolean("isFlowing");
     }
 

@@ -31,7 +31,7 @@ public class MessageMarker implements IMessage {
     public int cacheId, count;
     public final List<BlockPos> positions = new ArrayList<>();
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         PacketBufferBC packet = PacketBufferBC.asPacketBufferBc(buf);
         add = packet.readBoolean();
@@ -48,7 +48,7 @@ public class MessageMarker implements IMessage {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         count = positions.size();
         multiple = count != 1;

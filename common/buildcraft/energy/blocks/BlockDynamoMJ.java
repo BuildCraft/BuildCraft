@@ -1,7 +1,8 @@
 package buildcraft.energy.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -22,7 +23,7 @@ import buildcraft.energy.tile.TileDynamoMJ;
 
 public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotationHandler {
 
-    public BlockDynamoMJ(Material material, String id) {
+    public BlockDynamoMJ(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -31,25 +32,25 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
         return new TileDynamoMJ();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Deprecated
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Deprecated
     public boolean isFullBlock(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Deprecated
     public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Deprecated
     public BlockFaceShape getBlockFaceShape(BlockView world, BlockState state, BlockPos pos, Direction side) {
         BlockEntity tile = world.getBlockEntity(pos);
@@ -64,7 +65,7 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
         return BlockFaceShape.UNDEFINED;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Deprecated
     public boolean isSideSolid(BlockState base_state, BlockView world, BlockPos pos, Direction side) {
         BlockEntity tile = world.getBlockEntity(pos);
@@ -81,7 +82,7 @@ public class BlockDynamoMJ extends BlockBCTile_Neptune implements ICustomRotatio
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
         if (world.isClient) return;

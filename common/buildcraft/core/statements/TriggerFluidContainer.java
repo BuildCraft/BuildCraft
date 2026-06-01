@@ -11,7 +11,7 @@ import java.util.Locale;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -63,7 +63,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
         IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
 
         if (handler != null) {
-            FluidStack searchedFluid = null;
+            FluidStackBC searchedFluid = null;
 
             if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack().isEmpty()) {
                 searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
@@ -80,12 +80,12 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
             switch (state) {
                 case EMPTY:
-                    FluidStack drained = handler.drain(1, false);
+                    FluidStackBC drained = handler.drain(1, false);
                     return drained == null || drained.amount <= 0;
                 case CONTAINS:
                     for (IFluidTankProperties c : liquids) {
                         if (c == null) continue;
-                        FluidStack fluid = c.getContents();
+                        FluidStackBC fluid = c.getContents();
                         if (fluid != null && fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(fluid))) {
                             return true;
                         }
@@ -95,7 +95,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                     if (searchedFluid == null) {
                         for (IFluidTankProperties c : liquids) {
                             if (c == null) continue;
-                            FluidStack fluid = c.getContents();
+                            FluidStackBC fluid = c.getContents();
                             if ((fluid == null || fluid.amount < c.getCapacity())) {
                                 return true;
                             }
@@ -107,7 +107,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                     if (searchedFluid == null) {
                         for (IFluidTankProperties c : liquids) {
                             if (c == null) continue;
-                            FluidStack fluid = c.getContents();
+                            FluidStackBC fluid = c.getContents();
                             if ((fluid == null || fluid.amount < c.getCapacity())) {
                                 return false;
                             }

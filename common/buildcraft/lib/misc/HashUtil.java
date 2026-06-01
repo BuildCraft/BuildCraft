@@ -12,6 +12,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
@@ -137,8 +139,8 @@ public class HashUtil {
             type = nbt.get(0).getId();
         }
         out.writeByte(type);
-        out.writeInt(nbt.tagCount());
-        for (int i = 0; i < nbt.tagCount(); i++) {
+        out.writeInt(nbt.size());
+        for (int i = 0; i < nbt.size(); i++) {
             writeStableNbt(nbt.get(i), out);
         }
     }

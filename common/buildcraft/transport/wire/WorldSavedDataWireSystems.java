@@ -52,6 +52,8 @@ public class WorldSavedDataWireSystems extends PersistentState {
         this.world = world;
     }
 
+    public World getWorld() { return world; }
+
     public void markStructureChanged() {
         structureChanged = true;
         gatesChanged = true;

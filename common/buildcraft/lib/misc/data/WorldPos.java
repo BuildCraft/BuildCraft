@@ -22,7 +22,7 @@ public final class WorldPos {
     }
 
     public WorldPos(World world, BlockPos pos) {
-        this(world.provider.getDimension(), pos);
+        this(System.identityHashCode(world), pos);
     }
 
     public WorldPos(BlockEntity tile) {

@@ -4,7 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 
 import buildcraft.lib.registry.RegistrationHelper;
 
@@ -45,16 +46,16 @@ public class BCFactoryBlocks {
     public static BlockWaterGel waterGel;
 
     public static void fmlPreInit() {
-        autoWorkbenchItems = HELPER.addBlockAndItem(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
-        miningWell = HELPER.addBlockAndItem(new BlockMiningWell(Material.IRON, "block.mining_well"));
-        pump = HELPER.addBlockAndItem(new BlockPump(Material.IRON, "block.pump"));
-        tube = HELPER.addBlock(new BlockTube(Material.IRON, "block.tube"));
-        floodGate = HELPER.addBlockAndItem(new BlockFloodGate(Material.IRON, "block.flood_gate"));
-        tank = HELPER.addBlockAndItem(new BlockTank(Material.IRON, "block.tank"));
-        chute = HELPER.addBlockAndItem(new BlockChute(Material.IRON, "block.chute"));
-        distiller = HELPER.addBlockAndItem(new BlockDistiller(Material.IRON, "block.distiller"));
-        heatExchange = HELPER.addBlockAndItem(new BlockHeatExchange(Material.IRON, "block.heat_exchange"));
-        waterGel = HELPER.addBlock(new BlockWaterGel(Material.CLAY, "block.water_gel"));
+        autoWorkbenchItems = HELPER.addBlockAndItem(new BlockAutoWorkbenchItems(MaterialBC.ROCK, "block.autoworkbench.item"));
+        miningWell = HELPER.addBlockAndItem(new BlockMiningWell(MaterialBC.IRON, "block.mining_well"));
+        pump = HELPER.addBlockAndItem(new BlockPump(MaterialBC.IRON, "block.pump"));
+        tube = HELPER.addBlock(new BlockTube(MaterialBC.IRON, "block.tube"));
+        floodGate = HELPER.addBlockAndItem(new BlockFloodGate(MaterialBC.IRON, "block.flood_gate"));
+        tank = HELPER.addBlockAndItem(new BlockTank(MaterialBC.IRON, "block.tank"));
+        chute = HELPER.addBlockAndItem(new BlockChute(MaterialBC.IRON, "block.chute"));
+        distiller = HELPER.addBlockAndItem(new BlockDistiller(MaterialBC.IRON, "block.distiller"));
+        heatExchange = HELPER.addBlockAndItem(new BlockHeatExchange(MaterialBC.IRON, "block.heat_exchange"));
+        waterGel = HELPER.addBlock(new BlockWaterGel(MaterialBC.CLAY, "block.water_gel"));
 
         HELPER.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         HELPER.registerTile(TileMiningWell.class, "tile.mining_well");

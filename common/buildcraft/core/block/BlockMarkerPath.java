@@ -5,7 +5,8 @@
 // TODO(R.Chen): blocked by lib.block.BlockMarkerBase (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -21,7 +22,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.core.tile.TileMarkerPath;
 
 public class BlockMarkerPath extends BlockMarkerBase {
-    public BlockMarkerPath(Material material, String id) {
+    public BlockMarkerPath(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

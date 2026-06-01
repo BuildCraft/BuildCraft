@@ -3,6 +3,7 @@ package buildcraft.energy.tile;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import com.mojang.authlib.GameProfile;
 
@@ -21,6 +22,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.misc.AdvancementUtil;
 
 import buildcraft.core.tile.ITileOilSpring;
+import net.minecraft.nbt.NbtElement;
 
 // We don't extend TileBC here because we have no need of any of its functions.
 public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilSpring {
@@ -57,17 +59,17 @@ public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilS
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void readFromNBT(NbtCompound nbt) {
         super.readFromNBT(nbt);
         NbtList list = nbt.getList("pumpProgress", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < list.tagCount(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             PlayerPumpInfo info = new PlayerPumpInfo(list.getCompoundTagAt(i));
             pumpProgress.put(info.profile, info);
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public NbtCompound writeToNBT(NbtCompound nbt) {
         super.writeToNBT(nbt);
         nbt.putInt("totalSources", totalSources);
@@ -103,14 +105,14 @@ public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilS
         }
 
         public PlayerPumpInfo(NbtCompound nbt) {
-            profile = NBTUtil.readGameProfileFromNBT(nbt.getCompound("profile"));
+            profile = net.minecraft.nbt.NbtHelper.toGameProfile(nbt.getCompound("profile"));
             lastPumpTick = nbt.getLong("lastPumpTick");
             sourcesPumped = nbt.getInt("sourcesPumped");
         }
 
         public NbtCompound writeToNbt() {
             NbtCompound nbt = new NbtCompound();
-            nbt.put("profile", NBTUtil.writeGameProfile(new NbtCompound(), profile));
+            nbt.put("profile", net.minecraft.nbt.NbtHelper.writeGameProfile(new NbtCompound(), profile));
             nbt.putLong("lastPumpTick", lastPumpTick);
             nbt.putInt("sourcesPumped", sourcesPumped);
             return nbt;

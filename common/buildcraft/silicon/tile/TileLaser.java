@@ -41,6 +41,7 @@ import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.data.AverageLong;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // STUB(R.Chen): BCSiliconBlocks import removed — referenced only in stub comment.
 
@@ -237,7 +238,7 @@ public class TileLaser extends TileBC_Neptune implements IDebuggable, ILocalBloc
     @Override
     public void writePayload(int id, PacketBufferBC buffer, TileBC_Neptune.NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == TileBC_Neptune.NetEnvType.SERVER) {
+        if (side == TileBC_Neptune.NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 battery.writeToBuffer(buffer);
                 buffer.writeBoolean(targetPos != null);
@@ -255,7 +256,7 @@ public class TileLaser extends TileBC_Neptune implements IDebuggable, ILocalBloc
     @Override
     public void readPayload(int id, PacketBufferBC buffer, TileBC_Neptune.NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == TileBC_Neptune.NetEnvType.CLIENT) {
+        if (side == TileBC_Neptune.NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 battery.readFromBuffer(buffer);
                 if (buffer.readBoolean()) {

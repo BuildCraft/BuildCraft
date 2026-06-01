@@ -1,4 +1,4 @@
-// TODO(R.Chen): blocked by Forge fluid capability (ICapabilityProvider/IFluidHandlerItem/FluidStack) — Phase 3 fluid migration
+// TODO(R.Chen): blocked by Forge fluid capability (ICapabilityProvider/IFluidHandlerItem/FluidStackBC) — Phase 3 fluid migration
 package buildcraft.core.item;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -42,19 +42,19 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         setMaxStackSize(1);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ICapabilityProvider initCapabilities(ItemStack stack, NbtCompound nbt) {
         return new FragileFluidHandler(stack);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void addSubItems(ItemGroup tab, DefaultedList<ItemStack> items) {
         // Never allow this to be displayed in a creative tab -- we don't want to list every single fluid...
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getItemStackDisplayName(ItemStack stack) {
-        FluidStack fluid = getFluid(stack);
+        FluidStackBC fluid = getFluid(stack);
 
         String localized;
 
@@ -77,12 +77,12 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     }
 
     @Environment(EnvType.CLIENT)
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, TooltipContext flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         NbtCompound fluidTag = stack.getSubCompound("fluid");
         if (fluidTag != null) {
-            FluidStack fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
+            FluidStackBC fluid = FluidStackBC.loadFluidStackFromNBT(fluidTag);
             if (fluid != null && fluid.amount > 0) {
                 tooltip.add(LocaleUtil.localizeFluidStaticAmount(fluid.amount, MAX_FLUID_HELD));
             }
@@ -90,13 +90,13 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
     }
 
     @Override
-    public void addFluidDrops(DefaultedList<ItemStack> toDrop, FluidStack fluid) {
+    public void addFluidDrops(DefaultedList<ItemStack> toDrop, FluidStackBC fluid) {
         if (fluid == null) {
             return;
         }
         int amount = fluid.amount;
         if (amount >= MAX_FLUID_HELD) {
-            FluidStack fluid2 = fluid.copy();
+            FluidStackBC fluid2 = fluid.copy();
             fluid2.amount = MAX_FLUID_HELD;
             while (amount >= MAX_FLUID_HELD) {
                 ItemStack stack = new ItemStack(this);
@@ -107,18 +107,18 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         }
         if (amount > 0) {
             ItemStack stack = new ItemStack(this);
-            setFluid(stack, new FluidStack(fluid, amount));
+            setFluid(stack, new FluidStackBC(fluid, amount));
             toDrop.add(stack);
         }
     }
 
-    static void setFluid(ItemStack container, FluidStack fluid) {
+    static void setFluid(ItemStack container, FluidStackBC fluid) {
         NbtCompound nbt = NBTUtilBC.getItemData(container);
         nbt.put("fluid", fluid.writeToNBT(new NbtCompound()));
     }
 
     @Nullable
-    static FluidStack getFluid(ItemStack container) {
+    static FluidStackBC getFluid(ItemStack container) {
         if (container.isEmpty()) {
             return null;
         }
@@ -126,7 +126,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         if (fluidNbt == null) {
             return null;
         }
-        return FluidStack.loadFluidStackFromNBT(fluidNbt);
+        return FluidStackBC.loadFluidStackFromNBT(fluidNbt);
     }
 
     public class FragileFluidHandler implements IFluidHandlerItem, ICapabilityProvider {
@@ -138,7 +138,7 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
             this.container = container;
         }
 
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         public boolean hasCapability(Capability<?> capability, Direction facing) {
             return getCapability(capability, facing) != null;
         }
@@ -159,13 +159,13 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         }
 
         @Override
-        public int fill(FluidStack resource, boolean doFill) {
+        public int fill(FluidStackBC resource, boolean doFill) {
             return 0;
         }
 
         @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            FluidStack fluid = ItemFragileFluidContainer.getFluid(container);
+        public FluidStackBC drain(FluidStackBC resource, boolean doDrain) {
+            FluidStackBC fluid = ItemFragileFluidContainer.getFluid(container);
             if (fluid == null || resource == null) {
                 return null;
             }
@@ -176,13 +176,13 @@ public class ItemFragileFluidContainer extends ItemBC_Neptune implements IItemFl
         }
 
         @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            FluidStack fluid = ItemFragileFluidContainer.getFluid(container);
+        public FluidStackBC drain(int maxDrain, boolean doDrain) {
+            FluidStackBC fluid = ItemFragileFluidContainer.getFluid(container);
             if (fluid == null || maxDrain <= 0) {
                 return null;
             }
             int toDrain = Math.min(maxDrain, fluid.amount);
-            FluidStack f = new FluidStack(fluid, toDrain);
+            FluidStackBC f = new FluidStackBC(fluid, toDrain);
             if (doDrain) {
                 fluid.amount -= toDrain;
                 if (fluid.amount <= 0) {

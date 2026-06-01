@@ -18,9 +18,9 @@ public class ContainerChute extends ContainerBCTile<TileChute> {
         super(player, tile);
         addFullPlayerInventory(71);
 
-        addSlotToContainer(new SlotBase(tile.inv, 0, 62, 18));
-        addSlotToContainer(new SlotBase(tile.inv, 1, 80, 18));
-        addSlotToContainer(new SlotBase(tile.inv, 2, 98, 18));
-        addSlotToContainer(new SlotBase(tile.inv, 3, 80, 36));
+        addSlot(new SlotBase(tile.inv, 0, 62, 18));
+        addSlot(new SlotBase(tile.inv, 1, 80, 18));
+        addSlot(new SlotBase(tile.inv, 2, 98, 18));
+        addSlot(new SlotBase(tile.inv, 3, 80, 36));
     }
 }

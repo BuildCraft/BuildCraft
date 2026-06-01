@@ -5,7 +5,7 @@ import java.util.List;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
@@ -72,17 +72,17 @@ public class FluidSmoother implements IDebuggable {
         }
     }
 
-    public FluidStack getFluidForRender() {
+    public FluidStackBC getFluidForRender() {
         if (data instanceof _Client) {
             _Client client = (_Client) data;
             if (client.link == null) {
                 return null;
             }
-            FluidStack fluid = client.link.get();
+            FluidStackBC fluid = client.link.get();
             if (fluid == null) {
                 return null;
             }
-            return new FluidStack(fluid, client.amount);
+            return new FluidStackBC(fluid, client.amount);
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class FluidSmoother implements IDebuggable {
             if (client.link == null) {
                 return null;
             }
-            FluidStack fluid = client.link.get();
+            FluidStackBC fluid = client.link.get();
             if (fluid == null) {
                 return null;
             }
@@ -121,10 +121,10 @@ public class FluidSmoother implements IDebuggable {
     }
 
     public static class FluidStackInterp {
-        public final FluidStack fluid;
+        public final FluidStackBC fluid;
         public final double amount;
 
-        public FluidStackInterp(FluidStack fluid, double amount) {
+        public FluidStackInterp(FluidStackBC fluid, double amount) {
             this.fluid = fluid;
             this.amount = amount;
         }
@@ -141,7 +141,7 @@ public class FluidSmoother implements IDebuggable {
 
         @Override
         void tick(World world) {
-            FluidStack fluid = tank.getFluid();
+            FluidStackBC fluid = tank.getFluid();
             boolean hasFluid = fluid != null;
             if ((tank.getFluidAmount() != sentAmount || hasFluid != sentHasFluid)) {
                 if (tracker.markTimeIfDelay(world)) {
@@ -151,7 +151,7 @@ public class FluidSmoother implements IDebuggable {
         }
 
         void writeMessage(PacketBufferBC buffer) {
-            FluidStack fluid = tank.getFluid();
+            FluidStackBC fluid = tank.getFluid();
             boolean hasFluid = fluid != null;
 
             sentAmount = tank.getFluidAmount();

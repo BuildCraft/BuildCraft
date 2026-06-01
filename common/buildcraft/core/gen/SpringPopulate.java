@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
@@ -26,7 +26,7 @@ import buildcraft.core.BCCoreBlocks;
 
 public class SpringPopulate {
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public void populate(PopulateChunkEvent.Post event) {
 
         World world = event.getWorld();
@@ -48,7 +48,7 @@ public class SpringPopulate {
     }
 
     private static void doPopulate(World world, Random random, int x, int z) {
-        int dimId = world.provider.getDimension();
+        int dimId = System.identityHashCode(world);
         // No water springs will generate in the Nether or End.
         if (dimId == -1 || dimId == 1) {
             return;
@@ -74,7 +74,7 @@ public class SpringPopulate {
             int y = i > 0 ? i : i - 1;
 
             BlockState springState = BCCoreBlocks.spring.getDefaultState();
-            springState = springState.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.WATER);
+            springState = springState.with(BuildCraftProperties.SPRING_TYPE, EnumSpring.WATER);
 
             world.setBlockState(new BlockPos(posX, y, posZ), springState);
 

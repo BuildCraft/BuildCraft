@@ -16,27 +16,27 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 public class RequiredExtractorTank extends RequiredExtractor {
     private NbtPath path = null;
 
     @Nonnull
     @Override
-    public List<FluidStack> extractFluidsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
+    public List<FluidStackBC> extractFluidsFromBlock(@Nonnull BlockState blockState, @Nullable NbtCompound tileNbt) {
         return Optional.ofNullable(path.get(tileNbt))
             .map(NbtCompound.class::cast)
-            .map(nbt -> !nbt.contains("Empty") ? FluidStack.loadFluidStackFromNBT(nbt) : null)
+            .map(nbt -> !nbt.contains("Empty") ? FluidStackBC.loadFluidStackFromNBT(nbt) : null)
             .map(Collections::singletonList)
             .orElseGet(Collections::emptyList);
     }
 
     @Nonnull
     @Override
-    public List<FluidStack> extractFluidsFromEntity(@Nonnull NbtCompound entityNbt) {
+    public List<FluidStackBC> extractFluidsFromEntity(@Nonnull NbtCompound entityNbt) {
         return Optional.ofNullable(path.get(entityNbt))
             .map(NbtCompound.class::cast)
-            .map(nbt -> !nbt.contains("Empty") ? FluidStack.loadFluidStackFromNBT(nbt) : null)
+            .map(nbt -> !nbt.contains("Empty") ? FluidStackBC.loadFluidStackFromNBT(nbt) : null)
             .map(Collections::singletonList)
             .orElseGet(Collections::emptyList);
     }

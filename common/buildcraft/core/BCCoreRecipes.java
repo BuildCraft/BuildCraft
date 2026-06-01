@@ -12,10 +12,11 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.Identifier;
+import java.util.Set;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
@@ -31,11 +32,11 @@ import buildcraft.core.item.ItemPaintbrush_BC8;
 public class BCCoreRecipes {
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCCoreRecipes.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCCoreRecipes.class);
     }
 
-    @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
+    public static void registerRecipes(RegistryEvent.Register<net.minecraft.recipe.CraftingRecipe> event) {
         // TODO (1.13): define these in json
 
         if (BCItems.Core.PAINTBRUSH != null) {
@@ -89,18 +90,18 @@ public class BCCoreRecipes {
 
             // if (BCItems.Builders!= null) {
             // builder.map('s', "stone");
-            // builder.map('c', new ItemStack(BCItems.Builders.SNAPSHOT, 1, 2));
-            // builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16, EnumDecoratedBlock.BLUEPRINT.ordinal()));
+            // builder.map('c', new ItemStack(BCItems.Builders.SNAPSHOT, 1));
+            // builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16));
             // builder.register();
             //
-            // builder.map('c', new ItemStack(BCItems.Builders.SNAPSHOT, 1, 0));
-            // builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16, EnumDecoratedBlock.TEMPLATE.ordinal()));
+            // builder.map('c', new ItemStack(BCItems.Builders.SNAPSHOT, 1));
+            // builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16));
             // builder.register();
             // }
 
             builder.map('s', Blocks.OBSIDIAN);
             builder.map('c', Blocks.REDSTONE_BLOCK);
-            builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16, EnumDecoratedBlock.LASER_BACK.ordinal()));
+            builder.setResult(new ItemStack(BCBlocks.Core.DECORATED, 16));
             builder.register();
         }
     }

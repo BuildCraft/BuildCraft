@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.StreamSupport;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -55,16 +56,14 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtLong;
 import net.minecraft.nbt.NbtShort;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.util.JsonUtils;
 import net.minecraft.util.Identifier;
 import net.minecraft.text.Text;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidRegistryBC;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import buildcraft.api.core.BCLog;
@@ -75,35 +74,35 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public class JsonUtil {
 
-    public static final JsonDeserializer<FluidStack> FLUID_STACK_DESERIALIZER = (json, type, ctx) -> {
+    public static final JsonDeserializer<FluidStackBC> FLUID_STACK_DESERIALIZER = (json, type, ctx) -> {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
-            Fluid fluid = FluidRegistry.getFluid(name);
+            Fluid fluid = FluidRegistryBC.getFluid(name);
             if (fluid == null) {
                 throw failAndListFluids(name);
             } else {
-                return new FluidStack(fluid, 1);
+                return new FluidStackBC(fluid, 1);
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
-            String id = JsonUtils.getString(obj, "id");
-            Fluid fluid = FluidRegistry.getFluid(id);
+            String id = obj.get("id").getAsString();
+            Fluid fluid = FluidRegistryBC.getFluid(id);
             if (fluid == null) {
                 throw failAndListFluids(id);
             }
             int amount = 1;
             if (obj.has("amount")) {
-                amount = JsonUtils.getInt(obj, "amount");
+                amount = obj.get("amount").getAsInt();
             }
             // TODO: NBT
-            return new FluidStack(fluid, amount);
+            return new FluidStackBC(fluid, amount);
         } else {
             throw new JsonSyntaxException("Expected either a string or an object, got " + json);
         }
     };
 
     private static JsonSyntaxException failAndListFluids(String name) {
-        Set<String> knownFluids = FluidRegistry.getRegisteredFluids().keySet();
+        Set<String> knownFluids = FluidRegistryBC.getRegisteredFluids().keySet();
         String msg = "Unknown fluid '" + name + "'.";
         msg += "\nKnown types:";
         for (String known : new TreeSet<>(knownFluids)) {
@@ -123,7 +122,7 @@ public class JsonUtil {
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
-            String id = JsonUtils.getString(obj, "id");
+            String id = obj.get("id").getAsString();
             Identifier loc = new Identifier(id);
             if (!ForgeRegistries.ITEMS.containsKey(loc)) {
                 throw new JsonSyntaxException("Unknown item '" + id + "'");
@@ -141,7 +140,7 @@ public class JsonUtil {
                 meta = JsonUtil.getInt(obj, "meta");
             }
             // TODO: NBT!
-            return new ItemStack(item, count, meta);
+            return new ItemStack(item, count);
         } else {
             throw new JsonSyntaxException("Expected either a string or an object, got " + json);
         }
@@ -252,9 +251,9 @@ public class JsonUtil {
             } else {
                 args = new String[0];
             }
-            return new TranslatableText(localePrefix + str, args);
+            return Text.translatable(localePrefix + str, args);
         } else if (json.has(subPrefix + "_raw")) {
-            return new LiteralText(JsonUtils.getString(json, subPrefix + "_raw"));
+            return Text.literal(JsonUtils.getString(json, subPrefix + "_raw"));
         } else {
             throw new JsonSyntaxException(
                 "Expected to find either '" + subPrefix + "' or '" + subPrefix + "_raw', but got neither for " + json);
@@ -416,7 +415,7 @@ public class JsonUtil {
     }
 
     public static void registerTypeAdaptors(GsonBuilder builder) {
-        builder.registerTypeAdapter(FluidStack.class, FLUID_STACK_DESERIALIZER);
+        builder.registerTypeAdapter(FluidStackBC.class, FLUID_STACK_DESERIALIZER);
         builder.registerTypeAdapter(ItemStack.class, ITEM_STACK_DESERIALIZER);
         // TODO: Ingredient deserialiser!
         registerNbtSerializersDeserializers(builder);
@@ -522,7 +521,7 @@ public class JsonUtil {
                 (JsonSerializer<NbtInt>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getInt()))
             .registerTypeAdapter(NbtInt.class,
                 (JsonDeserializer<
-                    NbtInt>) (json, typeOfT, context) -> new NbtInt(json.getAsJsonPrimitive().getAsInt()))
+                    NbtInt>) (json, typeOfT, context) -> NbtInt.of(json.getAsJsonPrimitive().getAsInt()))
             .registerTypeAdapter(NbtLong.class,
                 (JsonSerializer<NbtLong>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getLong()))
             .registerTypeAdapter(NbtLong.class,
@@ -556,7 +555,7 @@ public class JsonUtil {
                     context) -> new NbtString(json.getAsJsonPrimitive().getAsString()))
             .registerTypeAdapter(NbtList.class, (JsonSerializer<NbtList>) (src, typeOfSrc, context) -> {
                 JsonArray jsonArray = new JsonArray();
-                for (int i = 0; i < src.tagCount(); i++) {
+                for (int i = 0; i < src.size(); i++) {
                     NbtElement element = src.get(i);
                     jsonArray.add(context.serialize(element, NbtElement.class));
                 }

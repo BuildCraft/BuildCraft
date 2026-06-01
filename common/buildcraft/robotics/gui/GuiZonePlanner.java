@@ -45,6 +45,10 @@ import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
 import buildcraft.robotics.zone.ZonePlannerMapDataClient;
 import buildcraft.robotics.zone.ZonePlannerMapRenderer;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import buildcraft.lib.misc.GlStateManagerCompat;
+import net.minecraft.client.render.VertexFormat;
 
 public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private static final Identifier TEXTURE_BASE = new Identifier("buildcraftrobotics:textures/gui/zone_planner.png");
@@ -77,7 +81,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     }
 
     private ItemStack getCurrentStack() {
-        return mc.player.inventory.getItemStack();
+        return mc.player.getInventory().getItemStack();
     }
 
     private ItemStack getPaintbrush() {
@@ -99,7 +103,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         return null;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
         if (wheel != 0) {
@@ -108,7 +112,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         super.handleMouseInput();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         canDrag = false;
@@ -125,12 +129,12 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         if (!canDrag) {
             if (lastSelected != null && getPaintbrushBrush() != null) {
-                bufferLayer = new ZonePlan(container.tile.layers[getPaintbrushBrush().colour.getMetadata()]);
+                bufferLayer = new ZonePlan(container.tile.layers[getPaintbrushBrush().colour.getId()]);
                 if (selectionStartXZ != null && getPaintbrushBrush() != null && lastSelected != null) {
                     for (int x = Math.min(selectionStartXZ.getX(), lastSelected.getX());
                          x < Math.max(selectionStartXZ.getX(), lastSelected.getX());
@@ -164,18 +168,18 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         positionZ = startPositionZ - deltaY * s;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         selectionStartXZ = null;
         if (getPaintbrushBrush() != null && bufferLayer != null) {
-            container.tile.layers[getPaintbrushBrush().colour.getMetadata()] = bufferLayer;
-            container.tile.sendLayerToServer(getPaintbrushBrush().colour.getMetadata());
+            container.tile.layers[getPaintbrushBrush().colour.getId()] = bufferLayer;
+            container.tile.sendLayerToServer(getPaintbrushBrush().colour.getId());
         }
         bufferLayer = null;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
 
@@ -199,9 +203,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
         IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
 
-        GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
-        GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
-        GlStateManager.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
+        GlStateManagerCompat.getFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
+        GlStateManagerCompat.getFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
+        GlStateManagerCompat.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
 
         FloatBuffer positionNearBuffer = BufferUtils.createFloatBuffer(3);
         FloatBuffer positionFarBuffer = BufferUtils.createFloatBuffer(3);
@@ -219,10 +223,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             int chunkX = (int) Math.round(rayPosition.getX()) >> 4;
             int chunkZ = (int) Math.round(rayPosition.getZ()) >> 4;
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                mc.world,
+                mc.getWorld(),
                 new ZonePlannerMapChunkKey(
                     new ChunkPos(chunkX, chunkZ),
-                    mc.world.provider.getDimension(),
+                    mc.getWorld().provider.getDimension(),
                     container.tile.getLevel()
                 )
             );
@@ -246,17 +250,17 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         camY += scaleSpeed;
         scaleSpeed *= 0.7F;
         int posX = (int) positionX;
         int posZ = (int) positionZ;
-        int dimension = mc.world.provider.getDimension();
+        int dimension = mc.getWorld().provider.getDimension();
         {
             ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                mc.world,
+                mc.getWorld(),
                 new ZonePlannerMapChunkKey(
                     chunkPos,
                     dimension,
@@ -274,23 +278,23 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                 camY = Math.max(camY, pos.getY() + 10);
             }
         }
-        int x = guiLeft;
-        int y = guiTop;
+        int x = x;
+        int y = y;
         if (lastSelected != null) {
             String text = "X: " + lastSelected.getX() + " Y: " + lastSelected.getY() + " Z: " + lastSelected.getZ();
-            fontRenderer.drawString(text, x + 130, y + 130, 0x404040);
+            fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), text, x + 130, y + 130, 0x404040);
         }
         int offsetX = 8;
         int offsetY = 9;
         int sizeX = 213;
         int sizeY = 100;
         RenderSystem.getModelViewStack().push();
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManagerCompat.matrixMode(GL11.GL_PROJECTION);
         RenderSystem.getModelViewStack().push();
-        GlStateManager.loadIdentity();
+        GlStateManagerCompat.loadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         int viewportX = (x + offsetX) * scaledResolution.getScaleFactor();
-        int viewportY = mc.displayHeight - (sizeY + y + offsetY) * scaledResolution.getScaleFactor();
+        int viewportY = mc.getWindow().getHeight() - (sizeY + y + offsetY) * scaledResolution.getScaleFactor();
         int viewportWidth = sizeX * scaledResolution.getScaleFactor();
         int viewportHeight = sizeY * scaledResolution.getScaleFactor();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -302,7 +306,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         );
         GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.viewport(
+        GlStateManagerCompat.viewport(
             viewportX,
             viewportY,
             viewportWidth,
@@ -310,10 +314,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         );
         RenderSystem.getModelViewStack().scale(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 1F, 10000.0F);
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.loadIdentity();
+        GlStateManagerCompat.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManagerCompat.loadIdentity();
         RenderHelper.enableStandardItemLighting();
-        GlStateManager.enableRescaleNormal();
+        GlStateManagerCompat.enableRescaleNormal();
         RenderSystem.getModelViewStack().rotate(90, 1, 0, 0); // look down
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(-positionX, -camY, -positionZ);
@@ -379,10 +383,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         }
         if (found != null) {
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                mc.world,
+                mc.getWorld(),
                 new ZonePlannerMapChunkKey(
                     new ChunkPos(found),
-                    mc.world.provider.getDimension(),
+                    mc.getWorld().provider.getDimension(),
                     container.tile.getLevel()
                 )
             );
@@ -397,18 +401,18 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         if (found != null) {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
-            GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-            GlStateManager.glLineWidth(2);
+            GlStateManagerCompat.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            GlStateManagerCompat.glLineWidth(2);
             int r = (int) (((foundColor >> 16) & 0xFF) * 0.7);
             int g = (int) (((foundColor >> 8) & 0xFF) * 0.7);
             int b = (int) (((foundColor >> 0) & 0xFF) * 0.7);
             int a = 0x77;
             ZonePlannerMapRenderer.INSTANCE.setColor(r << 16 | g << 8 | b << 0 | a << 24);
             BufferBuilder builder = Tessellator.getInstance().getBuffer();
-            builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+            builder.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR);
             ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(builder, found.getX(), found.getY(), found.getZ());
             Tessellator.getInstance().draw();
-            GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            GlStateManagerCompat.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
             RenderSystem.disableBlend();
             RenderSystem.enableDepthTest();
         }
@@ -417,15 +421,15 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         RenderSystem.enableBlend();
 
         for (int i = 0; i < container.tile.layers.length; i++) {
-            if (getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() != i) {
+            if (getPaintbrushBrush() != null && getPaintbrushBrush().colour.getId() != i) {
                 continue;
             }
             ZonePlan layer = container.tile.layers[i];
-            if (getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() == i && bufferLayer != null) {
+            if (getPaintbrushBrush() != null && getPaintbrushBrush().colour.getId() == i && bufferLayer != null) {
                 layer = bufferLayer;
             }
             if (!layer.getChunkPoses().isEmpty()) {
-                Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+                Tessellator.getInstance().getBuffer().begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR);
                 for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
                     for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                         ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
@@ -439,7 +443,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 }
                                 int height;
                                 ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(
-                                    mc.world,
+                                    mc.getWorld(),
                                     new ZonePlannerMapChunkKey(
                                         chunkPos,
                                         dimension,
@@ -456,7 +460,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 } else {
                                     continue;
                                 }
-                                int color = DyeColor.byMetadata(i).getColorValue();
+                                int color = DyeColor.byId(i).getColorValue();
                                 int r = (color >> 16) & 0xFF;
                                 int g = (color >> 8) & 0xFF;
                                 int b = (color >> 0) & 0xFF;
@@ -483,11 +487,11 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
         lastSelected = found;
         RenderSystem.getModelViewStack().pop();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+        GlStateManagerCompat.disableRescaleNormal();
+        GlStateManagerCompat.matrixMode(GL11.GL_PROJECTION);
+        GlStateManagerCompat.viewport(0, 0, mc.getWindow().getWidth(), mc.getWindow().getHeight());
         RenderSystem.getModelViewStack().pop();
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManagerCompat.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.getModelViewStack().pop();
         RenderHelper.disableStandardItemLighting();
         RenderSystem.disableBlend();

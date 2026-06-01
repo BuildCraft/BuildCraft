@@ -7,10 +7,11 @@
 package buildcraft.lib.inventory;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import gnu.trove.list.array.TIntArrayList;
+import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
@@ -56,7 +57,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
     @Nonnull
     private ItemStack insertAnyAmount(@Nonnull ItemStack stack, boolean simulate) {
         int slotCount = getSlots();
-        TIntArrayList emptySlots = new TIntArrayList(slotCount);
+        ArrayList<Integer> emptySlots = new ArrayList<Integer>(slotCount);
         for (int slot = 0; slot < getSlots(); slot++) {
             if (isEmpty(slot)) {
                 emptySlots.add(slot);
@@ -75,8 +76,8 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
     @Nonnull
     private ItemStack insertAllAtOnce(@Nonnull ItemStack stack, boolean simulate) {
         ItemStack before = asValid(stack);
-        TIntArrayList insertedSlots = new TIntArrayList(getSlots());
-        TIntArrayList emptySlots = new TIntArrayList(getSlots());
+        ArrayList<Integer> insertedSlots = new ArrayList<Integer>(getSlots());
+        ArrayList<Integer> emptySlots = new ArrayList<Integer>(getSlots());
         for (int slot = 0; slot < getSlots(); slot++) {
             if (isEmpty(slot)) {
                 emptySlots.add(slot);
@@ -125,7 +126,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         }
 
         int slots = getSlots();
-        TIntArrayList valids = new TIntArrayList();
+        ArrayList<Integer> valids = new ArrayList<Integer>();
         int totalSize = 0;
         ItemStack toExtract = StackUtil.EMPTY;
 

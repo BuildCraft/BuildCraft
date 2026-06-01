@@ -7,9 +7,10 @@
 package buildcraft.lib.tile.craft;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
+import java.util.Map;
+import java.util.HashMap;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
@@ -47,7 +48,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
     private boolean cachedHasRequirements = false;
 
     @Nullable
-    private IRecipe currentRecipe;
+    private net.minecraft.recipe.CraftingRecipe currentRecipe;
     private ItemStack assumedResult = ItemStack.EMPTY;
 
     private EnumRecipeType recipeType = null;
@@ -65,7 +66,7 @@ public class WorkbenchCrafting extends InventoryCrafting {
         this.invResult = invResult;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public ItemStack getStackInSlot(int index) {
         return isBlueprintDirty ? invBlueprint.getStackInSlot(index) : super.getStackInSlot(index);
     }
@@ -158,7 +159,8 @@ public class WorkbenchCrafting extends InventoryCrafting {
     }
 
     private boolean hasExactStacks() {
-        TObjectIntMap<ItemStackKey> required = new TObjectIntHashMap<>(getSizeInventory());
+        // TODO(R.Chen): verify Trove→JDK behavior — was TObjectIntHashMap with adjustOrPutValue/forEachEntry
+        Map<ItemStackKey, Integer> required = new HashMap<>(getSizeInventory());
         for (int s = 0; s < getSizeInventory(); s++) {
             ItemStack req = invBlueprint.getStackInSlot(s);
             if (!req.isEmpty()) {
@@ -168,14 +170,15 @@ public class WorkbenchCrafting extends InventoryCrafting {
                     req.setCount(1);
                 }
                 ItemStackKey key = new ItemStackKey(req);
-                required.adjustOrPutValue(key, count, count);
+                required.merge(key, count, Integer::sum);
             }
         }
-        return required.forEachEntry((stack, count) -> {
-            ArrayStackFilter filter = new ArrayStackFilter(stack.baseStack);
-            ItemStack inInventory = invMaterials.extract(filter, count, count, true);
-            return !inInventory.isEmpty() && inInventory.getCount() == count;
-        });
+        for (Map.Entry<ItemStackKey, Integer> e : required.entrySet()) {
+            ArrayStackFilter filter = new ArrayStackFilter(e.getKey().baseStack);
+            ItemStack inInventory = invMaterials.extract(filter, e.getValue(), e.getValue(), true);
+            if (inInventory.isEmpty() || inInventory.getCount() != e.getValue()) return false;
+        }
+        return true;
     }
 
     /** Implementation of {@link #craft()}, assuming nothing about the current recipe. */
@@ -275,12 +278,12 @@ public class WorkbenchCrafting extends InventoryCrafting {
     }
 
     static class ContainerNullEventHandler extends Container {
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         public boolean canInteractWith(PlayerEntity playerIn) {
             return false;
         }
 
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         public void onCraftMatrixChanged(IInventory inventoryIn) {
             // NO-OP
         }

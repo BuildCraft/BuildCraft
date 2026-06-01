@@ -76,6 +76,7 @@ import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebuggable, RenderAttachmentBlockEntity {
 
@@ -125,7 +126,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     /** Converts the tile-level {@link NetSide} discriminator to the {@link EnvType} expected by the pipe /
      * flow / pluggable / wire payload methods (which were migrated against EnvType, not NetSide). */
     private static EnvType toEnv(NetSide side) {
-        return side == NetEnvType.SERVER ? EnvType.SERVER : EnvType.CLIENT;
+        return side == NetSide.SERVER ? EnvType.SERVER : EnvType.CLIENT;
     }
 
     /** STUB(R.Chen): was {@code BCModules.SILICON.isLoaded()} (Forge Loader). BCModules carries heavy Forge
@@ -250,8 +251,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
                 eventBus.registerHandler(FilterEventHandler.class);
             }
             // STUB(R.Chen): item metadata→pipe colour was lost in the 1.13 flattening. Coloured pipe items
-            // now carry their colour via the item/NBT instead of stack.getMetadata(); restore in Phase 4F.
-            //   int meta = stack.getMetadata();
+            // now carry their colour via the item/NBT instead of stack.getId(); restore in Phase 4F.
+            //   int meta = stack.getId();
             //   if (meta > 0 && meta <= 16) { pipe.setColour(DyeColor.byId(meta - 1)); }
             eventBus.fireEvent(new PipeEventPlaced(this, placer, stack));
         }
@@ -368,7 +369,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
         EnvType env = toEnv(side);
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 if (pipe == null) {
                     buffer.writeBoolean(false);
@@ -410,7 +411,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, /* STUB(R.Chen): MessageContext */ Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         EnvType env = toEnv(side);
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
                     pipe = new Pipe(this, buffer, ctx);

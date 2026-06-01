@@ -9,6 +9,7 @@ package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -71,6 +72,7 @@ public class ItemHandlerSimple implements IItemHandlerAdv {
         this.callback = callback;
     }
 
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         NbtCompound nbt = new NbtCompound();
         NbtList list = new NbtList();

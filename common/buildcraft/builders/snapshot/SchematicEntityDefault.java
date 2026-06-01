@@ -33,7 +33,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicEntity;
@@ -52,10 +52,10 @@ public class SchematicEntityDefault implements ISchematicEntity {
     public static boolean predicate(SchematicEntityContext context) {
         Identifier registryName = EntityList.getKey(context.entity);
         return registryName != null &&
-            RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+            RulesLoader.READ_DOMAINS.contains(registryName.getNamespace()) &&
             RulesLoader.getRules(
                 EntityList.getKey(context.entity),
-                context.entity.serializeNBT()
+                context.entity.createNbt()
             )
                 .stream()
                 .anyMatch(rule -> rule.capture);
@@ -63,8 +63,8 @@ public class SchematicEntityDefault implements ISchematicEntity {
 
     @Override
     public void init(SchematicEntityContext context) {
-        entityNbt = context.entity.serializeNBT();
-        pos = context.entity.getPositionVector().subtract(new Vec3d(context.basePos));
+        entityNbt = context.entity.createNbt();
+        pos = context.entity.getPos().subtract(new Vec3d(context.basePos.getX(), context.basePos.getY(), context.basePos.getZ()));
         if (context.entity instanceof EntityHanging) {
             EntityHanging entityHanging = (EntityHanging) context.entity;
             hangingPos = entityHanging.getHangingPosition().subtract(context.basePos);
@@ -101,7 +101,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids() {
+    public List<FluidStackBC> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(
             new Identifier(entityNbt.getString("id")),
             entityNbt
@@ -116,7 +116,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
     }
 
     @Override
-    public SchematicEntityDefault getRotated(Rotation rotation) {
+    public SchematicEntityDefault getRotated(net.minecraft.util.BlockRotation rotation) {
         SchematicEntityDefault schematicEntity = SchematicEntityManager.createCleanCopy(this);
         schematicEntity.entityNbt = entityNbt;
         schematicEntity.pos = RotationUtil.rotateVec3d(pos, rotation);
@@ -139,7 +139,7 @@ public class SchematicEntityDefault implements ISchematicEntity {
             .reduce(NBTUtilBC::merge)
             .map(NbtCompound.class::cast)
             .orElse(null);
-        Vec3d placePos = new Vec3d(basePos).add(pos);
+        Vec3d placePos = new Vec3d(basePos.getX(), basePos.getY(), basePos.getZ()).add(pos);
         BlockPos placeHangingPos = basePos.add(hangingPos);
         NbtCompound newEntityNbt = new NbtCompound();
         entityNbt.getKeySet().stream()
@@ -182,12 +182,13 @@ public class SchematicEntityDefault implements ISchematicEntity {
         return build(world, basePos);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         NbtCompound nbt = new NbtCompound();
         nbt.put("entityNbt", entityNbt);
         nbt.put("pos", NBTUtilBC.writeVec3d(pos));
-        nbt.put("hangingPos", NBTUtil.createPosTag(hangingPos));
+        nbt.put("hangingPos", net.minecraft.nbt.NbtHelper.fromBlockPos(hangingPos));
         nbt.put("hangingFacing", NBTUtilBC.writeEnum(hangingFacing));
         nbt.put("entityRotation", NBTUtilBC.writeEnum(entityRotation));
         return nbt;
@@ -197,9 +198,9 @@ public class SchematicEntityDefault implements ISchematicEntity {
     public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
         entityNbt = nbt.getCompound("entityNbt");
         pos = NBTUtilBC.readVec3d(nbt.get("pos"));
-        hangingPos = NBTUtil.getPosFromTag(nbt.getCompound("hangingPos"));
+        hangingPos = net.minecraft.nbt.NbtHelper.toBlockPos(nbt.getCompound("hangingPos"));
         hangingFacing = NBTUtilBC.readEnum(nbt.get("hangingFacing"), Direction.class);
-        entityRotation = NBTUtilBC.readEnum(nbt.get("entityRotation"), Rotation.class);
+        entityRotation = NBTUtilBC.readEnum(nbt.get("entityRotation"), net.minecraft.util.BlockRotation.class);
     }
 
     @Override

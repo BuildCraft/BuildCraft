@@ -7,7 +7,7 @@
  */
 package buildcraft.transport;
 
-// STUB(R.Chen): Forge recipe registration (GameRegistry.addRecipe, IRecipe) → Fabric data-gen
+// STUB(R.Chen): Forge recipe registration (GameRegistry.addRecipe, net.minecraft.recipe.CraftingRecipe) → Fabric data-gen
 // or RecipeManager in Phase 4E. Pipe-colour recipes are the primary transport recipes.
 public class BCTransportRecipes {
     public static void preInit() {}

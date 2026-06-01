@@ -1,6 +1,7 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.util.Identifier;
+import java.util.Map;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
@@ -42,7 +43,7 @@ public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
             (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateScreen() {
         super.updateScreen();
         SPRITE_PATTERN.delegate = container.getPatternStatementClient().get().getSprite();

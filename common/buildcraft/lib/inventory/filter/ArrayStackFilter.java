@@ -7,6 +7,7 @@
 package buildcraft.lib.inventory.filter;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 

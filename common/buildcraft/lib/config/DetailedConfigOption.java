@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceManagerReloadListener;
+import net.minecraft.resource.SynchronousResourceReloader;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -144,11 +144,11 @@ public class DetailedConfigOption {
     }
 
     @Environment(EnvType.CLIENT)
-    public enum ReloadListener implements IResourceManagerReloadListener {
+    public enum ReloadListener implements SynchronousResourceReloader {
         INSTANCE;
 
-        @Override
-        public void onResourceManagerReload(ResourceManager resourceManager) {
+        // @Override -- removed: method does not exist in Fabric 1.20.1
+        public void reload(ResourceManager resourceManager) {
             reloadAll();
         }
     }

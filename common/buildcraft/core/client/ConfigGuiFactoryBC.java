@@ -8,6 +8,7 @@ package buildcraft.core.client;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.List;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiScreen;
@@ -46,18 +47,18 @@ public class ConfigGuiFactoryBC implements IModGuiFactory {
     }
 
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
         return null;
     }
 
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean hasConfigGui() {
         return true;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public GuiScreen createConfigGui(GuiScreen parentScreen) {
         return new GuiConfigManager(parentScreen);
     }

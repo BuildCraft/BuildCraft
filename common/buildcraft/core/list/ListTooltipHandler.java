@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Formatting;
 
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.items.IList;
 
@@ -20,7 +20,7 @@ import buildcraft.lib.misc.LocaleUtil;
 public enum ListTooltipHandler {
     INSTANCE;
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public void itemTooltipEvent(ItemTooltipEvent event) {
         final PlayerEntity player = event.getEntityPlayer();
         final ItemStack stack = event.getItemStack();

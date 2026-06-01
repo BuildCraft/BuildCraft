@@ -4,7 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
@@ -20,7 +21,7 @@ import buildcraft.factory.tile.TileAutoWorkbenchItems;
 
 public class BlockAutoWorkbenchItems extends BlockBCTile_Neptune {
 
-    public BlockAutoWorkbenchItems(Material material, String id) {
+    public BlockAutoWorkbenchItems(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 

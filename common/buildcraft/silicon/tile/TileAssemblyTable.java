@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
@@ -28,6 +29,7 @@ import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 import buildcraft.silicon.EnumAssemblyRecipeState;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 /**
  * STUB(R.Chen): AssemblyRecipe/AssemblyRecipeRegistry removed — recipe processing deferred until

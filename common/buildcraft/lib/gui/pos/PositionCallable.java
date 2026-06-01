@@ -20,8 +20,8 @@ public class PositionCallable implements IGuiPosition {
     }
 
     public PositionCallable(DoubleSupplier x, DoubleSupplier y) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
     }
 
     @Override

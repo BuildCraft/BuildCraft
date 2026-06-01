@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -38,6 +37,7 @@ import buildcraft.lib.tile.TileMarker;
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("marker_volume");
@@ -99,9 +99,9 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(showSignals);
             }
@@ -109,9 +109,9 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_SIGNALS_ON) {
                 readNewSignalState(true);
             } else if (id == NET_SIGNALS_OFF) {
@@ -123,13 +123,13 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Nonnull
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public Box getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return BCCoreConfig.markerMaxDistance * 4 * BCCoreConfig.markerMaxDistance;

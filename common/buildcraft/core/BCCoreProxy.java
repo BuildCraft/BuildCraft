@@ -85,7 +85,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeBoxes.INSTANCE);
-            MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
+            // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
             MessageManager.setHandler(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, EnvType.CLIENT);
         }
 
@@ -93,7 +93,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
         public void fmlInit() {
             super.fmlInit();
             BCCoreModels.fmlInit();
-            MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
+            // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
         }
 
         @Override

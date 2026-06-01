@@ -18,7 +18,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.BCModules;
 import buildcraft.api.mj.MjAPI;
@@ -258,14 +258,14 @@ public class BCCoreConfig {
         reloadConfig(game);
         addReloadListener(BCCoreConfig::reloadConfig);
 
-        MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
     }
 
     public static void addReloadListener(Consumer<EnumRestartRequirement> listener) {
         reloadListeners.add(listener);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onConfigChange(OnConfigChangedEvent cce) {
         if (BCModules.isBcMod(cce.getModID())) {
             EnumRestartRequirement req = EnumRestartRequirement.NONE;

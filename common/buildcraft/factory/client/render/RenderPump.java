@@ -53,14 +53,14 @@ public class RenderPump extends FastTESR<TilePump> {
         LED_POWER = new RenderPartCube[4];
         LED_STATUS = new RenderPartCube[4];
         for (int i = 0; i < 4; i++) {
-            Direction facing = Direction.getHorizontal(i);
+            Direction facing = Direction.fromHorizontal(i);
 
             final int dX, dZ;
             final double ledX, ledZ;
 
             if (facing.getAxis() == Axis.X) {
                 dX = 0;
-                dZ = facing.getAxisDirection().getOffset();
+                dZ = facing.getDirection().getOffset();
                 ledZ = 0.5;
                 if (facing == Direction.EAST) {
                     ledX = 15.6 / 16.0;
@@ -68,7 +68,7 @@ public class RenderPump extends FastTESR<TilePump> {
                     ledX = 0.4 / 16.0;
                 }
             } else {
-                dX = -facing.getAxisDirection().getOffset();
+                dX = -facing.getDirection().getOffset();
                 dZ = 0;
                 ledX = 0.5;
                 if (facing == Direction.SOUTH) {
@@ -105,12 +105,12 @@ public class RenderPump extends FastTESR<TilePump> {
 
     public RenderPump() {}
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(@Nonnull TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         MinecraftClient.getInstance().getProfiler().push("bc");
         MinecraftClient.getInstance().getProfiler().push("pump");
 
-        buffer.setTranslation(x, y, z);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(x, y, z);
 
         float percentFilled = tile.getPercentFilledForRender();
         int powerColour = COLOUR_POWER[(int) (percentFilled * (COLOUR_POWER.length - 1))];
@@ -121,7 +121,7 @@ public class RenderPump extends FastTESR<TilePump> {
 
         for (int i = 0; i < 4; i++) {
             // Get the light level of a direction
-            Direction dir = Direction.getHorizontal(i);
+            Direction dir = Direction.fromHorizontal(i);
             BlockPos pos = tile.getPos().offset(dir);
             int block = tile.getWorld().getLightFor(EnumSkyBlock.BLOCK, pos);
             int sky = tile.getWorld().getLightFor(EnumSkyBlock.SKY, pos);
@@ -144,7 +144,7 @@ public class RenderPump extends FastTESR<TilePump> {
         MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TilePump tile) {
         return true;
     }

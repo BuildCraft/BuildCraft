@@ -9,6 +9,7 @@
 package buildcraft.transport.pipe.behaviour;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 

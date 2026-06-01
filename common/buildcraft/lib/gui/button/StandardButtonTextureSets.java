@@ -24,8 +24,8 @@ public enum StandardButtonTextureSets implements IButtonTextureSet {
     private final int x, y, height, width;
 
     StandardButtonTextureSets(int x, int y, int height, int width) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
         this.height = height;
         this.width = width;
     }

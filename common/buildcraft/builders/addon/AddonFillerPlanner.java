@@ -125,7 +125,7 @@ public class AddonFillerPlanner extends Addon implements ISingleAddon, IFillerSt
 
     @Override
     public World getFillerWorld() {
-        return volumeBox.world;
+        return volumeBox.getWorld();
     }
 
     @Override

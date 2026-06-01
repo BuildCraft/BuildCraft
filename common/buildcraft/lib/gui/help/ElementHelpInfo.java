@@ -22,6 +22,12 @@ public class ElementHelpInfo {
         this.text = text;
     }
 
+    /** 3-arg compat constructor: (title, color, helpKey) — color is ignored, helpKey used as text. */
+    public ElementHelpInfo(String title, int color, String helpKey) {
+        this.title = title;
+        this.text = helpKey;
+    }
+
     public static class HelpPosition {
         public final ElementHelpInfo info;
         public final IGuiArea area;

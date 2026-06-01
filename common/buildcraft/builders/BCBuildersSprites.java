@@ -109,7 +109,7 @@ public class BCBuildersSprites {
         }
 
         PARAM_FACE = new EnumMap<>(Direction.class);
-        for (Direction face : Direction.VALUES) {
+        for (Direction face : Direction.values()) {
             PARAM_FACE.put(face, getHolder("filler/parameters/face_" + face.getName()));
         }
 

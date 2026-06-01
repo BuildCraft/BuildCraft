@@ -27,7 +27,7 @@ public class GuideSmeltingFactory implements GuidePartFactory {
     public GuideSmeltingFactory(ItemStack input, ItemStack output) {
         this.input = StackUtil.asNonNull(input);
         this.output = StackUtil.asNonNull(output);
-        this.hash = Arrays.hashCode(new int[] { input.serializeNBT().hashCode(), output.serializeNBT().hashCode() });
+        this.hash = Arrays.hashCode(new int[] { input.createNbt().hashCode(), output.createNbt().hashCode() });
     }
 
     public static GuideSmeltingFactory create(ItemStack stack) {

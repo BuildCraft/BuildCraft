@@ -34,23 +34,26 @@ import buildcraft.lib.client.render.DetachedRenderer;
 
 import buildcraft.builders.BCBuildersConfig;
 import buildcraft.builders.client.ClientArchitectTables;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 @Environment(EnvType.CLIENT)
 public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(PlayerEntity player, float partialTicks) {
         List<Box> boxes = new ArrayList<>(ClientArchitectTables.BOXES.keySet());
         boxes.sort(
             Comparator.<Box>comparingDouble(bb ->
-                bb.getCenter().distanceTo(player.getPositionVector())
+                bb.getCenter().distanceTo(player.getPos())
             ).reversed()
         );
         List<BlockPos> poses = new ArrayList<>(ClientArchitectTables.SCANNED_BLOCKS.keySet());
         poses.sort(
             Comparator.<BlockPos>comparingDouble(pos ->
-                new Vec3d(pos).distanceTo(player.getPositionVector())
+                new Vec3d(pos.getX(), pos.getY(), pos.getZ()).distanceTo(player.getPos())
             ).reversed()
         );
 
@@ -71,7 +74,7 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             }
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             if (__STENCIL) {
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            buffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION);
             bb = bb.grow(0.01);
             buffer.vertex(bb.minX, bb.maxY, bb.minZ).next();
             buffer.vertex(bb.maxX, bb.maxY, bb.minZ).next();
@@ -108,18 +111,18 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             }
             RenderSystem.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            MinecraftClient.getInstance().renderEngine.bindTexture(
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, 
                 new Identifier(
                     "buildcraftbuilders",
                     "textures/blocks/scan.png"
                 )
             );
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            buffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
             for (BlockPos pos : poses) {
                 if (!bb.intersects(new Box(pos))) {
                     continue;
                 }
-                for (Direction face : Direction.VALUES) {
+                for (Direction face : Direction.values()) {
                     ModelUtil.createFace(
                         face,
                         new Point3f(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F),

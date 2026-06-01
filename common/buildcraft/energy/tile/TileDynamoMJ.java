@@ -1,6 +1,7 @@
 package buildcraft.energy.tile;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +47,7 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.energy.BCEnergyGuis;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLikeForLedger {
 
@@ -101,7 +103,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
         nbt.putFloat("progress", progress);
         nbt.putInt("progressPart", progressPart);
         nbt.putInt("currentRF", currentRF);
-        nbt.put("mj", mjBattery.serializeNBT());
+        nbt.put("mj", mjBattery.createNbt());
         return nbt;
     }
 
@@ -121,9 +123,9 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 isPumping = buffer.readBoolean();
                 currentDirection = buffer.readEnumValue(Direction.class);
@@ -139,9 +141,9 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(isPumping);
                 buffer.writeEnumValue(currentDirection);
@@ -496,7 +498,7 @@ public class TileDynamoMJ extends TileBC_Neptune implements ITickable, IEngineLi
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public <T> T getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (facing == currentDirection) {
             if (CapabilityEnergy.ENERGY == capability) {

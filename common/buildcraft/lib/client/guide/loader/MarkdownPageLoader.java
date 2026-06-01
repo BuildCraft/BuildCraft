@@ -9,6 +9,7 @@ package buildcraft.lib.client.guide.loader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.Identifier;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
@@ -73,9 +74,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             int meta = Integer.parseInt(args[2].trim());
             if (meta == -1) {
                 // Use oredict
-                meta = OreDictionary.WILDCARD_VALUE;
+                meta = OreDictionaryStub.WILDCARD_VALUE;
             }
-            stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
+            stack = new ItemStack(stack.getItem(), stack.getCount());
         } catch (NumberFormatException nfe) {
             return new OptionallyDisabled<>(args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }

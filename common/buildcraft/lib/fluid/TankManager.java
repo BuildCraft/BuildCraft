@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import java.util.List;
 
 // STUB(R.Chen): the full Forge tank manager (Tank/SingleUseTank list, FluidStack draining, bucket
 // fill/empty onActivated, IFluidTankProperties capability exposure, the FluidUtilBC/FluidItemDrops
@@ -31,6 +32,7 @@ public class TankManager {
         return false;
     }
 
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         return new NbtCompound();
     }

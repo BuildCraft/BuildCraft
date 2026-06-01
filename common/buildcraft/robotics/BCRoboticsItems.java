@@ -9,11 +9,11 @@ package buildcraft.robotics;
 import net.minecraft.item.Item;
 
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 public class BCRoboticsItems {
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void registerItems(RegistryEvent.Register<Item> event) {
 
     }

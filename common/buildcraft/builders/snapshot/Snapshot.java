@@ -115,7 +115,7 @@ public abstract class Snapshot {
     }
 
     public static NbtCompound writeToNBT(Snapshot snapshot) {
-        NbtCompound nbt = snapshot.serializeNBT();
+        NbtCompound nbt = snapshot.createNbt();
         nbt.put("type", NBTUtilBC.writeEnum(snapshot.getType()));
         return nbt;
     }
@@ -131,20 +131,21 @@ public abstract class Snapshot {
         return snapshot;
     }
 
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         NbtCompound nbt = new NbtCompound();
-        nbt.put("key", key.serializeNBT());
-        nbt.put("size", NBTUtil.createPosTag(size));
+        nbt.put("key", key.createNbt());
+        nbt.put("size", net.minecraft.nbt.NbtHelper.fromBlockPos(size));
         nbt.put("facing", NBTUtilBC.writeEnum(facing));
-        nbt.put("offset", NBTUtil.createPosTag(offset));
+        nbt.put("offset", net.minecraft.nbt.NbtHelper.fromBlockPos(offset));
         return nbt;
     }
 
     public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
         key = new Key(nbt.getCompound("key"));
-        size = NBTUtil.getPosFromTag(nbt.getCompound("size"));
+        size = net.minecraft.nbt.NbtHelper.toBlockPos(nbt.getCompound("size"));
         facing = NBTUtilBC.readEnum(nbt.get("facing"), Direction.class);
-        offset = NBTUtil.getPosFromTag(nbt.getCompound("offset"));
+        offset = net.minecraft.nbt.NbtHelper.toBlockPos(nbt.getCompound("offset"));
     }
 
     abstract public Snapshot copy();
@@ -207,7 +208,7 @@ public abstract class Snapshot {
             NbtCompound nbt = new NbtCompound();
             nbt.putByteArray("hash", hash);
             if (header != null) {
-                nbt.put("header", header.serializeNBT());
+                nbt.put("header", header.createNbt());
             }
             return nbt;
         }
@@ -272,7 +273,7 @@ public abstract class Snapshot {
 
         public NbtCompound serializeNBT() {
             NbtCompound nbt = new NbtCompound();
-            nbt.put("key", key.serializeNBT());
+            nbt.put("key", key.createNbt());
             nbt.setUniqueId("owner", owner);
             nbt.putLong("created", created.getTime());
             nbt.putString("name", name);
@@ -320,10 +321,10 @@ public abstract class Snapshot {
     public abstract class BuildingInfo {
         public final BlockPos basePos;
         public final BlockPos offsetPos;
-        public final Rotation rotation;
+        public final net.minecraft.util.BlockRotation rotation;
         public final Box box = new Box();
 
-        protected BuildingInfo(BlockPos basePos, Rotation rotation) {
+        protected BuildingInfo(BlockPos basePos, net.minecraft.util.BlockRotation rotation) {
             this.basePos = basePos;
             this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;

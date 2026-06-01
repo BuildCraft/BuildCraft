@@ -26,6 +26,8 @@ import net.fabricmc.api.Environment;
 import buildcraft.lib.client.model.MutableVertex;
 
 import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 @Environment(EnvType.CLIENT)
 public enum ZonePlannerMapRenderer {
@@ -122,7 +124,7 @@ public enum ZonePlannerMapRenderer {
             return;
         }
         BufferBuilder builder = Tessellator.getInstance().getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
+        builder.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 MapColourData data = zonePlannerMapChunk.getData(x, z);

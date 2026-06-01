@@ -13,9 +13,9 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtString;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidRegistryBC;
+import buildcraft.lib.compat.FluidStackBC;
 
 public class FluidStackRef {
     private final NbtRef<NbtString> fluid;
@@ -26,10 +26,10 @@ public class FluidStackRef {
         this.amount = amount;
     }
 
-    public FluidStack get(NbtElement nbt) {
-        return new FluidStack(
+    public FluidStackBC get(NbtElement nbt) {
+        return new FluidStackBC(
             Objects.requireNonNull(
-                FluidRegistry.getFluid(
+                FluidRegistryBC.getFluid(
                     fluid
                         .get(nbt)
                         .orElseThrow(NullPointerException::new)

@@ -36,7 +36,7 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.schematics.ISchematicBlock;
@@ -71,11 +71,11 @@ public class SchematicBlockDefault implements ISchematicBlock {
         Identifier registryName = context.block.getRegistryName();
         // noinspection ConstantConditions
         return registryName != null &&
-            RulesLoader.READ_DOMAINS.contains(registryName.getResourceDomain()) &&
+            RulesLoader.READ_DOMAINS.contains(registryName.getNamespace()) &&
             RulesLoader.getRules(
                 context.blockState,
-                context.block.hasTileEntity(context.blockState) && context.world.getBlockEntity(context.pos) != null
-                    ? context.world.getBlockEntity(context.pos).serializeNBT()
+                context.block.hasTileEntity(context.blockState) && context.getWorld().getBlockEntity(context.pos) != null
+                    ? context.getWorld().getBlockEntity(context.pos).createNbt()
                     : null
             ).stream()
                 .noneMatch(rule -> rule.ignore);
@@ -117,9 +117,9 @@ public class SchematicBlockDefault implements ISchematicBlock {
     protected void setTileNbt(SchematicBlockContext context, Set<JsonRule> rules) {
         tileNbt = null;
         if (context.block.hasTileEntity(context.blockState)) {
-            BlockEntity tileEntity = context.world.getBlockEntity(context.pos);
+            BlockEntity tileEntity = context.getWorld().getBlockEntity(context.pos);
             if (tileEntity != null) {
-                tileNbt = tileEntity.serializeNBT();
+                tileNbt = tileEntity.createNbt();
             }
         }
     }
@@ -144,7 +144,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 .flatMap(Collection::stream)
                 .forEach(updateBlockOffsets::add);
         } else {
-            Stream.of(Direction.VALUES)
+            Stream.of(Direction.values())
                 .map(Direction::getDirectionVec)
                 .map(BlockPos::new)
                 .forEach(updateBlockOffsets::add);
@@ -170,8 +170,8 @@ public class SchematicBlockDefault implements ISchematicBlock {
         // noinspection ConstantConditions
         Set<JsonRule> rules = RulesLoader.getRules(
             context.blockState,
-            context.block.hasTileEntity(context.blockState) && context.world.getBlockEntity(context.pos) != null
-                ? context.world.getBlockEntity(context.pos).serializeNBT()
+            context.block.hasTileEntity(context.blockState) && context.getWorld().getBlockEntity(context.pos) != null
+                ? context.getWorld().getBlockEntity(context.pos).createNbt()
                 : null
         );
         setRequiredBlockOffsets /*   */(context, rules);
@@ -209,7 +209,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
 
     @Nonnull
     @Override
-    public List<FluidStack> computeRequiredFluids() {
+    public List<FluidStackBC> computeRequiredFluids() {
         Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
         return rules.stream()
             .map(rule -> rule.requiredExtractors)
@@ -221,7 +221,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
     }
 
     @Override
-    public SchematicBlockDefault getRotated(Rotation rotation) {
+    public SchematicBlockDefault getRotated(net.minecraft.util.BlockRotation rotation) {
         SchematicBlockDefault schematicBlock = SchematicBlockManager.createCleanCopy(this);
         requiredBlockOffsets.stream()
             .map(blockPos -> blockPos.rotate(rotation))
@@ -249,7 +249,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         if (placeBlock == Blocks.AIR) {
             return true;
         }
-        world.profiler.push("prepare block");
+        world.getProfiler().push("prepare block");
         BlockState newBlockState = blockState;
         if (placeBlock != blockState.getBlock()) {
             newBlockState = placeBlock.getDefaultState();
@@ -270,18 +270,18 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 placeBlock.getDefaultState()
             );
         }
-        world.profiler.pop();
-        world.profiler.push("place block");
+        world.getProfiler().pop();
+        world.getProfiler().push("place block");
         boolean b = world.setBlockState(blockPos, newBlockState, 11);
-        world.profiler.pop();
+        world.getProfiler().pop();
         if (b) {
-            world.profiler.push("notify");
+            world.getProfiler().push("notify");
             updateBlockOffsets.stream()
                 .map(blockPos::add)
                 .forEach(updatePos -> world.notifyNeighborsOfStateChange(updatePos, placeBlock, false));
-            world.profiler.pop();
+            world.getProfiler().pop();
             if (tileNbt != null && blockState.getBlock().hasTileEntity(blockState)) {
-                world.profiler.push("prepare tile");
+                world.getProfiler().push("prepare tile");
                 Set<JsonRule> rules = RulesLoader.getRules(blockState, tileNbt);
                 NbtCompound replaceNbt = rules.stream()
                     .map(rule -> rule.replaceNbt)
@@ -297,8 +297,8 @@ public class SchematicBlockDefault implements ISchematicBlock {
                 newTileNbt.putInt("x", blockPos.getX());
                 newTileNbt.putInt("y", blockPos.getY());
                 newTileNbt.putInt("z", blockPos.getZ());
-                world.profiler.pop();
-                world.profiler.push("place tile");
+                world.getProfiler().pop();
+                world.getProfiler().push("place tile");
                 BlockEntity tileEntity = BlockEntity.create(
                     world,
                     replaceNbt != null
@@ -312,7 +312,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                         tileEntity.rotate(tileRotation);
                     }
                 }
-                world.profiler.pop();
+                world.getProfiler().pop();
             }
             return true;
         }
@@ -352,7 +352,8 @@ public class SchematicBlockDefault implements ISchematicBlock {
             BlockUtil.blockStatesWithoutBlockEqual(blockState, world.getBlockState(blockPos), ignoredProperties);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
         NbtCompound nbt = new NbtCompound();
         nbt.put(
@@ -362,7 +363,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
                     .map(NBTUtil::createPosTag)
             )
         );
-        nbt.put("blockState", NBTUtil.writeBlockState(new NbtCompound(), blockState));
+        nbt.put("blockState", net.minecraft.nbt.NbtHelper.fromBlockState(blockState));
         nbt.put(
             "ignoredProperties",
             NBTUtilBC.writeStringList(
@@ -398,7 +399,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         NBTUtilBC.readCompoundList(nbt.get("requiredBlockOffsets"))
             .map(NBTUtil::getPosFromTag)
             .forEach(requiredBlockOffsets::add);
-        blockState = NBTUtil.readBlockState(nbt.getCompound("blockState"));
+        blockState = net.minecraft.nbt.NbtHelper.toBlockState(nbt.getCompound("blockState"));
         NBTUtilBC.readStringList(nbt.get("ignoredProperties"))
             .map(propertyName ->
                 blockState.getPropertyKeys().stream()
@@ -410,7 +411,7 @@ public class SchematicBlockDefault implements ISchematicBlock {
         if (nbt.contains("tileNbt")) {
             tileNbt = nbt.getCompound("tileNbt");
         }
-        tileRotation = NBTUtilBC.readEnum(nbt.get("tileRotation"), Rotation.class);
+        tileRotation = NBTUtilBC.readEnum(nbt.get("tileRotation"), net.minecraft.util.BlockRotation.class);
         placeBlock = Block.REGISTRY.getObject(new Identifier(nbt.getString("placeBlock")));
         NBTUtilBC.readCompoundList(nbt.get("updateBlockOffsets"))
             .map(NBTUtil::getPosFromTag)

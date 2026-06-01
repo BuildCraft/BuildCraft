@@ -8,8 +8,9 @@ package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
+import java.util.List;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.FluidUtil;
 
 import buildcraft.api.core.IFluidFilter;
@@ -19,21 +20,21 @@ import buildcraft.lib.misc.StackUtil;
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {
 
-    protected FluidStack[] fluids;
+    protected FluidStackBC[] fluids;
 
     public ArrayFluidFilter(ItemStack... stacks) {
         this(StackUtil.listOf(stacks));
     }
 
-    public ArrayFluidFilter(FluidStack... iFluids) {
+    public ArrayFluidFilter(FluidStackBC... iFluids) {
         fluids = iFluids;
     }
 
     public ArrayFluidFilter(DefaultedList<ItemStack> stacks) {
-        fluids = new FluidStack[stacks.size()];
+        fluids = new FluidStackBC[stacks.size()];
 
         for (int i = 0; i < stacks.size(); ++i) {
-            FluidStack stack = FluidUtil.getFluidContained(stacks.get(i));
+            FluidStackBC stack = FluidUtil.getFluidContained(stacks.get(i));
             if (stack != null) {
                 fluids[i] = stack;
             }
@@ -41,7 +42,7 @@ public class ArrayFluidFilter implements IFluidFilter {
     }
 
     public boolean hasFilter() {
-        for (FluidStack filter : fluids) {
+        for (FluidStackBC filter : fluids) {
             if (filter != null) {
                 return true;
             }
@@ -49,14 +50,18 @@ public class ArrayFluidFilter implements IFluidFilter {
         return false;
     }
 
-    @Override
-    public boolean matches(FluidStack fluid) {
-        for (FluidStack filter : fluids) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean matches(FluidStackBC fluid) {
+        for (FluidStackBC filter : fluids) {
             if (filter != null && filter.isFluidEqual(fluid)) {
                 return true;
             }
         }
 
         return false;
+    }
+    @Override
+    public boolean matches(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant fluid, long amount) {
+        return matches(buildcraft.lib.compat.FluidStackBC.of(fluid, amount));
     }
 }

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager;
@@ -27,12 +27,12 @@ public enum FuelRegistry implements IFuelManager {
     }
 
     @Override
-    public IFuel addFuel(FluidStack fluid, long powerPerCycle, int totalBurningTime) {
+    public IFuel addFuel(FluidStackBC fluid, long powerPerCycle, int totalBurningTime) {
         return addFuel(new Fuel(fluid, powerPerCycle, totalBurningTime));
     }
 
     @Override
-    public IDirtyFuel addDirtyFuel(FluidStack fuel, long powerPerCycle, int totalBurningTime, FluidStack residue) {
+    public IDirtyFuel addDirtyFuel(FluidStackBC fuel, long powerPerCycle, int totalBurningTime, FluidStackBC residue) {
         return addFuel(new DirtyFuel(fuel, powerPerCycle, totalBurningTime, residue));
     }
 
@@ -42,7 +42,7 @@ public enum FuelRegistry implements IFuelManager {
     }
 
     @Override
-    public IFuel getFuel(FluidStack fluid) {
+    public IFuel getFuel(FluidStackBC fluid) {
         if (fluid == null) {
             return null;
         }
@@ -55,18 +55,18 @@ public enum FuelRegistry implements IFuelManager {
     }
 
     public static class Fuel implements IFuel {
-        private final FluidStack fluid;
+        private final FluidStackBC fluid;
         private final long powerPerCycle;
         private final int totalBurningTime;
 
-        public Fuel(FluidStack fluid, long powerPerCycle, int totalBurningTime) {
+        public Fuel(FluidStackBC fluid, long powerPerCycle, int totalBurningTime) {
             this.fluid = fluid;
             this.powerPerCycle = powerPerCycle;
             this.totalBurningTime = totalBurningTime;
         }
 
         @Override
-        public FluidStack getFluid() {
+        public FluidStackBC getFluid() {
             return fluid;
         }
 
@@ -83,15 +83,15 @@ public enum FuelRegistry implements IFuelManager {
 
     public static class DirtyFuel extends Fuel implements IDirtyFuel {
 
-        private final FluidStack residue;
+        private final FluidStackBC residue;
 
-        public DirtyFuel(FluidStack fluid, long powerPerCycle, int totalBurningTime, FluidStack residue) {
+        public DirtyFuel(FluidStackBC fluid, long powerPerCycle, int totalBurningTime, FluidStackBC residue) {
             super(fluid, powerPerCycle, totalBurningTime);
             this.residue = residue;
         }
 
         @Override
-        public FluidStack getResidue() {
+        public FluidStackBC getResidue() {
             return residue;
         }
     }

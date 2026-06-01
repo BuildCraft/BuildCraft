@@ -10,6 +10,7 @@ package buildcraft.lib.engine;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -48,6 +49,7 @@ import buildcraft.lib.misc.data.ModelVariableData;
 import buildcraft.lib.mj.MJEnergyStorage;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Step 3 migration scope (R.Chen): only the Forge IEnergyStorage capability, the ITickable tick, and the
 // energy-field NBT have been ported. All engine-specific game logic (heat, piston, burn, MJ chaining) is
@@ -136,7 +138,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 isPumping = buffer.readBoolean();
                 currentDirection = buffer.readEnumValue(Direction.class);
@@ -158,7 +160,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeBoolean(isPumping);
                 buffer.writeEnumValue(currentDirection);

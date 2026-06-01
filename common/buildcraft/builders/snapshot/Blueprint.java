@@ -25,7 +25,7 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.enums.EnumSnapshotType;
@@ -33,6 +33,7 @@ import buildcraft.api.schematics.ISchematicBlock;
 import buildcraft.api.schematics.ISchematicEntity;
 
 import buildcraft.lib.misc.NBTUtilBC;
+import net.minecraft.nbt.NbtElement;
 
 public class Blueprint extends Snapshot {
     public final List<ISchematicBlock> palette = new ArrayList<>();
@@ -58,14 +59,15 @@ public class Blueprint extends Snapshot {
     }
 
     @Override
+    public NbtCompound createNbt() { return serializeNBT(); }
     public NbtCompound serializeNBT() {
-        NbtCompound nbt = super.serializeNBT();
+        NbtCompound nbt = super.createNbt();
         nbt.put("palette", NBTUtilBC.writeCompoundList(palette.stream().map(SchematicBlockManager::writeToNBT)));
         NbtList list = new NbtList();
         for (int z = 0; z < size.getZ(); z++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int x = 0; x < size.getX(); x++) {
-                    list.appendTag(new NbtInt(data[posToIndex(x, y, z)]));
+                    list.appendTag(NbtInt.of(data[posToIndex(x, y, z)]));
                 }
             }
         }
@@ -98,7 +100,7 @@ public class Blueprint extends Snapshot {
         }
         int serializedDataLength = serializedDataList == null
             ? serializedDataIntArray.length
-            : serializedDataList.tagCount();
+            : serializedDataList.size();
         if (serializedDataLength != getDataSize()) {
             throw new InvalidInputDataException(
                 "Serialized data has length of " + serializedDataLength +
@@ -129,18 +131,18 @@ public class Blueprint extends Snapshot {
     @SuppressWarnings("WeakerAccess")
     public class BuildingInfo extends Snapshot.BuildingInfo {
         public final List<ItemStack>[] toPlaceRequiredItems;
-        public final List<FluidStack>[] toPlaceRequiredFluids;
+        public final List<FluidStackBC>[] toPlaceRequiredFluids;
         public final List<ISchematicBlock> rotatedPalette;
         public final Set<ISchematicEntity> entities;
         public final Map<ISchematicEntity, List<ItemStack>> entitiesRequiredItems;
-        public final Map<ISchematicEntity, List<FluidStack>> entitiesRequiredFluids;
+        public final Map<ISchematicEntity, List<FluidStackBC>> entitiesRequiredFluids;
 
-        public BuildingInfo(BlockPos basePos, Rotation rotation) {
+        public BuildingInfo(BlockPos basePos, net.minecraft.util.BlockRotation rotation) {
             super(basePos, rotation);
             // noinspection unchecked
             toPlaceRequiredItems = (List<ItemStack>[]) new List<?>[getDataSize()];
             // noinspection unchecked
-            toPlaceRequiredFluids = (List<FluidStack>[]) new List<?>[getDataSize()];
+            toPlaceRequiredFluids = (List<FluidStackBC>[]) new List<?>[getDataSize()];
             rotatedPalette = ImmutableList.copyOf(
                 palette.stream()
                     .map(schematicBlock -> schematicBlock.getRotated(rotation))
@@ -160,7 +162,7 @@ public class Blueprint extends Snapshot {
             ImmutableSet.Builder<ISchematicEntity> entitiesBuilder = ImmutableSet.builder();
             ImmutableMap.Builder<ISchematicEntity, List<ItemStack>> entitiesRequiredItemsBuilder =
                 ImmutableMap.builder();
-            ImmutableMap.Builder<ISchematicEntity, List<FluidStack>> entitiesRequiredFluidsBuilder =
+            ImmutableMap.Builder<ISchematicEntity, List<FluidStackBC>> entitiesRequiredFluidsBuilder =
                 ImmutableMap.builder();
             for (ISchematicEntity schematicEntity : getSnapshot().entities) {
                 ISchematicEntity rotatedSchematicEntity = schematicEntity.getRotated(rotation);

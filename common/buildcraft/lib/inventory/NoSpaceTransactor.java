@@ -9,6 +9,7 @@
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;

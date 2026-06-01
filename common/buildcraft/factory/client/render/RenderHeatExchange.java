@@ -22,7 +22,7 @@ import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
@@ -39,6 +39,9 @@ import buildcraft.factory.tile.TileHeatExchange;
 import buildcraft.factory.tile.TileHeatExchange.EnumProgressState;
 import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionEnd;
 import buildcraft.factory.tile.TileHeatExchange.ExchangeSectionStart;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchange> {
     private static final Map<Direction, TankSideData> TANK_SIDES = new EnumMap<>(Direction.class);
@@ -72,7 +75,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(TileHeatExchange tile, double x, double y, double z, float partialTicks, int destroyStage,
         float alpha) {
         super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
@@ -97,19 +100,19 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
 
         // gl state setup
         RenderHelper.disableStandardItemLighting();
-        MinecraftClient.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         RenderSystem.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
         // buffer setup
         try (AutoTessellator tess = RenderUtil.getThreadLocalUnusedTessellator()) {
             BufferBuilder bb = tess.tessellator.getBuffer();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            bb.setTranslation(x, y, z);
+            bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x, y, z);
 
             profiler.push("tank");
 
-            Direction face = state.getValue(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
+            Direction face = state.get(BlockBCBase_Neptune.PROP_FACING).rotateYCCW();
             TankSideData sideTank = TANK_SIDES.get(face);
 
             renderTank(TANK_BOTTOM, section.smoothedTankInput, combinedLight, partialTicks, bb);
@@ -119,10 +122,10 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             if (sectionEnd != null) {
                 // TODO: Move this into the other renderer!
                 BlockPos diff = sectionEnd.getTile().getPos().subtract(tile.getPos());
-                bb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
+                // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x + diff.getX(), y + diff.getY(), z + diff.getZ());
                 renderTank(TANK_TOP, sectionEnd.smoothedTankOutput, combinedLight, partialTicks, bb);
                 renderTank(sideTank.end, sectionEnd.smoothedTankInput, combinedLight, partialTicks, bb);
-                bb.setTranslation(x, y, z);
+                // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x, y, z);
             }
 
             profiler.swap("flow");
@@ -138,19 +141,19 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
                     double progressEnd = p0 + length * progress;
 
                     boolean flip = progressState == EnumProgressState.PREPARING;
-                    flip ^= face.getAxisDirection() == AxisDirection.NEGATIVE;
+                    flip ^= face.getDirection() == AxisDirection.NEGATIVE;
 
                     if (flip) {
                         progressStart = p1 - length * progress;
                         progressEnd = p1;
                     }
                     BlockPos diff = BlockPos.ORIGIN;
-                    if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+                    if (face.getDirection() == AxisDirection.NEGATIVE) {
                         diff = diff.offset(face, middles + 1);
                     }
                     double otherStart = flip ? p0 : p1 - length * progress;
                     double otherEnd = flip ? p0 + length * progress : p1;
-                    Vec3d vDiff = new Vec3d(diff).addVector(x, y, z);
+                    Vec3d vDiff = new Vec3d(diff.getX(), diff.getY(), diff.getZ()).add(x, y, z);
                     renderFlow(vDiff, face, bb, progressStart + 0.01, progressEnd - 0.01,
                         sectionEnd.smoothedTankInput.getFluidForRender(), 4, partialTicks);
                     renderFlow(vDiff, face.getOpposite(), bb, otherStart, otherEnd,
@@ -159,7 +162,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             }
 
             // buffer finish
-            bb.setTranslation(0, 0, 0);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
             profiler.swap("draw");
             tess.tessellator.draw();
         }
@@ -185,15 +188,15 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             size.max, bb, null);
     }
 
-    private static void renderFlow(Vec3d diff, Direction face, BufferBuilder bb, double s, double e, FluidStack fluid,
+    private static void renderFlow(Vec3d diff, Direction face, BufferBuilder bb, double s, double e, FluidStackBC fluid,
         int point, float partialTicks) {
         double tickTime = MinecraftClient.getInstance().world.getTotalWorldTime();
         double offset = (tickTime + partialTicks) % 31 / 31.0;
-        if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+        if (face.getDirection() == AxisDirection.NEGATIVE) {
             offset = -offset;
             face = face.getOpposite();
         }
-        Vec3d dirVec = new Vec3d(face.getDirectionVec());
+        Vec3d dirVec = new Vec3d(face.getDirectionVec().getX(), face.getDirectionVec().getY(), face.getDirectionVec().getZ());
         double ds = (point + 0.1) / 16.0;
         Vec3d vs = new Vec3d(ds, ds, ds);
         Vec3d ve = new Vec3d(1 - ds, 1 - ds, 1 - ds);
@@ -211,7 +214,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
             if (i < s - 1) {
                 continue;
             }
-            bb.setTranslation(d.x, d.y, d.z);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(d.x, d.y, d.z);
 
             double s1 = s < i ? 0 : (s % 1);
             double e1 = e > i + 1 ? 1 : (e % 1);
@@ -230,7 +233,7 @@ public class RenderHeatExchange extends TileEntitySpecialRenderer<TileHeatExchan
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileHeatExchange tile) {
         return tile.isStart();
     }

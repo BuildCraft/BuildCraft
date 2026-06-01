@@ -5,11 +5,11 @@
 package buildcraft.lib;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.server.world.ServerWorld;
@@ -20,7 +20,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
@@ -52,7 +52,7 @@ import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 public enum BCLibEventDist {
     INSTANCE;
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof ServerPlayerEntity) {
@@ -62,7 +62,7 @@ public enum BCLibEventDist {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onWorldUnload(WorldEvent.Unload event) {
         MarkerCache.onWorldUnload(event.getWorld());
         if (event.getWorld() instanceof ServerWorld) {
@@ -70,20 +70,20 @@ public enum BCLibEventDist {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void onReloadFinish(EventBuildCraftReload.FinishLoad event) {
         // Note: when you need to add server-side listeners the client listeners need to be moved to BCLibProxy
         GuideManager.INSTANCE.onRegistryReload(event);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void onConnectToServer(ClientConnectedToServerEvent event) {
         BuildCraftObjectCaches.onClientJoinServer();
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void textureStitchPre(TextureStitchEvent.Pre event) {
         ReloadManager.INSTANCE.preReloadResources();
@@ -92,13 +92,13 @@ public enum BCLibEventDist {
         ModelHolderRegistry.onTextureStitchPre(map);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event(priority = EventPriority.LOWEST)
     @Environment(EnvType.CLIENT)
     public static void textureStitchPreLow(TextureStitchEvent.Pre event) {
         FluidRenderer.onTextureStitchPre(event.getMap());
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void textureStitchPost(TextureStitchEvent.Post event) {
         TextureMap map = event.getMap();
@@ -106,7 +106,7 @@ public enum BCLibEventDist {
         FluidRenderer.onTextureStitchPost(event.getMap());
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void modelBake(ModelBakeEvent event) {
         SpriteHolderRegistry.exportTextureMap();
@@ -115,7 +115,7 @@ public enum BCLibEventDist {
         ModelVariableData.onModelBake();
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void renderWorldLast(RenderWorldLastEvent event) {
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -126,7 +126,7 @@ public enum BCLibEventDist {
         DetachedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void serverTick(ServerTickEvent event) {
         if (event.phase == Phase.END) {
             BCAdvDebugging.INSTANCE.onServerPostTick();
@@ -134,14 +134,14 @@ public enum BCLibEventDist {
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     @Environment(EnvType.CLIENT)
     public static void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             BuildCraftObjectCaches.onClientTick();
             MessageUtil.postClientTick();
             MinecraftClient mc = MinecraftClient.getInstance();
-            EntityPlayerSP player = mc.player;
+            ClientPlayerEntity player = mc.player;
             if (player != null && ItemDebugger.isShowDebugInfo(player)) {
                 HitResult mouseOver = mc.objectMouseOver;
                 if (mouseOver != null) {

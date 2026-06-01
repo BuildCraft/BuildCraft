@@ -8,6 +8,7 @@
 package buildcraft.lib.block;
 
 import net.minecraft.util.math.Direction;
+import java.util.Map;
 
 import buildcraft.lib.misc.collect.OrderedEnumMap;
 

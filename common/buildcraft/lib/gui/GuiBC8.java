@@ -27,6 +27,18 @@ public class GuiBC8<T extends ContainerBC_Neptune> extends BuildCraftGui {
         standardLedgerInit();
     }
 
+    /** Forge-compat single-arg constructor. inv/title default to empty values. */
+    @SuppressWarnings("unchecked")
+    public GuiBC8(T container) {
+        super(container,
+              net.minecraft.client.MinecraftClient.getInstance().player != null
+                  ? net.minecraft.client.MinecraftClient.getInstance().player.getInventory()
+                  : new PlayerInventory(null),
+              Text.empty());
+        this.container = container;
+        standardLedgerInit();
+    }
+
     private void standardLedgerInit() {
         if (container instanceof ContainerBCTile<?>) {
             shownElements.add(new LedgerOwnership(this, ((ContainerBCTile<?>) container).tile, true));

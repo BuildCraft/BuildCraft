@@ -8,10 +8,11 @@ package buildcraft.lib.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import gnu.trove.map.hash.TCharObjectHashMap;
+import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -27,7 +28,7 @@ public class RecipeBuilderShaped {
     @Nonnull
     private ItemStack result = StackUtil.EMPTY;
     private final List<String> shape = new ArrayList<>();
-    private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
+    private final HashMap<Character, Object> objects = new HashMap<>();
 
     public void clear() {
         result = StackUtil.EMPTY;
@@ -78,7 +79,7 @@ public class RecipeBuilderShaped {
         for (String s : shape) {
             objs[offset++] = s;
         }
-        for (char c : objects.keys()) {
+        for (char c : objects.keySet()) {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }
@@ -115,7 +116,7 @@ public class RecipeBuilderShaped {
         for (StringBuilder string : strings) {
             objs[offset++] = string.toString();
         }
-        for (char c : objects.keys()) {
+        for (char c : objects.keySet()) {
             objs[offset++] = c;
             objs[offset++] = objects.get(c);
         }

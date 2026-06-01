@@ -12,7 +12,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.HitResult;
@@ -32,21 +32,21 @@ public class ItemWaterGel extends ItemBC_Neptune {
         this.maxStackSize = 16;
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+        Vec3d start = player.getEyePos();
         Vec3d look = player.getLookVec();
         Vec3d end = start.add(look.scale(7));
         HitResult ray = world.rayTraceBlocks(start, end, true, false, true);
 
         if (ray == null || ray.getBlockPos() == null) {
-            return new ActionResult<>(ActionResult.FAIL, stack);
+            return TypedActionResult.fail(stack);
         }
 
         Block b = world.getBlockState(ray.getBlockPos()).getBlock();
         if (b != Blocks.WATER) {
-            return new ActionResult<>(ActionResult.FAIL, stack);
+            return TypedActionResult.fail(stack);
         }
 
         if (!player.capabilities.isCreativeMode) {
@@ -59,7 +59,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
                 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
         if (!world.isClient) {
-            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
+            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().with(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
             world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.waterGel, 200);
 
             // TODO: Snowball stuff
@@ -70,7 +70,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         // player.addStat(StatList.getObjectUseStats(this));
-        return new ActionResult<>(ActionResult.SUCCESS, stack);
+        return TypedActionResult.success(stack);
     }
 
 }

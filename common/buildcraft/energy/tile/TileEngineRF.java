@@ -10,6 +10,7 @@ package buildcraft.energy.tile;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 
@@ -40,12 +41,13 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackInsertionFunction;
 
 import buildcraft.energy.BCEnergyGuis;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 // Forge→Fabric migration notes (R.Chen):
 //   PlayerEntity / Direction / Hand     → PlayerEntity / Direction / Hand
 //   NbtCompound / readFromNBT/writeToNBT  → NbtCompound / readNbt/writeNbt
 //   nbt.setInteger                           → nbt.putInt
-//   EnvType.CLIENT / EnvType.SERVER                → NetEnvType.CLIENT / NetEnvType.SERVER
+//   EnvType.CLIENT / EnvType.SERVER                → NetSide.CLIENT / NetSide.SERVER
 //   MessageContext                           → Object ctx
 //   world.isClient                           → world.isClient
 //   player.getHeldItem                       → player.getStackInHand
@@ -127,7 +129,7 @@ public class TileEngineRF extends TileEngineBase_BC8 {
     @Override
     public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == NetEnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 currentRF = buffer.readInt();
             }
@@ -137,7 +139,7 @@ public class TileEngineRF extends TileEngineBase_BC8 {
     @Override
     public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == NetEnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_GUI_DATA || id == NET_GUI_TICK) {
                 buffer.writeInt(currentRF);
             }

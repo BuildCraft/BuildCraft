@@ -9,12 +9,12 @@ package buildcraft.lib.client.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.network.ClientPlayerEntity;
 
 public abstract class HudRenderer {
-    protected abstract void renderImpl(MinecraftClient mc, EntityPlayerSP player);
+    protected abstract void renderImpl(MinecraftClient mc, ClientPlayerEntity player);
 
-    protected abstract boolean shouldRender(MinecraftClient mc, EntityPlayerSP player);
+    protected abstract boolean shouldRender(MinecraftClient mc, ClientPlayerEntity player);
 
     protected void setupTransforms() {}
 
@@ -22,7 +22,7 @@ public abstract class HudRenderer {
 
     }
 
-    public final void render(MinecraftClient mc, EntityPlayerSP player) {
+    public final void render(MinecraftClient mc, ClientPlayerEntity player) {
         if (shouldRender(mc, player)) {
             GL11.glPushMatrix();
             setupTransforms();

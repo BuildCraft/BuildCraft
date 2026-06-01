@@ -17,7 +17,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEnd;
 
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
@@ -52,7 +52,7 @@ public class OilGenerator {
         NONE
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onPopulatePre(PopulateChunkEvent.Pre event) {
         World world = event.getWorld();
         int chunkX = event.getChunkX();
@@ -67,7 +67,7 @@ public class OilGenerator {
             }
             return;
         }
-        boolean isExcludedDimension = BCEnergyConfig.excludedDimensions.contains(world.provider.getDimension());
+        boolean isExcludedDimension = BCEnergyConfig.excludedDimensions.contains(System.identityHashCode(world));
         if (isExcludedDimension == BCEnergyConfig.excludedDimensionsIsBlackList) {
             if (DEBUG_OILGEN_BASIC) {
                 BCLog.logger.info(
@@ -78,7 +78,7 @@ public class OilGenerator {
             return;
         }
 
-        world.profiler.push("bc_oil");
+        world.getProfiler().push("bc_oil");
         int x = chunkX * 16 + 8;
         int z = chunkZ * 16 + 8;
         BlockPos min = new BlockPos(x, 0, z);
@@ -88,10 +88,10 @@ public class OilGenerator {
             for (int cdz = -MAX_CHUNK_RADIUS; cdz <= MAX_CHUNK_RADIUS; cdz++) {
                 int cx = chunkX + cdx;
                 int cz = chunkZ + cdz;
-                world.profiler.push("scan");
+                world.getProfiler().push("scan");
                 List<OilGenStructure> structures = getStructures(world, cx, cz, cdx == 0 && cdz == 0);
                 OilGenStructure.Spring spring = null;
-                world.profiler.swap("gen");
+                world.getProfiler().swap("gen");
                 for (OilGenStructure struct : structures) {
                     struct.generate(world, box);
                     if (struct instanceof OilGenStructure.Spring) {
@@ -105,10 +105,10 @@ public class OilGenerator {
                     }
                     spring.generate(world, count);
                 }
-                world.profiler.pop();
+                world.getProfiler().pop();
             }
         }
-        world.profiler.pop();
+        world.getProfiler().pop();
     }
 
     public static List<OilGenStructure> getStructures(World world, int cx, int cz) {

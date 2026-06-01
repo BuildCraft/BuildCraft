@@ -17,6 +17,7 @@ import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
+import net.minecraft.block.BlockSoundGroup;
 
 public class PipeBehaviourVoid extends PipeBehaviour {
     public PipeBehaviourVoid(IPipe pipe) {
@@ -45,7 +46,7 @@ public class PipeBehaviourVoid extends PipeBehaviour {
         World world = move.holder.getPipeWorld();
         BlockPos pos = move.holder.getPipePos();
         if (removed > 0 && (world.getTotalWorldTime() + pos.toLong()) % 23 == 0) {
-            SoundType soundType = SoundType.SLIME;
+            BlockSoundGroup soundType = BlockSoundGroup.SLIME_BLOCK;
             final SoundEvent soundEvent;
             Fluid f = move.fluid.getFluid();
             if (f == FluidRegistry.LAVA) {

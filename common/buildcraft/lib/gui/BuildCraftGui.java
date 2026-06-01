@@ -13,7 +13,7 @@ import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.minecraft.client.MinecraftClientClient;
+import net.minecraft.client.MinecraftClient;
 import java.util.stream.Collectors;
 
 import net.minecraft.client.gui.DrawContext;
@@ -21,7 +21,6 @@ import net.minecraft.text.Text;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
 
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
@@ -51,12 +50,23 @@ public class BuildCraftGui extends HandledScreen {
     public final IGuiArea screenElement = createScreenArea();
     public final IGuiArea rootElement;
     public final MousePosition mouse = new MousePosition();
+    /** Self-reference used by legacy BC GUI subclasses that reference 'mainGui' instead of 'this'. */
+    public final BuildCraftGui mainGui = this;
+    /** Forge-compat: alias for {@link #textRenderer}. */
+    protected net.minecraft.client.font.TextRenderer fontRenderer;
+    /** Forge-compat: reference to MinecraftClient. */
+    protected MinecraftClient mc;
 
     public final List<IGuiElement> shownElements = new ArrayList<>();
     public IMenuElement currentMenu;
 
     public IGuiPosition lowerLeftLedgerPos, lowerRightLedgerPos;
     private float lastPartialTicks;
+
+    /** Forge-compat: maps to {@link #backgroundWidth}. Setting this also updates backgroundWidth. */
+    protected int xSize = 176;
+    /** Forge-compat: maps to {@link #backgroundHeight}. Setting this also updates backgroundHeight. */
+    protected int ySize = 166;
 
     public BuildCraftGui(ScreenHandler handler, PlayerInventory inv, Text title) {
         super(handler, inv, title);
@@ -66,6 +76,17 @@ public class BuildCraftGui extends HandledScreen {
     }
 
     public final float getLastPartialTicks() { return lastPartialTicks; }
+
+    @Override
+    protected void init() {
+        // Sync xSize/ySize (Forge compat) to HandledScreen's backgroundWidth/backgroundHeight
+        backgroundWidth = xSize;
+        backgroundHeight = ySize;
+        // Sync compat fields
+        mc = MinecraftClient.getInstance();
+        fontRenderer = mc.textRenderer;
+        super.init();
+    }
 
     // ------------------------------------------------------------------ tick
     // Note: HandledScreen.tick() is final — BC element ticking happens inside render().

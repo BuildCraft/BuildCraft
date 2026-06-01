@@ -252,7 +252,7 @@ public class GuiGuide extends GuiScreen {
         chapters.addAll(currentPage.getChapters());
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void updateScreen() {
         super.updateScreen();
         if (isOpen) {
@@ -274,7 +274,7 @@ public class GuiGuide extends GuiScreen {
         return new ScaledResolution(mc).getScaledWidth() < 590;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         lastPartialTicks = partialTicks = mc.getRenderPartialTicks();
         minX = (width - PAGE_LEFT.width * 2) / 2;
@@ -307,7 +307,7 @@ public class GuiGuide extends GuiScreen {
         minX = (width - BOOK_COVER.width) / 2;
         minY = (height - BOOK_COVER.height) / 2;
 
-        mc.renderEngine.bindTexture(COVER);
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, COVER);
         BOOK_COVER.drawAt(minX, minY);
     }
 
@@ -332,10 +332,10 @@ public class GuiGuide extends GuiScreen {
             float offset = sin * 50;
             int bindingWidth = (int) (sin * BOOK_BINDING.width);
 
-            mc.renderEngine.bindTexture(RIGHT_PAGE);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, RIGHT_PAGE);
             PAGE_RIGHT.drawAt(minX + BOOK_COVER.width - PAGE_RIGHT.width, minY);
 
-            mc.renderEngine.bindTexture(COVER);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, COVER);
 
             // BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
             // BOOK_COVER.drawCustomQuad(
@@ -358,10 +358,10 @@ public class GuiGuide extends GuiScreen {
             minX = (width - BOOK_COVER.width) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
-            mc.renderEngine.bindTexture(RIGHT_PAGE);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, RIGHT_PAGE);
             PAGE_RIGHT.drawAt(minX + BOOK_COVER.width - PAGE_LEFT.width, minY);
 
-            mc.renderEngine.bindTexture(COVER);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, COVER);
             BOOK_COVER.drawAt(minX, minY);
         } else if (openingAngle > 0) {
             int pageWidth = (int) (sin * PAGE_LEFT.width);
@@ -372,10 +372,10 @@ public class GuiGuide extends GuiScreen {
             minX = (width - PAGE_LEFT.width - pageWidth) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
-            mc.renderEngine.bindTexture(RIGHT_PAGE);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, RIGHT_PAGE);
             PAGE_RIGHT.drawAt(minX + pageWidth + bindingWidth, minY);
 
-            mc.renderEngine.bindTexture(LEFT_PAGE);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, LEFT_PAGE);
             // PAGE_LEFT.drawCustomQuad(
             // minX + bindingWidth, minY + PAGE_LEFT.height + offset,
             // minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
@@ -388,13 +388,13 @@ public class GuiGuide extends GuiScreen {
             );
             // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
-            mc.renderEngine.bindTexture(COVER);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, COVER);
             BOOK_BINDING.drawScaledInside(
                 (int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height
                     + offset * 2)
             );
 
-            mc.renderEngine.bindTexture(ICONS_2);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, ICONS_2);
         }
     }
 
@@ -421,7 +421,7 @@ public class GuiGuide extends GuiScreen {
         String title = currentPage.getTitle();
         if (title != null) {
             final int x;
-            int titleWidth = currentFont.getStringWidth(title);
+            int titleWidth = currentFont.getWidth(title);
             if (isHalfPageShown) {
                 x = (int) (minX + PAGE_LEFT_TEXT.x + (PAGE_LEFT_TEXT.width - titleWidth) / 2);
             } else {
@@ -464,7 +464,7 @@ public class GuiGuide extends GuiScreen {
                 int hoverOffset = isHovered ? -5 : 0;
                 int y = minY + hoverOffset;
 
-                int strWidth = currentFont.getStringWidth(str);
+                int strWidth = currentFont.getWidth(str);
                 try (AutoGlScissor scissor = GuiUtil.scissor(secondPageX, 0, strWidth + 20, minY + 10)) {
                     CHAPTER_MARKER_9.draw(secondPageX, y, strWidth + 20, 100);
                     currentFont.drawString(str, secondPageX + 10, y + 3, 0);
@@ -493,7 +493,7 @@ public class GuiGuide extends GuiScreen {
         }
 
         // Reset the colour
-        RenderSystem.setShaderColor(1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1.0F);
         if (tooltipStack != null) {
             renderToolTip(tooltipStack, (int) mouse.getX(), (int) mouse.getY());
         } else if (!tooltips.isEmpty()) {
@@ -509,7 +509,7 @@ public class GuiGuide extends GuiScreen {
         currentPage.setFontRenderer(currentFont);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         mouse.setMousePosition(mouseX, mouseY);
         // Primary mouse button
@@ -581,7 +581,7 @@ public class GuiGuide extends GuiScreen {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
         if (currentPage.keyTyped(typedChar, keyCode)) {
@@ -615,14 +615,14 @@ public class GuiGuide extends GuiScreen {
             }
             mc.getToastGui().add(new ToastInformation("buildcraft.guide_book.reloaded", icon));
         }
-        if (keyCode == mc.gameSettings.keyBindLeft.getKeyCode()) {
+        if (keyCode == mc.options.keyBindLeft.getKeyCode()) {
             currentPage.lastPage();
-        } else if (keyCode == mc.gameSettings.keyBindRight.getKeyCode()) {
+        } else if (keyCode == mc.options.keyBindRight.getKeyCode()) {
             currentPage.nextPage();
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean doesGuiPauseGame() {
         return false;
     }

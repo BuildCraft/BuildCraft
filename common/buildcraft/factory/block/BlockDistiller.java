@@ -6,7 +6,8 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -26,7 +27,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.factory.tile.TileDistiller_BC8;
 
 public class BlockDistiller extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockDistiller(Material material, String id) {
+    public BlockDistiller(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -35,12 +36,12 @@ public class BlockDistiller extends BlockBCTile_Neptune implements IBlockWithFac
         return new TileDistiller_BC8();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
@@ -55,9 +56,9 @@ public class BlockDistiller extends BlockBCTile_Neptune implements IBlockWithFac
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public RenderLayer getBlockLayer() {
-        return RenderLayer.CUTOUT;
+        return RenderLayer.getCutout();
     }
 }

@@ -9,7 +9,8 @@ package buildcraft.factory.block;
 import java.util.List;
 import java.util.Locale;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -18,7 +19,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -37,14 +38,14 @@ import buildcraft.factory.tile.TileHeatExchange;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection, IBlockWithFacing {
 
-    public enum EnumExchangePart implements IStringSerializable {
+    public enum EnumExchangePart implements StringIdentifiable {
         START,
         MIDDLE,
         END;
 
         private final String lowerCaseName = name().toLowerCase(Locale.ROOT);
 
-        @Override
+        // @Override -- removed: method does not exist in Fabric 1.20.1
         public String getName() {
             return lowerCaseName;
         }
@@ -55,7 +56,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
     public static final Property<Boolean> PROP_CONNECTED_LEFT = BooleanProperty.create("connected_left");
     public static final Property<Boolean> PROP_CONNECTED_RIGHT = BooleanProperty.create("connected_right");
 
-    public BlockHeatExchange(Material material, String id) {
+    public BlockHeatExchange(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
@@ -68,7 +69,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
         properties.add(PROP_CONNECTED_RIGHT);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileHeatExchange) {
@@ -81,17 +82,17 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
             } else {
                 part = EnumExchangePart.MIDDLE;
             }
-            Direction thisFacing = state.getValue(PROP_FACING);
-            state = state.withProperty(PROP_PART, part);
-            state = state.withProperty(PROP_CONNECTED_Y, false);
+            Direction thisFacing = state.get(PROP_FACING);
+            state = state.with(PROP_PART, part);
+            state = state.with(PROP_CONNECTED_Y, false);
 
             boolean connectLeft = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateY());
-            state = state.withProperty(PROP_CONNECTED_LEFT, connectLeft);
+            state = state.with(PROP_CONNECTED_LEFT, connectLeft);
 
             boolean connectRight = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateYCCW());
-            state = state.withProperty(PROP_CONNECTED_RIGHT, connectRight);
+            state = state.with(PROP_CONNECTED_RIGHT, connectRight);
         }
-        state = state.withProperty(PROP_CONNECTED_Y, false);
+        state = state.with(PROP_CONNECTED_Y, false);
         return state;
     }
 
@@ -104,7 +105,7 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean rotateBlock(World world, BlockPos pos, Direction axis) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileHeatExchange) {
@@ -129,20 +130,20 @@ public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPip
         return new TileHeatExchange();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     @Environment(EnvType.CLIENT)
     public RenderLayer getBlockLayer() {
-        return RenderLayer.CUTOUT;
+        return RenderLayer.getCutout();
     }
 
     @Override

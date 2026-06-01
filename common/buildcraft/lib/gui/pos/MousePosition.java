@@ -10,8 +10,8 @@ public final class MousePosition implements IGuiPosition {
     private double x = -10, y = -10;
 
     public void setMousePosition(double mouseX, double mouseY) {
-        this.x = mouseX;
-        this.y = mouseY;
+        this.setX(mouseX);
+        this.setY(mouseY);
     }
 
     @Override

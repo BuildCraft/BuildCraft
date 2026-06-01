@@ -13,10 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.fabricmc.api.EnvType;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.mj.IMjConnector;
@@ -33,9 +32,9 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     public int currentOutputIndex = 0;
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, NetSide side) {
         super.writePayload(id, buffer, side);
-        if (side == EnvType.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == NET_RENDER_DATA) {
                 buffer.writeByte(currentOutputIndex);
             }
@@ -43,9 +42,9 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == EnvType.CLIENT) {
+        if (side == NetSide.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 currentOutputIndex = buffer.readUnsignedByte() % outputs.length;
             }
@@ -122,8 +121,8 @@ public class TileEngineCreative extends TileEngineBase_BC8 {
             if (!world.isClient) {
                 currentOutputIndex++;
                 currentOutputIndex %= outputs.length;
-                player.sendStatusMessage(
-                    new TranslatableText("chat.pipe.power.iron.mode", outputs[currentOutputIndex]), true);
+                player.sendMessage(
+                    Text.translatable("chat.pipe.power.iron.mode", outputs[currentOutputIndex]), true);
                 sendNetworkUpdate(NET_RENDER_DATA);
             }
             return true;

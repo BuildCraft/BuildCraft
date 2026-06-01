@@ -8,7 +8,8 @@ package buildcraft.builders.block;
 
 import java.util.List;
 
-import net.minecraft.block.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,9 +30,9 @@ import buildcraft.builders.tile.TileFiller;
 public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing {
     // public static final Property<EnumFillerPattern> PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
-    public BlockFiller(Material material, String id) {
+    public BlockFiller(AbstractBlock.Settings material, String id) {
         super(material, id);
-        // setDefaultState(getDefaultState().withProperty(PATTERN, EnumFillerPattern.NONE));
+        // setDefaultState(getDefaultState().with(PATTERN, EnumFillerPattern.NONE));
     }
 
     // BlockState
@@ -42,12 +43,12 @@ public class BlockFiller extends BlockBCTile_Neptune implements IBlockWithFacing
         // properties.add(PATTERN);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFiller) {
             TileFiller filler = (TileFiller) tile;
-            // return state.withProperty(PATTERN, EnumFillerPattern.NONE); // FIXME
+            // return state.with(PATTERN, EnumFillerPattern.NONE); // FIXME
         }
         return state;
     }
