@@ -51,7 +51,7 @@ public class ZonePlannerMapChunk {
                 if (colour == null) {
                     buffer.writeInt(-1);
                 } else {
-                    buffer.writeInt(colour.posY);
+                    buffer.writeInt(colour.getY());
                     buffer.writeInt(colour.colour);
                 }
             }
@@ -73,7 +73,7 @@ public class ZonePlannerMapChunk {
         public final int colour;
 
         public MapColourData(int posY, int colour) {
-            this.posY = posY;
+            this.getY() = posY;
             this.colour = colour;
         }
     }

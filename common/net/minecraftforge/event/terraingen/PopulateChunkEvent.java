@@ -44,4 +44,8 @@ public class PopulateChunkEvent extends Event {
         public Object getGen() { return gen; }
         public boolean isHasVillageGenerated() { return hasVillageGenerated; }
     }
+
+    public static class Pre extends PopulateChunkEvent {
+        public Pre(World world, int chunkX, int chunkZ) { super(world, chunkX, chunkZ); }
+    }
 }

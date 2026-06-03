@@ -199,4 +199,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         }
         return texture;
     }
+
+    @Override
+    public void render(TileZonePlanner entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
 }

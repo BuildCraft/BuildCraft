@@ -63,9 +63,9 @@ public class MessageContainer implements IMessage {
         try {
             int id = message.windowId;
             PlayerEntity player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player != null && player.openContainer instanceof ContainerBC_Neptune
-                && player.openContainer.windowId == id) {
-                ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
+            if (player != null && player.currentScreenHandler instanceof ContainerBC_Neptune
+                && player.currentScreenHandler.syncId == id) {
+                ContainerBC_Neptune container = (ContainerBC_Neptune) player.currentScreenHandler;
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
                 // error checking

@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -151,10 +152,10 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         }
         NbtCompound nbt = NBTUtilBC.getItemData(stack);
         for (String key : STORAGE_TAGS) {
-            nbt.removeTag(key);
+            nbt.remove(key);
         }
-        if (nbt.hasNoTags()) {
-            stack.setTagCompound(null);
+        if (nbt.isEmpty()) {
+            stack.setNbt(null);
         }
         MapLocationType.CLEAN.setToStack(stack);
         return TypedActionResult.success(stack);
@@ -195,7 +196,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             NbtList pathNBT = new NbtList();
 
             for (BlockPos posInPath : path) {
-                pathNBT.appendTag(NBTUtilBC.writeBlockPos(posInPath));
+                pathNBT.add(NBTUtilBC.writeBlockPos(posInPath));
             }
 
             cpt.put("path", pathNBT);

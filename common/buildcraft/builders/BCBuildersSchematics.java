@@ -8,10 +8,10 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.BlockBanner;
-import net.minecraft.block.BlockVine;
+import net.minecraft.block.BannerBlock;
+import net.minecraft.block.VineBlock;
 import net.minecraft.util.DyeColor;
-import net.minecraft.item.ItemBanner;
+import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -33,8 +33,8 @@ public class BCBuildersSchematics {
         registerSchematicFactory("default", 100, SchematicBlockDefault::predicate, SchematicBlockDefault::new);
         registerSchematicFactory("fluid", 200, SchematicBlockFluid::predicate, SchematicBlockFluid::new);
 
-        registerSchematicFactory("banner", 300, c -> c.block instanceof BlockBanner, BCBuildersSchematics::getBanner);
-        registerSchematicFactory("vine", 300, c -> c.block instanceof BlockVine, BCBuildersSchematics::getVine);
+        registerSchematicFactory("banner", 300, c -> c.block instanceof BannerBlock, BCBuildersSchematics::getBanner);
+        registerSchematicFactory("vine", 300, c -> c.block instanceof VineBlock, BCBuildersSchematics::getVine);
 
         SchematicEntityFactoryRegistry.registerFactory("default", 100, SchematicEntityDefault::predicate,
             SchematicEntityDefault::new);
@@ -50,7 +50,7 @@ public class BCBuildersSchematics {
             @Nonnull
             @Override
             public List<ItemStack> computeRequiredItems() {
-                return Collections.singletonList(ItemBanner.makeBanner(
+                return Collections.singletonList(BannerItem.makeBanner(
                     DyeColor.byDyeDamage(tileNbt.getInt("Base")), tileNbt.getList("Patterns", 10)));
             }
         };
@@ -61,7 +61,7 @@ public class BCBuildersSchematics {
             @Override
             public boolean isReadyToBuild(World world, BlockPos blockPos) {
                 return super.isReadyToBuild(world, blockPos)
-                    && (world.getBlockState(blockPos.up()).getBlock() instanceof BlockVine
+                    && (world.getBlockState(blockPos.up()).getBlock() instanceof VineBlock
                         || StreamSupport.stream(Direction.Plane.HORIZONTAL.spliterator(), false).map(blockPos::offset)
                             .map(world::getBlockState)
                             .anyMatch(state -> state.isFullCube() && state.getMaterial().blocksMovement()));

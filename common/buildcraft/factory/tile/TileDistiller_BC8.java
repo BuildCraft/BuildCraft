@@ -55,9 +55,11 @@ public class TileDistiller_BC8 extends TileBC_Neptune implements IDebuggable {
 
     public static final long MAX_MJ_PER_TICK = 6 * MjAPI.MJ;
 
-    // STUB(R.Chen): Tank + FluidSmoother deferred — Transfer-API fluid migration (Phase 4E).
-    // public final Tank tankIn, tankGasOut, tankLiquidOut;
-    // public final FluidSmoother smoothedTankIn, smoothedTankGasOut, smoothedTankLiquidOut;
+    // STUB(R.Chen): Tank + FluidSmoother partially enabled — Transfer-API fluid migration (Phase 4E).
+    public final buildcraft.lib.fluid.Tank tankIn = new buildcraft.lib.fluid.Tank("tankIn", 4000, this);
+    public final buildcraft.lib.fluid.Tank tankGasOut = new buildcraft.lib.fluid.Tank("tankGasOut", 4000, this);
+    public final buildcraft.lib.fluid.Tank tankLiquidOut = new buildcraft.lib.fluid.Tank("tankLiquidOut", 4000, this);
+    // public final FluidSmoother smoothedTankIn, smoothedTankGasOut, smoothedTankLiquidOut; // deferred
 
     private final MjBattery mjBattery = new MjBattery(1024 * MjAPI.MJ);
 

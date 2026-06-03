@@ -81,7 +81,7 @@ public abstract class NetworkedObjectCache<T> {
     public ServerView server() {
         if (DEBUG_LOG) {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-            if (!server.isCallingFromMinecraftThread()) {
+            if (!server.isOnThread()) {
                 throw new IllegalStateException("");
             }
         }
@@ -92,7 +92,7 @@ public abstract class NetworkedObjectCache<T> {
      *         make sure that this really is the client thread. */
     public ClientView client() {
         if (DEBUG_LOG) {
-            if (!MinecraftClient.getInstance().isCallingFromMinecraftThread()) {
+            if (!MinecraftClient.getInstance().isOnThread()) {
                 throw new IllegalStateException("");
             }
         }
@@ -194,7 +194,7 @@ public abstract class NetworkedObjectCache<T> {
                 String toString;
                 if (copy instanceof FluidStackBC) {
                     FluidStackBC fluid = (FluidStackBC) copy;
-                    toString = fluid.getUnlocalizedName();
+                    toString = fluid.getFluid().getDefaultState().toString();
                 } else {
                     toString = copy.toString();
                 }
@@ -256,7 +256,7 @@ public abstract class NetworkedObjectCache<T> {
             String toString;
             if (read instanceof FluidStackBC) {
                 FluidStackBC fluid = (FluidStackBC) read;
-                toString = fluid.getUnlocalizedName();
+                toString = fluid.getFluid().getDefaultState().toString();
             } else {
                 toString = read.toString();
             }

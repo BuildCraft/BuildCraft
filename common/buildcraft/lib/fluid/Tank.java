@@ -39,6 +39,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
+import buildcraft.lib.compat.FluidRegistryBC;
 import buildcraft.lib.net.cache.BuildCraftObjectCaches;
 import buildcraft.lib.net.cache.NetworkedFluidStackCache;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -249,21 +250,21 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
     public String getDebugString() {
         FluidStackBC f = getFluidForRender();
         if (f == null) f = getFluid();
-        return (f == null ? 0 : f.amount) + " / " + capacity + " mB of " + (f != null ? f.getFluid().getName() : "n/a");
+        return (f == null ? 0 : f.amount) + " / " + capacity + " mB of " + (f != null ? FluidRegistryBC.getFluidName(f.getFluid()) : "n/a");
     }
 
     public void onGuiClicked(ContainerBC_Neptune container) {
         PlayerEntity player = container.player;
-        ItemStack held = player.getInventory().getItemStack();
+        ItemStack held = container.getCursorStack(); // STUB(R.Chen): PlayerInventory.getCursorStack() removed in 1.20.1
         if (held.isEmpty()) {
             return;
         }
         ItemStack stack = transferStackToTank(container, held);
-        player.getInventory().setItemStack(stack);
-        ((ServerPlayerEntity) player).updateHeldItem();
-        player.inventoryContainer.detectAndSendChanges();
-        if (player.openContainer != null) {
-            player.openContainer.detectAndSendChanges();
+        container.setCursorStack(stack); // STUB(R.Chen): PlayerInventory.setCursorStack() removed in 1.20.1
+        // STUB: updateHeldItem removed in 1.20
+        // STUB(R.Chen): inventoryContainer.sendContentUpdates removed in 1.20
+        if (player.currentScreenHandler != null) {
+            player.currentScreenHandler.sendContentUpdates();
         }
     }
 
@@ -283,7 +284,7 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         copy.setCount(1);
         int space = capacity - getFluidAmount();
 
-        boolean isCreative = player.capabilities.isCreativeMode;
+        boolean isCreative = player.isCreative();
         boolean isSurvival = !isCreative;
 
         FluidGetResult result = map(copy, space);
@@ -298,16 +299,16 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
                     throw new IllegalStateException(
                         "We seem to be buggy! (accepted = " + accepted + ", reallyAccepted = " + reallyAccepted + ")");
                 }
-                stack.shrink(1);
+                stack.decrement(1);
                 FluidStackBC fl = getFluid();
                 if (fl != null) {
-                    SoundUtil.playBucketEmpty(player.getWorld(), player.getPosition(), fl);
+                    SoundUtil.playBucketEmpty(player.getWorld(), player.getPos(), fl);
                 }
                 if (isSurvival) {
                     if (stack.isEmpty()) {
                         return result.itemStack;
                     } else if (!result.itemStack.isEmpty()) {
-                        InventoryUtil.addToPlayer(player, result.itemStack);
+                        player.giveItemStack(result.itemStack); // STUB(R.Chen): InventoryUtil.addToPlayer removed
                         return stack;
                     }
                 }
@@ -317,25 +318,25 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
         // Now try to drain the fluid into the item
         IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(copy);
         if (fluidHandler == null) return stack;
-        FluidStackBC drained = drainInternal(capacity, false);
+        FluidStackBC drained = drain(capacity, false);
         if (drained == null || drained.amount <= 0) return stack;
         int filled = fluidHandler.fill(drained, true);
         if (filled > 0) {
-            FluidStackBC reallyDrained = drainInternal(filled, true);
+            FluidStackBC reallyDrained = drain(filled, true);
             if ((reallyDrained == null || reallyDrained.amount != filled)) {
                 throw new IllegalStateException("Somehow drained differently than expected! ( drained = "//
                     + drained + ", filled = " + filled + ", reallyDrained = " + reallyDrained + " )");
             }
-            SoundUtil.playBucketFill(player.getWorld(), player.getPosition(), reallyDrained);
+            SoundUtil.playBucketFill(player.getWorld(), player.getPos(), reallyDrained);
             if (isSurvival) {
                 if (original.getCount() == 1) {
                     return fluidHandler.getContainer();
                 } else {
                     ItemStack stackContainer = fluidHandler.getContainer();
                     if (!stackContainer.isEmpty()) {
-                        InventoryUtil.addToPlayer(player, stackContainer);
+                        player.giveItemStack(stackContainer); // STUB(R.Chen): InventoryUtil.addToPlayer removed
                     }
-                    original.shrink(1);
+                    original.decrement(1);
                     return original;
                 }
             }
@@ -366,4 +367,23 @@ public class Tank extends FluidTank implements IFluidHandlerAdv {
             this.fluidStack = fluidStack;
         }
     }
+
+    // STUB(R.Chen): Storage<FluidVariant>.iterator() — required by IFluidHandlerAdv extends Storage.
+    @Override
+    public java.util.Iterator<net.fabricmc.fabric.api.transfer.v1.storage.StorageView<net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant>> iterator() {
+        return java.util.Collections.emptyIterator();
+    }
+
+    // STUB(R.Chen): Storage<FluidVariant>.extract() — required by IFluidHandlerAdv extends Storage.
+    @Override
+    public long extract(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant resource, long maxAmount, net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext transaction) {
+        return 0;
+    }
+
+    // STUB(R.Chen): Storage<FluidVariant>.insert() — required by IFluidHandlerAdv extends Storage.
+    @Override
+    public long insert(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant resource, long maxAmount, net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext transaction) {
+        return 0;
+    }
+
 }

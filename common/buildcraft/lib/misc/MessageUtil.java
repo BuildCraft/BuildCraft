@@ -80,6 +80,15 @@ public class MessageUtil {
         return (idx >= 0 && idx < constants.length) ? constants[idx] : null;
     }
 
+    // ---- BlockPos helpers (compat with 1.12.2 API) ----
+    public static void writeBlockPos(PacketByteBuf buf, BlockPos pos) {
+        buf.writeBlockPos(pos);
+    }
+
+    public static BlockPos readBlockPos(PacketByteBuf buf) {
+        return buf.readBlockPos();
+    }
+
     /** Checks that the given buffer has been fully read; logs (or throws) if bytes remain. */
     public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
         int readableBytes = buf.readableBytes();

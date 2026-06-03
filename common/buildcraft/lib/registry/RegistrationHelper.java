@@ -165,7 +165,7 @@ public final class RegistrationHelper {
             addForcedItem(itemBlockConstructor.apply(added));
         } else {
             // FIXME: This won't work if the item has a different reg name to the block!
-            RegistryConfig.setDisabled("items", block.getRegistryName().getPath());
+            RegistryConfig.setDisabled("items", net.minecraft.registry.Registries.BLOCK.getId(block).getPath());
         }
         return added;
     }

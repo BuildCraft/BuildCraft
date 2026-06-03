@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
@@ -27,7 +28,7 @@ public class GuideSmeltingFactory implements GuidePartFactory {
     public GuideSmeltingFactory(ItemStack input, ItemStack output) {
         this.input = StackUtil.asNonNull(input);
         this.output = StackUtil.asNonNull(output);
-        this.hash = Arrays.hashCode(new int[] { input.createNbt().hashCode(), output.createNbt().hashCode() });
+        this.hash = Arrays.hashCode(new int[] { input.writeNbt(new NbtCompound()).hashCode(), output.writeNbt(new NbtCompound()).hashCode() });
     }
 
     public static GuideSmeltingFactory create(ItemStack stack) {
@@ -62,7 +63,7 @@ public class GuideSmeltingFactory implements GuidePartFactory {
         // Shortcut out of this full itemstack comparison as its really expensive
         if (hash != other.hash) return false;
 
-        return ItemStack.areItemStacksEqual(input, other.input)//
-            && ItemStack.areItemStacksEqual(output, other.output);
+        return ItemStack.areEqual(input, other.input)//
+            && ItemStack.areEqual(output, other.output);
     }
 }

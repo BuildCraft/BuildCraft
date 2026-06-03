@@ -19,6 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import buildcraft.lib.compat.FluidStackBC;
+
 public final class StringUtilBC {
 
     public static final Splitter newLineSplitter = Splitter.on("\\n");
@@ -91,5 +93,11 @@ public final class StringUtilBC {
 
     public static <T> Comparator<T> compareByString(Function<T, String> keyExtractor) {
         return Comparator.comparing(keyExtractor, String::compareToIgnoreCase);
+    }
+
+    // STUB(R.Chen): fluid-to-string helper deferred until Transfer API migration.
+    public static String fluidToString(FluidStackBC fluid) {
+        if (fluid == null) return "null";
+        return fluid.getFluid().toString() + " x " + fluid.amount + " mB";
     }
 }

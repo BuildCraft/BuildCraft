@@ -251,8 +251,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, IDebu
                 eventBus.registerHandler(FilterEventHandler.class);
             }
             // STUB(R.Chen): item metadata→pipe colour was lost in the 1.13 flattening. Coloured pipe items
-            // now carry their colour via the item/NBT instead of stack.getId(); restore in Phase 4F.
-            //   int meta = stack.getId();
+            // now carry their colour via the item/NBT instead of stack.getDamage(); restore in Phase 4F.
+            //   int meta = stack.getDamage();
             //   if (meta > 0 && meta <= 16) { pipe.setColour(DyeColor.byId(meta - 1)); }
             eventBus.fireEvent(new PipeEventPlaced(this, placer, stack));
         }

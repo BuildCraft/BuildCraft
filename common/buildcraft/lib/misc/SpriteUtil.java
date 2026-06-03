@@ -18,7 +18,7 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.block.entity.BlockEntitySkull;
+// STUB: BlockEntitySkull renamed to SkullBlockEntity in 1.20
 import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.render.ISprite;
@@ -115,6 +115,6 @@ public class SpriteUtil {
     }
 
     public static Sprite missingSprite() {
-        return MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite();
+        return buildcraft.lib.compat.McTextureCompat.getMissingSprite();
     }
 }

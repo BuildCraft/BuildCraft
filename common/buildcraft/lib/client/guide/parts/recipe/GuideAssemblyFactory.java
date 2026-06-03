@@ -50,7 +50,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // return val;
     // } else {
     // BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown " + recipe.getClass() + " for
-    // " + stack.getDisplayName());
+    // " + stack.getName().getString());
     // }
     // }
     // }
@@ -160,7 +160,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // ItemStack best = stacks.get(0);
     // for (ItemStack stack : stacks) {
     // // The lower the ID of an item, the closer it is to minecraft. Hmmm.
-    // if (Item.getIdFromItem(stack.getItem()) < Item.getIdFromItem(best.getItem())) {
+    // if (Item.getRawId(stack.getItem()) < Item.getRawId(best.getItem())) {
     // best = stack;
     // }
     // }

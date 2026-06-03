@@ -32,12 +32,12 @@ public class GuideImageFactory implements GuidePartFactory {
     }
 
     public GuideImageFactory(String location, int width, int height) {
-        TextureMap textureMap = MinecraftClient.getInstance().getTextureMapBlocks();
+        net.minecraft.client.renderer.texture.TextureMap textureMap = new net.minecraft.client.renderer.texture.TextureMap(buildcraft.lib.compat.McTextureCompat.getBlockAtlas());
         Sprite stitched = textureMap.getAtlasSprite(location);
         if (stitched != textureMap.getMissingSprite()) {
             this.sprite = new SpriteAtlas(stitched);
-            this.srcWidth = stitched.getIconWidth();
-            this.srcHeight = stitched.getIconHeight();
+            this.srcWidth = stitched.getContents().getWidth();
+            this.srcHeight = stitched.getContents().getHeight();
         } else {
             ISprite s;
             int sw, sh;
@@ -51,8 +51,8 @@ public class GuideImageFactory implements GuidePartFactory {
                 BCLog.logger.warn("[lib.guide.loader.image] Couldn't load image '" + resLoc + "' because " + io.getMessage());
                 stitched = textureMap.getMissingSprite();
                 s = new SpriteAtlas(stitched);
-                sw = stitched.getIconWidth();
-                sh = stitched.getIconHeight();
+                sw = stitched.getContents().getWidth();
+                sh = stitched.getContents().getHeight();
             }
             this.sprite = s;
             this.srcWidth = sw;

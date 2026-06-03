@@ -28,7 +28,7 @@ public class ItemGuideNote extends ItemBC_Neptune {
 
     // @Override -- removed: method does not exist in Fabric 1.20.1
     public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        player.openGui(BCLib.INSTANCE, 1, world, 0, 0, 0);
+        // STUB(R.Chen): Forge player.openGui → Fabric ScreenHandler, deferred — Phase 10
         return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }
 }

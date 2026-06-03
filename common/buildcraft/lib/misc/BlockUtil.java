@@ -15,9 +15,11 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 // STUB(R.Chen): the full Forge BlockUtil (block breaking, BreakEvent firing, fluid drain/fill via the
@@ -51,7 +53,7 @@ public class BlockUtil {
             .thenComparingInt(BlockPos::getZ);
     }
 
-    // STUB(R.Chen): Forge fluid API (BlockLiquid / IFluidBlock / FluidRegistry.lookupFluidForBlock) has no
+    // STUB(R.Chen): Forge fluid API (FluidBlock / IFluidBlock / FluidRegistry.lookupFluidForBlock) has no
     // direct Yarn equivalent; the viscosity-aware fluid probing the quarry/pump use is deferred to the
     // Transfer-API fluid migration pass. Returns null (treat as "no fluid") until then.
     public static Fluid getFluidWithFlowing(World world, BlockPos pos) {
@@ -73,5 +75,37 @@ public class BlockUtil {
         }
         world.breakBlock(pos, false);
         return Optional.of(java.util.Collections.emptyList());
+    }
+
+    // STUB(R.Chen): missing getFluidWithoutFlowing / getFluid helpers.
+    public static Fluid getFluidWithoutFlowing(BlockState state) {
+        FluidState fs = state.getFluidState();
+        return fs.isEmpty() ? net.minecraft.fluid.Fluids.EMPTY : fs.getFluid().getStill();
+    }
+    public static Fluid getFluid(World world, BlockPos pos) {
+        return getFluidWithFlowing(world, pos);
+    }
+
+    /** BlockUtil.getBlockEntity with explicit force flag (no-op, delegates to World). */
+    public static BlockEntity getBlockEntity(World world, BlockPos pos, boolean force) {
+        return getTileEntity(world, pos, force);
+    }
+
+    /** STUB(R.Chen): getFluidWithFlowing(Block) — checks if block is a fluid block. */
+    public static Fluid getFluidWithFlowing(net.minecraft.block.Block block) {
+        if (block instanceof net.minecraft.block.FluidBlock) {
+            return ((net.minecraft.block.FluidBlock) block).getFluidState(block.getDefaultState()).getFluid();
+        }
+        return null;
+    }
+
+    // STUB(R.Chen): direction arrays from Forge BlockUtil — static convenience fields.
+    public static final Direction[] HORIZONTALS = Direction.Type.HORIZONTAL.stream().toArray(Direction[]::new);
+    public static final int BUCKET_VOLUME = 1000;
+
+    // STUB(R.Chen): Forge useItemOnBlock → Fabric ItemUsageContext migration deferred. Returns false.
+    public static boolean useItemOnBlock(World world, net.minecraft.entity.player.PlayerEntity player,
+            ItemStack stack, BlockPos pos, Direction side) {
+        return false;
     }
 }

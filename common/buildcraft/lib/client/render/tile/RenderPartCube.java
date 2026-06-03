@@ -36,7 +36,7 @@ public class RenderPartCube {
     }
 
     public void setWhiteTex() {
-        Sprite sprite = ModelLoader.White.INSTANCE;
+        Sprite sprite = buildcraft.lib.compat.McTextureCompat.getMissingSprite();
         // Reset the vertex so that edits don't spill out to other tiles.
         center.texf(sprite.getInterpolatedU(8), sprite.getInterpolatedV(8));
     }

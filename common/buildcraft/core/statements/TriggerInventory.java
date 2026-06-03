@@ -63,7 +63,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
             searchedStack = parameters[0].getItemStack();
         }
 
-        IItemHandler handler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+        IItemHandler handler = CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, side.getOpposite());
 
         if (handler != null) {
             boolean hasSlots = false;
@@ -77,7 +77,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 // TODO: Replace some of this with
                 foundItems |= !stack.isEmpty() && (searchedStack.isEmpty() || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack.isEmpty() || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxStackSize()))//
+                foundSpace |= (stack.isEmpty() || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxCount()))//
                     && (searchedStack.isEmpty() || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true).isEmpty());
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a

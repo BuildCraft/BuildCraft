@@ -39,9 +39,9 @@ public class ContainerDistiller extends ContainerBCTile<TileDistiller_BC8> {
             ItemStack stack = slot.getStack();
             ItemStack original = stack.copy();
             stack = tile.tankIn.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
+            if (!ItemStack.areEqual(stack, original)) {
+                slot.setStack(stack);
+                sendContentUpdates();
                 return ItemStack.EMPTY;
             }
         }

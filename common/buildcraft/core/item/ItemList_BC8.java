@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

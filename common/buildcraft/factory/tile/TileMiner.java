@@ -43,7 +43,7 @@ import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 //   NbtCompound            → NbtCompound (Yarn rename)
 //   NBTUtil.createPosTag      → NbtHelper.fromBlockPos
 //   NBTUtil.getPosFromTag     → NbtHelper.toBlockPos
-//   world.getTotalWorldTime() → world.getTime()
+//   world.getTime() → world.getTime()
 //   world.isClient            → world.isClient
 //   world.rand                → world.random
 //   world.setBlockToAir       → world.removeBlock(pos, false)

@@ -24,7 +24,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer<T> {
 
     public AddonDefaultRenderer() {
-        // STUB(R.Chen): ModelLoader.White.INSTANCE dropped; Fabric uses solid-white sprite differently.
+        // STUB(R.Chen): buildcraft.lib.compat.McTextureCompat.getMissingSprite() dropped; Fabric uses solid-white sprite differently.
     }
 
     public AddonDefaultRenderer(Object sprite) {

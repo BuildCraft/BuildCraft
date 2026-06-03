@@ -77,7 +77,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
 
         NbtList positionList = new NbtList();
         for (BlockPos p : markerPositions) {
-            positionList.appendTag(NBTUtilBC.writeBlockPos(p));
+            positionList.add(NBTUtilBC.writeBlockPos(p));
         }
         nbt.put("positions", positionList);
 
@@ -85,9 +85,9 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
         for (List<BlockPos> connection : markerConnections) {
             NbtList inner = new NbtList();
             for (BlockPos p : connection) {
-                inner.appendTag(NBTUtilBC.writeBlockPos(p));
+                inner.add(NBTUtilBC.writeBlockPos(p));
             }
-            connectionList.appendTag(inner);
+            connectionList.add(inner);
         }
         nbt.put("connections", connectionList);
 

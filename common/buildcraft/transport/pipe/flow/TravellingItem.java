@@ -65,7 +65,7 @@ public class TravellingItem {
 
     public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
         this.clientItemLink = StackUtil.asNonNull(clientStackLink);
-        this.stackSize = count;
+        this.getCount() = count;
         this.stack = StackUtil.EMPTY;
     }
 
@@ -190,7 +190,7 @@ public class TravellingItem {
             vecTo = vecSide;
         }
 
-        return VecUtil.scale(vecFrom, 1 - interp).add(VecUtil.scale(vecTo, interp));
+        return VecUtil.multiply(vecFrom, 1 - interp).add(VecUtil.multiply(vecTo, interp));
     }
 
     public Direction getRenderDirection(long tick, float partialTicks) {

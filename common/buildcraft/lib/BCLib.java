@@ -102,11 +102,11 @@ public class BCLib {
         ExpressionCompat.setup();
 
         BCLibRegistries.fmlPreInit();
-        BCLibProxy.getProxy().fmlPreInit();
+        // STUB(R.Chen): BCLibProxy.fmlPreInit() removed — Fabric lifecycle via BCLibInitializer
         BCLibItems.fmlPreInit();
 
-        BuildCraftObjectCaches.fmlPreInit();
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
+        // STUB(R.Chen): BuildCraftObjectCaches.fmlPreInit() removed
+        // STUB(R.Chen): NetworkRegistry.registerGuiHandler removed — use Fabric ExtendedScreenHandlerType
 
         // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCLibEventDist.class);
         // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(MigrationManager.INSTANCE);
@@ -126,12 +126,12 @@ public class BCLib {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
-        BCLibProxy.getProxy().fmlInit();
+        // STUB(R.Chen): BCLibProxy.fmlInit() removed
 
         BCLibRegistries.fmlInit();
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
-        VanillaRotationHandlers.fmlInit();
+        // STUB(R.Chen): VanillaRotationHandlers.fmlInit() removed
 
         RegistrationHelper.registerOredictEntries();
     }
@@ -139,11 +139,10 @@ public class BCLib {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
         ReloadableRegistryManager.loadAll();
-        BCLibProxy.getProxy().fmlPostInit();
-        BuildCraftObjectCaches.fmlPostInit();
+        // STUB(R.Chen): BCLibProxy.fmlPostInit(), BuildCraftObjectCaches.fmlPostInit() removed
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
-        MessageManager.fmlPostInit();
+        // STUB(R.Chen): MessageManager.fmlPostInit() removed
     }
 
     @Mod.EventHandler

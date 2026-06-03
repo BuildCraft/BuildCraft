@@ -1,51 +1,22 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+// STUB(R.Chen): GuiFillerPlanner rendering deferred
 package buildcraft.builders.gui;
 
-import net.minecraft.util.Identifier;
-import java.util.Map;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.button.IButtonBehaviour;
-import buildcraft.lib.gui.button.IButtonClickEventListener;
-import buildcraft.lib.gui.json.BuildCraftJsonGui;
-import buildcraft.lib.gui.json.SpriteDelegate;
-import buildcraft.lib.misc.collect.TypedKeyMap;
 
 import buildcraft.builders.container.ContainerFillerPlanner;
-import buildcraft.builders.filler.FillerStatementContext;
 
+@Environment(EnvType.CLIENT)
 public class GuiFillerPlanner extends GuiBC8<ContainerFillerPlanner> {
-    private static final Identifier LOCATION = new Identifier("buildcraftbuilders:gui/filler_planner.json");
-    private static final SpriteDelegate SPRITE_PATTERN = new SpriteDelegate();
 
     public GuiFillerPlanner(ContainerFillerPlanner container) {
-        super(container, LOCATION);
-
-        BuildCraftJsonGui jsonGui = (BuildCraftJsonGui) mainGui;
-        preLoad(jsonGui);
-        jsonGui.load();
-        xSize = jsonGui.getSizeX();
-        ySize = jsonGui.getSizeY();
-    }
-
-    protected void preLoad(BuildCraftJsonGui json) {
-        TypedKeyMap<String, Object> properties = json.properties;
-        FunctionContext context = json.context;
-
-        properties.put("filler.possible", FillerStatementContext.CONTEXT_ALL);
-        properties.put("filler.pattern", container.getPatternStatementClient());
-        properties.put("filler.pattern.sprite", SPRITE_PATTERN);
-
-        context.put_b("filler.invert", () -> container.addon.inverted);
-        properties.put("filler.invert", IButtonBehaviour.TOGGLE);
-        properties.put("filler.invert", container.addon.inverted);
-        properties.put("filler.invert",
-            (IButtonClickEventListener) (b, k) -> container.sendInverted(b.isButtonActive()));
-    }
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public void updateScreen() {
-        super.updateScreen();
-        SPRITE_PATTERN.delegate = container.getPatternStatementClient().get().getSprite();
+        super(container);
     }
 }

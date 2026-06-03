@@ -205,4 +205,26 @@ public class StackUtil {
         }
         return stacks;
     }
+
+    /** Returns true if either stack matches the other (same item, same NBT). */
+    public static boolean doesEitherStackMatch(ItemStack a, ItemStack b) {
+        if (a.isEmpty() && b.isEmpty()) return true;
+        if (a.isEmpty() || b.isEmpty()) return false;
+        return ItemStack.areEqual(a, b) || ItemStack.areItemsEqual(a, b);
+    }
+
+    // STUB(R.Chen): Forge ore-dictionary / IList matching — simplified to exact item match until ported.
+    public static boolean isMatchingItem(ItemStack filter, ItemStack test, boolean matchDamage, boolean matchNbt) {
+        if (filter.isEmpty() || test.isEmpty()) return false;
+        if (filter.getItem() != test.getItem()) return false;
+        if (matchNbt && !ItemStack.areNbtEqual(filter, test)) return false;
+        return true;
+    }
+    public static boolean isMatchingItemOrList(ItemStack filter, ItemStack test) {
+        return isMatchingItem(filter, test, false, false);
+    }
+    public static boolean canStacksOrListsMerge(ItemStack a, ItemStack b) { return canMerge(a, b); }
+
+    /** Sentinel constant for search-mode item matching. */
+    public static final ItemStack SEARCH = ItemStack.EMPTY;
 }

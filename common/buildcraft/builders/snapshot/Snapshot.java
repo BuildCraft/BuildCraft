@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
@@ -155,7 +155,7 @@ public abstract class Snapshot {
     public void computeKey() {
         NbtCompound nbt = writeToNBT(this);
         if (nbt.contains("key", NbtElement.COMPOUND_TYPE)) {
-            nbt.removeTag("key");
+            nbt.remove("key");
         }
         key = new Key(key, HashUtil.computeHash(nbt));
     }
@@ -204,6 +204,7 @@ public abstract class Snapshot {
             header = buffer.readBoolean() ? new Header(buffer) : null;
         }
 
+        public NbtCompound createNbt() { return serializeNBT(); }
         public NbtCompound serializeNBT() {
             NbtCompound nbt = new NbtCompound();
             nbt.putByteArray("hash", hash);
@@ -271,6 +272,7 @@ public abstract class Snapshot {
             name = buffer.readString();
         }
 
+        public NbtCompound createNbt() { return serializeNBT(); }
         public NbtCompound serializeNBT() {
             NbtCompound nbt = new NbtCompound();
             nbt.put("key", key.createNbt());

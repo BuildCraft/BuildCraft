@@ -87,7 +87,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
         String nbtString = args[3];
         try {
-            stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
+            stack.setNbt(JsonToNBT.getTagFromJson(nbtString));
         } catch (NBTException e) {
             return new OptionallyDisabled<>(nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }

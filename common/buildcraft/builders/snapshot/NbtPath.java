@@ -92,7 +92,7 @@ public class NbtPath {
                 return NBTUtilBC.NBT_NULL;
             }
             if (key >= 0 && key < tag.getByteArray().length) {
-                return new NbtByte(tag.getByteArray()[key]);
+                return NbtByte.of(tag.getByteArray()[key]);
             } else {
                 return NBTUtilBC.NBT_NULL;
             }
@@ -165,7 +165,7 @@ public class NbtPath {
     }
 
     public NbtElement get(NbtElement tag) {
-        switch (tag.getId()) {
+        switch (tag.getType()) {
             case NbtElement.BYTE_TYPE:
                 return get((NbtByte) tag);
             case NbtElement.SHORT_TYPE:
@@ -178,7 +178,7 @@ public class NbtPath {
                 return get((NbtFloat) tag);
             case NbtElement.DOUBLE_TYPE:
                 return get((NbtDouble) tag);
-            case NbtElement.BYTE_TYPE_ARRAY:
+            case NbtElement.BYTE_ARRAY_TYPE:
                 return get((NbtByteArray) tag);
             case NbtElement.STRING_TYPE:
                 return get((NbtString) tag);
@@ -186,7 +186,7 @@ public class NbtPath {
                 return get((NbtList) tag);
             case NbtElement.COMPOUND_TYPE:
                 return get((NbtCompound) tag);
-            case NbtElement.INT_TYPE_ARRAY:
+            case NbtElement.INT_ARRAY_TYPE:
                 return get((NbtIntArray) tag);
             default:
                 return NBTUtilBC.NBT_NULL;

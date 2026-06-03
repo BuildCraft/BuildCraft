@@ -143,7 +143,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         DefaultedList<ItemStack> wildcard = DefaultedList.of();
 
         for (ItemStack is : stacks) {
-            if (is != null && is.getDamage() == OreDictionaryStub.WILDCARD_VALUE && is.getHasSubtypes()) {
+            if (is != null && is.getDamage() == OreDictionaryStub.WILDCARD_VALUE && is.getItem().isDamageable()) {
                 wildcard.add(is);
             }
         }

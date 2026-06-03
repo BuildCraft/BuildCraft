@@ -13,4 +13,8 @@ public class ForgeRegistries {
         public void register(net.minecraft.item.Item value) {}
         public void registerAll(net.minecraft.item.Item... values) {}
     };
+
+    // STUB: Recipe registry — no direct equivalent in Fabric 1.20.1; returns empty list
+    @SuppressWarnings("unchecked")
+    public static final Iterable<net.minecraft.recipe.CraftingRecipe> RECIPES = java.util.Collections.emptyList();
 }

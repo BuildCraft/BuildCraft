@@ -38,7 +38,7 @@ public class ItemStackRef {
                     item
                         .get(nbt)
                         .orElseThrow(NullPointerException::new)
-                        .getString()
+                        .asString()
                 )
             ), Optional.ofNullable(amount)
                 .flatMap(ref -> ref.get(nbt))

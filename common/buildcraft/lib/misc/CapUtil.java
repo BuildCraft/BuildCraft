@@ -92,4 +92,20 @@ public class CapUtil {
         }
         return provider.getCapability(capability, facing);
     }
+
+    /** STUB(R.Chen): Forge BlockEntity.getCapability is gone in Fabric. Delegates if the tile still
+     * implements the compat ICapabilityProvider, otherwise returns null. Real Transfer-API lookup
+     * is deferred — Phase 10. */
+    @Nullable
+    public static <T> T getCapability(net.minecraft.block.entity.BlockEntity tile, Capability<T> capability, Direction facing) {
+        if (tile instanceof ICapabilityProvider) {
+            return getCapability((ICapabilityProvider) tile, capability, facing);
+        }
+        return null;
+    }
+
+    /** STUB(R.Chen): Forge BlockEntity.hasCapability compat — Phase 10. */
+    public static boolean hasCapability(net.minecraft.block.entity.BlockEntity tile, Capability<?> capability, Direction facing) {
+        return false;
+    }
 }

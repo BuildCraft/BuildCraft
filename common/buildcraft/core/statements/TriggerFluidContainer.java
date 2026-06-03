@@ -60,7 +60,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
+        IFluidHandler handler = CapUtil.getCapability(tile, CapUtil.CAP_FLUIDS, side.getOpposite());
 
         if (handler != null) {
             FluidStackBC searchedFluid = null;

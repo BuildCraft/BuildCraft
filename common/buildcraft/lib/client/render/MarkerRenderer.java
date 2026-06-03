@@ -24,4 +24,7 @@ public enum MarkerRenderer implements IDetachedRenderer {
             }
         }
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

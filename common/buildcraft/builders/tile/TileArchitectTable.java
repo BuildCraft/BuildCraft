@@ -270,7 +270,7 @@ public class TileArchitectTable extends TileBC_Neptune implements ITickable, IDe
             return;
         }
 
-        Direction facing = thisState.getValue(BlockArchitectTable.PROP_FACING);
+        Direction facing = thisState.get(BlockArchitectTable.PROP_FACING);
         Snapshot snapshot = Snapshot.create(snapshotType);
         snapshot.size = box.size();
         snapshot.facing = facing;

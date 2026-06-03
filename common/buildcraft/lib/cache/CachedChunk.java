@@ -43,13 +43,13 @@ public class CachedChunk implements IChunkCache {
             // STUB(R.Chen): Forge Chunk.isLoaded() removed; validity is now keyed on the cached chunk's
             // world still matching the tile's world (Yarn WorldChunk has no isLoaded predicate).
             WorldChunk c = cachedChunk.get();
-            if (c != null && c.getWorld() == world) {
+            if (c != null && c.world == world) {
                 return c;
             }
             cachedChunk = null;
         }
         WorldChunk chunk = ChunkUtil.getChunk(world, pos, true);
-        if (chunk != null && chunk.getWorld() == world) {
+        if (chunk != null && chunk.world == world) {
             cachedChunk = new WeakReference<>(chunk);
             return chunk;
         }

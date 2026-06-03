@@ -15,14 +15,14 @@ import java.util.stream.StreamSupport;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemBlockSpecial;
+import net.minecraft.item.BlockItem;
 
 public class ItemBlocks {
     private static final List<Item> LIST = new ArrayList<>();
 
     static {
-        StreamSupport.stream(Item.REGISTRY.spliterator(), false)
-            .filter(item -> item instanceof BlockItem || item instanceof ItemBlockSpecial)
+        StreamSupport.stream(net.minecraft.registry.Registries.ITEM.spliterator(), false)
+            .filter(item -> item instanceof BlockItem || item instanceof BlockItem)
             .forEach(ItemBlocks::add);
         add(
             Items.BED,

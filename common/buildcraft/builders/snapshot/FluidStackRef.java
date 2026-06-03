@@ -33,7 +33,7 @@ public class FluidStackRef {
                     fluid
                         .get(nbt)
                         .orElseThrow(NullPointerException::new)
-                        .getString()
+                        .asString()
                 )
             ),
             Optional.ofNullable(amount)

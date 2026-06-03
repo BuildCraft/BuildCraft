@@ -28,4 +28,16 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
 
     // STUB(R.Chen): getSubItems / addSubItems dropped — Fabric creative tab population
     // is handled via ItemGroupEvents.modifyEntriesEvent in the module's ModInitializer (Phase 5).
+
+    // ---- 1.12.2 compat no-ops ----
+    /** 1.12.2 compat: max stack size is set via Item.Settings in 1.20.1. */
+    protected void setMaxStackSize(int maxStackSize) { /* no-op: use Item.Settings.maxCount() */ }
+    /** 1.12.2 compat: sub-items replaced by ItemGroupEvents. */
+    protected void setHasSubtypes(boolean has) { /* no-op */ }
+    /** 1.12.2 compat: max damage set via Item.Settings in 1.20.1. */
+    protected void setMaxDamage(int maxDamage) { /* no-op: use Item.Settings.maxDamage() */ }
+    /** 1.12.2 compat: alias for getRegistryName(). Returns registry ID. */
+    public net.minecraft.util.Identifier getRegistryName() {
+        return net.minecraft.registry.Registries.ITEM.getId(this);
+    }
 }

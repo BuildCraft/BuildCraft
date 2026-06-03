@@ -67,7 +67,7 @@ public class ModelHeatExchange extends ModelItemSimple {
         VAR_DIRECTION.value = Direction.NORTH;
 
         if (BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads().length == 0) {
-            particle = MinecraftClient.getInstance().getTextureMapBlocks().getMissingSprite();
+            particle = buildcraft.lib.compat.McTextureCompat.getMissingSprite();
         } else {
             particle = BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads()[0].toBakedItem().getSprite();
         }
@@ -109,7 +109,7 @@ public class ModelHeatExchange extends ModelItemSimple {
         return (state.get(BlockHeatExchange.PROP_CONNECTED_LEFT) ? 1 : 0)//
             | (state.get(BlockHeatExchange.PROP_CONNECTED_RIGHT) ? 2 : 0)//
             | (state.get(BlockHeatExchange.PROP_CONNECTED_Y) ? 4 : 0)//
-            | (state.get(BlockBCBase_Neptune.PROP_FACING).getHorizontalIndex() * 8)//
+            | (state.get(BlockBCBase_Neptune.PROP_FACING).getHorizontal() * 8)//
             | (state.get(BlockHeatExchange.PROP_PART).ordinal() * 8 * 4)//
         ;
     }

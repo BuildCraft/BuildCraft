@@ -8,6 +8,8 @@
 
 package buildcraft.lib.net.cache;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -19,40 +21,28 @@ import net.minecraft.item.ItemStack;
 import buildcraft.lib.misc.StackUtil;
 
 // STUB(R.Chen): full implementation in Phase 4E.
-// The networked-object-cache layer (NetworkedObjectCache / NetworkedItemStackCache /
-// NetworkedFluidStackCache) and the Forge FML lifecycle hooks (Loader / LoaderState / FMLPreInit…)
-// are not yet migrated. Only the ItemStack and FluidVariant store/retrieve entry points referenced
-// by PipeFlowItems / PipeFlowFluids are exposed; they currently round-trip the value locally rather
-// than over the cache.
 public class BuildCraftObjectCaches {
 
-    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
-    public static int storeItemStack(@Nonnull ItemStack stack) {
-        return 0;
-    }
+    /** Real NetworkedFluidStackCache — provides typed server()/client() API Tank.java expects. */
+    public static final NetworkedFluidStackCache CACHE_FLUIDS = new NetworkedFluidStackCache();
+    /** STUB(R.Chen): all caches list — stub for FML lifecycle calls. */
+    public static final List<Object> CACHES = new ArrayList<>();
 
     /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
-    public static int getItemStackId(@Nonnull ItemStack stack) {
-        return 0;
-    }
+    public static int storeItemStack(@Nonnull ItemStack stack) { return 0; }
+
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int getItemStackId(@Nonnull ItemStack stack) { return 0; }
 
     /** STUB(R.Chen): returns an empty supplier until the client cache is migrated. */
-    public static Supplier<ItemStack> retrieveItemStack(int id) {
-        return () -> StackUtil.EMPTY;
-    }
+    public static Supplier<ItemStack> retrieveItemStack(int id) { return () -> StackUtil.EMPTY; }
 
     /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
-    public static int storeFluid(@Nonnull FluidVariant fluid) {
-        return 0;
-    }
+    public static int storeFluid(@Nonnull FluidVariant fluid) { return 0; }
 
     /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
-    public static int getFluidId(@Nonnull FluidVariant fluid) {
-        return 0;
-    }
+    public static int getFluidId(@Nonnull FluidVariant fluid) { return 0; }
 
     /** STUB(R.Chen): returns a blank supplier until the client cache is migrated. */
-    public static Supplier<FluidVariant> retrieveFluid(int id) {
-        return FluidVariant::blank;
-    }
+    public static Supplier<FluidVariant> retrieveFluid(int id) { return FluidVariant::blank; }
 }

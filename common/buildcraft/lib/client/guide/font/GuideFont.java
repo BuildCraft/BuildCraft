@@ -18,8 +18,8 @@ import java.util.List;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.ScaledResolution;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
-import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
+import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 
 import buildcraft.lib.client.sprite.DynamicTextureBC;
 import buildcraft.lib.misc.ColourUtil;
@@ -91,7 +91,7 @@ public class GuideFont implements IFontRenderer {
         ;
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().scale(1 / scaleFactor, 1 / scaleFactor, 1);
         if ((shade & 0xFF_00_00_00) == 0) {

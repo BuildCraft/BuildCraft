@@ -108,7 +108,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     @Override
     public String getDescription() {
         if (stack != null) {
-            return stack.getDisplayName();
+            return stack.getName().getString();
         } else {
             return "";
         }

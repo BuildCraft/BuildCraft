@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 //   World#isRemote          → World#isClient
 //   new BlockPos(Vec3d)     → BlockPos.ofFloored(Vec3d)
 //   player.getEyePos()      replaces getPositionVector().add(0, getEyeHeight(), 0)
-//   player.getLookVec()     → player.getRotationVector()
-//   Vec3d.scale()           → Vec3d.multiply()
+//   player.getRotationVec(1.0f)     → player.getRotationVector()
+//   Vec3d.multiply()           → Vec3d.multiply()
 //   MapStorage.getOrLoadData → ServerWorld.getPersistentStateManager()
 //                              .getOrCreate(Function<NbtCompound,T>, Supplier<T>, String)
 import net.minecraft.entity.player.PlayerEntity;

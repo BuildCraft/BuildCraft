@@ -72,41 +72,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
         return false;
     }
 
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public boolean shouldSideBeRendered(BlockState state, BlockView world, BlockPos pos, Direction side) {
-        BlockState actualState = state.getActualState(world, pos);
-        Direction[] facings = CONNECTED_MAP.keySet().stream()
-                .filter(facing -> actualState.getValue(CONNECTED_MAP.get(facing)))
-                .toArray(Direction[]::new);
-        if (facings.length == 1) {
-            return side != facings[0];
-        } else if (facings.length == 2 && facings[0] == facings[1].getOpposite()) {
-            return side != facings[0] && side != facings[1];
-        }
-        return true;
-    }
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public Box getBoundingBox(BlockState state, BlockView world, BlockPos pos) {
-        BlockState actualState = state.getActualState(world, pos);
-        AtomicReference<Box> box = new AtomicReference<>(BASE_AABB);
-        CONNECTED_MAP.forEach((side, property) -> {
-            if (actualState.getValue(property)) {
-                box.set(box.get().union(RotationUtil.rotateAABB(CONNECTION_AABB, side)));
-            }
-        });
-        return box.get();
-    }
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, Box entityBox, List<Box> collidingBoxes, @Nullable Entity entity, boolean isPistonMoving) {
-        BlockState actualState = state.getActualState(world, pos);
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, BASE_AABB);
-        CONNECTED_MAP.keySet().stream()
-                .filter(side -> actualState.getValue(CONNECTED_MAP.get(side)))
-                .map(side -> RotationUtil.rotateAABB(CONNECTION_AABB, side))
-                .forEach(box -> addCollisionBoxToList(pos, entityBox, collidingBoxes, box));
-    }
+    // STUB(R.Chen): shouldSideBeRendered, getBoundingBox, addCollisionBoxToList removed in 1.20.1
 
     // @Override -- removed: method does not exist in Fabric 1.20.1
     public List<ItemStack> getDrops(BlockView world, BlockPos pos, BlockState state, int fortune) {

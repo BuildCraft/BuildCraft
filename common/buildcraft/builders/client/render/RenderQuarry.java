@@ -84,7 +84,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
         SpriteUtil.bindBlockTextureMap();
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableBlend();
 
         if (MinecraftClient.isAmbientOcclusionEnabled()) {
@@ -137,7 +137,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
             profiler.swap("frame");
             if (tile.clientDrillPos != null && tile.prevClientDrillPos != null) {
-                Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
+                Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).multiply(partialTicks));
 
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
                         new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z),//
@@ -185,7 +185,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                     : -1 /* not possible */;
                 double xProgress = -1;
                 double zProgress = -1;
-                Direction side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+                Direction side = tile.getWorld().getBlockState(tile.getPos()).get(BuildCraftProperties.BLOCK_FACING).getOpposite();
                 BlockPos firstPos = tile.getPos().offset(side);
                 switch (side) {
                     case SOUTH:
@@ -238,7 +238,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 RenderSystem.getModelViewStack().push();
                 RenderSystem.getModelViewStack().translate(xResult + 0.5, tile.getPos().getY(), zResult + 0.5);
                 RenderSystem.getModelViewStack().scale(3, 3, 3);
-                MinecraftClient.getInstance().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
+                MinecraftClient.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
                 RenderSystem.getModelViewStack().pop();
                 RenderSystem.getModelViewStack().pop();
             }
@@ -258,4 +258,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static void init() {
 
     }
+
+    @Override
+    public void render(TileQuarry entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
 }

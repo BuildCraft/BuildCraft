@@ -3,121 +3,29 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): TileEntitySpecialRenderer → BlockEntityRenderer migration
 package buildcraft.factory.client.render;
 
-import org.lwjgl.opengl.GL11;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BufferBuilder;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.systems.RenderSystem.DestFactor;
-import com.mojang.blaze3d.systems.RenderSystem.SourceFactor;
-import net.minecraft.client.render.RenderHelper;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
-import buildcraft.lib.compat.FluidStackBC;
-
-import buildcraft.lib.client.render.fluid.FluidRenderer;
-import buildcraft.lib.client.render.fluid.FluidSpriteType;
-import buildcraft.lib.fluid.FluidSmoother.FluidStackInterp;
-import buildcraft.lib.misc.RenderUtil;
-import buildcraft.lib.misc.RenderUtil.AutoTessellator;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.util.math.MatrixStack;
 
 import buildcraft.factory.tile.TileTank;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.render.VertexFormat;
 
-public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
-    private static final Vec3d MIN = new Vec3d(0.13, 0.01, 0.13);
-    private static final Vec3d MAX = new Vec3d(0.86, 0.99, 0.86);
-    private static final Vec3d MIN_CONNECTED = new Vec3d(0.13, 0, 0.13);
-    private static final Vec3d MAX_CONNECTED = new Vec3d(0.86, 1 - 1e-5, 0.86);
+@Environment(EnvType.CLIENT)
+public class RenderTank implements BlockEntityRenderer<TileTank> {
 
-    public RenderTank() {}
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public void render(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        FluidStackInterp forRender = tile.getFluidForRender(partialTicks);
-        if (forRender == null) {
-            return;
-        }
-        MinecraftClient.getInstance().getProfiler().push("bc");
-        MinecraftClient.getInstance().getProfiler().push("tank");
-
-        // gl state setup
-        RenderHelper.disableStandardItemLighting();
-        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
-        RenderSystem.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-
-        // buffer setup
-        try (AutoTessellator tess = RenderUtil.getThreadLocalUnusedTessellator()) {
-            BufferBuilder bb = tess.tessellator.getBuffer();
-            bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
-            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x, y, z);
-
-            boolean[] sideRender = { true, true, true, true, true, true };
-            boolean connectedUp = isFullyConnected(tile, Direction.UP, partialTicks);
-            boolean connectedDown = isFullyConnected(tile, Direction.DOWN, partialTicks);
-            sideRender[Direction.DOWN.ordinal()] = !connectedDown;
-            sideRender[Direction.UP.ordinal()] = !connectedUp;
-
-            Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
-            Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
-            FluidStackBC fluid = forRender.fluid;
-            int blocklight = fluid.getFluid().getLuminosity(fluid);
-            int combinedLight = tile.getWorld().getCombinedLight(tile.getPos(), blocklight);
-
-            FluidRenderer.vertex.lighti(combinedLight);
-
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, forRender.amount, tile.tank.getCapacity(), min, max,
-                bb, sideRender);
-
-            // buffer finish
-            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
-            tess.tessellator.draw();
-        }
-
-        // gl state finish
-        RenderHelper.enableStandardItemLighting();
-
-        MinecraftClient.getInstance().getProfiler().pop();
-        MinecraftClient.getInstance().getProfiler().pop();
+    public RenderTank(BlockEntityRendererFactory.Context ctx) {
+        // STUB
     }
 
-    private static boolean isFullyConnected(TileTank thisTank, Direction face, float partialTicks) {
-        BlockPos pos = thisTank.getPos().offset(face);
-        BlockEntity oTile = thisTank.getWorld().getBlockEntity(pos);
-        if (oTile instanceof TileTank) {
-            TileTank oTank = (TileTank) oTile;
-            if (!TileTank.canTanksConnect(thisTank, oTank, face)) {
-                return false;
-            }
-            FluidStackInterp forRender = oTank.getFluidForRender(partialTicks);
-            if (forRender == null) {
-                return false;
-            }
-            FluidStackBC fluid = forRender.fluid;
-            if (fluid == null || forRender.amount <= 0) {
-                return false;
-            } else if (thisTank.getFluidForRender(partialTicks) == null
-                || !fluid.isFluidEqual(thisTank.getFluidForRender(partialTicks).fluid)) {
-                return false;
-            }
-            if (fluid.getFluid().isGaseous(fluid)) {
-                face = face.getOpposite();
-            }
-            return forRender.amount >= oTank.tank.getCapacity() || face == Direction.UP;
-        } else {
-            return false;
-        }
+    @Override
+    public void render(TileTank be, float tickDelta, MatrixStack matrices,
+            VertexConsumerProvider vcp, int light, int overlay) {
+        // STUB
     }
 }

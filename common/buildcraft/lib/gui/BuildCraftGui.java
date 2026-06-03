@@ -244,4 +244,22 @@ public class BuildCraftGui extends HandledScreen {
         }
         return elements;
     }
+
+    // ---- Forge/1.12.2 compat helpers ----
+
+    /** Forge-compat: itemRender field. Use DrawContext.drawItem() or MinecraftClient.getItemRenderer() instead. */
+    protected net.minecraft.client.render.item.ItemRenderer itemRender =
+        MinecraftClient.getInstance().getItemRenderer();
+
+    /** Forge-compat: getRenderItem() accessor. */
+    public net.minecraft.client.render.item.ItemRenderer getRenderItem() {
+        return itemRender != null ? itemRender : MinecraftClient.getInstance().getItemRenderer();
+    }
+
+    /** Forge-compat: guiLeft/guiTop → HandledScreen.x/y. */
+    protected int guiLeft() { return x; }
+    protected int guiTop() { return y; }
+
+    @Override
+    public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
 }

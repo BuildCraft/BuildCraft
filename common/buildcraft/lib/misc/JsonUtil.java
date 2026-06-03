@@ -58,13 +58,12 @@ import net.minecraft.nbt.NbtShort;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraft.fluid.Fluid;
 import buildcraft.lib.compat.FluidRegistryBC;
 import buildcraft.lib.compat.FluidStackBC;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+// STUB: ForgeRegistries removed
 
 import buildcraft.api.core.BCLog;
 
@@ -115,19 +114,19 @@ public class JsonUtil {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
             Identifier id = new Identifier(name);
-            if (!ForgeRegistries.ITEMS.containsKey(id)) {
-                throw new JsonSyntaxException("Unknown item '" + name + "'");
-            } else {
-                return new ItemStack(ForgeRegistries.ITEMS.getValue(id));
+            {
+                Item foundItem = net.minecraft.registry.Registries.ITEM.get(id);
+                if (foundItem == null) throw new com.google.gson.JsonSyntaxException("Unknown item: " + id);
+                return new net.minecraft.item.ItemStack(foundItem);
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
             String id = obj.get("id").getAsString();
             Identifier loc = new Identifier(id);
-            if (!ForgeRegistries.ITEMS.containsKey(loc)) {
+            if (!(net.minecraft.registry.Registries.ITEM.get(loc) != null)) {
                 throw new JsonSyntaxException("Unknown item '" + id + "'");
             }
-            Item item = ForgeRegistries.ITEMS.getValue(loc);
+            Item item = net.minecraft.registry.Registries.ITEM.get(loc);
             int count = 1;
             if (obj.has("count")) {
                 count = JsonUtil.getInt(obj, "count");
@@ -244,7 +243,7 @@ public class JsonUtil {
      * for a {@link TranslatableText}, or the prefix plus "_raw" for a raw {@link LiteralText}. */
     public static Text getTextComponent(JsonObject json, String subPrefix, String localePrefix) {
         if (json.has(subPrefix)) {
-            String str = JsonUtils.getString(json, subPrefix);
+            String str = json.get(subPrefix).getAsString();
             Object[] args;
             if (json.has(subPrefix + "_args")) {
                 args = getSubAsStringArray(json, subPrefix + "_args");
@@ -253,7 +252,7 @@ public class JsonUtil {
             }
             return Text.translatable(localePrefix + str, args);
         } else if (json.has(subPrefix + "_raw")) {
-            return Text.literal(JsonUtils.getString(json, subPrefix + "_raw"));
+            return Text.literal(json.get(subPrefix + "_raw").getAsString());
         } else {
             throw new JsonSyntaxException(
                 "Expected to find either '" + subPrefix + "' or '" + subPrefix + "_raw', but got neither for " + json);
@@ -272,7 +271,7 @@ public class JsonUtil {
         if (!obj.has(sub)) {
             return _default;
         }
-        String str = JsonUtils.getString(obj, sub).toLowerCase(Locale.ROOT);
+        String str = obj.get(sub).getAsString().toLowerCase(Locale.ROOT);
         int index = str.indexOf(':');
         if (index < 0) {
             throw new JsonSyntaxException("Expected 'domain:path', but didn't find a colon!");
@@ -433,7 +432,7 @@ public class JsonUtil {
                             if (src == NBTUtilBC.NBT_NULL) {
                                 return JsonNull.INSTANCE;
                             }
-                            switch (src.getId()) {
+                            switch (src.getType()) {
                                 case NbtElement.BYTE_TYPE:
                                     return context.serialize(src, NbtByte.class);
                                 case NbtElement.SHORT_TYPE:
@@ -446,7 +445,7 @@ public class JsonUtil {
                                     return context.serialize(src, NbtFloat.class);
                                 case NbtElement.DOUBLE_TYPE:
                                     return context.serialize(src, NbtDouble.class);
-                                case NbtElement.BYTE_TYPE_ARRAY:
+                                case NbtElement.BYTE_ARRAY_TYPE:
                                     return context.serialize(src, NbtByteArray.class);
                                 case NbtElement.STRING_TYPE:
                                     return context.serialize(src, NbtString.class);
@@ -454,7 +453,7 @@ public class JsonUtil {
                                     return context.serialize(src, NbtList.class);
                                 case NbtElement.COMPOUND_TYPE:
                                     return context.serialize(src, NbtCompound.class);
-                                case NbtElement.INT_TYPE_ARRAY:
+                                case NbtElement.INT_ARRAY_TYPE:
                                     return context.serialize(src, NbtIntArray.class);
                                 default:
                                     throw new IllegalArgumentException(src.toString());
@@ -508,35 +507,35 @@ public class JsonUtil {
                 } : null;
             }
         }).registerTypeAdapter(NbtByte.class,
-            (JsonSerializer<NbtByte>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getByte()))
+            (JsonSerializer<NbtByte>) (src, typeOfSrc, context) -> new JsonPrimitive(src.byteValue()))
             .registerTypeAdapter(NbtByte.class,
                 (JsonDeserializer<
-                    NbtByte>) (json, typeOfT, context) -> new NbtByte(json.getAsJsonPrimitive().getAsByte()))
+                    NbtByte>) (json, typeOfT, context) -> NbtByte.of(json.getAsJsonPrimitive().getAsByte()))
             .registerTypeAdapter(NbtShort.class,
-                (JsonSerializer<NbtShort>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getShort()))
+                (JsonSerializer<NbtShort>) (src, typeOfSrc, context) -> new JsonPrimitive(src.shortValue()))
             .registerTypeAdapter(NbtShort.class,
                 (JsonDeserializer<
-                    NbtShort>) (json, typeOfT, context) -> new NbtShort(json.getAsJsonPrimitive().getAsShort()))
+                    NbtShort>) (json, typeOfT, context) -> NbtShort.of(json.getAsJsonPrimitive().getAsShort()))
             .registerTypeAdapter(NbtInt.class,
-                (JsonSerializer<NbtInt>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getInt()))
+                (JsonSerializer<NbtInt>) (src, typeOfSrc, context) -> new JsonPrimitive(src.intValue()))
             .registerTypeAdapter(NbtInt.class,
                 (JsonDeserializer<
                     NbtInt>) (json, typeOfT, context) -> NbtInt.of(json.getAsJsonPrimitive().getAsInt()))
             .registerTypeAdapter(NbtLong.class,
-                (JsonSerializer<NbtLong>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getLong()))
+                (JsonSerializer<NbtLong>) (src, typeOfSrc, context) -> new JsonPrimitive(src.longValue()))
             .registerTypeAdapter(NbtLong.class,
                 (JsonDeserializer<
-                    NbtLong>) (json, typeOfT, context) -> new NbtLong(json.getAsJsonPrimitive().getAsLong()))
+                    NbtLong>) (json, typeOfT, context) -> NbtLong.of(json.getAsJsonPrimitive().getAsLong()))
             .registerTypeAdapter(NbtFloat.class,
-                (JsonSerializer<NbtFloat>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getFloat()))
+                (JsonSerializer<NbtFloat>) (src, typeOfSrc, context) -> new JsonPrimitive(src.floatValue()))
             .registerTypeAdapter(NbtFloat.class,
                 (JsonDeserializer<
-                    NbtFloat>) (json, typeOfT, context) -> new NbtFloat(json.getAsJsonPrimitive().getAsFloat()))
+                    NbtFloat>) (json, typeOfT, context) -> NbtFloat.of(json.getAsJsonPrimitive().getAsFloat()))
             .registerTypeAdapter(NbtDouble.class,
-                (JsonSerializer<NbtDouble>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getDouble()))
+                (JsonSerializer<NbtDouble>) (src, typeOfSrc, context) -> new JsonPrimitive(src.doubleValue()))
             .registerTypeAdapter(NbtDouble.class,
                 (JsonDeserializer<NbtDouble>) (json, typeOfT,
-                    context) -> new NbtDouble(json.getAsJsonPrimitive().getAsDouble()))
+                    context) -> NbtDouble.of(json.getAsJsonPrimitive().getAsDouble()))
             .registerTypeAdapter(NbtByteArray.class, (JsonSerializer<NbtByteArray>) (src, typeOfSrc, context) -> {
                 JsonArray jsonArray = new JsonArray();
                 for (byte element : src.getByteArray()) {
@@ -552,7 +551,7 @@ public class JsonUtil {
                 (JsonSerializer<NbtString>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getString()))
             .registerTypeAdapter(NbtString.class,
                 (JsonDeserializer<NbtString>) (json, typeOfT,
-                    context) -> new NbtString(json.getAsJsonPrimitive().getAsString()))
+                    context) -> NbtString.of(json.getAsJsonPrimitive().getAsString()))
             .registerTypeAdapter(NbtList.class, (JsonSerializer<NbtList>) (src, typeOfSrc, context) -> {
                 JsonArray jsonArray = new JsonArray();
                 for (int i = 0; i < src.size(); i++) {
@@ -568,7 +567,7 @@ public class JsonUtil {
                 return nbtTagList;
             }).registerTypeAdapter(NbtCompound.class, (JsonSerializer<NbtCompound>) (src, typeOfSrc, context) -> {
                 JsonObject jsonObject = new JsonObject();
-                for (String key : src.getKeySet()) {
+                for (String key : src.getKeys()) {
                     jsonObject.add(key, context.serialize(src.get(key), NbtElement.class));
                 }
                 return jsonObject;

@@ -46,4 +46,7 @@ public class RenderArchitectTable extends TileEntitySpecialRenderer<TileArchitec
     public boolean isGlobalRenderer(TileArchitectTable te) {
         return true;
     }
+
+    @Override
+    public void render(TileArchitectTable entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
 }

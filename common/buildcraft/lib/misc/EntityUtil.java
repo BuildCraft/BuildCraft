@@ -14,7 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntitySpectralArrow;
+import net.minecraft.entity.projectile.SpectralArrowEntity;
 import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -37,8 +37,8 @@ public class EntityUtil {
 
         Box aabb = BoundingBoxUtil.makeAround(around, radius);
         for (ItemEntity ent : world.getEntitiesWithinAABB(ItemEntity.class, aabb)) {
-            if (!ent.isDead) {
-                ent.isDead = true;
+            if (!ent.isRemoved()) {
+                ent.remove(net.minecraft.entity.Entity.RemovalReason.DISCARDED);
                 stacks.add(ent.getItem());
             }
         }
@@ -46,7 +46,7 @@ public class EntityUtil {
     }
 
     public static Vec3d getVec(Entity entity) {
-        return new Vec3d(entity.posX, entity.posY, entity.posZ);
+        return new Vec3d(entity.getX(), entity.getY(), entity.getZ());
     }
 
     public static void setVec(Entity entity, Vec3d vec) {
@@ -83,7 +83,7 @@ public class EntityUtil {
     public static ItemStack getArrowStack(EntityArrow arrow) {
         // FIXME: Replace this with an invocation of arrow.getArrowStack
         // (but its protected so we can't)
-        if (arrow instanceof EntitySpectralArrow) {
+        if (arrow instanceof SpectralArrowEntity) {
             return new ItemStack(Items.SPECTRAL_ARROW);
         }
         return new ItemStack(Items.ARROW);

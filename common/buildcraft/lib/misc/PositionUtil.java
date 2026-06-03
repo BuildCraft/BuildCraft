@@ -288,7 +288,7 @@ public class PositionUtil {
         // Its maths. Its allowed to deviate from normal naming rules.
         Vec3d p2_minus_p1 = p2.subtract(p1);
         double _dot_v = VecUtil.dot(p2_minus_p1, v);
-        Vec3d _scale_v = VecUtil.scale(v, _dot_v);
+        Vec3d _scale_v = VecUtil.multiply(v, _dot_v);
         return p1.add(_scale_v);
     }
 
@@ -301,11 +301,11 @@ public class PositionUtil {
         }
 
         public static Line createLongLine(Vec3d start, Vec3d direction) {
-            return new Line(start, VecUtil.scale(direction, 1024));
+            return new Line(start, VecUtil.multiply(direction, 1024));
         }
 
         public Vec3d interpolate(double interp) {
-            return VecUtil.scale(start, 1 - interp).add(VecUtil.scale(end, interp));
+            return VecUtil.multiply(start, 1 - interp).add(VecUtil.multiply(end, interp));
         }
     }
 

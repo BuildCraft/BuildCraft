@@ -19,7 +19,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.Explosion;
+import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.World;
 
 import buildcraft.lib.tile.TileBC_Neptune;

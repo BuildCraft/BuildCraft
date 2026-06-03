@@ -42,14 +42,15 @@ public class TileTank extends TileBC_Neptune implements IDebuggable {
     public static final int NET_FLUID_DELTA = IDS.allocId("FLUID_DELTA");
 
     // STUB(R.Chen): Tank + FluidSmoother deferred to Phase 4E (Transfer-API fluid migration).
-    // public final Tank tank;
+    public final buildcraft.lib.fluid.Tank tank;
     // public final FluidSmoother smoothedTank;
 
     private int lastComparatorLevel;
 
     public TileTank(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        // STUB(R.Chen): tank capacity / capability registration / smoothedTank init deferred.
+        // STUB(R.Chen): Tank capacity / capability registration deferred.
+        tank = new buildcraft.lib.fluid.Tank("tank", 16000, this);
     }
 
     @Override

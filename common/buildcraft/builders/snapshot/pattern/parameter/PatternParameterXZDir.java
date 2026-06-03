@@ -80,7 +80,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
 
     @Override
     public void writeToNbt(NbtCompound nbt) {
-        nbt.putByte("d", (byte) dir.getHorizontalIndex());
+        nbt.putByte("d", (byte) dir.getHorizontal());
     }
 
     @Override
@@ -113,7 +113,7 @@ public enum PatternParameterXZDir implements IStatementParameter {
 
     @Override
     public IStatementParameter rotateLeft() {
-        return get(dir.rotateY());
+        return get(dir.rotateYClockwise());
     }
 
     @Override

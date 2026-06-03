@@ -3,113 +3,22 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): snapshot builder render deferred — legacy GL render path removed in 1.20.1
 package buildcraft.builders.client.render;
-
-import java.util.Collections;
-
-import javax.vecmath.Point3f;
-
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.render.ItemRenderUtil;
-import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
-import buildcraft.lib.misc.MathUtil;
-import buildcraft.lib.misc.VecUtil;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 
-import buildcraft.builders.BCBuildersSprites;
 import buildcraft.builders.snapshot.ITileForSnapshotBuilder;
-import buildcraft.builders.snapshot.SnapshotBuilder;
-import buildcraft.core.client.BuildCraftLaserManager;
 
 @Environment(EnvType.CLIENT)
 public class RenderSnapshotBuilder {
-    public static <T extends ITileForSnapshotBuilder> void render(
-            SnapshotBuilder<T> snapshotBuilder,
-            World world,
-            BlockPos tilePos,
-            double x,
-            double y,
-            double z,
-            float partialTicks,
-            BufferBuilder bb
-    ) {
-        for (SnapshotBuilder<T>.PlaceTask placeTask : snapshotBuilder.clientPlaceTasks) {
-            Vec3d prevPos = snapshotBuilder.prevClientPlaceTasks.stream()
-                .filter(renderTaskLocal -> renderTaskLocal.pos.equals(placeTask.pos))
-                .map(snapshotBuilder::getPlaceTaskItemPos)
-                .findFirst()
-                .orElse(snapshotBuilder.getPlaceTaskItemPos(snapshotBuilder.new PlaceTask(tilePos, Collections.emptyList(), 0L)));
-            Vec3d pos = prevPos.add(snapshotBuilder.getPlaceTaskItemPos(placeTask).subtract(prevPos).scale(partialTicks));
-            for (ItemStack item : placeTask.items) {
-                ItemRenderUtil.renderItemStack(
-                    x - tilePos.getX() + pos.x,
-                    y - tilePos.getY() + pos.y,
-                    z - tilePos.getZ() + pos.z,
-                    item,
-                    world.getCombinedLight(new BlockPos(pos), 0),
-                    Direction.SOUTH,
-                    bb
-                );
-            }
-            ItemRenderUtil.endItemBatch();
-        }
 
-        Vec3d robotPos = snapshotBuilder.robotPos;
-        if (robotPos != null) {
-            if (snapshotBuilder.prevRobotPos != null) {
-                robotPos = snapshotBuilder.prevRobotPos.add(robotPos.subtract(snapshotBuilder.prevRobotPos).scale(partialTicks));
-            }
-
-            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x - tilePos.getX(), y - tilePos.getY(), z - tilePos.getZ());
-
-            int i = 0;
-            for (Direction face : Direction.values()) {
-                ModelUtil.createFace(
-                    face,
-                    new Point3f((float) robotPos.x, (float) robotPos.y, (float) robotPos.z),
-                    new Point3f(4 / 16F, 4 / 16F, 4 / 16F),
-                    new ModelUtil.UvFaceData(
-                        BCBuildersSprites.ROBOT.getInterpU((i * 8) / 64D),
-                        BCBuildersSprites.ROBOT.getInterpV(0 / 64D),
-                        BCBuildersSprites.ROBOT.getInterpU(((i + 1) * 8) / 64D),
-                        BCBuildersSprites.ROBOT.getInterpV(8 / 64D)
-                    )
-                )
-                    .lighti(world.getCombinedLight(new BlockPos(robotPos), 0))
-                    .render(bb);
-                i++;
-            }
-
-            for (SnapshotBuilder.BreakTask breakTask : snapshotBuilder.clientBreakTasks) {
-                LaserRenderer_BC8.renderLaserDynamic(
-                    new LaserData_BC8(
-                        BuildCraftLaserManager.POWERS[(int) Math.round(
-                            MathUtil.clamp(
-                                breakTask.power * 1D / breakTask.getTarget(),
-                                0D,
-                                1D
-                            ) * (BuildCraftLaserManager.POWERS.length - 1)
-                        )],
-                        robotPos.subtract(new Vec3d(0, 0.27, 0)),
-                        new Vec3d(breakTask.pos.getX(), breakTask.pos.getY(), breakTask.pos.getZ()).add(VecUtil.VEC_HALF),
-                        1 / 16D
-                    ),
-                    bb
-                );
-            }
-        }
-
-        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
+    public static <T extends ITileForSnapshotBuilder> void render(T tile, double x, double y, double z,
+            float partialTicks, MatrixStack matrices, VertexConsumerProvider vcp, int light) {
+        // STUB
     }
 }

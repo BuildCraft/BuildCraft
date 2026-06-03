@@ -33,9 +33,9 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             return;
         }
         isBuilt = true;
-        for (Item item : Item.REGISTRY) {
+        for (Item item : net.minecraft.registry.Registries.ITEM) {
             DefaultedList<ItemStack> stacks = DefaultedList.of();
-            item.getSubItems(ItemGroup.SEARCH, stacks);
+            // TODO(migration): item.getSubItems removed in 1.20.1 — populate stacks via ItemGroupEvents
             for (ItemStack toTry : stacks) {
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(toTry);
                 if (fluidHandler != null && fluidHandler.drain(1, false) == null) {

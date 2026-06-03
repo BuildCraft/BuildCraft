@@ -234,6 +234,6 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     @Environment(EnvType.CLIENT)
     private static Vec3d offset(Vec3d from, Vec3d to) {
         Vec3d dir = to.subtract(from).normalize();
-        return from.add(VecUtil.scale(dir, 0.125));
+        return from.add(VecUtil.multiply(dir, 0.125));
     }
 }

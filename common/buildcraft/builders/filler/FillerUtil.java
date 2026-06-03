@@ -32,6 +32,6 @@ public class FillerUtil {
         if (inverted) {
             filledTemplate.getTemplate().invert();
         }
-        return filledTemplate.getTemplate().new BuildingInfo(BlockPos.ORIGIN, Rotation.NONE);
+        return filledTemplate.getTemplate().new BuildingInfo(BlockPos.ORIGIN, BlockRotation.NONE);
     }
 }

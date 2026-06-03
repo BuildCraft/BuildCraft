@@ -307,4 +307,7 @@ public class TileLaser extends TileBC_Neptune implements IDebuggable, ILocalBloc
     }
 
     // STUB(R.Chen): getDebugRenderer() / IDetachedRenderer / AdvDebuggerLaser deferred to client render phase.
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

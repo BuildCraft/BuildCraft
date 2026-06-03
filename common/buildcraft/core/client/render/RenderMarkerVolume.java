@@ -97,4 +97,10 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
             return vec.add(0, 0, -by);
         }
     }
+
+    @Override
+    public void render(TileMarkerVolume entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
+
+    @Override
+    public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
 }

@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -34,13 +34,16 @@ public class ParticleUtil {
         double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;
         double z = pos.getZ() + 0.5 + face.getFrontOffsetZ() * 0.5;
 
-        Vec3d startingMotion = new Vec3d(face.getDirectionVec().getX(), face.getDirectionVec().getY(), face.getDirectionVec().getZ());
-        startingMotion = VecUtil.scale(startingMotion, 0.05);
+        Vec3d startingMotion = new Vec3d(face.getVector().getX(), face.getVector().getY(), face.getVector().getZ());
+        startingMotion = VecUtil.multiply(startingMotion, 0.05);
 
         ParticlePosition nPos = new ParticlePosition(new Vec3d(x, y, z), startingMotion);
 
         for (ParticlePosition pp : ParticlePipes.DUPLICATE_SPREAD.pipe(nPos)) {
-            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.x, pp.motion.y, pp.motion.z);
+            // STUB: spawnParticle via server world
+            if (world instanceof net.minecraft.server.world.ServerWorld) {
+                ((net.minecraft.server.world.ServerWorld) world).spawnParticles(ParticleTypes.FLAME, x, y, z, 1, pp.motion.x, pp.motion.y, pp.motion.z, 0.0);
+            }
         }
     }
 }

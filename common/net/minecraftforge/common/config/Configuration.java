@@ -57,4 +57,25 @@ public class Configuration {
     public void save() {}
     public boolean hasChanged() { return false; }
     public List<String> getCategoryNames() { return new ArrayList<>(); }
+
+    // STUB(R.Chen): migration helpers — no-ops until config is ported to Fabric Auto Config.
+    public void moveProperty(String categoryFrom, String categoryTo, String key) {}
+    public void renameProperty(String category, String oldKey, String newKey) {}
+    public boolean contains(String category, String key) { return false; }
+    public void log(java.util.logging.Level level, String msg) {}
+    public Property get(String category, String key, int[] defaultValues) {
+        return new Property(key, java.util.Arrays.toString(defaultValues), Property.Type.INTEGER);
+    }
+    public Property get(String category, String key, String[] defaultValues, String comment) {
+        Property p = get(category, key, defaultValues);
+        p.setComment(comment);
+        return p;
+    }
+    public Property getIntList(String category, String key, int[] defaults, String comment) {
+        return get(category, key, defaults);
+    }
+    public Property getStringList(String category, String key, String[] defaults, String comment) {
+        return get(category, key, defaults, comment);
+    }
+    public File getConfigFile() { return file; }
 }

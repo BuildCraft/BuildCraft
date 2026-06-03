@@ -3,199 +3,23 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): FluidUtilBC deferred — Forge FluidUtil API replaced in 1.20.1
 package buildcraft.lib.misc;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Nonnull;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 
-import net.minecraft.fluid.Fluid;
 import buildcraft.lib.compat.FluidStackBC;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.ItemHandlerHelper;
-
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IFluidHandlerAdv;
-
 import buildcraft.lib.fluid.Tank;
 
 public class FluidUtilBC {
 
-    public static void pushFluidAround(BlockView world, BlockPos pos, Tank tank) {
-        FluidStackBC potential = tank.drain(tank.getFluidAmount(), false);
-        int drained = 0;
-        if (potential == null || potential.amount <= 0) {
-            return;
-        }
-        FluidStackBC working = potential.copy();
-        for (Direction side : Direction.values()) {
-            if (potential.amount <= 0) {
-                break;
-            }
-            BlockEntity target = world.getBlockEntity(pos.offset(side));
-            if (target == null) {
-                continue;
-            }
-            IFluidHandler handler = target.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
-            if (handler != null) {
-                int used = handler.fill(potential.copy(), true);
-
-                if (used > 0) {
-                    drained += used;
-                    potential.amount -= used;
-                }
-            }
-        }
-        if (drained > 0) {
-            FluidStackBC actuallyDrained = tank.drain(drained, true);
-            if (actuallyDrained == null || actuallyDrained.amount != drained) {
-                String strWorking = StringUtilBC.fluidToString(working);
-                String strActual = StringUtilBC.fluidToString(actuallyDrained);
-                throw new IllegalStateException("Bad tank! Could drain " + strWorking + " but only drained " + strActual
-                    + "( tank " + tank.getClass() + ")");
-            }
-        }
+    public static boolean interactWithFluidHandler(@Nonnull ItemStack stack, Tank tank, boolean doAction) {
+        return false;
     }
 
-    public static List<FluidStackBC> mergeSameFluids(List<FluidStackBC> fluids) {
-        List<FluidStackBC> stacks = new ArrayList<>();
-        fluids.forEach(toAdd -> {
-            boolean found = false;
-            for (FluidStackBC stack : stacks) {
-                if (stack.isFluidEqual(toAdd)) {
-                    stack.amount += toAdd.amount;
-                    found = true;
-                }
-            }
-            if (!found) {
-                stacks.add(toAdd.copy());
-            }
-        });
-        return stacks;
-    }
-
-    public static boolean areFluidStackEqual(FluidStackBC a, FluidStackBC b) {
-        return (a == null && b == null) || (a != null && a.isFluidEqual(b) && a.amount == b.amount);
-    }
-
-    public static boolean areFluidsEqual(Fluid a, Fluid b) {
-        if (a == null || b == null) {
-            return a == b;
-        }
-        return buildcraft.lib.compat.FluidRegistryBC.getFluidName(a).equals(buildcraft.lib.compat.FluidRegistryBC.getFluidName(b));
-    }
-
-    /** @return The fluidstack that was moved, or null if no fluid was moved. */
-    @Nullable
-    public static FluidStackBC move(IFluidHandler from, IFluidHandler to) {
-        return move(from, to, Integer.MAX_VALUE);
-    }
-
-    /** @param max The maximum amount of fluid to move.
-     * @return The fluidstack that was moved, or null if no fluid was moved. */
-    @Nullable
-    public static FluidStackBC move(IFluidHandler from, IFluidHandler to, int max) {
-        if (from == null || to == null) {
-            return null;
-        }
-        FluidStackBC toDrainPotential;
-        if (from instanceof IFluidHandlerAdv) {
-            IFluidFilter filter = f -> to.fill(f, false) > 0;
-            toDrainPotential = ((IFluidHandlerAdv) from).drain(filter, max, false);
-        } else {
-            toDrainPotential = from.drain(max, false);
-        }
-        if (toDrainPotential == null) {
-            return null;
-        }
-        int accepted = to.fill(toDrainPotential.copy(), false);
-        if (accepted <= 0) {
-            return null;
-        }
-        FluidStackBC toDrain = new FluidStackBC(toDrainPotential, accepted);
-        if (accepted < toDrainPotential.amount) {
-            toDrainPotential = from.drain(toDrain, false);
-            if (toDrainPotential == null || toDrainPotential.amount < accepted) {
-                return null;
-            }
-        }
-        FluidStackBC drained = from.drain(toDrain.copy(), true);
-        if (drained == null || toDrain.amount != drained.amount || !toDrain.isFluidEqual(drained)) {
-            String detail = "(To Drain = " + StringUtilBC.fluidToString(toDrain);
-            detail += ",\npotential drain = " + StringUtilBC.fluidToString(toDrainPotential) + ")";
-            detail += ",\nactually drained = " + StringUtilBC.fluidToString(drained) + ")";
-            detail += ",\nIFluidHandler (from) = " + from.getClass() + "(" + from + ")";
-            detail += ",\nIFluidHandler (to) = " + to.getClass() + "(" + to + ")";
-            throw new IllegalStateException("Drained fluid did not equal expected fluid!\n" + detail);
-        }
-        int actuallyAccepted = to.fill(drained, true);
-        if (actuallyAccepted != accepted) {
-            String detail = "(actually accepted = " + actuallyAccepted + ", accepted = " + accepted + ")";
-            throw new IllegalStateException("Mismatched IFluidHandler implementations!\n" + detail);
-        }
-        return new FluidStackBC(drained, accepted);
-    }
-
-    public static boolean onTankActivated(PlayerEntity player, BlockPos pos, Hand hand,
-        IFluidHandler fluidHandler) {
-        ItemStack held = player.getStackInHand(hand);
-        if (held.isEmpty()) {
-            return false;
-        }
-        boolean replace = !player.capabilities.isCreativeMode;
-        boolean single = held.getCount() == 1;
-        IFluidHandlerItem flItem;
-        if (replace && single) {
-            flItem = FluidUtil.getFluidHandler(held);
-        } else {
-            // replace and not single - need a copy and count set to 1
-            // not replace and single - need a copy, does not need change of count but it should be ok
-            // not replace and not single - need a copy count set to 1
-            ItemStack copy = held.copy();
-            copy.setCount(1);
-            flItem = FluidUtil.getFluidHandler(copy);
-        }
-        if (flItem == null) {
-            return false;
-        }
-        World world = player.getWorld();
-        if (world.isClient) {
-            return true;
-        }
-        boolean changed = true;
-        FluidStackBC moved;
-        if ((moved = FluidUtilBC.move(flItem, fluidHandler)) != null) {
-            SoundUtil.playBucketEmpty(world, pos, moved);
-        } else if ((moved = FluidUtilBC.move(fluidHandler, flItem)) != null) {
-            SoundUtil.playBucketFill(world, pos, moved);
-        } else {
-            changed = false;
-        }
-
-        if (changed && replace) {
-            if (single) {
-                // if it was the single item, replace with changed one
-                player.setHeldItem(hand, flItem.getContainer());
-            } else {
-                // if it was part of stack, shrink stack and give / drop the new one
-                held.shrink(1);
-                ItemHandlerHelper.giveItemToPlayer(player, flItem.getContainer());
-            }
-            player.inventoryContainer.detectAndSendChanges();
-        }
-        return true;
+    public static FluidStackBC getFluidContained(ItemStack stack) {
+        return null;
     }
 }

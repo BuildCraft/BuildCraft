@@ -105,7 +105,7 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
             }
         }
 
-        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos().offset(facing), 0);
+        int combinedLight = buildcraft.lib.compat.WorldCompat.getCombinedLight(tile.getWorld(), tile.getPos().offset(facing), 0);
         LED_POWER.center.lighti(combinedLight);
         LED_STATUS.center.lighti(combinedLight);
 

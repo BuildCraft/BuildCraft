@@ -33,7 +33,7 @@ public class ToastInformation implements IToast {
             icon.drawAt(0, 0);
             x = 30;
         }
-        toastGui.getMinecraft().fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), LocaleUtil.localize(localeKey), x, 13, -1);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(LocaleUtil.localize(localeKey), x, 13, -1)
         return delta >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
 

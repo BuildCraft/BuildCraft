@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.TooltipContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -50,7 +51,7 @@ public class ItemSnapshot extends ItemBC_Neptune {
         NbtCompound nbt = new NbtCompound();
         nbt.put("header", header.createNbt());
         ItemStack stack = new ItemStack(this, 1);
-        stack.setTagCompound(nbt);
+        stack.setNbt(nbt);
         return stack;
     }
 
@@ -146,7 +147,10 @@ public class ItemSnapshot extends ItemBC_Neptune {
         }
 
         public static EnumItemSnapshotType getFromStack(ItemStack stack) {
-            return values()[Math.abs(stack.getId()) % values().length];
+            return values()[Math.abs(stack.getDamage()) % values().length];
         }
     }
+
+    @Override
+    public String asString() { return getName(); }
 }

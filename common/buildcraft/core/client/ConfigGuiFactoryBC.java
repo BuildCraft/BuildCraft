@@ -3,63 +3,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): Forge IModGuiFactory / GuiConfig deferred
 package buildcraft.core.client;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.List;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-
-import net.minecraftforge.fml.client.IModGuiFactory;
-import net.minecraftforge.fml.client.config.GuiConfig;
-
-import buildcraft.core.BCCoreConfig;
-
-public class ConfigGuiFactoryBC implements IModGuiFactory {
-    public static class GuiConfigManager extends GuiConfig {
-        public GuiConfigManager(GuiScreen parentScreen) {
-            super(parentScreen, new ArrayList<>(), "buildcraftcore", "config", false, false, I18n.format("config.buildcraft"));
-
-            for (String s : BCCoreConfig.config.getCategoryNames()) {
-                if (!s.contains(".")) {
-                    configElements.add(new BCConfigElement(BCCoreConfig.config.getCategory(s)));
-                }
-            }
-
-            for (String s : BCCoreConfig.objConfig.getCategoryNames()) {
-                if (!s.contains(".")) {
-                    configElements.add(new BCConfigElement(BCCoreConfig.objConfig.getCategory(s)));
-                }
-            }
-        }
-    }
-
-    /** Needed for forge IModGuiFactory */
-    public ConfigGuiFactoryBC() {}
-
-    @Override
-    public void initialize(MinecraftClient minecraftInstance) {
-        // We don't need to do anything
-    }
-
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
-        return null;
-    }
-
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public boolean hasConfigGui() {
-        return true;
-    }
-
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public GuiScreen createConfigGui(GuiScreen parentScreen) {
-        return new GuiConfigManager(parentScreen);
-    }
+public class ConfigGuiFactoryBC {
+    public static void fmlInit() {}
 }

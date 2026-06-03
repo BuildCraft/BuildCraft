@@ -38,7 +38,7 @@ import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 //   ICustomRotationHandler     → STUB (api.blocks not in libLeaf)
 //   EnumParticleTypes / MinecraftClient.getInstance() → STUB (@Environment client only)
 //   ExchangeSection inner classes: all fluid/recipe logic STUBbed (Phase 4E)
-//   findAdjacentExchangers: Direction.rotateY() → Direction helper (Phase 4E)
+//   findAdjacentExchangers: Direction.rotateYClockwise() → Direction helper (Phase 4E)
 public class TileHeatExchange extends TileBC_Neptune implements IDebuggable {
 
     public static final IdAllocator IDS = TileBC_Neptune.IDS.makeChild("HeatExchanger");
@@ -71,7 +71,7 @@ public class TileHeatExchange extends TileBC_Neptune implements IDebuggable {
         if (checkNeighbours) {
             checkNeighbours = false;
             // STUB(R.Chen): findAdjacentExchangers() + section linking deferred (Phase 4E).
-            // Uses Direction.rotateY() equivalent not available until Direction migration complete.
+            // Uses Direction.rotateYClockwise() equivalent not available until Direction migration complete.
         }
         if (section != null) {
             section.tick();

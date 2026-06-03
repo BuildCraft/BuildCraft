@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 public @interface SidedProxy {
     String clientSide() default "";
     String serverSide() default "";
+    String modId() default "";
 }

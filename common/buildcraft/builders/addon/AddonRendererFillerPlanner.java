@@ -56,7 +56,7 @@ public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFille
         MinecraftClient.getInstance().getProfiler().push("render");
         for (BlockPos p : list) {
             Box bb = new Box(p, p.add(1, 1, 1)).grow(-0.1);
-            Sprite s = ModelLoader.White.INSTANCE;
+            Sprite s = buildcraft.lib.compat.McTextureCompat.getMissingSprite();
 
             vb.vertex(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();
             vb.vertex(bb.maxX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMaxV()).light(240, 0).next();

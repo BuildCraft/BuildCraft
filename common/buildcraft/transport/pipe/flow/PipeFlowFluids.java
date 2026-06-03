@@ -377,7 +377,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         }
 
         if (currentFluid != null) {
-            // int timeSlot = (int) (world.getTotalWorldTime() % currentDelay);
+            // int timeSlot = (int) (world.getTime() % currentDelay);
             int totalFluid = 0;
             boolean canOutput = false;
 

@@ -3,98 +3,16 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): BCFactoryModels deferred — IModelHolder/ModelBakeEvent removed in 1.20.1
 package buildcraft.factory;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import buildcraft.lib.client.model.ModelHolderVariable;
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.client.model.MutableQuad;
-
-import buildcraft.factory.client.model.ModelHeatExchange;
-import buildcraft.factory.client.render.RenderDistiller;
-import buildcraft.factory.client.render.RenderHeatExchange;
-import buildcraft.factory.client.render.RenderMiningWell;
-import buildcraft.factory.client.render.RenderPump;
-import buildcraft.factory.client.render.RenderTank;
-import buildcraft.factory.tile.TileDistiller_BC8;
-import buildcraft.factory.tile.TileHeatExchange;
-import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileTank;
-
 public class BCFactoryModels {
-    public static final ModelHolderVariable DISTILLER = new ModelHolderVariable(
-        "buildcraftfactory:models/tiles/distiller.json",
-        TileDistiller_BC8.MODEL_FUNC_CTX
-    );
-    public static final ModelHolderVariable HEAT_EXCHANGE_STATIC = new ModelHolderVariable(
-        "buildcraftfactory:models/tiles/heat_exchange_static.json",
-        ModelHeatExchange.FUNCTION_CONTEXT
-    );
 
     public static void fmlPreInit() {
-        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCFactoryModels.class);
-    }
-
-    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
-    @Environment(EnvType.CLIENT)
-    public static void onModelRegistry(ModelRegistryEvent event) {
-        if (BCFactoryBlocks.heatExchange != null) {
-            ModelLoader.setCustomStateMapper(
-                BCFactoryBlocks.heatExchange,
-                new StateMapperBase() {
-                    @Nonnull
-                    // @Override -- removed: method does not exist in Fabric 1.20.1
-                    protected ModelIdentifier getModelResourceLocation(@Nonnull BlockState state) {
-                        return new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftfactory:heat_exchange"), "normal");
-                    }
-                }
-            );
-        }
+        // STUB
     }
 
     public static void fmlInit() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
-        ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileDistiller_BC8.class, new RenderDistiller());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileHeatExchange.class, new RenderHeatExchange());
-    }
-
-    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
-    public static void onModelBake(ModelBakeEvent event) {
-        event.getModelRegistry().putObject(
-            new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftfactory:heat_exchange"), "normal"),
-            new ModelHeatExchange()
-        );
-        event.getModelRegistry().putObject(
-            new ModelIdentifier(new net.minecraft.util.Identifier("buildcraftfactory:heat_exchange"), "inventory"),
-            new ModelItemSimple(
-                Arrays.stream(BCFactoryModels.HEAT_EXCHANGE_STATIC.getCutoutQuads())
-                    .map(MutableQuad::multShade)
-                    .map(MutableQuad::toBakedItem)
-                    .collect(Collectors.toList()),
-                ModelItemSimple.TRANSFORM_BLOCK,
-                true
-            )
-        );
+        // STUB
     }
 }

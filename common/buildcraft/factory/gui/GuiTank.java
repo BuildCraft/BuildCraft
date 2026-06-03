@@ -40,10 +40,10 @@ public class GuiTank extends GuiBC8<ContainerTank> {
         int strWidth = fontRenderer.getWidth(str);
         double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
         double titleY = mainGui.rootElement.getY() + 6;
-        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), str, (int) titleX, (int) titleY, 0x404040);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(str, (int) titleX, (int) titleY, 0x404040)
 
         double invX = mainGui.rootElement.getX() + 8;
         double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
-        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), LocaleUtil.localize("gui.getInventory()"), (int) invX, (int) invY, 0x404040);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(LocaleUtil.localize("gui.getInventory()"), (int) invX, (int) invY, 0x404040)
     }
 }

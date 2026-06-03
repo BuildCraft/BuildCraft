@@ -31,7 +31,7 @@ public abstract class RenderEngine_BC8<T extends TileEngineBase_BC8> extends Fas
         MutableQuad[] quads = getEngineModel(engine, partialTicks);
         profiler.swap("render");
         MutableQuad copy = new MutableQuad(0, null);
-        int lightc = engine.getWorld().getCombinedLight(engine.getPos(), 0);
+        int lightc = buildcraft.lib.compat.WorldCompat.getCombinedLight(engine.getWorld(), engine.getPos(), 0);
         int light_block = (lightc >> 4) & 15;
         int light_sky = (lightc >> 20) & 15;
         for (MutableQuad q : quads) {

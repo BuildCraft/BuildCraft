@@ -114,12 +114,12 @@ public class HashUtil {
 
     private static void writeStableCompound(NbtCompound nbt, DataOutput out) throws IOException {
         TreeMap<String, NbtElement> entries = new TreeMap<>();
-        for (String key : nbt.getKeySet()) {
+        for (String key : nbt.getKeys()) {
             entries.put(key, nbt.get(key));
         }
         for (String key : entries.keySet()) {
             NbtElement tag = entries.get(key);
-            byte id = tag.getId();
+            byte id = tag.getType();
             out.writeByte(id);
             if (id != 0) {
                 out.writeUTF(key);
@@ -133,10 +133,10 @@ public class HashUtil {
         // We have to intercept lists as they might contain compounds
         // (Although normal lists are already stable)
         int type;
-        if (nbt.hasNoTags()) {
+        if (nbt.isEmpty()) {
             type = 0;
         } else {
-            type = nbt.get(0).getId();
+            type = nbt.get(0).getType();
         }
         out.writeByte(type);
         out.writeInt(nbt.size());

@@ -62,4 +62,7 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
 
         RenderSystem.disableBlend();
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

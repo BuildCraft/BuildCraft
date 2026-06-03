@@ -362,7 +362,7 @@ public class BlockPipeHolder extends BlockBCBase_Neptune implements BlockEntityP
             }
         }
         // STUB(R.Chen): the ItemWire placement branch is dropped here. It needs the unmigrated transport item
-        // layer (ItemWire + BCTransportItems.wire) and relied on stack.getId()→DyeColor, which the 1.13
+        // layer (ItemWire + BCTransportItems.wire) and relied on stack.getDamage()→DyeColor, which the 1.13
         // item flattening removed. Restore in Phase 4F (wire item carries its colour via the item/NBT). The Forge
         // branch added a wire part via tile.getWireManager().addPart(...), scheduled a WIRES network update, and
         // unlocked ADVANCEMENT_LOGIC_TRANSPORTATION when the new wire became connected.

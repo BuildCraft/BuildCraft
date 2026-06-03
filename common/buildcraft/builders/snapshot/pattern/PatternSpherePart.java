@@ -87,7 +87,7 @@ public final class PatternSpherePart extends Pattern implements IFillerPatternSh
         Set<Direction> innerSides = EnumSet.noneOf(Direction.class);
 
         Vec3d max = new Vec3d(filledTemplate.getMax().getX(), filledTemplate.getMax().getY(), filledTemplate.getMax().getZ());
-        center = VecUtil.scale(max, 0.5);
+        center = VecUtil.multiply(max, 0.5);
         radius = center.add(0.5, 0.5, 0.5);
 
         innerSides.add(facing.face);

@@ -7,6 +7,7 @@ package buildcraft.lib.item;
 import java.util.List;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Formatting;
@@ -38,5 +39,13 @@ public class ItemBlockBC_Neptune extends BlockItem implements IItemBuildCraft {
         } else if (flags.isAdvanced()) {
             tooltip.add(Formatting.GRAY + tipId);
         }
+    }
+
+    // ---- 1.12.2 compat no-ops ----
+    protected void setMaxStackSize(int n) {}
+    protected void setHasSubtypes(boolean has) {}
+    protected void setMaxDamage(int n) {}
+    public net.minecraft.util.Identifier getRegistryName() {
+        return net.minecraft.registry.Registries.ITEM.getId(this);
     }
 }

@@ -7,13 +7,13 @@
 package buildcraft.lib.crops;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockDoublePlant;
-import net.minecraft.block.BlockFlower;
-import net.minecraft.block.BlockMelon;
-import net.minecraft.block.BlockMushroom;
-import net.minecraft.block.BlockNetherWart;
-import net.minecraft.block.BlockTallGrass;
+import net.minecraft.block.CropBlock;
+import net.minecraft.block.TallPlantBlock;
+import net.minecraft.block.FlowerBlock;
+import net.minecraft.block.MelonBlock;
+import net.minecraft.block.MushroomPlantBlock;
+import net.minecraft.block.NetherWartBlock;
+import net.minecraft.block.TallPlantBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.Blocks;
@@ -43,7 +43,7 @@ public enum CropHandlerPlantable implements ICropHandler {
 
         if (stack.getItem() instanceof BlockItem) {
             Block block = ((BlockItem) stack.getItem()).getBlock();
-            if (block instanceof IPlantable && block != Blocks.REEDS) {
+            if (block instanceof IPlantable && block != Blocks.SUGAR_CANE) {
                 return true;
             }
         }
@@ -72,13 +72,13 @@ public enum CropHandlerPlantable implements ICropHandler {
     @Override
     public boolean isMature(BlockView blockAccess, BlockState state, BlockPos pos) {
         Block block = state.getBlock();
-        if (block instanceof BlockFlower || block instanceof BlockTallGrass || block instanceof BlockMelon || block instanceof BlockMushroom || block instanceof BlockDoublePlant
+        if (block instanceof FlowerBlock || block instanceof TallPlantBlock || block instanceof MelonBlock || block instanceof MushroomPlantBlock || block instanceof TallPlantBlock
             || block == Blocks.PUMPKIN) {
             return true;
-        } else if (block instanceof BlockCrops) {
-            return ((BlockCrops) block).isMaxAge(state);
-        } else if (block instanceof BlockNetherWart) {
-            return state.get(BlockNetherWart.AGE) == 3;
+        } else if (block instanceof CropBlock) {
+            return ((CropBlock) block).isMature(state);
+        } else if (block instanceof NetherWartBlock) {
+            return state.get(NetherWartBlock.AGE) == 3;
         } else if (block instanceof IPlantable) {
             if (blockAccess.getBlockState(pos.down()).getBlock() == block) {
                 return true;

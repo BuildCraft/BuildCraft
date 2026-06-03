@@ -47,7 +47,7 @@ public class StripesHandlerPipeWires implements IStripesHandlerItem {
                     pipeHolder.scheduleRenderUpdate();
                     world.notifyNeighborsOfStateChange(pipeHolder.getPipePos(), tile.getBlockType(), false);
                     */
-                //stack.shrink(1);
+                //stack.decrement(1);
                     /*
                     return true;
 

@@ -50,7 +50,7 @@ public class SchematicEntityManager {
                 .name
                 .toString()
         );
-        schematicEntityTag.put("data", schematicEntity.createNbt());
+        schematicEntityTag.put("data", schematicEntity.serializeNBT());
         return schematicEntityTag;
     }
 

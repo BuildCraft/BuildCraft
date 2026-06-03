@@ -790,7 +790,7 @@ public enum XmlPageLoader implements IPageLoaderText {
 
         if (nbt != null) {
             try {
-                stack.setTagCompound(JsonToNBT.getTagFromJson(nbt));
+                stack.setNbt(JsonToNBT.getTagFromJson(nbt));
             } catch (NBTException e) {
                 BCLog.logger.warn("[lib.guide.loader.xml] " + nbt + " was not a valid nbt tag: " + e.getMessage());
             }

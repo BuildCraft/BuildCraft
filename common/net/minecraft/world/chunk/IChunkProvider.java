@@ -2,7 +2,7 @@
 package net.minecraft.world.chunk;
 
 public interface IChunkProvider {
-    WorldChunk provideChunk(int x, int z);
-    WorldChunk getLoadedChunk(int x, int z);
+    net.minecraft.world.chunk.Chunk provideChunk(int x, int z);
+    net.minecraft.world.chunk.Chunk getLoadedChunk(int x, int z);
     boolean isChunkGeneratedAt(int x, int z);
 }

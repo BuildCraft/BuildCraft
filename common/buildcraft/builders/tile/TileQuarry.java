@@ -818,6 +818,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
         public long clientPower;
         public long prevClientPower;
 
+        NbtCompound createNbt() { return serializeNBT(); }
         NbtCompound serializeNBT() {
             NbtCompound nbt = new NbtCompound();
             nbt.putLong("power", power);
@@ -1134,4 +1135,7 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
             return from.equals(other.from) && to.equals(other.to);
         }
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

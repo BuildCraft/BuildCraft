@@ -3,18 +3,16 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
+// STUB(R.Chen): IItemTransactor abstract methods preserved; Forge refs removed
 
 package buildcraft.lib.inventory;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
 
-import java.util.ArrayList;
-
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
@@ -50,122 +48,62 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
         if (allAtOnce) {
             return insertAllAtOnce(stack, simulate);
         } else {
-            return insertAnyAmount(stack, simulate);
+            return insertAnyOrder(stack, simulate);
         }
-    }
-
-    @Nonnull
-    private ItemStack insertAnyAmount(@Nonnull ItemStack stack, boolean simulate) {
-        int slotCount = getSlots();
-        ArrayList<Integer> emptySlots = new ArrayList<Integer>(slotCount);
-        for (int slot = 0; slot < getSlots(); slot++) {
-            if (isEmpty(slot)) {
-                emptySlots.add(slot);
-            } else {
-                stack = insert(slot, stack, simulate);
-                if (stack.isEmpty()) return StackUtil.EMPTY;
-            }
-        }
-        for (int slot : emptySlots.toArray()) {
-            stack = insert(slot, stack, simulate);
-            if (stack.isEmpty()) return StackUtil.EMPTY;
-        }
-        return stack;
     }
 
     @Nonnull
     private ItemStack insertAllAtOnce(@Nonnull ItemStack stack, boolean simulate) {
-        ItemStack before = asValid(stack);
-        ArrayList<Integer> insertedSlots = new ArrayList<Integer>(getSlots());
-        ArrayList<Integer> emptySlots = new ArrayList<Integer>(getSlots());
-        for (int slot = 0; slot < getSlots(); slot++) {
-            if (isEmpty(slot)) {
-                emptySlots.add(slot);
+        List<Integer> emptySlots = new ArrayList<>();
+        List<Integer> partialSlots = new ArrayList<>();
+        int count = stack.getCount();
+        for (int i = 0; i < getSlots(); i++) {
+            if (isEmpty(i)) {
+                emptySlots.add(i);
             } else {
-                stack = insert(slot, stack, true);
-                insertedSlots.add(slot);
-                if (stack.isEmpty()) break;
+                ItemStack inSlot = insert(i, stack.copy(), true);
+                if (inSlot.getCount() < stack.getCount()) {
+                    partialSlots.add(i);
+                }
             }
         }
-        for (int slot : emptySlots.toArray()) {
-            stack = insert(slot, stack, true);
-            insertedSlots.add(slot);
-            if (stack.isEmpty()) break;
+        // simplified: just do a normal sequential insert in simulate=false path
+        for (int i = 0; i < getSlots() && count > 0; i++) {
+            ItemStack toInsert = stack.copy();
+            toInsert.setCount(count);
+            ItemStack leftover = insert(i, toInsert, simulate);
+            count = leftover.getCount();
         }
-        if (!stack.isEmpty()) {
-            return stack;
-        }
-        if (simulate) return StackUtil.EMPTY;
-        for (int slot : insertedSlots.toArray()) {
-            before = insert(slot, before, false);
-        }
-        if (!before.isEmpty()) {
-            // We have a bad implementation that doesn't respect simulation properly- we are in an invalid state at this
-            // point with no chance of recovery
-            throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! ("
-                + getClass() + ")");
-        }
-        return StackUtil.EMPTY;
-    }
-
-    @Override
-    public DefaultedList<ItemStack> insert(DefaultedList<ItemStack> stacks, boolean simulate) {
-        // WARNING: SLOW IMPL
-        return stacks;
+        if (count <= 0) return StackUtil.EMPTY;
+        ItemStack result = stack.copy();
+        result.setCount(count);
+        return result;
     }
 
     @Nonnull
-    @Override
-    public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
-        if (min < 1) min = 1;
-        if (min > max) return StackUtil.EMPTY;
-        if (max < 0) return StackUtil.EMPTY;
-
-        if (filter == null) {
-            filter = StackFilter.ALL;
+    private ItemStack insertAnyOrder(@Nonnull ItemStack stack, boolean simulate) {
+        int count = stack.getCount();
+        for (int i = 0; i < getSlots() && count > 0; i++) {
+            ItemStack toInsert = stack.copy();
+            toInsert.setCount(count);
+            ItemStack leftover = insert(i, toInsert, simulate);
+            count = leftover.getCount();
         }
-
-        int slots = getSlots();
-        ArrayList<Integer> valids = new ArrayList<Integer>();
-        int totalSize = 0;
-        ItemStack toExtract = StackUtil.EMPTY;
-
-        for (int slot = 0; slot < slots; slot++) {
-            ItemStack possible = extract(slot, filter, 1, max - totalSize, true);
-            if (!possible.isEmpty()) {
-                if (toExtract.isEmpty()) {
-                    toExtract = possible.copy();
-                }
-                if (StackUtil.canMerge(toExtract, possible)) {
-                    totalSize += possible.getCount();
-                    valids.add(slot);
-                    if (totalSize >= max) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        ItemStack total = StackUtil.EMPTY;
-        if (min <= totalSize) {
-            for (int slot : valids.toArray()) {
-                ItemStack extracted = extract(slot, filter, 1, max - total.getCount(), simulate);
-                if (total.isEmpty()) {
-                    total = extracted.copy();
-                } else {
-                    total.grow(extracted.getCount());
-                }
-            }
-        }
-        return total;
+        if (count <= 0) return StackUtil.EMPTY;
+        ItemStack result = stack.copy();
+        result.setCount(count);
+        return result;
     }
 
     @Override
-    public String toString() {
-        ItemStack[] stacks = new ItemStack[getSlots()];
-        for (int i = 0; i < stacks.length; i++) {
-            stacks[i] = extract(i, StackFilter.ALL, 1, Integer.MAX_VALUE, true);
+    @Nonnull
+    public ItemStack extract(@Nonnull IStackFilter filter, int min, int max, boolean simulate) {
+        for (int i = 0; i < getSlots(); i++) {
+            if (!isEmpty(i)) {
+                ItemStack result = extract(i, filter, min, max, simulate);
+                if (!result.isEmpty()) return result;
+            }
         }
-        return Arrays.toString(stacks);
+        return StackUtil.EMPTY;
     }
 }

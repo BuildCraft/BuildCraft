@@ -38,6 +38,9 @@ import buildcraft.lib.net.PacketBufferBC;
 public abstract class ContainerBC_Neptune extends ScreenHandler {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
 
+    @Override
+    public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
+
     protected static final IdAllocator IDS = new IdAllocator("container");
     public static final int NET_DATA = IDS.allocId("DATA");
     public static final int NET_WIDGET = IDS.allocId("WIDGET");
@@ -111,7 +114,7 @@ public abstract class ContainerBC_Neptune extends ScreenHandler {
         Slot slot = this.slots.get(index);
         Slot firstSlot = this.slots.get(0);
         int playerInventorySize = 36;
-        boolean playerInventoryFirst = firstSlot.getInventory() instanceof PlayerInventory;
+        boolean playerInventoryFirst = firstSlot.inventory instanceof PlayerInventory;
 
         if (slot != null && slot.hasStack()) {
             ItemStack itemstack1 = slot.getStack();

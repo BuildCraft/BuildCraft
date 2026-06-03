@@ -506,7 +506,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements IDebu
         if (getPowerStage() == EnumPowerStage.OVERHEAT) {
             // TODO: turn engine off
             // worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
-            // worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+            // worldObj.setBlockState(xCoord, yCoord, zCoord);
         }
 
         if (power > getMaxPower()) {

@@ -43,7 +43,7 @@ public class StatementParameterDirection implements IStatementParameter {
     private Direction direction = null;
 
     @Environment(EnvType.CLIENT)
-    public void registerIcons(TextureMap map) {
+    public void registerIcons(net.minecraft.client.renderer.texture.TextureMap map) {
         sprites = new Sprite[] {
             map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_down")),
             map.registerSprite(new Identifier("buildcraftcore:triggers/trigger_dir_up")),
@@ -139,7 +139,7 @@ public class StatementParameterDirection implements IStatementParameter {
         StatementParameterDirection d = new StatementParameterDirection();
         Direction dir = d.getDirection();
         if (dir != null && dir.getAxis() != Axis.Y) {
-            d.direction = dir.rotateY();
+            d.direction = dir.rotateYClockwise();
         }
         return d;
     }

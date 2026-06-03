@@ -1,5 +1,7 @@
 package buildcraft.lib.command;
 
+import net.minecraft.command.ICommandSender;
+
 import com.mojang.brigadier.Command;
 import net.minecraft.command.CommandException;
 import net.minecraft.server.command.ServerCommandSource;

@@ -72,7 +72,7 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
 
     private static Vec3d offset(Vec3d from, Vec3d to) {
         Vec3d dir = to.subtract(from).normalize();
-        return from.add(VecUtil.scale(dir, OFFSET));
+        return from.add(VecUtil.multiply(dir, OFFSET));
     }
 
     // @Override -- removed: method does not exist in Fabric 1.20.1

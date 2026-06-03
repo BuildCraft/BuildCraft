@@ -52,4 +52,27 @@ public class Property {
     public String getName() { return ""; }
     public String getDefault() { return ""; }
     public boolean hasChanged() { return false; }
+
+    public Property setMinValue(int min) { return this; }
+    public Property setMaxValue(int max) { return this; }
+    public Property setMinValue(double min) { return this; }
+    public Property setMaxValue(double max) { return this; }
+    public Property setLanguageKey(String key) { return this; }
+    public int getMinValue() { return Integer.MIN_VALUE; }
+    public int getMaxValue() { return Integer.MAX_VALUE; }
+    public String getLanguageKey() { return ""; }
+
+    // STUB(R.Chen): additional getters expected by BCConfig classes
+    public double doubleValue() { return getDouble(); }
+    public int intValue() { return getInt(); }
+    public boolean booleanValue() { return getBoolean(); }
+    public String[] getStringList() { return value != null ? value.split(",") : new String[0]; }
+    public int[] getIntList() {
+        String[] parts = getStringList();
+        int[] ints = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            try { ints[i] = Integer.parseInt(parts[i].trim()); } catch (Exception e) { ints[i] = 0; }
+        }
+        return ints;
+    }
 }

@@ -61,4 +61,19 @@ public class GuiIcon implements ISimpleDrawable {
     public void drawScaledInside(IGuiArea element) {
         drawAt(element.getX(), element.getY());
     }
+
+    /** Returns a new GuiIcon with (u,v) offset by (du,dv) on the same texture. */
+    public GuiIcon offset(int du, int dv) {
+        if (texture != null) {
+            return new GuiIcon(texture, u + du, v + dv, width, height);
+        }
+        return this; // sprite-based icons: no simple offset
+    }
+
+    /** Returns true if the mouse position is within this icon drawn at (x, y). */
+    public boolean containsGuiPos(double x, double y, buildcraft.lib.gui.pos.IGuiPosition mouse) {
+        if (mouse == null) return false;
+        double mx = mouse.getX(), my = mouse.getY();
+        return mx >= x && mx < x + width && my >= y && my < y + height;
+    }
 }

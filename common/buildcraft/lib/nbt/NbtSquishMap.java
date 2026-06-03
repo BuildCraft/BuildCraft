@@ -55,49 +55,49 @@ public class NbtSquishMap {
 
     public void addTag(NbtElement nbt) {
         if (nbt instanceof NbtString) {
-            String val = ((NbtString) nbt).getString();
+            String val = ((NbtString)nbt).asString();
             if (!strings.contains(val)) {
                 strings.add(val);
             }
         } else if (nbt instanceof NbtByte) {
-            byte val = ((NbtByte) nbt).getByte();
+            byte val = ((nbt) instanceof NbtByte ? ((NbtByte)nbt).byteValue() : 0);
             if (!bytes.contains(val)) {
                 bytes.add(val);
             }
         } else if (nbt instanceof NbtShort) {
-            short val = ((NbtShort) nbt).getShort();
+            short val = ((NbtShort)nbt).shortValue();
             if (!shorts.contains(val)) {
                 shorts.add(val);
             }
         } else if (nbt instanceof NbtInt) {
-            int val = ((NbtInt) nbt).getInt();
+            int val = ((NbtInt)nbt).intValue();
             if (!ints.contains(val)) {
                 ints.add(val);
             }
         } else if (nbt instanceof NbtLong) {
-            long val = ((NbtLong) nbt).getLong();
+            long val = ((NbtLong)nbt).longValue();
             if (!longs.contains(val)) {
                 longs.add(val);
             }
         } else if (nbt instanceof NbtFloat) {
-            float val = ((NbtFloat) nbt).getFloat();
+            float val = ((NbtFloat)nbt).floatValue();
             if (!floats.contains(val)) {
                 floats.add(val);
             }
         } else if (nbt instanceof NbtDouble) {
-            double val = ((NbtDouble) nbt).getDouble();
+            double val = ((NbtDouble)nbt).doubleValue();
             if (!doubles.contains(val)) {
                 doubles.add(val);
             }
         } else if (nbt instanceof NbtByteArray) {
             byte[] val = ((NbtByteArray) nbt).getByteArray();
-            ArrayList<Byte> array = new ArrayList<Byte>(val);
+            ArrayList<Byte> array = new ArrayList<>(); for (byte b : val) array.add(b);
             if (!byteArrays.contains(array)) {
                 byteArrays.add(array);
             }
         } else if (nbt instanceof NbtIntArray) {
             int[] val = ((NbtIntArray) nbt).getIntArray();
-            ArrayList<Integer> array = new ArrayList<Integer>(val);
+            ArrayList<Integer> array = new ArrayList<>(); for (int i : val) array.add(i);
             if (!intArrays.contains(array)) {
                 intArrays.add(array);
             }
@@ -112,7 +112,7 @@ public class NbtSquishMap {
         } else if (nbt instanceof NbtCompound) {
             NbtCompound compound = (NbtCompound) nbt;
             if (!complex.contains(compound)) {
-                for (String key : compound.getKeySet()) {
+                for (String key : compound.getKeys()) {
                     if (!strings.contains(key)) {
                         strings.add(key);
                     }
@@ -128,51 +128,51 @@ public class NbtSquishMap {
     public int indexOfTag(NbtElement nbt) {
         int offset = 0;
         if (nbt instanceof NbtByte) {
-            return bytes.indexOf(((NbtByte) nbt).getByte());
+            return bytes.indexOf(((nbt) instanceof NbtByte ? ((NbtByte)nbt).byteValue() : 0));
         } else {
             offset += bytes.size();
         }
         if (nbt instanceof NbtShort) {
-            return offset + shorts.indexOf(((NbtShort) nbt).getShort());
+            return offset + shorts.indexOf(((NbtShort)nbt).shortValue());
         } else {
             offset += shorts.size();
         }
         if (nbt instanceof NbtInt) {
-            return offset + ints.indexOf(((NbtInt) nbt).getInt());
+            return offset + ints.indexOf(((NbtInt)nbt).intValue());
         } else {
             offset += ints.size();
         }
         if (nbt instanceof NbtLong) {
-            return offset + longs.indexOf(((NbtLong) nbt).getLong());
+            return offset + longs.indexOf(((NbtLong)nbt).longValue());
         } else {
             offset += longs.size();
         }
         if (nbt instanceof NbtFloat) {
-            return offset + floats.indexOf(((NbtFloat) nbt).getFloat());
+            return offset + floats.indexOf(((NbtFloat)nbt).floatValue());
         } else {
             offset += floats.size();
         }
         if (nbt instanceof NbtDouble) {
-            return offset + doubles.indexOf(((NbtDouble) nbt).getDouble());
+            return offset + doubles.indexOf(((NbtDouble)nbt).doubleValue());
         } else {
             offset += doubles.size();
         }
         if (nbt instanceof NbtByteArray) {
             byte[] val = ((NbtByteArray) nbt).getByteArray();
-            ArrayList<Byte> array = new ArrayList<Byte>(val);
+            ArrayList<Byte> array = new ArrayList<>(); for (byte b : val) array.add(b);
             return offset + byteArrays.indexOf(array);
         } else {
             offset += byteArrays.size();
         }
         if (nbt instanceof NbtIntArray) {
             int[] val = ((NbtIntArray) nbt).getIntArray();
-            ArrayList<Integer> array = new ArrayList<Integer>(val);
+            ArrayList<Integer> array = new ArrayList<>(); for (int i : val) array.add(i);
             return offset + intArrays.indexOf(array);
         } else {
             offset += intArrays.size();
         }
         if (nbt instanceof NbtString) {
-            return offset + strings.indexOf(((NbtString) nbt).getString());
+            return offset + strings.indexOf(((NbtString)nbt).asString());
         } else {
             offset += strings.size();
         }
@@ -189,12 +189,12 @@ public class NbtSquishMap {
             throw new IndexOutOfBoundsException(index + " was less than 0!");
         }
         if (index < bytes.size()) {
-            return new NbtByte(bytes.get(index));
+            return NbtByte.of(bytes.get(index));
         }
         index -= bytes.size();
 
         if (index < shorts.size()) {
-            return new NbtShort(shorts.get(index));
+            return NbtShort.of(shorts.get(index));
         }
         index -= shorts.size();
 
@@ -204,17 +204,17 @@ public class NbtSquishMap {
         index -= ints.size();
 
         if (index < longs.size()) {
-            return new NbtLong(longs.get(index));
+            return NbtLong.of(longs.get(index));
         }
         index -= longs.size();
 
         if (index < floats.size()) {
-            return new NbtFloat(floats.get(index));
+            return NbtFloat.of(floats.get(index));
         }
         index -= floats.size();
 
         if (index < doubles.size()) {
-            return new NbtDouble(doubles.get(index));
+            return NbtDouble.of(doubles.get(index));
         }
         index -= doubles.size();
 
@@ -232,7 +232,7 @@ public class NbtSquishMap {
         index -= intArrays.size();
 
         if (index < strings.size()) {
-            return new NbtString(strings.get(index));
+            return NbtString.of(strings.get(index));
         }
         index -= strings.size();
 
@@ -292,8 +292,8 @@ public class NbtSquishMap {
         if (isFlag(typeFlags, NbtElement.LONG_TYPE)) total += longs.size();
         if (isFlag(typeFlags, NbtElement.FLOAT_TYPE)) total += floats.size();
         if (isFlag(typeFlags, NbtElement.DOUBLE_TYPE)) total += doubles.size();
-        if (isFlag(typeFlags, NbtElement.BYTE_TYPE_ARRAY)) total += byteArrays.size();
-        if (isFlag(typeFlags, NbtElement.INT_TYPE_ARRAY)) total += intArrays.size();
+        if (isFlag(typeFlags, NbtElement.BYTE_ARRAY_TYPE)) total += byteArrays.size();
+        if (isFlag(typeFlags, NbtElement.INT_ARRAY_TYPE)) total += intArrays.size();
         if (isFlag(typeFlags, NbtElement.STRING_TYPE)) total += strings.size();
         if (isFlag(typeFlags, NbtElement.COMPOUND_TYPE)) total += complex.size();
         else if (isFlag(typeFlags, NbtElement.LIST_TYPE)) total += complex.size();

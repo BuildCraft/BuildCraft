@@ -110,7 +110,7 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
             }
             RenderSystem.enableBlend();
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
             com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, 
                 new Identifier(
                     "buildcraftbuilders",
@@ -149,4 +149,7 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             }
         }
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

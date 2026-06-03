@@ -15,7 +15,7 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
-import net.minecraft.util.DamageSource;
+import net.minecraft.entity.damage.DamageSource;
 
 import buildcraft.lib.item.IItemBuildCraft;
 

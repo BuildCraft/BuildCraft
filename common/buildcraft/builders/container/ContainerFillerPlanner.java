@@ -73,7 +73,7 @@ public class ContainerFillerPlanner extends ContainerBC_Neptune implements ICont
     public void valuesChanged() {
         addon.updateBuildingInfo();
         if (!player.getWorld().isClient) {
-            WorldSavedDataVolumeBoxes.get(getPlayer().world).markDirty();
+            WorldSavedDataVolumeBoxes.get(getPlayer().getWorld()).markDirty();
         }
     }
 

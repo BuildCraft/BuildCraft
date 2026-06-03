@@ -36,31 +36,34 @@ public class ItemWaterGel extends ItemBC_Neptune {
     public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         Vec3d start = player.getEyePos();
-        Vec3d look = player.getLookVec();
-        Vec3d end = start.add(look.scale(7));
-        HitResult ray = world.rayTraceBlocks(start, end, true, false, true);
+        Vec3d look = player.getRotationVec(1.0f);
+        Vec3d end = start.add(look.multiply(7));
+        net.minecraft.util.hit.BlockHitResult ray = world.raycastBlock(start, end,
+            net.minecraft.util.math.BlockPos.ofFloored(start),
+            net.minecraft.block.ShapeContext.absent());
 
-        if (ray == null || ray.getBlockPos() == null) {
+        if (ray == null) {
             return TypedActionResult.fail(stack);
         }
+        net.minecraft.util.math.BlockPos rayPos = ray.getBlockPos();
 
-        Block b = world.getBlockState(ray.getBlockPos()).getBlock();
+        Block b = world.getBlockState(rayPos).getBlock();
         if (b != Blocks.WATER) {
             return TypedActionResult.fail(stack);
         }
 
-        if (!player.capabilities.isCreativeMode) {
+        if (!player.getAbilities().creativeMode) {
             stack.setCount(stack.getCount() - 1);
         }
 
         // Same as ItemSnowball
-        world.playSound(null, player.posX, player.posY, player.posZ,//
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),//
                 SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL,//
-                0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+                0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
 
         if (!world.isClient) {
-            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().with(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
-            world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.waterGel, 200);
+            world.setBlockState(rayPos, BCFactoryBlocks.waterGel.getDefaultState().with(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
+            world.scheduleBlockTick(rayPos, BCFactoryBlocks.waterGel, 200);
 
             // TODO: Snowball stuff
 

@@ -6,7 +6,7 @@
 
 package buildcraft.lib.fluid;
 
-import net.minecraft.block.material.MapColor;
+import net.minecraft.block.MapColor;
 import net.minecraft.util.Identifier;
 
 import net.minecraft.fluid.Fluid;
@@ -112,5 +112,16 @@ public class BCFluid extends Fluid {
 
     public boolean isHeatable() {
         return heatable;
+    }
+
+    // ---- Forge fluid-block compat ----
+    private net.minecraft.block.Block fluidBlock;
+
+    public void setBlock(net.minecraft.block.Block block) {
+        this.fluidBlock = block;
+    }
+
+    public net.minecraft.block.Block getBlock() {
+        return fluidBlock;
     }
 }

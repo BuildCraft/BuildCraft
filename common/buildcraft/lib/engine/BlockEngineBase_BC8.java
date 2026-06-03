@@ -51,7 +51,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // Engine directly related methods
 
     public void registerEngine(E type, Supplier<? extends TileEngineBase_BC8> constructor) {
-        if (RegistryConfig.isEnabled("engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT),
+        if (RegistryConfig.isEnabled("engines", net.minecraft.registry.Registries.BLOCK.getId(this) + "/" + type.name().toLowerCase(Locale.ROOT),
             getUnlocalizedName(type))) {
             engineTileConstructors.put(type, constructor);
         }

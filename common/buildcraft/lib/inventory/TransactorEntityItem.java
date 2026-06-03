@@ -45,7 +45,7 @@ public class TransactorEntityItem implements IItemExtractable {
             ItemStack extracted = current.splitStack(max);
             if (!simulate) {
                 if (current.getCount() == 0) {
-                    entity.setDead();
+                    entity.discard();
                 } else {
                     entity.setItem(current);
                 }

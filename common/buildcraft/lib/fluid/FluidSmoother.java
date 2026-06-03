@@ -204,11 +204,11 @@ public class FluidSmoother implements IDebuggable {
                 link = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
             }
             lastMessageMinus1 = lastMessage;
-            lastMessage = world.getTotalWorldTime();
+            lastMessage = world.getTime();
         }
 
         void resetSmoothing(World world) {
-            lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
+            lastMessageMinus1 = lastMessage = world.getTime();
             lastMessageMinus1 -= 1;
         }
 

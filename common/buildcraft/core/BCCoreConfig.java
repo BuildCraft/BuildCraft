@@ -313,7 +313,7 @@ public class BCCoreConfig {
         BCLibConfig.rotateTravelingItems =
             ConfigUtil.parseEnumForConfig(propItemRenderRotation, RenderRotation.ENABLED);
         BCLibConfig.enableAnimatedSprites = propEnableAnimatedSprites.getBoolean();
-        miningMultiplier = MathUtil.clamp(propMiningMultiplier.getDouble(), 1.0, 200.0);
+        miningMultiplier = MathUtil.clamp(propMiningMultiplier.doubleValue(), 1.0, 200.0);
         miningMaxDepth = propMiningMaxDepth.getInt();
 
         if (EnumRestartRequirement.WORLD.hasBeenRestarted(restarted)) {

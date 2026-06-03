@@ -39,7 +39,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
             return true;
         }
-        for (int f = 0; f < sprite.getFrameCount(); f++) {
+        for (int f = 0; f < buildcraft.lib.compat.SpriteCompat.getFrameCount(sprite); f++) {
             recolourFrame(sprite, f);
         }
         swapWith(sprite);
@@ -47,7 +47,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
     }
 
     private void recolourFrame(Sprite sprite, int f) {
-        int[][] frameData = sprite.getFrameTextureData(f);
+        int[][] frameData = buildcraft.lib.compat.SpriteCompat.getFrameTextureData(sprite, f);
         if (frameData != null) {
             // frameData[0] is mipmap 0
             int[] pixels = frameData[0];

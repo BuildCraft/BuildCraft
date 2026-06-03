@@ -231,7 +231,7 @@ public class BCEnergyConfig {
                 enableOilDesertBiome = propEnableOilDesertBiome.getBoolean();
 
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
-                oilWellGenerationRate = propOilWellGenerationRate.getDouble();
+                oilWellGenerationRate = propOilWellGenerationRate.doubleValue();
                 enableOilSpouts = propEnableOilSpouts.getBoolean();
                 enableOilBurn = propEnableOilBurn.getBoolean();
                 oilIsSticky = propOilIsSticky.getBoolean();
@@ -243,9 +243,9 @@ public class BCEnergyConfig {
                 largeSpoutMinHeight = propLargeSpoutMinHeight.getInt();
                 largeSpoutMaxHeight = propLargeSpoutMaxHeight.getInt();
 
-                smallOilGenProb = propSmallOilGenProb.getDouble() / 100;
-                mediumOilGenProb = propMediumOilGenProb.getDouble() / 100;
-                largeOilGenProb = propLargeOilGenProb.getDouble() / 100;
+                smallOilGenProb = propSmallOilGenProb.doubleValue() / 100;
+                mediumOilGenProb = propMediumOilGenProb.doubleValue() / 100;
+                largeOilGenProb = propLargeOilGenProb.doubleValue() / 100;
 
                 christmasEventStatus = ConfigUtil.parseEnumForConfig(propChristmasEventType, SpecialEventType.DAY_ONLY);
             } else {

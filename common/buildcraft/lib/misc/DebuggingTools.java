@@ -43,9 +43,9 @@ public class DebuggingTools {
                 bc[bcIndex++] = ste.getClassName() + " # " + ste.getMethodName() + " : " + ste.getLineNumber();
             }
             if (bcIndex > 0) {
-                BCLog.logger.info("[lib.debug.world] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
+                BCLog.logger.info("[lib.debug.getWorld()] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
                 for (int i = 0; i < bcIndex; i++) {
-                    BCLog.logger.info("[lib.debug.world]   at " + bc[i]);
+                    BCLog.logger.info("[lib.debug.getWorld()]   at " + bc[i]);
                 }
             }
         }

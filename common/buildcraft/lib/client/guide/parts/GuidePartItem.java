@@ -3,50 +3,34 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): guide item part rendering deferred
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.GuideManager;
-import buildcraft.lib.gui.pos.GuiRectangle;
-import buildcraft.lib.misc.ItemStackKey;
 
+@Environment(EnvType.CLIENT)
 public abstract class GuidePartItem extends GuidePart {
-    public static final GuiRectangle STACK_RECT = new GuiRectangle(0, 0, 16, 16);
 
-    public GuidePartItem(GuiGuide gui) {
+    public final ItemStack stack;
+
+    public GuidePartItem(GuiGuide gui, ItemStack stack) {
         super(gui);
+        this.stack = stack;
     }
 
-    protected void drawItemStack(ItemStackKey stack, int x, int y) {
-        drawItemStack(stack.baseStack, x, y);
+    @Override
+    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
+        return current;
     }
 
-    protected void drawItemStack(ItemStack stack, int x, int y) {
-        if (stack != null && !stack.isEmpty()) {
-            RenderSystem.setShaderColor(1, 1, 1, 1.0F);
-            TextRenderer fr = MinecraftClient.getInstance().fontRenderer;
-            gui.mc.getRenderItem().renderItemIntoGUI(stack, x, y);
-            gui.mc.getRenderItem().renderItemOverlays(fr, stack, x, y);
-            if (STACK_RECT.offset(x, y).contains(gui.mouse)) {
-                gui.tooltipStack = stack;
-            }
-            RenderSystem.setShaderColor(1, 1, 1, 1.0F);
-        }
-    }
-
-    protected void testClickItemStack(ItemStackKey stack, int x, int y) {
-        testClickItemStack(stack.baseStack, x, y);
-    }
-
-    protected void testClickItemStack(ItemStack stack, int x, int y) {
-        if (stack != null && !stack.isEmpty() && STACK_RECT.offset(x, y).contains(gui.mouse)) {
-            gui.openPage(GuideManager.INSTANCE.getPageFor(stack).createNew(gui));
-        }
+    @Override
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
+            int mouseX, int mouseY, int mouseButton) {
+        return null;
     }
 }

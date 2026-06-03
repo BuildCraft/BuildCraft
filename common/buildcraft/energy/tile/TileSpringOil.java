@@ -9,7 +9,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Identifier;
@@ -46,7 +46,7 @@ public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilS
             return;
         }
         PlayerPumpInfo info = pumpProgress.computeIfAbsent(profile, PlayerPumpInfo::new);
-        info.lastPumpTick = world.getTotalWorldTime();
+        info.lastPumpTick = world.getTime();
         info.sourcesPumped++;
 
         // BCLog.logger.info("Pumped " + info.sourcesPumped + " / " + totalSources + " at " + oilPos + " (for " +
@@ -75,7 +75,7 @@ public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilS
         nbt.putInt("totalSources", totalSources);
         NbtList list = new NbtList();
         for (PlayerPumpInfo info : pumpProgress.values()) {
-            list.appendTag(info.writeToNbt());
+            list.add(info.writeToNbt());
         }
         nbt.put("pumpProgress", list);
         return nbt;
@@ -91,7 +91,7 @@ public class TileSpringOil extends BlockEntity implements IDebuggable, ITileOilS
                 added = true;
             }
             left.add("  " + info.profile.getName() + " = " + info.sourcesPumped + " ( "
-                + (world.getTotalWorldTime() - info.lastPumpTick) / 20 + "s )");
+                + (world.getTime() - info.lastPumpTick) / 20 + "s )");
         }
     }
 

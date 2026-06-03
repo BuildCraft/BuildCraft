@@ -45,4 +45,23 @@ public class MessageManager {
     public static void sendTo(Object message, ServerPlayerEntity player) {
         // TODO(R.Chen): migrate callers to FabricPacket
     }
+
+    /** Forge-compat: send a message to all players in a dimension. */
+    public static void sendToDimension(Object message, int dimensionId) {
+        // TODO(R.Chen): migrate to Fabric dimension-based broadcast
+    }
+
+    /** Forge-compat: send a message to all players in a dimension (FabricPacket). */
+    public static <T extends net.fabricmc.fabric.api.networking.v1.FabricPacket> void sendToDimension(T message, int dimensionId) {
+        // TODO(R.Chen): migrate to Fabric dimension-based broadcast
+    }
+
+    /** Forge-compat: send a message to all nearby players. */
+    public static void sendToAllAround(Object message, net.minecraftforge.common.util.FakePlayerFactory.Target target) {
+        // TODO(R.Chen): migrate to Fabric proximity broadcast
+    }
+
+    // STUB(R.Chen): Forge SimpleNetworkWrapper registration — no-ops until packet migration.
+    public static <MSG> void registerMessageClass(Object module, Class<MSG> clazz, net.fabricmc.api.EnvType side) {}
+    public static <MSG, RESP> void setHandler(Class<MSG> clazz, Object handler, net.fabricmc.api.EnvType side) {}
 }

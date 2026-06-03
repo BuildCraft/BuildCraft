@@ -16,9 +16,15 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
+
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.fluid.Tank;
 
 // STUB(R.Chen): Forge-dependent methods (localizeColour, localizeFacing, localizeFluid*, localizeRf*,
 // localizeRfFlow, formatRf, localize(key, args)) stripped. BCLibConfig / I18n / IFluidTank / DyeColor
@@ -61,5 +67,24 @@ public class LocaleUtil {
 
     public static boolean canLocalize(String key) {
         return false;
+    }
+
+    // STUB(R.Chen): colour/facing/fluid/RF localizers — return placeholder strings until I18n is ported.
+    public static String localizeColour(DyeColor colour) { return colour.getName(); }
+    public static String localizeFacing(Direction dir) { return dir.getName(); }
+    public static String localizeFluidStaticAmount(int amount, int capacity) { return amount + "/" + capacity + " mB"; }
+    public static String localizeFluidStaticAmount(long amount, int capacity) { return amount + "/" + capacity + " mB"; }
+    public static String localizeFluidStaticAmount(Tank tank) {
+        int amount = tank.getFluidAmount();
+        return localizeFluidStaticAmount(amount, tank.getCapacity());
+    }
+    public static String localizeRf(int rf) { return FORMAT_RF.format(rf) + " RF"; }
+    public static String localizeRfFlow(int rf) { return FORMAT_RF.format(rf) + " RF/t"; }
+    public static String preTranslated(String prefix, int value, String suffix) { return prefix + value + suffix; }
+    public static Direction getFacingFromAxis(AxisDirection axisDir, Axis axis) {
+        for (Direction d : Direction.values()) {
+            if (d.getAxis() == axis && d.getDirection() == axisDir) return d;
+        }
+        return Direction.UP;
     }
 }

@@ -83,7 +83,7 @@ public abstract class GuidePart {
 
     /** Renders a raw line at the position, lowering it appropriately */
     protected void renderTextLine(String text, int x, int y, int colour) {
-        fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour)
         RenderSystem.setShaderColor(1, 1, 1, 1.0F);
     }
 
@@ -160,7 +160,7 @@ public abstract class GuidePart {
                     }
                     renderTooltip();
                 }
-                fontRenderer.draw(new net.minecraft.client.util.math.MatrixStack(), text, _x, _y, 0);
+                // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(text, _x, _y, 0)
             }
 
             next = strings.length == 1 ? null : strings[1];

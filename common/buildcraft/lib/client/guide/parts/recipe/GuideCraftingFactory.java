@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -40,9 +41,9 @@ public class GuideCraftingFactory implements GuidePartFactory {
         for (Ingredient ingredient : this.input) {
             NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.createNbt());
+                list.add(stack.writeNbt(new NbtCompound()));
             }
-            hashNbt.appendTag(list);
+            hashNbt.add(list);
         }
         this.hash = hashNbt.hashCode();
     }
@@ -55,7 +56,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
                     return val;
                 } else {
                     BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown "
-                        + recipe.getClass() + " for " + stack.getDisplayName());
+                        + recipe.getClass() + " for " + stack.getName().getString());
                 }
             }
         }
@@ -120,7 +121,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
                     }
                     ItemStack stack = (ItemStack) obj;
                     // The lower the ID of an item, the closer it is to minecraft. Hmmm.
-                    if (Item.getIdFromItem(stack.getItem()) < Item.getIdFromItem(best.getItem())) {
+                    if (Item.getRawId(stack.getItem()) < Item.getRawId(best.getItem())) {
                         best = stack;
                     }
                 }
@@ -159,17 +160,17 @@ public class GuideCraftingFactory implements GuidePartFactory {
         for (Ingredient ingredient : this.input) {
             NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.createNbt());
+                list.add(stack.writeNbt(new NbtCompound()));
             }
-            nbtThis.appendTag(list);
+            nbtThis.add(list);
         }
         NbtList nbtThat = new NbtList();
         for (Ingredient ingredient : other.input) {
             NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.createNbt());
+                list.add(stack.writeNbt(new NbtCompound()));
             }
-            nbtThat.appendTag(list);
+            nbtThat.add(list);
         }
         return nbtThis.equals(nbtThat);
     }

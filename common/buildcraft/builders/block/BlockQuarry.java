@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockSoundGroup;
+import net.minecraft.sound.BlockSoundGroup;
 import buildcraft.lib.compat.MaterialBC;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.state.property.Property;
@@ -55,10 +55,10 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         Direction facing = side;
         if (Arrays.asList(Direction.HORIZONTALS).contains(facing)) {
             facing = Direction.fromHorizontal(
-                side.getHorizontalIndex() + 2 + state.get(getFacingProperty()).getHorizontalIndex());
+                side.getHorizontal() + 2 + state.get(getFacingProperty()).getHorizontal());
         }
         BlockEntity tile = world.getBlockEntity(pos.offset(facing));
-        return tile != null && tile.hasCapability(CapUtil.CAP_ITEMS, facing.getOpposite());
+        return tile != null && CapUtil.hasCapability(tile, CapUtil.CAP_ITEMS, facing.getOpposite());
     }
 
     // @Override -- removed: method does not exist in Fabric 1.20.1
@@ -86,7 +86,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
         if (tile instanceof TileQuarry) {
             for (BlockPos blockPos : ((TileQuarry) tile).framePoses) {
                 if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
-                    world.setBlockToAir(blockPos);
+                    world.setBlockState(blockPos);
                 }
             }
         }

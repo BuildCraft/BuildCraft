@@ -229,7 +229,7 @@ class NbtSquishMapWriter {
         if (debug) log("\n  Compound tag count = " + compound.size());
         to.writeByte(NbtSquishConstants.COMPLEX_COMPOUND);
         writeVarInt(to, compound.size());
-        for (String key : compound.getKeySet()) {
+        for (String key : compound.getKeys()) {
             profiler.push("entry");
             NbtElement nbt = compound.get(key);
             profiler.push("index_value");

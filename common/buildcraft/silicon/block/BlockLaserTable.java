@@ -57,4 +57,7 @@ public class BlockLaserTable extends BlockBCBase_Neptune implements ILaserTarget
     // STUB(R.Chen): onUse (was onBlockActivated) deferred — BCSiliconGuis.openGui needs
     // ExtendedScreenHandlerType registration first.
     // STUB(R.Chen): getBoundingBox/VoxelShape (was Box) deferred to lib.block phase.
+
+    @Override
+    public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
 }

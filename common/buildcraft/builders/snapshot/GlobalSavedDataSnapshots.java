@@ -32,6 +32,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.fabricmc.api.EnvType;
 
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
+
 import buildcraft.lib.misc.data.SingleCache;
 import buildcraft.lib.nbt.NbtSquisher;
 

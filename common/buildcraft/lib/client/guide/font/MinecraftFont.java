@@ -34,7 +34,7 @@ public enum MinecraftFont implements IFontRenderer {
 
     @Override
     public int getMaxFontHeight() {
-        return getFontRenderer().FONT_HEIGHT;
+        return getFontRenderer().fontHeight;
     }
 
     @Override

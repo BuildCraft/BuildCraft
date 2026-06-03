@@ -8,12 +8,11 @@ package buildcraft.lib.item;
 
 import java.util.function.Function;
 
-import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 
-/** Basically a copy of {@link ItemMultiTexture}, but extends {@link ItemBC_Neptune} */
+/** Basically a copy of vanilla ItemMultiTexture, but extends ItemBC_Neptune */
 public class ItemBlockBCMulti extends ItemBlockBC_Neptune {
     protected final Function<ItemStack, String> nameFunction;
 
@@ -26,7 +25,7 @@ public class ItemBlockBCMulti extends ItemBlockBC_Neptune {
 
     public ItemBlockBCMulti(BlockBCBase_Neptune block, final String[] namesByMeta) {
         this(block, stack -> {
-            int meta = stack.getId();
+            int meta = stack.getDamage();
             if (meta < 0 || meta >= namesByMeta.length) meta = 0;
             return namesByMeta[meta];
         });
@@ -39,6 +38,6 @@ public class ItemBlockBCMulti extends ItemBlockBC_Neptune {
 
     // @Override -- removed: method does not exist in Fabric 1.20.1
     public String getUnlocalizedName(ItemStack stack) {
-        return super.getUnlocalizedName() + "." + this.nameFunction.apply(stack);
+        return super.getTranslationKey() + "." + this.nameFunction.apply(stack);
     }
 }

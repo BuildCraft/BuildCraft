@@ -42,7 +42,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
         super.engineUpdate();
         if (isRedstonePowered) {
             power = getMaxPower();
-            if (world.getTotalWorldTime() % 16 == 0) {
+            if (world.getTime() % 16 == 0) {
                 if (getHeatLevel() < 0.8) {
                     heat += 4;
                 }

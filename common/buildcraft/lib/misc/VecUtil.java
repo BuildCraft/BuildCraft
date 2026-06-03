@@ -44,6 +44,11 @@ public class VecUtil {
         return vec.multiply(scale);
     }
 
+    /** Compat alias for Vec3d.multiply(scale). */
+    public static Vec3d multiply(Vec3d vec, double scale) {
+        return vec.multiply(scale);
+    }
+
     public static Direction getFacing(Axis axis, boolean positive) {
         AxisDirection dir = positive ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
         return Direction.get(dir, axis);

@@ -3,97 +3,39 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): IBox / Box utility methods deferred
 package buildcraft.lib.misc;
 
 import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.Axis;
-import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.IBox;
-
 import buildcraft.lib.misc.data.Box;
 
 /** Various methods operating on (and creating) {@link Box} */
 public class BoundingBoxUtil {
 
-    /** Creates an {@link Box} from a block pos and a box. Note that additional must NOT be null, but the box
-     * can be. */
     public static Box makeFrom(BlockPos additional, @Nullable IBox box) {
         if (box == null) {
             return new Box(additional);
-        } else {
-            BlockPos min = VecUtil.min(box.min(), additional);
-            BlockPos max = VecUtil.max(box.max(), additional);
-            return new Box(min, max.add(VecUtil.POS_ONE));
         }
+        Box b = new Box(box);
+        b.extendToEncompass(additional);
+        return b;
     }
 
-    public static Box makeFrom(BlockPos primary, BlockPos... additional) {
-        Box box = new Box(primary, primary);
-        for (BlockPos a : additional) {
-            box.extendToEncompass(a);
-        }
-        return box.getBoundingBox();
-    }
-
-    /** Creates an {@link Box} from a block pos and 2 boxes Note that additional must NOT be null, but (either
-     * of) the boxes can be. */
-    public static Box makeFrom(BlockPos additional, @Nullable IBox box1, @Nullable IBox box2) {
-        if (box1 == null) {
-            return makeFrom(additional, box2);
-        } else if (box2 == null) {
-            return makeFrom(additional, box1);
-        } else {
-            BlockPos min = VecUtil.min(box1.min(), box2.min(), additional);
-            BlockPos max = VecUtil.max(box1.max(), box2.max(), additional);
-            return new Box(min, max.add(VecUtil.POS_ONE));
-        }
-    }
-
-    public static Box makeFrom(Vec3d from, Vec3d to) {
-        return new Box(from.x, from.y, from.z, to.x, to.y, to.z);
-    }
-
-    public static Box makeFrom(Vec3d from, Vec3d to, double radius) {
-        return makeFrom(from, to).grow(radius);
-    }
-
-    public static Box makeAround(Vec3d around, double radius) {
-        return new Box(around.x, around.y, around.z, around.x, around.y, around.z).grow(radius);
-    }
-
-    public static Box makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
-        BlockPos min = box == null ? pos : VecUtil.min(box.min(), pos);
-        BlockPos max = box == null ? pos : VecUtil.max(box.max(), pos);
-        if (additional != null) {
-            for (BlockPos p : additional) {
-                min = VecUtil.min(min, p);
-                max = VecUtil.max(max, p);
+    public static Box makeFrom(Collection<BlockPos> positions) {
+        Box b = null;
+        for (BlockPos pos : positions) {
+            if (b == null) {
+                b = new Box(pos);
+            } else {
+                b.extendToEncompass(pos);
             }
         }
-        return new Box(min, max.add(VecUtil.POS_ONE));
-    }
-
-    /** Creates a box that extrudes from the specified face of the given block position. */
-    public static Box extrudeFace(BlockPos pos, Direction face, double depth) {
-        Vec3d from = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-        Vec3d to = new Vec3d(pos.getX(), pos.getY(), pos.getZ()).add(1, 1, 1);
-
-        Axis axis = face.getAxis();
-        if (face.getDirection() == AxisDirection.POSITIVE) {
-            from = VecUtil.replaceValue(from, axis, VecUtil.getValue(from, axis) + 1);
-            to = VecUtil.replaceValue(to, axis, VecUtil.getValue(to, axis) + depth);
-        } else {
-            to = VecUtil.replaceValue(to, axis, VecUtil.getValue(to, axis) - 1);
-            from = VecUtil.replaceValue(from, axis, VecUtil.getValue(from, axis) - depth);
-        }
-        return makeFrom(from, to);
+        return b;
     }
 }
