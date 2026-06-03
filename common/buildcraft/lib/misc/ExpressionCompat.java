@@ -64,7 +64,7 @@ public class ExpressionCompat {
 
         ENUM_POWER_STAGE = new NodeType<>("Engine Power Stage", EnumPowerStage.BLUE);
         NodeTypes.addType("EnginePowerStage", ENUM_POWER_STAGE);
-        ENUM_POWER_STAGE.put_t_o("(string)", String.class, EnumPowerStage::getName);
+        ENUM_POWER_STAGE.put_t_o("(string)", String.class, EnumPowerStage::asString);
         for (EnumPowerStage stage : EnumPowerStage.VALUES) {
             ENUM_POWER_STAGE.putConstant("" + stage, stage);
         }

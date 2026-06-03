@@ -65,7 +65,7 @@ public class TravellingItem {
 
     public TravellingItem(Supplier<ItemStack> clientStackLink, int count) {
         this.clientItemLink = StackUtil.asNonNull(clientStackLink);
-        this.getCount() = count;
+        this.stackSize = count;
         this.stack = StackUtil.EMPTY;
     }
 

@@ -37,6 +37,17 @@ public class ColourUtil {
         return f;
     }
 
+    /** STUB(R.Chen): Forge had a dedicated bright-colour table; approximate with DyeColor's sign colour. */
+    public static int getLightHex(DyeColor colour) {
+        if (colour == null) return 0xFFFFFF;
+        return colour.getSignColor() & 0xFFFFFF;
+    }
+
+    @Nullable
+    public static DyeColor parseColourOrNull(String name) {
+        return getDyeFromName(name);
+    }
+
     public static int swapArgbToAbgr(int argb) {
         int a = (argb >> 24) & 0xFF;
         int r = (argb >> 16) & 0xFF;

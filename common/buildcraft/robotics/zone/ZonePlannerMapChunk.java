@@ -17,12 +17,12 @@ public class ZonePlannerMapChunk {
     private final MapColourData[][] data = new MapColourData[16][16];
 
     public ZonePlannerMapChunk(World world, ZonePlannerMapChunkKey key) {
-        Chunk chunk = world.getChunkFromChunkCoords(key.chunkPos.x, key.chunkPos.z);
+        Chunk chunk = world.getChunk(key.chunkPos.x, key.chunkPos.z);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // Scan down from the max height value of a chunk until we find a block
                 for (int y = key.level * ZonePlannerMapChunkKey.LEVEL_HEIGHT; y > 0; y--) {
-                    int colour = chunk.getBlockState(x, y, z).getMapColor(world, new BlockPos(x, y, z)).colorValue;
+                    int colour = chunk.getBlockState(new BlockPos(x, y, z)).getMapColor(world, new BlockPos(x, y, z)).colorValue;
                     if (colour != 0) {
                         data[x][z] = new MapColourData(y, colour);
                         break;
@@ -51,7 +51,7 @@ public class ZonePlannerMapChunk {
                 if (colour == null) {
                     buffer.writeInt(-1);
                 } else {
-                    buffer.writeInt(colour.getY());
+                    buffer.writeInt(colour.posY);
                     buffer.writeInt(colour.colour);
                 }
             }
@@ -73,7 +73,7 @@ public class ZonePlannerMapChunk {
         public final int colour;
 
         public MapColourData(int posY, int colour) {
-            this.getY() = posY;
+            this.posY = posY;
             this.colour = colour;
         }
     }

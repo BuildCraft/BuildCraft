@@ -34,6 +34,11 @@ public class RegistryConfig {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.registry");
     private static final Map<String, Set<String>> disabled = new HashMap<>();
 
+    /** STUB(R.Chen): Forge per-mod config sharing — Phase 10. No-op for now. */
+    public static void useOtherModConfigFor(String modId, String otherModId) {
+        // STUB(R.Chen): config sharing deferred — Phase 10
+    }
+
     // #######################
     //
     // Checking
