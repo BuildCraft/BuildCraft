@@ -10,6 +10,18 @@ package buildcraft.lib.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-// STUB(R.Chen): GlStateManager/RenderHelper render — Phase 5.
+import buildcraft.lib.fluid.Tank;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.Widget_Neptune;
+
+// STUB(R.Chen): GlStateManager/RenderHelper render — Phase 5. Retains container/tank binding so
+// GUIs that wire it up still compile.
 @Environment(EnvType.CLIENT)
-public class WidgetFluidTank {}
+public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
+    public final Tank tank;
+
+    public WidgetFluidTank(ContainerBC_Neptune container, Tank tank) {
+        super(container);
+        this.tank = tank;
+    }
+}

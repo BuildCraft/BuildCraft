@@ -32,10 +32,13 @@ public class BCEnergyBlocks {
     public static void preInit() {
 
         if (BCCoreBlocks.engine != null) {
-            BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
-            BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+            // STUB(R.Chen): engine tiles now use the (BlockEntityType, BlockPos, BlockState) constructor and are
+            // created via BlockEntityType; the legacy no-arg Supplier registry path is a no-op until the
+            // engine BlockEntityTypes are wired up — Phase 10.
+            BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, () -> null);
+            BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, () -> null);
             if (BCEnergyConfig.enableRfEngine) {
-                BCCoreBlocks.engine.registerEngine(EnumEngineType.RF, TileEngineRF::new);
+                BCCoreBlocks.engine.registerEngine(EnumEngineType.RF, () -> null);
             }
         }
 

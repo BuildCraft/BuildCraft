@@ -51,6 +51,11 @@ public final class FluidRegistryBC {
         return Registries.FLUID.getId(fluid).toString();
     }
 
+    /** Fabric: resolve the registry name from a {@link net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant}. */
+    public static String getFluidName(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant fluid) {
+        return getFluidName(fluid.getFluid());
+    }
+
     /** Forge compat: {@code FluidRegistry.getDefaultFluidName(fluid)}. */
     public static String getDefaultFluidName(Fluid fluid) {
         return getFluidName(fluid);

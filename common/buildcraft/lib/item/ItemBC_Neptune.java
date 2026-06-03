@@ -21,6 +21,12 @@ public class ItemBC_Neptune extends Item implements IItemBuildCraft {
         init();
     }
 
+    public ItemBC_Neptune(Item.Settings settings, String id) {
+        super(settings);
+        this.id = id;
+        init();
+    }
+
     @Override
     public String id() {
         return id;
