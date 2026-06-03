@@ -18,7 +18,7 @@ public final class BiomeOilOcean extends BiomeOcean {
     public static final Biome INSTANCE = null;
 
     public BiomeOilOcean() {
-        super(new BiomeProperties("Ocean Oil Field").setBaseHeight(-1.0F).setHeightVariation(0.1F));
-        setRegistryName("oil_ocean");
+        // STUB(R.Chen): Forge BiomeProperties / setRegistryName worldgen removed in Fabric 1.20.1 — Phase 10
+        super();
     }
 }

@@ -87,8 +87,8 @@ public class VolumeUtil {
                     axisJ = Axis.Y;
                     break;
             }
-            Direction faceI = Direction.getFacingFromAxis(AxisDirection.POSITIVE, axisI);
-            Direction faceJ = Direction.getFacingFromAxis(AxisDirection.POSITIVE, axisJ);
+            Direction faceI = Direction.from(axisI, AxisDirection.POSITIVE);
+            Direction faceJ = Direction.from(axisJ, AxisDirection.POSITIVE);
 
             BlockPos coneCenter = start;
             for (int d = 0; d < distance; d++) {

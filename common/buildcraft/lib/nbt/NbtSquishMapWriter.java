@@ -226,9 +226,9 @@ class NbtSquishMapWriter {
     private void writeCompound(WrittenType type, NbtCompound compound, DataOutput to) throws IOException {
         profiler.push("compound");
         WrittenType stringType = WrittenType.getForSize(map.strings.size());
-        if (debug) log("\n  Compound tag count = " + compound.size());
+        if (debug) log("\n  Compound tag count = " + compound.getSize());
         to.writeByte(NbtSquishConstants.COMPLEX_COMPOUND);
-        writeVarInt(to, compound.size());
+        writeVarInt(to, compound.getSize());
         for (String key : compound.getKeys()) {
             profiler.push("entry");
             NbtElement nbt = compound.get(key);

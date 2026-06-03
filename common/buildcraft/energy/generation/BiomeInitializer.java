@@ -16,20 +16,7 @@ import buildcraft.energy.BCEnergyConfig;
 public class BiomeInitializer {
     // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public void initBiomeGens(WorldTypeEvent.InitBiomeGens event) {
-
-        boolean oilOcean = BCEnergyConfig.enableOilOceanBiome && GenLayerAddOilOcean.getOilBiomeId() >= 0;
-        boolean oilDesert = BCEnergyConfig.enableOilDesertBiome &&GenLayerAddOilDesert.getOilBiomeId() >= 0;
-
-        if (!oilOcean && !oilDesert) {
-            // The biomes aren't registered, so don't bother creating a new array.
-            return;
-        }
-
-        GenLayer[] newBiomeGens = event.getNewBiomeGens().clone();
-        for (int i = 0; i < newBiomeGens.length; i++) {
-            if (oilOcean) newBiomeGens[i] = new GenLayerAddOilOcean(event.getSeed(), 1500L, newBiomeGens[i]);
-            if (oilDesert) newBiomeGens[i] = new GenLayerAddOilDesert(event.getSeed(), 1500L, newBiomeGens[i]);
-        }
-        event.setNewBiomeGens(newBiomeGens);
+        // STUB(R.Chen): Forge GenLayer biome injection (InitBiomeGens) has no Fabric 1.20.1 equivalent.
+        // Oil-biome worldgen is deferred to a Fabric BiomeModification rewrite — Phase 10.
     }
 }
