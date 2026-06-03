@@ -14,15 +14,15 @@ public final class GuiRectangle implements IGuiArea {
     public final double x, y, width, height;
 
     public GuiRectangle(double x, double y, double width, double height) {
-        this.setX(x);
-        this.setY(y);
+        this.x = x;
+        this.y = y;
         this.width = width;
         this.height = height;
     }
 
     public GuiRectangle(double width, double height) {
-        this.setX(0);
-        this.setY(0);
+        this.x = 0;
+        this.y = 0;
         this.width = width;
         this.height = height;
     }

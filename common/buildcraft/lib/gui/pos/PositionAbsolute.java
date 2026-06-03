@@ -14,8 +14,8 @@ public final class PositionAbsolute implements IGuiPosition {
     private final double x, y;
 
     public PositionAbsolute(double x, double y) {
-        this.setX(x);
-        this.setY(y);
+        this.x = x;
+        this.y = y;
     }
 
     @Override

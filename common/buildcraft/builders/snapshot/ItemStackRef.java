@@ -34,7 +34,7 @@ public class ItemStackRef {
 
     public ItemStack get(NbtElement nbt) {
         ItemStack itemStack = new ItemStack(Objects.requireNonNull(
-                Item.getByNameOrId(
+                buildcraft.lib.misc.StackUtil.getItemByNameOrId(
                     item
                         .get(nbt)
                         .orElseThrow(NullPointerException::new)

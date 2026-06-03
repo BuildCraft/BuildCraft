@@ -18,8 +18,9 @@ public class ListMatchHandlerTools extends ListMatchHandler {
     @Override
     public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
         if (type == Type.TYPE) {
-            Set<String> toolClassesSource = stack.getItem().getToolClasses(stack);
-            Set<String> toolClassesTarget = target.getItem().getToolClasses(stack);
+            // STUB(R.Chen): Forge Item.getToolClasses removed in Fabric — tool-type matching deferred, Phase 10
+            Set<String> toolClassesSource = java.util.Collections.emptySet();
+            Set<String> toolClassesTarget = java.util.Collections.emptySet();
             if (toolClassesSource.size() > 0 && toolClassesTarget.size() > 0) {
                 if (precise) {
                     if (toolClassesSource.size() != toolClassesTarget.size()) {
@@ -39,6 +40,6 @@ public class ListMatchHandlerTools extends ListMatchHandler {
 
     @Override
     public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
-        return stack.getItem().getToolClasses(stack).size() > 0;
+        return false; // STUB(R.Chen): Forge tool classes removed — Phase 10
     }
 }

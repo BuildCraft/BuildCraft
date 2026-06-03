@@ -26,7 +26,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     @Nullable
     public BlockEntity getTile(World world, BlockPos pos, boolean force) {
         if (direct | force) {
-            if (force || world.isBlockLoaded(pos)) {
+            if (force || world.isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4)) {
                 return world.getBlockEntity(pos);
             }
             return null;
@@ -42,7 +42,7 @@ public enum DefaultBlockAccessor implements ISoftBlockAccessor {
     @Override
     public BlockState getState(World world, BlockPos pos, boolean force) {
         if (direct | force) {
-            if (force || world.isBlockLoaded(pos)) {
+            if (force || world.isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4)) {
                 return world.getBlockState(pos);
             }
             return Blocks.AIR.getDefaultState();

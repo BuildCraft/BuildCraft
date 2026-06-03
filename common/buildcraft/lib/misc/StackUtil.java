@@ -225,6 +225,17 @@ public class StackUtil {
     }
     public static boolean canStacksOrListsMerge(ItemStack a, ItemStack b) { return canMerge(a, b); }
 
+    /** Replacement for the old {@code Item.getByNameOrId(String)}. */
+    public static net.minecraft.item.Item getItemByNameOrId(String name) {
+        if (name == null) return null;
+        return net.minecraft.registry.Registries.ITEM.get(net.minecraft.util.Identifier.tryParse(name.trim()));
+    }
+
+    /** STUB(R.Chen): Forge ore-dictionary crafting equivalence — simplified to exact item match. */
+    public static boolean isCraftingEquivalent(ItemStack base, ItemStack comparison, boolean matchNbt) {
+        return isMatchingItem(base, comparison, true, matchNbt);
+    }
+
     /** Sentinel constant for search-mode item matching. */
     public static final ItemStack SEARCH = ItemStack.EMPTY;
 }

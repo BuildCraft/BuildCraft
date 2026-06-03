@@ -757,7 +757,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             return null;
         }
         ItemStack stack = null;
-        Item item = Item.getByNameOrId(id.trim());
+        Item item = buildcraft.lib.misc.StackUtil.getItemByNameOrId(id.trim());
         if (item != null) {
             stack = new ItemStack(item);
         } else {

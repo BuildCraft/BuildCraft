@@ -31,7 +31,7 @@ public enum GuideAssemblyRecipes implements IStackRecipes {
     @Override
     public List<GuidePartFactory> getUsages(@Nonnull ItemStack stack) {
         List<GuidePartFactory> usages = new ArrayList<>();
-        boolean all = stack.getItem() == Item.getItemFromBlock(BCBlocks.Silicon.ASSEMBLY_TABLE);
+        boolean all = stack.getItem() == Item.fromBlock(BCBlocks.Silicon.ASSEMBLY_TABLE);
         for (AssemblyRecipe recipe : AssemblyRecipeRegistry.REGISTRY.values()) {
             for (ItemStack output: recipe.getOutputPreviews()) {
                 if (all || recipe.getInputsFor(output).stream().anyMatch((definition) -> definition.ingredient.apply(stack))) {

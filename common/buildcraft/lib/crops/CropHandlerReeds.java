@@ -35,7 +35,8 @@ public enum CropHandlerReeds implements ICropHandler {
     public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        return block.canSustainPlant(state, world, pos, Direction.UP, Blocks.SUGAR_CANE) && block != Blocks.SUGAR_CANE && world.isAir(pos.up());
+        // STUB(R.Chen): Forge Block.canSustainPlant removed — assume sustainable, Phase 10
+        return block != Blocks.SUGAR_CANE && world.isAir(pos.up());
     }
 
     @Override

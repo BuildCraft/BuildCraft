@@ -181,7 +181,7 @@ public class CuboidRenderer {
             if (ctx.invertV) {
                 realv = 1 - realv;
             }
-            ctx.vertex.texf(ctx.sprite.getInterpolatedU(realu * 16), ctx.sprite.getInterpolatedV(realv * 16));
+            ctx.vertex.texf(ctx.sprite.getFrameU(realu * 16), ctx.sprite.getFrameV(realv * 16));
         }
     }
 }

@@ -55,12 +55,12 @@ public enum CropHandlerPlantable implements ICropHandler {
     public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         if (seed.getItem() instanceof IPlantable) {
-            Block block = state.getBlock();
-            return block.canSustainPlant(state, world, pos, Direction.UP, (IPlantable) seed.getItem()) && world.isAir(pos.up());
+            // STUB(R.Chen): Forge Block.canSustainPlant removed — assume sustainable, Phase 10
+            return world.isAir(pos.up());
         } else {
             Block block = state.getBlock();
-            IPlantable plantable = (IPlantable) ((BlockItem) seed.getItem()).getBlock();
-            return block.canSustainPlant(state, world, pos, Direction.UP, plantable) && block != ((BlockItem) seed.getItem()).getBlock() && world.isAir(pos.up());
+            // STUB(R.Chen): Forge Block.canSustainPlant removed — assume sustainable, Phase 10
+            return block != ((BlockItem) seed.getItem()).getBlock() && world.isAir(pos.up());
         }
     }
 

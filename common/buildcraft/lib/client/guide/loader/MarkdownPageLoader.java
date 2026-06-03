@@ -47,7 +47,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             return new OptionallyDisabled<>(line + " was not a valid complex item string!");
         }
         ItemStack stack = null;
-        Item item = Item.getByNameOrId(args[0].trim());
+        Item item = buildcraft.lib.misc.StackUtil.getItemByNameOrId(args[0].trim());
         if (item != null) {
             stack = new ItemStack(item);
         } else {

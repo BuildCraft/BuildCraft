@@ -54,7 +54,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
             return ImmutableList.of(new GuideSmeltingFactory(stack, result));
         }
 
-        if (stack.getItem() == Item.getItemFromBlock(Blocks.FURNACE)) {
+        if (stack.getItem() == Item.fromBlock(Blocks.FURNACE)) {
             List<GuidePartFactory> list = new ArrayList<>();
             for (Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
                 list.add(new GuideSmeltingFactory(recipe.getKey(), recipe.getValue()));

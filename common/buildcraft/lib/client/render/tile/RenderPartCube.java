@@ -38,7 +38,7 @@ public class RenderPartCube {
     public void setWhiteTex() {
         Sprite sprite = buildcraft.lib.compat.McTextureCompat.getMissingSprite();
         // Reset the vertex so that edits don't spill out to other tiles.
-        center.texf(sprite.getInterpolatedU(8), sprite.getInterpolatedV(8));
+        center.texf(sprite.getFrameU(8), sprite.getFrameV(8));
     }
 
     /** Renders an element, without changing the vertex. However this does ignore the "normal" and "texture" components
