@@ -22,11 +22,8 @@ import buildcraft.core.client.BuildCraftLaserManager;
 public class PathSubCache extends MarkerSubCache<PathConnection> {
     public PathSubCache(World world) {
         super(world, MarkerCache.CACHES.indexOf(PathCache.INSTANCE));
-        PathSavedData data = (PathSavedData) world.getPerWorldStorage().getOrLoadData(PathSavedData.class, PathSavedData.NAME);
-        if (data == null) {
-            data = new PathSavedData();
-            world.getPerWorldStorage().setData(PathSavedData.NAME, data);
-        }
+        // STUB(R.Chen): Forge MapStorage / getPerWorldStorage → Fabric PersistentStateManager port deferred — Phase 10
+        PathSavedData data = new PathSavedData();
         data.loadInto(this);
     }
 

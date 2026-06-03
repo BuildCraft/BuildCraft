@@ -60,7 +60,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         if (!world.isClient) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
-                    player.swingArm(hand);
+                    player.swingHand(hand);
                     break;
                 }
             }

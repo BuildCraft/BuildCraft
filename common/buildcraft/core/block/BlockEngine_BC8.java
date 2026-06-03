@@ -33,6 +33,6 @@ public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
 
     @Override
     public String getUnlocalizedName(EnumEngineType engine) {
-        return TagManager.get("block.engine.bc." + engine.unlocalizedTag, EnumTagType.UNLOCALIZED_NAME);
+        return TagManager.getTag("block.engine.bc." + engine.unlocalizedTag, EnumTagType.UNLOCALIZED_NAME);
     }
 }

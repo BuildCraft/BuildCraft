@@ -120,10 +120,10 @@ public enum ReloadManager {
         if (potentialReloadables.isEmpty()) {
             return;
         }
-        BCLog.logger.fatal("Detected a cyclic dependency chain!");
-        BCLog.logger.fatal("Reloadables involved:");
+        BCLog.logger.error("Detected a cyclic dependency chain!");
+        BCLog.logger.error("Reloadables involved:");
         for (Reloadable r : toReload) {
-            BCLog.logger.fatal("  - " + r);
+            BCLog.logger.error("  - " + r);
         }
         throw new IllegalStateException("Cyclic dependency chain!");
     }

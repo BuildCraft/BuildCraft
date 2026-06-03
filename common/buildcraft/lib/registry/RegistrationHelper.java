@@ -106,7 +106,7 @@ public final class RegistrationHelper {
                 String[] oldRegNames = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
                 MigrationManager.INSTANCE.addItemMigration(item, oldRegNames);
                 if (TagManager.hasTag(id, EnumTagType.OREDICT_NAME)) {
-                    oredictItems.put(TagManager.get(id, EnumTagType.OREDICT_NAME), item);
+                    oredictItems.put(TagManager.getTag(id, EnumTagType.OREDICT_NAME), item);
                 }
             }
         }
@@ -135,7 +135,7 @@ public final class RegistrationHelper {
                 String[] oldRegNames = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
                 MigrationManager.INSTANCE.addBlockMigration(block, oldRegNames);
                 if (TagManager.hasTag(id, EnumTagType.OREDICT_NAME)) {
-                    oredictBlocks.put(TagManager.get(id, EnumTagType.OREDICT_NAME), block);
+                    oredictBlocks.put(TagManager.getTag(id, EnumTagType.OREDICT_NAME), block);
                 }
             }
         }
@@ -171,7 +171,7 @@ public final class RegistrationHelper {
     }
 
     public void registerTile(Class<? extends BlockEntity> clazz, String id) {
-        String regName = TagManager.get(id, EnumTagType.REGISTRY_NAME);
+        String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntity(clazz, regName);
     }

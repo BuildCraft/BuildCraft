@@ -41,7 +41,7 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     @Override
     public void wrenchUsed(PlayerEntity player, Hand hand, ItemStack wrench, HitResult rayTrace) {
         AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
-        player.swingArm(hand);
+        player.swingHand(hand);
     }
 
     // @Override -- removed: method does not exist in Fabric 1.20.1

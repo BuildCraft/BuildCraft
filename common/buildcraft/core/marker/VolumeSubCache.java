@@ -29,11 +29,8 @@ import buildcraft.core.client.BuildCraftLaserManager;
 public class VolumeSubCache extends MarkerSubCache<VolumeConnection> {
     public VolumeSubCache(World world) {
         super(world, MarkerCache.CACHES.indexOf(VolumeCache.INSTANCE));
-        VolumeSavedData data = (VolumeSavedData) world.getPerWorldStorage().getOrLoadData(VolumeSavedData.class, VolumeSavedData.NAME);
-        if (data == null) {
-            data = new VolumeSavedData();
-            world.getPerWorldStorage().setData(VolumeSavedData.NAME, data);
-        }
+        // STUB(R.Chen): Forge MapStorage / getPerWorldStorage → Fabric PersistentStateManager port deferred — Phase 10
+        VolumeSavedData data = new VolumeSavedData();
         data.loadInto(this);
     }
 

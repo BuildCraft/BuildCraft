@@ -61,10 +61,10 @@ public class PatternStairs extends Pattern implements IFillerPatternShape {
         while (y != yEnd) {
             filledTemplate.setAreaXZ(fx, tx, y, fz, tz, true);
 
-            fx += xzDir.dir.getFrontOffsetX() > 0 ? 1 : 0;
-            fz += xzDir.dir.getFrontOffsetZ() > 0 ? 1 : 0;
-            tx += xzDir.dir.getFrontOffsetX() < 0 ? -1 : 0;
-            tz += xzDir.dir.getFrontOffsetZ() < 0 ? -1 : 0;
+            fx += xzDir.dir.getOffsetX() > 0 ? 1 : 0;
+            fz += xzDir.dir.getOffsetZ() > 0 ? 1 : 0;
+            tx += xzDir.dir.getOffsetX() < 0 ? -1 : 0;
+            tz += xzDir.dir.getOffsetZ() < 0 ? -1 : 0;
             y += yStep;
 
             if (fx > tx) break;

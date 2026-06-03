@@ -22,13 +22,13 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     public NonNullMatrix(int width, int height, @Nonnull T fill) {
         this.width = width;
         this.height = height;
-        internalList = DefaultedList.withSize(width * height, fill);
+        internalList = DefaultedList.ofSize(width * height, fill);
     }
 
     public NonNullMatrix(int width, int height, IEntryFiller<T> filler) {
         this.width = width;
         this.height = height;
-        internalList = DefaultedList.withSize(width * height, filler.getEntry(0, 0));
+        internalList = DefaultedList.ofSize(width * height, filler.getEntry(0, 0));
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 internalList.set(flatIndexOf(x, y), filler.getEntry(x, y));
@@ -46,7 +46,7 @@ public class NonNullMatrix<T> extends AbstractList<T> {
     public NonNullMatrix(T[][] from, @Nonnull T nullReplacer) {
         this.width = from.length;
         this.height = width == 0 ? 0 : from[0].length;
-        internalList = DefaultedList.withSize(width * height, nullReplacer);
+        internalList = DefaultedList.ofSize(width * height, nullReplacer);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 T val = from[x][y];
