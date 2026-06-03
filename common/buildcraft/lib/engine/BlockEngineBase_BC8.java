@@ -76,7 +76,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
         // TODO(R.Chen): Forge createBlockState() → override appendProperties() instead.
 
-@Override
+// @Override removed (R.Chen): no longer overrides — Phase 10
     public int getMetaFromState(BlockState state) {
         E type = state.get(getEngineProperty());
         return type.ordinal();

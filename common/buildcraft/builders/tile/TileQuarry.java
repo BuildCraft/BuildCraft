@@ -1136,6 +1136,6 @@ public class TileQuarry extends TileBC_Neptune implements IDebuggable, IChunkLoa
         }
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public void render(float partialTicks) { /* STUB */ }
 }

@@ -11,12 +11,12 @@ public enum ReloadableRegistryManager implements IReloadableRegistryManager {
 
     public static void loadAll() {}
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public <T> IReloadableRegistry<T> createRegistry(String id, Class<T> type, IScriptableRegistry.EntryDeserialiser<T> deserialiser) {
         return null;
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public <T> IReloadableRegistry<T> getRegistry(String id, Class<T> type) {
         return null;
     }

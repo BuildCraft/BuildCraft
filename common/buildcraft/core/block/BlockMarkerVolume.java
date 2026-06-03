@@ -33,7 +33,7 @@ public class BlockMarkerVolume extends BlockMarkerBase {
         return new TileMarkerVolume();
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         checkSignalState(world, pos);
     }

@@ -31,7 +31,7 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
         colourDark = fluid.getDarkColour();
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public boolean load(ResourceManager manager, Identifier location, Function<Identifier, Sprite> textureGetter) {
         Identifier from = SpriteUtil.transformLocation(fromName);
         Sprite sprite = loadSprite(manager, from.toString(), from, true);

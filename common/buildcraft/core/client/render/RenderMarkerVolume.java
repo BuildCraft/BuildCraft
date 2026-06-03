@@ -98,9 +98,9 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         }
     }
 
-    @Override
+// @Override removed (R.Chen): no longer overrides — Phase 10 
     public void render(TileMarkerVolume entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
 }

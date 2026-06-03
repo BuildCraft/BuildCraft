@@ -23,7 +23,7 @@ public class GuideImage extends GuidePart {
         return current;
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index,
             int mouseX, int mouseY, int mouseButton) {
         return null;

@@ -260,6 +260,6 @@ public class BuildCraftGui extends HandledScreen {
     protected int guiLeft() { return x; }
     protected int guiTop() { return y; }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
 }

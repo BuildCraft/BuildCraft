@@ -29,7 +29,7 @@ public class GuideChapterWithin extends GuideChapter {
         return pos;
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     protected boolean onClick() {
         if (lastPage != -1) {
             GuidePageBase page = gui.getCurrentPage();

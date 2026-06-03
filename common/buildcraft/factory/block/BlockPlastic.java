@@ -26,7 +26,7 @@ public class BlockPlastic extends BlockBCBase_Neptune {
 
         // TODO(R.Chen): Forge createBlockState() → override appendProperties() instead.
 
-@Override
+// @Override removed (R.Chen): no longer overrides — Phase 10
     public int getMetaFromState(BlockState state) {
         DyeColor colour = state.get(BuildCraftProperties.BLOCK_COLOR);
         return colour.getId();

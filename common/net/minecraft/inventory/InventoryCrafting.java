@@ -8,6 +8,6 @@ public class InventoryCrafting extends CraftingInventory {
         super(handler, width, height);
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public boolean canUse(net.minecraft.entity.player.PlayerEntity player) { return true; }
 }

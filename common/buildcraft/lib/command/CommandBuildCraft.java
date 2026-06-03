@@ -19,7 +19,7 @@ public class CommandBuildCraft extends CommandTreeBase {
         return "buildcraft";
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public String getUsage(ICommandSender sender) {
         return "command.buildcraft.help";
     }
