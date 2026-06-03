@@ -259,7 +259,7 @@ public abstract class Snapshot {
         @SuppressWarnings("WeakerAccess")
         public Header(NbtCompound nbt) {
             key = new Key(nbt.getCompound("key"));
-            owner = nbt.getUniqueId("owner");
+            owner = nbt.getUuid("owner");
             created = new Date(nbt.getLong("created"));
             name = nbt.getString("name");
         }
@@ -267,7 +267,7 @@ public abstract class Snapshot {
         @SuppressWarnings("WeakerAccess")
         public Header(PacketBufferBC buffer) {
             key = new Key(buffer);
-            owner = buffer.readUniqueId();
+            owner = buffer.readUuid();
             created = new Date(buffer.readLong());
             name = buffer.readString();
         }
@@ -276,7 +276,7 @@ public abstract class Snapshot {
         public NbtCompound serializeNBT() {
             NbtCompound nbt = new NbtCompound();
             nbt.put("key", key.createNbt());
-            nbt.setUniqueId("owner", owner);
+            nbt.putUuid("owner", owner);
             nbt.putLong("created", created.getTime());
             nbt.putString("name", name);
             return nbt;
@@ -284,13 +284,13 @@ public abstract class Snapshot {
 
         public void writeToByteBuf(PacketBufferBC buffer) {
             key.writeToByteBuf(buffer);
-            buffer.writeUniqueId(owner);
+            buffer.writeUuid(owner);
             buffer.writeLong(created.getTime());
             buffer.writeString(name);
         }
 
         public PlayerEntity getOwnerPlayer(World world) {
-            return world.getPlayerEntityByUUID(owner);
+            return world.getPlayerByUuid(owner);
         }
 
         @Override

@@ -34,7 +34,7 @@ public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFille
 
         MinecraftClient.getInstance().getProfiler().push("iter");
         List<BlockPos> list = StreamSupport.stream(
-            BlockPos.getAllInBoxMutable(addon.buildingInfo.box.min(), addon.buildingInfo.box.max()).spliterator(),
+            BlockPos.iterate(addon.buildingInfo.box.min(), addon.buildingInfo.box.max()).spliterator(),
             false
         )
             .filter(blockPos ->
@@ -44,18 +44,18 @@ public class AddonRendererFillerPlanner implements IFastAddonRenderer<AddonFille
                     )
                 )
             )
-            .filter(player.getWorld()::isAirBlock)
-            .map(BlockPos.MutableBlockPos::toImmutable)
+            .filter(player.getWorld()::isAir)
+            .map(BlockPos::toImmutable)
             .collect(Collectors.toCollection(ArrayList::new));
         MinecraftClient.getInstance().getProfiler().pop();
 
         MinecraftClient.getInstance().getProfiler().push("sort");
-        list.sort(Comparator.<BlockPos>comparingDouble(p -> player.getPos().squareDistanceTo(new Vec3d(p.getX(), p.getY(), p.getZ()))).reversed());
+        list.sort(Comparator.<BlockPos>comparingDouble(p -> player.getPos().squaredDistanceTo(new Vec3d(p.getX(), p.getY(), p.getZ()))).reversed());
         MinecraftClient.getInstance().getProfiler().pop();
 
         MinecraftClient.getInstance().getProfiler().push("render");
         for (BlockPos p : list) {
-            Box bb = new Box(p, p.add(1, 1, 1)).grow(-0.1);
+            Box bb = new Box(p, p.add(1, 1, 1)).expand(-0.1);
             Sprite s = buildcraft.lib.compat.McTextureCompat.getMissingSprite();
 
             vb.vertex(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 127).texture(s.getMinU(), s.getMinV()).light(240, 0).next();

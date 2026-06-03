@@ -75,7 +75,7 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             if (__STENCIL) {
             buffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION);
-            bb = bb.grow(0.01);
+            bb = bb.expand(0.01);
             buffer.vertex(bb.minX, bb.maxY, bb.minZ).next();
             buffer.vertex(bb.maxX, bb.maxY, bb.minZ).next();
             buffer.vertex(bb.maxX, bb.minY, bb.minZ).next();

@@ -55,6 +55,10 @@ public class Box implements IBox {
         this.max = VecUtil.max(min, max);
     }
 
+    public Box(BlockPos point) {
+        this(point, point);
+    }
+
     public Box(BlockEntity e) {
         this(e.getPos(), e.getPos());
     }
