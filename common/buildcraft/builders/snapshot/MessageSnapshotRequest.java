@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -25,18 +25,18 @@ public class MessageSnapshotRequest implements IMessage {
         this.key = key;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         key.writeToByteBuf(new PacketBufferBC(buf));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         key = new Snapshot.Key(new PacketBufferBC(buf));
     }
 
     public static final IMessageHandler<MessageSnapshotRequest, MessageSnapshotResponse> HANDLER = (message, ctx) -> {
-        Snapshot snapshot = GlobalSavedDataSnapshots.get(Side.SERVER).getSnapshot(message.key);
+        Snapshot snapshot = GlobalSavedDataSnapshots.get(EnvType.SERVER).getSnapshot(message.key);
         return snapshot != null ? new MessageSnapshotResponse(snapshot) : null;
     };
 }

@@ -18,9 +18,8 @@ import com.google.common.base.Splitter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.text.TextFormatting;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 public final class StringUtilBC {
 
@@ -35,50 +34,9 @@ public final class StringUtilBC {
         return newLineSplitter.splitToList(string.replaceAll("\\n", "\n"));
     }
 
-    /** Formats a string to be displayed on a white background (for example a book background), replacing any
-     * close-to-white colours with darker variants. Replaces instances of {@link TextFormatting} values. */
-    public static String formatStringForWhite(String string) {
-        return formatStringImpl(string, ColourUtil.getTextFormatForWhite);
-    }
-
-    /** Formats a string to be displayed on a black background (for example an item tooltip), replacing any
-     * close-to-white colours with darker variants. Replaces instances of {@link TextFormatting} values. */
-    public static String formatStringForBlack(String string) {
-        return formatStringImpl(string, ColourUtil.getTextFormatForBlack);
-    }
-
-    private static String formatStringImpl(String string, Function<TextFormatting, TextFormatting> fn) {
-        /*
-         * FIXME: Normal usage (changing an item's text from onBlack to onWhite) has the disadvantage that colours will
-         * be changed to onBlack FIRST, and then onWhite, which means that BLACK will be changed to GRAY despite BLACK
-         * being absolutely fine on white. One possible fix could be to emit ORIGINAL_COLOUR + CHANGED_TO_COLOUR from
-         * ColourUtil.convertColourToTextFormat as a pair, and then use the ORIGINAL_COLOUR, but change CHANGED_COLOUR
-         * when calling this.
-         */
-        StringBuilder out = new StringBuilder(string.length());
-        for (int i = 0; i < string.length(); i++) {
-            char c = string.charAt(i);
-            if (c == '\u00a7' & string.length() > i + 2) {// \u00a7 - § - the control char used by text formatting
-                i++;
-                char after = string.charAt(i);
-                TextFormatting colour = null;
-                if (after >= '0' & after <= '9') {
-                    colour = TextFormatting.fromColorIndex(after - '0');
-                } else if (after >= 'a' & after <= 'f') {
-                    colour = TextFormatting.fromColorIndex(after - 'a' + 10);
-                }
-                if (colour == null) {
-                    out.append(c);
-                    out.append(after);
-                } else {
-                    out.append(fn.apply(colour).toString());
-                }
-            } else {
-                out.append(c);
-            }
-        }
-        return out.toString();
-    }
+    // STUB(R.Chen): formatStringForWhite/Black + compareBasicReadable removed — they depend on the
+    // unmigrated ColourUtil and Forge Formatting. fluidToString removed — depends on Forge FluidStack.
+    // Restore once ColourUtil and the Transfer-API fluid layer are migrated.
 
     public static String blockPosToString(BlockPos pos) {
         if (pos == null) {
@@ -92,13 +50,6 @@ public final class StringUtilBC {
             return "null";
         }
         return pos.getX() + "x" + pos.getY() + "x" + pos.getZ();
-    }
-
-    public static String fluidToString(FluidStack fluid) {
-        if (fluid == null) {
-            return "null";
-        }
-        return fluid.amount + "mb " + fluid.getFluid().getName();
     }
 
     // Displaying objects
@@ -140,26 +91,13 @@ public final class StringUtilBC {
         }
     }
 
-    /** @param keyExtractor An extractor that will map an object to a string.
-     * @return A form of {@link #compareBasicReadable()} that operates on any object that can provide a string. */
-    public static <T> Comparator<T> compareBasicReadable(Function<T, String> keyExtractor) {
-        return Comparator.comparing(keyExtractor, compareBasicReadable());
+    public static <T> Comparator<T> compareByString(Function<T, String> keyExtractor) {
+        return Comparator.comparing(keyExtractor, String::compareToIgnoreCase);
     }
 
-    /** @return A comparator that only compares the text that we can see - so this will remove any format codes, and
-     *         ignore case when comparing. */
-    public static Comparator<String> compareBasicReadable() {
-        return BasicReadableStringComparator.INSTANCE;
-    }
-
-    enum BasicReadableStringComparator implements Comparator<String> {
-        INSTANCE;
-
-        @Override
-        public int compare(String o1, String o2) {
-            String __o1 = ColourUtil.stripAllFormatCodes(o1);
-            String __o2 = ColourUtil.stripAllFormatCodes(o2);
-            return __o1.compareToIgnoreCase(__o2);
-        }
+    // STUB(R.Chen): fluid-to-string helper deferred until Transfer API migration.
+    public static String fluidToString(FluidStackBC fluid) {
+        if (fluid == null) return "null";
+        return fluid.getFluid().toString() + " x " + fluid.amount + " mB";
     }
 }

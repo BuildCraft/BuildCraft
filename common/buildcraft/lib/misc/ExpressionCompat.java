@@ -1,8 +1,8 @@
 package buildcraft.lib.misc;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 
 import buildcraft.api.enums.EnumPowerStage;
 import buildcraft.api.tiles.IControllable;
@@ -24,10 +24,10 @@ public class ExpressionCompat {
 
     public static final FunctionContext RENDERING = DefaultContexts.RENDERING;
 
-    // Minecraft Types
+    // MinecraftClient Types
     public static final NodeType<Axis> ENUM_AXIS;
-    public static final NodeType<EnumFacing> ENUM_FACING;
-    public static final NodeType<EnumDyeColor> ENUM_DYE_COLOUR;
+    public static final NodeType<Direction> ENUM_FACING;
+    public static final NodeType<DyeColor> ENUM_DYE_COLOUR;
 
     // BuildCraft API types
     public static final NodeType<EnumPowerStage> ENUM_POWER_STAGE;
@@ -44,27 +44,27 @@ public class ExpressionCompat {
             ENUM_AXIS.putConstant("" + a, a);
         }
 
-        ENUM_FACING = new NodeType<>("Facing", EnumFacing.UP);
+        ENUM_FACING = new NodeType<>("Facing", Direction.UP);
         NodeTypes.addType("Facing", ENUM_FACING);
-        ENUM_FACING.put_t_t("getOpposite", EnumFacing::getOpposite);
-        ENUM_FACING.put_t_o("getAxis", Axis.class, EnumFacing::getAxis);
-        ENUM_FACING.put_t_o("(string)", String.class, EnumFacing::getName);
-        for (EnumFacing f : EnumFacing.values()) {
+        ENUM_FACING.put_t_t("getOpposite", Direction::getOpposite);
+        ENUM_FACING.put_t_o("getAxis", Axis.class, Direction::getAxis);
+        ENUM_FACING.put_t_o("(string)", String.class, Direction::getName);
+        for (Direction f : Direction.values()) {
             ENUM_FACING.putConstant("" + f, f);
         }
 
-        ENUM_DYE_COLOUR = new NodeType<>("Dye Colour", EnumDyeColor.WHITE);
+        ENUM_DYE_COLOUR = new NodeType<>("Dye Colour", DyeColor.WHITE);
         NodeTypes.addType("DyeColor", ENUM_DYE_COLOUR);
         NodeTypes.addType("DyeColour", ENUM_DYE_COLOUR);
         ENUM_DYE_COLOUR.put_t_l("to_argb", c -> 0xFF_00_00_00 | ColourUtil.getLightHex(c));
-        ENUM_DYE_COLOUR.put_t_o("(string)", String.class, EnumDyeColor::getName);
-        for (EnumDyeColor c : EnumDyeColor.values()) {
+        ENUM_DYE_COLOUR.put_t_o("(string)", String.class, DyeColor::getName);
+        for (DyeColor c : DyeColor.values()) {
             ENUM_DYE_COLOUR.putConstant("" + c, c);
         }
 
         ENUM_POWER_STAGE = new NodeType<>("Engine Power Stage", EnumPowerStage.BLUE);
         NodeTypes.addType("EnginePowerStage", ENUM_POWER_STAGE);
-        ENUM_POWER_STAGE.put_t_o("(string)", String.class, EnumPowerStage::getName);
+        ENUM_POWER_STAGE.put_t_o("(string)", String.class, EnumPowerStage::asString);
         for (EnumPowerStage stage : EnumPowerStage.VALUES) {
             ENUM_POWER_STAGE.putConstant("" + stage, stage);
         }
@@ -111,13 +111,13 @@ public class ExpressionCompat {
     }
 
     private static long convertColourToAbgr(String c) {
-        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
+        DyeColor colour = ColourUtil.parseColourOrNull(c);
         if (colour == null) return 0xFF_FF_FF_FF;
         return 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(colour));
     }
 
     private static long convertColourToArgb(String c) {
-        EnumDyeColor colour = ColourUtil.parseColourOrNull(c);
+        DyeColor colour = ColourUtil.parseColourOrNull(c);
         if (colour == null) return 0xFF_FF_FF_FF;
         return 0xFF_00_00_00 | ColourUtil.getLightHex(colour);
     }

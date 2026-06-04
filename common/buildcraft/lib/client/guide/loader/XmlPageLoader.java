@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,11 +24,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Formatting;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.InvalidInputDataException;
@@ -181,7 +182,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                     str.startsWith("~{") && str.endsWith("}") && str.indexOf('{', 2) == -1 && str.indexOf('}') == str
                         .length() - 1
                 ) {
-                    lines.set(i, TextFormatting.DARK_PURPLE + str);
+                    lines.set(i, Formatting.DARK_PURPLE + str);
                     continue;
                 }
                 // FIXME: This doesn't really work properly! We will need to use the same system that the rest of the
@@ -191,11 +192,11 @@ public enum XmlPageLoader implements IPageLoaderText {
                 // everything is simpler)
                 // and then we only need a map of lang name to a def class with all of the formatting defs.
                 // (And customisable syntax highlighting? Why?)
-                str = str.replace("{", TextFormatting.DARK_GREEN + "{" + TextFormatting.RESET);
-                str = str.replace("}", TextFormatting.DARK_GREEN + "}" + TextFormatting.RESET);
-                str = str.replaceAll("\"(.+)\"", TextFormatting.DARK_BLUE + "$0" + TextFormatting.RESET);
-                str = str.replaceAll("%[0-9]+", TextFormatting.DARK_PURPLE + "$0" + TextFormatting.RESET);
-                str = str.replaceAll("//", TextFormatting.DARK_GREEN + "//");
+                str = str.replace("{", Formatting.DARK_GREEN + "{" + Formatting.RESET);
+                str = str.replace("}", Formatting.DARK_GREEN + "}" + Formatting.RESET);
+                str = str.replaceAll("\"(.+)\"", Formatting.DARK_BLUE + "$0" + Formatting.RESET);
+                str = str.replaceAll("%[0-9]+", Formatting.DARK_PURPLE + "$0" + Formatting.RESET);
+                str = str.replaceAll("//", Formatting.DARK_GREEN + "//");
                 lines.set(i, str);
             }
             return gui -> new GuidePartCodeBlock(gui, lines);
@@ -215,14 +216,14 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry, Profiler prof)
+    public GuidePageFactory loadPage(BufferedReader reader, Identifier name, PageEntry<?> entry, Profiler prof)
         throws IOException {
         try (IProfilerSection p = new ProfilerBC(prof).start("xml")) {
             return loadPage0(reader, name, entry, prof);
         }
     }
 
-    private static GuidePageFactory loadPage0(BufferedReader reader, ResourceLocation name, PageEntry<?> entry,
+    private static GuidePageFactory loadPage0(BufferedReader reader, Identifier name, PageEntry<?> entry,
         Profiler prof) throws IOException, InvalidInputDataException {
         // Needs to support:
         // - start/end tags (such as <lore></lore>)
@@ -262,16 +263,16 @@ public enum XmlPageLoader implements IPageLoaderText {
             if (line.startsWith("\\/\\/")) {
                 line = "//" + line.substring(4);
             }
-            prof.startSection("parse_tag");
+            prof.push("parse_tag");
             XmlTag tag = parseTag(line);
-            prof.endSection();
+            prof.pop();
             if (tag != null) {
                 if (tag.state == XmlTagState.COMPLETE) {
                     SpecialParser parser = TAG_FACTORIES.get(tag.name);
                     if (parser != null) {
-                        prof.startSection("use_" + tag.name);
+                        prof.push("use_" + tag.name);
                         List<GuidePartFactory> factories = parser.parse(tag, prof);
-                        prof.endSection();
+                        prof.pop();
                         if (factories != null) {
                             nestedParts.peek().addAll(factories);
                             line = line.substring(tag.originalString.length());
@@ -303,9 +304,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                             );
                         }
                         List<GuidePartFactory> subParts = nestedParts.pop();
-                        prof.startSection("join_" + tag.name);
+                        prof.push("join_" + tag.name);
                         GuidePartFactory joined = joiner.join(nameTag, subParts, prof);
-                        prof.endSection();
+                        prof.pop();
                         if (joined == null) {
                             nestedParts.peek().addAll(subParts);
                             int len = tag.originalString.length();
@@ -324,9 +325,9 @@ public enum XmlPageLoader implements IPageLoaderText {
             if (line.length() == 0) {
                 line = " ";
             }
-            prof.startSection("text_format");
-            Set<TextFormatting> formattingElements = EnumSet.noneOf(TextFormatting.class);
-            Deque<TextFormatting> formatColours = new ArrayDeque<>();
+            prof.push("text_format");
+            Set<Formatting> formattingElements = EnumSet.noneOf(Formatting.class);
+            Deque<Formatting> formatColours = new ArrayDeque<>();
             String completeLine = "";
             int i = 0;
             while (i < line.length()) {
@@ -334,7 +335,7 @@ public enum XmlPageLoader implements IPageLoaderText {
                 if (c == '<') {
                     XmlTag currentTag = parseTag(line.substring(i));
                     if (currentTag != null) {
-                        TextFormatting formatting = TextFormatting.getValueByName(currentTag.name.replace("_", ""));
+                        Formatting formatting = Formatting.getValueByName(currentTag.name.replace("_", ""));
                         if (formatting != null) {
                             if (currentTag.state == XmlTagState.END) {
                                 formattingElements.remove(formatting);
@@ -348,11 +349,11 @@ public enum XmlPageLoader implements IPageLoaderText {
                                     formattingElements.add(formatting);
                                 }
                             }
-                            completeLine += TextFormatting.RESET;
+                            completeLine += Formatting.RESET;
                             if (formatColours.peek() != null) {
                                 completeLine += formatColours.peek();
                             }
-                            for (TextFormatting format : formattingElements) {
+                            for (Formatting format : formattingElements) {
                                 completeLine += format;
                             }
                             i += currentTag.originalString.length();
@@ -372,7 +373,7 @@ public enum XmlPageLoader implements IPageLoaderText {
 
             final String modLine = completeLine;
             nestedParts.peek().add(new GuideTextFactory(modLine));
-            prof.endSection();
+            prof.pop();
         }
         List<GuidePartFactory> factories = nestedParts.pop();
         if (nestedParts.size() != 0) {
@@ -520,7 +521,7 @@ public enum XmlPageLoader implements IPageLoaderText {
         }
         final PageLink link;
         if (type == null) {
-            ResourceLocation location = new ResourceLocation(to);
+            Identifier location = new Identifier(to);
             PageEntry<?> entry = GuidePageRegistry.INSTANCE.getReloadableEntryMap().get(location);
             if (entry == null) {
                 BCLog.logger.warn("[lib.guide.loader.xml] Found a link tag to an unknown page! " + tag);
@@ -648,7 +649,7 @@ public enum XmlPageLoader implements IPageLoaderText {
     }
 
     public static List<GuidePartFactory> loadAllCrafting(@Nonnull ItemStack stack, Profiler prof, int chapterLevel) {
-        prof.startSection("recipes");
+        prof.push("recipes");
         List<GuidePartFactory> list = new ArrayList<>();
         List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack, prof);
         if (recipeParts.size() > 0) {
@@ -660,7 +661,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             list.addAll(recipeParts);
         }
-        prof.endStartSection("uses");
+        prof.swap("uses");
         List<GuidePartFactory> usageParts = RecipeLookupHelper.getAllUsages(stack, prof);
         // Ensure we don't have any duplicate recipes
         usageParts.removeAll(recipeParts);
@@ -675,7 +676,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             }
             list.addAll(usageParts);
         }
-        prof.endSection();
+        prof.pop();
         return list;
     }
 
@@ -756,7 +757,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             return null;
         }
         ItemStack stack = null;
-        Item item = Item.getByNameOrId(id.trim());
+        Item item = buildcraft.lib.misc.StackUtil.getItemByNameOrId(id.trim());
         if (item != null) {
             stack = new ItemStack(item);
         } else {
@@ -779,9 +780,9 @@ public enum XmlPageLoader implements IPageLoaderText {
                 int meta = Integer.parseInt(data.trim());
                 if (meta == -1) {
                     // Use oredict
-                    meta = OreDictionary.WILDCARD_VALUE;
+                    meta = OreDictionaryStub.WILDCARD_VALUE;
                 }
-                stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
+                stack = new ItemStack(stack.getItem(), stack.getCount());
             } catch (NumberFormatException nfe) {
                 BCLog.logger.warn("[lib.guide.loader.xml] " + data + " was not a valid number: " + nfe.getMessage());
             }
@@ -789,7 +790,7 @@ public enum XmlPageLoader implements IPageLoaderText {
 
         if (nbt != null) {
             try {
-                stack.setTagCompound(JsonToNBT.getTagFromJson(nbt));
+                stack.setNbt(JsonToNBT.getTagFromJson(nbt));
             } catch (NBTException e) {
                 BCLog.logger.warn("[lib.guide.loader.xml] " + nbt + " was not a valid nbt tag: " + e.getMessage());
             }

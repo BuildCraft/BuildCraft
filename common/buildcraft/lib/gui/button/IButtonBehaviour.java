@@ -2,13 +2,17 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui.button;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public interface IButtonBehaviour {
     void mousePressed(GuiAbstractButton button, int bkey);
-
     void mouseReleased(GuiAbstractButton button, int bkey);
 
     IButtonBehaviour DEFAULT = new IButtonBehaviour() {
@@ -47,7 +51,6 @@ public interface IButtonBehaviour {
         return radio;
     }
 
-    /** A radio button is a button linked to several other buttons, of which only 1 can be pressed at a time. */
     class Radio implements IButtonBehaviour {
         public final GuiAbstractButton[] buttons;
 
@@ -59,9 +62,7 @@ public interface IButtonBehaviour {
         public void mousePressed(GuiAbstractButton button, int bkey) {
             for (GuiAbstractButton toDisable : buttons) {
                 if (toDisable == button) {
-                    if (!button.active) {
-                        button.active = true;
-                    }
+                    if (!button.active) button.active = true;
                 } else {
                     toDisable.active = false;
                 }
@@ -73,7 +74,6 @@ public interface IButtonBehaviour {
             if (button.contains(button.gui.mouse)) {
                 button.notifyButtonClicked(bkey);
             }
-            // NO-OP
         }
     }
 }

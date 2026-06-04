@@ -1,262 +1,217 @@
 /*
- * Copyright (c) 2017 SpaceToad and the BuildCraft team This Source Code Form is subject to the terms of the Mozilla
- * Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
- * https://mozilla.org/MPL/2.0/
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.block;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import io.netty.handler.codec.http2.Http2FrameLogger.Direction;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.particle.ParticleBlockDust;
-import net.minecraft.client.particle.ParticleDigging;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ShapeContext;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.blocks.ICustomPaintHandler;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.EnumWirePart;
 import buildcraft.api.transport.IItemPluggable;
-import buildcraft.api.transport.WireNode;
-import buildcraft.api.transport.pipe.IPipeHolder;
-import buildcraft.api.transport.pipe.PipeApi;
-import buildcraft.api.transport.pipe.PipeDefinition;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableModelKey;
 
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.misc.AdvancementUtil;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.SpriteUtil;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.net.IPayloadWriter;
-import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.prop.UnlistedNonNullProperty;
-import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.energy.BCEnergyProxy;
-import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.client.model.PipeModelCacheBase;
-import buildcraft.transport.client.model.PipeModelCachePluggable;
-import buildcraft.transport.client.render.PipeWireRenderer;
-import buildcraft.transport.item.ItemWire;
+import buildcraft.transport.BCTransportBlocks;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 
-public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
-    public static final IUnlistedProperty<WeakReference<TilePipeHolder>> PROP_TILE
-        = new UnlistedNonNullProperty<>("tile");
+/** The pipe block. Migrated from the 1,115-LOC Forge original (Phase 4F finale of the transport block layer).
+ *
+ * <h2>IExtendedBlockState replacement</h2>
+ * Forge attached a {@code WeakReference<TilePipeHolder>} to the block state through an unlisted property
+ * ({@code PROP_TILE}) + {@code getExtendedState()}, and the baked model pulled the {@link
+ * buildcraft.transport.client.model.key.PipeModelKey PipeModelKey} from it. 1.20.1 has no IExtendedBlockState, so
+ * the per-tile render data is routed through Fabric's {@code RenderAttachmentBlockEntity} on {@link TilePipeHolder}
+ * (see {@link TilePipeHolder#getRenderAttachmentData()}). Consequently the block carries <b>no</b> block-state
+ * properties at all (the Forge {@code ExtendedBlockState} held only the unlisted tile reference), so there is no
+ * {@code createBlockState}/{@code appendProperties} override and no placement metadata (pipe type + colour live on
+ * the item / block entity, not the block state — there is no meta in 1.20.1).
+ *
+ * <h2>Raytracing / sub-parts</h2>
+ * Yarn's {@link BlockHitResult} has no {@code subHit} field, so the Forge per-sub-part hit index is preserved via
+ * the {@link PipeRayTraceResult} subclass. Collision/outline shapes are assembled as {@link VoxelShape}s via
+ * {@link VoxelShapes#union} from the pipe centre, connection boxes, pluggable boxes and wire boxes. */
+public class BlockPipeHolder extends BlockBCBase_Neptune implements BlockEntityProvider {
 
-    private static final AxisAlignedBB BOX_CENTER = new AxisAlignedBB(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
-    private static final AxisAlignedBB BOX_DOWN = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.25, 0.75);
-    private static final AxisAlignedBB BOX_UP = new AxisAlignedBB(0.25, 0.75, 0.25, 0.75, 1, 0.75);
-    private static final AxisAlignedBB BOX_NORTH = new AxisAlignedBB(0.25, 0.25, 0, 0.75, 0.75, 0.25);
-    private static final AxisAlignedBB BOX_SOUTH = new AxisAlignedBB(0.25, 0.25, 0.75, 0.75, 0.75, 1);
-    private static final AxisAlignedBB BOX_WEST = new AxisAlignedBB(0, 0.25, 0.25, 0.25, 0.75, 0.75);
-    private static final AxisAlignedBB BOX_EAST = new AxisAlignedBB(0.75, 0.25, 0.25, 1, 0.75, 0.75);
-    private static final AxisAlignedBB[] BOX_FACES = { BOX_DOWN, BOX_UP, BOX_NORTH, BOX_SOUTH, BOX_WEST, BOX_EAST };
+    private static final Direction[] DIRECTIONS = Direction.values();
 
-    private static final ResourceLocation ADVANCEMENT_LOGIC_TRANSPORTATION
-        = new ResourceLocation("buildcrafttransport:logic_transportation");
+    private static final Box BOX_CENTER = new Box(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
+    private static final Box BOX_DOWN = new Box(0.25, 0, 0.25, 0.75, 0.25, 0.75);
+    private static final Box BOX_UP = new Box(0.25, 0.75, 0.25, 0.75, 1, 0.75);
+    private static final Box BOX_NORTH = new Box(0.25, 0.25, 0, 0.75, 0.75, 0.25);
+    private static final Box BOX_SOUTH = new Box(0.25, 0.25, 0.75, 0.75, 0.75, 1);
+    private static final Box BOX_WEST = new Box(0, 0.25, 0.25, 0.25, 0.75, 0.75);
+    private static final Box BOX_EAST = new Box(0.75, 0.25, 0.25, 1, 0.75, 0.75);
+    private static final Box[] BOX_FACES = { BOX_DOWN, BOX_UP, BOX_NORTH, BOX_SOUTH, BOX_WEST, BOX_EAST };
 
-    public BlockPipeHolder(Material material, String id) {
-        super(material, id);
+    private static final Box FULL_BLOCK_BOX = new Box(0, 0, 0, 1, 1, 1);
 
-        setHardness(0.25f);
-        setResistance(3.0f);
-        setLightOpacity(0);
+    public BlockPipeHolder(AbstractBlock.Settings settings, String id) {
+        // STUB(R.Chen): Forge setHardness(0.25f)/setResistance(3.0f)/setLightOpacity(0) move into the
+        // AbstractBlock.Settings passed by the registrar (strength/.nonOpaque()); set there in Phase 4F.
+        super(settings, id);
     }
 
-    // basics
+    // BlockEntityProvider
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] { PROP_TILE });
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new TilePipeHolder(BCTransportBlocks.pipeHolderTile, pos, state);
     }
 
+    @Nullable
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        return new TilePipeHolder();
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullBlock(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    // Collisions
-
-    @Override
-    @Deprecated
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        if (source.isAirBlock(pos)) {
-            // Permit placing pipes below when jumping
-            return BOX_CENTER;
+    @SuppressWarnings("unchecked")
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state,
+        BlockEntityType<T> type) {
+        if (type != BCTransportBlocks.pipeHolderTile) {
+            return null;
         }
-        return super.getBoundingBox(state, source, pos);
+        return (BlockEntityTicker<T>) TilePipeHolder.<TilePipeHolder>ticker();
+    }
+
+    // Shapes (was getBoundingBox / addCollisionBoxToList)
+
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        // STUB(R.Chen): Forge getSelectedBoundingBox returned only the single sub-part under the cursor (so the
+        // highlight box hugged the wire/pluggable/connection being looked at). That requires the client's live
+        // raytrace, which is a Phase 5 client-render concern; for now the outline is the full pipe envelope.
+        return getShape(world, pos);
     }
 
     @Override
-    public void addCollisionBoxToList(
-        IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes,
-        Entity entityIn, boolean isPistonMoving
-    ) {
-        TilePipeHolder tile = getPipe(world, pos, false);
+    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return getShape(world, pos);
+    }
+
+    private static VoxelShape getShape(BlockView world, BlockPos pos) {
+        TilePipeHolder tile = getPipe(world, pos);
         if (tile == null) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
-            return;
+            return VoxelShapes.fullCube();
         }
-        boolean added = false;
+        List<Box> boxes = new ArrayList<>();
         Pipe pipe = tile.getPipe();
         if (pipe != null) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, BOX_CENTER);
-            added = true;
-            for (EnumFacing face : EnumFacing.VALUES) {
+            boxes.add(BOX_CENTER);
+            for (Direction face : DIRECTIONS) {
                 float conSize = pipe.getConnectedDist(face);
                 if (conSize > 0) {
-                    AxisAlignedBB aabb = BOX_FACES[face.ordinal()];
-                    if (conSize != 0.25f) {
-                        Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
-                        Vec3d radius = new Vec3d(0.25, 0.25, 0.25);
-                        radius = VecUtil.replaceValue(radius, face.getAxis(), conSize / 2);
-                        Vec3d min = center.subtract(radius);
-                        Vec3d max = center.add(radius);
-                        aabb = BoundingBoxUtil.makeFrom(min, max);
-                    }
-                    addCollisionBoxToList(pos, entityBox, collidingBoxes, aabb);
+                    boxes.add(connectionBox(face, conSize));
                 }
             }
         }
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : DIRECTIONS) {
             PipePluggable pluggable = tile.getPluggable(face);
             if (pluggable != null) {
-                AxisAlignedBB bb = pluggable.getBoundingBox();
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-                added = true;
+                boxes.add(pluggable.getBoundingBox());
             }
         }
         for (EnumWirePart part : tile.getWireManager().parts.keySet()) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, part.boundingBox);
-            added = true;
+            boxes.add(part.boundingBox);
         }
         for (EnumWireBetween between : tile.getWireManager().betweens.keySet()) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, between.boundingBox);
-            added = true;
+            boxes.add(between.boundingBox);
         }
-        if (!added) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
+        if (boxes.isEmpty()) {
+            return VoxelShapes.fullCube();
         }
+        VoxelShape shape = VoxelShapes.empty();
+        for (Box box : boxes) {
+            shape = VoxelShapes.union(shape, VoxelShapes.cuboid(box));
+        }
+        return shape;
     }
 
+    /** The collision/raytrace box for a pipe connection of the given length (was inline in the Forge collision +
+     * raytrace loops; {@code BoundingBoxUtil.makeFrom} is not yet migrated, so the {@link Box} is built directly). */
+    private static Box connectionBox(Direction face, float conSize) {
+        if (conSize == 0.25f) {
+            return BOX_FACES[face.ordinal()];
+        }
+        Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
+        Vec3d radius = VecUtil.replaceValue(new Vec3d(0.25, 0.25, 0.25), face.getAxis(), conSize / 2);
+        return new Box(center.subtract(radius), center.add(radius));
+    }
+
+    // Raytracing (was collisionRayTrace + the custom rayTrace family). Yarn BlockHitResult has no subHit, so the
+    // sub-part index is carried by PipeRayTraceResult.
+
     @Nullable
-    public RayTraceResult rayTrace(World world, BlockPos pos, EntityPlayer player) {
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+    public PipeRayTraceResult rayTrace(World world, BlockPos pos, PlayerEntity player) {
+        Vec3d start = player.getEyePos();
+        // STUB(R.Chen): Forge read the exact reach from ServerPlayerEntity.interactionManager.getBlockReachDistance();
+        // Yarn's ServerPlayerInteractionManager does not expose it, so the vanilla 5-block reach is used.
         double reachDistance = 5;
-        if (player instanceof EntityPlayerMP) {
-            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
-        }
-        Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
-        return rayTrace(world, pos, start, end);
-    }
-
-    @Override
-    @Nullable
-    public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
+        Vec3d end = start.add(player.getRotationVec(1.0F).normalize().multiply(reachDistance));
         return rayTrace(world, pos, start, end);
     }
 
     @Nullable
-    public RayTraceResult rayTrace(World world, BlockPos pos, Vec3d start, Vec3d end) {
-        TilePipeHolder tile = getPipe(world, pos, false);
+    public PipeRayTraceResult rayTrace(World world, BlockPos pos, Vec3d start, Vec3d end) {
+        TilePipeHolder tile = getPipe(world, pos);
         if (tile == null) {
-            return computeTrace(null, pos, start, end, FULL_BLOCK_AABB, 400);
+            return computeTrace(null, pos, start, end, FULL_BLOCK_BOX, 400);
         }
-        RayTraceResult best = null;
+        PipeRayTraceResult best = null;
         Pipe pipe = tile.getPipe();
         boolean computed = false;
         if (pipe != null) {
             computed = true;
             best = computeTrace(best, pos, start, end, BOX_CENTER, 0);
-            for (EnumFacing face : EnumFacing.VALUES) {
+            for (Direction face : DIRECTIONS) {
                 float conSize = pipe.getConnectedDist(face);
                 if (conSize > 0) {
-                    AxisAlignedBB aabb = BOX_FACES[face.ordinal()];
-                    if (conSize != 0.25f) {
-                        Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
-                        Vec3d radius = new Vec3d(0.25, 0.25, 0.25);
-                        radius = VecUtil.replaceValue(radius, face.getAxis(), conSize / 2);
-                        Vec3d min = center.subtract(radius);
-                        Vec3d max = center.add(radius);
-                        aabb = BoundingBoxUtil.makeFrom(min, max);
-                    }
-                    best = computeTrace(best, pos, start, end, aabb, face.ordinal() + 1);
+                    best = computeTrace(best, pos, start, end, connectionBox(face, conSize), face.ordinal() + 1);
                 }
             }
         }
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : DIRECTIONS) {
             PipePluggable pluggable = tile.getPluggable(face);
             if (pluggable != null) {
-                AxisAlignedBB bb = pluggable.getBoundingBox();
-                best = computeTrace(best, pos, start, end, bb, face.ordinal() + 1 + 6);
+                best = computeTrace(best, pos, start, end, pluggable.getBoundingBox(), face.ordinal() + 1 + 6);
                 computed = true;
             }
         }
@@ -269,7 +224,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             computed = true;
         }
         if (!computed) {
-            return computeTrace(null, pos, start, end, FULL_BLOCK_AABB, 400);
+            return computeTrace(null, pos, start, end, FULL_BLOCK_BOX, 400);
         }
         return best;
     }
@@ -281,55 +236,65 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         EnumWirePart best = null;
         double dist = 1000;
         for (EnumWirePart part : EnumWirePart.VALUES) {
-            RayTraceResult trace = part.boundingBoxPossible.calculateIntercept(realStart, realEnd);
-            if (trace != null) {
-                if (best == null) {
+            // Forge Box.calculateIntercept(start, end) → Yarn Box.raycast(start, end) (Optional<Vec3d>).
+            Optional<Vec3d> trace = part.boundingBoxPossible.raycast(realStart, realEnd);
+            if (trace.isPresent()) {
+                double nextDist = trace.get().squaredDistanceTo(realStart);
+                if (best == null || dist > nextDist) {
                     best = part;
-                    dist = trace.hitVec.squareDistanceTo(realStart);
-                } else {
-                    double nextDist = trace.hitVec.squareDistanceTo(realStart);
-                    if (dist > nextDist) {
-                        best = part;
-                        dist = nextDist;
-                    }
+                    dist = nextDist;
                 }
             }
         }
         return best;
     }
 
-    private RayTraceResult computeTrace(
-        RayTraceResult lastBest, BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB aabb, int part
-    ) {
-        RayTraceResult next = super.rayTrace(pos, start, end, aabb);
-        if (next == null) {
+    private static PipeRayTraceResult computeTrace(PipeRayTraceResult lastBest, BlockPos pos, Vec3d start, Vec3d end,
+        Box box, int part) {
+        Box worldBox = box.offset(pos);
+        Optional<Vec3d> hit = worldBox.raycast(start, end);
+        if (hit.isEmpty()) {
             return lastBest;
         }
-        next.subHit = part;
+        Vec3d hitVec = hit.get();
+        PipeRayTraceResult next = new PipeRayTraceResult(hitVec, sideForHit(worldBox, hitVec), pos, false, part);
         if (lastBest == null) {
             return next;
         }
-        double distLast = lastBest.hitVec.squareDistanceTo(start);
-        double distNext = next.hitVec.squareDistanceTo(start);
+        double distLast = lastBest.getPos().squaredDistanceTo(start);
+        double distNext = hitVec.squaredDistanceTo(start);
         return distLast > distNext ? next : lastBest;
     }
 
+    /** Determines which face of {@code box} the {@code hit} point lies on. Forge got this for free from
+     * {@code Block.rayTrace}; Yarn's {@link Box#raycast(Vec3d, Vec3d)} only returns the point, so it is recovered
+     * by matching the hit against the box bounds. */
+    private static Direction sideForHit(Box box, Vec3d hit) {
+        double e = 1.0E-4;
+        if (Math.abs(hit.x - box.minX) < e) return Direction.WEST;
+        if (Math.abs(hit.x - box.maxX) < e) return Direction.EAST;
+        if (Math.abs(hit.y - box.minY) < e) return Direction.DOWN;
+        if (Math.abs(hit.y - box.maxY) < e) return Direction.UP;
+        if (Math.abs(hit.z - box.minZ) < e) return Direction.NORTH;
+        return Direction.SOUTH;
+    }
+
     @Nullable
-    public static EnumFacing getPartSideHit(RayTraceResult trace) {
+    public static Direction getPartSideHit(PipeRayTraceResult trace) {
         if (trace.subHit <= 0) {
-            return trace.sideHit;
+            return trace.getSide();
         }
         if (trace.subHit <= 6) {
-            return EnumFacing.VALUES[trace.subHit - 1];
+            return DIRECTIONS[trace.subHit - 1];
         }
         if (trace.subHit <= 6 + 6) {
-            return EnumFacing.VALUES[trace.subHit - 1 - 6];
+            return DIRECTIONS[trace.subHit - 1 - 6];
         }
         return null;
     }
 
     @Nullable
-    public static EnumWirePart getWirePartHit(RayTraceResult trace) {
+    public static EnumWirePart getWirePartHit(PipeRayTraceResult trace) {
         if (trace.subHit <= 6 + 6) {
             return null;
         } else if (trace.subHit <= 6 + 6 + 8) {
@@ -340,7 +305,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Nullable
-    public static EnumWireBetween getWireBetweenHit(RayTraceResult trace) {
+    public static EnumWireBetween getWireBetweenHit(PipeRayTraceResult trace) {
         if (trace.subHit <= 6 + 6 + 8) {
             return null;
         } else if (trace.subHit <= 6 + 6 + 8 + EnumWireBetween.VALUES.length) {
@@ -350,325 +315,84 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
     }
 
+    // Interactions
+
     @Override
-    @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
-        TilePipeHolder tile = getPipe(world, pos, false);
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+        BlockHitResult hit) {
+        TilePipeHolder tile = getPipe(world, pos);
         if (tile == null) {
-            return FULL_BLOCK_AABB;
+            return ActionResult.PASS;
         }
-        RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;
-        if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
-            // Perhaps we aren't the object the mouse is over
-            return FULL_BLOCK_AABB;
-        }
-        int part = trace.subHit;
-        AxisAlignedBB aabb = FULL_BLOCK_AABB;
-        if (part == 0) {
-            aabb = BOX_CENTER;
-        } else if (part < 1 + 6) {
-            aabb = BOX_FACES[part - 1];
-            Pipe pipe = tile.getPipe();
-            if (pipe != null) {
-                EnumFacing face = EnumFacing.VALUES[part - 1];
-                float conSize = pipe.getConnectedDist(face);
-                if (conSize > 0 && conSize != 0.25f) {
-                    Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
-                    Vec3d radius = new Vec3d(0.25, 0.25, 0.25);
-                    radius = VecUtil.replaceValue(radius, face.getAxis(), conSize / 2);
-                    Vec3d min = center.subtract(radius);
-                    Vec3d max = center.add(radius);
-                    aabb = BoundingBoxUtil.makeFrom(min, max);
-                }
-            }
-        } else if (part < 1 + 6 + 6) {
-            EnumFacing side = EnumFacing.VALUES[part - 1 - 6];
-            PipePluggable pluggable = tile.getPluggable(side);
-            if (pluggable != null) {
-                aabb = pluggable.getBoundingBox();
-            }
-        } else if (part < 1 + 6 + 6 + 8) {
-            EnumWirePart wirePart = EnumWirePart.VALUES[part - 1 - 6 - 6];
-            aabb = wirePart.boundingBox;
-        } else if (part < 1 + 6 + 6 + 6 + 8 + 36) {
-            EnumWireBetween wireBetween = EnumWireBetween.VALUES[part - 1 - 6 - 6 - 8];
-            aabb = wireBetween.boundingBox;
-        }
-        if (part >= 1 + 6 + 6) {
-            return aabb.offset(pos);
-        } else {
-            return (aabb == FULL_BLOCK_AABB ? aabb : aabb.grow(1 / 32.0)).offset(pos);
-        }
-    }
-
-    @Override
-    public ItemStack getPickBlock(
-        IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player
-    ) {
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null || target == null) {
-            return ItemStack.EMPTY;
-        }
-        if (target.subHit <= 6) {
-            Pipe pipe = tile.getPipe();
-            if (pipe != null) {
-                PipeDefinition def = pipe.getDefinition();
-                Item item = (Item) PipeApi.pipeRegistry.getItemForPipe(def);
-                if (item != null) {
-                    int meta = pipe.getColour() == null ? 0 : pipe.getColour().getMetadata() + 1;
-                    return new ItemStack(item, 1, meta);
-                }
-            }
-        } else if (target.subHit <= 12) {
-            int pluggableHit = target.subHit - 7;
-            EnumFacing face = EnumFacing.VALUES[pluggableHit];
-            PipePluggable plug = tile.getPluggable(face);
-            if (plug != null) {
-                return plug.getPickStack();
-            }
-        } else {
-            EnumWirePart part = null;
-            EnumWireBetween between = null;
-
-            if (target.subHit > 6) {
-                part = getWirePartHit(target);
-                between = getWireBetweenHit(target);
-            }
-
-            if (part != null && tile.wireManager.getColorOfPart(part) != null) {
-                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
-            } else if (between != null && tile.wireManager.getColorOfPart(between.parts[0]) != null) {
-                return new ItemStack(
-                    BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()
-                );
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean onBlockActivated(
-        World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX,
-        float hitY, float hitZ
-    ) {
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null) {
-            return false;
-        }
-        RayTraceResult trace = rayTrace(world, pos, player);
+        PipeRayTraceResult trace = rayTrace(world, pos, player);
         if (trace == null) {
-            return false;
+            return ActionResult.PASS;
         }
-        EnumFacing realSide = getPartSideHit(trace);
+        Direction realSide = getPartSideHit(trace);
         if (realSide == null) {
-            realSide = side;
+            realSide = hit.getSide();
         }
-        if (trace.subHit > 6 && trace.subHit <= 12) {
-            PipePluggable existing = tile.getPluggable(realSide);
-            if (existing != null) {
-                return existing.onPluggableActivate(player, trace, hitX, hitY, hitZ);
+        float hitX = (float) (trace.getPos().x - pos.getX());
+        float hitY = (float) (trace.getPos().y - pos.getY());
+        float hitZ = (float) (trace.getPos().z - pos.getZ());
+
+        PipePluggable existing = tile.getPluggable(realSide);
+        if (trace.subHit > 6 && trace.subHit <= 12 && existing != null) {
+            if (existing.onPluggableActivate(player, trace, hitX, hitY, hitZ)) {
+                return ActionResult.SUCCESS;
             }
         }
 
         EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
 
-        ItemStack held = player.getHeldItem(hand);
+        ItemStack held = player.getStackInHand(hand);
         Item item = held.isEmpty() ? null : held.getItem();
-        PipePluggable existing = tile.getPluggable(realSide);
         if (item instanceof IItemPluggable && existing == null) {
             IItemPluggable itemPlug = (IItemPluggable) item;
             PipePluggable plug = itemPlug.onPlace(held, tile, realSide, player, hand);
             if (plug == null) {
-                return false;
+                return ActionResult.FAIL;
             } else {
                 tile.replacePluggable(realSide, plug);
                 plug.onPlacedBy(player);
-                if (!player.capabilities.isCreativeMode) {
-                    held.shrink(1);
+                if (!player.getAbilities().creativeMode) {
+                    held.decrement(1);
                 }
-                return true;
+                return ActionResult.SUCCESS;
             }
         }
-        if (item instanceof ItemWire) {
-            EnumWirePart wirePartHit = getWirePartHit(trace);
-            EnumWirePart wirePart;
-            TilePipeHolder attachTile = tile;
-            if (wirePartHit != null) {
-                WireNode node = new WireNode(pos, wirePartHit);
-                node = node.offset(trace.sideHit);
-                wirePart = node.part;
-                if (!node.pos.equals(pos)) {
-                    attachTile = getPipe(world, node.pos, false);
-                }
-            } else {
-                wirePart = EnumWirePart.get(
-                    (trace.hitVec.x % 1 + 1) % 1 > 0.5, (trace.hitVec.y % 1 + 1) % 1 > 0.5,
-                    (trace.hitVec.z % 1 + 1) % 1 > 0.5
-                );
-            }
-            if (wirePart != null && attachTile != null) {
-                EnumDyeColor colour = EnumDyeColor.byMetadata(held.getMetadata());
-                boolean attached = attachTile.getWireManager().addPart(wirePart, colour);
-                attachTile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
-                if (attached) {
-                    WireNode from = new WireNode(attachTile.getPipePos(), wirePart);
+        // STUB(R.Chen): the ItemWire placement branch is dropped here. It needs the unmigrated transport item
+        // layer (ItemWire + BCTransportItems.wire) and relied on stack.getDamage()→DyeColor, which the 1.13
+        // item flattening removed. Restore in Phase 4F (wire item carries its colour via the item/NBT). The Forge
+        // branch added a wire part via tile.getWireManager().addPart(...), scheduled a WIRES network update, and
+        // unlocked ADVANCEMENT_LOGIC_TRANSPORTATION when the new wire became connected.
 
-                    boolean isNowConnected = false;
-                    for (EnumFacing dir : EnumFacing.values()) {
-                        WireNode to = from.offset(dir);
-                        if (to.pos == attachTile.getPipePos()) {
-                            if (attachTile.getWireManager().getColorOfPart(to.part) == colour) {
-                                isNowConnected = true;
-                                break;
-                            }
-                        } else {
-                            TileEntity localTile = attachTile.getLocalTile(to.pos);
-                            if (localTile instanceof TilePipeHolder) {
-                                if (((TilePipeHolder) localTile).getWireManager().getColorOfPart(to.part) == colour) {
-                                    isNowConnected = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (isNowConnected) {
-                        AdvancementUtil.unlockAdvancement(player, ADVANCEMENT_LOGIC_TRANSPORTATION);
-                    }
-
-                    if (!player.capabilities.isCreativeMode) {
-                        held.shrink(1);
-                    }
-                }
-                if (attached) {
-                    return true;
-                }
-            }
-        }
         Pipe pipe = tile.getPipe();
         if (pipe == null) {
-            return false;
+            return ActionResult.PASS;
         }
         if (pipe.behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
-            return true;
+            return ActionResult.SUCCESS;
         }
         if (pipe.flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
-            return true;
+            return ActionResult.SUCCESS;
         }
-        return false;
+        return ActionResult.PASS;
     }
 
     @Override
-    public boolean removedByPlayer(
-        IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest
-    ) {
-        if (world.isRemote) {
-            return false;
-        }
-
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null) {
-            return super.removedByPlayer(state, world, pos, player, willHarvest);
-        }
-
-        NonNullList<ItemStack> toDrop = NonNullList.create();
-        RayTraceResult trace = rayTrace(world, pos, player);
-        EnumFacing side = null;
-        EnumWirePart part = null;
-        EnumWireBetween between = null;
-
-        if (trace != null && trace.subHit > 6) {
-            side = getPartSideHit(trace);
-            part = getWirePartHit(trace);
-            between = getWireBetweenHit(trace);
-        }
-
-        if (side != null) {
-            removePluggable(side, tile, toDrop);
-            if (!player.capabilities.isCreativeMode) {
-                InventoryUtil.dropAll(world, pos, toDrop);
-            }
-            return false;
-        } else if (part != null) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata()));
-            tile.wireManager.removePart(part);
-            if (!player.capabilities.isCreativeMode) {
-                InventoryUtil.dropAll(world, pos, toDrop);
-            }
-            tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
-            return false;
-        } else if (between != null) {
-            toDrop.add(
-                new ItemStack(
-                    BCTransportItems.wire, between.to == null ? 2 : 1,
-                    tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()
-                )
-            );
-            if (between.to == null) {
-                tile.wireManager.removeParts(Arrays.asList(between.parts));
-            } else {
-                tile.wireManager.removePart(between.parts[0]);
-            }
-            if (!player.capabilities.isCreativeMode) {
-                InventoryUtil.dropAll(world, pos, toDrop);
-            }
-            tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
-            return false;
-        } else {
-            toDrop.addAll(getDrops(world, pos, state, 0));
-            for (EnumFacing face : EnumFacing.VALUES) {
-                removePluggable(face, tile, NonNullList.create());
-            }
-        }
-        if (!player.capabilities.isCreativeMode) {
-            InventoryUtil.dropAll(world, pos, toDrop);
-        }
-        return super.removedByPlayer(state, world, pos, player, willHarvest);
-    }
-
-    @Override
-    public void getDrops(
-        NonNullList<ItemStack> toDrop, IBlockAccess world, BlockPos pos, IBlockState state, int fortune
-    ) {
-        TilePipeHolder tile = getPipe(world, pos, false);
-        for (EnumFacing face : EnumFacing.VALUES) {
-            PipePluggable pluggable = tile.getPluggable(face);
-            if (pluggable != null) {
-                pluggable.addDrops(toDrop, fortune);
-            }
-        }
-        for (EnumDyeColor color : tile.wireManager.parts.values()) {
-            toDrop.add(new ItemStack(BCTransportItems.wire, 1, color.getMetadata()));
-        }
-        Pipe pipe = tile.getPipe();
-        if (pipe != null) {
-            pipe.addDrops(toDrop, fortune);
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos,
+        boolean notify) {
+        super.neighborUpdate(state, world, pos, block, fromPos, notify);
+        TilePipeHolder tile = getPipe(world, pos);
+        if (tile != null) {
+            tile.onNeighbourBlockChanged(block, fromPos);
         }
     }
 
     @Override
-    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
-        if (exploder != null) {
-            Vec3d subtract = exploder.getPositionVector().subtract(new Vec3d(pos).add(VecUtil.VEC_HALF)).normalize();
-            EnumFacing side = Arrays.stream(EnumFacing.VALUES)
-                .min(Comparator.comparing(facing -> new Vec3d(facing.getDirectionVec()).distanceTo(subtract)))
-                .orElseThrow(IllegalArgumentException::new);
-            TilePipeHolder tile = getPipe(world, pos, true);
-            if (tile != null) {
-                PipePluggable pluggable = tile.getPluggable(side);
-                if (pluggable != null) {
-                    float explosionResistance = pluggable.getExplosionResistance(exploder, explosion);
-                    if (explosionResistance > 0) {
-                        return explosionResistance;
-                    }
-                }
-            }
-        }
-        return super.getExplosionResistance(world, pos, exploder, explosion);
-    }
-
-    @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
-        TilePipeHolder tile = getPipe(world, pos, false);
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        TilePipeHolder tile = getPipe(world, pos);
         if (tile == null) {
             return;
         }
@@ -678,425 +402,43 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
     }
 
-    @Override
-    public void harvestBlock(
-        World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack
-    ) {
-        player.addStat(StatList.getBlockStats(this));
-        player.addExhaustion(0.005F);
-    }
+    // Drops (was getDrops + the partial removedByPlayer logic)
 
     @Override
-    public boolean canBeConnectedTo(IBlockAccess world, BlockPos pos, EnumFacing facing) {
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null) {
-            return false;
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
+        BlockEntity be = builder.getOptional(LootContextParameters.BLOCK_ENTITY);
+        if (!(be instanceof TilePipeHolder)) {
+            return super.getDroppedStacks(state, builder);
         }
-        PipePluggable pluggable = tile.getPluggable(facing);
-        return pluggable != null && pluggable.canBeConnected();
-    }
-
-    @Override
-    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null) {
-            return false;
-        }
-        PipePluggable pluggable = tile.getPluggable(side);
-        return pluggable != null && pluggable.isSideSolid();
-    }
-
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile == null) {
-            return BlockFaceShape.UNDEFINED;
-        }
-        PipePluggable pluggable = tile.getPluggable(face);
-        return pluggable != null ? pluggable.getBlockFaceShape() : BlockFaceShape.UNDEFINED;
-    }
-
-    private static void removePluggable(EnumFacing side, TilePipeHolder tile, NonNullList<ItemStack> toDrop) {
-        PipePluggable removed = tile.replacePluggable(side, null);
-        if (removed != null) {
-            removed.onRemove();
-            removed.addDrops(toDrop, 0);
-        }
-    }
-
-    public static TilePipeHolder getPipe(IBlockAccess access, BlockPos pos, boolean requireServer) {
-        if (access instanceof World) {
-            return getPipe((World) access, pos, requireServer);
-        }
-        if (requireServer) {
-            return null;
-        }
-        TileEntity tile = access.getTileEntity(pos);
-        if (tile instanceof TilePipeHolder) {
-            return (TilePipeHolder) tile;
-        }
-        return null;
-    }
-
-    public static TilePipeHolder getPipe(World world, BlockPos pos, boolean requireServer) {
-        if (requireServer && world.isRemote) {
-            return null;
-        }
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TilePipeHolder) {
-            return (TilePipeHolder) tile;
-        }
-        return null;
-    }
-
-    // Block overrides
-
-    @Override
-    public boolean addLandingEffects(
-        IBlockState state, WorldServer world, BlockPos pos, IBlockState iblockstate, EntityLivingBase entity,
-        int numberOfParticles
-    ) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TilePipeHolder) {
-            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
-
-            pipeHolder.createAndSendMessage(TilePipeHolder.NET_CREATE_LANDING_PARTICLE, new IPayloadWriter() {
-
-                @Override
-                public void write(PacketBufferBC buffer) {
-                    buffer.writeDouble(entity.posX);
-                    buffer.writeDouble(entity.posY);
-                    buffer.writeDouble(entity.posZ);
-                    buffer.writeInt(numberOfParticles);
-                }
-            });
-            return true;
-        }
-
-        return super.addLandingEffects(state, world, pos, iblockstate, entity, numberOfParticles);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity) {
-        if (!world.isRemote) {
-            return super.addRunningEffects(state, world, pos, entity);
-        }
-
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TilePipeHolder) {
-            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
-
-            spawnRunningParticles(pipeHolder, entity.posX, entity.getEntityBoundingBox().minY, entity.posZ, entity.width, entity.motionX, entity.motionZ);
-
-            return true;
-        }
-
-        return super.addRunningEffects(state, world, pos, entity);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void spawnLandingParticles(
-        TilePipeHolder pipe, double posX, double posY, double posZ, int numberOfParticles
-    ) {
-        int subHit = 0;
-        if (pipe.getPluggable(EnumFacing.UP) != null) {
-            subHit = 6 + 1 + EnumFacing.UP.ordinal();
-        }
-        HitSpriteInfo info = getHitSpriteInfo(subHit, pipe);
-        if (info != null) {
-
-            Random random = pipe.getWorld().rand;
-
-            for (int i = 0; i < numberOfParticles; i++) {
-
-                double speedX = random.nextGaussian() * 0.15;
-                double speedY = random.nextGaussian() * 0.15;
-                double speedZ = random.nextGaussian() * 0.15;
-
-                ParticleDigging particle
-                    = new ParticleBlockDust(pipe.getWorld(), posX, posY, posZ, speedX, speedY, speedZ, pipe.getCurrentState()) {
-                        // Just to make the constructor public
-                    };
-                particle.setBlockPos(pipe.getPos());
-                particle.setParticleTexture(info.sprite);
-
-                Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+        TilePipeHolder tile = (TilePipeHolder) be;
+        DefaultedList<ItemStack> toDrop = DefaultedList.of();
+        for (Direction face : DIRECTIONS) {
+            PipePluggable pluggable = tile.getPluggable(face);
+            if (pluggable != null) {
+                pluggable.addDrops(toDrop, 0);
             }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void spawnRunningParticles(TilePipeHolder pipe, double posX, double posY, double posZ, float entityWidth, double motionX, double motionZ) {
-        int subHit = 0;
-        if (pipe.getPluggable(EnumFacing.UP) != null) {
-            subHit = 6 + 1 + EnumFacing.UP.ordinal();
-        }
-        HitSpriteInfo info = getHitSpriteInfo(subHit, pipe);
-        if (info != null) {
-
-            Random random = pipe.getWorld().rand;
-
-            posX += (random.nextFloat() - 0.5) * entityWidth;
-            posY += 0.1;
-            posZ += (random.nextFloat() - 0.5) * entityWidth;
-
-            double speedX = motionX * -0.4;
-            double speedY = 0.15;
-            double speedZ = motionZ * -0.4;
-
-            ParticleDigging particle
-                = new ParticleBlockDust(pipe.getWorld(), posX, posY, posZ, speedX, speedY, speedZ, pipe.getCurrentState()) {
-                    // Just to make the constructor public
-                };
-            particle.setBlockPos(pipe.getPos());
-            particle.setParticleTexture(info.sprite);
-
-            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
-        }
-    }
-
-    private static HitSpriteInfo getHitSpriteInfo(RayTraceResult target, TilePipeHolder pipeHolder) {
-        return getHitSpriteInfo(target.subHit, pipeHolder);
-    }
-
-    private static HitSpriteInfo getHitSpriteInfo(int subHit, TilePipeHolder pipeHolder) {
-        int p = subHit;
-        AxisAlignedBB aabb = null;
-        TextureAtlasSprite sprite = SpriteUtil.missingSprite();
-        if (0 <= p && p <= 6) {
-            aabb = p == 0 ? BOX_CENTER : BOX_FACES[p - 1];
-            PipeDefinition def = pipeHolder.getPipe().definition;
-            TextureAtlasSprite[] sprites = PipeModelCacheBase.generator.getItemSprites(def);
-            sprite = sprites.length == 0 ? SpriteUtil.missingSprite() : sprites[0];
-        } else if (6 + 1 <= p && p < 6 + 6 + 1) {
-            PipePluggable plug = pipeHolder.getPluggable(EnumFacing.values()[p - 6 - 1]);
-            if (plug == null) {
-                return null;
-            }
-            aabb = plug.getBoundingBox();
-            if (aabb == null) {
-                return null;
-            }
-            PluggableModelKey keyC = plug.getModelRenderKey(BlockRenderLayer.CUTOUT);
-            PluggableModelKey keyT = plug.getModelRenderKey(BlockRenderLayer.TRANSLUCENT);
-            if (keyC == null && keyT == null) {
-                return null;
-            }
-            List<BakedQuad> quads = null;
-            if (keyC != null) quads = PipeModelCachePluggable.cacheCutoutSingle.bake(keyC);
-            if (quads == null || quads.isEmpty()) {
-                if (keyT == null) {
-                    return null;
-                }
-                quads = PipeModelCachePluggable.cacheTranslucentSingle.bake(keyT);
-                if (quads == null || quads.isEmpty()) {
-                    return null;
-                }
-            }
-            sprite = quads.get(0).getSprite();
-        } else if (6 + 6 + 1 <= p && p < 1 + 6 + 6 + 8) {
-            EnumWirePart wirePart = EnumWirePart.values()[p - 6 - 6 - 1];
-            aabb = wirePart.boundingBox;
-            EnumDyeColor colour = pipeHolder.getWireManager().getColorOfPart(wirePart);
-            if (colour == null) {
-                return null;
-            }
-            sprite = PipeWireRenderer.getWireSprite(colour).getSprite();
-        } else if (6 + 6 + 1 + 8 < p && p <= 6 + 6 + 1 + 8 + 36) {
-            EnumWireBetween wireBetween = EnumWireBetween.values()[p - 6 - 6 - 1 - 8];
-            aabb = wireBetween.boundingBox;
-            EnumDyeColor colour = pipeHolder.getWireManager().betweens.get(wireBetween);
-            if (colour == null) {
-                return null;
-            }
-            sprite = PipeWireRenderer.getWireSprite(colour).getSprite();
-        } else {
-            return null;
-        }
-        if (aabb == null) {
-            throw new IllegalStateException("Null aabb for index " + p + " (and sprite " + sprite + ")");
-        }
-        return new HitSpriteInfo(aabb, sprite);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager) {
-
-        TileEntity te = world.getTileEntity(target.getBlockPos());
-        if (te instanceof TilePipeHolder) {
-            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
-            HitSpriteInfo info = getHitSpriteInfo(target, pipeHolder);
-
-            if (info == null) {
-                return false;
-            }
-
-            double x = Math.random() * (info.aabb.maxX - info.aabb.minX) + info.aabb.minX;
-            double y = Math.random() * (info.aabb.maxY - info.aabb.minY) + info.aabb.minY;
-            double z = Math.random() * (info.aabb.maxZ - info.aabb.minZ) + info.aabb.minZ;
-
-            switch (target.sideHit) {
-                case DOWN:
-                    y = info.aabb.minY - 0.1;
-                    break;
-                case UP:
-                    y = info.aabb.maxY + 0.1;
-                    break;
-                case NORTH:
-                    z = info.aabb.minZ - 0.1;
-                    break;
-                case SOUTH:
-                    z = info.aabb.maxZ + 0.1;
-                    break;
-                case WEST:
-                    x = info.aabb.minX - 0.1;
-                    break;
-                default:
-                    x = info.aabb.maxX + 0.1;
-                    break;
-            }
-
-            x += target.getBlockPos().getX();
-            y += target.getBlockPos().getY();
-            z += target.getBlockPos().getZ();
-
-            ParticleDigging particle = new ParticleDigging(world, x, y, z, 0, 0, 0, state) {
-                // Just to make the constructor public
-            };
-            particle.setBlockPos(target.getBlockPos());
-            particle.setParticleTexture(info.sprite);
-            particle.multiplyVelocity(0.2F);
-            particle.multipleParticleScaleBy(0.6F);
-            manager.addEffect(particle);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
-        RayTraceResult hitResult = Minecraft.getMinecraft().objectMouseOver;
-        if (hitResult == null || !pos.equals(hitResult.getBlockPos())) {
-            return false;
-        }
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TilePipeHolder) {
-            TilePipeHolder pipeHolder = ((TilePipeHolder) te);
-            HitSpriteInfo info = getHitSpriteInfo(hitResult, pipeHolder);
-            if (info == null) {
-                return false;
-            }
-
-            double sizeX = info.aabb.maxX - info.aabb.minX;
-            double sizeY = info.aabb.maxY - info.aabb.minY;
-            double sizeZ = info.aabb.maxZ - info.aabb.minZ;
-
-            int countX = (int) Math.max(2, 4 * sizeX);
-            int countY = (int) Math.max(2, 4 * sizeY);
-            int countZ = (int) Math.max(2, 4 * sizeZ);
-
-            IBlockState state = world.getBlockState(pos);
-            for (int x = 0; x < countX; x++) {
-                for (int y = 0; y < countY; y++) {
-                    for (int z = 0; z < countZ; z++) {
-
-                        double _x = pos.getX() + info.aabb.minX + (x + 0.5) * sizeX / countX;
-                        double _y = pos.getY() + info.aabb.minY + (y + 0.5) * sizeY / countY;
-                        double _z = pos.getZ() + info.aabb.minZ + (z + 0.5) * sizeZ / countZ;
-
-                        ParticleDigging particle = new ParticleDigging(world, _x, _y, _z, 0, 0, 0, state) {
-                            // Just to make the constructor public
-                        };
-                        particle.setBlockPos(pos);
-                        particle.setParticleTexture(info.sprite);
-                        manager.addEffect(particle);
-                    }
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    private static final class HitSpriteInfo {
-        final AxisAlignedBB aabb;
-        final TextureAtlasSprite sprite;
-
-        HitSpriteInfo(AxisAlignedBB aabb, TextureAtlasSprite sprite) {
-            this.aabb = aabb;
-            this.sprite = sprite;
-        }
-    }
-
-    // paint
-
-    @Override
-    public EnumActionResult attemptPaint(
-        World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing hitSide, EnumDyeColor paintColour
-    ) {
-        TilePipeHolder tile = getPipe(world, pos, true);
-        if (tile == null) {
-            return EnumActionResult.PASS;
-        }
-
+        // STUB(R.Chen): wire drops (new ItemStack(BCTransportItems.wire, ...)) dropped — wire item layer unmigrated.
         Pipe pipe = tile.getPipe();
-        if (pipe == null) {
-            return EnumActionResult.FAIL;
+        if (pipe != null) {
+            pipe.addDrops(toDrop, 0);
         }
-        if (pipe.getColour() == paintColour || !pipe.definition.canBeColoured) {
-            return EnumActionResult.FAIL;
-        } else {
-            pipe.setColour(paintColour);
-            return EnumActionResult.SUCCESS;
-        }
+        return toDrop;
+        // STUB(R.Chen): the Forge removedByPlayer sub-part removal (break only the wire/pluggable under the cursor
+        // and cancel the full-block break) needs the player's live raytrace at break time + the wire item layer;
+        // deferred to Phase 4F. The full-block break path drops everything above, which getDroppedStacks covers.
     }
 
-    // rendering
+    // Redstone
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IExtendedBlockState extended = (IExtendedBlockState) state;
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile != null) {
-            extended = extended.withProperty(PROP_TILE, new WeakReference<>(tile));
-        }
-        return extended;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BlockRenderLayer.TRANSLUCENT;
-    }
-
-    @Override
-    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
-        if (side == null) return false;
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile != null) {
-            PipePluggable pluggable = tile.getPluggable(side.getOpposite());
-            return pluggable != null && pluggable.canConnectToRedstone(side);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean canProvidePower(IBlockState state) {
+    public boolean emitsRedstonePower(BlockState state) {
         return true;
     }
 
     @Override
-    public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        if (side == null) {
-            return 0;
-        }
-        TilePipeHolder tile = getPipe(blockAccess, pos, false);
+    public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction side) {
+        TilePipeHolder tile = getPipe(world, pos);
         if (tile != null) {
             return tile.getRedstoneOutput(side.getOpposite());
         }
@@ -1104,12 +446,70 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     }
 
     @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return false;
+    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction side) {
+        return getStrongRedstonePower(state, world, pos, side);
     }
 
-    @Override
-    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return getStrongPower(blockState, blockAccess, pos, side);
+    // STUB(R.Chen): Forge IForgeBlock hooks with no vanilla equivalent are deferred:
+    //   - canConnectRedstone(state, world, pos, side) → pluggable.canConnectToRedstone (no Fabric block hook).
+    //   - getExplosionResistance(world, pos, exploder, explosion) → positional pluggable blast resistance
+    //     (AbstractBlock only exposes a flat getBlastResistance from Settings).
+    //   - isSideSolid / getBlockFaceShape / canBeConnectedTo (BlockFaceShape removed in 1.16+).
+    //   - addLandingEffects / addRunningEffects / addHitEffects / addDestroyEffects (client particle hooks).
+    // All restored alongside the Phase 5 client render layer / Phase 4F capability wiring.
+
+    // Paint
+    // STUB(R.Chen): was @Override of ICustomPaintHandler.attemptPaint — that API interface is still Forge-form
+    // (ActionResult/DyeColor) and unmigrated, so the implements clause is dropped and this is kept as a
+    // plain method (no @Override). Re-add the interface + its registration in Phase 4F. Logic is preserved.
+    public ActionResult attemptPaint(World world, BlockPos pos, BlockState state, Vec3d hitPos,
+        @Nullable Direction hitSide, @Nullable DyeColor paintColour) {
+        TilePipeHolder tile = getPipe(world, pos);
+        if (tile == null) {
+            return ActionResult.PASS;
+        }
+        Pipe pipe = tile.getPipe();
+        if (pipe == null) {
+            return ActionResult.FAIL;
+        }
+        if (pipe.getColour() == paintColour || !pipe.definition.canBeColoured) {
+            return ActionResult.FAIL;
+        } else {
+            pipe.setColour(paintColour);
+            return ActionResult.SUCCESS;
+        }
+    }
+
+    // Helpers
+
+    @Nullable
+    public static TilePipeHolder getPipe(BlockView access, BlockPos pos) {
+        if (access == null) {
+            return null;
+        }
+        BlockEntity tile = access.getBlockEntity(pos);
+        if (tile instanceof TilePipeHolder) {
+            return (TilePipeHolder) tile;
+        }
+        return null;
+    }
+
+    /** Called from {@link TilePipeHolder#readPayload} when a NET_CREATE_LANDING_PARTICLE message arrives. */
+    @Environment(EnvType.CLIENT)
+    public static void spawnLandingParticles(TilePipeHolder tile, double x, double y, double z, int number) {
+        // STUB(R.Chen): pipe-flow landing particle spawn restored with the client render layer in Phase 5
+        // (Forge used ParticleBlockDust + MinecraftClient.effectRenderer; needs the migrated pipe/pluggable sprites).
+    }
+
+    /** Carries the Forge {@code HitResult.subHit} sub-part index, which Yarn's {@link BlockHitResult} lacks.
+     * 0 = pipe centre; 1..6 = pipe connection on {@code DIRECTIONS[subHit-1]}; 7..12 = pluggable on that face;
+     * 13..20 = wire part; 21+ = wire-between; 400 = full-block fallback. */
+    public static final class PipeRayTraceResult extends BlockHitResult {
+        public final int subHit;
+
+        public PipeRayTraceResult(Vec3d pos, Direction side, BlockPos blockPos, boolean insideBlock, int subHit) {
+            super(pos, side, blockPos, insideBlock);
+            this.subHit = subHit;
+        }
     }
 }

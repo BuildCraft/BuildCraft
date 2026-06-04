@@ -2,8 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui.elem;
 
 import java.util.ArrayList;
@@ -11,11 +12,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import com.google.common.collect.ForwardingList;
 
 import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
+@Environment(EnvType.CLIENT)
 public class ToolTip extends ForwardingList<String> implements RandomAccess {
 
     /* If the impl list class does not implement RandomAccess then the interface MUST be removed from this class */
@@ -23,8 +28,6 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
     private final long delay;
     private long mouseOverStart;
 
-    /** Creates a {@link ToolTip} based off of an array of localisation keys. The localised strings can use "\n" to
-     * split up into separate lines. */
     public static ToolTip createLocalized(String... localeKeys) {
         List<String> allLines = new ArrayList<>();
         for (String key : localeKeys) {
@@ -54,26 +57,23 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
         return delegate;
     }
 
+    public ToolTip addLine(String line) {
+        delegate.add(line);
+        return this;
+    }
+
     public void onTick(boolean mouseOver) {
-        if (delay == 0) {
-            return;
-        }
+        if (delay == 0) return;
         if (mouseOver) {
-            if (mouseOverStart == 0) {
-                mouseOverStart = System.currentTimeMillis();
-            }
+            if (mouseOverStart == 0) mouseOverStart = System.currentTimeMillis();
         } else {
             mouseOverStart = 0;
         }
     }
 
     public boolean isReady() {
-        if (delay == 0) {
-            return true;
-        }
-        if (mouseOverStart == 0) {
-            return false;
-        }
+        if (delay == 0) return true;
+        if (mouseOverStart == 0) return false;
         return System.currentTimeMillis() - mouseOverStart >= delay;
     }
 

@@ -2,22 +2,26 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.misc;
 
 import javax.annotation.Nonnull;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
+// javax.vecmath.* → org.joml.* (Tuple3f/Vector3f → Vector3f)
+import org.joml.Vector3f;
+
+// Yarn 1.20.1: net.minecraft.util.Direction → net.minecraft.util.math.Direction
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
-/** Class for dealing with {@link Vec3d}, {@link Vec3i}, {@link EnumFacing}, {@link Axis} conversions and additions.
+/** Class for dealing with {@link Vec3d}, {@link Vec3i}, {@link Direction}, {@link Axis} conversions and additions.
  * This is for simple functions ONLY, {@link PositionUtil} is for complex interactions */
 public class VecUtil {
     public static final BlockPos POS_ONE = new BlockPos(1, 1, 1);
@@ -25,11 +29,11 @@ public class VecUtil {
     public static final Vec3d VEC_ONE = new Vec3d(1, 1, 1);
 
     public static Vec3d add(Vec3d a, Vec3i b) {
-        return a.addVector(b.getX(), b.getY(), b.getZ());
+        return a.add(b.getX(), b.getY(), b.getZ());
     }
 
-    public static Vec3d offset(Vec3d from, EnumFacing direction, double by) {
-        return from.addVector(direction.getFrontOffsetX() * by, direction.getFrontOffsetY() * by, direction.getFrontOffsetZ() * by);
+    public static Vec3d offset(Vec3d from, Direction direction, double by) {
+        return from.add(direction.getOffsetX() * by, direction.getOffsetY() * by, direction.getOffsetZ() * by);
     }
 
     public static double dot(Vec3d a, Vec3d b) {
@@ -37,12 +41,17 @@ public class VecUtil {
     }
 
     public static Vec3d scale(Vec3d vec, double scale) {
-        return vec.scale(scale);
+        return vec.multiply(scale);
     }
 
-    public static EnumFacing getFacing(Axis axis, boolean positive) {
+    /** Compat alias for Vec3d.multiply(scale). */
+    public static Vec3d multiply(Vec3d vec, double scale) {
+        return vec.multiply(scale);
+    }
+
+    public static Direction getFacing(Axis axis, boolean positive) {
         AxisDirection dir = positive ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
-        return EnumFacing.getFacingFromAxis(dir, axis);
+        return Direction.get(dir, axis);
     }
 
     public static BlockPos absolute(BlockPos val) {
@@ -74,7 +83,7 @@ public class VecUtil {
         return axis == Axis.X ? from.getX() : axis == Axis.Y ? from.getY() : from.getZ();
     }
 
-    public static double getValue(Vec3d negative, Vec3d positive, EnumFacing face) {
+    public static double getValue(Vec3d negative, Vec3d positive, Direction face) {
         switch (face) {
             case DOWN:
                 return negative.y;
@@ -89,11 +98,11 @@ public class VecUtil {
             case EAST:
                 return positive.x;
             default:
-                throw new IllegalArgumentException("Unknwon EnumFacing " + face);
+                throw new IllegalArgumentException("Unknwon Direction " + face);
         }
     }
 
-    public static int getValue(Vec3i negative, Vec3i positive, EnumFacing face) {
+    public static int getValue(Vec3i negative, Vec3i positive, Direction face) {
         switch (face) {
             case DOWN:
                 return negative.getY();
@@ -108,7 +117,7 @@ public class VecUtil {
             case EAST:
                 return positive.getX();
             default:
-                throw new IllegalArgumentException("Unknwon EnumFacing " + face);
+                throw new IllegalArgumentException("Unknwon Direction " + face);
         }
     }
 
@@ -117,14 +126,14 @@ public class VecUtil {
     }
 
     public static BlockPos convertFloor(Vec3d vec) {
-        return new BlockPos(Math.floor(vec.x), Math.floor(vec.y), Math.floor(vec.z));
+        return new BlockPos((int) Math.floor(vec.x), (int) Math.floor(vec.y), (int) Math.floor(vec.z));
     }
 
     public static BlockPos convertCeiling(Vec3d vec) {
-        return new BlockPos(Math.ceil(vec.x), Math.ceil(vec.y), Math.ceil(vec.z));
+        return new BlockPos((int) Math.ceil(vec.x), (int) Math.ceil(vec.y), (int) Math.ceil(vec.z));
     }
 
-    public static Tuple3f convertFloat(Vec3d vec) {
+    public static Vector3f convertFloat(Vec3d vec) {
         return new Vector3f((float) vec.x, (float) vec.y, (float) vec.z);
     }
 

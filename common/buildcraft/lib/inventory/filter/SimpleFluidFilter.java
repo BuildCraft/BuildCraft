@@ -6,26 +6,30 @@
 
 package buildcraft.lib.inventory.filter;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.IFluidFilter;
 
 public class SimpleFluidFilter implements IFluidFilter {
 
-    private FluidStack fluidChecked;
+    private FluidStackBC fluidChecked;
 
-    public SimpleFluidFilter(FluidStack stack) {
+    public SimpleFluidFilter(FluidStackBC stack) {
         if (stack != null) {
             fluidChecked = stack;
         }
     }
 
-    @Override
-    public boolean matches(FluidStack fluid) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean matches(FluidStackBC fluid) {
         if (fluidChecked != null) {
             return fluidChecked.isFluidEqual(fluid);
         } else {
             return fluid == null;
         }
+    }
+    @Override
+    public boolean matches(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant fluid, long amount) {
+        return matches(buildcraft.lib.compat.FluidStackBC.of(fluid, amount));
     }
 }

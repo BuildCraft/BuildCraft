@@ -6,7 +6,7 @@
 
 package buildcraft.lib.misc.data;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,10 +22,10 @@ public final class WorldPos {
     }
 
     public WorldPos(World world, BlockPos pos) {
-        this(world.provider.getDimension(), pos);
+        this(System.identityHashCode(world), pos);
     }
 
-    public WorldPos(TileEntity tile) {
+    public WorldPos(BlockEntity tile) {
         this(tile.getWorld(), tile.getPos());
     }
 

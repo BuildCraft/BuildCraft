@@ -7,6 +7,7 @@
 package buildcraft.lib.client.guide;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class TypeOrder {
     public final String localeKey;

@@ -1,22 +1,17 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.transport.client.model.plug;
 
-import buildcraft.api.transport.pluggable.PluggableModelKey;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import buildcraft.lib.client.model.MutableQuad;
-
-/** @deprecated Moved to BC lib. */
-@Deprecated
-public class PlugBakerSimple<K extends PluggableModelKey> extends buildcraft.lib.client.model.plug.PlugBakerSimple<K> {
-
-    @Deprecated
-    public PlugBakerSimple(IQuadProvider provider) {
-        super(provider);
-    }
-
-    @Deprecated
-    public interface IQuadProvider extends buildcraft.lib.client.model.plug.PlugBakerSimple.IQuadProvider {
-
-        @Override
-        MutableQuad[] getCutoutQuads();
-    }
+// STUB(R.Chen): PlugBakerSimple — Forge IPluggableStaticBaker → Fabric FRAPI Phase 5.
+@Environment(EnvType.CLIENT)
+public class PlugBakerSimple {
+    // STUB Phase 5
 }

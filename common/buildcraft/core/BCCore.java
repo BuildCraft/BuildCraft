@@ -6,8 +6,9 @@ package buildcraft.core;
 
 import java.io.File;
 import java.util.function.Consumer;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
@@ -74,21 +75,20 @@ public class BCCore {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
-        OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
-        MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
+        // STUB(R.Chen): OreDictionaryStub.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCCoreEventDist.INSTANCE);
         BCCoreConfig.saveConfigs();
     }
 
     private static void setItemTab(Item item, CreativeTabBC tab) {
-        if (item != null) {
-            item.setCreativeTab(tab);
-        }
+        // STUB(R.Chen): Forge Item.setCreativeTab dropped — Fabric uses ItemGroupEvents in the ModInitializer, Phase 10
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         BCCoreConfig.saveConfigs();
-        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
+        // STUB(R.Chen): Forge Item.setCreativeTab dropped — Fabric ItemGroupEvents, Phase 10
+        // BCLibItems.guide creative-tab assignment deferred
 
         BCCoreProxy.getProxy().fmlInit();
 

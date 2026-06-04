@@ -4,12 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ModelIdentifier;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.enums.EnumDecoratedBlock;
 
@@ -30,9 +31,9 @@ public class ItemBlockDecorated extends ItemBlockBCMulti {
         return names;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    @Environment(EnvType.CLIENT)
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for (EnumDecoratedBlock type : EnumDecoratedBlock.VALUES) {
             addVariant(variants, type.ordinal(), type.getName());
         }

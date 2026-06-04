@@ -4,11 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -20,19 +21,19 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileElectronicLibrary;
 
 public class BlockElectronicLibrary extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockElectronicLibrary(Material material, String id) {
+    public BlockElectronicLibrary(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileElectronicLibrary();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
+        if (!world.isClient) {
             BCBuildersGuis.LIBRARY.openGUI(player, pos);
         }
         return true;

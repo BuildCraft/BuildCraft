@@ -4,13 +4,15 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.EnumDyeColor;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.state.StateManager;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.util.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
+import java.util.List;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
@@ -18,30 +20,27 @@ import buildcraft.lib.block.BlockBCBase_Neptune;
 
 public class BlockPlastic extends BlockBCBase_Neptune {
     public BlockPlastic(String id) {
-        super(Material.IRON, id);
+        super(MaterialBC.IRON, id);
         setDefaultState(getStateFromMeta(0));
     }
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, BuildCraftProperties.BLOCK_COLOR);
+        // TODO(R.Chen): Forge createBlockState() → override appendProperties() instead.
+
+// @Override removed (R.Chen): no longer overrides — Phase 10
+    public int getMetaFromState(BlockState state) {
+        DyeColor colour = state.get(BuildCraftProperties.BLOCK_COLOR);
+        return colour.getId();
     }
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        EnumDyeColor colour = state.getValue(BuildCraftProperties.BLOCK_COLOR);
-        return colour.getMetadata();
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockState getStateFromMeta(int meta) {
+        return getDefaultState().with(BuildCraftProperties.BLOCK_COLOR, DyeColor.byId(meta));
     }
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(BuildCraftProperties.BLOCK_COLOR, EnumDyeColor.byMetadata(meta));
-    }
-
-    @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        for (EnumDyeColor dye : EnumDyeColor.values()) {
-            list.add(new ItemStack(this, 1, dye.getMetadata()));
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void getSubBlocks(ItemGroup tab, DefaultedList<ItemStack> list) {
+        for (DyeColor dye : DyeColor.values()) {
+            list.add(new ItemStack(this, 1));
         }
     }
 }

@@ -14,8 +14,8 @@ import javax.vecmath.Point2i;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 
 public class ZoneChunk {
@@ -76,18 +76,18 @@ public class ZoneChunk {
         return builder.build();
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setBoolean("fullSet", fullSet);
+    public void writeToNBT(NbtCompound nbt) {
+        nbt.putBoolean("fullSet", fullSet);
 
         if (property != null) {
-            nbt.setByteArray("bits", property.toByteArray());
+            nbt.putByteArray("bits", property.toByteArray());
         }
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         fullSet = nbt.getBoolean("fullSet");
 
-        if (nbt.hasKey("bits")) {
+        if (nbt.contains("bits")) {
             property = BitSet.valueOf(nbt.getByteArray("bits"));
         }
     }
@@ -120,7 +120,7 @@ public class ZoneChunk {
         return !fullSet && property.isEmpty();
     }
 
-    public ZoneChunk readFromByteBuf(PacketBuffer buf) {
+    public ZoneChunk readFromByteBuf(PacketByteBuf buf) {
         int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
             property = BitSet.valueOf(buf.readByteArray());
@@ -130,7 +130,7 @@ public class ZoneChunk {
         return this;
     }
 
-    public void writeToByteBuf(PacketBuffer buf) {
+    public void writeToByteBuf(PacketByteBuf buf) {
         int flags = (fullSet ? 2 : 0) | (property != null ? 1 : 0);
         buf.writeByte(flags);
         if (property != null) {

@@ -11,10 +11,10 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -46,17 +46,17 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
         maxLevel = max;
     }
 
-    public StatementParameterRedstoneLevel(NBTTagCompound nbt) {
+    public StatementParameterRedstoneLevel(NbtCompound nbt) {
         level = nbt.getByte("l");
         minLevel = nbt.getByte("ml");
         maxLevel = nbt.getByte("ma");
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("l", (byte) level);
-        nbt.setByte("mi", (byte) minLevel);
-        nbt.setByte("ma", (byte) maxLevel);
+    public void writeToNbt(NbtCompound nbt) {
+        nbt.putByte("l", (byte) level);
+        nbt.putByte("mi", (byte) minLevel);
+        nbt.putByte("ma", (byte) maxLevel);
     }
 
     @Nonnull
@@ -66,7 +66,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
         return BCCoreSprites.PARAM_REDSTONE_LEVEL[level & 15];
     }

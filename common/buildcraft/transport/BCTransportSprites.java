@@ -2,144 +2,87 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport;
 
 import java.util.EnumMap;
-import java.util.Locale;
+import java.util.Map;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.ColourUtil;
 
-import buildcraft.transport.client.model.PipeModelCacheAll;
-import buildcraft.transport.client.model.PipeModelCacheBase;
-import buildcraft.transport.client.render.PipeFlowRendererItems;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 
 public class BCTransportSprites {
-    public static final SpriteHolder EMPTY_FILTERED_BUFFER_SLOT;
-    public static final SpriteHolder NOTHING_FILTERED_BUFFER_SLOT;
-    public static final SpriteHolder PIPE_COLOUR, COLOUR_ITEM_BOX;
-    public static final SpriteHolder PIPE_COLOUR_BORDER_OUTER;
-    public static final SpriteHolder PIPE_COLOUR_BORDER_INNER;
 
-    public static final SpriteHolder TRIGGER_POWER_REQUESTED;
-    public static final SpriteHolder TRIGGER_ITEMS_TRAVERSING;
-    public static final SpriteHolder TRIGGER_FLUIDS_TRAVERSING;
+    private static final String NS = "buildcrafttransport:";
+
+    public static final SpriteHolder EMPTY_FILTERED_BUFFER_SLOT =
+        getHolder("gui/empty_filtered_buffer_slot");
+    public static final SpriteHolder NOTHING_FILTERED_BUFFER_SLOT =
+        getHolder("gui/nothing_filtered_buffer_slot");
+    public static final SpriteHolder PIPE_COLOUR            = getHolder("pipes/overlay_stained");
+    public static final SpriteHolder COLOUR_ITEM_BOX        = getHolder("pipes/colour_item_box");
+    public static final SpriteHolder PIPE_COLOUR_BORDER_OUTER = getHolder("pipes/colour_border_outer");
+    public static final SpriteHolder PIPE_COLOUR_BORDER_INNER = getHolder("pipes/colour_border_inner");
+
+    public static final SpriteHolder TRIGGER_POWER_REQUESTED   = getHolder("triggers/trigger_power_requested");
+    public static final SpriteHolder TRIGGER_ITEMS_TRAVERSING  = getHolder("triggers/trigger_items_traversing");
+    public static final SpriteHolder TRIGGER_FLUIDS_TRAVERSING = getHolder("triggers/trigger_fluids_traversing");
+
+    public static final SpriteHolder POWER_FLOW          = getHolder("pipes/power_flow");
+    public static final SpriteHolder POWER_FLOW_OVERLOAD = getHolder("pipes/power_flow_overload");
+    public static final SpriteHolder POWER_FLOW_RF       = getHolder("pipes/power_flow_rf");
 
     public static final SpriteHolder[] ACTION_PIPE_COLOUR;
-    public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
-    private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
-    private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
-    private static final EnumMap<EnumFacing, SpriteHolder> ACTION_PIPE_DIRECTION;
-
-    public static final SpriteHolder POWER_FLOW;
-    public static final SpriteHolder POWER_FLOW_OVERLOAD;
-    public static final SpriteHolder POWER_FLOW_RF;
-
     public static final SpriteHolder[] POWER_LIMIT;
     public static final SpriteHolder[] POWER_LIMIT_RF;
+    public static final EnumMap<SlotIndex, SpriteHolder> ACTION_EXTRACTION_PRESET;
+
+    private static final EnumMap<DyeColor, SpriteHolder> PIPE_SIGNAL_ON  = new EnumMap<>(DyeColor.class);
+    private static final EnumMap<DyeColor, SpriteHolder> PIPE_SIGNAL_OFF = new EnumMap<>(DyeColor.class);
+    private static final EnumMap<Direction, SpriteHolder> ACTION_PIPE_DIRECTION = new EnumMap<>(Direction.class);
 
     static {
-        EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
-        NOTHING_FILTERED_BUFFER_SLOT = getHolder("gui/nothing_filtered_buffer_slot");
-        PIPE_COLOUR = getHolder("pipes/overlay_stained");
-        COLOUR_ITEM_BOX = getHolder("pipes/colour_item_box");
-        PIPE_COLOUR_BORDER_OUTER = getHolder("pipes/colour_border_outer");
-        PIPE_COLOUR_BORDER_INNER = getHolder("pipes/colour_border_inner");
-
-        ACTION_PIPE_COLOUR = new SpriteHolder[ColourUtil.COLOURS.length];
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
-            ACTION_PIPE_COLOUR[colour.ordinal()] = getHolder("core", "items/paintbrush/" + colour.getName());
+        ACTION_PIPE_COLOUR = new SpriteHolder[DyeColor.values().length];
+        POWER_LIMIT    = new SpriteHolder[8];
+        POWER_LIMIT_RF = new SpriteHolder[8];
+        for (DyeColor c : DyeColor.values()) {
+            String name = c.getName();
+            ACTION_PIPE_COLOUR[c.getId()] = getHolder("actions/action_pipe_colour_" + name);
+            PIPE_SIGNAL_ON.put(c,  getHolder("triggers/pipe_signal_on_"  + name));
+            PIPE_SIGNAL_OFF.put(c, getHolder("triggers/pipe_signal_off_" + name));
         }
-
-        PIPE_SIGNAL_OFF = new EnumMap<>(EnumDyeColor.class);
-        PIPE_SIGNAL_ON = new EnumMap<>(EnumDyeColor.class);
-
-        for (EnumDyeColor colour : ColourUtil.COLOURS) {
-            String pre = "triggers/trigger_pipesignal_" + colour.getName().toLowerCase(Locale.ROOT) + "_";
-            PIPE_SIGNAL_OFF.put(colour, getHolder(pre + "inactive"));
-            PIPE_SIGNAL_ON.put(colour, getHolder(pre + "active"));
+        for (int i = 0; i < 8; i++) {
+            POWER_LIMIT[i]    = getHolder("triggers/trigger_power_limit_"    + i);
+            POWER_LIMIT_RF[i] = getHolder("triggers/trigger_power_limit_rf_" + i);
         }
-
         ACTION_EXTRACTION_PRESET = new EnumMap<>(SlotIndex.class);
-        for (SlotIndex index : SlotIndex.VALUES) {
-            ACTION_EXTRACTION_PRESET.put(index, getHolder("triggers/extraction_preset_" + index.colour.getName()));
+        for (SlotIndex slot : SlotIndex.values()) {
+            ACTION_EXTRACTION_PRESET.put(slot,
+                getHolder("actions/action_extraction_preset_" + slot.name().toLowerCase()));
         }
-
-        ACTION_PIPE_DIRECTION = new EnumMap<>(EnumFacing.class);
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             ACTION_PIPE_DIRECTION.put(face,
-                getHolder("core", "triggers/trigger_dir_" + face.getName().toLowerCase(Locale.ROOT)));
+                getHolder("actions/action_pipe_direction_" + face.getName()));
         }
-
-        POWER_FLOW = getHolder("pipes/power_flow");
-        POWER_FLOW_OVERLOAD = getHolder("pipes/power_flow_overload");
-        POWER_FLOW_RF = getHolder("pipes/rf_flow");
-
-        POWER_LIMIT = new SpriteHolder[] {//
-            getHolder("triggers/trigger_limiter_m256"),// 0 shift (100%)
-            getHolder("triggers/trigger_limiter_m128"),// 1 shift (50%)
-            getHolder("triggers/trigger_limiter_m64"),// 2 shift (25%)
-            getHolder("triggers/trigger_limiter_m16"),// 3 shift (12.5%)
-            getHolder("triggers/trigger_limiter_m8"),// 4 shift (6.25%)
-            getHolder("triggers/trigger_limiter_m2"),// 5 shift (3.125%)
-            getHolder("triggers/trigger_limiter_m0"),// 6 shift (0%)
-        };
-
-        POWER_LIMIT_RF = new SpriteHolder[] {//
-            getHolder("triggers/trigger_rf_limiter_m256"),// 0 shift (100%)
-            getHolder("triggers/trigger_rf_limiter_m128"),// 1 shift (50%)
-            getHolder("triggers/trigger_rf_limiter_m64"),// 2 shift (25%)
-            getHolder("triggers/trigger_rf_limiter_m16"),// 3 shift (12.5%)
-            getHolder("triggers/trigger_rf_limiter_m8"),// 4 shift (6.25%)
-            getHolder("triggers/trigger_rf_limiter_m2"),// 5 shift (3.125%)
-            getHolder("triggers/trigger_rf_limiter_m0"),// 6 shift (0%)
-        };
-
-        TRIGGER_POWER_REQUESTED = getHolder("transport", "triggers/trigger_pipecontents_requestsenergy");
-        TRIGGER_ITEMS_TRAVERSING = getHolder("transport", "triggers/trigger_pipecontents_containsitems");
-        TRIGGER_FLUIDS_TRAVERSING = getHolder("transport", "triggers/trigger_pipecontents_containsfluids");
     }
 
-    private static SpriteHolder getHolder(String loc) {
-        return SpriteHolderRegistry.getHolder("buildcrafttransport:" + loc);
+    private static SpriteHolder getHolder(String path) {
+        return SpriteHolderRegistry.getHolder(NS + path);
     }
 
-    private static SpriteHolder getHolder(String module, String loc) {
-        return SpriteHolderRegistry.getHolder("buildcraft" + module + ":" + loc);
-    }
-
-    public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCTransportSprites.class);
-    }
-
-    @SubscribeEvent
-    public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
-        PipeModelCacheBase.generator.onTextureStitchPre(event.getMap());
-    }
-
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
-        PipeModelCacheAll.clearModels();
-        PipeFlowRendererItems.onModelBake();
-    }
-
-    public static SpriteHolder getPipeSignal(boolean active, EnumDyeColor colour) {
+    public static SpriteHolder getPipeSignal(boolean active, DyeColor colour) {
         return (active ? PIPE_SIGNAL_ON : PIPE_SIGNAL_OFF).get(colour);
     }
 
-    public static SpriteHolder getPipeDirection(EnumFacing face) {
+    public static SpriteHolder getPipeDirection(Direction face) {
         return ACTION_PIPE_DIRECTION.get(face);
     }
 }

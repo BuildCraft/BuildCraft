@@ -39,3 +39,6 @@ license_checker/out/**
 
 # For some annoying reason the tests creates a log file in "/logs/latest.txt"
 logs
+
+claude.md
+claude/

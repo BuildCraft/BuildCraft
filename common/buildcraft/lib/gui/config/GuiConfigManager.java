@@ -16,7 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
 
@@ -32,7 +32,7 @@ import buildcraft.lib.misc.MessageUtil;
  * config options per-gui. */
 public class GuiConfigManager {
     public static final Map<String, GuiPropertyConstructor> customGuiProperties = new HashMap<>();
-    private static final Map<ResourceLocation, GuiConfigSet> properties;
+    private static final Map<Identifier, GuiConfigSet> properties;
     private static boolean isDirty = false;
 
     static {
@@ -45,12 +45,12 @@ public class GuiConfigManager {
         // customGuiProperties.put(NodeTypes.getName(String.class), GuiPropertyString::new);
     }
 
-    public static IVariableNode getOrAddProperty(ResourceLocation gui, String name, IExpressionNode value) {
+    public static IVariableNode getOrAddProperty(Identifier gui, String name, IExpressionNode value) {
         GuiConfigSet props = properties.computeIfAbsent(gui, r -> new GuiConfigSet());
         return props.getOrAddProperty(name, value);
     }
 
-    public static IVariableNodeBoolean getOrAddBoolean(ResourceLocation gui, String name, boolean defaultValue) {
+    public static IVariableNodeBoolean getOrAddBoolean(Identifier gui, String name, boolean defaultValue) {
         return (IVariableNodeBoolean) getOrAddProperty(gui, name, NodeConstantBoolean.of(defaultValue));
     }
 
@@ -115,7 +115,7 @@ public class GuiConfigManager {
 
     private static JsonObject writeToJson() {
         JsonObject json = new JsonObject();
-        for (Entry<ResourceLocation, GuiConfigSet> entry : properties.entrySet()) {
+        for (Entry<Identifier, GuiConfigSet> entry : properties.entrySet()) {
             String key = entry.getKey().toString();
             json.add(key, entry.getValue().writeToJson());
         }
@@ -127,7 +127,7 @@ public class GuiConfigManager {
             throw new JsonSyntaxException("No json element!");
         }
         for (Entry<String, JsonElement> entry : json.entrySet()) {
-            ResourceLocation location = new ResourceLocation(entry.getKey());
+            Identifier location = new Identifier(entry.getKey());
             GuiConfigSet set = properties.get(location);
             if (set == null) {
                 set = new GuiConfigSet();

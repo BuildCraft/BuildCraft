@@ -7,17 +7,18 @@
 package buildcraft.lib.inventory.filter;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.api.core.IStackFilter;
 
 public class DelegatingArrayFilter implements IStackFilter {
     private final ISingleStackFilter perStackFilter;
-    private final NonNullList<ItemStack> stacks;
+    private final DefaultedList<ItemStack> stacks;
 
-    public DelegatingArrayFilter(ISingleStackFilter perStackFilter, NonNullList<ItemStack> stacks) {
+    public DelegatingArrayFilter(ISingleStackFilter perStackFilter, DefaultedList<ItemStack> stacks) {
         this.perStackFilter = perStackFilter;
         this.stacks = stacks;
     }

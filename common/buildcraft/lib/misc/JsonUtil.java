@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.StreamSupport;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -43,29 +44,26 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtByte;
+import net.minecraft.nbt.NbtByteArray;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtFloat;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtIntArray;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtLong;
+import net.minecraft.nbt.NbtShort;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.util.Identifier;
+import net.minecraft.text.Text;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidRegistryBC;
+import buildcraft.lib.compat.FluidStackBC;
+// STUB: ForgeRegistries removed
 
 import buildcraft.api.core.BCLog;
 
@@ -75,35 +73,35 @@ import buildcraft.lib.expression.api.InvalidExpressionException;
 
 public class JsonUtil {
 
-    public static final JsonDeserializer<FluidStack> FLUID_STACK_DESERIALIZER = (json, type, ctx) -> {
+    public static final JsonDeserializer<FluidStackBC> FLUID_STACK_DESERIALIZER = (json, type, ctx) -> {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
-            Fluid fluid = FluidRegistry.getFluid(name);
+            Fluid fluid = FluidRegistryBC.getFluid(name);
             if (fluid == null) {
                 throw failAndListFluids(name);
             } else {
-                return new FluidStack(fluid, 1);
+                return new FluidStackBC(fluid, 1);
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
-            String id = JsonUtils.getString(obj, "id");
-            Fluid fluid = FluidRegistry.getFluid(id);
+            String id = obj.get("id").getAsString();
+            Fluid fluid = FluidRegistryBC.getFluid(id);
             if (fluid == null) {
                 throw failAndListFluids(id);
             }
             int amount = 1;
             if (obj.has("amount")) {
-                amount = JsonUtils.getInt(obj, "amount");
+                amount = obj.get("amount").getAsInt();
             }
             // TODO: NBT
-            return new FluidStack(fluid, amount);
+            return new FluidStackBC(fluid, amount);
         } else {
             throw new JsonSyntaxException("Expected either a string or an object, got " + json);
         }
     };
 
     private static JsonSyntaxException failAndListFluids(String name) {
-        Set<String> knownFluids = FluidRegistry.getRegisteredFluids().keySet();
+        Set<String> knownFluids = FluidRegistryBC.getRegisteredFluids().keySet();
         String msg = "Unknown fluid '" + name + "'.";
         msg += "\nKnown types:";
         for (String known : new TreeSet<>(knownFluids)) {
@@ -115,20 +113,20 @@ public class JsonUtil {
     public static final JsonDeserializer<ItemStack> ITEM_STACK_DESERIALIZER = (json, type, ctx) -> {
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String name = json.getAsString();
-            ResourceLocation id = new ResourceLocation(name);
-            if (!ForgeRegistries.ITEMS.containsKey(id)) {
-                throw new JsonSyntaxException("Unknown item '" + name + "'");
-            } else {
-                return new ItemStack(ForgeRegistries.ITEMS.getValue(id));
+            Identifier id = new Identifier(name);
+            {
+                Item foundItem = net.minecraft.registry.Registries.ITEM.get(id);
+                if (foundItem == null) throw new com.google.gson.JsonSyntaxException("Unknown item: " + id);
+                return new net.minecraft.item.ItemStack(foundItem);
             }
         } else if (json.isJsonObject()) {
             JsonObject obj = json.getAsJsonObject();
-            String id = JsonUtils.getString(obj, "id");
-            ResourceLocation loc = new ResourceLocation(id);
-            if (!ForgeRegistries.ITEMS.containsKey(loc)) {
+            String id = obj.get("id").getAsString();
+            Identifier loc = new Identifier(id);
+            if (!(net.minecraft.registry.Registries.ITEM.get(loc) != null)) {
                 throw new JsonSyntaxException("Unknown item '" + id + "'");
             }
-            Item item = ForgeRegistries.ITEMS.getValue(loc);
+            Item item = net.minecraft.registry.Registries.ITEM.get(loc);
             int count = 1;
             if (obj.has("count")) {
                 count = JsonUtil.getInt(obj, "count");
@@ -141,7 +139,7 @@ public class JsonUtil {
                 meta = JsonUtil.getInt(obj, "meta");
             }
             // TODO: NBT!
-            return new ItemStack(item, count, meta);
+            return new ItemStack(item, count);
         } else {
             throw new JsonSyntaxException("Expected either a string or an object, got " + json);
         }
@@ -242,45 +240,45 @@ public class JsonUtil {
     }
 
     /** Tries to get a translatable text component from the json as a string. This will either get the prefix directly
-     * for a {@link TextComponentTranslation}, or the prefix plus "_raw" for a raw {@link TextComponentString}. */
-    public static ITextComponent getTextComponent(JsonObject json, String subPrefix, String localePrefix) {
+     * for a {@link TranslatableText}, or the prefix plus "_raw" for a raw {@link LiteralText}. */
+    public static Text getTextComponent(JsonObject json, String subPrefix, String localePrefix) {
         if (json.has(subPrefix)) {
-            String str = JsonUtils.getString(json, subPrefix);
+            String str = json.get(subPrefix).getAsString();
             Object[] args;
             if (json.has(subPrefix + "_args")) {
                 args = getSubAsStringArray(json, subPrefix + "_args");
             } else {
                 args = new String[0];
             }
-            return new TextComponentTranslation(localePrefix + str, args);
+            return Text.translatable(localePrefix + str, args);
         } else if (json.has(subPrefix + "_raw")) {
-            return new TextComponentString(JsonUtils.getString(json, subPrefix + "_raw"));
+            return Text.literal(json.get(subPrefix + "_raw").getAsString());
         } else {
             throw new JsonSyntaxException(
                 "Expected to find either '" + subPrefix + "' or '" + subPrefix + "_raw', but got neither for " + json);
         }
     }
 
-    public static ResourceLocation getIdentifier(JsonObject obj, String sub) {
-        ResourceLocation ident = getIdentifier(obj, sub, null);
+    public static Identifier getIdentifier(JsonObject obj, String sub) {
+        Identifier ident = getIdentifier(obj, sub, null);
         if (ident == null) {
             throw new JsonSyntaxException("Expected to find '" + sub + "' as a string, but found nothing!");
         }
         return ident;
     }
 
-    public static ResourceLocation getIdentifier(JsonObject obj, String sub, ResourceLocation _default) {
+    public static Identifier getIdentifier(JsonObject obj, String sub, Identifier _default) {
         if (!obj.has(sub)) {
             return _default;
         }
-        String str = JsonUtils.getString(obj, sub).toLowerCase(Locale.ROOT);
+        String str = obj.get(sub).getAsString().toLowerCase(Locale.ROOT);
         int index = str.indexOf(':');
         if (index < 0) {
             throw new JsonSyntaxException("Expected 'domain:path', but didn't find a colon!");
         }
         String domain = str.substring(0, index);
         String path = str.substring(index + 1);
-        return new ResourceLocation(domain, path);
+        return new Identifier(domain, path);
     }
 
     public static int getInt(JsonObject obj, String string) {
@@ -416,7 +414,7 @@ public class JsonUtil {
     }
 
     public static void registerTypeAdaptors(GsonBuilder builder) {
-        builder.registerTypeAdapter(FluidStack.class, FLUID_STACK_DESERIALIZER);
+        builder.registerTypeAdapter(FluidStackBC.class, FLUID_STACK_DESERIALIZER);
         builder.registerTypeAdapter(ItemStack.class, ITEM_STACK_DESERIALIZER);
         // TODO: Ingredient deserialiser!
         registerNbtSerializersDeserializers(builder);
@@ -426,37 +424,37 @@ public class JsonUtil {
         return gsonBuilder.registerTypeAdapterFactory(new TypeAdapterFactory() {
             @Override
             public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-                return type.getRawType() == NBTBase.class ? new TypeAdapter<T>() {
+                return type.getRawType() == NbtElement.class ? new TypeAdapter<T>() {
                     @Override
                     public void write(JsonWriter out, T value) throws IOException {
                         // noinspection unchecked, RedundantCast
-                        Streams.write(((JsonSerializer<T>) (JsonSerializer<NBTBase>) (src, typeOfSrc, context) -> {
+                        Streams.write(((JsonSerializer<T>) (JsonSerializer<NbtElement>) (src, typeOfSrc, context) -> {
                             if (src == NBTUtilBC.NBT_NULL) {
                                 return JsonNull.INSTANCE;
                             }
-                            switch (src.getId()) {
-                                case Constants.NBT.TAG_BYTE:
-                                    return context.serialize(src, NBTTagByte.class);
-                                case Constants.NBT.TAG_SHORT:
-                                    return context.serialize(src, NBTTagShort.class);
-                                case Constants.NBT.TAG_INT:
-                                    return context.serialize(src, NBTTagInt.class);
-                                case Constants.NBT.TAG_LONG:
-                                    return context.serialize(src, NBTTagLong.class);
-                                case Constants.NBT.TAG_FLOAT:
-                                    return context.serialize(src, NBTTagFloat.class);
-                                case Constants.NBT.TAG_DOUBLE:
-                                    return context.serialize(src, NBTTagDouble.class);
-                                case Constants.NBT.TAG_BYTE_ARRAY:
-                                    return context.serialize(src, NBTTagByteArray.class);
-                                case Constants.NBT.TAG_STRING:
-                                    return context.serialize(src, NBTTagString.class);
-                                case Constants.NBT.TAG_LIST:
-                                    return context.serialize(src, NBTTagList.class);
-                                case Constants.NBT.TAG_COMPOUND:
-                                    return context.serialize(src, NBTTagCompound.class);
-                                case Constants.NBT.TAG_INT_ARRAY:
-                                    return context.serialize(src, NBTTagIntArray.class);
+                            switch (src.getType()) {
+                                case NbtElement.BYTE_TYPE:
+                                    return context.serialize(src, NbtByte.class);
+                                case NbtElement.SHORT_TYPE:
+                                    return context.serialize(src, NbtShort.class);
+                                case NbtElement.INT_TYPE:
+                                    return context.serialize(src, NbtInt.class);
+                                case NbtElement.LONG_TYPE:
+                                    return context.serialize(src, NbtLong.class);
+                                case NbtElement.FLOAT_TYPE:
+                                    return context.serialize(src, NbtFloat.class);
+                                case NbtElement.DOUBLE_TYPE:
+                                    return context.serialize(src, NbtDouble.class);
+                                case NbtElement.BYTE_ARRAY_TYPE:
+                                    return context.serialize(src, NbtByteArray.class);
+                                case NbtElement.STRING_TYPE:
+                                    return context.serialize(src, NbtString.class);
+                                case NbtElement.LIST_TYPE:
+                                    return context.serialize(src, NbtList.class);
+                                case NbtElement.COMPOUND_TYPE:
+                                    return context.serialize(src, NbtCompound.class);
+                                case NbtElement.INT_ARRAY_TYPE:
+                                    return context.serialize(src, NbtIntArray.class);
                                 default:
                                     throw new IllegalArgumentException(src.toString());
                             }
@@ -484,110 +482,110 @@ public class JsonUtil {
                                 Number number = json.getAsJsonPrimitive().getAsNumber();
                                 if (number instanceof BigInteger || number instanceof Long || number instanceof Integer
                                     || number instanceof Short || number instanceof Byte) {
-                                    return context.deserialize(json, NBTTagLong.class);
+                                    return context.deserialize(json, NbtLong.class);
                                 } else {
-                                    return context.deserialize(json, NBTTagDouble.class);
+                                    return context.deserialize(json, NbtDouble.class);
                                 }
                             }
                             if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isBoolean()) {
                                 return context.deserialize(
                                     new JsonPrimitive(json.getAsJsonPrimitive().getAsBoolean() ? (byte) 1 : (byte) 0),
-                                    NBTTagByte.class);
+                                    NbtByte.class);
                             }
                             if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
-                                return context.deserialize(json, NBTTagString.class);
+                                return context.deserialize(json, NbtString.class);
                             }
                             if (json.isJsonArray()) {
-                                return context.deserialize(json, NBTTagList.class);
+                                return context.deserialize(json, NbtList.class);
                             }
                             if (json.isJsonObject()) {
-                                return context.deserialize(json, NBTTagCompound.class);
+                                return context.deserialize(json, NbtCompound.class);
                             }
                             throw new IllegalArgumentException(json.toString());
                         }).deserialize(Streams.parse(in), type.getType(), gson::fromJson);
                     }
                 } : null;
             }
-        }).registerTypeAdapter(NBTTagByte.class,
-            (JsonSerializer<NBTTagByte>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getByte()))
-            .registerTypeAdapter(NBTTagByte.class,
+        }).registerTypeAdapter(NbtByte.class,
+            (JsonSerializer<NbtByte>) (src, typeOfSrc, context) -> new JsonPrimitive(src.byteValue()))
+            .registerTypeAdapter(NbtByte.class,
                 (JsonDeserializer<
-                    NBTTagByte>) (json, typeOfT, context) -> new NBTTagByte(json.getAsJsonPrimitive().getAsByte()))
-            .registerTypeAdapter(NBTTagShort.class,
-                (JsonSerializer<NBTTagShort>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getShort()))
-            .registerTypeAdapter(NBTTagShort.class,
+                    NbtByte>) (json, typeOfT, context) -> NbtByte.of(json.getAsJsonPrimitive().getAsByte()))
+            .registerTypeAdapter(NbtShort.class,
+                (JsonSerializer<NbtShort>) (src, typeOfSrc, context) -> new JsonPrimitive(src.shortValue()))
+            .registerTypeAdapter(NbtShort.class,
                 (JsonDeserializer<
-                    NBTTagShort>) (json, typeOfT, context) -> new NBTTagShort(json.getAsJsonPrimitive().getAsShort()))
-            .registerTypeAdapter(NBTTagInt.class,
-                (JsonSerializer<NBTTagInt>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getInt()))
-            .registerTypeAdapter(NBTTagInt.class,
+                    NbtShort>) (json, typeOfT, context) -> NbtShort.of(json.getAsJsonPrimitive().getAsShort()))
+            .registerTypeAdapter(NbtInt.class,
+                (JsonSerializer<NbtInt>) (src, typeOfSrc, context) -> new JsonPrimitive(src.intValue()))
+            .registerTypeAdapter(NbtInt.class,
                 (JsonDeserializer<
-                    NBTTagInt>) (json, typeOfT, context) -> new NBTTagInt(json.getAsJsonPrimitive().getAsInt()))
-            .registerTypeAdapter(NBTTagLong.class,
-                (JsonSerializer<NBTTagLong>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getLong()))
-            .registerTypeAdapter(NBTTagLong.class,
+                    NbtInt>) (json, typeOfT, context) -> NbtInt.of(json.getAsJsonPrimitive().getAsInt()))
+            .registerTypeAdapter(NbtLong.class,
+                (JsonSerializer<NbtLong>) (src, typeOfSrc, context) -> new JsonPrimitive(src.longValue()))
+            .registerTypeAdapter(NbtLong.class,
                 (JsonDeserializer<
-                    NBTTagLong>) (json, typeOfT, context) -> new NBTTagLong(json.getAsJsonPrimitive().getAsLong()))
-            .registerTypeAdapter(NBTTagFloat.class,
-                (JsonSerializer<NBTTagFloat>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getFloat()))
-            .registerTypeAdapter(NBTTagFloat.class,
+                    NbtLong>) (json, typeOfT, context) -> NbtLong.of(json.getAsJsonPrimitive().getAsLong()))
+            .registerTypeAdapter(NbtFloat.class,
+                (JsonSerializer<NbtFloat>) (src, typeOfSrc, context) -> new JsonPrimitive(src.floatValue()))
+            .registerTypeAdapter(NbtFloat.class,
                 (JsonDeserializer<
-                    NBTTagFloat>) (json, typeOfT, context) -> new NBTTagFloat(json.getAsJsonPrimitive().getAsFloat()))
-            .registerTypeAdapter(NBTTagDouble.class,
-                (JsonSerializer<NBTTagDouble>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getDouble()))
-            .registerTypeAdapter(NBTTagDouble.class,
-                (JsonDeserializer<NBTTagDouble>) (json, typeOfT,
-                    context) -> new NBTTagDouble(json.getAsJsonPrimitive().getAsDouble()))
-            .registerTypeAdapter(NBTTagByteArray.class, (JsonSerializer<NBTTagByteArray>) (src, typeOfSrc, context) -> {
+                    NbtFloat>) (json, typeOfT, context) -> NbtFloat.of(json.getAsJsonPrimitive().getAsFloat()))
+            .registerTypeAdapter(NbtDouble.class,
+                (JsonSerializer<NbtDouble>) (src, typeOfSrc, context) -> new JsonPrimitive(src.doubleValue()))
+            .registerTypeAdapter(NbtDouble.class,
+                (JsonDeserializer<NbtDouble>) (json, typeOfT,
+                    context) -> NbtDouble.of(json.getAsJsonPrimitive().getAsDouble()))
+            .registerTypeAdapter(NbtByteArray.class, (JsonSerializer<NbtByteArray>) (src, typeOfSrc, context) -> {
                 JsonArray jsonArray = new JsonArray();
                 for (byte element : src.getByteArray()) {
                     jsonArray.add(new JsonPrimitive(element));
                 }
                 return jsonArray;
             })
-            .registerTypeAdapter(NBTTagByteArray.class,
-                (JsonDeserializer<NBTTagByteArray>) (json, typeOfT, context) -> new NBTTagByteArray(
+            .registerTypeAdapter(NbtByteArray.class,
+                (JsonDeserializer<NbtByteArray>) (json, typeOfT, context) -> new NbtByteArray(
                     ArrayUtils.toPrimitive(StreamSupport.stream(json.getAsJsonArray().spliterator(), false)
                         .map(JsonElement::getAsByte).toArray(Byte[]::new))))
-            .registerTypeAdapter(NBTTagString.class,
-                (JsonSerializer<NBTTagString>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getString()))
-            .registerTypeAdapter(NBTTagString.class,
-                (JsonDeserializer<NBTTagString>) (json, typeOfT,
-                    context) -> new NBTTagString(json.getAsJsonPrimitive().getAsString()))
-            .registerTypeAdapter(NBTTagList.class, (JsonSerializer<NBTTagList>) (src, typeOfSrc, context) -> {
+            .registerTypeAdapter(NbtString.class,
+                (JsonSerializer<NbtString>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getString()))
+            .registerTypeAdapter(NbtString.class,
+                (JsonDeserializer<NbtString>) (json, typeOfT,
+                    context) -> NbtString.of(json.getAsJsonPrimitive().getAsString()))
+            .registerTypeAdapter(NbtList.class, (JsonSerializer<NbtList>) (src, typeOfSrc, context) -> {
                 JsonArray jsonArray = new JsonArray();
-                for (int i = 0; i < src.tagCount(); i++) {
-                    NBTBase element = src.get(i);
-                    jsonArray.add(context.serialize(element, NBTBase.class));
+                for (int i = 0; i < src.size(); i++) {
+                    NbtElement element = src.get(i);
+                    jsonArray.add(context.serialize(element, NbtElement.class));
                 }
                 return jsonArray;
-            }).registerTypeAdapter(NBTTagList.class, (JsonDeserializer<NBTTagList>) (json, typeOfT, context) -> {
-                NBTTagList nbtTagList = new NBTTagList();
+            }).registerTypeAdapter(NbtList.class, (JsonDeserializer<NbtList>) (json, typeOfT, context) -> {
+                NbtList nbtTagList = new NbtList();
                 StreamSupport.stream(json.getAsJsonArray().spliterator(), false)
-                    .map(element -> context.<NBTBase> deserialize(element, NBTBase.class))
+                    .map(element -> context.<NbtElement> deserialize(element, NbtElement.class))
                     .forEach(nbtTagList::appendTag);
                 return nbtTagList;
-            }).registerTypeAdapter(NBTTagCompound.class, (JsonSerializer<NBTTagCompound>) (src, typeOfSrc, context) -> {
+            }).registerTypeAdapter(NbtCompound.class, (JsonSerializer<NbtCompound>) (src, typeOfSrc, context) -> {
                 JsonObject jsonObject = new JsonObject();
-                for (String key : src.getKeySet()) {
-                    jsonObject.add(key, context.serialize(src.getTag(key), NBTBase.class));
+                for (String key : src.getKeys()) {
+                    jsonObject.add(key, context.serialize(src.get(key), NbtElement.class));
                 }
                 return jsonObject;
             })
-            .registerTypeAdapter(NBTTagCompound.class, (JsonDeserializer<NBTTagCompound>) (json, typeOfT, context) -> {
-                NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            .registerTypeAdapter(NbtCompound.class, (JsonDeserializer<NbtCompound>) (json, typeOfT, context) -> {
+                NbtCompound nbtTagCompound = new NbtCompound();
                 for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
-                    nbtTagCompound.setTag(entry.getKey(), context.deserialize(entry.getValue(), NBTBase.class));
+                    nbtTagCompound.put(entry.getKey(), context.deserialize(entry.getValue(), NbtElement.class));
                 }
                 return nbtTagCompound;
-            }).registerTypeAdapter(NBTTagIntArray.class, (JsonSerializer<NBTTagIntArray>) (src, typeOfSrc, context) -> {
+            }).registerTypeAdapter(NbtIntArray.class, (JsonSerializer<NbtIntArray>) (src, typeOfSrc, context) -> {
                 JsonArray jsonArray = new JsonArray();
                 for (int element : src.getIntArray()) {
                     jsonArray.add(new JsonPrimitive(element));
                 }
                 return jsonArray;
-            }).registerTypeAdapter(NBTTagIntArray.class,
-                (JsonDeserializer<NBTTagIntArray>) (json, typeOfT, context) -> new NBTTagIntArray(StreamSupport
+            }).registerTypeAdapter(NbtIntArray.class,
+                (JsonDeserializer<NbtIntArray>) (json, typeOfT, context) -> new NbtIntArray(StreamSupport
                     .stream(json.getAsJsonArray().spliterator(), false).mapToInt(JsonElement::getAsByte).toArray()));
     }
 

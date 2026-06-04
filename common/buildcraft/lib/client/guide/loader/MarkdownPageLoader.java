@@ -9,15 +9,16 @@ package buildcraft.lib.client.guide.loader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.Identifier;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
@@ -46,7 +47,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             return new OptionallyDisabled<>(line + " was not a valid complex item string!");
         }
         ItemStack stack = null;
-        Item item = Item.getByNameOrId(args[0].trim());
+        Item item = buildcraft.lib.misc.StackUtil.getItemByNameOrId(args[0].trim());
         if (item != null) {
             stack = new ItemStack(item);
         } else {
@@ -73,9 +74,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             int meta = Integer.parseInt(args[2].trim());
             if (meta == -1) {
                 // Use oredict
-                meta = OreDictionary.WILDCARD_VALUE;
+                meta = OreDictionaryStub.WILDCARD_VALUE;
             }
-            stack = new ItemStack(stack.getItem(), stack.getCount(), meta);
+            stack = new ItemStack(stack.getItem(), stack.getCount());
         } catch (NumberFormatException nfe) {
             return new OptionallyDisabled<>(args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
@@ -86,7 +87,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
         String nbtString = args[3];
         try {
-            stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
+            stack.setNbt(JsonToNBT.getTagFromJson(nbtString));
         } catch (NBTException e) {
             return new OptionallyDisabled<>(nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }
@@ -94,9 +95,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePageFactory loadPage(BufferedReader reader, ResourceLocation name, PageEntry<?> entry, Profiler prof)
+    public GuidePageFactory loadPage(BufferedReader reader, Identifier name, PageEntry<?> entry, Profiler prof)
         throws IOException {
-        prof.startSection("md");
+        prof.push("md");
         StringBuilder replaced = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -107,7 +108,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         }
 
         BufferedReader nReader = new BufferedReader(new StringReader(replaced.toString()));
-        prof.endSection();
+        prof.pop();
         return XmlPageLoader.INSTANCE.loadPage(nReader, name, entry, prof);
     }
 

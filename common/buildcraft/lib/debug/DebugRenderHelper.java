@@ -7,23 +7,22 @@
 package buildcraft.lib.debug;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public enum DebugRenderHelper implements IDetachedRenderer {
     INSTANCE;
 
@@ -31,19 +30,19 @@ public enum DebugRenderHelper implements IDetachedRenderer {
 
     static {
         smallCuboid = new MutableQuad[6];
-        Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
-        Tuple3f radius = new Point3f(0.25f, 0.25f, 0.25f);
+        Point3f center = new Point3f(0.5f, 0.5f, 0.5f);
+        Point3f radius = new Point3f(0.25f, 0.25f, 0.25f);
 
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             MutableQuad quad = ModelUtil.createFace(face, center, radius, null);
             quad.lightf(1, 1);
             smallCuboid[face.ordinal()] = quad;
         }
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void render(EntityPlayer player, float partialTicks) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    @Environment(EnvType.CLIENT)
+    public void render(PlayerEntity player, float partialTicks) {
         IAdvDebugTarget target = BCAdvDebugging.INSTANCE.targetClient;
         if (target == null) {
             return;
@@ -57,9 +56,9 @@ public enum DebugRenderHelper implements IDetachedRenderer {
         }
     }
 
-    public static void renderAABB(BufferBuilder bb, AxisAlignedBB aabb, int colour) {
-        bb.setTranslation(0, 0, 0);
-        for (EnumFacing face : EnumFacing.VALUES) {
+    public static void renderAABB(BufferBuilder bb, Box aabb, int colour) {
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
+        for (Direction face : Direction.values()) {
             MutableQuad quad = ModelUtil.createFace(
                 face,
                 new Point3f(
@@ -75,19 +74,22 @@ public enum DebugRenderHelper implements IDetachedRenderer {
                 null
             );
             quad.lightf(1, 1);
-            quad.texFromSprite(ModelLoader.White.INSTANCE);
+            quad.texFromSprite(buildcraft.lib.compat.McTextureCompat.getMissingSprite());
             quad.colouri(colour);
             quad.render(bb);
         }
     }
 
     public static void renderSmallCuboid(BufferBuilder bb, BlockPos pos, int colour) {
-        bb.setTranslation(pos.getX(), pos.getY(), pos.getZ());
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(pos.getX(), pos.getY(), pos.getZ());
         for (MutableQuad q : smallCuboid) {
-            q.texFromSprite(ModelLoader.White.INSTANCE);
+            q.texFromSprite(buildcraft.lib.compat.McTextureCompat.getMissingSprite());
             q.colouri(colour);
             q.render(bb);
         }
-        bb.setTranslation(0, 0, 0);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

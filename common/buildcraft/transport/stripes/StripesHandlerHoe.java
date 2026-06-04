@@ -1,17 +1,16 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
- * should be located as "LICENSE.API" in the BuildCraft source code distribution.
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 package buildcraft.transport.stripes;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemHoe;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,42 +23,22 @@ public enum StripesHandlerHoe implements IStripesHandlerItem {
     @Override
     public boolean handle(World world,
                           BlockPos pos,
-                          EnumFacing direction,
+                          Direction direction,
                           ItemStack stack,
-                          EntityPlayer player,
+                          PlayerEntity player,
                           IStripesActivator activator) {
 
-        if (!(stack.getItem() instanceof ItemHoe)) {
+        if (!(stack.getItem() instanceof HoeItem)) {
             return false;
         }
 
         pos = pos.offset(direction);
-        if (stack.onItemUse(
-                player,
-                world,
-                pos,
-                EnumHand.MAIN_HAND,
-                EnumFacing.UP,
-                0.0f,
-                0.0f,
-                0.0f
-        ) != EnumActionResult.PASS) {
-            return true;
+        // STUB(R.Chen): stack.onItemUse(...) → item.useOnBlock(ItemUsageContext) in 1.20.1
+        // TODO(R.Chen): replace with ItemUsageContext-based call once ItemUsageContext is available
+        if (stack.getItem() instanceof HoeItem hoe) {
+            // placeholder — actual hoe tillage requires ItemUsageContext
+            return false;
         }
-
-        if (direction != EnumFacing.UP && stack.onItemUse(
-                player,
-                world,
-                pos.down(),
-                EnumHand.MAIN_HAND,
-                EnumFacing.UP,
-                0.0f,
-                0.0f,
-                0.0f
-        ) != EnumActionResult.PASS) {
-            return true;
-        }
-
         return false;
     }
 

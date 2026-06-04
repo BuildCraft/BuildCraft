@@ -44,20 +44,20 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
         "schematicFrom",
         1,
         (slot, stack) -> stack.getItem() instanceof ItemSchematicSingle &&
-            stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED,
+            stack.getDamage() == ItemSchematicSingle.DAMAGE_USED,
         ItemHandlerManager.EnumAccess.NONE
     );
     public final ItemHandlerSimple invSchematicTo = itemManager.addInvHandler(
         "schematicTo",
         1,
         (slot, stack) -> stack.getItem() instanceof ItemSchematicSingle &&
-            stack.getItemDamage() == ItemSchematicSingle.DAMAGE_USED,
+            stack.getDamage() == ItemSchematicSingle.DAMAGE_USED,
         ItemHandlerManager.EnumAccess.NONE
     );
 
     @Override
     public void update() {
-        if (world.isRemote) {
+        if (world.isClient) {
             return;
         }
         if (!invSnapshot.getStackInSlot(0).isEmpty() &&
@@ -71,11 +71,11 @@ public class TileReplacer extends TileBC_Neptune implements ITickable {
                     try {
                         ISchematicBlock from = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicFrom.getStackInSlot(0))
-                                .getCompoundTag(ItemSchematicSingle.NBT_KEY)
+                                .getCompound(ItemSchematicSingle.NBT_KEY)
                         );
                         ISchematicBlock to = SchematicBlockManager.readFromNBT(
                             NBTUtilBC.getItemData(invSchematicTo.getStackInSlot(0))
-                                .getCompoundTag(ItemSchematicSingle.NBT_KEY)
+                                .getCompound(ItemSchematicSingle.NBT_KEY)
                         );
                         Blueprint newBlueprint = blueprint.copy();
                         newBlueprint.replace(from, to);

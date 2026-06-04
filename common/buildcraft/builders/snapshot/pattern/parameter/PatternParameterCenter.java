@@ -9,10 +9,10 @@ package buildcraft.builders.snapshot.pattern.parameter;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -48,7 +48,7 @@ public enum PatternParameterCenter implements IStatementParameter {
         offsetZ = z;
     }
 
-    public static PatternParameterCenter readFromNbt(NBTTagCompound nbt) {
+    public static PatternParameterCenter readFromNbt(NbtCompound nbt) {
         int ord = nbt.getByte("dir");
         if (ord < 0 || ord >= values().length) {
             return CENTER;
@@ -57,8 +57,8 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound nbt) {
-        nbt.setByte("dir", (byte) ordinal());
+    public void writeToNbt(NbtCompound nbt) {
+        nbt.putByte("dir", (byte) ordinal());
     }
 
     @Override
@@ -67,7 +67,7 @@ public enum PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
         return BCBuildersSprites.PARAM_CENTER.get(this);
     }

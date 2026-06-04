@@ -2,40 +2,19 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.silicon.client.model.key;
 
-import java.util.Objects;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.transport.pluggable.PluggableModelKey;
-
-import buildcraft.silicon.gate.GateVariant;
-
-public class KeyPlugGate extends PluggableModelKey {
-    public final GateVariant variant;
-    public final int hash;
-
-    public KeyPlugGate(EnumFacing side, GateVariant variant) {
-        super(BlockRenderLayer.CUTOUT, side);
-        this.variant = variant;
-        this.hash = Objects.hash(variant, side);
-    }
-
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!super.equals(obj)) return false;
-        if (getClass() != obj.getClass()) return false;
-        KeyPlugGate other = (KeyPlugGate) obj;
-        return side == other.side && variant.equals(other.variant);
-    }
+/**
+ * STUB(R.Chen): KeyPlugGate implementation deferred until the client render/model layer
+ * (FRAPI, BakedModel, ItemColors, DetachedRenderer) is migrated to Fabric 1.20.1.
+ */
+@Environment(EnvType.CLIENT)
+public class KeyPlugGate {
+    // STUB(R.Chen): full client implementation deferred.
 }

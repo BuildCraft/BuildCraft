@@ -6,11 +6,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.client.resources.data.MetadataSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 /** Alternate metadata loader for {@link IResource#getMetadata(String)} */
 public class MetadataLoader {
@@ -20,15 +20,15 @@ public class MetadataLoader {
     private static void register() {
         if (!hasRegistered) {
             hasRegistered = true;
-            MetadataSerializer metaReg = Minecraft.getMinecraft().getResourcePackRepository().rprMetadataSerializer;
+            MetadataSerializer metaReg = MinecraftClient.getInstance().getResourcePackRepository().rprMetadataSerializer;
             metaReg.registerMetadataSectionType(DataMetadataSection.DESERIALISER, DataMetadataSection.class);
         }
     }
 
     /** @param samePack If true, then only the data in the same resource pack will be returned. */
     @Nullable
-    public static DataMetadataSection getData(ResourceLocation location, boolean samePack) {
-        IResourceManager resManager = Minecraft.getMinecraft().getResourceManager();
+    public static DataMetadataSection getData(Identifier location, boolean samePack) {
+        ResourceManager resManager = MinecraftClient.getInstance().getResourceManager();
         register();
         try {
             List<IResource> resources = resManager.getAllResources(location);

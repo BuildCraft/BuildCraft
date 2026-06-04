@@ -1,31 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.gui.json;
 
-import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.elem.GuiElementContainerResizing;
-import buildcraft.lib.gui.elem.GuiElementContainerScissor;
-import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.gui.pos.IGuiPosition;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-public class ElementTypeContainer extends ElementType {
-    public static final String NAME = "buildcraftlib:container";
-    public static final ElementTypeContainer INSTANCE = new ElementTypeContainer();
-
-    private ElementTypeContainer() {
-        super(NAME);
-    }
-
-    @Override
-    protected IGuiElement deserialize0(BuildCraftJsonGui gui, IGuiPosition parent, JsonGuiInfo info,
-        JsonGuiElement json) {
-        FunctionContext ctx = createContext(json);
-        boolean scissor = resolveEquationBool(json, "limit", ctx, false);
-        if (scissor) {
-            IGuiArea area = resolveArea(json, "area", parent, ctx);
-            return new GuiElementContainerScissor(gui, area);
-        } else {
-            IGuiPosition pos = resolvePosition(json, "pos", parent, ctx);
-            return new GuiElementContainerResizing(gui, pos);
-        }
-    }
-}
+// STUB(R.Chen): GUI render — Phase 5.
+@Environment(EnvType.CLIENT)
+public class ElementTypeContainer {}

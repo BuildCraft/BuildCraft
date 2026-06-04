@@ -1,153 +1,65 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+
 package buildcraft.lib.misc;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.text.NumberFormat;
-import java.util.List;
 
-import net.minecraft.profiler.Profiler;
-
-import buildcraft.api.core.BCLog;
+// Yarn 1.20.1: Profiler is at net.minecraft.util.profiler.Profiler (interface).
+// API changed: push(String)/pop() replace startSection/endSection; Profiler.Result
+// and getProfilingData() were removed — the writeProfilerResults* methods below
+// are stubbed until a new analysis approach is found.
+import net.minecraft.util.profiler.Profiler;
 
 /** Provides a few methods for writing the results from a vanilla {@link Profiler} to a file or something else. */
 public class ProfilerUtil {
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link System#out} as the
-     * {@link ILogAcceptor}. */
+    // TODO(R.Chen): Profiler.getProfilingData() and Profiler.Result were removed in 1.20.1.
+    // The write/print/save/log result methods below cannot be implemented without a new
+    // profiling data API. Stub them until a replacement strategy is decided.
+
     public static void printProfilerResults(Profiler profiler, String rootName) {
-        printProfilerResults(profiler, rootName, -1);
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link System#out} as the
-     * {@link ILogAcceptor}. */
     public static void printProfilerResults(Profiler profiler, String rootName, long totalNanoseconds) {
-        writeProfilerResults(profiler, rootName, totalNanoseconds, System.out::println);
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link BCLog#logger
-     * BCLog.logger}::{@link org.apache.logging.log4j.Logger#info(CharSequence) info} as the {@link ILogAcceptor}. */
     public static void logProfilerResults(Profiler profiler, String rootName) {
-        logProfilerResults(profiler, rootName, -1);
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} with {@link BCLog#logger
-     * BCLog.logger}::{@link org.apache.logging.log4j.Logger#info(CharSequence) info} as the {@link ILogAcceptor}. */
     public static void logProfilerResults(Profiler profiler, String rootName, long totalNanoseconds) {
-        writeProfilerResults(profiler, rootName, totalNanoseconds, BCLog.logger::info);
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} but saves the output to a file.
-     * 
-     * @throws IOException if the file exists but is a directory rather than a regular file, does not exist but cannot
-     *             be created, or cannot be opened for any other reason, or if an I/O exception occurred while writing
-     *             the profiler results. */
     public static void saveProfilerResults(Profiler profiler, String rootName, Path dest) throws IOException {
-        saveProfilerResults(profiler, rootName, -1, dest);
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} but saves the output to a file.
-     * 
-     * @throws IOException if the file exists but is a directory rather than a regular file, does not exist but cannot
-     *             be created, or cannot be opened for any other reason, or if an I/O exception occurred while wrting
-     *             the profiler results. */
     public static void saveProfilerResults(Profiler profiler, String rootName, File dest) throws IOException {
-        dest = dest.getAbsoluteFile();
-        dest.getParentFile().mkdirs();
-        saveProfilerResults(profiler, rootName, -1, dest.toPath());
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** Calls {@link #writeProfilerResults(Profiler, String, ILogAcceptor)} but saves the output to a file.
-     * 
-     * @param totalNanoseconds The total amount of time that the profiler's root section took, or -1 if this isn't
-     *            known.
-     * @throws IOException if the file exists but is a directory rather than a regular file, does not exist but cannot
-     *             be created, or cannot be opened for any other reason, or if an I/O exception occurred while writing
-     *             the profiler results. */
     public static void saveProfilerResults(Profiler profiler, String rootName, long totalNanoseconds, Path dest)
         throws IOException {
-        try (BufferedWriter br = Files.newBufferedWriter(dest, StandardOpenOption.WRITE,
-            StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
-            writeProfilerResults(profiler, rootName, str -> {
-                br.write(str);
-                br.newLine();
-            });
-            br.flush();
-        }
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** @param rootName The base name to use. Most of the time you just want to use "root".
-     * @param dest The method to call with the finished lines.
-     * @throws E if {@link ILogAcceptor#write(String)} throws an exception. */
     public static <E extends Throwable> void writeProfilerResults(Profiler profiler, String rootName,
         ILogAcceptor<E> dest) throws E {
-        writeProfilerResults(profiler, rootName, -1, dest);
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
-    /** @param rootName The base name to use. Most of the time you just want to use "root".
-     * @param totalNanoseconds The total amount of time that the profiler's root section took, or -1 if this isn't
-     *            known.
-     * @param dest The method to call with the finished lines.
-     * @throws E if {@link ILogAcceptor#write(String)} throws an exception. */
     public static <E extends Throwable> void writeProfilerResults(Profiler profiler, String rootName,
         long totalNanoseconds, ILogAcceptor<E> dest) throws E {
-        writeProfilerResults_Internal(profiler, rootName, totalNanoseconds, 0, dest);
-    }
-
-    private static <E extends Throwable> void writeProfilerResults_Internal(Profiler profiler, String sectionName,
-        long totalNanoseconds, int indent, ILogAcceptor<E> dest) throws E {
-
-        List<Profiler.Result> list = profiler.getProfilingData(sectionName);
-
-        if (list != null && list.size() >= 3) {
-            for (int i = 1; i < list.size(); ++i) {
-                Profiler.Result result = list.get(i);
-                StringBuilder builder = new StringBuilder();
-                builder.append(StringUtilBC.formatDirect("[%02d] ", indent));
-
-                for (int j = 0; j < indent; ++j) {
-                    builder.append("|   ");
-                }
-
-                builder.append(result.profilerName);
-                builder.append(" - ");
-                builder.append(StringUtilBC.formatDirect("%.2f", result.usePercentage));
-                builder.append("%/");
-                builder.append(StringUtilBC.formatDirect("%.2f", result.totalUsePercentage));
-                if (totalNanoseconds > 0) {
-                    builder.append(" (");
-                    long nano = (long) (result.totalUsePercentage * totalNanoseconds / 100);
-                    if (nano < 99_999) {
-                        builder.append(NumberFormat.getInstance().format(nano));
-                        builder.append("ns");
-                    } else if (nano < 99_999_999) {
-                        builder.append(NumberFormat.getInstance().format(nano / 1000));
-                        builder.append("µs");
-                    } else if (nano < 99_999_999_999L) {
-                        builder.append(NumberFormat.getInstance().format(nano / 1_000_000));
-                        builder.append("ms");
-                    } else {
-                        builder.append(NumberFormat.getInstance().format(nano / 1_000_000_000));
-                        builder.append("s");
-                    }
-                    builder.append(")");
-                }
-                dest.write(builder.toString());
-
-                if (!"unspecified".equals(result.profilerName)) {
-                    if (indent > 20) {
-                        // Something probably went wrong
-                        dest.write("[[ Too deep! ]]");
-                        continue;
-                    }
-                    writeProfilerResults_Internal(profiler, sectionName + "." + result.profilerName, totalNanoseconds,
-                        indent + 1, dest);
-                }
-            }
-        }
+        throw new UnsupportedOperationException("TODO(R.Chen): profiler result output not yet ported to 1.20.1");
     }
 
     /** @param <E> The base exception type that {@link #write(String)} might throw. Used to allow writing to files to
@@ -157,6 +69,7 @@ public class ProfilerUtil {
     }
 
     public interface ProfilerEntry {
+        // Yarn 1.20.1: Profiler.push()/pop() replace startSection()/endSection().
         void startSection(String name);
 
         void endSection();
@@ -167,20 +80,16 @@ public class ProfilerUtil {
         }
     }
 
+    // TODO(R.Chen): Profiler.profilingEnabled was a public field in 1.12.2 used to
+    // skip profiling overhead. In 1.20.1 Profiler is an interface with no such flag;
+    // always route to the wrapped profiler(s). Consider using DummyProfiler detection
+    // in a later pass if the overhead matters.
     public static ProfilerEntry createEntry(Profiler p1, Profiler p2) {
-        if (p1.profilingEnabled) {
-            if (p2.profilingEnabled) {
-                return new ProfilerEntry2(p1, p2);
-            } else {
-                return new ProfilerEntry1(p1);
-            }
-        } else {
-            if (p2.profilingEnabled) {
-                return new ProfilerEntry1(p2);
-            } else {
-                return ProfilerEntry0.INSTANCE;
-            }
-        }
+        return new ProfilerEntry2(p1, p2);
+    }
+
+    public static ProfilerEntry createEntry(Profiler p) {
+        return new ProfilerEntry1(p);
     }
 
     static enum ProfilerEntry0 implements ProfilerEntry {
@@ -206,12 +115,12 @@ public class ProfilerUtil {
 
         @Override
         public void startSection(String name) {
-            p.startSection(name);
+            p.push(name);
         }
 
         @Override
         public void endSection() {
-            p.endSection();
+            p.pop();
         }
     }
 
@@ -225,14 +134,14 @@ public class ProfilerUtil {
 
         @Override
         public void startSection(String name) {
-            p1.startSection(name);
-            p2.startSection(name);
+            p1.push(name);
+            p2.push(name);
         }
 
         @Override
         public void endSection() {
-            p1.endSection();
-            p2.endSection();
+            p1.pop();
+            p2.pop();
         }
     }
 

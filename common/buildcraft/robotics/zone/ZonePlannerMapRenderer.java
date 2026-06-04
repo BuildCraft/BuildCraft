@@ -15,19 +15,21 @@ import com.google.common.cache.RemovalNotification;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.MutableVertex;
 
 import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public enum ZonePlannerMapRenderer {
     INSTANCE;
 
@@ -117,12 +119,12 @@ public enum ZonePlannerMapRenderer {
     }
 
     private void genChunk(ZonePlannerMapChunkKey key) {
-        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().world, key);
+        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getChunk(MinecraftClient.getInstance().world, key);
         if (zonePlannerMapChunk == null) {
             return;
         }
         BufferBuilder builder = Tessellator.getInstance().getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
+        builder.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR); // TODO: normals
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 MapColourData data = zonePlannerMapChunk.getData(x, z);
@@ -130,10 +132,10 @@ public enum ZonePlannerMapRenderer {
                     setColor(data.colour);
                     drawBlockCuboid(
                             builder,
-                            key.chunkPos.getXStart() + x,
-                            data.posY,
-                            key.chunkPos.getZStart() + z,
-                            data.posY
+                            key.chunkPos.getStartX() + x,
+                            data.getY(),
+                            key.chunkPos.getStartZ() + z,
+                            data.getY()
                     );
                 }
             }

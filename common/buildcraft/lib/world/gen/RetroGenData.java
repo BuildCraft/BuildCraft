@@ -14,12 +14,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.map.hash.TObjectByteHashMap;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -27,6 +25,7 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import net.minecraft.nbt.NbtElement;
 
 public class RetroGenData extends WorldSavedData {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.gen.retro");
@@ -42,12 +41,12 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         gennedChunks.clear();
 
-        NBTTagList registry = nbt.getTagList("registry", Constants.NBT.TAG_STRING);
-        String[] names = new String[registry.tagCount()];
-        for (int i = 0; i < registry.tagCount(); i++) {
+        NbtList registry = nbt.getList("registry", NbtElement.STRING_TYPE);
+        String[] names = new String[registry.size()];
+        for (int i = 0; i < registry.size(); i++) {
             names[i] = registry.getStringTagAt(i);
         }
 
@@ -58,8 +57,8 @@ public class RetroGenData extends WorldSavedData {
             }
         }
 
-        NBTTagCompound data = nbt.getCompoundTag("data");
-        for (String key : data.getKeySet()) {
+        NbtCompound data = nbt.getCompound("data");
+        for (String key : data.getKeys()) {
             ChunkPos pos = deserializeChunkPos(key);
             if (pos == null) {
                 continue;
@@ -105,33 +104,35 @@ public class RetroGenData extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NbtCompound writeToNBT(NbtCompound nbt) {
         Set<String> allNames = new HashSet<>();
         for (Set<String> used : gennedChunks.values()) {
             allNames.addAll(used);
         }
-        TObjectByteHashMap<String> map = new TObjectByteHashMap<>();
+        HashMap<String, Byte> map = new HashMap<>();
         List<String> list = new ArrayList<>(allNames);
-        NBTTagList registry = new NBTTagList();
+        NbtList registry = new NbtList();
         for (int i = 0; i < list.size(); i++) {
             String name = list.get(i);
             map.put(name, (byte) i);
-            registry.appendTag(new NBTTagString(name));
+            registry.add(NbtString.of(name));
         }
-        nbt.setTag("registry", registry);
+        nbt.put("registry", registry);
 
-        NBTTagCompound data = new NBTTagCompound();
+        NbtCompound data = new NbtCompound();
         for (Entry<ChunkPos, Set<String>> entry : gennedChunks.entrySet()) {
             String key = serializeChunkPos(entry.getKey());
             Set<String> names = entry.getValue();
-            TByteArrayList ids = new TByteArrayList();
+            ArrayList<Byte> ids = new ArrayList<Byte>();
             for (String s : names) {
                 byte b = map.get(s);
                 ids.add(b);
             }
-            data.setByteArray(key, ids.toArray());
+            byte[] arr = new byte[ids.size()];
+            for (int i = 0; i < ids.size(); i++) arr[i] = ids.get(i);
+            data.putByteArray(key, arr);
         }
-        nbt.setTag("data", data);
+        nbt.put("data", data);
 
         return nbt;
     }

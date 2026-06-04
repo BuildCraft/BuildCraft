@@ -9,11 +9,11 @@ package buildcraft.lib.misc.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
+import buildcraft.BuildCraftFabric;
 
 public class IdAllocator {
-    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.id_alloc");
+    // STUB(R.Chen): BCDebugging.shouldDebugLog → system property gate
+    public static final boolean DEBUG = Boolean.getBoolean("buildcraft.debug.lib.id_alloc");
 
     private final IdAllocator parent;
     private final String name;
@@ -55,7 +55,7 @@ public class IdAllocator {
                 + " You have probably set the calling class up wrong!");
         }
         if (DEBUG) {
-            BCLog.logger.info("[lib.id_alloc] " + name + " allocated " + allocName + " as " + nextId);
+            BuildCraftFabric.LOGGER.info("[lib.id_alloc] " + name + " allocated " + allocName + " as " + nextId);
         }
         idNameMap.add(allocName);
         return nextId++;

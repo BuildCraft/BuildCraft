@@ -1,6 +1,7 @@
 package buildcraft.lib.script;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class LineData {
     public final String text;

@@ -8,7 +8,7 @@ package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
@@ -18,16 +18,16 @@ import buildcraft.lib.misc.StackUtil;
 
 public class TransactorEntityItem implements IItemExtractable {
 
-    private final EntityItem entity;
+    private final ItemEntity entity;
 
-    public TransactorEntityItem(EntityItem entity) {
+    public TransactorEntityItem(ItemEntity entity) {
         this.entity = entity;
     }
 
     @Override
     @Nonnull
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
-        if (entity.isDead) {
+        if (entity.isRemoved()) {
             return StackUtil.EMPTY;
         }
         if (min < 1) {
@@ -36,18 +36,18 @@ public class TransactorEntityItem implements IItemExtractable {
         if (max < min) {
             return StackUtil.EMPTY;
         }
-        ItemStack current = entity.getItem();
+        ItemStack current = entity.getStack();
         if (current.isEmpty() || current.getCount() < min) {
             return StackUtil.EMPTY;
         }
         if (filter.matches(current)) {
             current = current.copy();
-            ItemStack extracted = current.splitStack(max);
+            ItemStack extracted = current.split(max);
             if (!simulate) {
                 if (current.getCount() == 0) {
-                    entity.setDead();
+                    entity.discard();
                 } else {
-                    entity.setItem(current);
+                    entity.setStack(current);
                 }
             }
             return extracted;

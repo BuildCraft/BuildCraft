@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSectionSerializer;
-import net.minecraft.util.JsonUtils;
 
 /** Generic metadata section, containing any types of data. */
 public class DataMetadataSection implements IMetadataSection {
@@ -22,7 +21,7 @@ public class DataMetadataSection implements IMetadataSection {
 
     public static final IMetadataSectionSerializer<DataMetadataSection> DESERIALISER =
         new IMetadataSectionSerializer<DataMetadataSection>() {
-            @Override
+            // @Override -- removed: method does not exist in Fabric 1.20.1
             public DataMetadataSection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
                 return new DataMetadataSection(JsonUtils.getJsonObject(json, SECTION_NAME));
             }

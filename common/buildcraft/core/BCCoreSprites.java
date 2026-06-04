@@ -128,7 +128,7 @@ public class BCCoreSprites {
         TRIGGER_POWER_STAGE = new EnumMap<>(EnumPowerStage.class);
         for (EnumPowerStage stage : EnumPowerStage.values()) {
             if (stage == EnumPowerStage.BLACK) continue;
-            String tex = "triggers/trigger_engineheat_" + stage.getName();
+            String tex = "triggers/trigger_engineheat_" + stage.asString();
             TRIGGER_POWER_STAGE.put(stage, getHolder(tex));
         }
     }

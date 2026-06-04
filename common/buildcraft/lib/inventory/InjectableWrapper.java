@@ -7,10 +7,11 @@
 package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
@@ -20,9 +21,9 @@ import buildcraft.lib.misc.StackUtil;
 
 public class InjectableWrapper implements IItemTransactor {
     private final IInjectable injectable;
-    private final EnumFacing from;
+    private final Direction from;
 
-    public InjectableWrapper(IInjectable injectable, EnumFacing facing) {
+    public InjectableWrapper(IInjectable injectable, Direction facing) {
         this.injectable = injectable;
         this.from = facing;
     }
@@ -51,7 +52,7 @@ public class InjectableWrapper implements IItemTransactor {
     }
 
     @Override
-    public NonNullList<ItemStack> insert(NonNullList<ItemStack> stacks, boolean simulate) {
+    public DefaultedList<ItemStack> insert(DefaultedList<ItemStack> stacks, boolean simulate) {
         return ItemTransactorHelper.insertAllBypass(this, stacks, simulate);
     }
 

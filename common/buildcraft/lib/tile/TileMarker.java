@@ -8,7 +8,7 @@ package buildcraft.lib.tile;
 
 import java.util.List;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.tiles.IDebuggable;
 
@@ -43,7 +43,7 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
         getLocalCache().unloadMarker(getPos());
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void invalidate() {
         super.invalidate();
         // getLocalCache().removeMarker(getPos());
@@ -63,7 +63,7 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         C current = getCurrentConnection();
         MarkerSubCache<C> cache = getLocalCache();
         left.add("Exists = " + (cache.getMarker(getPos()) == this));

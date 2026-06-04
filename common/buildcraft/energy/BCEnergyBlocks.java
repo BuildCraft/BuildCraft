@@ -6,7 +6,8 @@
 
 package buildcraft.energy;
 
-import net.minecraft.block.material.Material;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumSpring;
@@ -31,15 +32,18 @@ public class BCEnergyBlocks {
     public static void preInit() {
 
         if (BCCoreBlocks.engine != null) {
-            BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, TileEngineStone_BC8::new);
-            BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, TileEngineIron_BC8::new);
+            // STUB(R.Chen): engine tiles now use the (BlockEntityType, BlockPos, BlockState) constructor and are
+            // created via BlockEntityType; the legacy no-arg Supplier registry path is a no-op until the
+            // engine BlockEntityTypes are wired up — Phase 10.
+            BCCoreBlocks.engine.registerEngine(EnumEngineType.STONE, () -> null);
+            BCCoreBlocks.engine.registerEngine(EnumEngineType.IRON, () -> null);
             if (BCEnergyConfig.enableRfEngine) {
-                BCCoreBlocks.engine.registerEngine(EnumEngineType.RF, TileEngineRF::new);
+                BCCoreBlocks.engine.registerEngine(EnumEngineType.RF, () -> null);
             }
         }
 
         if (BCEnergyConfig.enableMjDynamo) {
-            mjDynamo = HELPER.addForcedBlock(new BlockDynamoMJ(Material.IRON, "block.mj_dynamo"));
+            mjDynamo = HELPER.addForcedBlock(new BlockDynamoMJ(MaterialBC.IRON, "block.mj_dynamo"));
             HELPER.addForcedItem(new ItemBlockBC_Neptune(mjDynamo));
             HELPER.registerTile(TileDynamoMJ.class, "tile.mj_dynamo");
         }

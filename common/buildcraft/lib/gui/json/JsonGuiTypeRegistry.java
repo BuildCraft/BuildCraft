@@ -1,50 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.gui.json;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import buildcraft.lib.client.model.ResourceLoaderContext;
-import buildcraft.lib.expression.DefaultContexts;
-
-/** Turns several json elements into some functional gui data. */
-public class JsonGuiTypeRegistry {
-    public static final Map<String, ElementType> TYPES = new HashMap<>();
-
-    static {
-        registerType(ElementTypeText.INSTANCE);
-        registerType(ElementTypeHelp.INSTANCE);
-        registerType(ElementTypeSlot.INSTANCE);
-        registerType(ElementTypeSprite.INSTANCE);
-        registerType(ElementTypeButton.INSTANCE);
-        registerType(ElementTypeLedger.INSTANCE);
-        registerType(ElementTypeToolTip.INSTANCE);
-        registerType(ElementTypeContainer.INSTANCE);
-        registerType(ElementTypeDrawnStack.INSTANCE);
-        registerType(ElementTypeStatementSlot.INSTANCE);
-        registerType(ElementTypeStatementParam.INSTANCE);
-        registerType(ElementTypeStatementSource.INSTANCE);
-    }
-
-    public static void registerType(ElementType type) {
-        TYPES.put(type.name, type);
-    }
-
-    // Simple test
-    public static void main(String[] args) throws IOException {
-        String loc = "/assets/buildcraftbuilders/gui/filler.json";
-        InputStream is = JsonGuiTypeRegistry.class.getResourceAsStream(loc);
-        JsonObject obj;
-        try (InputStreamReader isr = new InputStreamReader(is)) {
-            obj = new Gson().fromJson(isr, JsonObject.class);
-        }
-
-        JsonGuiInfo info = new JsonGuiInfo(obj, DefaultContexts.createWithAll(), new ResourceLoaderContext());
-        info.printOut(System.out::println);
-    }
-}
+// STUB(R.Chen): GUI render — Phase 5.
+@Environment(EnvType.CLIENT)
+public class JsonGuiTypeRegistry {}

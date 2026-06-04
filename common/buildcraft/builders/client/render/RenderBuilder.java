@@ -10,8 +10,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -29,26 +29,26 @@ import buildcraft.core.client.BuildCraftLaserManager;
 public class RenderBuilder extends FastTESR<TileBuilder> {
     private static final double OFFSET = 0.1;
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(@Nonnull TileBuilder tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("builder");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("builder");
 
-        buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
-        Minecraft.getMinecraft().mcProfiler.startSection("box");
+        MinecraftClient.getInstance().getProfiler().push("box");
         Box box = tile.getBox();
         LaserBoxRenderer.renderLaserBoxDynamic(box, BuildCraftLaserManager.STRIPES_WRITE, buffer, true);
 
-        Minecraft.getMinecraft().mcProfiler.endStartSection("path");
+        MinecraftClient.getInstance().getProfiler().swap("path");
 
         List<BlockPos> path = tile.path;
         if (path != null) {
             BlockPos last = null;
             for (BlockPos p : path) {
                 if (last != null) {
-                    Vec3d from = new Vec3d(last).add(VecUtil.VEC_HALF);
-                    Vec3d to = new Vec3d(p).add(VecUtil.VEC_HALF);
+                    Vec3d from = new Vec3d(last.getX(), last.getY(), last.getZ()).add(VecUtil.VEC_HALF);
+                    Vec3d to = new Vec3d(p.getX(), p.getY(), p.getZ()).add(VecUtil.VEC_HALF);
                     Vec3d one = offset(from, to);
                     Vec3d two = offset(to, from);
                     LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE_DIRECTION, one, two, 1 / 16.1);
@@ -58,24 +58,24 @@ public class RenderBuilder extends FastTESR<TileBuilder> {
             }
         }
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
 
-        buffer.setTranslation(0, 0, 0);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(0, 0, 0);
 
         if (tile.getBuilder() != null) {
             RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, buffer);
         }
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
     private static Vec3d offset(Vec3d from, Vec3d to) {
         Vec3d dir = to.subtract(from).normalize();
-        return from.add(VecUtil.scale(dir, OFFSET));
+        return from.add(VecUtil.multiply(dir, OFFSET));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileBuilder te) {
         return true;
     }

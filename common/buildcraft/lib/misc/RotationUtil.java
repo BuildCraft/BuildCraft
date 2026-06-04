@@ -2,34 +2,35 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.misc;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public class RotationUtil {
-    public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
-        if (facing == EnumFacing.DOWN) {
-            return new AxisAlignedBB(aabb.minX, aabb.maxY, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
-        } else if (facing == EnumFacing.UP) {
-            return new AxisAlignedBB(aabb.minX, 1 - aabb.maxY, aabb.minZ, aabb.maxX, 1 - aabb.minY, aabb.maxZ);
-        } else if (facing == EnumFacing.NORTH) {
-            return new AxisAlignedBB(aabb.minX, aabb.minZ, aabb.minY, aabb.maxX, aabb.maxZ, aabb.maxY);
-        } else if (facing == EnumFacing.SOUTH) {
-            return new AxisAlignedBB(aabb.minX, aabb.minZ, 1 - aabb.maxY, aabb.maxX, aabb.maxZ, 1 - aabb.minY);
-        } else if (facing == EnumFacing.WEST) {
-            return new AxisAlignedBB(aabb.minY, aabb.minZ, aabb.minX, aabb.maxY, aabb.maxZ, aabb.maxX);
-        } else if (facing == EnumFacing.EAST) {
-            return new AxisAlignedBB(1 - aabb.maxY, aabb.minZ, aabb.minX, 1 - aabb.minY, aabb.maxZ, aabb.maxX);
+    // Use FQN to avoid clashing with buildcraft.lib.misc.data.Box
+    public static net.minecraft.util.math.Box rotateAABB(net.minecraft.util.math.Box aabb, Direction facing) {
+        if (facing == Direction.DOWN) {
+            return new net.minecraft.util.math.Box(aabb.minX, aabb.maxY, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
+        } else if (facing == Direction.UP) {
+            return new net.minecraft.util.math.Box(aabb.minX, 1 - aabb.maxY, aabb.minZ, aabb.maxX, 1 - aabb.minY, aabb.maxZ);
+        } else if (facing == Direction.NORTH) {
+            return new net.minecraft.util.math.Box(aabb.minX, aabb.minZ, aabb.minY, aabb.maxX, aabb.maxZ, aabb.maxY);
+        } else if (facing == Direction.SOUTH) {
+            return new net.minecraft.util.math.Box(aabb.minX, aabb.minZ, 1 - aabb.maxY, aabb.maxX, aabb.maxZ, 1 - aabb.minY);
+        } else if (facing == Direction.WEST) {
+            return new net.minecraft.util.math.Box(aabb.minY, aabb.minZ, aabb.minX, aabb.maxY, aabb.maxZ, aabb.maxX);
+        } else if (facing == Direction.EAST) {
+            return new net.minecraft.util.math.Box(1 - aabb.maxY, aabb.minZ, aabb.minX, 1 - aabb.minY, aabb.maxZ, aabb.maxX);
         }
         return aabb;
     }
 
-    public static Vec3d rotateVec3d(Vec3d vec, Rotation rotation) {
+    public static Vec3d rotateVec3d(Vec3d vec, BlockRotation rotation) {
         switch (rotation) {
             case NONE:
             default:
@@ -43,34 +44,34 @@ public class RotationUtil {
         }
     }
 
-    public static EnumFacing rotateAll(EnumFacing facing) {
+    public static Direction rotateAll(Direction facing) {
         switch (facing) {
             case NORTH:
-                return EnumFacing.EAST;
+                return Direction.EAST;
             case EAST:
-                return EnumFacing.SOUTH;
+                return Direction.SOUTH;
             case SOUTH:
-                return EnumFacing.WEST;
+                return Direction.WEST;
             case WEST:
-                return EnumFacing.UP;
+                return Direction.UP;
             case UP:
-                return EnumFacing.DOWN;
+                return Direction.DOWN;
             case DOWN:
-                return EnumFacing.NORTH;
+                return Direction.NORTH;
         }
         throw new IllegalArgumentException();
     }
 
-    public static Rotation invert(Rotation rotation) {
+    public static BlockRotation invert(BlockRotation rotation) {
         switch (rotation) {
             case NONE:
-                return Rotation.NONE;
+                return BlockRotation.NONE;
             case CLOCKWISE_90:
-                return Rotation.COUNTERCLOCKWISE_90;
+                return BlockRotation.COUNTERCLOCKWISE_90;
             case CLOCKWISE_180:
-                return Rotation.CLOCKWISE_180;
+                return BlockRotation.CLOCKWISE_180;
             case COUNTERCLOCKWISE_90:
-                return Rotation.CLOCKWISE_90;
+                return BlockRotation.CLOCKWISE_90;
         }
         throw new IllegalArgumentException();
     }

@@ -2,19 +2,19 @@ package buildcraft.lib.cache;
 
 import java.lang.ref.WeakReference;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
 
 import buildcraft.lib.misc.ChunkUtil;
 
 public class CachedChunk implements IChunkCache {
 
-    private final TileEntity tile;
-    private WeakReference<Chunk> cachedChunk;
+    private final BlockEntity tile;
+    private WeakReference<WorldChunk> cachedChunk;
 
-    public CachedChunk(TileEntity tile) {
+    public CachedChunk(BlockEntity tile) {
         this.tile = tile;
     }
 
@@ -24,8 +24,8 @@ public class CachedChunk implements IChunkCache {
     }
 
     @Override
-    public Chunk getChunk(BlockPos pos) {
-        if (tile.isInvalid()) {
+    public WorldChunk getChunk(BlockPos pos) {
+        if (tile.isRemoved()) {
             cachedChunk = null;
             return null;
         }
@@ -34,20 +34,22 @@ public class CachedChunk implements IChunkCache {
             || pos.getZ() >> 4 != tPos.getZ() >> 4) {
             return null;
         }
-        if (cachedChunk != null) {
-            Chunk c = cachedChunk.get();
-            if (c != null && c.isLoaded()) {
-                return c;
-            }
-            cachedChunk = null;
-        }
         World world = tile.getWorld();
         if (world == null) {
             cachedChunk = null;
             return null;
         }
-        Chunk chunk = ChunkUtil.getChunk(world, pos, true);
-        if (chunk != null && chunk.getWorld() == world) {
+        if (cachedChunk != null) {
+            // STUB(R.Chen): Forge Chunk.isLoaded() removed; validity is now keyed on the cached chunk's
+            // world still matching the tile's world (Yarn WorldChunk has no isLoaded predicate).
+            WorldChunk c = cachedChunk.get();
+            if (c != null && c.world == world) {
+                return c;
+            }
+            cachedChunk = null;
+        }
+        WorldChunk chunk = ChunkUtil.getChunk(world, pos, true);
+        if (chunk != null && chunk.world == world) {
             cachedChunk = new WeakReference<>(chunk);
             return chunk;
         }

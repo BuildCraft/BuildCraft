@@ -9,7 +9,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
@@ -40,9 +40,9 @@ public class ContentsNode implements IContentsNode {
     @Override
     public GuidePart createGuidePart(GuiGuide gui) {
         if (indent == 0) {
-            return new GuideChapterWithin(gui, TextFormatting.UNDERLINE + title);
+            return new GuideChapterWithin(gui, Formatting.UNDERLINE + title);
         } else {
-            return new GuideText(gui, new PageLine(indent + 1, TextFormatting.UNDERLINE + title, false));
+            return new GuideText(gui, new PageLine(indent + 1, Formatting.UNDERLINE + title, false));
         }
     }
 

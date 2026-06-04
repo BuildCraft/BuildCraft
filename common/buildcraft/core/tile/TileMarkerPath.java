@@ -5,6 +5,7 @@
 package buildcraft.core.tile;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -29,7 +30,7 @@ public class TileMarkerPath extends TileMarker<PathConnection> implements IPathP
     @Override
     public void removeFromWorld() {
         for (BlockPos pos : getPath()) {
-            world.destroyBlock(pos, true);
+            world.breakBlock(pos, true);
         }
     }
 
@@ -45,7 +46,7 @@ public class TileMarkerPath extends TileMarker<PathConnection> implements IPathP
     }
 
     public void reverseDirection() {
-        if (world.isRemote) {
+        if (world.isClient) {
             return;
         }
         PathConnection connection = getCurrentConnection();

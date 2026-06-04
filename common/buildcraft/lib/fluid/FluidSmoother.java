@@ -2,10 +2,10 @@ package buildcraft.lib.fluid;
 
 import java.util.List;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
@@ -33,7 +33,7 @@ public class FluidSmoother implements IDebuggable {
             if (world == null) {
                 return;
             }
-            data = world.isRemote ? new _Client() : new _Server();
+            data = world.isClient ? new _Client() : new _Server();
         }
         data.tick(world);
     }
@@ -61,7 +61,7 @@ public class FluidSmoother implements IDebuggable {
     }
 
     public void resetSmoothing(World world) {
-        if (data == null && world.isRemote) {
+        if (data == null && world.isClient) {
             data = new _Client();
         }
         if (data instanceof _Client) {
@@ -72,17 +72,17 @@ public class FluidSmoother implements IDebuggable {
         }
     }
 
-    public FluidStack getFluidForRender() {
+    public FluidStackBC getFluidForRender() {
         if (data instanceof _Client) {
             _Client client = (_Client) data;
             if (client.link == null) {
                 return null;
             }
-            FluidStack fluid = client.link.get();
+            FluidStackBC fluid = client.link.get();
             if (fluid == null) {
                 return null;
             }
-            return new FluidStack(fluid, client.amount);
+            return new FluidStackBC(fluid, client.amount);
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class FluidSmoother implements IDebuggable {
             if (client.link == null) {
                 return null;
             }
-            FluidStack fluid = client.link.get();
+            FluidStackBC fluid = client.link.get();
             if (fluid == null) {
                 return null;
             }
@@ -109,7 +109,7 @@ public class FluidSmoother implements IDebuggable {
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         if (data != null) {
             data.getDebugInfo(left, right, side);
         }
@@ -121,10 +121,10 @@ public class FluidSmoother implements IDebuggable {
     }
 
     public static class FluidStackInterp {
-        public final FluidStack fluid;
+        public final FluidStackBC fluid;
         public final double amount;
 
-        public FluidStackInterp(FluidStack fluid, double amount) {
+        public FluidStackInterp(FluidStackBC fluid, double amount) {
             this.fluid = fluid;
             this.amount = amount;
         }
@@ -141,7 +141,7 @@ public class FluidSmoother implements IDebuggable {
 
         @Override
         void tick(World world) {
-            FluidStack fluid = tank.getFluid();
+            FluidStackBC fluid = tank.getFluid();
             boolean hasFluid = fluid != null;
             if ((tank.getFluidAmount() != sentAmount || hasFluid != sentHasFluid)) {
                 if (tracker.markTimeIfDelay(world)) {
@@ -151,7 +151,7 @@ public class FluidSmoother implements IDebuggable {
         }
 
         void writeMessage(PacketBufferBC buffer) {
-            FluidStack fluid = tank.getFluid();
+            FluidStackBC fluid = tank.getFluid();
             boolean hasFluid = fluid != null;
 
             sentAmount = tank.getFluidAmount();
@@ -170,7 +170,7 @@ public class FluidSmoother implements IDebuggable {
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        public void getDebugInfo(List<String> left, List<String> right, Direction side) {
             String contents = (tank.getFluid() != null) ? "Something" : "Nothing";
             left.add("current = " + tank.getFluidAmount() + " of " + contents);
             left.add("lastSent = " + sentAmount + " of " + (sentHasFluid ? "Something" : "Nothing"));
@@ -204,16 +204,16 @@ public class FluidSmoother implements IDebuggable {
                 link = BuildCraftObjectCaches.CACHE_FLUIDS.client().retrieve(buffer.readInt());
             }
             lastMessageMinus1 = lastMessage;
-            lastMessage = world.getTotalWorldTime();
+            lastMessage = world.getTime();
         }
 
         void resetSmoothing(World world) {
-            lastMessageMinus1 = lastMessage = world.getTotalWorldTime();
+            lastMessageMinus1 = lastMessage = world.getTime();
             lastMessageMinus1 -= 1;
         }
 
         @Override
-        public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        public void getDebugInfo(List<String> left, List<String> right, Direction side) {
             left.add("shown = " + amount + ", target = " + target);
             left.add("lastMsg = " + lastMessage + ", lastMsg-1 = " + lastMessageMinus1 + ", diff = "
                 + (lastMessage - lastMessageMinus1));

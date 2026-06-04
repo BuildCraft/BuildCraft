@@ -8,11 +8,11 @@ package buildcraft.factory.client.render;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
@@ -70,16 +70,16 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
     public RenderMiningWell() {}
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(@Nonnull TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("miner");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("miner");
 
-        buffer.setTranslation(x, y, z);
-        EnumFacing facing = EnumFacing.NORTH;
-        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(x, y, z);
+        Direction facing = Direction.NORTH;
+        BlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() == BCFactoryBlocks.miningWell) {
-            facing = state.getValue(BuildCraftProperties.BLOCK_FACING);
+            facing = state.get(BuildCraftProperties.BLOCK_FACING);
         }
 
         final int dX, dZ;
@@ -87,25 +87,25 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
         if (facing.getAxis() == Axis.X) {
             dX = 0;
-            dZ = facing.getAxisDirection().getOffset();
+            dZ = facing.getDirection().getOffset();
             ledZ = 0.5;
-            if (facing == EnumFacing.EAST) {
+            if (facing == Direction.EAST) {
                 ledX = 15.8 / 16.0;
             } else {
                 ledX = 0.2 / 16.0;
             }
         } else {
-            dX = -facing.getAxisDirection().getOffset();
+            dX = -facing.getDirection().getOffset();
             dZ = 0;
             ledX = 0.5;
-            if (facing == EnumFacing.SOUTH) {
+            if (facing == Direction.SOUTH) {
                 ledZ = 15.8 / 16.0;
             } else {
                 ledZ = 0.2 / 16.0;
             }
         }
 
-        int combinedLight = tile.getWorld().getCombinedLight(tile.getPos().offset(facing), 0);
+        int combinedLight = buildcraft.lib.compat.WorldCompat.getCombinedLight(tile.getWorld(), tile.getPos().offset(facing), 0);
         LED_POWER.center.lighti(combinedLight);
         LED_STATUS.center.lighti(combinedLight);
 
@@ -126,11 +126,11 @@ public class RenderMiningWell extends FastTESR<TileMiningWell> {
 
         tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, partial, buffer);
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileMiningWell tile) {
         return true;
     }

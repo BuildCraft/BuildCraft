@@ -1,28 +1,23 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.silicon;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-
+/**
+ * STUB(R.Chen): BCSiliconGuis enum stub. Full openGui() implementation deferred until
+ * ExtendedScreenHandlerType is registered for each GUI type.
+ */
 public enum BCSiliconGuis {
     ASSEMBLY_TABLE,
     ADVANCED_CRAFTING_TABLE,
     INTEGRATION_TABLE,
     GATE;
 
-    public void openGUI(EntityPlayer player) {
-        player.openGui(BCSilicon.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
-    }
-
-    public void openGUI(EntityPlayer player, BlockPos pos) {
-        openGui(player, pos, 0);
-    }
-
-    public void openGui(EntityPlayer player, BlockPos pos, int data) {
-        int fullId = (data << 8) | ordinal();
-        player.openGui(BCSilicon.INSTANCE, fullId, player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
+    public void openGui(net.minecraft.entity.player.PlayerEntity player, net.minecraft.util.math.BlockPos pos, int data) {
+        // STUB(R.Chen): ExtendedScreenHandlerType.open() deferred until GUI types are registered.
     }
 }

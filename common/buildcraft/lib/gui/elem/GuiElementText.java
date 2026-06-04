@@ -2,26 +2,29 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui.elem;
 
 import java.util.List;
-import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import buildcraft.lib.client.guide.font.MinecraftFont;
-import buildcraft.lib.expression.node.value.NodeConstantDouble;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+
 import buildcraft.lib.expression.node.value.NodeConstantObject;
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
+@Environment(EnvType.CLIENT)
 public class GuiElementText extends GuiElementSimple {
     public boolean dropShadow = false;
     public boolean foreground = false;
@@ -29,18 +32,11 @@ public class GuiElementText extends GuiElementSimple {
 
     private final Supplier<String> text;
     private final IntSupplier colour;
-    private final DoubleSupplier scale;// TODO: Use this and then use this for the guide!
 
     public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour) {
-        this(gui, parent, text, colour, NodeConstantDouble.ONE);
-    }
-
-    public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, IntSupplier colour,
-        DoubleSupplier scale) {
-        super(gui, GuiRectangle.ZERO.offset(parent));// TODO: link this up like in GuidePageContents!
+        super(gui, GuiRectangle.ZERO.offset(parent));
         this.text = text;
         this.colour = colour;
-        this.scale = scale;
     }
 
     public GuiElementText(BuildCraftGui gui, IGuiPosition parent, Supplier<String> text, int colour) {
@@ -66,51 +62,34 @@ public class GuiElementText extends GuiElementSimple {
         return this;
     }
 
+    private TextRenderer getFr() {
+        return MinecraftClient.getInstance().textRenderer;
+    }
+
     @Override
     public double getWidth() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        return fr.getStringWidth(text.get());
+        return getFr().getWidth(text.get());
     }
 
     @Override
     public double getHeight() {
-        FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        return fr.FONT_HEIGHT;
+        return getFr().fontHeight;
     }
 
     @Override
-    public void drawBackground(float partialTicks) {
-        if (!foreground) {
-            draw();
-        }
+    public void drawBackground(DrawContext context, float partialTicks) {
+        if (!foreground) draw(context);
     }
 
     @Override
-    public void drawForeground(float partialTicks) {
-        if (foreground) {
-            draw();
-        }
+    public void drawForeground(DrawContext context, float partialTicks) {
+        if (foreground) draw(context);
     }
 
-    private void draw() {
-        MinecraftFont.INSTANCE.drawString(text.get(), (int) getX(), (int) getY(), colour.getAsInt(), dropShadow,
-            centered, (float) scale.getAsDouble());
-        // final double s = scale.getAsDouble();
-        // final boolean needsScaling = s != 1;
-        // FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-        // if (needsScaling) {
-        // GuiUtil.drawScaledText(fr, text.get(), getX(), getY(), colour.getAsInt(), dropShadow, centered, s);
-        // return;
-        // }
-        // if (centered) {
-        // String str = text.get();
-        // int width = fr.getStringWidth(str);
-        // double x = getX() - width / 2;
-        // fr.drawString(str, (float) x, (float) getY(), colour.getAsInt(), dropShadow);
-        // } else {
-        // fr.drawString(text.get(), (float) getX(), (float) getY(), colour.getAsInt(), dropShadow);
-        // }
-        // RenderUtil.setGLColorFromInt(-1);
+    private void draw(DrawContext context) {
+        String str = text.get();
+        int x = centered ? (int) getX() - getFr().getWidth(str) / 2 : (int) getX();
+        context.drawText(getFr(), str, x, (int) getY(), colour.getAsInt(), dropShadow);
     }
 
     @Override

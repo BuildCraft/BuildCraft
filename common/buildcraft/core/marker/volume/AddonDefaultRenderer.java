@@ -2,63 +2,37 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.core.marker.volume;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+// STUB(R.Chen): client render Phase 5.
+// Yarn 1.20.1:
+//   BufferBuilder          → net.minecraft.client.render.BufferBuilder
+//   Sprite     → net.minecraft.client.texture.Sprite
+//   ModelLoader.White      → no Fabric equivalent; use RenderSystem / solid-white approach instead.
+// The original vertex-building calls (builder.pos/color/tex/lightmap/endVertex) map to
+// VertexConsumer.vertex/color/texture/light/next in Fabric's render pipeline; deferred to Phase 5.
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.entity.player.PlayerEntity;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class AddonDefaultRenderer<T extends Addon> implements IFastAddonRenderer<T> {
-    private final TextureAtlasSprite s;
 
     public AddonDefaultRenderer() {
-        s = ModelLoader.White.INSTANCE;
+        // STUB(R.Chen): buildcraft.lib.compat.McTextureCompat.getMissingSprite() dropped; Fabric uses solid-white sprite differently.
     }
 
-    public AddonDefaultRenderer(TextureAtlasSprite s) {
-        this.s = s;
+    public AddonDefaultRenderer(Object sprite) {
+        // STUB(R.Chen): Sprite → net.minecraft.client.texture.Sprite (Phase 5).
     }
 
     @Override
-    public void renderAddonFast(T addon, EntityPlayer player, float partialTicks, BufferBuilder builder) {
-        AxisAlignedBB bb = addon.getBoundingBox();
-
-        builder.pos(bb.minX, bb.maxY, bb.minZ).color(204, 204, 204, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(204, 204, 204, 255).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.minY, bb.minZ).color(204, 204, 204, 255).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.minY, bb.minZ).color(204, 204, 204, 255).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
-
-        builder.pos(bb.minX, bb.minY, bb.maxZ).color(204, 204, 204, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(204, 204, 204, 255).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(204, 204, 204, 255).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(204, 204, 204, 255).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
-
-        builder.pos(bb.minX, bb.minY, bb.minZ).color(127, 127, 127, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.minY, bb.minZ).color(127, 127, 127, 255).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(127, 127, 127, 255).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.minY, bb.maxZ).color(127, 127, 127, 255).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
-
-        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(255, 255, 255, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(255, 255, 255, 255).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(255, 255, 255, 255).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.maxY, bb.minZ).color(255, 255, 255, 255).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
-
-        builder.pos(bb.minX, bb.minY, bb.maxZ).color(153, 153, 153, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.maxY, bb.maxZ).color(153, 153, 153, 255).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.maxY, bb.minZ).color(153, 153, 153, 255).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.minX, bb.minY, bb.minZ).color(153, 153, 153, 255).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
-
-        builder.pos(bb.maxX, bb.minY, bb.minZ).color(153, 153, 153, 255).tex(s.getMinU(), s.getMinV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.maxY, bb.minZ).color(153, 153, 153, 255).tex(s.getMinU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.maxY, bb.maxZ).color(153, 153, 153, 255).tex(s.getMaxU(), s.getMaxV()).lightmap(240, 0).endVertex();
-        builder.pos(bb.maxX, bb.minY, bb.maxZ).color(153, 153, 153, 255).tex(s.getMaxU(), s.getMinV()).lightmap(240, 0).endVertex();
+    public void renderAddonFast(T addon, PlayerEntity player, float partialTicks, BufferBuilder builder) {
+        // STUB(R.Chen): client render Phase 5 — BufferBuilder vertex calls require VertexFormat rewrite.
     }
 }

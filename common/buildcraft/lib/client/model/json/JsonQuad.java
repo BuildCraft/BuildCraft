@@ -2,69 +2,28 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model.json;
 
-import java.util.Arrays;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import javax.vecmath.Vector3f;
+import net.minecraft.client.texture.Sprite;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.JsonUtils;
-
-import buildcraft.lib.client.model.ModelUtil;
-import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.misc.JsonUtil;
 
+// STUB(R.Chen): model/json — Phase 5.
+@Environment(EnvType.CLIENT)
 public class JsonQuad {
-    public boolean shade = false;
-    public int tint = -1;
     public String texture;
-    public final JsonVertex[] vertices = new JsonVertex[4];
-    public EnumFacing face;
 
-    public JsonQuad(JsonObject obj, float[] from, float[] to, EnumFacing face) {
-        this.face = face;
-        tint = JsonUtils.getInt(obj, "tintindex", -1);
-        texture = JsonUtils.getString(obj, "texture");
-        int rotation = JsonUtils.getInt(obj, "rotation", 0);
-        float[] uv = JsonUtil.getSubAsFloatArray(obj, "uv");
-        if (uv.length != 4) {
-            throw new JsonSyntaxException("Expected exactly 4 floats, but got " + Arrays.toString(uv));
-        }
-        UvFaceData uvs = new UvFaceData();
-        uvs.minU = uv[0] / 16f;
-        uvs.minV = uv[1] / 16f;
-        uvs.maxU = uv[2] / 16f;
-        uvs.maxV = uv[3] / 16f;
-        Vector3f radius = new Vector3f(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
-        radius.scale(0.5f);
-        Vector3f center = new Vector3f(from);
-        center.add(radius);
-        MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
-        quad.rotateTextureUp(rotation);
-        vertices[0] = new JsonVertex(quad.vertex_0);
-        vertices[1] = new JsonVertex(quad.vertex_1);
-        vertices[2] = new JsonVertex(quad.vertex_2);
-        vertices[3] = new JsonVertex(quad.vertex_3);
-    }
+    JsonQuad() {}
 
-    public MutableQuad toQuad(TextureAtlasSprite sprite) {
-        MutableQuad quad = new MutableQuad(tint, face, shade);
-        vertices[0].loadInto(quad.vertex_0);
-        vertices[1].loadInto(quad.vertex_1);
-        vertices[2].loadInto(quad.vertex_2);
-        vertices[3].loadInto(quad.vertex_3);
-        if (sprite != null) {
-            quad.texFromSprite(sprite);
-            quad.setSprite(sprite);
-        }
-        return quad;
+    // STUB(R.Chen): Phase 5 — quad baking with Fabric Sprite UVs.
+    public MutableQuad toQuad(Sprite sprite) {
+        return new MutableQuad();
     }
 }

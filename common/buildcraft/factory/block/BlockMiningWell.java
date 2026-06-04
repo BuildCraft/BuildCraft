@@ -6,8 +6,9 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
@@ -17,12 +18,12 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.factory.tile.TileMiningWell;
 
 public class BlockMiningWell extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockMiningWell(Material material, String id) {
+    public BlockMiningWell(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World worldIn, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World worldIn, BlockState state) {
         return new TileMiningWell();
     }
 }

@@ -3,150 +3,73 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): BlockHeatExchange multiblock connection logic deferred
 package buildcraft.factory.block;
 
-import java.util.List;
 import java.util.Locale;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.Property;
+import net.minecraft.state.StateManager;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.transport.pipe.ICustomPipeConnection;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.tile.TileHeatExchange;
 
 public class BlockHeatExchange extends BlockBCTile_Neptune implements ICustomPipeConnection, IBlockWithFacing {
 
-    public enum EnumExchangePart implements IStringSerializable {
-        START,
-        MIDDLE,
-        END;
+    public enum EnumExchangePart implements StringIdentifiable {
+        START, MIDDLE, END;
 
         private final String lowerCaseName = name().toLowerCase(Locale.ROOT);
 
         @Override
-        public String getName() {
+        public String asString() {
             return lowerCaseName;
         }
     }
 
-    public static final IProperty<EnumExchangePart> PROP_PART = PropertyEnum.create("part", EnumExchangePart.class);
-    public static final IProperty<Boolean> PROP_CONNECTED_Y = PropertyBool.create("connected_y");
-    public static final IProperty<Boolean> PROP_CONNECTED_LEFT = PropertyBool.create("connected_left");
-    public static final IProperty<Boolean> PROP_CONNECTED_RIGHT = PropertyBool.create("connected_right");
+    public static final Property<EnumExchangePart> PROP_PART = EnumProperty.of("part", EnumExchangePart.class);
+    public static final Property<Boolean> PROP_CONNECTED_Y = BooleanProperty.of("connected_y");
+    public static final Property<Boolean> PROP_CONNECTED_LEFT = BooleanProperty.of("connected_left");
+    public static final Property<Boolean> PROP_CONNECTED_RIGHT = BooleanProperty.of("connected_right");
 
-    public BlockHeatExchange(Material material, String id) {
-        super(material, id);
+    public BlockHeatExchange(AbstractBlock.Settings settings, String id) {
+        super(settings, id);
+        setDefaultState(getStateManager().getDefaultState()
+            .with(PROP_PART, EnumExchangePart.MIDDLE)
+            .with(PROP_CONNECTED_Y, false)
+            .with(PROP_CONNECTED_LEFT, false)
+            .with(PROP_CONNECTED_RIGHT, false));
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
-        super.addProperties(properties);
-        properties.add(PROP_PART);
-        properties.add(PROP_CONNECTED_Y);
-        properties.add(PROP_CONNECTED_LEFT);
-        properties.add(PROP_CONNECTED_RIGHT);
+    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
+        builder.add(PROP_PART, PROP_CONNECTED_Y, PROP_CONNECTED_LEFT, PROP_CONNECTED_RIGHT);
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileHeatExchange) {
-            TileHeatExchange exchange = (TileHeatExchange) tile;
-            EnumExchangePart part;
-            if (exchange.isStart()) {
-                part = EnumExchangePart.START;
-            } else if (exchange.isEnd()) {
-                part = EnumExchangePart.END;
-            } else {
-                part = EnumExchangePart.MIDDLE;
-            }
-            EnumFacing thisFacing = state.getValue(PROP_FACING);
-            state = state.withProperty(PROP_PART, part);
-            state = state.withProperty(PROP_CONNECTED_Y, false);
-
-            boolean connectLeft = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateY());
-            state = state.withProperty(PROP_CONNECTED_LEFT, connectLeft);
-
-            boolean connectRight = doesNeighbourConnect(world, pos, thisFacing, thisFacing.rotateYCCW());
-            state = state.withProperty(PROP_CONNECTED_RIGHT, connectRight);
-        }
-        state = state.withProperty(PROP_CONNECTED_Y, false);
-        return state;
-    }
-
-    private static boolean doesNeighbourConnect(IBlockAccess world, BlockPos pos, EnumFacing thisFacing,
-        EnumFacing dir) {
-        IBlockState neighbour = world.getBlockState(pos.offset(dir));
-        if (neighbour.getBlock() == BCFactoryBlocks.heatExchange) {
-            return neighbour.getValue(PROP_FACING) == thisFacing;
-        }
-        return false;
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new TileHeatExchange(null, pos, state);
     }
 
     @Override
-    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileHeatExchange) {
-            TileHeatExchange exchange = (TileHeatExchange) tile;
-            return exchange.rotate();
-        }
-        return false;
-    }
-
-    @Override
-    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileHeatExchange) {
-            TileHeatExchange exchange = (TileHeatExchange) tile;
-            return exchange.rotate() ? EnumActionResult.PASS : EnumActionResult.FAIL;
-        }
-        return EnumActionResult.FAIL;
-    }
-
-    @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        return new TileHeatExchange();
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
-    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+    public float getExtension(World world, BlockPos pos, Direction face, BlockState state) {
         return 0;
     }
 }

@@ -12,18 +12,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumPowerStage;
@@ -49,7 +49,7 @@ import buildcraft.core.tile.TileMarkerVolume;
 public class BCCoreModels {
     private static final NodeVariableDouble ENGINE_PROGRESS;
     private static final NodeVariableObject<EnumPowerStage> ENGINE_STAGE;
-    private static final NodeVariableObject<EnumFacing> ENGINE_FACING;
+    private static final NodeVariableObject<Direction> ENGINE_FACING;
 
     private static final ModelHolderVariable ENGINE_REDSTONE;
     private static final ModelHolderVariable ENGINE_CREATIVE;
@@ -58,7 +58,7 @@ public class BCCoreModels {
         FunctionContext fnCtx = new FunctionContext(ExpressionCompat.ENUM_POWER_STAGE, DefaultContexts.createWithAll());
         ENGINE_PROGRESS = fnCtx.putVariableDouble("progress");
         ENGINE_STAGE = fnCtx.putVariableObject("stage", EnumPowerStage.class);
-        ENGINE_FACING = fnCtx.putVariableObject("direction", EnumFacing.class);
+        ENGINE_FACING = fnCtx.putVariableObject("direction", Direction.class);
 
         ENGINE_REDSTONE = new ModelHolderVariable(
             "buildcraftcore:models/block/engine_redstone.json",
@@ -71,11 +71,11 @@ public class BCCoreModels {
     }
 
     public static void fmlPreInit() {
-        MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(BCCoreModels.class);
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
+    @Environment(EnvType.CLIENT)
     public static void onModelRegistry(ModelRegistryEvent event) {
         if (BCCoreBlocks.engine != null) {
 
@@ -88,17 +88,17 @@ public class BCCoreModels {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineCreative.class, RenderEngineCreative.INSTANCE);
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public static void onModelBake(ModelBakeEvent event) {
         ENGINE_PROGRESS.value = 0.2;
         ENGINE_STAGE.value = EnumPowerStage.BLUE;
-        ENGINE_FACING.value = EnumFacing.UP;
+        ENGINE_FACING.value = Direction.UP;
         ModelVariableData varData = new ModelVariableData();
         varData.setNodes(ENGINE_REDSTONE.createTickableNodes());
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelResourceLocation(EnumEngineType.WOOD.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier(EnumEngineType.WOOD.getItemModelLocation()), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_REDSTONE.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)
@@ -112,7 +112,7 @@ public class BCCoreModels {
         varData.tick();
         varData.refresh();
         event.getModelRegistry().putObject(
-            new ModelResourceLocation(EnumEngineType.CREATIVE.getItemModelLocation(), "inventory"),
+            new ModelIdentifier(new net.minecraft.util.Identifier(EnumEngineType.CREATIVE.getItemModelLocation()), "inventory"),
             new ModelItemSimple(
                 Arrays.stream(ENGINE_CREATIVE.getCutoutQuads())
                     .map(MutableQuad::toBakedItem)

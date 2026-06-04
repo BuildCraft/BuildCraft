@@ -1,113 +1,57 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ */
+// STUB(R.Chen): TextRenderer subclassing not supported in Fabric 1.20.1 — delegate via IFontRenderer
 package buildcraft.lib.client.render.font;
 
+import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-public class DelegateFontRenderer extends FontRenderer {
-    public final FontRenderer delegate;
+import net.minecraft.client.font.TextRenderer;
 
-    public DelegateFontRenderer(FontRenderer delegate) {
-        super(Minecraft.getMinecraft().gameSettings, new ResourceLocation("textures/font/ascii.png"),
-            Minecraft.getMinecraft().renderEngine, delegate.getUnicodeFlag());
+import buildcraft.lib.client.guide.font.IFontRenderer;
+
+@Environment(EnvType.CLIENT)
+public class DelegateFontRenderer implements IFontRenderer {
+
+    public final TextRenderer delegate;
+
+    public DelegateFontRenderer(TextRenderer delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public int hashCode() {
-        return delegate.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return delegate.equals(obj);
-    }
-
-    @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
-        delegate.onResourceManagerReload(resourceManager);
-    }
-
-    @Override
-    public String toString() {
-        return delegate.toString();
-    }
-
-    @Override
-    public final int drawStringWithShadow(String text, float x, float y, int color) {
-        return drawString(text, x, y, color, true);
-    }
-
-    @Override
-    public final int drawString(String text, int x, int y, int color) {
-        return drawString(text, x, y, color, false);
-    }
-
-    @Override
-    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
-        return delegate.drawString(text, x, y, color, dropShadow);
-    }
-
-    @Override
     public int getStringWidth(String text) {
-        return delegate.getStringWidth(text);
+        return delegate.getWidth(text);
     }
 
     @Override
-    public int getCharWidth(char character) {
-        return delegate.getCharWidth(character);
+    public int getFontHeight(String text) {
+        return 9;
     }
 
     @Override
-    public String trimStringToWidth(String text, int width) {
-        return delegate.trimStringToWidth(text, width);
+    public int getMaxFontHeight() {
+        return 9;
+    }
+
+    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+        // STUB
+        return (int) x;
     }
 
     @Override
-    public String trimStringToWidth(String text, int width, boolean reverse) {
-        return delegate.trimStringToWidth(text, width, reverse);
+    public int drawString(String text, int x, int y, int colour, boolean shadow, boolean centered, float scale) {
+        return drawString(text, (float) x, (float) y, colour, shadow);
     }
 
     @Override
-    public void drawSplitString(String str, int x, int y, int wrapWidth, int textColor) {
-        delegate.drawSplitString(str, x, y, wrapWidth, textColor);
-    }
-
-    @Override
-    public int getWordWrappedHeight(String str, int maxLength) {
-        return delegate.getWordWrappedHeight(str, maxLength);
-    }
-
-    @Override
-    public void setUnicodeFlag(boolean unicodeFlagIn) {
-        delegate.setUnicodeFlag(unicodeFlagIn);
-    }
-
-    @Override
-    public boolean getUnicodeFlag() {
-        return delegate.getUnicodeFlag();
-    }
-
-    @Override
-    public void setBidiFlag(boolean bidiFlagIn) {
-        delegate.setBidiFlag(bidiFlagIn);
-    }
-
-    @Override
-    public List<String> listFormattedStringToWidth(String str, int wrapWidth) {
-        return delegate.listFormattedStringToWidth(str, wrapWidth);
-    }
-
-    @Override
-    public boolean getBidiFlag() {
-        return delegate.getBidiFlag();
-    }
-
-    @Override
-    public int getColorCode(char character) {
-        return delegate.getColorCode(character);
+    public List<String> wrapString(String text, int maxWidth, boolean shadow, float scale) {
+        return Collections.emptyList();
     }
 }

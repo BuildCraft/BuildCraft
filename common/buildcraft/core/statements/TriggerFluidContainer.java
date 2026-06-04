@@ -8,15 +8,15 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -43,7 +43,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public SpriteHolder getSprite() {
         return BCCoreSprites.TRIGGER_FLUID.get(state);
     }
@@ -59,11 +59,11 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        IFluidHandler handler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
+    public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
+        IFluidHandler handler = CapUtil.getCapability(tile, CapUtil.CAP_FLUIDS, side.getOpposite());
 
         if (handler != null) {
-            FluidStack searchedFluid = null;
+            FluidStackBC searchedFluid = null;
 
             if (parameters != null && parameters.length >= 1 && parameters[0] != null && !parameters[0].getItemStack().isEmpty()) {
                 searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
@@ -80,12 +80,12 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
             switch (state) {
                 case EMPTY:
-                    FluidStack drained = handler.drain(1, false);
+                    FluidStackBC drained = handler.drain(1, false);
                     return drained == null || drained.amount <= 0;
                 case CONTAINS:
                     for (IFluidTankProperties c : liquids) {
                         if (c == null) continue;
-                        FluidStack fluid = c.getContents();
+                        FluidStackBC fluid = c.getContents();
                         if (fluid != null && fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(fluid))) {
                             return true;
                         }
@@ -95,7 +95,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                     if (searchedFluid == null) {
                         for (IFluidTankProperties c : liquids) {
                             if (c == null) continue;
-                            FluidStack fluid = c.getContents();
+                            FluidStackBC fluid = c.getContents();
                             if ((fluid == null || fluid.amount < c.getCapacity())) {
                                 return true;
                             }
@@ -107,7 +107,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                     if (searchedFluid == null) {
                         for (IFluidTankProperties c : liquids) {
                             if (c == null) continue;
-                            FluidStack fluid = c.getContents();
+                            FluidStackBC fluid = c.getContents();
                             if ((fluid == null || fluid.amount < c.getCapacity())) {
                                 return false;
                             }

@@ -7,7 +7,7 @@
 package buildcraft.lib.client.guide.parts;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
@@ -83,8 +83,8 @@ public abstract class GuidePart {
 
     /** Renders a raw line at the position, lowering it appropriately */
     protected void renderTextLine(String text, int x, int y, int colour) {
-        fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour);
-        GlStateManager.color(1, 1, 1);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(text, x, y + 8 - (fontRenderer.getFontHeight(text) / 2), colour)
+        RenderSystem.setShaderColor(1, 1, 1, 1.0F);
     }
 
     /** @param current The current position to render from
@@ -149,7 +149,7 @@ public abstract class GuidePart {
             boolean render = current.page == pageRenderIndex;
 
             int _y = y + current.pixel;
-            int _w = fontRenderer.getStringWidth(text);
+            int _w = fontRenderer.getWidth(text);
             GuiRectangle rect = new GuiRectangle(_x, _y - 2, _w, neededSpace + 3);
             wasHovered |= rect.contains(gui.mouse);
             if (render) {
@@ -160,7 +160,7 @@ public abstract class GuidePart {
                     }
                     renderTooltip();
                 }
-                fontRenderer.drawString(text, _x, _y, 0);
+                // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(text, _x, _y, 0)
             }
 
             next = strings.length == 1 ? null : strings[1];

@@ -1,11 +1,11 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * BuildCraft is distributed under the terms of the MinecraftClient Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.snapshot.pattern;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.filler.IFilledTemplate;
 import buildcraft.api.filler.IFillerPatternShape;
@@ -23,7 +23,7 @@ public class PatternStairs extends Pattern implements IFillerPatternShape {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public SpriteHolder getSprite() {
         return BCBuildersSprites.FILLER_STAIRS;
     }
@@ -61,10 +61,10 @@ public class PatternStairs extends Pattern implements IFillerPatternShape {
         while (y != yEnd) {
             filledTemplate.setAreaXZ(fx, tx, y, fz, tz, true);
 
-            fx += xzDir.dir.getFrontOffsetX() > 0 ? 1 : 0;
-            fz += xzDir.dir.getFrontOffsetZ() > 0 ? 1 : 0;
-            tx += xzDir.dir.getFrontOffsetX() < 0 ? -1 : 0;
-            tz += xzDir.dir.getFrontOffsetZ() < 0 ? -1 : 0;
+            fx += xzDir.dir.getOffsetX() > 0 ? 1 : 0;
+            fz += xzDir.dir.getOffsetZ() > 0 ? 1 : 0;
+            tx += xzDir.dir.getOffsetX() < 0 ? -1 : 0;
+            tz += xzDir.dir.getOffsetZ() < 0 ? -1 : 0;
             y += yStep;
 
             if (fx > tx) break;

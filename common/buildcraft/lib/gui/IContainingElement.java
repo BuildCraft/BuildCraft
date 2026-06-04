@@ -1,88 +1,38 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.gui;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.client.gui.DrawContext;
 
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.help.ElementHelpInfo.HelpPosition;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
+@Environment(EnvType.CLIENT)
 public interface IContainingElement extends IInteractionElement {
-    /** @return The backing list of the contained elements. Must be modifiable, and changes must be reflected by future
-     *         calls. */
     List<IGuiElement> getChildElements();
-
-    default IGuiPosition getChildElementPosition() {
-        return this;
+    default IGuiPosition getChildElementPosition() { return this; }
+    default void calculateSizes() {}
+    @Override default void drawBackground(DrawContext context, float partialTicks) {
+        for (IGuiElement e : getChildElements()) e.drawBackground(context, partialTicks);
     }
-
-    /** Called after {@link #getChildElements()} is added to, possibly last (so it might not be called after every
-     * addition). */
-    default void calculateSizes() {
-
+    @Override default void drawForeground(DrawContext context, float partialTicks) {
+        for (IGuiElement e : getChildElements()) e.drawForeground(context, partialTicks);
     }
-
-    @Override
-    default void addToolTips(List<ToolTip> tooltips) {
-        for (IGuiElement elem : getChildElements()) {
-            elem.addToolTips(tooltips);
-        }
+    @Override default void addToolTips(List<ToolTip> tooltips) {
+        for (IGuiElement e : getChildElements()) e.addToolTips(tooltips);
     }
-
-    @Override
-    default void addHelpElements(List<HelpPosition> elements) {
-        for (IGuiElement elem : getChildElements()) {
-            elem.addHelpElements(elements);
-        }
-    }
-
-    @Override
-    default List<IGuiElement> getThisAndChildrenAt(double x, double y) {
-        List<IGuiElement> list = new ArrayList<>();
-        if (contains(x, y)) {
-            list.add(this);
-            for (IGuiElement elem : getChildElements()) {
-                list.addAll(elem.getThisAndChildrenAt(x, y));
-            }
-        }
-        return list;
-    }
-
-    @Override
-    default void onMouseClicked(int button) {
-        for (IGuiElement elem : getChildElements()) {
-            if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseClicked(button);
-            }
-        }
-    }
-
-    @Override
-    default void onMouseReleased(int button) {
-        for (IGuiElement elem : getChildElements()) {
-            if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseReleased(button);
-            }
-        }
-    }
-
-    @Override
-    default void onMouseDragged(int button, long ticksSinceClick) {
-        for (IGuiElement elem : getChildElements()) {
-            if (elem instanceof IInteractionElement) {
-                ((IInteractionElement) elem).onMouseDragged(button, ticksSinceClick);
-            }
-        }
-    }
-
-    @Override
-    default boolean onKeyPress(char typedChar, int keyCode) {
-        boolean action = false;
-        for (IGuiElement elem : getChildElements()) {
-            if (elem instanceof IInteractionElement) {
-                action |= ((IInteractionElement) elem).onKeyPress(typedChar, keyCode);
-            }
-        }
-        return action;
+    @Override default void addHelpElements(List<HelpPosition> elements) {
+        for (IGuiElement e : getChildElements()) e.addHelpElements(elements);
     }
 }

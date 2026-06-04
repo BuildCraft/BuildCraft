@@ -6,13 +6,13 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
@@ -22,7 +22,7 @@ import buildcraft.lib.misc.SpriteUtil;
  * as well.<br>
  * For fluid rendering look at {@link FluidRenderer} - it deals with fluid types so that you don't have to manage the
  * sprite collection. */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class CuboidRenderer {
     // ##############
     //
@@ -30,7 +30,7 @@ public class CuboidRenderer {
     //
     // ##############
 
-    public static void renderCuboid(TextureAtlasSprite sprite, Vec3d min, Vec3d max, Vec3d offset, BufferBuilder bb, boolean[] sideRender) {
+    public static void renderCuboid(Sprite sprite, Vec3d min, Vec3d max, Vec3d offset, BufferBuilder bb, boolean[] sideRender) {
         if (sprite == null) {
             sprite = SpriteUtil.missingSprite();
         }
@@ -82,14 +82,14 @@ public class CuboidRenderer {
         // TODO: Enable/disable inversion for the correct faces
         ctx.invertU = false;
         ctx.invertV = false;
-        if (sideRender[EnumFacing.UP.ordinal()]) {
+        if (sideRender[Direction.UP.ordinal()]) {
             vertex(ctx, xs, yb, zb);
             vertex(ctx, xb, yb, zb);
             vertex(ctx, xb, yb, zs);
             vertex(ctx, xs, yb, zs);
         }
 
-        if (sideRender[EnumFacing.DOWN.ordinal()]) {
+        if (sideRender[Direction.DOWN.ordinal()]) {
             vertex(ctx, xs, ys, zs);
             vertex(ctx, xb, ys, zs);
             vertex(ctx, xb, ys, zb);
@@ -97,14 +97,14 @@ public class CuboidRenderer {
         }
 
         ctx.texmap = TexMap.ZY;
-        if (sideRender[EnumFacing.WEST.ordinal()]) {
+        if (sideRender[Direction.WEST.ordinal()]) {
             vertex(ctx, xs, ys, zs);
             vertex(ctx, xs, ys, zb);
             vertex(ctx, xs, yb, zb);
             vertex(ctx, xs, yb, zs);
         }
 
-        if (sideRender[EnumFacing.EAST.ordinal()]) {
+        if (sideRender[Direction.EAST.ordinal()]) {
             vertex(ctx, xb, yb, zs);
             vertex(ctx, xb, yb, zb);
             vertex(ctx, xb, ys, zb);
@@ -112,14 +112,14 @@ public class CuboidRenderer {
         }
 
         ctx.texmap = TexMap.XY;
-        if (sideRender[EnumFacing.NORTH.ordinal()]) {
+        if (sideRender[Direction.NORTH.ordinal()]) {
             vertex(ctx, xs, yb, zs);
             vertex(ctx, xb, yb, zs);
             vertex(ctx, xb, ys, zs);
             vertex(ctx, xs, ys, zs);
         }
 
-        if (sideRender[EnumFacing.SOUTH.ordinal()]) {
+        if (sideRender[Direction.SOUTH.ordinal()]) {
             vertex(ctx, xs, ys, zb);
             vertex(ctx, xb, ys, zb);
             vertex(ctx, xb, yb, zb);
@@ -130,7 +130,7 @@ public class CuboidRenderer {
     public static class CuboidRenderContext {
         public final MutableVertex vertex = new MutableVertex();
         BufferBuilder buffer;
-        TextureAtlasSprite sprite;
+        Sprite sprite;
         TexMap texmap;
         boolean invertU, invertV;
         public double xTexDiff, yTexDiff, zTexDiff;
@@ -181,7 +181,7 @@ public class CuboidRenderer {
             if (ctx.invertV) {
                 realv = 1 - realv;
             }
-            ctx.vertex.texf(ctx.sprite.getInterpolatedU(realu * 16), ctx.sprite.getInterpolatedV(realv * 16));
+            ctx.vertex.texf(ctx.sprite.getFrameU(realu * 16), ctx.sprite.getFrameV(realv * 16));
         }
     }
 }

@@ -2,26 +2,29 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.behaviour;
 
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeBehaviour;
 import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventItem;
+import net.minecraft.sound.BlockSoundGroup;
 
 public class PipeBehaviourVoid extends PipeBehaviour {
     public PipeBehaviourVoid(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourVoid(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourVoid(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
     }
 
@@ -42,8 +45,8 @@ public class PipeBehaviourVoid extends PipeBehaviour {
         /*
         World world = move.holder.getPipeWorld();
         BlockPos pos = move.holder.getPipePos();
-        if (removed > 0 && (world.getTotalWorldTime() + pos.toLong()) % 23 == 0) {
-            SoundType soundType = SoundType.SLIME;
+        if (removed > 0 && (world.getTime() + pos.toLong()) % 23 == 0) {
+            BlockSoundGroup soundType = BlockSoundGroup.SLIME_BLOCK;
             final SoundEvent soundEvent;
             Fluid f = move.fluid.getFluid();
             if (f == FluidRegistry.LAVA) {

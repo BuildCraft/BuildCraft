@@ -4,12 +4,12 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.HashMap;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.util.JsonUtils;
 
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.InternalCompiler;
@@ -44,10 +44,10 @@ public class JsonVariableObject {
             if (value.isJsonObject()) {
                 JsonObject objValue = value.getAsJsonObject();
                 value = objValue.get("value");
-                type = JsonUtils.getString(objValue, "type");
-                getter = JsonUtils.getString(objValue, "getter");
+                type = objValue.get("type").getAsString();
+                getter = objValue.get("getter").getAsString();
                 if (objValue.has("rounder")) {
-                    rounder = JsonUtils.getString(objValue, "rounder");
+                    rounder = objValue.get("rounder").getAsString();
                 }
             }
 

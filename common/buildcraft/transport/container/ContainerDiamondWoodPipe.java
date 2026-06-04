@@ -2,20 +2,18 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.container;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.ContainerPipe;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.net.PacketBufferBC;
@@ -25,11 +23,12 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
 
 public class ContainerDiamondWoodPipe extends ContainerPipe {
+
     private final PipeBehaviourWoodDiamond behaviour;
     private final ItemHandlerSimple filterInv;
 
-    public ContainerDiamondWoodPipe(EntityPlayer player, PipeBehaviourWoodDiamond behaviour) {
-        super(player, behaviour.pipe.getHolder());
+    public ContainerDiamondWoodPipe(PlayerEntity player, int syncId, PipeBehaviourWoodDiamond behaviour) {
+        super(player, syncId, behaviour.pipe.getHolder());
         this.behaviour = behaviour;
         this.filterInv = behaviour.filters;
         behaviour.pipe.getHolder().onPlayerOpen(player);
@@ -37,13 +36,13 @@ public class ContainerDiamondWoodPipe extends ContainerPipe {
         addFullPlayerInventory(79);
 
         for (int i = 0; i < 9; i++) {
-            addSlotToContainer(new SlotPhantom(filterInv, i, 8 + i * 18, 18));
+            addSlot(new SlotPhantom(filterInv, i, 8 + i * 18, 18));
         }
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
+    public void onClosed(PlayerEntity player) {
+        super.onClosed(player);
         behaviour.pipe.getHolder().onPlayerClose(player);
     }
 
@@ -52,9 +51,9 @@ public class ContainerDiamondWoodPipe extends ContainerPipe {
     }
 
     @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
-        super.readMessage(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+    public void readMessage(int id, PacketBufferBC buffer, boolean isClient, Object ctx) throws IOException {
+        super.readMessage(id, buffer, isClient, ctx);
+        if (!isClient) {
             behaviour.filterMode = buffer.readEnumValue(FilterMode.class);
             behaviour.pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
         }

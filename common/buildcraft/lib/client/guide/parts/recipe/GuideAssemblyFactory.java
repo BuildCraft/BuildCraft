@@ -7,6 +7,8 @@
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.Arrays;
+import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import net.minecraft.item.ItemStack;
 
@@ -41,21 +43,21 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     }
 
     // public static GuideAssemblyFactory create(@Nonnull ItemStack stack) {
-    // for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-    // if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
+    // for (net.minecraft.recipe.CraftingRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
+    // if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY)), false)) {
     // GuideAssemblyFactory val = getFactory(recipe);
     // if (val != null) {
     // return val;
     // } else {
     // BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown " + recipe.getClass() + " for
-    // " + stack.getDisplayName());
+    // " + stack.getName().getString());
     // }
     // }
     // }
     // return null;
     // }
 
-    // public static GuideAssemblyFactory getFactory(IRecipe recipe) {
+    // public static GuideAssemblyFactory getFactory(net.minecraft.recipe.CraftingRecipe recipe) {
     // GuideAssemblyFactory val = null;
     // if (recipe instanceof ShapedRecipes) {
     // ShapedRecipes shaped = (ShapedRecipes) recipe;
@@ -66,7 +68,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // dimInput[x][y] = input[x + y * dimInput.length].copy();
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof ShapedOreRecipe) {
     // Object[] input = ((ShapedOreRecipe) recipe).getInput();
     // ItemStack[][] dimInput = getStackSizeArray(recipe);
@@ -75,7 +77,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // dimInput[x][y] = oreConvert(input[x + y * dimInput.length]);
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof ShapelessOreRecipe) {
     // List<Object> input = ((ShapelessOreRecipe) recipe).getInput();
     // ItemStack[][] dimInput = getStackSizeArray(recipe);
@@ -87,7 +89,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // }
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof ShapelessRecipes) {
     // List<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
     // ItemStack[][] dimInput = getStackSizeArray(recipe);
@@ -99,7 +101,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // }
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof IRecipeViewable) {
     // // TODO: Implement IRecipeViewable usage
     // } else {
@@ -108,7 +110,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // return val;
     // }
 
-    // private static ItemStack[][] getStackSizeArray(IRecipe recipe) {
+    // private static ItemStack[][] getStackSizeArray(net.minecraft.recipe.CraftingRecipe recipe) {
     // if (recipe instanceof ShapedRecipes) {
     // return new ItemStack[((ShapedRecipes) recipe).recipeWidth][((ShapedRecipes) recipe).recipeHeight];
     // } else if (recipe instanceof ShapedOreRecipe) {
@@ -135,7 +137,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // return ((ItemStack) object).copy();
     // }
     // if (object instanceof String) {
-    // NonNullList<ItemStack> stacks = OreDictionary.getOres((String) object);
+    // DefaultedList<ItemStack> stacks = OreDictionaryStub.getOres((String) object);
     // // It will be sorted out below
     // object = stacks;
     // }
@@ -151,14 +153,14 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // if (first instanceof ItemStack) {
     // // Technically a safe cast as the first one WAS an Item Stack and we never add to the list
     // @SuppressWarnings("unchecked")
-    // NonNullList<ItemStack> stacks = (NonNullList<ItemStack>) list;
+    // DefaultedList<ItemStack> stacks = (DefaultedList<ItemStack>) list;
     // if (stacks.size() == 0) {
     // return StackUtil.EMPTY;
     // }
     // ItemStack best = stacks.get(0);
     // for (ItemStack stack : stacks) {
     // // The lower the ID of an item, the closer it is to minecraft. Hmmm.
-    // if (Item.getIdFromItem(stack.getItem()) < Item.getIdFromItem(best.getItem())) {
+    // if (Item.getRawId(stack.getItem()) < Item.getRawId(best.getItem())) {
     // best = stack;
     // }
     // }

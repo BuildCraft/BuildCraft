@@ -26,15 +26,13 @@ public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
     }
 
     public static int getOilBiomeId() {
-        return Biome.getIdForBiome(BiomeOilDesert.INSTANCE);
+        // STUB(R.Chen): Forge biome-id worldgen has no Fabric 1.20.1 equivalent — disabled, Phase 10
+        return -1;
     }
 
     @Override
     protected boolean canReplaceBiome(int biomeId) {
-        Biome biome = Biome.getBiomeForId(biomeId);
-        if (biome == null) {
-            return false;
-        }
-        return BiomeDictionary.getTypes(biome).containsAll(REQUIRED_TYPES);
+        // STUB(R.Chen): Forge BiomeDictionary worldgen removed — Phase 10
+        return false;
     }
 }

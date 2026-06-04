@@ -8,12 +8,12 @@ package buildcraft.lib.client.guide.parts;
 
 import java.io.IOException;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.render.ISprite;
@@ -32,17 +32,17 @@ public class GuideImageFactory implements GuidePartFactory {
     }
 
     public GuideImageFactory(String location, int width, int height) {
-        TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
-        TextureAtlasSprite stitched = textureMap.getAtlasSprite(location);
+        net.minecraft.client.renderer.texture.TextureMap textureMap = new net.minecraft.client.renderer.texture.TextureMap(buildcraft.lib.compat.McTextureCompat.getBlockAtlas());
+        Sprite stitched = textureMap.getAtlasSprite(location);
         if (stitched != textureMap.getMissingSprite()) {
             this.sprite = new SpriteAtlas(stitched);
-            this.srcWidth = stitched.getIconWidth();
-            this.srcHeight = stitched.getIconHeight();
+            this.srcWidth = stitched.getContents().getWidth();
+            this.srcHeight = stitched.getContents().getHeight();
         } else {
             ISprite s;
             int sw, sh;
-            ResourceLocation resLoc = new ResourceLocation(location);
-            try (IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(resLoc)) {
+            Identifier resLoc = new Identifier(location);
+            try (IResource resource = MinecraftClient.getInstance().getResourceManager().getResource(resLoc)) {
                 PngSizeInfo size = PngSizeInfo.makeFromResource(resource);
                 s = new SpriteRaw(resLoc, 0, 0, 1, 1);
                 sw = size.pngWidth;
@@ -51,8 +51,8 @@ public class GuideImageFactory implements GuidePartFactory {
                 BCLog.logger.warn("[lib.guide.loader.image] Couldn't load image '" + resLoc + "' because " + io.getMessage());
                 stitched = textureMap.getMissingSprite();
                 s = new SpriteAtlas(stitched);
-                sw = stitched.getIconWidth();
-                sh = stitched.getIconHeight();
+                sw = stitched.getContents().getWidth();
+                sh = stitched.getContents().getHeight();
             }
             this.sprite = s;
             this.srcWidth = sw;

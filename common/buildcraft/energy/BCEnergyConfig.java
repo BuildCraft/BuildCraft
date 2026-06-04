@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -51,12 +49,12 @@ public class BCEnergyConfig {
     public static double mediumOilGenProb;
     public static double largeOilGenProb;
 
-    public static final TIntSet excludedDimensions = new TIntHashSet();
+    public static final Set<Integer> excludedDimensions = new HashSet<Integer>();
     /** If false then {@link #excludedDimensions} should be treated as a whitelist rather than a blacklist. */
     public static boolean excludedDimensionsIsBlackList;
-    public static final Set<ResourceLocation> excessiveBiomes = new HashSet<>();
-    public static final Set<ResourceLocation> surfaceDepositBiomes = new HashSet<>();
-    public static final Set<ResourceLocation> excludedBiomes = new HashSet<>();
+    public static final Set<Identifier> excessiveBiomes = new HashSet<>();
+    public static final Set<Identifier> surfaceDepositBiomes = new HashSet<>();
+    public static final Set<Identifier> excludedBiomes = new HashSet<>();
     /** If false then {@link #excludedBiomes} should be treated as a whitelist rather than a blacklist. */
     public static boolean excludedBiomesIsBlackList;
     public static SpecialEventType christmasEventStatus = SpecialEventType.DAY_ONLY;
@@ -187,29 +185,29 @@ public class BCEnergyConfig {
         // boolean hasKey(String category, String key)
         // boolean moveProperty(String oldCategory, String propName, String newCategory);
         // boolean renameProperty(String category, String oldPropName, String newPropName)
-        if (BCCoreConfig.config.hasKey("worldgen", "enableOilGen")) {
+        if (BCCoreConfig.config.contains("worldgen", "enableOilGen")) {
             BCCoreConfig.config.moveProperty("worldgen", "enableOilGen", "worldgen.oil");
             BCCoreConfig.config.renameProperty("worldgen.oil", "enableOilGen", "enable");
         }
-        if (BCCoreConfig.config.hasKey("worldgen", "oilWellGenerationRate")) {
+        if (BCCoreConfig.config.contains("worldgen", "oilWellGenerationRate")) {
             BCCoreConfig.config.moveProperty("worldgen", "oilWellGenerationRate", "worldgen.oil");
             BCCoreConfig.config.renameProperty("worldgen.oil", "oilWellGenerationRate", "generationRate");
         }
-        if (BCCoreConfig.config.hasKey("worldgen", "enableOilSpouts")) {
+        if (BCCoreConfig.config.contains("worldgen", "enableOilSpouts")) {
             BCCoreConfig.config.moveProperty("worldgen", "enableOilSpouts", "worldgen.oil.spouts");
             BCCoreConfig.config.renameProperty("worldgen.oil.spouts", "enableOilSpouts", "enable");
         }
 
-        if (BCCoreConfig.config.hasKey("worldgen", "excessiveBiomes")) {
+        if (BCCoreConfig.config.contains("worldgen", "excessiveBiomes")) {
             BCCoreConfig.config.moveProperty("worldgen", "excessiveBiomes", "worldgen.oil");
         }
-        if (BCCoreConfig.config.hasKey("worldgen", "surfaceDepositBiomes")) {
+        if (BCCoreConfig.config.contains("worldgen", "surfaceDepositBiomes")) {
             BCCoreConfig.config.moveProperty("worldgen", "surfaceDepositBiomes", "worldgen.oil");
         }
-        if (BCCoreConfig.config.hasKey("worldgen", "excludedBiomes")) {
+        if (BCCoreConfig.config.contains("worldgen", "excludedBiomes")) {
             BCCoreConfig.config.moveProperty("worldgen", "excludedBiomes", "worldgen.oil");
         }
-        if (BCCoreConfig.config.hasKey("worldgen", "excludedDimensions")) {
+        if (BCCoreConfig.config.contains("worldgen", "excludedDimensions")) {
             BCCoreConfig.config.moveProperty("worldgen", "excludedDimensions", "worldgen.oil");
         }
 
@@ -233,7 +231,7 @@ public class BCEnergyConfig {
                 enableOilDesertBiome = propEnableOilDesertBiome.getBoolean();
 
                 enableOilGeneration = propEnableOilGeneration.getBoolean();
-                oilWellGenerationRate = propOilWellGenerationRate.getDouble();
+                oilWellGenerationRate = propOilWellGenerationRate.doubleValue();
                 enableOilSpouts = propEnableOilSpouts.getBoolean();
                 enableOilBurn = propEnableOilBurn.getBoolean();
                 oilIsSticky = propOilIsSticky.getBoolean();
@@ -245,9 +243,9 @@ public class BCEnergyConfig {
                 largeSpoutMinHeight = propLargeSpoutMinHeight.getInt();
                 largeSpoutMaxHeight = propLargeSpoutMaxHeight.getInt();
 
-                smallOilGenProb = propSmallOilGenProb.getDouble() / 100;
-                mediumOilGenProb = propMediumOilGenProb.getDouble() / 100;
-                largeOilGenProb = propLargeOilGenProb.getDouble() / 100;
+                smallOilGenProb = propSmallOilGenProb.doubleValue() / 100;
+                mediumOilGenProb = propMediumOilGenProb.doubleValue() / 100;
+                largeOilGenProb = propLargeOilGenProb.doubleValue() / 100;
 
                 christmasEventStatus = ConfigUtil.parseEnumForConfig(propChristmasEventType, SpecialEventType.DAY_ONLY);
             } else {
@@ -256,17 +254,17 @@ public class BCEnergyConfig {
         }
     }
 
-    private static void addBiomeNames(Property prop, Set<ResourceLocation> set) {
+    private static void addBiomeNames(Property prop, Set<Identifier> set) {
         set.clear();
         for (String s : prop.getStringList()) {
-            set.add(new ResourceLocation(s));
+            set.add(new Identifier(s));
         }
     }
 
     /** Called in post-init, after all biomes should have been registered. In 1.12 this should be called after the
      * registry event for biomes has been fired. */
     public static void validateBiomeNames() {
-        Set<ResourceLocation> invalids = new HashSet<>();
+        Set<Identifier> invalids = new HashSet<>();
         addInvalidBiomeNames(excessiveBiomes, invalids);
         addInvalidBiomeNames(excludedBiomes, invalids);
         addInvalidBiomeNames(surfaceDepositBiomes, invalids);
@@ -275,13 +273,13 @@ public class BCEnergyConfig {
             return;
         }
 
-        List<ResourceLocation> invalidList = new ArrayList<>();
+        List<Identifier> invalidList = new ArrayList<>();
         invalidList.addAll(invalids);
-        Collections.sort(invalidList, Comparator.comparing(ResourceLocation::toString));
+        Collections.sort(invalidList, Comparator.comparing(Identifier::toString));
 
-        List<ResourceLocation> allValid = new ArrayList<>();
+        List<Identifier> allValid = new ArrayList<>();
         allValid.addAll(ForgeRegistries.BIOMES.getKeys());
-        Collections.sort(allValid, Comparator.comparing(ResourceLocation::toString));
+        Collections.sort(allValid, Comparator.comparing(Identifier::toString));
 
         BCLog.logger.warn("****************************************************");
         BCLog.logger.warn("*");
@@ -297,14 +295,14 @@ public class BCEnergyConfig {
         BCLog.logger.warn("****************************************************");
     }
 
-    private static void printList(Level level, List<ResourceLocation> list) {
-        for (ResourceLocation location : list) {
+    private static void printList(Level level, List<Identifier> list) {
+        for (Identifier location : list) {
             BCLog.logger.log(level, "*    - " + location);
         }
     }
 
-    private static void addInvalidBiomeNames(Set<ResourceLocation> toTest, Set<ResourceLocation> invalidDest) {
-        for (ResourceLocation test : toTest) {
+    private static void addInvalidBiomeNames(Set<Identifier> toTest, Set<Identifier> invalidDest) {
+        for (Identifier test : toTest) {
             if (!ForgeRegistries.BIOMES.containsKey(test)) {
                 invalidDest.add(test);
             }

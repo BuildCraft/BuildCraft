@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.silicon.gate;
 
 import java.util.List;
@@ -6,7 +13,6 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatement;
 
 import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.statement.StatementContext;
 
 public class GateContext<T extends IStatement> implements StatementContext<T> {
@@ -46,7 +52,8 @@ public class GateContext<T extends IStatement> implements StatementContext<T> {
             if (part == EnumPipePart.CENTER) {
                 return 0;
             }
-            return ColourUtil.getColourForSide(part.face);
+            // STUB(R.Chen): ColourUtil.getColourForSide not in libLeaf — return 0 until ColourUtil is migrated.
+            return 0;
         }
     }
 }

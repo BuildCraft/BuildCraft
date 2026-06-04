@@ -12,12 +12,12 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -37,7 +37,7 @@ import buildcraft.lib.net.PacketBufferBC;
 public abstract class Snapshot {
     public Key key = new Key();
     public BlockPos size;
-    public EnumFacing facing;
+    public Direction facing;
     public BlockPos offset;
 
     public static Snapshot create(EnumSnapshotType type) {
@@ -114,14 +114,14 @@ public abstract class Snapshot {
         return getDataSize(size);
     }
 
-    public static NBTTagCompound writeToNBT(Snapshot snapshot) {
-        NBTTagCompound nbt = snapshot.serializeNBT();
-        nbt.setTag("type", NBTUtilBC.writeEnum(snapshot.getType()));
+    public static NbtCompound writeToNBT(Snapshot snapshot) {
+        NbtCompound nbt = snapshot.createNbt();
+        nbt.put("type", NBTUtilBC.writeEnum(snapshot.getType()));
         return nbt;
     }
 
-    public static Snapshot readFromNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        NBTBase tag = nbt.getTag("type");
+    public static Snapshot readFromNBT(NbtCompound nbt) throws InvalidInputDataException {
+        NbtElement tag = nbt.get("type");
         EnumSnapshotType type = NBTUtilBC.readEnum(tag, EnumSnapshotType.class);
         if (type == null) {
             throw new InvalidInputDataException("Unknown snapshot type " + tag);
@@ -131,20 +131,21 @@ public abstract class Snapshot {
         return snapshot;
     }
 
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("key", key.serializeNBT());
-        nbt.setTag("size", NBTUtil.createPosTag(size));
-        nbt.setTag("facing", NBTUtilBC.writeEnum(facing));
-        nbt.setTag("offset", NBTUtil.createPosTag(offset));
+    public NbtCompound createNbt() { return serializeNBT(); }
+    public NbtCompound serializeNBT() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.put("key", key.createNbt());
+        nbt.put("size", net.minecraft.nbt.NbtHelper.fromBlockPos(size));
+        nbt.put("facing", NBTUtilBC.writeEnum(facing));
+        nbt.put("offset", net.minecraft.nbt.NbtHelper.fromBlockPos(offset));
         return nbt;
     }
 
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
-        key = new Key(nbt.getCompoundTag("key"));
-        size = NBTUtil.getPosFromTag(nbt.getCompoundTag("size"));
-        facing = NBTUtilBC.readEnum(nbt.getTag("facing"), EnumFacing.class);
-        offset = NBTUtil.getPosFromTag(nbt.getCompoundTag("offset"));
+    public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
+        key = new Key(nbt.getCompound("key"));
+        size = net.minecraft.nbt.NbtHelper.toBlockPos(nbt.getCompound("size"));
+        facing = NBTUtilBC.readEnum(nbt.get("facing"), Direction.class);
+        offset = net.minecraft.nbt.NbtHelper.toBlockPos(nbt.getCompound("offset"));
     }
 
     abstract public Snapshot copy();
@@ -152,9 +153,9 @@ public abstract class Snapshot {
     abstract public EnumSnapshotType getType();
 
     public void computeKey() {
-        NBTTagCompound nbt = writeToNBT(this);
-        if (nbt.hasKey("key", Constants.NBT.TAG_COMPOUND)) {
-            nbt.removeTag("key");
+        NbtCompound nbt = writeToNBT(this);
+        if (nbt.contains("key", NbtElement.COMPOUND_TYPE)) {
+            nbt.remove("key");
         }
         key = new Key(key, HashUtil.computeHash(nbt));
     }
@@ -193,9 +194,9 @@ public abstract class Snapshot {
         }
 
         @SuppressWarnings("WeakerAccess")
-        public Key(NBTTagCompound nbt) {
+        public Key(NbtCompound nbt) {
             hash = nbt.getByteArray("hash");
-            header = nbt.hasKey("header") ? new Header(nbt.getCompoundTag("header")) : null;
+            header = nbt.contains("header") ? new Header(nbt.getCompound("header")) : null;
         }
 
         public Key(PacketBufferBC buffer) {
@@ -203,11 +204,12 @@ public abstract class Snapshot {
             header = buffer.readBoolean() ? new Header(buffer) : null;
         }
 
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setByteArray("hash", hash);
+        public NbtCompound createNbt() { return serializeNBT(); }
+        public NbtCompound serializeNBT() {
+            NbtCompound nbt = new NbtCompound();
+            nbt.putByteArray("hash", hash);
             if (header != null) {
-                nbt.setTag("header", header.serializeNBT());
+                nbt.put("header", header.createNbt());
             }
             return nbt;
         }
@@ -255,9 +257,9 @@ public abstract class Snapshot {
         }
 
         @SuppressWarnings("WeakerAccess")
-        public Header(NBTTagCompound nbt) {
-            key = new Key(nbt.getCompoundTag("key"));
-            owner = nbt.getUniqueId("owner");
+        public Header(NbtCompound nbt) {
+            key = new Key(nbt.getCompound("key"));
+            owner = nbt.getUuid("owner");
             created = new Date(nbt.getLong("created"));
             name = nbt.getString("name");
         }
@@ -265,29 +267,30 @@ public abstract class Snapshot {
         @SuppressWarnings("WeakerAccess")
         public Header(PacketBufferBC buffer) {
             key = new Key(buffer);
-            owner = buffer.readUniqueId();
+            owner = buffer.readUuid();
             created = new Date(buffer.readLong());
             name = buffer.readString();
         }
 
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setTag("key", key.serializeNBT());
-            nbt.setUniqueId("owner", owner);
-            nbt.setLong("created", created.getTime());
-            nbt.setString("name", name);
+        public NbtCompound createNbt() { return serializeNBT(); }
+        public NbtCompound serializeNBT() {
+            NbtCompound nbt = new NbtCompound();
+            nbt.put("key", key.createNbt());
+            nbt.putUuid("owner", owner);
+            nbt.putLong("created", created.getTime());
+            nbt.putString("name", name);
             return nbt;
         }
 
         public void writeToByteBuf(PacketBufferBC buffer) {
             key.writeToByteBuf(buffer);
-            buffer.writeUniqueId(owner);
+            buffer.writeUuid(owner);
             buffer.writeLong(created.getTime());
             buffer.writeString(name);
         }
 
-        public EntityPlayer getOwnerPlayer(World world) {
-            return world.getPlayerEntityByUUID(owner);
+        public PlayerEntity getOwnerPlayer(World world) {
+            return world.getPlayerByUuid(owner);
         }
 
         @Override
@@ -320,10 +323,10 @@ public abstract class Snapshot {
     public abstract class BuildingInfo {
         public final BlockPos basePos;
         public final BlockPos offsetPos;
-        public final Rotation rotation;
+        public final net.minecraft.util.BlockRotation rotation;
         public final Box box = new Box();
 
-        protected BuildingInfo(BlockPos basePos, Rotation rotation) {
+        protected BuildingInfo(BlockPos basePos, net.minecraft.util.BlockRotation rotation) {
             this.basePos = basePos;
             this.offsetPos = basePos.add(offset.rotate(rotation));
             this.rotation = rotation;

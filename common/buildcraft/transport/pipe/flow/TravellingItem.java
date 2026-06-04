@@ -2,32 +2,41 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.flow;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.VecUtil;
 
+// Ported to Fabric 1.20.1 by R.Chen:
+//   - DyeColor → DyeColor (byMetadata/getMetadata → byId/getId).
+//   - Direction → Direction (VALUES → values()).
+//   - NbtCompound → NbtCompound (getInteger/setX → getInt/putX, getCompoundTag → getCompound,
+//     getTag → get, setTag → put; serializeNBT → writeNbt; new ItemStack(nbt) → ItemStack.fromNbt).
+//   - new Vec3d(BlockPos.getX(), BlockPos.getY(), BlockPos.getZ()) → Vec3d.ofCenter / Vec3d.of; addVector → add.
 public class TravellingItem {
     // Client fields - public for rendering
     @Nonnull
     public final Supplier<ItemStack> clientItemLink;
     public int stackSize;
-    public EnumDyeColor colour;
+    public DyeColor colour;
 
     // Server fields
     /** The server itemstack */
@@ -36,35 +45,18 @@ public class TravellingItem {
     int id = 0;
     boolean toCenter;
     double speed = 0.05;
-    /** Absolute times (relative to world.getTotalWorldTime()) with when an item started to when it finishes. */
+    /** Absolute times (relative to world time) with when an item started to when it finishes. */
     long tickStarted, tickFinished;
     /** Relative times (from tickStarted) until an event needs to be fired or this item needs changing. */
     int timeToDest;
     /** If {@link #toCenter} is true then this represents the side that the item is coming from, otherwise this
      * represents the side that the item is going to. */
-    EnumFacing side;
+    Direction side;
     /** A set of all the faces that this item has tried to go and failed. */
-    EnumSet<EnumFacing> tried = EnumSet.noneOf(EnumFacing.class);
+    EnumSet<Direction> tried = EnumSet.noneOf(Direction.class);
     /** If true then events won't be fired for this, and this item won't be dropped by the pipe. However it will affect
      * pipe.isEmpty and related gate triggers. */
     boolean isPhantom = false;
-
-    // @formatter:off
-    /* States (server side):
-      
-      - TO_CENTER:
-        - tickStarted is the tick that the item entered the pipe (or bounced back)
-        - tickFinished is the tick that the item will reach the center 
-        - side is the side that the item came from
-        - timeToDest is equal to timeFinished - timeStarted
-      
-      - TO_EXIT:
-       - tickStarted is the tick that the item reached the center
-       - tickFinished is the tick that the item will reach the end of a pipe 
-       - side is the side that the item is going to 
-       - timeToDest is equal to timeFinished - timeStarted. 
-     */
-    // @formatter:on
 
     public TravellingItem(@Nonnull ItemStack stack) {
         this.stack = stack;
@@ -77,43 +69,43 @@ public class TravellingItem {
         this.stack = StackUtil.EMPTY;
     }
 
-    public TravellingItem(NBTTagCompound nbt, long tickNow) {
+    public TravellingItem(NbtCompound nbt, long tickNow) {
         clientItemLink = () -> ItemStack.EMPTY;
-        stack = new ItemStack(nbt.getCompoundTag("stack"));
+        stack = ItemStack.fromNbt(nbt.getCompound("stack"));
         int c = nbt.getByte("colour");
-        this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);
+        this.colour = c == 0 ? null : DyeColor.byId(c - 1);
         this.toCenter = nbt.getBoolean("toCenter");
         this.speed = nbt.getDouble("speed");
         if (speed < 0.001) {
             // Just to make sure that we don't have an invalid speed
             speed = 0.001;
         }
-        tickStarted = nbt.getInteger("tickStarted") + tickNow;
-        tickFinished = nbt.getInteger("tickFinished") + tickNow;
-        timeToDest = nbt.getInteger("timeToDest");
+        tickStarted = nbt.getInt("tickStarted") + tickNow;
+        tickFinished = nbt.getInt("tickFinished") + tickNow;
+        timeToDest = nbt.getInt("timeToDest");
 
-        side = NBTUtilBC.readEnum(nbt.getTag("side"), EnumFacing.class);
+        side = NBTUtilBC.readEnum(nbt.get("side"), Direction.class);
         if (side == null || timeToDest == 0) {
             // Older 8.0.x. version
             toCenter = true;
         }
-        tried = NBTUtilBC.readEnumSet(nbt.getTag("tried"), EnumFacing.class);
+        tried = NBTUtilBC.readEnumSet(nbt.get("tried"), Direction.class);
         isPhantom = nbt.getBoolean("isPhantom");
     }
 
-    public NBTTagCompound writeToNbt(long tickNow) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("stack", stack.serializeNBT());
-        nbt.setByte("colour", (byte) (colour == null ? 0 : colour.getMetadata() + 1));
-        nbt.setBoolean("toCenter", toCenter);
-        nbt.setDouble("speed", speed);
-        nbt.setInteger("tickStarted", (int) (tickStarted - tickNow));
-        nbt.setInteger("tickFinished", (int) (tickFinished - tickNow));
-        nbt.setInteger("timeToDest", timeToDest);
-        nbt.setTag("side", NBTUtilBC.writeEnum(side));
-        nbt.setTag("tried", NBTUtilBC.writeEnumSet(tried, EnumFacing.class));
+    public NbtCompound writeToNbt(long tickNow) {
+        NbtCompound nbt = new NbtCompound();
+        nbt.put("stack", stack.writeNbt(new NbtCompound()));
+        nbt.putByte("colour", (byte) (colour == null ? 0 : colour.getId() + 1));
+        nbt.putBoolean("toCenter", toCenter);
+        nbt.putDouble("speed", speed);
+        nbt.putInt("tickStarted", (int) (tickStarted - tickNow));
+        nbt.putInt("tickFinished", (int) (tickFinished - tickNow));
+        nbt.putInt("timeToDest", timeToDest);
+        nbt.put("side", NBTUtilBC.writeEnum(side));
+        nbt.put("tried", NBTUtilBC.writeEnumSet(tried, Direction.class));
         if (isPhantom) {
-            nbt.setBoolean("isPhantom", true);
+            nbt.putBoolean("isPhantom", true);
         }
         return nbt;
     }
@@ -147,17 +139,17 @@ public class TravellingItem {
             && colour == with.colour//
             && side == with.side//
             && Math.abs(tickFinished - with.tickFinished) < 4//
-            && stack.getMaxStackSize() >= stack.getCount() + with.stack.getCount()//
+            && stack.getMaxCount() >= stack.getCount() + with.stack.getCount()//
             && StackUtil.canMerge(stack, with.stack);
     }
 
     /** Attempts to merge the two travelling item's together, if they are close enough.
-     * 
+     *
      * @param with
      * @return */
     public boolean mergeWith(TravellingItem with) {
         if (canMerge(with)) {
-            this.stack.grow(with.stack.getCount());
+            this.stack.increment(with.stack.getCount());
             return true;
         }
         return false;
@@ -185,7 +177,7 @@ public class TravellingItem {
         float interp = (afterTick + partialTicks) / diff;
         interp = Math.max(0, Math.min(1, interp));
 
-        Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+        Vec3d center = Vec3d.ofCenter(pos);
         Vec3d vecSide = side == null ? center : VecUtil.offset(center, side, flow.getPipeLength(side));
 
         Vec3d vecFrom;
@@ -198,10 +190,10 @@ public class TravellingItem {
             vecTo = vecSide;
         }
 
-        return VecUtil.scale(vecFrom, 1 - interp).add(VecUtil.scale(vecTo, interp));
+        return VecUtil.multiply(vecFrom, 1 - interp).add(VecUtil.multiply(vecTo, interp));
     }
 
-    public EnumFacing getRenderDirection(long tick, float partialTicks) {
+    public Direction getRenderDirection(long tick, float partialTicks) {
         long diff = tickFinished - tickStarted;
         long afterTick = tick - tickStarted;
 

@@ -4,15 +4,15 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
 /** A segment of a larger text */
 public final class FormatSegment {
     public final String text;
-    public final TextFormatting colour;
-    public final Set<TextFormatting> misc;
+    public final Formatting colour;
+    public final Set<Formatting> misc;
 
-    FormatSegment(String text, TextFormatting colour, Set<TextFormatting> misc) {
+    FormatSegment(String text, Formatting colour, Set<Formatting> misc) {
         this.text = text;
         this.colour = colour;
         this.misc = misc;
@@ -28,16 +28,16 @@ public final class FormatSegment {
 
     public String toFormatString() {
         StringBuilder miscString = new StringBuilder();
-        for (TextFormatting format : misc) {
+        for (Formatting format : misc) {
             miscString.append(format.toString());
         }
-        return TextFormatting.RESET + (colour == null ? "" : colour.toString()) + miscString + text;
+        return Formatting.RESET + (colour == null ? "" : colour.toString()) + miscString + text;
     }
 
     @Override
     public String toString() {
         StringBuilder miscStr = new StringBuilder();
-        for (TextFormatting format : misc) {
+        for (Formatting format : misc) {
             miscStr.append(format.getFriendlyName());
             miscStr.append(' ');
         }

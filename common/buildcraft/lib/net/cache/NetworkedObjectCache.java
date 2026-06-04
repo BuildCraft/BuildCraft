@@ -11,11 +11,14 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.core.BCDebugging;
@@ -78,7 +81,7 @@ public abstract class NetworkedObjectCache<T> {
     public ServerView server() {
         if (DEBUG_LOG) {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-            if (!server.isCallingFromMinecraftThread()) {
+            if (!server.isOnThread()) {
                 throw new IllegalStateException("");
             }
         }
@@ -89,7 +92,7 @@ public abstract class NetworkedObjectCache<T> {
      *         make sure that this really is the client thread. */
     public ClientView client() {
         if (DEBUG_LOG) {
-            if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            if (!MinecraftClient.getInstance().isOnThread()) {
                 throw new IllegalStateException("");
             }
         }
@@ -189,9 +192,9 @@ public abstract class NetworkedObjectCache<T> {
             serverIdToObject.put(id, copy);
             if (DEBUG_CPLX) {
                 String toString;
-                if (copy instanceof FluidStack) {
-                    FluidStack fluid = (FluidStack) copy;
-                    toString = fluid.getUnlocalizedName();
+                if (copy instanceof FluidStackBC) {
+                    FluidStackBC fluid = (FluidStackBC) copy;
+                    toString = fluid.getFluid().getDefaultState().toString();
                 } else {
                     toString = copy.toString();
                 }
@@ -251,9 +254,9 @@ public abstract class NetworkedObjectCache<T> {
         if (DEBUG_CPLX) {
             T read = link.actual;
             String toString;
-            if (read instanceof FluidStack) {
-                FluidStack fluid = (FluidStack) read;
-                toString = fluid.getUnlocalizedName();
+            if (read instanceof FluidStackBC) {
+                FluidStackBC fluid = (FluidStackBC) read;
+                toString = fluid.getFluid().getDefaultState().toString();
             } else {
                 toString = read.toString();
             }

@@ -11,19 +11,20 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.sound.BlockSoundGroup;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.state.property.Property;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
@@ -38,71 +39,71 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
 
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftbuilders:shaping_the_world");
+    private static final Identifier ADVANCEMENT = new Identifier("buildcraftbuilders:shaping_the_world");
 
-    public BlockQuarry(Material material, String id) {
+    public BlockQuarry(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(BuildCraftProperties.CONNECTED_MAP.values());
     }
 
-    private boolean isConnected(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-        EnumFacing facing = side;
-        if (Arrays.asList(EnumFacing.HORIZONTALS).contains(facing)) {
-            facing = EnumFacing.getHorizontal(
-                side.getHorizontalIndex() + 2 + state.getValue(getFacingProperty()).getHorizontalIndex());
+    private boolean isConnected(BlockView world, BlockPos pos, BlockState state, Direction side) {
+        Direction facing = side;
+        if (Arrays.asList(Direction.HORIZONTALS).contains(facing)) {
+            facing = Direction.fromHorizontal(
+                side.getHorizontal() + 2 + state.get(getFacingProperty()).getHorizontal());
         }
-        TileEntity tile = world.getTileEntity(pos.offset(facing));
-        return tile != null && tile.hasCapability(CapUtil.CAP_ITEMS, facing.getOpposite());
+        BlockEntity tile = world.getBlockEntity(pos.offset(facing));
+        return tile != null && CapUtil.hasCapability(tile, CapUtil.CAP_ITEMS, facing.getOpposite());
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        for (EnumFacing face : EnumFacing.VALUES) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
+        for (Direction face : Direction.values()) {
             state =
-                state.withProperty(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected(world, pos, state, face));
+                state.with(BuildCraftProperties.CONNECTED_MAP.get(face), isConnected(world, pos, state, face));
         }
         return state;
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileQuarry();
     }
 
     @Override
-    public boolean canBeRotated(World world, BlockPos pos, IBlockState state) {
+    public boolean canBeRotated(World world, BlockPos pos, BlockState state) {
         return false;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = world.getTileEntity(pos);
+    public void breakBlock(World world, BlockPos pos, BlockState state) {
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileQuarry) {
             for (BlockPos blockPos : ((TileQuarry) tile).framePoses) {
                 if (world.getBlockState(blockPos).getBlock() == BCBuildersBlocks.frame) {
-                    world.setBlockToAir(blockPos);
+                    world.setBlockState(blockPos);
                 }
             }
         }
         super.breakBlock(world, pos, state);
     }
 
-    @Override
-    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
-        return SoundType.ANVIL;
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockSoundGroup getSoundType(BlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+        return BlockSoundGroup.ANVIL;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer,
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer,
         ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (placer instanceof EntityPlayer) {
-            AdvancementUtil.unlockAdvancement((EntityPlayer) placer, ADVANCEMENT);
+        if (placer instanceof PlayerEntity) {
+            AdvancementUtil.unlockAdvancement((PlayerEntity) placer, ADVANCEMENT);
         }
     }
 }

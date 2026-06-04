@@ -35,7 +35,7 @@ public class MessageObjectCacheRequest implements IMessage {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         buf.writeByte(cacheId);
         buf.writeShort(ids.length);
@@ -44,7 +44,7 @@ public class MessageObjectCacheRequest implements IMessage {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         cacheId = buf.readByte();
         int idCount = buf.readShort();

@@ -1,170 +1,117 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.block;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 
-import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public class BlockBCBase_Neptune extends Block {
-    public static final IProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
-    public static final IProperty<EnumFacing> BLOCK_FACING_6 = BuildCraftProperties.BLOCK_FACING_6;
+    public static final Property<Direction> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final Property<Direction> BLOCK_FACING_6 = BuildCraftProperties.BLOCK_FACING_6;
 
-    /** The tag used to identify this in the {@link TagManager}. Note that this may be empty if this block doesn't use
-     * the tag system. */
+    /** The tag used to identify this in the {@link TagManager}. May be empty if not using the tag system. */
     public final String id;
 
-    /** @param id The ID that will be looked up in the {@link TagManager} when registering blocks. Pass null or the
-     *            empty string to bypass the {@link TagManager} entirely. */
-    public BlockBCBase_Neptune(Material material, String id) {
-        super(material);
+    public BlockBCBase_Neptune(AbstractBlock.Settings settings, String id) {
+        super(settings);
         if (id == null) {
             id = "";
         }
         this.id = id;
 
-        // Sensible default block properties
-        setHardness(5.0F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
-
-        if (!id.isEmpty()) {
-            // Init names from the tag manager
-            setUnlocalizedName(TagManager.getTag(id, EnumTagType.UNLOCALIZED_NAME));
-            setRegistryName(TagManager.getTag(id, EnumTagType.REGISTRY_NAME));
-            setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id, EnumTagType.CREATIVE_TAB)));
-        }
+        // TODO(R.Chen): setUnlocalizedName / setRegistryName / setCreativeTab removed in 1.20.1;
+        // registration is handled via Fabric registry events in BCCoreInitializer.
 
         if (this instanceof IBlockWithFacing) {
-            IProperty<EnumFacing> facingProp = ((IBlockWithFacing) this).getFacingProperty();
-            setDefaultState(getDefaultState().withProperty(facingProp, EnumFacing.NORTH));
+            Property<Direction> facingProp = ((IBlockWithFacing) this).getFacingProperty();
+            setDefaultState(getDefaultState().with(facingProp, Direction.NORTH));
         }
     }
 
-    // IBlockState
+    // BlockState
 
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         if (this instanceof IBlockWithFacing) {
             properties.add(((IBlockWithFacing) this).getFacingProperty());
         }
     }
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        List<IProperty<?>> properties = new ArrayList<>();
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        List<Property<?>> properties = new ArrayList<>();
         addProperties(properties);
-        return new BlockStateContainer(this, properties.toArray(new IProperty<?>[0]));
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        int meta = 0;
-        if (this instanceof IBlockWithFacing) {
-            if (((IBlockWithFacing) this).canFaceVertically()) {
-                meta |= state.getValue(((IBlockWithFacing) this).getFacingProperty()).getIndex();
-            } else {
-                meta |= state.getValue(((IBlockWithFacing) this).getFacingProperty()).getHorizontalIndex();
-            }
+        for (Property<?> p : properties) {
+            builder.add(p);
         }
-        return meta;
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        IBlockState state = getDefaultState();
+    public BlockState rotate(BlockState state, BlockRotation rot) {
+        if (this instanceof IBlockWithFacing) {
+            Property<Direction> prop = ((IBlockWithFacing) this).getFacingProperty();
+            state = state.with(prop, rot.rotate(state.get(prop)));
+        }
+        return state;
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        if (this instanceof IBlockWithFacing) {
+            Property<Direction> prop = ((IBlockWithFacing) this).getFacingProperty();
+            state = state.with(prop, mirror.apply(state.get(prop)));
+        }
+        return state;
+    }
+
+    @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        BlockState state = getDefaultState();
         if (this instanceof IBlockWithFacing) {
             IBlockWithFacing b = (IBlockWithFacing) this;
-            IProperty<EnumFacing> prop = b.getFacingProperty();
-            if (b.canFaceVertically()) {
-                state = state.withProperty(prop, EnumFacing.getFront(meta & 7));
-            } else {
-                state = state.withProperty(prop, EnumFacing.getHorizontal(meta & 3));
+            net.minecraft.entity.player.PlayerEntity placer = ctx.getPlayer();
+            if (placer == null) {
+                return state;
             }
-        }
-        return state;
-    }
-
-    @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot) {
-        if (this instanceof IBlockWithFacing) {
-            IProperty<EnumFacing> prop = ((IBlockWithFacing) this).getFacingProperty();
-            EnumFacing facing = state.getValue(prop);
-            state = state.withProperty(prop, rot.rotate(facing));
-        }
-        return state;
-    }
-
-    @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirror) {
-        if (this instanceof IBlockWithFacing) {
-            IProperty<EnumFacing> prop = ((IBlockWithFacing) this).getFacingProperty();
-            EnumFacing facing = state.getValue(prop);
-            state = state.withProperty(prop, mirror.mirror(facing));
-        }
-        return state;
-    }
-
-    // Others
-
-    @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-        float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
-        if (this instanceof IBlockWithFacing) {
-            EnumFacing orientation = placer.getHorizontalFacing();
-            IBlockWithFacing b = (IBlockWithFacing) this;
+            Direction orientation = placer.getHorizontalFacing();
             if (b.canFaceVertically()) {
-                if (MathHelper.abs((float) placer.posX - pos.getX()) < 2.0F
-                    && MathHelper.abs((float) placer.posZ - pos.getZ()) < 2.0F) {
-                    double y = placer.posY + placer.getEyeHeight();
-
-                    if (y - pos.getY() > 2.0D) {
-                        orientation = EnumFacing.DOWN;
+                BlockPos pos = ctx.getBlockPos();
+                if (MathHelper.abs((float) (placer.getX() - pos.getX())) < 2.0F
+                    && MathHelper.abs((float) (placer.getZ() - pos.getZ())) < 2.0F) {
+                    double eyeY = placer.getEyeY();
+                    if (eyeY - pos.getY() > 2.0D) {
+                        orientation = Direction.DOWN;
                     }
-
-                    if (pos.getY() - y > 0.0D) {
-                        orientation = EnumFacing.UP;
+                    if (pos.getY() - eyeY > 0.0D) {
+                        orientation = Direction.UP;
                     }
                 }
             }
-            state = state.withProperty(b.getFacingProperty(), orientation.getOpposite());
+            state = state.with(b.getFacingProperty(), orientation.getOpposite());
         }
         return state;
-    }
-
-    @Override
-    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
-        if (this instanceof IBlockWithFacing) {
-            if (!((IBlockWithFacing) this).canBeRotated(world, pos, world.getBlockState(pos))) {
-                return false;
-            }
-        }
-        return super.rotateBlock(world, pos, axis);
-    }
-
-    public static boolean isExceptBlockForAttachWithPiston(Block attachBlock) {
-        return Block.isExceptBlockForAttachWithPiston(attachBlock);
     }
 }

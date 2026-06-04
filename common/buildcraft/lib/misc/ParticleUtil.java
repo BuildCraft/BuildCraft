@@ -8,9 +8,9 @@ package buildcraft.lib.misc;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.Direction;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -19,7 +19,7 @@ import buildcraft.lib.particle.ParticlePipes;
 import buildcraft.lib.particle.ParticlePosition;
 
 public class ParticleUtil {
-    public static void showChangeColour(World world, Vec3d pos, @Nullable EnumDyeColor colour) {
+    public static void showChangeColour(World world, Vec3d pos, @Nullable DyeColor colour) {
         if (colour == null) {
             showWaterParticles(world, pos);
         }
@@ -29,18 +29,21 @@ public class ParticleUtil {
 
     }
 
-    public static void showTempPower(World world, BlockPos pos, EnumFacing face, long microJoules) {
-        double x = pos.getX() + 0.5 + face.getFrontOffsetX() * 0.5;
-        double y = pos.getY() + 0.5 + face.getFrontOffsetY() * 0.5;
-        double z = pos.getZ() + 0.5 + face.getFrontOffsetZ() * 0.5;
+    public static void showTempPower(World world, BlockPos pos, Direction face, long microJoules) {
+        double x = pos.getX() + 0.5 + face.getOffsetX() * 0.5;
+        double y = pos.getY() + 0.5 + face.getOffsetY() * 0.5;
+        double z = pos.getZ() + 0.5 + face.getOffsetZ() * 0.5;
 
-        Vec3d startingMotion = new Vec3d(face.getDirectionVec());
-        startingMotion = VecUtil.scale(startingMotion, 0.05);
+        Vec3d startingMotion = new Vec3d(face.getVector().getX(), face.getVector().getY(), face.getVector().getZ());
+        startingMotion = VecUtil.multiply(startingMotion, 0.05);
 
         ParticlePosition nPos = new ParticlePosition(new Vec3d(x, y, z), startingMotion);
 
         for (ParticlePosition pp : ParticlePipes.DUPLICATE_SPREAD.pipe(nPos)) {
-            world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, pp.motion.x, pp.motion.y, pp.motion.z);
+            // STUB: spawnParticle via server world
+            if (world instanceof net.minecraft.server.world.ServerWorld) {
+                ((net.minecraft.server.world.ServerWorld) world).spawnParticles(ParticleTypes.FLAME, x, y, z, 1, pp.motion.x, pp.motion.y, pp.motion.z, 0.0);
+            }
         }
     }
 }

@@ -2,9 +2,15 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.tile;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.EnumPipePart;
 
@@ -14,10 +20,12 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileFilteredBuffer extends TileBC_Neptune {
+
     public final ItemHandlerSimple invFilter;
     public final ItemHandlerFiltered invMain;
 
-    public TileFilteredBuffer() {
+    public TileFilteredBuffer(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         invFilter = itemManager.addInvHandler("filter", 9, EnumAccess.PHANTOM);
         invFilter.setLimitedInsertor(1);
 

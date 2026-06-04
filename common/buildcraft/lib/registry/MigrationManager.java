@@ -1,28 +1,31 @@
-/* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+/*
+ * Copyright (c) 2016 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.registry;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraft.registry.Registries;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
+/**
+ * Tracks old → new registry-name remappings for BuildCraft blocks and items.
+ *
+ * STUB(R.Chen): Forge's {@code RegistryEvent.MissingMappings} has no direct Fabric equivalent —
+ * the {@code onMissingBlocks}/{@code onMissingItems} handlers are dropped. The remap data maps are
+ * retained so a future Fabric-side fixup (e.g. a {@code DataFixer} or world-load scan) can consume
+ * them. See {@code buildcraft/lib/compat/forge_stubs/MissingMappingsStub.java}.
+ */
 public enum MigrationManager {
     INSTANCE;
 
@@ -44,7 +47,7 @@ public enum MigrationManager {
             itemMigrations.put(oldLowerCase, to);
             if (DEBUG) {
                 BCLog.logger
-                    .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + to.getRegistryName());
+                    .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + Registries.ITEM.getId(to));
             }
         }
     }
@@ -62,47 +65,12 @@ public enum MigrationManager {
             blockMigrations.put(oldLowerCase, to);
             if (DEBUG) {
                 BCLog.logger
-                    .info("[lib.migrate] Adding item migration from " + oldLowerCase + " to " + to.getRegistryName());
+                    .info("[lib.migrate] Adding block migration from " + oldLowerCase + " to " + Registries.BLOCK.getId(to));
             }
         }
     }
 
-    @SubscribeEvent
-    public void onMissingBlocks(RegistryEvent.MissingMappings<Block> missing) {
-        onMissingMappings(missing, blockMigrations);
-    }
-
-    @SubscribeEvent
-    public void onMissingItems(RegistryEvent.MissingMappings<Item> missing) {
-        onMissingMappings(missing, itemMigrations);
-    }
-
-    private static <T extends IForgeRegistryEntry<T>> void onMissingMappings(MissingMappings<T> missing,
-        Map<String, T> migrations) {
-        ImmutableList<Mapping<T>> all = missing.getAllMappings();
-        if (all.isEmpty()) {
-            return;
-        }
-        if (DEBUG) {
-            BCLog.logger.info("[lib.migrate] Received missing mappings event for " + missing.getGenericType() + " with "
-                + all.size() + " missing.");
-        }
-        for (MissingMappings.Mapping<T> mapping : all) {
-            ResourceLocation loc = mapping.key;
-            String domain = loc.getResourceDomain();
-            String path = loc.getResourcePath().toLowerCase(Locale.ROOT);
-            if (DEBUG) {
-                BCLog.logger.info("[lib.migrate]  - " + domain + ":" + path);
-            }
-            // TECHNICALLY this can pick up non-bc mods, but generally only addons
-            if (!domain.startsWith("buildcraft")) continue;
-            T to = migrations.get(path);
-            if (to != null) {
-                mapping.remap(to);
-                if (DEBUG) {
-                    BCLog.logger.info("[lib.migrate]    -> " + to.getRegistryName());
-                }
-            }
-        }
-    }
+    // STUB(R.Chen): Forge RegistryEvent.MissingMappings<Block>/<Item> handlers removed.
+    //               Re-implement remapping on the Fabric side once a world-load fixup exists;
+    //               the itemMigrations / blockMigrations maps above carry the data.
 }

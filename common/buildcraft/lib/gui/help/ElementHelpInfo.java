@@ -2,87 +2,39 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui.help;
 
-import java.util.List;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.client.Minecraft;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.gui.BuildCraftGui;
-import buildcraft.lib.gui.IGuiElement;
-import buildcraft.lib.gui.elem.GuiElementContainerHelp;
-import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.pos.IGuiArea;
-import buildcraft.lib.misc.LocaleUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
-/** Defines some information used when displaying help text about a specific {@link IGuiElement}. If you want to display
- * help at a particular position, but the target is not an {@link IGuiElement} then you should use
- * {@link DummyHelpElement}. */
+@Environment(EnvType.CLIENT)
 public class ElementHelpInfo {
     public final String title;
-    public final int colour;
-    public final String[] localeKeys;
-    public final boolean isPreTranslated;
+    public final String text;
 
-    public ElementHelpInfo(String title, int colour, String... localeKeys) {
+    public ElementHelpInfo(String title, String text) {
         this.title = title;
-        this.colour = colour;
-        this.localeKeys = localeKeys;
-        this.isPreTranslated = false;
+        this.text = text;
     }
 
-    public ElementHelpInfo(String title, int colour, boolean isPreTranslated, String... localeKeys) {
+    /** 3-arg compat constructor: (title, color, helpKey) — color is ignored, helpKey used as text. */
+    public ElementHelpInfo(String title, int color, String helpKey) {
         this.title = title;
-        this.colour = colour;
-        this.localeKeys = localeKeys;
-        this.isPreTranslated = isPreTranslated;
+        this.text = helpKey;
     }
 
-    public static ElementHelpInfo preTranslated(String title, int colour, String... lines) {
-        return new ElementHelpInfo(title, colour, true, lines);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public final HelpPosition target(IGuiArea target) {
-        return new HelpPosition(this, target);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void addGuiElements(GuiElementContainerHelp container) {
-        BuildCraftGui gui = container.gui;
-        int y = 20;
-        for (int i = 0; i < localeKeys.length; i++) {
-            String key = localeKeys[i];
-            if (key == null) {
-                y += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 5;
-                continue;
-            }
-            String localized = isPreTranslated ? key : LocaleUtil.localize(key);
-            List<String> lines = StringUtilBC.splitIntoLines(localized);
-
-            for (String line : lines) {
-                GuiElementText elemText = new GuiElementText(gui, container.offset(0, y), line, 0);
-                container.add(elemText);
-                y += elemText.getHeight() + 5;
-            }
-        }
-    }
-
-    /** Stores an {@link ElementHelpInfo} information, as well as the target area which the help element relates to. */
-    @SideOnly(Side.CLIENT)
-    public static final class HelpPosition {
+    public static class HelpPosition {
         public final ElementHelpInfo info;
-        public final IGuiArea target;
+        public final IGuiArea area;
 
-        private HelpPosition(ElementHelpInfo info, IGuiArea target) {
+        public HelpPosition(ElementHelpInfo info, IGuiArea area) {
             this.info = info;
-            this.target = target;
+            this.area = area;
         }
     }
 }

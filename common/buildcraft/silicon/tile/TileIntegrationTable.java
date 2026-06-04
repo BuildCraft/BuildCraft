@@ -2,169 +2,96 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.recipes.IngredientStack;
-import buildcraft.api.recipes.IntegrationRecipe;
 
-import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.net.PacketBufferBC;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
+/**
+ * STUB(R.Chen): IntegrationRecipe/IntegrationRecipeRegistry not in libLeaf — recipe logic deferred.
+ * inv fields kept for UI/serialisation compatibility.
+ */
 public class TileIntegrationTable extends TileLaserTableBase {
     public final ItemHandlerSimple invTarget = itemManager.addInvHandler(
         "target",
         1,
-        ItemHandlerManager.EnumAccess.BOTH,
-        EnumPipePart.VALUES
+        ItemHandlerManager.EnumAccess.BOTH
     );
     public final ItemHandlerSimple invToIntegrate = itemManager.addInvHandler(
         "toIntegrate",
         3 * 3 - 1,
-        ItemHandlerManager.EnumAccess.BOTH,
-        EnumPipePart.VALUES
+        ItemHandlerManager.EnumAccess.BOTH
     );
     public final ItemHandlerSimple invResult = itemManager.addInvHandler(
         "result",
         1,
-        ItemHandlerManager.EnumAccess.INSERT,
-        EnumPipePart.VALUES
+        ItemHandlerManager.EnumAccess.INSERT
     );
-    public IntegrationRecipe recipe;
 
-    private boolean extract(IngredientStack item, ImmutableList<IngredientStack> items, boolean simulate) {
-        ItemStack targetStack = invTarget.getStackInSlot(0);
-        if (targetStack.isEmpty()) return false;
-        if (!StackUtil.contains(item, targetStack)) return false;
-        if (!extract(invToIntegrate, items, simulate, true)) return false;
-        if (!simulate) {
-            targetStack.setCount(targetStack.getCount() - item.count);
-            invTarget.setStackInSlot(0, targetStack);
-        }
-        return true;
-    }
+    // STUB(R.Chen): IntegrationRecipe recipe field deferred.
+    // public IntegrationRecipe recipe;
 
-    private boolean isSpaceEnough(ItemStack stack) {
-        ItemStack output = invResult.getStackInSlot(0);
-        return output.isEmpty() || (StackUtil.canMerge(stack, output) && stack.getCount() + output.getCount() <= stack.getMaxStackSize());
-    }
-
-    private void updateRecipe() {
-        if (recipe != null) {
-            ItemStack output = getOutput();
-            if (!output.isEmpty() && extract(recipe.getCenterStack(), recipe.getRequirements(output), true))
-                return;
-        }
-        recipe = IntegrationRecipeRegistry.INSTANCE.getRecipeFor(invTarget.getStackInSlot(0), invToIntegrate.stacks);
-    }
-
-    public ItemStack getOutput() {
-        return recipe != null ? recipe.getOutput(invTarget.getStackInSlot(0), invToIntegrate.stacks) : ItemStack.EMPTY;
+    public TileIntegrationTable(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override
     public long getTarget() {
-        ItemStack output = getOutput();
-        return recipe != null && isSpaceEnough(output) ? recipe.getRequiredMicroJoules(output) : 0;
+        // STUB(R.Chen): recipe.getRequiredMicroJoules() deferred.
+        return 0L;
     }
 
     @Override
-    public void update() {
-        super.update();
-
-        if (world.isRemote) {
-            return;
-        }
-
-        updateRecipe();
-
-        if (getTarget() > 0 && power >= getTarget()) {
-            ItemStack output = getOutput();
-            extract(recipe.getCenterStack(), recipe.getRequirements(output), false);
-            ItemStack result = invResult.getStackInSlot(0);
-            if (!result.isEmpty()) {
-                result = result.copy();
-                result.setCount(result.getCount() + output.getCount());
-            } else {
-                result = output.copy();
-            }
-            invResult.setStackInSlot(0, result);
-            power -= getTarget();
-        }
-
-        sendNetworkGuiUpdate(NET_GUI_DATA);
+    public void tick() {
+        super.tick();
+        // STUB(R.Chen): updateRecipe() and recipe completion deferred.
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        if (recipe != null) {
-            nbt.setString("recipe", recipe.name.toString());
-        }
-        return nbt;
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        // STUB(R.Chen): recipe serialisation deferred.
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        if (nbt.hasKey("recipe")) {
-            recipe = lookupRecipe(nbt.getString("recipe"));
-        } else {
-            recipe = null;
-        }
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        // STUB(R.Chen): recipe deserialisation deferred.
     }
 
     @Override
-    public void writePayload(int id, PacketBufferBC buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, TileBC_Neptune.NetSide side) {
         super.writePayload(id, buffer, side);
-
-        if (id == NET_GUI_DATA) {
-            buffer.writeBoolean(recipe != null);
-            if (recipe != null) {
-                buffer.writeString(recipe.name.toString());
-            }
-        }
+        // STUB(R.Chen): NET_GUI_DATA recipe payload deferred.
     }
 
     @Override
-    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, TileBC_Neptune.NetSide side, Object ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-
-        if (id == NET_GUI_DATA) {
-            if (buffer.readBoolean()) {
-                recipe = lookupRecipe(buffer.readString());
-            } else {
-                recipe = null;
-            }
-        }
+        // STUB(R.Chen): NET_GUI_DATA recipe reading deferred.
     }
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         super.getDebugInfo(left, right, side);
-        left.add("recipe - " + recipe);
+        left.add("recipe - (stubbed)");
         left.add("target - " + getTarget());
-    }
-
-    private IntegrationRecipe lookupRecipe(String name) {
-        return IntegrationRecipeRegistry.INSTANCE.getRecipe(new ResourceLocation(name));
     }
 }

@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.behaviour;
@@ -11,8 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.pipe.IPipe;
 import buildcraft.api.transport.pipe.PipeEventHandler;
@@ -28,14 +30,14 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
         super(pipe);
     }
 
-    public PipeBehaviourDiamondItem(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourDiamondItem(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
     }
 
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck sideCheck) {
         ItemStack toCompare = sideCheck.stack;
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             if (sideCheck.isAllowed(face) && pipe.isConnected(face)) {
                 int offset = FILTERS_PER_SIDE * face.ordinal();
                 boolean sideAllowed = false;
@@ -44,7 +46,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
                     if (compareTo.isEmpty()) continue;
                     foundItem = true;
-                    if (StackUtil.isMatchingItemOrList(compareTo, toCompare)) {
+                    if (StackUtil.matchesStackOrList(compareTo, toCompare)) {
                         sideAllowed = true;
                         break;
                     }
@@ -62,7 +64,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 
     @PipeEventHandler
     public void split(PipeEventItem.Split split) {
-        EnumFacing[] allSides = split.getAllPossibleDestinations().toArray(new EnumFacing[0]);
+        Direction[] allSides = split.getAllPossibleDestinations().toArray(new Direction[0]);
 
         if (allSides.length == 0 || allSides.length == 1) {
             // Nothing to split
@@ -80,7 +82,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                 for (int i = 0; i < FILTERS_PER_SIDE; i++) {
                     ItemStack compareTo = filters.getStackInSlot(offset + i);
                     if (compareTo.isEmpty()) continue;
-                    if (StackUtil.isMatchingItemOrList(compareTo, item.stack)) {
+                    if (StackUtil.matchesStackOrList(compareTo, item.stack)) {
                         int count = compareTo.getCount();
                         totalCount += count;
                         countPerSide[s] += count;
@@ -114,7 +116,7 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
                     toSide.setCount(countPerSide[s] * multiples);
                     entries[s] = new ItemEntry(item.colour, toSide, item.from);
 
-                    List<EnumFacing> dests = new ArrayList<>(1);
+                    List<Direction> dests = new ArrayList<>(1);
                     dests.add(allSides[s]);
                     entries[s].to = dests;
                 }
@@ -131,19 +133,19 @@ public class PipeBehaviourDiamondItem extends PipeBehaviourDiamond {
 
                 while (!toSplit.isEmpty()) {
                     // Pick a random number between 0 and total count.
-                    int rand = split.holder.getPipeWorld().rand.nextInt(totalCount);
+                    int rand = split.holder.getPipeWorld().random.nextInt(totalCount);
                     int face = randLookup[rand];
                     if (entries[face] == null) {
                         ItemStack stack = toSplit.copy();
                         stack.setCount(1);
                         ItemEntry entry = new ItemEntry(item.colour, stack, item.from);
-                        List<EnumFacing> dests = entry.to = new ArrayList<>(1);
+                        List<Direction> dests = entry.to = new ArrayList<>(1);
                         dests.add(allSides[face]);
                         entries[face] = entry;
                     } else {
-                        entries[face].stack.grow(1);
+                        entries[face].stack.increment(1);
                     }
-                    toSplit.shrink(1);
+                    toSplit.decrement(1);
                 }
             }
             for (int s = 0; s < allSides.length; s++) {

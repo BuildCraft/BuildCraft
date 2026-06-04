@@ -15,15 +15,16 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 
 import buildcraft.lib.client.sprite.DynamicTextureBC;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.RenderUtil;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 public class GuideFont implements IFontRenderer {
 
@@ -61,9 +62,9 @@ public class GuideFont implements IFontRenderer {
     @Override
     public int drawString(String text, int x, int y, int shade, boolean shadow, boolean centered, float scale) {
         text = ColourUtil.stripAllFormatCodes(text);
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         ScaledResolution res = new ScaledResolution(mc);
-        double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+        double scaleFactor = mc.getWindow().getWidth() / res.getScaledWidth_double();
 
         g2d.setColor(new Color(0, 0, 0, 255));
         g2d.fillRect(0, 0, 512, 512);
@@ -87,12 +88,12 @@ public class GuideFont implements IFontRenderer {
                 tex.setColor(_x, _y, rgb);
             }
         }
-        GlStateManager.enableAlpha();
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(1 / scaleFactor, 1 / scaleFactor, 1);
+        ;
+        RenderSystem.disableDepthTest();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.getModelViewStack().push();
+        RenderSystem.getModelViewStack().scale(1 / scaleFactor, 1 / scaleFactor, 1);
         if ((shade & 0xFF_00_00_00) == 0) {
             shade |= 0xFF_00_00_00;
         }
@@ -103,9 +104,9 @@ public class GuideFont implements IFontRenderer {
         tex.draw((int) (x * scaleFactor), (int) (y * scaleFactor - metrics.getMaxDescent()), 0, 0, 0,
             (int) (rect.getWidth()), (int) (rect.getHeight() + 1));
         // tex.draw(x, y, 0);
-        GlStateManager.popMatrix();
-        GlStateManager.color(1, 1, 1);
-        GlStateManager.enableDepth();
+        RenderSystem.getModelViewStack().pop();
+        RenderSystem.setShaderColor(1, 1, 1, 1.0F);
+        RenderSystem.enableDepthTest();
 
         return (int) rect.getWidth();
     }
@@ -133,9 +134,9 @@ public class GuideFont implements IFontRenderer {
 
         FontState(GuideFont font, float scale, boolean shadow) {
             this.defaultShadow = shadow;
-            Minecraft mc = Minecraft.getMinecraft();
+            MinecraftClient mc = MinecraftClient.getInstance();
             ScaledResolution res = new ScaledResolution(mc);
-            double scaleFactor = mc.displayWidth / res.getScaledWidth_double();
+            double scaleFactor = mc.getWindow().getWidth() / res.getScaledWidth_double();
 
             Font f2 = font.font.deriveFont(font.font.getSize2D() * scale * (float) scaleFactor);
 

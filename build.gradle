@@ -1,560 +1,1155 @@
 /*
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
- * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at
+ * https://mozilla.org/MPL/2.0/
+ *
+ * -------------------------------------------------------------------------
+ * BUILD SYSTEM: Fabric Loom 1.6 / Minecraft 1.20.1
+ * -------------------------------------------------------------------------
+ * Migrated from: ForgeGradle 2.3-SNAPSHOT / Minecraft 1.12.2
+ *
+ * Structure kept as a SINGLE compilation unit (all BC modules in one source
+ * tree) to avoid touching any Java source files during Phase 1.  A true
+ * per-module Gradle subproject split is planned for a later phase.
+ *
+ * sub_projects/expression is compiled as a separate subproject because it has
+ * its own code generator that must run before the main compile step.
+ * -------------------------------------------------------------------------
  */
 
+plugins {
+    // Fabric Loom replaces net.minecraftforge.gradle.forge
+    alias(libs.plugins.fabric.loom)
+    id 'maven-publish'
+}
 
-/* Build info:
+// ---------------------------------------------------------------------------
+// Version
+// ---------------------------------------------------------------------------
+def baseVersion = "8.0.1-pre.2+mc1.20.1"
+if (System.getenv("MOD_VERSION")) {
+    version = System.getenv("MOD_VERSION")
+} else if (!Boolean.getBoolean("release")) {
+    // Append short git hash for non-release builds, matching old ForgeGradle behaviour.
+    def gitProc = "git rev-parse --short=12 HEAD".execute([], rootDir)
+    gitProc.waitFor()
+    def hash = gitProc.exitValue() == 0 ? gitProc.text.trim() : ""
+    version = hash ? "${baseVersion}-${hash}" : "${baseVersion}-SNAPSHOT"
+} else {
+    version = baseVersion
+}
+group            = "com.mod-buildcraft"
+base.archivesName = "buildcraft"
 
- - Using a release version (e.g. 8.0.4 rather than 8.0.4-SNAPSHOT or 8.0.4-0A1B2C3D4E5) requires setting the "release" system property to true
-    - Add "-Drelease=true" to disallow adding the git commit hash to the end, or SNAPSHOT if we cannot find our git directory.
-
-*/
-
-// DON'T TOUCH THE BUILDSCRIPT[] BLOCK
-// its special, and it is only there to make ForgeGradle work correctly.
-
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven {
-            url = "https://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+// ---------------------------------------------------------------------------
+// Java toolchain (Java 17 required by Fabric Loom 1.6 + Minecraft 1.20.1)
+// ---------------------------------------------------------------------------
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
-    dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
-        classpath "org.ajoberstar:grgit:2.2.1"
-    }
+    withSourcesJar()
 }
 
-apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
-apply plugin: 'maven' // for uploading to a maven repo
-apply plugin: 'maven-publish' // for uploading to a maven repo
-if (!hasProperty("grgit")) {
-    // As otherwise it logs a warning as grgit gets applied twice
-    apply plugin: "org.ajoberstar.grgit"
-}
+// ---------------------------------------------------------------------------
+// Fabric Loom configuration
+// ---------------------------------------------------------------------------
+loom {
+    // Do NOT call splitEnvironmentSourceSets() here.
+    // The Forge codebase uses @SideOnly inline on shared classes rather than
+    // separate client/common source sets.  Splitting would break compilation
+    // without touching Java.  Re-evaluate in Phase 2 after @SideOnly → @Environment
+    // rename pass is complete.
 
-if (gradle.startParameter.taskNames.contains("checkstyle")) {
-    apply plugin: "checkstyle"
-}
-
-ext.configFile = file "build.properties"
-configFile.withReader {
-    // Load config. It shall from now be referenced as simply config or project.config
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
-}
-
-if (System.getenv("BUILD_NUMBER") != null) {
-    config.mod_version += "-${System.getenv("BUILD_NUMBER")}"
-}
-if (System.getenv("BUILD_VARIANT") != null) {
-    config.mod_version += "-${System.getenv("BUILD_VARIANT")}"
-}
-
-version = config.mod_version
-group= "com.mod-buildcraft"
-archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
-
-ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/mcmod.info"))
-ext.priv = parseConfig(file('private.properties'))
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-dependencies {
-    // Testing
-    testCompile "junit:junit:4.12"
-}
-
-minecraft {
-    version = config.mc_version + "-" + config.forge_version
-    runDir = "run"
-
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = config.mappings_version
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    def addVersionDetails = !Boolean.getBoolean("release")
-
-    // Git versioning stuffs
-    if (grgit != null) {
-        String gitDir;
-        if (rootProject == project) {
-            gitDir = "$projectDir";
-        } else {
-            File dotGit = project.file(".git");
-            if (dotGit.isDirectory()) {
-                gitDir = dotGit;
-            } else {
-                gitDir = rootProject.file(".git/modules/BuildCraft").toString()
-            }
+    runs {
+        client {
+            client()
+            setConfigName "BuildCraft Client"
+            ideConfigGenerated true
+            runDir "run"
+            // Preserve original JVM tuning from the Forge runClient task
+            vmArgs(
+                "-Dbuildcraft.dev=true",
+                "-XX:+UseG1GC",
+                "-Xmx2G", "-Xms2G",
+                "-XX:+UnlockExperimentalVMOptions",
+                "-XX:G1NewSizePercent=20",
+                "-XX:G1ReservePercent=20",
+                "-XX:MaxGCPauseMillis=50",
+                "-XX:G1HeapRegionSize=32M"
+            )
         }
-        def repo = grgit.open(dir: gitDir)
-        replace "\${git_commit_hash}", repo.head().id
-        // This is very ugly: we need 7(!) \ to produce a single \ in the final one. 
-        replace "\${git_commit_msg}", repo.head().fullMessage.replace("\"", "\\\\\\\"").split("\n")[0]
-        replace "\${git_commit_author}", repo.head().author.name
-        replace "\${git_branch}", repo.branch.current().getName()
-        if (addVersionDetails) {
-            // Always use the compat commit for the version.
-            project.version += "-" + grgit.open(dir: project.rootDir).head().id.toString().substring(0, 12)
+        server {
+            server()
+            setConfigName "BuildCraft Server"
+            ideConfigGenerated true
+            runDir "run"
         }
-    } else {
-        if (addVersionDetails) {
-            project.version += "-SNAPSHOT"
-        }
-    }
-
-    // replacing stuff in the source
-    replace "\$version", project.version
-    replace "\${mcversion}", version
-    // Replace @Mod.acceptedMinecraftVersions specially as it has to be a valid version in a dev environment :/
-    replace "(gradle_replace_mcversion,)", "[" + version + "]"
-    replace "(gradle_replace_forgeversion,)", "[" + config.forge_version + ",)"
-}
-
-task printVersion {
-    description = "Prints out the actual version used. Useful for testing the buildscript. (Add -Drelease=true to force this to the version specified in build.properties)"
-    doLast {
-        println "Version = " + project.version
     }
 }
 
-// configure  the source folders
+// ---------------------------------------------------------------------------
+// Source sets
+// ---------------------------------------------------------------------------
+// The old ForgeGradle build had three source sets: api, main, test.
+// The api sourceSet (BuildCraftAPI/api) is folded into main here because
+// Fabric has no concept of a separately-shipped API artifact at this stage.
+// Re-split in a later phase when the API surface has been reworked.
 sourceSets {
-    main {
+    // ---------------------------------------------------------------------------
+    // libLeaf — isolated sourceSet for incremental lib/misc migration verification.
+    // Only contains the 11 already-migrated leaf files; grows as more files are ported.
+    // Run: ./gradlew compileLibLeaf
+    // ---------------------------------------------------------------------------
+    libLeaf {
+        java {
+            // The 11 migrated leaf files
+            srcDir "common/buildcraft/lib/misc"
+            include "ArrayUtil.java",
+                    "MathUtil.java",
+                    "ObjectUtilBC.java",
+                    "TimeUtil.java",
+                    "WorkerThreadUtil.java",
+                    "DrawingUtil.java",
+                    "ItemStackKey.java",
+                    "ProfilerUtil.java",
+                    "RandUtil.java",
+                    "StackMatchingPredicate.java",
+                    "WorldUtil.java"
+        }
+        // Fabric-native initializers + forge_stubs (registry + event migration)
         java {
             srcDir "common"
-            srcDir "common_old_license"
-            srcDir "sub_projects/expression/src/main/java"
-            srcDir "sub_projects/expression/src/autogen/java"
-            // srcDir "src_old_license"
+            include "buildcraft/lib/BCLibInitializer.java",
+                    "buildcraft/lib/BCLibClientInitializer.java",
+                    "buildcraft/lib/compat/forge_stubs/MissingMappingsStub.java",
+                    "buildcraft/lib/compat/forge_stubs/ObjectHolderStub.java",
+                    "buildcraft/lib/compat/forge_stubs/LegacyNetStubs.java",
+                    "buildcraft/lib/compat/forge_stubs/LegacyCapabilityStubs.java",
+                    "buildcraft/lib/net/BCNetworkManager.java",
+                    "buildcraft/lib/net/UpdateTilePayload.java",
+                    "buildcraft/lib/mj/IMJConnector.java",
+                    "buildcraft/lib/mj/IMJReceiver.java",
+                    "buildcraft/lib/mj/IMJRedstoneReceiver.java",
+                    "buildcraft/lib/mj/MJEnergyStorage.java",
+                    "buildcraft/lib/mj/MjBatteryReceiver.java",
+                    "buildcraft/lib/mj/MjRedstoneBatteryReceiver.java",
+                    "buildcraft/lib/compat/BCItemStorage.java",
+                    "buildcraft/lib/compat/BCFluidStorage.java",
+                    // Middle-layer migration (unblock TileBC_Neptune) — zero-Forge / Easy
+                    "buildcraft/lib/misc/data/IdAllocator.java",
+                    "buildcraft/lib/misc/collect/OrderedEnumMap.java",
+                    "buildcraft/lib/misc/collect/TypedKeyMap.java",
+                    "buildcraft/lib/misc/collect/TypedMap.java",
+                    "buildcraft/lib/misc/collect/TypedMapDirect.java",
+                    "buildcraft/lib/misc/collect/TypedMapHierarchy.java",
+                    "buildcraft/lib/migrate/BCVersion.java"
         }
-        resources {
-            srcDir "buildcraft_resources"
-            srcDir "BuildCraft-Localization"
-            exclude "**/.md" // exclude readme from localization repo
-            srcDir "BuildCraftGuide/guide_resources"
-            exclude "pack.png" // exclude from the guide repo
-            exclude "pack.mcmeta" // exclude from the guide repo
+        // BuildCraftFabric.java is in src/main/java; libLeaf depends on it for LOGGER
+        java {
+            srcDir "src/main/java"
+            include "buildcraft/BuildCraftFabric.java"
         }
-    }
-    api {
+        // Layer A — api.core (BCLog/BCDebugging/IPlayerOwned) needed by TileBC_Neptune
         java {
             srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/BCLog.java",
+                    "buildcraft/api/core/BCDebugging.java",
+                    "buildcraft/api/core/IPlayerOwned.java"
+        }
+        // Layers B/C/D — TileBC_Neptune blockers (lib.misc utils, lib.net primitives, render/debug stubs)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/BlockUtil.java",
+                    "buildcraft/lib/misc/ChunkUtil.java",
+                    "buildcraft/lib/misc/FakePlayerProvider.java",
+                    "buildcraft/lib/misc/InventoryUtil.java",
+                    "buildcraft/lib/misc/MessageUtil.java",
+                    "buildcraft/lib/misc/PermissionUtil.java",
+                    "buildcraft/lib/misc/StringUtilBC.java",
+                    "buildcraft/lib/net/IPayloadWriter.java",
+                    "buildcraft/lib/net/IPayloadReceiver.java",
+                    "buildcraft/lib/net/PacketBufferBC.java",
+                    "buildcraft/lib/net/MessageUpdateTile.java",
+                    "buildcraft/lib/net/MessageManager.java",
+                    "buildcraft/lib/client/render/DetachedRenderer.java",
+                    "buildcraft/lib/debug/IAdvDebugTarget.java",
+                    // lib.cache — chunk/tile caches (NeighbourTileCache stubbed to no-op)
+                    "buildcraft/lib/cache/IChunkCache.java",
+                    "buildcraft/lib/cache/ITileCache.java",
+                    "buildcraft/lib/cache/TileCacheRet.java",
+                    "buildcraft/lib/cache/TileCacheType.java",
+                    "buildcraft/lib/cache/NoopTileCache.java",
+                    "buildcraft/lib/cache/NeighbourTileCache.java",
+                    "buildcraft/lib/cache/CachedChunk.java",
+                    // lib.delta — numeric delta networking
+                    "buildcraft/lib/delta/DeltaManager.java",
+                    "buildcraft/lib/delta/DeltaInt.java",
+                    // lib.debug — advanced debug target holder
+                    "buildcraft/lib/debug/BCAdvDebugging.java",
+                    // Stubs (cap/fluid/item) — minimal surface for TileBC_Neptune
+                    "buildcraft/lib/cap/CapabilityHelper.java",
+                    "buildcraft/lib/fluid/TankManager.java",
+                    "buildcraft/lib/tile/item/ItemHandlerManager.java",
+                    "buildcraft/lib/tile/item/StackChangeCallback.java",
+                    // The integration target
+                    "buildcraft/lib/tile/TileBC_Neptune.java"
+        }
+        // Layer E — TileEngineBase_BC8 and its direct dependencies
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/mj/IMjConnector.java",
+                    "buildcraft/api/mj/IMjPassiveProvider.java",
+                    "buildcraft/api/mj/IMjReceiver.java",
+                    "buildcraft/api/mj/IMjRedstoneReceiver.java",
+                    "buildcraft/api/mj/MjAPI.java",
+                    "buildcraft/api/mj/MjCapabilityHelper.java",
+                    "buildcraft/api/mj/MjToRfAutoConvertor.java",
+                    "buildcraft/api/enums/EnumPowerStage.java",
+                    "buildcraft/api/tiles/IDebuggable.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/NBTUtilBC.java",
+                    "buildcraft/lib/misc/LocaleUtil.java",
+                    "buildcraft/lib/misc/data/ModelVariableData.java",
+                    "buildcraft/lib/block/VanillaRotationHandlers.java",
+                    "buildcraft/lib/engine/IEngineLikeForLedger.java",
+                    "buildcraft/lib/engine/TileEngineBase_BC8.java"
+        }
+        // Layer F — buildcraft.core entry point + standalone leaf files
+        java {
+            srcDir "common"
+            include "buildcraft/core/BCCoreInitializer.java",
+                    "buildcraft/core/statements/IBlockDefaultTriggers.java"
+        }
+        // Layer G — lib.registry (greenable subset; RegistrationHelper + PluggableRegistry
+        // deferred — blocked by unmigrated lib.block / lib.item / api.transport)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/registry/TagManager.java",
+                    "buildcraft/lib/registry/CreativeTabManager.java",
+                    "buildcraft/lib/registry/MigrationManager.java",
+                    "buildcraft/lib/registry/RegistryConfig.java"
+        }
+        // Layer H — lib.misc.data.Box + its dependency chain (gates core marker/volume)
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/IZone.java",
+                    "buildcraft/api/core/IBox.java",
+                    "buildcraft/api/core/IAreaProvider.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/VecUtil.java",
+                    "buildcraft/lib/misc/PositionUtil.java",
+                    "buildcraft/lib/misc/data/FaceDistance.java",
+                    "buildcraft/lib/misc/data/Box.java"
+        }
+        // Layer I — lib.client.render.laser layer (data files migrated; render-heavy files stubbed).
+        // SpriteHolderRegistry + BuildCraftLaserManager are aggressive client-render stubs.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/render/ISprite.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/client/sprite/SpriteHolderRegistry.java",
+                    "buildcraft/lib/client/render/laser/ILaserRenderer.java",
+                    "buildcraft/lib/client/render/laser/LaserData_BC8.java",
+                    "buildcraft/lib/client/render/laser/LaserContext.java",
+                    "buildcraft/lib/client/render/laser/CompiledLaserRow.java",
+                    "buildcraft/lib/client/render/laser/CompiledLaserType.java",
+                    "buildcraft/lib/client/render/laser/LaserCompiledBuffer.java",
+                    "buildcraft/lib/client/render/laser/LaserCompiledList.java",
+                    "buildcraft/lib/client/render/laser/LaserBoxRenderer.java",
+                    "buildcraft/lib/client/render/laser/LaserRenderer_BC8.java",
+                    "buildcraft/core/client/BuildCraftLaserManager.java"
+        }
+        // Layer J — core.marker.volume coupled cluster (VolumeBox↔Addon↔EnumAddonSlot↔Lock + helpers)
+        java {
+            srcDir "common"
+            include "buildcraft/core/marker/volume/ISingleAddon.java",
+                    "buildcraft/core/marker/volume/AddonsRegistry.java",
+                    "buildcraft/core/marker/volume/IFastAddonRenderer.java",
+                    "buildcraft/core/marker/volume/EnumAddonSlot.java",
+                    "buildcraft/core/marker/volume/Addon.java",
+                    "buildcraft/core/marker/volume/Lock.java",
+                    "buildcraft/core/marker/volume/VolumeBox.java"
+        }
+        // Layer K — complete core.marker.volume migration (ItemAddon + remaining blocked files)
+        // lib.item (ItemBC_Neptune, IItemBuildCraft) + lib.BCLibProxy unblocked here.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/item/IItemBuildCraft.java",
+                    "buildcraft/lib/item/ItemBC_Neptune.java",
+                    "buildcraft/lib/BCLibProxy.java",
+                    "buildcraft/core/marker/volume/ItemAddon.java",
+                    "buildcraft/core/marker/volume/WorldSavedDataVolumeBoxes.java",
+                    "buildcraft/core/marker/volume/MessageVolumeBoxes.java",
+                    "buildcraft/core/marker/volume/ClientVolumeBoxes.java",
+                    "buildcraft/core/marker/volume/AddonDefaultRenderer.java"
+        }
+        // Layer L — lib.block.BlockBCBase_Neptune + prerequisites, core/block and core/item leaf files.
+        // Unblocked by: BuildCraftProperties migration, RotationUtil, IBlockWithFacing.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/IEngineType.java",
+                    "buildcraft/api/enums/EnumSnapshotType.java",
+                    "buildcraft/api/enums/EnumDecoratedBlock.java",
+                    "buildcraft/api/enums/EnumEngineType.java",
+                    "buildcraft/api/enums/EnumLaserTableType.java",
+                    "buildcraft/api/enums/EnumMachineState.java",
+                    "buildcraft/api/enums/EnumOptionalSnapshotType.java",
+                    "buildcraft/api/enums/EnumSpring.java",
+                    "buildcraft/api/blocks/ICustomRotationHandler.java",
+                    "buildcraft/api/properties/BuildCraftProperties.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/XorShift128Random.java",
+                    "buildcraft/lib/misc/RotationUtil.java",
+                    "buildcraft/lib/block/IBlockWithFacing.java",
+                    "buildcraft/lib/block/BlockBCBase_Neptune.java",
+                    // core/block — only direct BlockBCBase_Neptune subclasses; others deferred
+                    "buildcraft/core/block/BlockDecoration.java",
+                    "buildcraft/core/block/BlockSpring.java",
+                    // core/item — only fully-unblocked leaf
+                    "buildcraft/core/item/ItemVolumeBox.java"
+        }
+        // Layer M — api.transport full migration (all 54 files) + prerequisite api.statements/api.core stubs.
+        // FluidStack-dependent methods stubbed with Object; Capability<T> replaced with Object stubs.
+        // Side → EnvType; MessageContext → Object; ICapabilityProvider dropped.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/EnumHandlerPriority.java",
+                    "buildcraft/api/core/EnumPipePart.java",
+                    "buildcraft/api/core/InvalidInputDataException.java",
+                    "buildcraft/api/core/IStackFilter.java",
+                    "buildcraft/api/core/IConvertable.java",
+                    "buildcraft/api/statements/IGuiSlot.java",
+                    "buildcraft/api/statements/IStatement.java",
+                    "buildcraft/api/statements/IStatementContainer.java",
+                    "buildcraft/api/statements/IStatementParameter.java",
+                    "buildcraft/api/statements/StatementMouseClick.java",
+                    "buildcraft/api/statements/IAction.java",
+                    "buildcraft/api/statements/IActionInternal.java",
+                    "buildcraft/api/statements/IActionInternalSided.java",
+                    "buildcraft/api/statements/ITrigger.java",
+                    "buildcraft/api/statements/ITriggerInternal.java",
+                    "buildcraft/api/statements/ITriggerInternalSided.java",
+                    "buildcraft/api/statements/containers/IRedstoneStatementContainer.java",
+                    "buildcraft/api/transport/package-info.java",
+                    "buildcraft/api/transport/EnumWirePart.java",
+                    "buildcraft/api/transport/IInjectable.java",
+                    "buildcraft/api/transport/IItemPluggable.java",
+                    "buildcraft/api/transport/IStripesActivator.java",
+                    "buildcraft/api/transport/IStripesHandlerBlock.java",
+                    "buildcraft/api/transport/IStripesHandlerItem.java",
+                    "buildcraft/api/transport/IStripesRegistry.java",
+                    "buildcraft/api/transport/IWireEmitter.java",
+                    "buildcraft/api/transport/IWireManager.java",
+                    "buildcraft/api/transport/WireNode.java",
+                    "buildcraft/api/transport/pipe/EnumPipeColourType.java",
+                    "buildcraft/api/transport/pipe/ICustomPipeConnection.java",
+                    "buildcraft/api/transport/pipe/IFlowFluid.java",
+                    "buildcraft/api/transport/pipe/IFlowItems.java",
+                    "buildcraft/api/transport/pipe/IFlowPower.java",
+                    "buildcraft/api/transport/pipe/IFlowPowerLike.java",
+                    "buildcraft/api/transport/pipe/IFlowRedstoneFlux.java",
+                    "buildcraft/api/transport/pipe/IItemPipe.java",
+                    "buildcraft/api/transport/pipe/IPipeBehaviourBaker.java",
+                    "buildcraft/api/transport/pipe/IPipeBehaviourRenderer.java",
+                    "buildcraft/api/transport/pipe/IPipeConnection.java",
+                    "buildcraft/api/transport/pipe/IPipeExtensionManager.java",
+                    "buildcraft/api/transport/pipe/IPipeFlowBaker.java",
+                    "buildcraft/api/transport/pipe/IPipeFlowRenderer.java",
+                    "buildcraft/api/transport/pipe/IPipe.java",
+                    "buildcraft/api/transport/pipe/IPipeHolder.java",
+                    "buildcraft/api/transport/pipe/IPipeRegistry.java",
+                    "buildcraft/api/transport/pipe/PipeApi.java",
+                    "buildcraft/api/transport/pipe/PipeApiClient.java",
+                    "buildcraft/api/transport/pipe/PipeBehaviour.java",
+                    "buildcraft/api/transport/pipe/PipeConnectionAPI.java",
+                    "buildcraft/api/transport/pipe/PipeDefinition.java",
+                    "buildcraft/api/transport/pipe/PipeEvent.java",
+                    "buildcraft/api/transport/pipe/PipeEventActionActivate.java",
+                    "buildcraft/api/transport/pipe/PipeEventConnectionChange.java",
+                    "buildcraft/api/transport/pipe/PipeEventFluid.java",
+                    "buildcraft/api/transport/pipe/PipeEventHandler.java",
+                    "buildcraft/api/transport/pipe/PipeEventItem.java",
+                    "buildcraft/api/transport/pipe/PipeEventPlaced.java",
+                    "buildcraft/api/transport/pipe/PipeEventPower.java",
+                    "buildcraft/api/transport/pipe/PipeEventPriority.java",
+                    "buildcraft/api/transport/pipe/PipeEventRedstoneFlux.java",
+                    "buildcraft/api/transport/pipe/PipeEventStatement.java",
+                    "buildcraft/api/transport/pipe/PipeEventTileState.java",
+                    "buildcraft/api/transport/pipe/PipeFaceTex.java",
+                    "buildcraft/api/transport/pipe/PipeFlow.java",
+                    "buildcraft/api/transport/pipe/PipeFlowType.java",
+                    "buildcraft/api/transport/pluggable/IPlugDynamicRenderer.java",
+                    "buildcraft/api/transport/pluggable/IPluggableRegistry.java",
+                    "buildcraft/api/transport/pluggable/IPluggableStaticBaker.java",
+                    "buildcraft/api/transport/pluggable/PipePluggable.java",
+                    "buildcraft/api/transport/pluggable/PluggableDefinition.java",
+                    "buildcraft/api/transport/pluggable/PluggableModelKey.java"
+        }
+        // Layer N — api.mj (remaining after E) + api.statements (remaining after M) + api.gates.
+        // IFillerStatementContainer deferred — blocked on api.filler.IFillerPattern migration.
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/mj/ILaserTarget.java",
+                    "buildcraft/api/mj/ILaserTargetBlock.java",
+                    "buildcraft/api/mj/IMjEffectManager.java",
+                    "buildcraft/api/mj/IMjReadable.java",
+                    "buildcraft/api/mj/IMjToRfStatus.java",
+                    "buildcraft/api/mj/MjBattery.java",
+                    "buildcraft/api/mj/MjRfConversion.java",
+                    "buildcraft/api/statements/IActionExternal.java",
+                    "buildcraft/api/statements/IActionProvider.java",
+                    "buildcraft/api/statements/IActionReceptor.java",
+                    "buildcraft/api/statements/IActionSingle.java",
+                    "buildcraft/api/statements/ITriggerExternal.java",
+                    "buildcraft/api/statements/ITriggerExternalOverride.java",
+                    "buildcraft/api/statements/ITriggerProvider.java",
+                    "buildcraft/api/statements/IOverrideDefaultStatements.java",
+                    "buildcraft/api/statements/StatementManager.java",
+                    "buildcraft/api/statements/StatementParameterItemStack.java",
+                    "buildcraft/api/statements/StatementSlot.java",
+                    "buildcraft/api/statements/containers/ISidedStatementContainer.java",
+                    "buildcraft/api/gates/IGate.java"
+        }
+        // Layer O — transport rename-only batch: zero-Forge files with all BC deps in libLeaf.
+        // PipeBehaviourIron excluded (extends PipeBehaviourDirectional, not yet migrated).
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/PipeEventBus.java",
+                    "buildcraft/transport/client/PipeRegistryClient.java",
+                    "buildcraft/transport/pipe/flow/IPipeTransportPowerHook.java",
+                    "buildcraft/transport/pipe/flow/IPipeTransportRfHook.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowStructure.java",
+                    "buildcraft/transport/pipe/DefaultPipeConnection.java",
+                    "buildcraft/transport/pipe/StripesRegistry.java",
+                    "buildcraft/transport/wire/EnumWireBetween.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourSeparate.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourCobble.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourGold.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourQuartz.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourStone.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourSandstone.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourStructure.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourVoid.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourClay.java",
+                    "buildcraft/transport/client/model/key/KeyPlugBlocker.java",
+                    "buildcraft/transport/client/model/key/KeyPlugPowerAdaptor.java",
+                    "buildcraft/transport/stripes/StripesHandlerPipes.java",
+                    "buildcraft/transport/stripes/StripesHandlerUse.java",
+                    "buildcraft/transport/stripes/StripesHandlerEntityInteract.java",
+                    "buildcraft/transport/stripes/StripesHandlerPipeWires.java",
+                    "buildcraft/transport/stripes/StripesHandlerHoe.java",
+                    "buildcraft/transport/stripes/StripesHandlerPlaceBlock.java"
+        }
+        // Layer P — lib.gui container/slot layer (ScreenHandler + Slot migration).
+        // Shared container/slot logic; CLIENT-ONLY render files deferred to Phase 5 (commit 2).
+        // IItemHandlerAdv: Forge IItemHandler stub — Transfer-API wiring deferred.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/tile/item/StackInsertionChecker.java",
+                    "buildcraft/lib/tile/item/IItemHandlerAdv.java",
+                    // lib.gui.pos — pure geometry, no MC/Forge deps
+                    "buildcraft/lib/gui/pos/AreaCallable.java",
+                    "buildcraft/lib/gui/pos/GuiRectangle.java",
+                    "buildcraft/lib/gui/pos/IGuiArea.java",
+                    "buildcraft/lib/gui/pos/IGuiPosition.java",
+                    "buildcraft/lib/gui/pos/MousePosition.java",
+                    "buildcraft/lib/gui/pos/PositionAbsolute.java",
+                    "buildcraft/lib/gui/pos/PositionAdded.java",
+                    "buildcraft/lib/gui/pos/PositionCallable.java",
+                    "buildcraft/lib/gui/pos/PositionOffset.java",
+                    // lib.gui.config — deferred: GuiConfigSet/Entry/PropertyBoolean all call
+                    // GuiConfigManager which needs BCLibConfig (not yet in libLeaf).
+                    // Only GuiProperty and GuiPropertyConstructor are clean but isolated without the rest.
+                    "buildcraft/lib/gui/config/GuiProperty.java",
+                    "buildcraft/lib/gui/config/GuiPropertyConstructor.java",
+                    // lib.gui.slot — Fabric Slot / Inventory migration
+                    "buildcraft/lib/gui/slot/IPhantomSlot.java",
+                    "buildcraft/lib/gui/slot/SlotBase.java",
+                    "buildcraft/lib/gui/slot/SlotDisplay.java",
+                    "buildcraft/lib/gui/slot/SlotHidden.java",
+                    "buildcraft/lib/gui/slot/SlotLimited.java",
+                    "buildcraft/lib/gui/slot/SlotOutput.java",
+                    "buildcraft/lib/gui/slot/SlotPhantom.java",
+                    "buildcraft/lib/gui/slot/SlotUntouchable.java",
+                    "buildcraft/lib/gui/slot/SlotValidated.java",
+                    // lib.gui root — shared interface + ScreenHandler container tier
+                    "buildcraft/lib/gui/ISimpleDrawable.java",
+                    "buildcraft/lib/gui/ContainerBC_Neptune.java",
+                    "buildcraft/lib/gui/ContainerBCTile.java",
+                    "buildcraft/lib/gui/ContainerPipe.java",
+                    "buildcraft/lib/gui/Widget_Neptune.java",
+                    // lib.gui.json — slot holder (shared, no render deps)
+                    "buildcraft/lib/gui/json/InventorySlotHolder.java"
+        }
+        // Layer P.5 — SpriteNineSliced (migrated from Forge BufferBuilder → Fabric) + BCLibSprites.
+        // Required by Ledger_Neptune (nine-sliced background) and ledger subclasses.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/client/sprite/SpriteNineSliced.java",
+                    "buildcraft/lib/BCLibSprites.java"
+        }
+        // Layer Q — lib.gui CLIENT-ONLY render layer (Phase 5 implemented).
+        // All files marked @Environment(EnvType.CLIENT) with empty bodies.
+        // Stubs satisfy compile-time type references; real render implementation is Phase 5 work.
+        java {
+            srcDir "common"
+            // root gui — render classes and client-only interfaces
+            include "buildcraft/lib/gui/IGuiElement.java",
+                    "buildcraft/lib/gui/ITooltipElement.java",
+                    "buildcraft/lib/gui/IHelpElement.java",
+                    "buildcraft/lib/gui/IInteractionElement.java",
+                    "buildcraft/lib/gui/IMenuElement.java",
+                    "buildcraft/lib/gui/IContainingElement.java",
+                    "buildcraft/lib/gui/BuildCraftGui.java",
+                    "buildcraft/lib/gui/GuiBC8.java",
+                    "buildcraft/lib/gui/GuiIcon.java",
+                    "buildcraft/lib/gui/GuiScreenBuildCraft.java",
+                    "buildcraft/lib/gui/GuiSpriteScaled.java",
+                    "buildcraft/lib/gui/GuiElementSimple.java",
+                    "buildcraft/lib/gui/GuiElementToolTip.java",
+                    "buildcraft/lib/gui/GuiStack.java",
+                    // button/
+                    "buildcraft/lib/gui/button/ButtonTextureSet.java",
+                    "buildcraft/lib/gui/button/GuiAbstractButton.java",
+                    "buildcraft/lib/gui/button/GuiButtonDrawable.java",
+                    "buildcraft/lib/gui/button/GuiImageButton.java",
+                    "buildcraft/lib/gui/button/IButtonBehaviour.java",
+                    "buildcraft/lib/gui/button/IButtonClickEventListener.java",
+                    "buildcraft/lib/gui/button/IButtonClickEventTrigger.java",
+                    "buildcraft/lib/gui/button/IButtonTextureSet.java",
+                    "buildcraft/lib/gui/button/StandardButtonTextureSets.java",
+                    "buildcraft/lib/gui/button/StandardSpriteButtons.java",
+                    // elem/
+                    "buildcraft/lib/gui/elem/ToolTip.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainer2.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainerHelp.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainerResizing.java",
+                    "buildcraft/lib/gui/elem/GuiElementContainerScissor.java",
+                    "buildcraft/lib/gui/elem/GuiElementDrawable.java",
+                    "buildcraft/lib/gui/elem/GuiElementSlotMover.java",
+                    "buildcraft/lib/gui/elem/GuiElementText.java",
+                    "buildcraft/lib/gui/elem/ScrollbarElement.java",
+                    "buildcraft/lib/gui/elem/ScrollWindow.java",
+                    // help/
+                    "buildcraft/lib/gui/help/DummyHelpElement.java",
+                    "buildcraft/lib/gui/help/ElementHelpInfo.java",
+                    // json/ CLIENT-ONLY stubs (InventorySlotHolder already in Layer P)
+                    "buildcraft/lib/gui/json/BuildCraftJsonGui.java",
+                    "buildcraft/lib/gui/json/ElementType.java",
+                    "buildcraft/lib/gui/json/ElementTypeButton.java",
+                    "buildcraft/lib/gui/json/ElementTypeContainer.java",
+                    "buildcraft/lib/gui/json/ElementTypeDrawnStack.java",
+                    "buildcraft/lib/gui/json/ElementTypeHelp.java",
+                    "buildcraft/lib/gui/json/ElementTypeLedger.java",
+                    "buildcraft/lib/gui/json/ElementTypeSlot.java",
+                    "buildcraft/lib/gui/json/ElementTypeSprite.java",
+                    "buildcraft/lib/gui/json/ElementTypeStatementParam.java",
+                    "buildcraft/lib/gui/json/ElementTypeStatementSlot.java",
+                    "buildcraft/lib/gui/json/ElementTypeStatementSource.java",
+                    "buildcraft/lib/gui/json/ElementTypeText.java",
+                    "buildcraft/lib/gui/json/ElementTypeToolTip.java",
+                    "buildcraft/lib/gui/json/JsonGuiElement.java",
+                    "buildcraft/lib/gui/json/JsonGuiInfo.java",
+                    "buildcraft/lib/gui/json/JsonGuiIterator.java",
+                    "buildcraft/lib/gui/json/JsonGuiTypeRegistry.java",
+                    "buildcraft/lib/gui/json/SpriteDelegate.java",
+                    // ledger/
+                    "buildcraft/lib/gui/ledger/LedgerEngine.java",
+                    "buildcraft/lib/gui/ledger/LedgerHelp.java",
+                    "buildcraft/lib/gui/ledger/LedgerOwnership.java",
+                    "buildcraft/lib/gui/ledger/Ledger_Neptune.java",
+                    // recipe/
+                    "buildcraft/lib/gui/recipe/GuiButtonRecipePhantom.java",
+                    "buildcraft/lib/gui/recipe/GuiRecipeBookPhantom.java",
+                    "buildcraft/lib/gui/recipe/GuiRecipeBookTyped.java",
+                    "buildcraft/lib/gui/recipe/RecipeBookPagePhantom.java",
+                    "buildcraft/lib/gui/recipe/RecipeListPhantom.java",
+                    // statement/
+                    "buildcraft/lib/gui/statement/GuiElementStatement.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementDrag.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementParam.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementSource.java",
+                    "buildcraft/lib/gui/statement/GuiElementStatementVariant.java",
+                    "buildcraft/lib/gui/statement/IDrawingParameter.java",
+                    "buildcraft/lib/gui/statement/ParameterRenderer.java",
+                    // widget/
+                    "buildcraft/lib/gui/widget/WidgetFluidTank.java",
+                    "buildcraft/lib/gui/widget/WidgetPhantomSlot.java"
+        }
+        // Layer R — transport containers unblocked: ItemHandlerSimple + TileFilteredBuffer + BCTransportSprites stub.
+        // PipeBehaviour subclasses are compile-only stubs; full migration deferred (pipeline dep).
+        java {
+            srcDir "common"
+            include "buildcraft/lib/tile/item/StackInsertionFunction.java",
+                    "buildcraft/lib/tile/item/ItemHandlerSimple.java",
+                    "buildcraft/lib/tile/item/ItemHandlerFiltered.java",
+                    "buildcraft/transport/BCTransportSprites.java",
+                    "buildcraft/transport/tile/TileFilteredBuffer.java",
+                    // PipeBehaviour stubs — minimal surface for container compile
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDiamond.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourWoodDiamond.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourEmzuli.java",
+                    // Transport containers
+                    "buildcraft/transport/container/ContainerFilteredBuffer_BC8.java",
+                    "buildcraft/transport/container/ContainerDiamondPipe.java",
+                    "buildcraft/transport/container/ContainerDiamondWoodPipe.java",
+                    "buildcraft/transport/container/ContainerEmzuliPipe_BC8.java"
+        }
+        // Layer S — pipe core: PipeRegistry (item-creation stubbed), Pipe, PipeModelKey.
+        // Unblocks the pipe.flow layer's dependency on the central Pipe class.
+        // PipeRegistry.createItemForPipe* stubbed (blocked by ItemPipeHolder / RegistrationHelper).
+        // Pipe Forge ICapabilityProvider stripped → BlockApiLookup wiring deferred (Phase 4F).
+        // TilePipeHolder NOT added — blocked by WireManager + BlockPipeHolder (1115 LOC) +
+        // PluggableHolder (circular) + silicon.FilterEventHandler + AdvancementUtil cascade.
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/PipeRegistry.java",
+                    "buildcraft/transport/client/model/key/PipeModelKey.java",
+                    "buildcraft/transport/pipe/Pipe.java"
+        }
+        // Layer T — PipeFlowItems (item pipe flow) + its deps. TravellingItem migrated fully;
+        // PipeFlowItems migrated with only its Forge-capability getCapability body stubbed (Phase 4F,
+        // same deferral as PipeFlow/Pipe). Deps: lib.inventory (IItemTransactor migrated; transactor
+        // helpers stubbed), lib.misc.StackUtil (partial — OreDict/IList helpers dropped),
+        // lib.misc.data.DelayedList, lib.net.cache.BuildCraftObjectCaches (stub), transport.net
+        // message queue (stub) + BCTransportStatements (stub).
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/inventory/IItemTransactor.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/StackUtil.java",
+                    "buildcraft/lib/misc/data/DelayedList.java",
+                    "buildcraft/lib/inventory/NoSpaceTransactor.java",
+                    "buildcraft/lib/inventory/ItemTransactorHelper.java",
+                    "buildcraft/lib/net/cache/BuildCraftObjectCaches.java",
+                    "buildcraft/transport/net/MessageMultiPipeItem.java",
+                    "buildcraft/transport/net/PipeItemMessageQueue.java",
+                    "buildcraft/transport/BCTransportStatements.java",
+                    "buildcraft/transport/pipe/flow/TravellingItem.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowItems.java"
+        }
+        // Layer U — PipeFlowPower (MJ power pipe flow). Pipe→pipe power-distribution math kept intact;
+        // the Forge MJ-capability edges (CAP_RECEIVER / CAP_CONNECTOR / CAP_PASSIVE_PROVIDER, removed from
+        // MjAPI) are stubbed — external-tile power delivery deferred to Phase 4F (EnergyStorage.SIDED lookup).
+        // AverageInt is a zero-Forge leaf pulled in as the only new dependency.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/AverageInt.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowPower.java",
+                    "buildcraft/transport/pipe/flow/PipeFlowRedstoneFlux.java"
+        }
+        // Layer V — PipeFlowFluids (fluid pipe flow) + the FluidStack→FluidVariant bridge.
+        // IFluidFilter / IFluidHandlerAdv migrated to FluidVariant + Fabric Storage<FluidVariant>.
+        // The pipe's internal fluid mechanics run fully on FluidVariant + int mB; every external-tile
+        // edge that used getCapabilityFromPipe(side, CAP_FLUIDS) is stubbed to Phase 4F (FluidStorage.SIDED).
+        // The FluidStack NetworkedObjectCache stays deferred (Phase 4E): currentFluid is round-tripped
+        // through BuildCraftObjectCaches.storeFluid/retrieveFluid stubs, matching the ItemStack helpers.
+        // BCCoreConfig.networkUpdateRate / BCCoreItems.fragileFluidShard are inlined/stubbed rather than
+        // pulling the core module (same approach as the sibling flows).
+        java {
+            srcDir "BuildCraftAPI/api"
+            include "buildcraft/api/core/SafeTimeTracker.java",
+                    "buildcraft/api/core/IFluidFilter.java",
+                    "buildcraft/api/core/IFluidHandlerAdv.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/flow/PipeFlowFluids.java"
+        }
+        // Layer W — TilePipeHolder (the pipe capability hub) + the wire system + plug/block/event scaffolding.
+        // The whole wire layer is migrated as a unit (WireManager needs WireSystem + WorldSavedDataWireSystems):
+        //   - WorldSavedDataWireSystems → PersistentState (per-player MessageWireSystems broadcast deferred to
+        //     Phase 5, same as container networking); WireSystem.isPlayerWatching stubbed alongside it.
+        //   - AdvancementUtil migrated (UUID overload no-ops until a MinecraftServer holder exists).
+        //   - FilterEventHandler stubbed to a no-op (silicon Phase 7 — depends on PluggableLens).
+        //   - BCTransportBlocks stubbed to the pipeHolder handle only (BlockFilteredBuffer not yet migrated).
+        //   - BlockPipeHolder stubbed (1,115-LOC VoxelShape/render finale is Phase 4F).
+        //   - PluggableHolder fully migrated (circular with TilePipeHolder, same layer).
+        //   - TilePipeHolder: ITickable→BlockEntityTicker, Forge getCapability/provider → BlockApiLookup design
+        //     (registerCapabilities(), wired in Phase 4F); neighbour CAP_PIPE lookup resolved via IPipeHolder.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/AdvancementUtil.java",
+                    "buildcraft/silicon/plug/FilterEventHandler.java",
+                    "buildcraft/transport/BCTransportBlocks.java",
+                    "buildcraft/transport/block/BlockPipeHolder.java",
+                    "buildcraft/transport/wire/WireSystem.java",
+                    "buildcraft/transport/wire/WorldSavedDataWireSystems.java",
+                    "buildcraft/transport/wire/WireManager.java",
+                    "buildcraft/transport/pipe/PluggableHolder.java",
+                    "buildcraft/transport/tile/TilePipeHolder.java"
+        }
+        // Layer X — pipe behaviours (directional/lapis/daizuli/limiter/diamond/wood/obsidian/stripes),
+        // wire message stubs, stripes handlers, plug holders.
+        // Heavy Forge deps (MjCapabilityHelper, FluidStack, FakePlayer, BlockDispenser, IShearable,
+        // CropManager, EntityUtil) are stubbed to no-ops; restore in Phase 4E/4F.
+        java {
+            srcDir "common"
+            include "buildcraft/transport/pipe/behaviour/PipeBehaviourDirectional.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourIron.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourLapis.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDaizuli.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourLimiter.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDiamondItem.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourDiamondFluid.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourObsidian.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourWood.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourWoodPower.java",
+                    "buildcraft/transport/pipe/behaviour/PipeBehaviourStripes.java",
+                    "buildcraft/transport/wire/ClientWireSystems.java",
+                    "buildcraft/transport/wire/MessageWireSystems.java",
+                    "buildcraft/transport/wire/MessageWireSystemsPowered.java",
+                    "buildcraft/transport/stripes/StripesHandlerDispenser.java",
+                    "buildcraft/transport/stripes/StripesHandlerMinecartDestroy.java",
+                    "buildcraft/transport/stripes/StripesHandlerPlant.java",
+                    "buildcraft/transport/stripes/StripesHandlerShears.java",
+                    "buildcraft/transport/stripes/PipeExtensionManager.java",
+                    "buildcraft/transport/plug/PluggableBlocker.java",
+                    "buildcraft/transport/plug/PluggablePowerAdaptor.java"
+        }
+        // Layer Y — complete transport module: BCStatement (unblocks all statements), root module
+        // stubs, 13 statement classes, items, block, recipe, schematic, and all 21 client stubs.
+        java {
+            srcDir "common"
+            // BCStatement from core (only dep is migrated api) — unlocks all transport statements
+            include "buildcraft/core/statements/BCStatement.java",
+                    // Root module
+                    "buildcraft/transport/BCTransport.java",
+                    "buildcraft/transport/BCTransportConfig.java",
+                    "buildcraft/transport/BCTransportEventDist.java",
+                    "buildcraft/transport/BCTransportGuis.java",
+                    "buildcraft/transport/BCTransportItems.java",
+                    "buildcraft/transport/BCTransportModels.java",
+                    "buildcraft/transport/BCTransportPipes.java",
+                    "buildcraft/transport/BCTransportPlugs.java",
+                    "buildcraft/transport/BCTransportProxy.java",
+                    "buildcraft/transport/BCTransportRecipes.java",
+                    "buildcraft/transport/BCTransportRegistries.java",
+                    "buildcraft/transport/RecipePipeColour.java",
+                    // Block
+                    "buildcraft/transport/block/BlockFilteredBuffer.java",
+                    // Items
+                    "buildcraft/transport/item/ItemPipeHolder.java",
+                    "buildcraft/transport/item/ItemWire.java",
+                    // Pipe misc
+                    "buildcraft/transport/pipe/SchematicBlockPipe.java",
+                    // Recipe
+                    "buildcraft/transport/recipe/EngineRegisteredFactory.java",
+                    // Statements
+                    "buildcraft/transport/statements/ActionExtractionPreset.java",
+                    "buildcraft/transport/statements/ActionParameterSignal.java",
+                    "buildcraft/transport/statements/ActionPipeColor.java",
+                    "buildcraft/transport/statements/ActionPipeDirection.java",
+                    "buildcraft/transport/statements/ActionPipeSignal.java",
+                    "buildcraft/transport/statements/ActionPowerLimit.java",
+                    "buildcraft/transport/statements/ActionProviderPipes.java",
+                    "buildcraft/transport/statements/TriggerFluidsTraversing.java",
+                    "buildcraft/transport/statements/TriggerItemsTraversing.java",
+                    "buildcraft/transport/statements/TriggerParameterSignal.java",
+                    "buildcraft/transport/statements/TriggerPipeSignal.java",
+                    "buildcraft/transport/statements/TriggerPowerRequested.java",
+                    "buildcraft/transport/statements/TriggerProviderPipes.java",
+                    // Client stubs — Phase 5
+                    "buildcraft/transport/client/PipeBlockColours.java",
+                    "buildcraft/transport/client/model/IPipeBaseModelGen.java",
+                    "buildcraft/transport/client/model/ModelPipe.java",
+                    "buildcraft/transport/client/model/ModelPipeItem.java",
+                    "buildcraft/transport/client/model/PipeBaseModelGenConnected.java",
+                    "buildcraft/transport/client/model/PipeBaseModelGenStandard.java",
+                    "buildcraft/transport/client/model/PipeModelCacheAll.java",
+                    "buildcraft/transport/client/model/PipeModelCacheBase.java",
+                    "buildcraft/transport/client/model/PipeModelCachePluggable.java",
+                    "buildcraft/transport/client/model/plug/PlugBakerSimple.java",
+                    "buildcraft/transport/client/render/PipeBehaviourRendererStripes.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererFluids.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererItems.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererPower.java",
+                    "buildcraft/transport/client/render/PipeFlowRendererRf.java",
+                    "buildcraft/transport/client/render/PipeWireRenderer.java",
+                    "buildcraft/transport/client/render/RenderPipeHolder.java",
+                    // Layer W — transport client initializer
+                    "buildcraft/transport/BCTransportClientInitializer.java"
+        }
+        // Layer V — lib.client.model base render layer (MutableQuad/Vertex JOML + BakedModel stubs)
+        java {
+            srcDir "common"
+            include "buildcraft/lib/client/model/MutableVertex.java",
+                    "buildcraft/lib/client/model/MutableQuad.java",
+                    "buildcraft/lib/client/model/ModelUtil.java",
+                    "buildcraft/lib/client/model/IModelCache.java",
+                    "buildcraft/lib/client/model/ModelCache.java",
+                    "buildcraft/lib/client/model/ModelHolder.java",
+                    "buildcraft/lib/client/model/ModelHolderRegistry.java",
+                    "buildcraft/lib/client/model/ModelHolderVariable.java",
+                    "buildcraft/lib/client/model/ModelHolderStatic.java",
+                    "buildcraft/lib/client/model/ModelItemSimple.java",
+                    "buildcraft/lib/client/model/ModelPluggableItem.java",
+                    "buildcraft/lib/client/model/ModelNotifyOfRF.java",
+                    "buildcraft/lib/client/model/ModelCacheJoiner.java",
+                    "buildcraft/lib/client/model/ModelCacheMultipleSame.java",
+                    "buildcraft/lib/client/model/AdvModelCache.java",
+                    "buildcraft/lib/client/model/ResourceLoaderContext.java",
+                    "buildcraft/lib/client/model/json/JsonTexture.java",
+                    "buildcraft/lib/client/model/json/JsonVariableModel.java",
+                    "buildcraft/lib/client/model/json/JsonVariableModelPart.java",
+                    "buildcraft/lib/client/model/json/JsonModel.java",
+                    "buildcraft/lib/client/model/json/JsonModelPart.java",
+                    "buildcraft/lib/client/model/json/JsonModelRule.java",
+                    "buildcraft/lib/client/model/json/JsonQuad.java",
+                    "buildcraft/lib/client/model/json/JsonVariableFaceUV.java",
+                    "buildcraft/lib/client/model/json/JsonVertex.java",
+                    "buildcraft/lib/client/model/json/VariablePartContainer.java",
+                    "buildcraft/lib/client/model/json/VariablePartCuboid.java",
+                    "buildcraft/lib/client/model/json/VariablePartCuboidBase.java",
+                    "buildcraft/lib/client/model/json/VariablePartLed.java",
+                    "buildcraft/lib/client/model/json/VariablePartTextureExpand.java",
+                    "buildcraft/lib/client/model/plug/PlugBakerSimple.java"
+        }
+        java {
+            srcDir "common"
+            include "buildcraft/transport/gui/GuiDiamondPipe.java",
+                    "buildcraft/transport/gui/GuiDiamondWoodPipe.java",
+                    "buildcraft/transport/gui/GuiEmzuliPipe_BC8.java",
+                    "buildcraft/transport/gui/GuiFilteredBuffer.java"
+        }
+        // Layer Z — factory module Phase 1: entry point + all 9 tile entities.
+        // BCFactoryInitializer: full ModInitializer stub (all registration deferred).
+        // TileMiner: ITickable→tick()+ticker(), Forge NBT/net/side APIs fully migrated;
+        //            BCFactoryBlocks.tube and BCCoreConfig.miningMaxDepth stubbed.
+        // TileMiningWell: mining logic stubbed (BlockUtil Phase 4E).
+        // TilePump/TileFloodGate: BFS fluid logic stubbed (Tank/FluidVariant Phase 4E).
+        // TileChute: item pickup stubbed (BoundingBoxUtil/TransactorEntityItem Phase 4E).
+        // TileDistiller_BC8/TileHeatExchange: recipe + fluid logic stubbed (Phase 4E).
+        // TileTank: fluid storage stubbed (Phase 4E).
+        // TileAutoWorkbenchBase/Items/Fluids: WorkbenchCrafting stubbed (Phase 4E).
+        java {
+            srcDir "common"
+            include "buildcraft/factory/BCFactoryInitializer.java",
+                    "buildcraft/factory/tile/TileMiner.java",
+                    "buildcraft/factory/tile/TileMiningWell.java",
+                    "buildcraft/factory/tile/TilePump.java",
+                    "buildcraft/factory/tile/TileFloodGate.java",
+                    "buildcraft/factory/tile/TileChute.java",
+                    "buildcraft/factory/tile/TileDistiller_BC8.java",
+                    "buildcraft/factory/tile/TileHeatExchange.java",
+                    "buildcraft/factory/tile/TileTank.java",
+                    "buildcraft/factory/tile/TileAutoWorkbenchBase.java",
+                    "buildcraft/factory/tile/TileAutoWorkbenchItems.java",
+                    "buildcraft/factory/tile/TileAutoWorkbenchFluids.java"
+        }
+        // Layer AA — silicon module Phase 1: lib additions + gate logic + tile entities.
+        // New lib files:
+        //   AverageLong: NBT method renames (setIntArray→putIntArray).
+        //   ILocalBlockUpdateSubscriber: IBlockState→BlockState.
+        //   LocalBlockUpdateNotifier: IWorldEventListener removed (STUB); structure preserved.
+        //   StatementContext/Wrapper/ActionWrapper/TriggerWrapper: TileEntity→BlockEntity,
+        //     EnumFacing→Direction, ColourUtil.getTextFullTooltip stubbed.
+        //   StatementType/StatementTypeParam/FullStatement: NBTTagCompound→NbtCompound, renames.
+        // Silicon files:
+        //   EnumGateMaterial: Blocks.BRICK_BLOCK→Blocks.BRICKS, NETHER_BRICK→NETHER_BRICKS.
+        //   GateVariant: PacketBuffer→PacketByteBuf, NBT method renames.
+        //   ActionType/TriggerType: NBT method renames.
+        //   GateLogic: full migration (DyeColor, Direction, EnvType, FabricLoader, NbtElement).
+        //   PluggableGate: expression model system stubbed; core wire + readPayload migrated.
+        //   PluggablePulsar: MjAPI/BCTransportConfig/PipeEvent stubbed; NBT migrated.
+        //   ActionPowerPulsar/TriggerLightSensor/TriggerTimer: SideOnly→@Environment, API renames.
+        //   TileLaserTableBase: ITickable→tick()+ticker(), Side→NetSide, NBT renames.
+        //     IngredientStack.extract() stubbed.
+        //   TileAssemblyTable/AdvancedCraftingTable/IntegrationTable: recipe logic stubbed.
+        //   TileChargingTable/TileProgrammingTable_Neptune: 3-arg constructor.
+        //   TileLaser: VolumeUtil.iterateCone stubbed; MjCapabilityHelper deferred;
+        //     MjBattery.writeToNbt/readFromNbt pattern; validate→cancelRemoval.
+        //   BCSiliconInitializer: ModInitializer stub.
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/IReference.java",
+                    "buildcraft/lib/misc/data/AverageLong.java",
+                    "buildcraft/lib/block/ILocalBlockUpdateSubscriber.java",
+                    "buildcraft/lib/block/LocalBlockUpdateNotifier.java",
+                    "buildcraft/lib/statement/StatementContext.java",
+                    "buildcraft/lib/statement/StatementWrapper.java",
+                    "buildcraft/lib/statement/ActionWrapper.java",
+                    "buildcraft/lib/statement/TriggerWrapper.java",
+                    "buildcraft/lib/statement/StatementType.java",
+                    "buildcraft/lib/statement/StatementTypeParam.java",
+                    "buildcraft/lib/statement/FullStatement.java",
+                    "buildcraft/silicon/BCSiliconInitializer.java",
+                    "buildcraft/silicon/EnumAssemblyRecipeState.java",
+                    "buildcraft/silicon/BCSiliconStatements.java",
+                    "buildcraft/silicon/BCSiliconSprites.java",
+                    "buildcraft/silicon/BCSiliconPlugs.java",
+                    "buildcraft/silicon/gate/EnumGateLogic.java",
+                    "buildcraft/silicon/gate/EnumGateModifier.java",
+                    "buildcraft/silicon/gate/EnumGateMaterial.java",
+                    "buildcraft/silicon/gate/GateContext.java",
+                    "buildcraft/silicon/gate/GateVariant.java",
+                    "buildcraft/silicon/gate/ActionType.java",
+                    "buildcraft/silicon/gate/TriggerType.java",
+                    "buildcraft/silicon/gate/GateLogic.java",
+                    "buildcraft/silicon/plug/PluggableGate.java",
+                    "buildcraft/silicon/plug/PluggablePulsar.java",
+                    "buildcraft/silicon/statement/ActionPowerPulsar.java",
+                    "buildcraft/silicon/statement/TriggerLightSensor.java",
+                    "buildcraft/silicon/statement/TriggerTimer.java",
+                    "buildcraft/silicon/tile/TileLaserTableBase.java",
+                    "buildcraft/silicon/tile/TileAssemblyTable.java",
+                    "buildcraft/silicon/tile/TileAdvancedCraftingTable.java",
+                    "buildcraft/silicon/tile/TileIntegrationTable.java",
+                    "buildcraft/silicon/tile/TileChargingTable.java",
+                    "buildcraft/silicon/tile/TileProgrammingTable_Neptune.java",
+                    "buildcraft/silicon/tile/TileLaser.java"
+        }
+        // Layer AB — energy module Phase 1: entry point + three engine tile entities.
+        // EngineConnector added here (needed by all three tiles via createConnector()).
+        // TileDynamoMJ / TileSpringOil deferred (TileDynamoMJ needs Tank / FluidStack;
+        // TileSpringOil needs ITileOilSpring + generation API — both blocked until fluid layer lands).
+        java {
+            srcDir "common"
+            include "buildcraft/lib/engine/EngineConnector.java",
+                    "buildcraft/energy/BCEnergyGuis.java",
+                    "buildcraft/energy/BCEnergyInitializer.java",
+                    "buildcraft/energy/tile/TileEngineStone_BC8.java",
+                    "buildcraft/energy/tile/TileEngineIron_BC8.java",
+                    "buildcraft/energy/tile/TileEngineRF.java"
+        }
+        // Layer AC — builders module Phase 1: entry point + TileQuarry (priority).
+        // Adds the Quarry's data/chunk-loading dependency closure to libLeaf:
+        //   - lib.misc.data.{EnumAxisOrder, AxisOrder, BoxIterator} — Yarn-migrated scan-order helpers
+        //   - lib.chunkload.{IChunkLoadingTile, ChunkLoaderManager} — Forge ticket system → ServerWorld.setChunkForced
+        // BlockUtil (already in libLeaf) gains stub helpers (uniqueBlockPosComparator, getFluidWithFlowing,
+        // computeBlockBreakPower, breakBlockAndGetDrops). Other builders tiles + the snapshot/schematic
+        // system are deferred (heavy snapshot coupling).
+        java {
+            srcDir "common"
+            include "buildcraft/lib/misc/data/EnumAxisOrder.java",
+                    "buildcraft/lib/misc/data/AxisOrder.java",
+                    "buildcraft/lib/misc/data/BoxIterator.java",
+                    "buildcraft/lib/chunkload/IChunkLoadingTile.java",
+                    "buildcraft/lib/chunkload/ChunkLoaderManager.java",
+                    "buildcraft/builders/BCBuildersInitializer.java",
+                    "buildcraft/builders/tile/TileQuarry.java"
+        }
+    }
+    main {
+        java {
+            srcDir "common"               // all eight BC modules
+            srcDir "common_old_license"   // older MPL files
+            srcDir "BuildCraftAPI/api"    // BC public API (was a separate sourceSet)
+            // expression sources are compiled by :sub_projects:expression and
+            // consumed via 'implementation project(...)' — do NOT list them here.
+        }
+        resources {
+            // src/main/resources (fabric.mod.json + Fabric assets) is already the Java
+            // plugin's default resources dir; re-declaring it here registers a second file
+            // tree over the same dir and makes every entry a duplicate in processResources.
+            srcDir "buildcraft_resources" // textures, models, blockstates, recipes
+            // Localization: .lang files must be converted to .json before 1.20.1
+            // will load them.  They are still included here so the build does not
+            // break; convert in a dedicated pass.
+            srcDir "BuildCraft-Localization"
+            exclude "**/*.md"
+            // Guide resources (keep for now; may be ported separately)
+            srcDir "BuildCraftGuide/guide_resources"
+            exclude "pack.png"
+            exclude "pack.mcmeta"
         }
     }
     test {
         java {
             srcDir "src/test/java"
-            srcDir "sub_projects/expression/src/test/java"
         }
     }
 }
 
-if (gradle.startParameter.taskNames.contains("checkstyle")) {
-    checkstyle {
-        configFile = file("guidelines/buildcraft.checkstyle")
-        toolVersion = "7.2"
+// Wire libLeaf classpath to main's compile classpath so it sees Minecraft + Fabric API.
+// Done outside the sourceSets block to avoid forward-reference issues.
+sourceSets.libLeaf.compileClasspath += sourceSets.main.compileClasspath
+
+// ---------------------------------------------------------------------------
+// Repositories
+// ---------------------------------------------------------------------------
+repositories {
+    maven {
+        name = "FabricMC"
+        url  = "https://maven.fabricmc.net/"
     }
-
-    task checkstyle {}
-    tasks["checkstyle"].dependsOn checkstyleApi
-    tasks["checkstyle"].dependsOn checkstyleMain
-
-    tasks["checkstyleApi"].enabled = true
-    tasks["checkstyleMain"].enabled = true
-    tasks["checkstyleTest"].enabled = false
-}
-
-task setupSubProjects(dependsOn: "sub_projects:expression:generateSources") {
-    // Just an inter-dependency task
-}
-
-eclipseClasspath.dependsOn setupSubProjects
-ideaModule.dependsOn setupSubProjects
-compileJava.dependsOn setupSubProjects
-
-runClient.jvmArgs += "-Dbuildcraft.dev=true"
-for (String s :"-XX:+UseG1GC -Xmx2G -Xms2G -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M".split(" ")) {
-    runClient.jvmArgs += s
-}
-
-// Obfuscated Jar location
-ext.jarFile = zipTree(jar.archivePath)
-
-// Add API dir to the IDEA module
-idea.module.sourceDirs += sourceSets.api.java.srcDirs
-
-processResources
-{
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        // ${version}   and    ${mcversion}    are the exact strings being replaced
-        expand "version":project.version, "mcversion":project.minecraft.version
+    maven {
+        // Team Reborn Energy — Fabric energy API replacing Forge RF / IEnergyStorage
+        name = "TeamReborn"
+        url  = "https://maven.teamreborn.energy/"
     }
-
-    // copy everything else, that's not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-        exclude 'pack.mcmeta'
-        exclude 'pack.png'
-    }
+    mavenCentral()
 }
 
-compileJava {
-    options.compilerArgs << "-Xmaxerrs" << "2000"
-    options.compilerArgs << "-Xmaxwarns" << "2"
-    options.compilerArgs << "-Xlint:all"
-    options.compilerArgs << "-Xdiags:verbose"
-    options.compilerArgs << "-encoding" << "UTF-8"
-}
-
-javadoc {
-    options.setUse(true)
-    options.addStringsOption("Xmaxerrs").setValue(["2000"])
-    options.addStringsOption("Xmaxwarns").setValue(["2000"])
-    options.addStringsOption("Xdoclint:all")
-    options.setEncoding("UTF-8")
-}
-
-// --------------------
-// extra jar section
-// -------------------
-
-def createMCModInfo(String taskName)
-{
-    return new File("$projectDir/build/processing/" + taskName + "/mcmod.info")
-}
-
-def writeMCModInfo(String taskName, int... ids)
-{
-    File temp = createMCModInfo(taskName)
-    temp.parentFile.mkdirs()
-    if (temp.exists())
-        temp.delete()
-    temp.createNewFile()
-    def elements = []
-    for (int id : ids) {
-        elements += ext.mcModInfo[id];
-    }
-    String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(elements))
-    prettyPrinted = prettyPrinted.replace("\$version", project.version)
-    prettyPrinted = prettyPrinted.replace("\${mcversion}", project.minecraft.version)
-    temp.write(prettyPrinted)
-    return temp
-}
-
-def parseConfig(File config) {
-    if (!config.exists())
-        return null
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
-    }
-}
-
-def unzippedSourceJar = new File("$projectDir/build/processing/tasks/unzipped_src_jar/unzip")
-def libsDir = new File(System.getenv("LIBS_DIR") ?: "$projectDir/build/libs/", version)
-def modulesDir = new File(libsDir, "modules")
-def modulesDirSrc = new File(modulesDir, "src")
-
-// forge (or gradle?) creates a special sourceJar which has been processed
-// This task unzips that created jar, so that partial source jars can be created.
-task unzipSourceJar(type: Copy, dependsOn: sourceJar) {
-    from (zipTree(sourceJar.archivePath)) {
-        include "**"
-    }
-    into unzippedSourceJar
-}
-
-// add api classes to javadoc
-javadoc {
-    source += sourceSets.api.allSource
-}
-
-// add a javadoc jar
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    destinationDir = libsDir
-    appendix = "main"
-    classifier = 'javadoc'
-    from '$projectDir/build/docs/javadoc'
-}
-
-// because the normal output has been made to be obfuscated
-task deobfJar(type: Jar) {
-    destinationDir = libsDir
-    appendix = "main"
-    from sourceSets.main.output
-    from sourceSets.api.output
-    classifier = 'dev'
-}
-
-task writeModInfos() {
-    outputs.upToDateWhen { false }
-    doLast {
-        writeMCModInfo("lib", 0)
-        writeMCModInfo("core", 0, 1)
-        writeMCModInfo("builders", 2)
-        writeMCModInfo("energy", 3)
-        writeMCModInfo("factory", 4)
-        writeMCModInfo("silicon", 5)
-        writeMCModInfo("transport", 6)
-        writeMCModInfo("robotics", 7)
-    }
-}
-
-task apiJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-    destinationDir = modulesDir
-    appendix = "api"
-
-    from(project.ext.jarFile) {
-        includes.addAll(["buildcraft/api/**"])
-    }
-}
-
-task apiSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
-    destinationDir = modulesDirSrc
-    appendix = "api"
-    classifier = 'sources'
-    from sourceSets.api.allSource
-}
-
-task libJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-    destinationDir = modulesDir
-    appendix = "lib"
-
-    from(createMCModInfo("lib").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "data/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
-    }
-}
-
-task libSrcJar(type: Jar, dependsOn: [build, unzipSourceJar]) {
-    destinationDir = modulesDirSrc
-    appendix = "lib"
-    classifier = "sources"
-
-    from sourceSets.api.allSource
-    from (unzippedSourceJar) {
-        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "LICENSE**"])
-    }
-}
-
-task coreJar(type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-    destinationDir = modulesDir
-    appendix = "core"
-
-    from(createMCModInfo("core").parentFile)
-    from(project.ext.jarFile) {
-        includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "data/buildcraftlib/**", "assets/buildcraftcore/**", "data/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
-    }
-}
-
-for (String module : ["builders", "energy", "factory", "silicon", "transport", "robotics"]) {
-    task (module + "Jar", type: Jar, dependsOn: [reobfJar, writeModInfos]) {
-        destinationDir = modulesDir
-        appendix = module
-
-        from(createMCModInfo(module).parentFile)
-        from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraft$module/**", "data/buildcraft$module/**", "buildcraft/$module/**", "LICENSE"])
-        }
-    }
-}
-
-task mainJar(type: Jar, dependsOn:reobfJar) {
-    destinationDir = libsDir
-    appendix = "main"
-
-    from(project.ext.jarFile) {
-        includes.addAll("**")
-    }
-}
-
-task mainSrcJar(type: Jar, dependsOn:[reobfJar, unzipSourceJar]) {
-    destinationDir = libsDir
-    appendix = "main"
-    classifier = "sources"
-
-    from sourceSets.api.allSource
-    from (unzippedSourceJar) {
-        includes.add("**")
-    }
-}
-
-// Configure BC compat
-if (rootProject != project) {
-    rootProject.allJar.
-        from (project.ext.jarFile) {
-            includes.addAll("**")
-            exclude("mcmod.info")
-        }
-    rootProject.allJar.dependsOn(mainJar)
-
-    rootProject.allSrcJar.
-        from (unzippedSourceJar) {
-            includes.add("**")
-            exclude("mcmod.info")
-        }
-    rootProject.allJar.dependsOn(unzipSourceJar)
-}
-
-// add api classes to main package
-jar {
-    from sourceSets.api.output
-}
-
-// make sure all of these happen when we run build
-build.dependsOn mainSrcJar, apiJar, deobfJar, javadocJar
-
-// --------------------
-// maven section
-// -------------------
-
-// create the deployerJars dependency configuration
-configurations {
-    deployerJars
-    sshAntTask
-}
-
+// ---------------------------------------------------------------------------
+// Dependencies
+// ---------------------------------------------------------------------------
 dependencies {
-    // dependency in deployerJars, for maven deployment. see definition in mavenDeployer{} below
-    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
-    sshAntTask "org.apache.ant:ant-jsch:1.9.6", "com.jcraft:jsch:0.1.53"
-}
-// specify artifacts to be uploaded
-artifacts {
-    // the default jar is already here by default
-    archives sourceJar
-    archives javadocJar
+    // ---- Fabric toolchain (managed by Loom, not bundled in the output jar) ----
+    minecraft libs.minecraft
+    // Yarn mappings: the :v2 classifier selects the intermediary-mapped variant.
+    mappings variantOf(libs.yarn.mappings) { classifier "v2" }
+    modImplementation libs.fabric.loader
+    modImplementation libs.fabric.api
 
-    // Modules
-    archives apiJar
-    archives libJar
-    archives coreJar
-    archives buildersJar
-    archives energyJar
-    archives factoryJar
-    archives siliconJar
-    archives transportJar
-    archives roboticsJar
-    archives mainJar
+    // ---- Energy API (Phase 3 — not yet referenced in Java source) ----
+    // teamreborn:energy replaces net.minecraftforge.energy.{IEnergyStorage, CapabilityEnergy}.
+    // It is declared here so the dependency chain is established; actual usage in
+    // tile entities is part of the capability migration phase.
+    modImplementation libs.team.reborn.energy
+
+    // ---- Annotation support ----
+    // @Nonnull / @Nullable are used throughout; jsr305 must be on the compile
+    // classpath.  It is NOT included in the output jar (annotation-only).
+    implementation libs.jsr305
+
+    // ---- Expression library (generated + compiled as a subproject) ----
+    // This replaces the old inline srcDir approach.  Loom will put it on the
+    // compile and runtime classpath; the jar will be included via remapping.
+    implementation project(':sub_projects:expression')
+
+    // ---- Tests ----
+    testImplementation libs.junit
 }
 
-def sftp(String subPath, Closure antFileset = {}) {
-    ant {
-        taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
-                classpath: configurations.sshAntTask.asPath)
-        Map sftpArgs = [
-                               verbose : 'yes',
-                               todir : priv.username + "@" + priv.host + ":" + priv.remotedir + version + "/" + subPath,
-                               port: priv.port,
-                               password: priv.password,
-                               sftp: true,
-                               trust: 'yes'
-        ]
-        delegate.scp(sftpArgs) {
-            antFileset.delegate = delegate
-            antFileset()
+// ---------------------------------------------------------------------------
+// Expression source generation
+// ---------------------------------------------------------------------------
+// The expression subproject must generate its autogen sources before the root
+// compileJava runs.  Declaring the project dependency handles compilation order,
+// but we also need the generateSources task to have run first.
+compileJava.dependsOn ':sub_projects:expression:generateSources'
+
+// ---------------------------------------------------------------------------
+// Resource processing
+// ---------------------------------------------------------------------------
+processResources {
+    inputs.property "version", project.version
+
+    // Expand ${version} placeholder in fabric.mod.json (mirrors old mcmod.info expand)
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+
+    // mcmod.info is no longer processed — it will be removed by cleanup-forge.sh.
+    // The old expand + copy logic for mcmod.info is intentionally dropped.
+}
+
+// ---------------------------------------------------------------------------
+// Compiler options
+// ---------------------------------------------------------------------------
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-Xmaxerrs" << "9999"
+    // Suppress all lint warnings during the migration.  The Forge-era source
+    // generates thousands of warnings against 1.20.1 APIs.  Re-enable per module
+    // after each module's porting pass is complete.
+    options.compilerArgs << "-Xlint:none"
+    // Verbose diagnostics kept — useful when tracking down cascading errors
+    options.compilerArgs << "-Xdiags:verbose"
+}
+
+// ---------------------------------------------------------------------------
+// Main jar
+// ---------------------------------------------------------------------------
+jar {
+    from("LICENSE")     { rename { "${it}_BuildCraft" } }
+    from("LICENSE-NEW") { rename { "${it}_BuildCraft" } }
+    manifest.attributes(
+        "Implementation-Title":   "BuildCraft",
+        "Implementation-Version": project.version
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Per-module convenience JARs
+// ---------------------------------------------------------------------------
+// These replace the old reobfJar-based module jars.  They are thin archives
+// that slice the compiled output by package prefix — useful for consumers that
+// want only a subset of BuildCraft.
+//
+// A true Gradle subproject split (where each module has its own compilation
+// unit and can express inter-module dependencies) is deferred to a later phase
+// because it requires Java-level changes (access modifiers, package refactoring).
+["lib", "core", "builders", "energy", "factory", "silicon", "transport", "robotics"].each { mod ->
+    tasks.register("${mod}Jar", Jar) {
+        group       = "build (modules)"
+        description = "Thin JAR containing only buildcraft.${mod} classes and its assets."
+        archiveAppendix = mod
+        dependsOn compileJava
+        from(sourceSets.main.output) {
+            include "buildcraft/${mod}/**"
+        }
+        // Also bundle the per-namespace assets so each module jar is self-contained
+        from(sourceSets.main.resources.sourceDirectories) {
+            include "assets/buildcraft${mod}/**"
+            include "data/buildcraft${mod}/**"
         }
     }
 }
 
+// ---------------------------------------------------------------------------
+// Checkstyle (optional — run via: ./gradlew checkstyleMain -PrunCheckstyle)
+// ---------------------------------------------------------------------------
+if (project.hasProperty("runCheckstyle")) {
+    apply plugin: "checkstyle"
+    checkstyle {
+        configFile  = file("guidelines/buildcraft.checkstyle")
+        // Upgraded from 7.2: 10.x supports Java 17 syntax.
+        // NOTE: guidelines/buildcraft.checkstyle may need rule updates for 10.x.
+        toolVersion = "10.12.4"
+    }
+}
+
+// ---------------------------------------------------------------------------
+// compileLibLeaf — compile only the verified-migrated leaf files
+// ---------------------------------------------------------------------------
+tasks.register("compileLibLeaf") {
+    group       = "verification"
+    description = "Compile only the lib-leaf source set for incremental migration verification."
+    dependsOn compileLibLeafJava
+}
+
+// ---------------------------------------------------------------------------
+// Publishing
+// ---------------------------------------------------------------------------
 publishing {
     repositories {
         maven {
-            url System.getenv("MAVEN_DIR") ?: "$projectDir/build/maven"
+            url = System.getenv("MAVEN_DIR")
+                ? file(System.getenv("MAVEN_DIR"))
+                : layout.buildDirectory.dir("maven").get().asFile
         }
     }
     publications {
-        pub_apiJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-api"
-            version project.version
-
-            artifact apiJar
-        }
-        pub_apiSrcJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-api"
-            version project.version
-
-            artifact apiSrcJar
-        }
-        pub_libJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-lib"
-            version project.version
-
-            artifact libJar
-        }
-        pub_libSrcJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-lib"
-            version project.version
-
-            artifact libSrcJar
-        }
-        pub_mainJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-main"
-            version project.version
-
-            artifact mainJar
-        }
-        pub_mainSrcJar(MavenPublication) {
-            groupId "com.mod-buildcraft"
-            artifactId "buildcraft-main"
-            version project.version
-
-            artifact mainSrcJar
+        mavenJava(MavenPublication) {
+            groupId    = "com.mod-buildcraft"
+            artifactId = "buildcraft"
+            version    = project.version
+            from components.java
         }
     }
 }
 
-task upload(dependsOn: build) {
-    description = 'Update files on remote server.'
-    doFirst {
-        sftp("") {
-            fileset(dir: libsDir)
-        }
-        sftp("modules") {
-            fileset(dir: 'modules')
-        }
+// ---------------------------------------------------------------------------
+// Utility tasks
+// ---------------------------------------------------------------------------
+tasks.register("printVersion") {
+    group       = "help"
+    description = "Prints the computed mod version. Add -Drelease=true to suppress the git hash suffix."
+    doLast {
+        println "Version = ${project.version}"
     }
 }
-
-
-if (ext.priv == null)
-    upload.enabled = false
-
-uploadArchives {
-    // make sure this happens after reobfuscation
-    //dependsOn "reobf"
-
-    repositories {
-        add project.repositories.mavenLocal()
-    }
-}
-

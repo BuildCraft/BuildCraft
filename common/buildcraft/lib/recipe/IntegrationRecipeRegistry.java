@@ -8,22 +8,23 @@ package buildcraft.lib.recipe;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.recipes.IIntegrationRecipeRegistry;
 import buildcraft.api.recipes.IntegrationRecipe;
 
 public class IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
     public static final IntegrationRecipeRegistry INSTANCE = new IntegrationRecipeRegistry();
-    public final Map<ResourceLocation, IntegrationRecipe> recipes = new HashMap<>();
+    public final Map<Identifier, IntegrationRecipe> recipes = new HashMap<>();
 
     @Override
-    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull NonNullList<ItemStack> toIntegrate) {
+    public IntegrationRecipe getRecipeFor(@Nonnull ItemStack target, @Nonnull DefaultedList<ItemStack> toIntegrate) {
         for (IntegrationRecipe recipe : recipes.values()) {
             if (!recipe.getOutput(target, toIntegrate).isEmpty()) {
                 return recipe;
@@ -50,7 +51,7 @@ public class IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {
 
 
     @Override
-    public IntegrationRecipe getRecipe(@Nonnull ResourceLocation name) {
+    public IntegrationRecipe getRecipe(@Nonnull Identifier name) {
         return recipes.get(name);
     }
 }

@@ -7,15 +7,15 @@
 package buildcraft.factory.item;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.Blocks;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -32,35 +32,38 @@ public class ItemWaterGel extends ItemBC_Neptune {
         this.maxStackSize = 16;
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-        Vec3d look = player.getLookVec();
-        Vec3d end = start.add(look.scale(7));
-        RayTraceResult ray = world.rayTraceBlocks(start, end, true, false, true);
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getStackInHand(hand);
+        Vec3d start = player.getEyePos();
+        Vec3d look = player.getRotationVec(1.0f);
+        Vec3d end = start.add(look.multiply(7));
+        net.minecraft.util.hit.BlockHitResult ray = world.raycastBlock(start, end,
+            net.minecraft.util.math.BlockPos.ofFloored(start),
+            net.minecraft.block.ShapeContext.absent());
 
-        if (ray == null || ray.getBlockPos() == null) {
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
+        if (ray == null) {
+            return TypedActionResult.fail(stack);
         }
+        net.minecraft.util.math.BlockPos rayPos = ray.getBlockPos();
 
-        Block b = world.getBlockState(ray.getBlockPos()).getBlock();
+        Block b = world.getBlockState(rayPos).getBlock();
         if (b != Blocks.WATER) {
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
+            return TypedActionResult.fail(stack);
         }
 
-        if (!player.capabilities.isCreativeMode) {
+        if (!player.getAbilities().creativeMode) {
             stack.setCount(stack.getCount() - 1);
         }
 
         // Same as ItemSnowball
-        world.playSound(null, player.posX, player.posY, player.posZ,//
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),//
                 SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL,//
-                0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+                0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
 
-        if (!world.isRemote) {
-            world.setBlockState(ray.getBlockPos(), BCFactoryBlocks.waterGel.getDefaultState().withProperty(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
-            world.scheduleUpdate(ray.getBlockPos(), BCFactoryBlocks.waterGel, 200);
+        if (!world.isClient) {
+            world.setBlockState(rayPos, BCFactoryBlocks.waterGel.getDefaultState().with(BlockWaterGel.PROP_STAGE, GelStage.SPREAD_0));
+            world.scheduleBlockTick(rayPos, BCFactoryBlocks.waterGel, 200);
 
             // TODO: Snowball stuff
 
@@ -70,7 +73,7 @@ public class ItemWaterGel extends ItemBC_Neptune {
         }
 
         // player.addStat(StatList.getObjectUseStats(this));
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return TypedActionResult.success(stack);
     }
 
 }

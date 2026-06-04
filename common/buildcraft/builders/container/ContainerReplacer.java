@@ -6,7 +6,7 @@
 
 package buildcraft.builders.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -14,12 +14,12 @@ import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.builders.tile.TileReplacer;
 
 public class ContainerReplacer extends ContainerBCTile<TileReplacer> {
-    public ContainerReplacer(EntityPlayer player, TileReplacer tile) {
+    public ContainerReplacer(PlayerEntity player, TileReplacer tile) {
         super(player, tile);
 
-        addSlotToContainer(new SlotBase(tile.invSnapshot, 0, 8, 115));
-        addSlotToContainer(new SlotBase(tile.invSchematicFrom, 0, 8, 137));
-        addSlotToContainer(new SlotBase(tile.invSchematicTo, 0, 56, 137));
+        addSlot(new SlotBase(tile.invSnapshot, 0, 8, 115));
+        addSlot(new SlotBase(tile.invSchematicFrom, 0, 8, 137));
+        addSlot(new SlotBase(tile.invSchematicTo, 0, 56, 137));
 
         addFullPlayerInventory(159);
     }

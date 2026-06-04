@@ -2,40 +2,36 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonParseException;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import buildcraft.api.core.BCLog;
+import net.minecraft.util.Identifier;
 
-import buildcraft.lib.client.model.json.JsonModel;
-import buildcraft.lib.client.model.json.JsonModelPart;
-import buildcraft.lib.client.model.json.JsonQuad;
-
-/** Holds a model that will never change except if the json file it is defined from is changed.
- * 
- * @deprecated Unused -- and a lot of duplicated code with ModelHolderVariable */
+/**
+ * STUB(R.Chen): client model — Phase 5. Also @Deprecated in the original source.
+ *
+ * The Forge original loaded a static JSON model and baked it during ModelBakeEvent + TextureStitchEvent.
+ * Phase 5 will replace with ModelLoadingPlugin. Bodies return empty/null until then.
+ *
+ * @deprecated Unused in the original code — a lot of duplicated code with ModelHolderVariable.
+ */
 @Deprecated
+@Environment(EnvType.CLIENT)
 public class ModelHolderStatic extends ModelHolder {
     private final ImmutableMap<String, String> textureLookup;
     private final boolean allowTextureFallthrough;
     private MutableQuad[][] quads;
-    private JsonModel rawModel;
-    private boolean unseen = true;
 
     public ModelHolderStatic(String location) {
         this(location, ImmutableMap.of(), false);
@@ -45,7 +41,8 @@ public class ModelHolderStatic extends ModelHolder {
         this(location, genTextureMap(textures), allowTextureFallthrough);
     }
 
-    public ModelHolderStatic(String modelLocation, ImmutableMap<String, String> textureLookup, boolean allowTextureFallthrough) {
+    public ModelHolderStatic(String modelLocation, ImmutableMap<String, String> textureLookup,
+        boolean allowTextureFallthrough) {
         super(modelLocation);
         this.textureLookup = textureLookup;
         this.allowTextureFallthrough = allowTextureFallthrough;
@@ -63,10 +60,7 @@ public class ModelHolderStatic extends ModelHolder {
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         for (String[] ar : textures) {
             if (ar.length != 2) {
-                throw new IllegalArgumentException("Must have 2 elements (key,value) but got " + Arrays.toString(ar));
-            }
-            if (!ar[0].startsWith("~")) {
-                throw new IllegalArgumentException("Key must start with '~' otherwise it will never be used!");
+                throw new IllegalArgumentException("Must have 2 elements (key,value) but got " + ar.length);
             }
             builder.put(ar[0], ar[1]);
         }
@@ -74,115 +68,20 @@ public class ModelHolderStatic extends ModelHolder {
     }
 
     @Override
-    protected void onTextureStitchPre(Set<ResourceLocation> toRegisterSprites) {
-        rawModel = null;
-        quads = null;
-        failReason = null;
-        try {
-            rawModel = JsonModel.deserialize(modelLocation);
-        } catch (JsonParseException jse) {
-            rawModel = null;
-            failReason = "The model had errors: " + jse.getMessage();
-            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + jse.getMessage());
-        } catch (IOException io) {
-            rawModel = null;
-            failReason = "The model did not exist in any resource pack: " + io.getMessage();
-            BCLog.logger.warn("[lib.model.holder] Failed to load the model " + modelLocation + " because " + io.getMessage());
-        }
-        if (rawModel != null) {
-            if (ModelHolderRegistry.DEBUG) {
-                BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
-            }
-            for (Entry<String, String> entry : rawModel.textures.entrySet()) {
-                String lookup = entry.getValue();
-                if (lookup.startsWith("#")) {
-                    // its somewhere else in the map so we don't need to register it twice
-                    continue;
-                }
-                if (lookup.startsWith("~") && textureLookup.containsKey(lookup)) {
-                    lookup = textureLookup.get(lookup);
-                }
-                if (lookup == null || lookup.startsWith("#") || lookup.startsWith("~")) {
-                    if (!allowTextureFallthrough) {
-                        failReason = "The sprite lookup '" + lookup + "' did not exist in ay of the maps";
-                        rawModel = null;
-                        break;
-                    }
-                } else {
-                    toRegisterSprites.add(new ResourceLocation(lookup));
-                }
-                if (ModelHolderRegistry.DEBUG) {
-                    BCLog.logger.info("[lib.model.holder]  - " + lookup);
-                }
-            }
-        }
+    protected void onTextureStitchPre(Set<Identifier> toRegisterSprites) {
+        // STUB(R.Chen): Phase 5
     }
 
     @Override
     protected void onModelBake() {
-        if (rawModel == null) {
-            quads = null;
-        } else {
-            MutableQuad[] cut = bakePart(rawModel.cutoutElements);
-            MutableQuad[] trans = bakePart(rawModel.translucentElements);
-            quads = new MutableQuad[][] { cut, trans };
-            rawModel = null;
-        }
-    }
-
-    private MutableQuad[] bakePart(JsonModelPart[] a) {
-        TextureAtlasSprite missingSprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
-        List<MutableQuad> list = new ArrayList<>();
-        for (JsonModelPart part : a) {
-            for (JsonQuad quad : part.quads) {
-                String lookup = quad.texture;
-                int attempts = 0;
-                while (lookup.startsWith("#") && rawModel.textures.containsKey(lookup) && attempts < 10) {
-                    lookup = rawModel.textures.get(lookup);
-                    attempts++;
-                }
-                if (lookup.startsWith("~") && textureLookup.containsKey(lookup)) {
-                    lookup = textureLookup.get(lookup);
-                }
-                TextureAtlasSprite sprite;
-                if (lookup.startsWith("#") || lookup.startsWith("~")) {
-                    if (allowTextureFallthrough) {
-                        // Let the caller manually replace the sprite (as we don't know what to replace it with)
-                        // But only if the model user is aware of this (so its not an error)
-                        sprite = null;
-                    } else {
-                        sprite = missingSprite;
-                    }
-                } else {
-                    sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
-                }
-                list.add(quad.toQuad(sprite));
-            }
-        }
-        return list.toArray(new MutableQuad[list.size()]);
-    }
-
-    private MutableQuad[][] getQuadsChecking() {
-        if (quads == null) {
-            if (unseen) {
-                unseen = false;
-                String warnText = "[lib.model.holder] Tried to use the model " + modelLocation + " before it was baked!";
-                if (ModelHolderRegistry.DEBUG) {
-                    BCLog.logger.warn(warnText, new Throwable());
-                } else {
-                    BCLog.logger.warn(warnText);
-                }
-            }
-            return new MutableQuad[][] { MutableQuad.EMPTY_ARRAY, MutableQuad.EMPTY_ARRAY };
-        }
-        return quads;
+        // STUB(R.Chen): Phase 5
     }
 
     public MutableQuad[] getCutoutQuads() {
-        return getQuadsChecking()[0];
+        return quads != null ? quads[0] : MutableQuad.EMPTY_ARRAY;
     }
 
     public MutableQuad[] getTranslucentQuads() {
-        return getQuadsChecking()[1];
+        return quads != null ? quads[1] : MutableQuad.EMPTY_ARRAY;
     }
 }

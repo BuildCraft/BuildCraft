@@ -2,30 +2,32 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport;
 
-import net.minecraft.block.material.Material;
+import net.minecraft.block.entity.BlockEntityType;
 
-import buildcraft.lib.registry.RegistrationHelper;
-
-import buildcraft.transport.block.BlockFilteredBuffer;
 import buildcraft.transport.block.BlockPipeHolder;
-import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
+// STUB(R.Chen): block/item registration moves to BCTransportInitializer (Fabric Registry.register against
+// Registries.BLOCK / BLOCK_ENTITY_TYPE). The Forge RegistrationHelper.addBlock/registerTile flow is dropped.
+// Fields are left as null handles so already-migrated code (TilePipeHolder, SchematicBlockPipe) can reference
+// BCTransportBlocks.pipeHolder; the initializer assigns them at mod-init time.
 public class BCTransportBlocks {
-    private static final RegistrationHelper HELPER = new RegistrationHelper();
 
-    public static BlockFilteredBuffer filteredBuffer;
+    // STUB(R.Chen): filteredBuffer dropped here — BlockFilteredBuffer is not yet migrated. Restore the field
+    // (typed BlockFilteredBuffer) once that block lands; nothing in the migrated leaf set references it.
     public static BlockPipeHolder pipeHolder;
 
-    public static void preInit() {
-        filteredBuffer = HELPER.addBlockAndItem(new BlockFilteredBuffer(Material.IRON, "block.filtered_buffer"));
-        pipeHolder = HELPER.addBlock(new BlockPipeHolder(Material.IRON, "block.pipe_holder"));
+    // STUB(R.Chen): the registered BlockEntityType for the pipe tile (was the Forge BlockEntity registration).
+    // BlockPipeHolder.createBlockEntity / getTicker reference this; the Phase 4F transport initializer builds it
+    // via FabricBlockEntityTypeBuilder.create(TilePipeHolder::new, pipeHolder) and assigns it here.
+    public static BlockEntityType<TilePipeHolder> pipeHolderTile;
 
-        HELPER.registerTile(TileFilteredBuffer.class, "tile.filtered_buffer");
-        HELPER.registerTile(TilePipeHolder.class, "tile.pipe_holder");
+    public static void preInit() {
+        // STUB(R.Chen): registered in BCTransportInitializer (Fabric registration).
     }
 }

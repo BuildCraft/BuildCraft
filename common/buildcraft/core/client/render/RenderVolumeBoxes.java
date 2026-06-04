@@ -8,11 +8,11 @@ package buildcraft.core.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.client.render.DetachedRenderer;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -23,18 +23,20 @@ import buildcraft.core.marker.volume.Addon;
 import buildcraft.core.marker.volume.ClientVolumeBoxes;
 import buildcraft.core.marker.volume.IFastAddonRenderer;
 import buildcraft.core.marker.volume.Lock;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
 public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void render(EntityPlayer player, float partialTicks) {
-        GlStateManager.enableBlend();
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void render(PlayerEntity player, float partialTicks) {
+        RenderSystem.enableBlend();
 
         BufferBuilder bb = Tessellator.getInstance().getBuffer();
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bb.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
 
         ClientVolumeBoxes.INSTANCE.volumeBoxes.forEach(volumeBox -> {
             LaserType type;
@@ -58,6 +60,9 @@ public enum RenderVolumeBoxes implements DetachedRenderer.IDetachedRenderer {
 
         Tessellator.getInstance().draw();
 
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

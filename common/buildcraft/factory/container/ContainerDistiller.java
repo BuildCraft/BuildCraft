@@ -6,8 +6,8 @@
 
 package buildcraft.factory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ContainerBCTile;
@@ -20,7 +20,7 @@ public class ContainerDistiller extends ContainerBCTile<TileDistiller_BC8> {
     public final WidgetFluidTank widgetOutputGasTank;
     public final WidgetFluidTank widgetOutputLiquidTank;
 
-    public ContainerDistiller(EntityPlayer player, TileDistiller_BC8 tank) {
+    public ContainerDistiller(PlayerEntity player, TileDistiller_BC8 tank) {
         super(player, tank);
 
         addFullPlayerInventory(79);
@@ -30,18 +30,18 @@ public class ContainerDistiller extends ContainerBCTile<TileDistiller_BC8> {
         widgetOutputLiquidTank = addWidget(new WidgetFluidTank(this, tank.tankLiquidOut));
     }
 
-    @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         // The only slots are player slots -- try to interact with the tank
 
-        if (!player.world.isRemote) {
+        if (!player.getWorld().isClient) {
             Slot slot = inventorySlots.get(index);
             ItemStack stack = slot.getStack();
             ItemStack original = stack.copy();
             stack = tile.tankIn.transferStackToTank(this, stack);
-            if (!ItemStack.areItemStacksEqual(stack, original)) {
-                slot.putStack(stack);
-                detectAndSendChanges();
+            if (!ItemStack.areEqual(stack, original)) {
+                slot.setStack(stack);
+                sendContentUpdates();
                 return ItemStack.EMPTY;
             }
         }

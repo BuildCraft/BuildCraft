@@ -8,8 +8,8 @@ package buildcraft.lib.misc;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -26,35 +26,27 @@ public class PermissionUtil {
     private static final int MAX_INTERACT_DISTANCE_SQ = MAX_INTERACT_DISTANCE * MAX_INTERACT_DISTANCE;
 
     public static boolean hasPermission(Object type, PermissionBlock attempting, PermissionBlock target) {
-        // TODO: fire a forge block-break event if its a break event
-        if (type == PERM_DESTROY || type == PERM_EDIT) {
-            // TODO check "area" -- the player must be an OP if its within spawn radius
-        }
+        // TODO(R.Chen): fire a Fabric block-break callback if it's a break event; check spawn-radius OP rule.
         return true;
     }
 
     public static boolean hasPermission(Object type, GameProfile attempting, PermissionBlock target) {
-        // TODO: fire a forge block-break event if its a break event
-        if (type == PERM_DESTROY || type == PERM_EDIT) {
-            // TODO check "area" -- the player must be an OP if its within spawn radius
-        }
+        // TODO(R.Chen): fire a Fabric block-break callback if it's a break event; check spawn-radius OP rule.
         return true;
     }
 
-    public static boolean hasPermission(Object type, EntityPlayer attempting, PermissionBlock target) {
-        // TODO: fire a forge block-break event if its a break event
-        if (attempting.getDistanceSq(target.pos) > MAX_INTERACT_DISTANCE_SQ) {
+    public static boolean hasPermission(Object type, PlayerEntity attempting, PermissionBlock target) {
+        if (attempting.squaredDistanceTo(
+            target.pos.getX() + 0.5, target.pos.getY() + 0.5, target.pos.getZ() + 0.5
+        ) > MAX_INTERACT_DISTANCE_SQ) {
             return false;
         }
-
-        if (type == PERM_DESTROY || type == PERM_EDIT) {
-            // TODO check "area" -- the player must be an OP if its within spawn radius
-        }
+        // TODO(R.Chen): check spawn-radius OP rule for PERM_DESTROY / PERM_EDIT.
         return true;
     }
 
     public static PermissionBlock createFrom(World world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         IPlayerOwned owned = null;
 
         if (tile instanceof IPlayerOwned) {

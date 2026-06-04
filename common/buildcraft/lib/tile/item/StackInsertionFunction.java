@@ -2,51 +2,46 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.tile.item;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.lib.misc.StackUtil;
-
-/** Defines a way of inserting items into an inventory - this can be overridden to have different rules with stack
- * merging. */
+/** Defines a way of inserting items into an inventory — overridable for custom stack-merge rules. */
 @FunctionalInterface
 public interface StackInsertionFunction {
-    /** @param addingTo The existing stack. Modifications are lost.
-     * @param toInsert The stacks to insert. Modifications are lost.
-     * @return The result of attempting to insert it. */
+
     @Nonnull
     InsertionResult modifyForInsertion(int slot, @Nonnull ItemStack addingTo, @Nonnull ItemStack toInsert);
 
-    /** Gets a stack insertion function that will insert items up to a given stack size. The stack size of the items
-     * themselves IS taken into account, so this has an effective upper limit of 64. */
     static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
             if (toInsert.isEmpty()) {
-                return new InsertionResult(addingTo, StackUtil.EMPTY);
+                return new InsertionResult(addingTo, ItemStack.EMPTY);
             }
-
             if (addingTo.isEmpty()) {
-                int maxSize = Math.min(maxStackSize, toInsert.getMaxStackSize());
+                int maxSize = Math.min(maxStackSize, toInsert.getMaxCount());
                 if (toInsert.getCount() <= maxSize) {
-                    return new InsertionResult(toInsert, StackUtil.EMPTY);
+                    return new InsertionResult(toInsert, ItemStack.EMPTY);
                 } else {
-                    ItemStack inserted = toInsert.splitStack(maxSize);
-                    return new InsertionResult(inserted, toInsert);
+                    // toInsert.copy().split(maxSize) removes maxSize from the copy and returns it
+                    ItemStack mutable = toInsert.copy();
+                    ItemStack inserted = mutable.split(maxSize);
+                    return new InsertionResult(inserted, mutable);
                 }
             } else if (addingTo.getCount() == maxStackSize) {
                 return new InsertionResult(addingTo, toInsert);
-            } else if (StackUtil.canMerge(addingTo, toInsert)) {
+            } else if (ItemStack.canCombine(addingTo, toInsert)) {
                 ItemStack complete = addingTo.copy();
                 int count = addingTo.getCount() + toInsert.getCount();
-                int maxSize = Math.min(maxStackSize, complete.getMaxStackSize());
+                int maxSize = Math.min(maxStackSize, complete.getMaxCount());
                 if (count <= maxSize) {
                     complete.setCount(count);
-                    return new InsertionResult(complete, StackUtil.EMPTY);
+                    return new InsertionResult(complete, ItemStack.EMPTY);
                 } else {
                     complete.setCount(maxSize);
                     ItemStack leftOver = toInsert.copy();
@@ -58,15 +53,12 @@ public interface StackInsertionFunction {
         };
     }
 
-    /** Gets a stack insertion function that will insert up to full stacks into a given slot. This is just
-     * {@link #getInsertionFunction(int)} with an argument of {@link Integer#MAX_VALUE}. */
-    public static StackInsertionFunction getDefaultInserter() {
+    static StackInsertionFunction getDefaultInserter() {
         return getInsertionFunction(Integer.MAX_VALUE);
     }
 
-    /** The result of an attempted insertion. */
     class InsertionResult {
-        public static final InsertionResult EMPTY_STACKS = new InsertionResult(StackUtil.EMPTY, StackUtil.EMPTY);
+        public static final InsertionResult EMPTY_STACKS = new InsertionResult(ItemStack.EMPTY, ItemStack.EMPTY);
 
         @Nonnull
         public final ItemStack toSet, toReturn;

@@ -8,11 +8,12 @@ package buildcraft.builders.block;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,20 +25,20 @@ import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileReplacer;
 
 public class BlockReplacer extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public BlockReplacer(Material material, String id) {
+    public BlockReplacer(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     @Nullable
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileReplacer();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
+        if (!world.isClient) {
             BCBuildersGuis.REPLACER.openGUI(player, pos);
         }
         return true;

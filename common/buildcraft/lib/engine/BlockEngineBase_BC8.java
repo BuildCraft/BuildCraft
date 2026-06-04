@@ -10,24 +10,26 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.state.property.Property;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.state.StateManager;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
@@ -42,14 +44,14 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors =
         new EnumMap<>(getEngineProperty().getValueClass());
 
-    public BlockEngineBase_BC8(Material material, String id) {
+    public BlockEngineBase_BC8(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     // Engine directly related methods
 
     public void registerEngine(E type, Supplier<? extends TileEngineBase_BC8> constructor) {
-        if (RegistryConfig.isEnabled("engines", getRegistryName() + "/" + type.name().toLowerCase(Locale.ROOT),
+        if (RegistryConfig.isEnabled("engines", net.minecraft.registry.Registries.BLOCK.getId(this) + "/" + type.name().toLowerCase(Locale.ROOT),
             getUnlocalizedName(type))) {
             engineTileConstructors.put(type, constructor);
         }
@@ -61,10 +63,10 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     @Nonnull
     public ItemStack getStack(E type) {
-        return new ItemStack(this, 1, type.ordinal());
+        return new ItemStack(this, 1);
     }
 
-    public abstract IProperty<E> getEngineProperty();
+    public abstract Property<E> getEngineProperty();
 
     public abstract E getEngineType(int meta);
 
@@ -72,43 +74,40 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     // BlockState
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, getEngineProperty());
-    }
+        // TODO(R.Chen): Forge createBlockState() → override appendProperties() instead.
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        E type = state.getValue(getEngineProperty());
+// @Override removed (R.Chen): no longer overrides — Phase 10
+    public int getMetaFromState(BlockState state) {
+        E type = state.get(getEngineProperty());
         return type.ordinal();
     }
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockState getStateFromMeta(int meta) {
         E engineType = getEngineType(meta);
-        return getDefaultState().withProperty(getEngineProperty(), engineType);
+        return getDefaultState().with(getEngineProperty(), engineType);
     }
 
     // Misc Block Overrides
 
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
-    @Override
-    public boolean isFullBlock(IBlockState state) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean isFullBlock(BlockState state) {
         return false;
     }
 
-    @Override
-    public boolean isFullCube(IBlockState state) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean isFullCube(BlockState state) {
         return false;
     }
 
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockFaceShape getBlockFaceShape(BlockView world, BlockState state, BlockPos pos, Direction side) {
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             if (side == engine.currentDirection.getOpposite()) {
@@ -120,9 +119,9 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
         return BlockFaceShape.UNDEFINED;
     }
 
-    @Override
-    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public boolean isSideSolid(BlockState base_state, BlockView world, BlockPos pos, Direction side) {
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             return side == engine.currentDirection.getOpposite();
@@ -131,13 +130,13 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
-        E engineType = state.getValue(getEngineProperty());
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
+        E engineType = state.get(getEngineProperty());
         Supplier<? extends TileEngineBase_BC8> constructor = engineTileConstructors.get(engineType);
         if (constructor == null) {
             return null;
@@ -147,25 +146,25 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
         return tile;
     }
 
-    @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        for (E engine : getEngineProperty().getAllowedValues()) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void getSubBlocks(ItemGroup tab, DefaultedList<ItemStack> list) {
+        for (E engine : getEngineProperty().getValues()) {
             if (engineTileConstructors.containsKey(engine)) {
-                list.add(new ItemStack(this, 1, engine.ordinal()));
+                list.add(new ItemStack(this, 1));
             }
         }
     }
 
-    @Override
-    public int damageDropped(IBlockState state) {
-        return state.getValue(getEngineProperty()).ordinal();
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public int damageDropped(BlockState state) {
+        return state.get(getEngineProperty()).ordinal();
     }
 
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
         super.neighborChanged(state, world, pos, block, fromPos);
-        if (world.isRemote) return;
-        TileEntity tile = world.getTileEntity(pos);
+        if (world.isClient) return;
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             engine.rotateIfInvalid();
@@ -175,12 +174,12 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
     // ICustomRotationHandler
 
     @Override
-    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
-        TileEntity tile = world.getTileEntity(pos);
+    public ActionResult attemptRotation(World world, BlockPos pos, BlockState state, Direction sideWrenched) {
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEngineBase_BC8) {
             TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
             return engine.attemptRotation();
         }
-        return EnumActionResult.FAIL;
+        return ActionResult.FAIL;
     }
 }

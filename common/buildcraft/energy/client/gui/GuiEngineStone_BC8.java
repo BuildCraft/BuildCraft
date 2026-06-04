@@ -6,7 +6,7 @@
 
 package buildcraft.energy.client.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -20,7 +20,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.energy.container.ContainerEngineStone_BC8;
 
 public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/steam_engine_gui.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftenergy:textures/gui/steam_engine_gui.png");
     private static final int SIZE_X = 176, SIZE_Y = 166;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
 
@@ -38,14 +38,14 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
         helpFuel = new ElementHelpInfo("buildcraft.help.stone_engine.fuel.title", 0xFF_AA_33_33, "buildcraft.help.stone_engine.fuel");
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void initGui() {
         super.initGui();
         mainGui.shownElements.add(new DummyHelpElement(flameRect.expand(2), helpFlame));
         mainGui.shownElements.add(new DummyHelpElement(fuelSlotRect, helpFuel));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
 
@@ -61,16 +61,16 @@ public class GuiEngineStone_BC8 extends GuiBC8<ContainerEngineStone_BC8> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineStone.name");
-        int strWidth = fontRenderer.getStringWidth(str);
+        int strWidth = fontRenderer.getWidth(str);
         double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
         double titleY = mainGui.rootElement.getY() + 6;
-        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(str, (int) titleX, (int) titleY, 0x404040)
         
         double invX = mainGui.rootElement.getX() + 8;
         double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(LocaleUtil.localize("gui.getInventory()"), (int) invX, (int) invY, 0x404040)
     }
 }

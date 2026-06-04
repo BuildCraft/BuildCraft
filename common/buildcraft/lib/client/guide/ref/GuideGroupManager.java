@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
@@ -27,7 +27,7 @@ import buildcraft.lib.client.guide.entry.PageValueType;
 
 public class GuideGroupManager {
     public static final List<PageValueType<?>> knownTypes = new ArrayList<>();
-    public static final Map<ResourceLocation, GuideGroupSet> sets = new HashMap<>();
+    public static final Map<Identifier, GuideGroupSet> sets = new HashMap<>();
 
     private static final Map<Class<?>, PageValueType<?>> knownClasses = new WeakHashMap<>();
     private static final Map<Class<?>, Function<Object, PageValue<?>>> transformers = new WeakHashMap<>();
@@ -45,12 +45,12 @@ public class GuideGroupManager {
     private static void temp() {
         addEntries("buildcraft", "pipe_power_providers", BCItems.Silicon.PLUG_PULSAR,
             BCItems.Transport.PLUG_POWER_ADAPTOR, new ItemStack(BCBlocks.Core.ENGINE),
-            new ItemStack(BCBlocks.Core.ENGINE, 1, 1), new ItemStack(BCBlocks.Core.ENGINE, 1, 2))//
+            new ItemStack(BCBlocks.Core.ENGINE, 1), new ItemStack(BCBlocks.Core.ENGINE, 1))//
                 .addKeyArray(BCItems.Transport.PIPE_WOOD_ITEM, BCItems.Transport.PIPE_DIAMOND_WOOD_ITEM,
                     BCItems.Transport.PIPE_EMZULI_ITEM, BCItems.Transport.PIPE_WOOD_FLUID,
                     BCItems.Transport.PIPE_DIAMOND_WOOD_FLUID);
-        addEntries("buildcraft", "full_power_providers", new ItemStack(BCBlocks.Core.ENGINE, 1, 1),
-            new ItemStack(BCBlocks.Core.ENGINE, 1, 2)).addKeyArray(BCBlocks.Builders.BUILDER, BCBlocks.Builders.FILLER,
+        addEntries("buildcraft", "full_power_providers", new ItemStack(BCBlocks.Core.ENGINE, 1),
+            new ItemStack(BCBlocks.Core.ENGINE, 1)).addKeyArray(BCBlocks.Builders.BUILDER, BCBlocks.Builders.FILLER,
                 BCBlocks.Builders.QUARRY, BCBlocks.Factory.DISTILLER, BCBlocks.Factory.MINING_WELL,
                 BCBlocks.Factory.PUMP, BCBlocks.Silicon.LASER);
         addEntries("buildcraft", "laser_power_providers", BCBlocks.Silicon.LASER).addKeyArray(
@@ -192,17 +192,17 @@ public class GuideGroupManager {
     // Internals
 
     @Nullable
-    public static GuideGroupSet get(ResourceLocation group) {
+    public static GuideGroupSet get(Identifier group) {
         return sets.get(group);
     }
 
     @Nullable
     public static GuideGroupSet get(String domain, String group) {
-        return get(new ResourceLocation(domain, group));
+        return get(new Identifier(domain, group));
     }
 
     public static GuideGroupSet getOrCreate(String domain, String group) {
-        return sets.computeIfAbsent(new ResourceLocation(domain, group), GuideGroupSet::new);
+        return sets.computeIfAbsent(new Identifier(domain, group), GuideGroupSet::new);
     }
 
     // Basic adders

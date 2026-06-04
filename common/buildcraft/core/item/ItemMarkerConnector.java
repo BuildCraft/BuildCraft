@@ -1,28 +1,30 @@
 /*
  * Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+// TODO(R.Chen): blocked by lib.marker.MarkerCache / MarkerSubCache (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.item;
 
 import java.util.Iterator;
 import java.util.stream.Collectors;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -45,31 +47,31 @@ import buildcraft.core.marker.volume.WorldSavedDataVolumeBoxes;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
 
-    private static final ResourceLocation ADVANCEMENT_VOLUME_MARKER = new ResourceLocation("buildcraftcore:markers");
-    private static final ResourceLocation ADVANCEMENT_PATH_MARKER = new ResourceLocation("buildcraftcore:path_markers");
+    private static final Identifier ADVANCEMENT_VOLUME_MARKER = new Identifier("buildcraftcore:markers");
+    private static final Identifier ADVANCEMENT_PATH_MARKER = new Identifier("buildcraftcore:path_markers");
 
     public ItemMarkerConnector(String id) {
         super(id);
     }
 
     @SuppressWarnings("NullableProblems")
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if (!world.isRemote) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        if (!world.isClient) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
-                    player.swingArm(hand);
+                    player.swingHand(hand);
                     break;
                 }
             }
         }
-        return new ActionResult<>(onItemRightClickVolumeBoxes(world, player), player.getHeldItem(hand));
+        return new ActionResult<>(onItemRightClickVolumeBoxes(world, player), player.getStackInHand(hand));
     }
 
-    private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player) {
+    private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, PlayerEntity player) {
         MarkerLineInteraction best = null;
-        Vec3d playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-        Vec3d playerLook = player.getLookVec();
+        Vec3d playerPos = player.getEyePos();
+        Vec3d playerLook = player.getRotationVec(1.0f);
         for (BlockPos marker : cache.getAllMarkers()) {
             ImmutableList<BlockPos> possibles = cache.getValidConnections(marker);
             for (BlockPos possible : possibles) {
@@ -93,26 +95,26 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         return false;
     }
 
-    public static boolean doesInteract(BlockPos a, BlockPos b, EntityPlayer player) {
+    public static boolean doesInteract(BlockPos a, BlockPos b, PlayerEntity player) {
         return new MarkerLineInteraction(
             a,
             b,
-            player.getPositionVector().addVector(0, player.getEyeHeight(), 0),
-            player.getLookVec()
+            player.getEyePos(),
+            player.getRotationVec(1.0f)
         ).didInteract();
     }
 
-    private EnumActionResult onItemRightClickVolumeBoxes(World world, EntityPlayer player) {
-        if (world.isRemote) {
-            return EnumActionResult.PASS;
+    private ActionResult onItemRightClickVolumeBoxes(World world, PlayerEntity player) {
+        if (world.isClient) {
+            return ActionResult.PASS;
         }
 
         WorldSavedDataVolumeBoxes volumeBoxes = WorldSavedDataVolumeBoxes.get(world);
 
         VolumeBox currentEditing = volumeBoxes.getCurrentEditing(player);
 
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
-        Vec3d end = start.add(player.getLookVec().scale(4));
+        Vec3d start = player.getEyePos();
+        Vec3d end = start.add(player.getRotationVec(1.0f).multiply(4));
 
         Pair<VolumeBox, EnumAddonSlot> selectingVolumeBoxAndSlot = EnumAddonSlot.getSelectingVolumeBoxAndSlot(
             player,
@@ -138,21 +140,21 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             if (currentEditing == null) {
                 for (Iterator<VolumeBox> iterator = volumeBoxes.volumeBoxes.iterator(); iterator.hasNext();) {
                     VolumeBox volumeBox = iterator.next();
-                    if (volumeBox.box.getBoundingBox().calculateIntercept(start, end) != null) {
+                    if (volumeBox.box.getBoundingBox().raycast(start, end).isPresent()) {
                         if (volumeBox.getLockTargetsStream().noneMatch(Lock.Target.TargetResize.class::isInstance)) {
                             volumeBox.addons.values().forEach(Addon::onRemoved);
                             iterator.remove();
                             volumeBoxes.markDirty();
-                            return EnumActionResult.SUCCESS;
+                            return ActionResult.SUCCESS;
                         } else {
-                            return EnumActionResult.FAIL;
+                            return ActionResult.FAIL;
                         }
                     }
                 }
             } else {
                 currentEditing.cancelEditing();
                 volumeBoxes.markDirty();
-                return EnumActionResult.SUCCESS;
+                return ActionResult.SUCCESS;
             }
         } else {
             if (currentEditing == null) {
@@ -169,9 +171,9 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         .collect(Collectors.toList())
                     ) {
                     for (BlockPos p : PositionUtil.getCorners(volumeBox.box.min(), volumeBox.box.max())) {
-                        RayTraceResult ray = new AxisAlignedBB(p).calculateIntercept(start, end);
-                        if (ray != null) {
-                            double dist = ray.hitVec.distanceTo(start);
+                        java.util.Optional<Vec3d> ray = new Box(p).raycast(start, end);
+                        if (ray.isPresent()) {
+                            double dist = ray.get().distanceTo(start);
                             if (bestDist > dist) {
                                 bestDist = dist;
                                 bestVolumeBox = volumeBox;
@@ -189,13 +191,13 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
 
                     BlockPos held = min;
                     if (editing.getX() == min.getX()) {
-                        held = VecUtil.replaceValue(held, EnumFacing.Axis.X, max.getX());
+                        held = VecUtil.replaceValue(held, Direction.Axis.X, max.getX());
                     }
                     if (editing.getY() == min.getY()) {
-                        held = VecUtil.replaceValue(held, EnumFacing.Axis.Y, max.getY());
+                        held = VecUtil.replaceValue(held, Direction.Axis.Y, max.getY());
                     }
                     if (editing.getZ() == min.getZ()) {
-                        held = VecUtil.replaceValue(held, EnumFacing.Axis.Z, max.getZ());
+                        held = VecUtil.replaceValue(held, Direction.Axis.Z, max.getZ());
                     }
                     bestVolumeBox.setHeldDistOldMinOldMax(
                         held,
@@ -204,15 +206,15 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         bestVolumeBox.box.max()
                     );
                     volumeBoxes.markDirty();
-                    return EnumActionResult.SUCCESS;
+                    return ActionResult.SUCCESS;
                 }
             } else {
                 currentEditing.confirmEditing();
                 volumeBoxes.markDirty();
-                return EnumActionResult.SUCCESS;
+                return ActionResult.SUCCESS;
             }
         }
-        return EnumActionResult.FAIL;
+        return ActionResult.FAIL;
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -6,7 +6,7 @@
 
 package buildcraft.builders.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -16,10 +16,10 @@ import buildcraft.builders.container.ContainerBuilder;
 
 // TODO: Convert this gui into JSON!
 public class GuiBuilder extends GuiBC8<ContainerBuilder> {
-    private static final ResourceLocation TEXTURE_BASE =
-            new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
-    private static final ResourceLocation TEXTURE_BLUEPRINT =
-            new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");
+    private static final Identifier TEXTURE_BASE =
+            new Identifier("buildcraftbuilders:textures/gui/builder.png");
+    private static final Identifier TEXTURE_BLUEPRINT =
+            new Identifier("buildcraftbuilders:textures/gui/builder_blueprint.png");
     private static final int SIZE_X = 176, SIZE_BLUEPRINT_X = 256, SIZE_Y = 222, BLUEPRINT_WIDTH = 87;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_BLUEPRINT_GUI = new GuiIcon(
@@ -37,7 +37,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
         ySize = SIZE_Y;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void initGui() {
         super.initGui();
 
@@ -66,7 +66,7 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
 //        );
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
         ICON_BLUEPRINT_GUI.drawAt(mainGui.rootElement.offset(SIZE_BLUEPRINT_X - BLUEPRINT_WIDTH, 0));

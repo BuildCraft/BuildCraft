@@ -3,69 +3,48 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): BlockView / WorldType removed in 1.20.1 deferred
 package buildcraft.lib.world;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.BlockView;
 
-/** An {@link IBlockAccess} for getting the properties of a single {@link IBlockState}
+/** An {@link BlockView} for getting the properties of a single {@link BlockState}
  * at the {@link SingleBlockAccess#POS} */
-public class SingleBlockAccess implements IBlockAccess {
+public class SingleBlockAccess implements BlockView {
     public static final BlockPos POS = BlockPos.ORIGIN;
-    public final IBlockState state;
+    public final BlockState state;
 
-    public SingleBlockAccess(IBlockState state) {
+    public SingleBlockAccess(BlockState state) {
         this.state = state;
     }
 
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
-        return null;
-    }
-
-    @Override
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        return lightValue << 4;
-    }
-
-    @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public BlockState getBlockState(BlockPos pos) {
         return POS.equals(pos) ? state : Blocks.AIR.getDefaultState();
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
-        return getBlockState(pos).getBlock().isAir(state, this, pos);
+    public FluidState getFluidState(BlockPos pos) {
+        return getBlockState(pos).getFluidState();
     }
 
     @Override
-    public Biome getBiome(BlockPos pos) {
-        return Biomes.PLAINS;
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        return null;
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getHeight() {
+        return 256;
+    }
+
+    @Override
+    public int getBottomY() {
         return 0;
-    }
-
-    @Override
-    public WorldType getWorldType() {
-        return WorldType.DEBUG_ALL_BLOCK_STATES;
-    }
-
-    @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
-        if (POS.equals(pos)) {
-            return _default;
-        }
-        return state.isSideSolid(this, pos, side);
     }
 }

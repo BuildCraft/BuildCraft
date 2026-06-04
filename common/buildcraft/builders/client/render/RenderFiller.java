@@ -6,46 +6,46 @@
 
 package buildcraft.builders.client.render;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
 
 import net.minecraftforge.client.model.animation.FastTESR;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 
 import buildcraft.builders.tile.TileFiller;
 import buildcraft.core.client.BuildCraftLaserManager;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RenderFiller extends FastTESR<TileFiller> {
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(TileFiller tile, double x, double y, double z, float partialTicks,
         int destroyStage, float partial, BufferBuilder bb) {
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("filler");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("filler");
 
-        Minecraft.getMinecraft().mcProfiler.startSection("main");
+        MinecraftClient.getInstance().getProfiler().push("main");
         if (tile.getBuilder() != null) {
             RenderSnapshotBuilder.render(tile.getBuilder(), tile.getWorld(), tile.getPos(), x, y, z, partialTicks, bb);
         }
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
 
-        Minecraft.getMinecraft().mcProfiler.startSection("box");
+        MinecraftClient.getInstance().getProfiler().push("box");
         if (tile.markerBox) {
-            bb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
             LaserBoxRenderer.renderLaserBoxDynamic(tile.box, BuildCraftLaserManager.STRIPES_WRITE, bb, true);
-            bb.setTranslation(0, 0, 0);
+            // TODO(R.Chen): setTranslation removed — use MatrixStack instead: bb.setTranslation(0, 0, 0);
         }
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileFiller te) {
         return true;
     }

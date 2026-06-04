@@ -5,19 +5,21 @@
 package buildcraft.lib.client.guide.parts.recipe;
 
 import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.util.collection.DefaultedList;
 
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.core.BCLog;
 
@@ -35,35 +37,35 @@ public class GuideCraftingFactory implements GuidePartFactory {
     public GuideCraftingFactory(Ingredient[][] input, ItemStack output) {
         this.input = new NonNullMatrix<>(input, Ingredient.EMPTY);
         this.output = StackUtil.asNonNull(output);
-        NBTTagList hashNbt = new NBTTagList();
+        NbtList hashNbt = new NbtList();
         for (Ingredient ingredient : this.input) {
-            NBTTagList list = new NBTTagList();
+            NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.serializeNBT());
+                list.add(stack.writeNbt(new NbtCompound()));
             }
-            hashNbt.appendTag(list);
+            hashNbt.add(list);
         }
         this.hash = hashNbt.hashCode();
     }
 
     public static GuidePartFactory create(@Nonnull ItemStack stack) {
-        for (IRecipe recipe : ForgeRegistries.RECIPES) {
-            if (OreDictionary.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
+        for (net.minecraft.recipe.CraftingRecipe recipe : ForgeRegistries.RECIPES) {
+            if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY)), false)) {
                 GuidePartFactory val = getFactory(recipe);
                 if (val != null) {
                     return val;
                 } else {
                     BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown "
-                        + recipe.getClass() + " for " + stack.getDisplayName());
+                        + recipe.getClass() + " for " + stack.getName().getString());
                 }
             }
         }
         return null;
     }
 
-    public static GuidePartFactory getFactory(IRecipe recipe) {
-        ItemStack output = recipe.getRecipeOutput();
-        NonNullList<Ingredient> input = recipe.getIngredients();
+    public static GuidePartFactory getFactory(net.minecraft.recipe.CraftingRecipe recipe) {
+        ItemStack output = recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY);
+        DefaultedList<Ingredient> input = recipe.getIngredients();
         if (input == null || input.isEmpty() || output.isEmpty()) {
             return null;
         }
@@ -98,7 +100,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
             return ((ItemStack) object).copy();
         }
         if (object instanceof String) {
-            NonNullList<ItemStack> stacks = OreDictionary.getOres((String) object);
+            DefaultedList<ItemStack> stacks = OreDictionaryStub.getOres((String) object);
             // It will be sorted out below
             object = stacks;
         }
@@ -119,7 +121,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
                     }
                     ItemStack stack = (ItemStack) obj;
                     // The lower the ID of an item, the closer it is to minecraft. Hmmm.
-                    if (Item.getIdFromItem(stack.getItem()) < Item.getIdFromItem(best.getItem())) {
+                    if (Item.getRawId(stack.getItem()) < Item.getRawId(best.getItem())) {
                         best = stack;
                     }
                 }
@@ -154,21 +156,21 @@ public class GuideCraftingFactory implements GuidePartFactory {
         // Shortcut out of this full itemstack comparison as its really expensive
         if (hash != other.hash) return false;
         if (input.getWidth() != other.input.getWidth() || input.getHeight() != other.input.getHeight()) return false;
-        NBTTagList nbtThis = new NBTTagList();
+        NbtList nbtThis = new NbtList();
         for (Ingredient ingredient : this.input) {
-            NBTTagList list = new NBTTagList();
+            NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.serializeNBT());
+                list.add(stack.writeNbt(new NbtCompound()));
             }
-            nbtThis.appendTag(list);
+            nbtThis.add(list);
         }
-        NBTTagList nbtThat = new NBTTagList();
+        NbtList nbtThat = new NbtList();
         for (Ingredient ingredient : other.input) {
-            NBTTagList list = new NBTTagList();
+            NbtList list = new NbtList();
             for (ItemStack stack : ingredient.getMatchingStacks()) {
-                list.appendTag(stack.serializeNBT());
+                list.add(stack.writeNbt(new NbtCompound()));
             }
-            nbtThat.appendTag(list);
+            nbtThat.add(list);
         }
         return nbtThis.equals(nbtThat);
     }

@@ -2,14 +2,15 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.statement;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatement;
@@ -28,7 +29,7 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
         super(delegate, sourcePart);
     }
 
-    public static TriggerWrapper wrap(IStatement statement, EnumFacing side) {
+    public static TriggerWrapper wrap(IStatement statement, Direction side) {
         if (statement == null) {
             return null;
         } else if (statement instanceof TriggerWrapper) {
@@ -86,7 +87,7 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
     public static class TriggerWrapperInternalSided extends TriggerWrapper {
         public final ITriggerInternalSided trigger;
 
-        public TriggerWrapperInternalSided(ITriggerInternalSided trigger, @Nonnull EnumFacing side) {
+        public TriggerWrapperInternalSided(ITriggerInternalSided trigger, @Nonnull Direction side) {
             super(trigger, EnumPipePart.fromFacing(side));
             this.trigger = trigger;
         }
@@ -100,14 +101,14 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
     public static class TriggerWrapperExternal extends TriggerWrapper {
         public final ITriggerExternal trigger;
 
-        public TriggerWrapperExternal(ITriggerExternal trigger, @Nonnull EnumFacing side) {
+        public TriggerWrapperExternal(ITriggerExternal trigger, @Nonnull Direction side) {
             super(trigger, EnumPipePart.fromFacing(side));
             this.trigger = trigger;
         }
 
         @Override
         public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
-            TileEntity tile = getNeighbourTile(source);
+            BlockEntity tile = getNeighbourTile(source);
             if (tile == null) {
                 return false;
             }

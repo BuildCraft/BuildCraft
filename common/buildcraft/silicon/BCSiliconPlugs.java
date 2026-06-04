@@ -1,20 +1,22 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.silicon;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
-import buildcraft.api.BCModules;
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pluggable.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableCreator;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.api.transport.pluggable.PluggableDefinition.IPluggableNetLoader;
 
-import buildcraft.silicon.plug.PluggableFacade;
 import buildcraft.silicon.plug.PluggableGate;
-import buildcraft.silicon.plug.PluggableLens;
-import buildcraft.silicon.plug.PluggableLightSensor;
 import buildcraft.silicon.plug.PluggablePulsar;
-import buildcraft.silicon.plug.PluggableTimer;
 
 public class BCSiliconPlugs {
 
@@ -27,11 +29,15 @@ public class BCSiliconPlugs {
 
     public static void preInit() {
         gate = register("gate", PluggableGate::new, PluggableGate::new);
-        lens = register("lens", PluggableLens::new, PluggableLens::new);
+        // STUB(R.Chen): PluggableLens not in libLeaf — deferred until lens is migrated.
+        // lens = register("lens", PluggableLens::new, PluggableLens::new);
         pulsar = register("pulsar", PluggablePulsar::new, PluggablePulsar::new);
-        lightSensor = register("daylight_sensor", PluggableLightSensor::new);
-        timer = register("timer", PluggableTimer::new);
-        facade = register("facade", PluggableFacade::new, PluggableFacade::new);
+        // STUB(R.Chen): PluggableLightSensor not in libLeaf — deferred.
+        // lightSensor = register("daylight_sensor", PluggableLightSensor::new);
+        // STUB(R.Chen): PluggableTimer not in libLeaf — deferred.
+        // timer = register("timer", PluggableTimer::new);
+        // STUB(R.Chen): PluggableFacade not in libLeaf — deferred.
+        // facade = register("facade", PluggableFacade::new, PluggableFacade::new);
     }
 
     private static PluggableDefinition register(String name, IPluggableCreator creator) {
@@ -43,17 +49,19 @@ public class BCSiliconPlugs {
     }
 
     private static PluggableDefinition register(PluggableDefinition def) {
-        // TODO: Add config for enabling/disabling
+        // TODO(R.Chen): Add config for enabling/disabling
         PipeApi.pluggableRegistry.register(def);
 
-        // TODO: remove this in 7.99.19!
-        // This handles the migration of most of the transport pluggables into silicon
-        String modId = BCModules.TRANSPORT.getModId();
-        PipeApi.pluggableRegistry.register(new ResourceLocation(modId, def.identifier.getResourcePath()), def);
+        // TODO(R.Chen): remove in 7.99.19!
+        // This handles the migration of most of the transport pluggables into silicon.
+        // In Forge the legacy registry used BCModules.TRANSPORT.getModId();
+        // in Fabric the transport mod id is "buildcrafttransport".
+        String modId = "buildcrafttransport";
+        PipeApi.pluggableRegistry.register(new Identifier(modId, def.identifier.getPath()), def);
         return def;
     }
 
-    private static ResourceLocation idFor(String name) {
-        return new ResourceLocation("buildcraftsilicon", name);
+    private static Identifier idFor(String name) {
+        return new Identifier("buildcraftsilicon", name);
     }
 }

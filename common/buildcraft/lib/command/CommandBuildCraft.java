@@ -2,6 +2,8 @@ package buildcraft.lib.command;
 
 import net.minecraft.command.ICommandSender;
 
+import net.minecraft.server.command.ServerCommandSource;
+
 import net.minecraftforge.server.command.CommandTreeBase;
 
 public class CommandBuildCraft extends CommandTreeBase {
@@ -17,7 +19,7 @@ public class CommandBuildCraft extends CommandTreeBase {
         return "buildcraft";
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     public String getUsage(ICommandSender sender) {
         return "command.buildcraft.help";
     }

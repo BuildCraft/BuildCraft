@@ -10,15 +10,16 @@ import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class MessageContainer implements IMessage {
 
@@ -40,7 +41,7 @@ public class MessageContainer implements IMessage {
     // USHORT - PAYLOAD_SIZE->"size"
     // BYTE[size] - PAYLOAD
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         windowId = buf.readInt();
         msgId = buf.readUnsignedShort();
@@ -49,7 +50,7 @@ public class MessageContainer implements IMessage {
         payload = new PacketBufferBC(read);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         buf.writeInt(windowId);
         buf.writeShort(msgId);
@@ -61,15 +62,15 @@ public class MessageContainer implements IMessage {
     public static final IMessageHandler<MessageContainer, IMessage> HANDLER = (message, ctx) -> {
         try {
             int id = message.windowId;
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player != null && player.openContainer instanceof ContainerBC_Neptune
-                && player.openContainer.windowId == id) {
-                ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
+            PlayerEntity player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+            if (player != null && player.currentScreenHandler instanceof ContainerBC_Neptune
+                && player.currentScreenHandler.syncId == id) {
+                ContainerBC_Neptune container = (ContainerBC_Neptune) player.currentScreenHandler;
                 container.readMessage(message.msgId, message.payload, ctx.side, ctx);
 
                 // error checking
                 String extra = container.getClass() + ", id = " + container.getIdAllocator().getNameFor(message.msgId);
-                MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, extra);
+                MessageUtil.ensureEmpty(message.payload, ctx.side == NetSide.CLIENT, extra);
             }
             return null;
         } catch (IOException e) {

@@ -6,10 +6,16 @@
 
 package buildcraft.lib.misc;
 
+import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
 public class WorldUtil {
     public static boolean isWorldCreative(World world) {
-        return world.getWorldInfo().getGameType().isCreative();
+        // Yarn 1.20.1: WorldProperties (returned by getLevelProperties()) does not expose
+        // getGameMode() directly. MinecraftServer.getDefaultGameMode() is the reliable path;
+        // returns false for client worlds (getServer() == null).
+        // TODO(R.Chen): Verify behavior for integrated-server client worlds.
+        return world.getServer() != null
+            && world.getServer().getDefaultGameMode() == GameMode.CREATIVE;
     }
 }

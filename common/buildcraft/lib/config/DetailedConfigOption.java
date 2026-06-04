@@ -9,11 +9,11 @@ package buildcraft.lib.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.SynchronousResourceReloader;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.BCLog;
 
@@ -143,12 +143,12 @@ public class DetailedConfigOption {
         return Math.min(max, Math.max(min, getAsFloat()));
     }
 
-    @SideOnly(Side.CLIENT)
-    public enum ReloadListener implements IResourceManagerReloadListener {
+    @Environment(EnvType.CLIENT)
+    public enum ReloadListener implements SynchronousResourceReloader {
         INSTANCE;
 
-        @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {
+        // @Override -- removed: method does not exist in Fabric 1.20.1
+        public void reload(ResourceManager resourceManager) {
             reloadAll();
         }
     }

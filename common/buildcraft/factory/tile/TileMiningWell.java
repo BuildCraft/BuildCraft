@@ -2,82 +2,60 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.factory.tile;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.mj.IMjReceiver;
 
-import buildcraft.lib.inventory.AutomaticProvidingTransactor;
-import buildcraft.lib.misc.BlockUtil;
-import buildcraft.lib.misc.CapUtil;
-import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
-import buildcraft.lib.world.WorldEventListenerAdapter;
 
-import buildcraft.core.BCCoreConfig;
-import buildcraft.factory.BCFactoryBlocks;
-
+// Forge→Fabric migration notes (R.Chen):
+//   IWorldEventListener       → STUB: world event listener deferred (WorldEventListenerAdapter
+//                               not yet in libLeaf; polling via SafeTimeTracker used instead).
+//   ServerWorld               → ServerWorld
+//   BlockState               → BlockState
+//   world.isAir(pos)     → world.isAir(pos)
+//   world.isOutsideBuildHeight→ world.isOutOfHeightLimit(pos)
+//   world.sendBlockBreakProgress → world.setBlockBreakingInfo
+//   BlockUtil.computeBlockBreakPower / breakBlockAndGetDrops / isUnbreakableBlock / getFluidWithFlowing
+//                             → STUB: BlockUtil methods not yet migrated (Phase 4E).
+//   CapUtil.CAP_ITEM_TRANSACTOR → STUB: Forge capability (deferred to Phase 4F).
+//   InventoryUtil.addToBestAcceptor → STUB: not in migrated InventoryUtil yet.
 public class TileMiningWell extends TileMiner {
     private boolean shouldCheck = true;
     private final SafeTimeTracker tracker = new SafeTimeTracker(256);
-    private final IWorldEventListener worldEventListener = new WorldEventListenerAdapter() {
-        @Override
-        public void notifyBlockUpdate(@Nonnull World world,
-                                      @Nonnull BlockPos pos,
-                                      @Nonnull IBlockState oldState,
-                                      @Nonnull IBlockState newState,
-                                      int flags) {
-            if (pos.getX() == TileMiningWell.this.pos.getX() &&
-                pos.getY() <= TileMiningWell.this.pos.getY() &&
-                pos.getZ() == TileMiningWell.this.pos.getZ()) {
-                shouldCheck = true;
-            }
-        }
-    };
 
-    public TileMiningWell() {
-        super();
-        caps.addCapabilityInstance(CapUtil.CAP_ITEM_TRANSACTOR, AutomaticProvidingTransactor.INSTANCE, EnumPipePart.VALUES);
+    // STUB(R.Chen): IWorldEventListener (WorldEventListenerAdapter) not yet migrated.
+    // The Fabric WorldEventListener interface requires many method implementations;
+    // WorldEventListenerAdapter will be ported in a dedicated lib.getWorld() pass.
+    // Until then, shouldCheck is set only via the SafeTimeTracker polling path below.
+
+    public TileMiningWell(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+        // STUB(R.Chen): CapUtil.CAP_ITEM_TRANSACTOR + AutomaticProvidingTransactor —
+        //               Forge capability; deferred to Phase 4F (Transfer-API item lookup).
     }
 
     @Override
     protected void mine() {
         if (currentPos != null && canBreak()) {
             shouldCheck = true;
-            long target = BlockUtil.computeBlockBreakPower(world, currentPos);
-            progress += battery.extractPower(0, target - progress);
-            if (progress >= target) {
-                progress = 0;
-                world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
-                BlockUtil.breakBlockAndGetDrops(
-                    (WorldServer) world,
-                    currentPos,
-                    new ItemStack(Items.DIAMOND_PICKAXE),
-                    getOwner()
-                ).ifPresent(stacks ->
-                    stacks.forEach(stack -> InventoryUtil.addToBestAcceptor(world, pos, null, stack))
-                );
-                nextPos();
-            } else {
-                if (!world.isAirBlock(currentPos)) {
-                    world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
-                }
-            }
+            // STUB(R.Chen): BlockUtil.computeBlockBreakPower / breakBlockAndGetDrops not yet migrated.
+            // Full mining logic (MJ cost, block breaking, drops) deferred to Phase 4E.
+            // The tile will tick normally but not actually mine until BlockUtil is ported.
+            nextPos();
         } else if (shouldCheck || tracker.markTimeIfDelay(world)) {
             nextPos();
             if (currentPos == null) {
@@ -87,28 +65,28 @@ public class TileMiningWell extends TileMiner {
     }
 
     private boolean canBreak() {
-        if (world.isAirBlock(currentPos) || BlockUtil.isUnbreakableBlock(world, currentPos, getOwner())) {
+        // STUB(R.Chen): BlockUtil.isUnbreakableBlock + getFluidWithFlowing not yet migrated.
+        // Conservatively return false until the full BlockUtil is ported (Phase 4E).
+        if (world.isAir(currentPos)) {
             return false;
         }
-
-        Fluid fluid = BlockUtil.getFluidWithFlowing(world, currentPos);
-        return fluid == null || fluid.getViscosity() <= 1000;
+        return false; // STUB(R.Chen): fluid viscosity + unbreakable checks deferred
     }
 
     private void nextPos() {
         currentPos = pos;
         while (true) {
             currentPos = currentPos.down();
-            if (world.isOutsideBuildHeight(currentPos)) {
+            if (world.isOutOfHeightLimit(currentPos)) {
                 break;
             }
-            if (pos.getY() - currentPos.getY() > BCCoreConfig.miningMaxDepth) {
+            if (pos.getY() - currentPos.getY() > MINING_MAX_DEPTH) {
                 break;
             }
             if (canBreak()) {
                 updateLength();
                 return;
-            } else if (!world.isAirBlock(currentPos) && world.getBlockState(currentPos).getBlock() != BCFactoryBlocks.tube) {
+            } else if (!world.isAir(currentPos) && !isTubeBlock(world, currentPos)) {
                 break;
             }
         }
@@ -117,21 +95,19 @@ public class TileMiningWell extends TileMiner {
     }
 
     @Override
-    public void validate() {
-        super.validate();
-        if (!world.isRemote) {
-            world.addEventListener(worldEventListener);
-        }
+    public void onLoad() {
+        super.onLoad();
+        // STUB(R.Chen): world.addEventListener(worldEventListener) deferred —
+        //               WorldEventListenerAdapter not yet in libLeaf.
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
-        if (!world.isRemote) {
-            world.removeEventListener(worldEventListener);
-            if (currentPos != null) {
-                world.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
-            }
+    public void onRemove() {
+        super.onRemove();
+        // STUB(R.Chen): world.removeEventListener(worldEventListener) deferred.
+        if (currentPos != null) {
+            // STUB(R.Chen): world.setBlockBreakingInfo(entityId, pos, -1) — cancel break animation.
+            //               Full signature: world.setBlockBreakingInfo(int entityId, BlockPos, int progress)
         }
     }
 

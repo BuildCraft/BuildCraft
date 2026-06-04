@@ -7,15 +7,16 @@ package buildcraft.lib.item;
 import java.util.List;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.client.util.TooltipContext;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.LocaleUtil;
 
-public class ItemBlockBC_Neptune extends ItemBlock implements IItemBuildCraft {
+public class ItemBlockBC_Neptune extends BlockItem implements IItemBuildCraft {
     public final String id;
 
     public ItemBlockBC_Neptune(BlockBCBase_Neptune block) {
@@ -29,14 +30,22 @@ public class ItemBlockBC_Neptune extends ItemBlock implements IItemBuildCraft {
         return id;
     }
 
-    @Override
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flags) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, TooltipContext flags) {
         super.addInformation(stack, world, tooltip, flags);
         String tipId = getUnlocalizedName(stack) + ".tip";
         if (LocaleUtil.canLocalize(tipId)) {
-            tooltip.add(TextFormatting.GRAY + LocaleUtil.localize(tipId));
+            tooltip.add(Formatting.GRAY + LocaleUtil.localize(tipId));
         } else if (flags.isAdvanced()) {
-            tooltip.add(TextFormatting.GRAY + tipId);
+            tooltip.add(Formatting.GRAY + tipId);
         }
+    }
+
+    // ---- 1.12.2 compat no-ops ----
+    protected void setMaxStackSize(int n) {}
+    protected void setHasSubtypes(boolean has) {}
+    protected void setMaxDamage(int n) {}
+    public net.minecraft.util.Identifier getRegistryName() {
+        return net.minecraft.registry.Registries.ITEM.getId(this);
     }
 }

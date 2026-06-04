@@ -7,16 +7,18 @@
 package buildcraft.lib.list;
 
 import java.util.Set;
+import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.lists.ListMatchHandler;
 
@@ -33,18 +35,18 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
     @Override
     public boolean matches(Type type, @Nonnull ItemStack stack, @Nonnull ItemStack target, boolean precise) {
-        int[] oreIds = OreDictionary.getOreIDs(stack);
+        int[] oreIds = OreDictionaryStub.getOreIDs(stack);
 
         if (oreIds.length == 0) {
             // Unfortunately we cannot compare the items.
             return false;
         }
 
-        int[] matchesIds = OreDictionary.getOreIDs(target);
+        int[] matchesIds = OreDictionaryStub.getOreIDs(target);
 
         String[] oreNames = new String[oreIds.length];
         for (int i = 0; i < oreIds.length; i++) {
-            oreNames[i] = OreDictionary.getOreName(oreIds[i]);
+            oreNames[i] = OreDictionaryStub.getOreName(oreIds[i]);
         }
 
         if (type == Type.CLASS) {
@@ -56,7 +58,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
                 }
             }
         } else {
-            // Always pick only the longest OreDictionary string for matching.
+            // Always pick only the longest OreDictionaryStub string for matching.
             // It's ugly, but should give us the most precise result for the
             // cases in which a given stone is also used for crafting equivalents.
             String s = getBestOreString(oreNames);
@@ -80,7 +82,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
     @Override
     public boolean isValidSource(Type type, @Nonnull ItemStack stack) {
-        return OreDictionary.getOreIDs(stack).length > 0;
+        return OreDictionaryStub.getOreIDs(stack).length > 0;
     }
 
     private static String getBestOreString(String[] oreIds) {
@@ -96,17 +98,17 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         return s;
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
-        int[] oreIds = OreDictionary.getOreIDs(stack);
-        NonNullList<ItemStack> stacks = NonNullList.create();
+    public DefaultedList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
+        int[] oreIds = OreDictionaryStub.getOreIDs(stack);
+        DefaultedList<ItemStack> stacks = DefaultedList.of();
 
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
-                NonNullList<ItemStack> tempStack = NonNullList.create();
-                stack.getItem().getSubItems(CreativeTabs.SEARCH, tempStack);
+                DefaultedList<ItemStack> tempStack = DefaultedList.of();
+                stack.getItem().getSubItems(ItemGroup.SEARCH, tempStack);
                 for (ItemStack is : tempStack) {
                     if (is.getItem() == stack.getItem()) {
                         stacks.add(is);
@@ -118,12 +120,12 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 
         String[] oreNames = new String[oreIds.length];
         for (int i = 0; i < oreIds.length; i++) {
-            oreNames[i] = OreDictionary.getOreName(oreIds[i]);
+            oreNames[i] = OreDictionaryStub.getOreName(oreIds[i]);
         }
 
         if (type == Type.CLASS) {
             for (String s : oreNames) {
-                stacks.addAll(OreDictionary.getOres(s));
+                stacks.addAll(OreDictionaryStub.getOres(s));
             }
         } else {
             String s = getBestOreString(oreNames);
@@ -132,22 +134,22 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
                     type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
-                        stacks.addAll(OreDictionary.getOres(OreDictionary.getOreName(j)));
+                        stacks.addAll(OreDictionaryStub.getOres(OreDictionaryStub.getOreName(j)));
                     }
                 }
             }
         }
 
-        NonNullList<ItemStack> wildcard = NonNullList.create();
+        DefaultedList<ItemStack> wildcard = DefaultedList.of();
 
         for (ItemStack is : stacks) {
-            if (is != null && is.getItemDamage() == OreDictionary.WILDCARD_VALUE && is.getHasSubtypes()) {
+            if (is != null && is.getDamage() == OreDictionaryStub.WILDCARD_VALUE && is.getItem().isDamageable()) {
                 wildcard.add(is);
             }
         }
         for (ItemStack is : wildcard) {
-            NonNullList<ItemStack> wll = NonNullList.create();
-            is.getItem().getSubItems(CreativeTabs.MISC, wll);
+            DefaultedList<ItemStack> wll = DefaultedList.of();
+            is.getItem().getSubItems(ItemGroup.MISC, wll);
             if (wll.size() > 0) {
                 stacks.remove(is);
                 stacks.addAll(wll);

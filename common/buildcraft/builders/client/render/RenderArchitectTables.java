@@ -14,49 +14,52 @@ import javax.vecmath.Point3f;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.render.DetachedRenderer;
 
 import buildcraft.builders.BCBuildersConfig;
 import buildcraft.builders.client.ClientArchitectTables;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.render.VertexFormat;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer {
     INSTANCE;
 
-    @Override
-    public void render(EntityPlayer player, float partialTicks) {
-        List<AxisAlignedBB> boxes = new ArrayList<>(ClientArchitectTables.BOXES.keySet());
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void render(PlayerEntity player, float partialTicks) {
+        List<Box> boxes = new ArrayList<>(ClientArchitectTables.BOXES.keySet());
         boxes.sort(
-            Comparator.<AxisAlignedBB>comparingDouble(bb ->
-                bb.getCenter().distanceTo(player.getPositionVector())
+            Comparator.<Box>comparingDouble(bb ->
+                bb.getCenter().distanceTo(player.getPos())
             ).reversed()
         );
         List<BlockPos> poses = new ArrayList<>(ClientArchitectTables.SCANNED_BLOCKS.keySet());
         poses.sort(
             Comparator.<BlockPos>comparingDouble(pos ->
-                new Vec3d(pos).distanceTo(player.getPositionVector())
+                new Vec3d(pos.getX(), pos.getY(), pos.getZ()).distanceTo(player.getPos())
             ).reversed()
         );
 
-        final boolean __STENCIL = BCBuildersConfig.enableStencil && Minecraft.getMinecraft().getFramebuffer().isStencilEnabled();
+        final boolean __STENCIL = BCBuildersConfig.enableStencil && MinecraftClient.getInstance().getFramebuffer().isStencilEnabled();
 
-        for (AxisAlignedBB bb : boxes) {
+        for (Box bb : boxes) {
             if (__STENCIL) {
             GL11.glStencilMask(0xff);
             GL11.glClearStencil(1);
@@ -71,55 +74,55 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
             }
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             if (__STENCIL) {
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb = bb.grow(0.01);
-            buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-            buffer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-            buffer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-            buffer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-            buffer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-            buffer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-            buffer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
-            buffer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-            buffer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-            buffer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-            buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-            buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-            buffer.pos(bb.minX, bb.minY, bb.maxZ).endVertex();
-            buffer.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
-            buffer.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
-            buffer.pos(bb.minX, bb.minY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.maxY, bb.minZ).endVertex();
-            buffer.pos(bb.maxX, bb.maxY, bb.maxZ).endVertex();
-            buffer.pos(bb.maxX, bb.minY, bb.maxZ).endVertex();
+            buffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.POSITION);
+            bb = bb.expand(0.01);
+            buffer.vertex(bb.minX, bb.maxY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.maxY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.minY, bb.minZ).next();
+            buffer.vertex(bb.minX, bb.minY, bb.minZ).next();
+            buffer.vertex(bb.minX, bb.minY, bb.maxZ).next();
+            buffer.vertex(bb.maxX, bb.minY, bb.maxZ).next();
+            buffer.vertex(bb.maxX, bb.maxY, bb.maxZ).next();
+            buffer.vertex(bb.minX, bb.maxY, bb.maxZ).next();
+            buffer.vertex(bb.minX, bb.minY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.minY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.minY, bb.maxZ).next();
+            buffer.vertex(bb.minX, bb.minY, bb.maxZ).next();
+            buffer.vertex(bb.minX, bb.maxY, bb.maxZ).next();
+            buffer.vertex(bb.maxX, bb.maxY, bb.maxZ).next();
+            buffer.vertex(bb.maxX, bb.maxY, bb.minZ).next();
+            buffer.vertex(bb.minX, bb.maxY, bb.minZ).next();
+            buffer.vertex(bb.minX, bb.minY, bb.maxZ).next();
+            buffer.vertex(bb.minX, bb.maxY, bb.maxZ).next();
+            buffer.vertex(bb.minX, bb.maxY, bb.minZ).next();
+            buffer.vertex(bb.minX, bb.minY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.minY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.maxY, bb.minZ).next();
+            buffer.vertex(bb.maxX, bb.maxY, bb.maxZ).next();
+            buffer.vertex(bb.maxX, bb.minY, bb.maxZ).next();
             Tessellator.getInstance().draw();
             GL11.glStencilMask(0x00);
             GL11.glDepthMask(true);
             GL11.glColorMask(true, true, true, true);
             }
-            GlStateManager.disableDepth();
+            RenderSystem.disableDepthTest();
             if (__STENCIL) {
             GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
             }
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            Minecraft.getMinecraft().renderEngine.bindTexture(
-                new ResourceLocation(
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, 
+                new Identifier(
                     "buildcraftbuilders",
                     "textures/blocks/scan.png"
                 )
             );
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            buffer.begin(VertexFormat.DrawMode.QUADS, DefaultVertexFormats.BLOCK);
             for (BlockPos pos : poses) {
-                if (!bb.intersects(new AxisAlignedBB(pos))) {
+                if (!bb.intersects(new Box(pos))) {
                     continue;
                 }
-                for (EnumFacing face : EnumFacing.VALUES) {
+                for (Direction face : Direction.values()) {
                     ModelUtil.createFace(
                         face,
                         new Point3f(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F),
@@ -139,11 +142,14 @@ public enum RenderArchitectTables implements DetachedRenderer.IDetachedRenderer 
                 }
             }
             Tessellator.getInstance().draw();
-            GlStateManager.disableBlend();
-            GlStateManager.enableDepth();
+            RenderSystem.disableBlend();
+            RenderSystem.enableDepthTest();
             if (__STENCIL) {
             GL11.glDisable(GL11.GL_STENCIL_TEST);
             }
         }
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

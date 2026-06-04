@@ -16,21 +16,23 @@ import java.util.function.Supplier;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.TooltipContext;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import buildcraft.api.core.BCLog;
@@ -46,6 +48,8 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import com.mojang.blaze3d.platform.GlStateManager;
+import buildcraft.lib.misc.GlStateManagerCompat;
 
 public class GuiUtil {
 
@@ -59,13 +63,13 @@ public class GuiUtil {
     /** @return The relative screen width. (Relative - changes with both the window size and the game setting "gui
      *         scale".) */
     public static int getScreenWidth() {
-        return Minecraft.getMinecraft().currentScreen.width;
+        return MinecraftClient.getInstance().currentScreen.width;
     }
 
     /** @return The relative screen height. (Relative - changes with both the window size and the game setting "gui
      *         scale".) */
     public static int getScreenHeight() {
-        return Minecraft.getMinecraft().currentScreen.height;
+        return MinecraftClient.getInstance().currentScreen.height;
     }
 
     public static IGuiArea moveRectangleToCentre(GuiRectangle area) {
@@ -115,10 +119,11 @@ public class GuiUtil {
 
     public static void drawItemStackAt(ItemStack stack, int x, int y) {
         RenderHelper.enableGUIStandardItemLighting();
-        Minecraft mc = Minecraft.getMinecraft();
-        RenderItem itemRender = mc.getRenderItem();
-        itemRender.renderItemAndEffectIntoGUI(mc.player, stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, stack, x, y, null);
+        MinecraftClient mc = MinecraftClient.getInstance();
+        // STUB(R.Chen): RenderItem → ItemRenderer in 1.20.1; use DrawContext.drawItem()
+        net.minecraft.client.render.item.ItemRenderer itemRender = mc.getItemRenderer();
+// TODO(migration): use DrawContext.drawItem() instead
+// TODO(migration): use DrawContext.drawItemInSlot() instead
         RenderHelper.disableStandardItemLighting();
     }
 
@@ -127,7 +132,7 @@ public class GuiUtil {
         double draw(D drawable, double x, double y);
     }
 
-    /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, FontRenderer)}, except that we
+    /** Straight copy of {@link GuiUtils#drawHoveringText(List, int, int, int, int, int, TextRenderer)}, except that we
      * return the height of the box that was drawn. Draws a tooltip box on the screen with text in it. Automatically
      * positions the box relative to the mouse to match Mojang's implementation. Automatically wraps text when there is
      * not enough space on the screen to display the text without wrapping. Can have a maximum width set to avoid
@@ -142,16 +147,16 @@ public class GuiUtil {
      *            width.
      * @param font the font for drawing the text in the tooltip box */
     public static int drawHoveringText(List<String> textLines, final int mouseX, final int mouseY,
-        final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font) {
+        final int screenWidth, final int screenHeight, final int maxTextWidth, TextRenderer font) {
         if (!textLines.isEmpty()) {
-            GlStateManager.disableRescaleNormal();
+            GlStateManagerCompat.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
+            ;
+            RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
 
             for (String textLine : textLines) {
-                int textLineWidth = font.getStringWidth(textLine);
+                int textLineWidth = font.getWidth(textLine);
 
                 if (textLineWidth > tooltipTextWidth) {
                     tooltipTextWidth = textLineWidth;
@@ -185,13 +190,13 @@ public class GuiUtil {
                 List<String> wrappedTextLines = new ArrayList<>();
                 for (int i = 0; i < textLines.size(); i++) {
                     String textLine = textLines.get(i);
-                    List<String> wrappedLine = font.listFormattedStringToWidth(textLine, tooltipTextWidth);
+                    List<String> wrappedLine = java.util.Arrays.asList(textLine); // STUB(R.Chen): listFormattedStringToWidth removed in 1.20.1
                     if (i == 0) {
                         titleLinesCount = wrappedLine.size();
                     }
 
                     for (String line : wrappedLine) {
-                        int lineWidth = font.getStringWidth(line);
+                        int lineWidth = font.getWidth(line);
                         if (lineWidth > wrappedTooltipWidth) {
                             wrappedTooltipWidth = lineWidth;
                         }
@@ -247,7 +252,7 @@ public class GuiUtil {
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
                 String line = textLines.get(lineNumber);
-                font.drawStringWithShadow(line, tooltipX, tooltipY, -1);
+                // STUB(R.Chen): drawStringWithShadow removed in 1.20.1 — use DrawContext.drawText
 
                 if (lineNumber + 1 == titleLinesCount) {
                     tooltipY += 2;
@@ -256,10 +261,10 @@ public class GuiUtil {
                 tooltipY += 10;
             }
 
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepth();
+            ;
+            RenderSystem.enableDepthTest();
             RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableRescaleNormal();
+            GlStateManagerCompat.enableRescaleNormal();
             return tooltipHeight + 5;
         }
         return 0;
@@ -299,20 +304,19 @@ public class GuiUtil {
         int v = MathHelper.floor(textureY);
         int w = MathHelper.floor(width);
         int h = MathHelper.floor(height);
-        Gui gui = Minecraft.getMinecraft().currentScreen;
-        gui.drawTexturedModalRect(x, y, u, v, w, h);
+        // STUB(R.Chen): Gui.drawTexturedModalRect removed in 1.20.1 — use DrawContext.drawTexture
     }
 
     public static void drawFluid(IGuiArea position, Tank tank) {
         drawFluid(position, tank.getFluidForRender(), tank.getCapacity());
     }
 
-    public static void drawFluid(IGuiArea position, FluidStack fluid, int capacity) {
+    public static void drawFluid(IGuiArea position, FluidStackBC fluid, int capacity) {
         if (fluid == null || fluid.amount <= 0) return;
-        drawFluid(position, fluid, fluid.amount, capacity);
+        drawFluid(position, fluid, (int) fluid.amount, capacity);
     }
 
-    public static void drawFluid(IGuiArea position, FluidStack fluid, int amount, int capacity) {
+    public static void drawFluid(IGuiArea position, FluidStackBC fluid, int amount, int capacity) {
         if (fluid == null || amount <= 0) return;
 
         double height = amount * position.getHeight() / capacity;
@@ -322,15 +326,10 @@ public class GuiUtil {
         double endX = startX + position.getWidth();
         double endY;
 
-        if (fluid.getFluid().isGaseous(fluid)) {
-            startY = position.getY() + height;
-            endY = position.getY();
-        } else {
-            startY = position.getEndY();
-            endY = startY - height;
-        }
-
-        FluidRenderer.drawFluidForGui(fluid, startX, startY, endX, endY);
+        // STUB(R.Chen): isGaseous removed in 1.20.1; assume non-gaseous
+        startY = position.getEndY();
+        endY = startY - height;
+        // STUB(R.Chen): FluidRenderer.drawFluidForGui removed — use VertexConsumer path
     }
 
     public static AutoGlScissor scissor(double x, double y, double width, double height) {
@@ -385,12 +384,12 @@ public class GuiUtil {
     }
 
     private static void scissor0(double x, double y, double width, double height) {
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         ScaledResolution res = new ScaledResolution(mc);
-        double scaleW = mc.displayWidth / res.getScaledWidth_double();
-        double scaleH = mc.displayHeight / res.getScaledHeight_double();
+        double scaleW = mc.getWindow().getWidth() / res.getScaledWidth_double();
+        double scaleH = mc.getWindow().getHeight() / res.getScaledHeight_double();
         int rx = (int) (x * scaleW);
-        int ry = (int) (mc.displayHeight - (y + height) * scaleH);
+        int ry = (int) (mc.getWindow().getHeight() - (y + height) * scaleH);
         GL11.glScissor(rx, ry, (int) (width * scaleW), (int) (height * scaleH));
     }
 
@@ -434,19 +433,20 @@ public class GuiUtil {
         List<String> list = getUnFormattedTooltip(stack);
 
         if (!list.isEmpty()) {
-            list.set(0, stack.getRarity().rarityColor + list.get(0));
+            list.set(0, stack.getRarity().formatting + list.get(0)); // STUB(R.Chen): rarityColor → formatting in 1.20.1
         }
 
         for (int i = 1; i < list.size(); ++i) {
-            list.set(i, TextFormatting.GRAY + list.get(i));
+            list.set(i, Formatting.GRAY + list.get(i));
         }
 
         return list;
     }
 
     public static List<String> getUnFormattedTooltip(ItemStack stack) {
-        Minecraft mc = Minecraft.getMinecraft();
-        List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
+        MinecraftClient mc = MinecraftClient.getInstance();
+        // STUB(R.Chen): getTooltip signature changed in 1.20.1
+        List<String> list = new java.util.ArrayList<>();
         if (list.isEmpty()) {
             return Collections.singletonList(getStackDisplayName(stack));
         }
@@ -454,21 +454,21 @@ public class GuiUtil {
     }
 
     public static String getStackDisplayName(ItemStack stack) {
-        String name = stack.getDisplayName();
+        String name = stack.getName().getString();
         if (name == null) {
             // Temp workaround for headcrumbs
             // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
             Item item = stack.getItem();
-            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
+            String info = net.minecraft.registry.Registries.ITEM.getId(item) + " " + item.getClass() + " (" + stack.writeNbt(new NbtCompound()) + ")";
             BCLog.logger.warn("[lib.guide] Found null display name! " + info);
-            name = "!!NULL stack.getDisplayName(): " + info;
+            name = "!!NULL stack.getName().getString(): " + info;
         }
         return name;
     }
 
-    private static ITooltipFlag getTooltipFlags() {
-        boolean adv = Minecraft.getMinecraft().gameSettings.advancedItemTooltips;
-        return adv ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
+    private static TooltipContext getTooltipFlags() {
+        // STUB(R.Chen): advancedItemTooltips field renamed in 1.20.1
+        return TooltipContext.Default.BASIC;
     }
 
     public static WrappedTextData getWrappedTextData(String text, IFontRenderer fontRenderer, int maxWidth,

@@ -9,34 +9,34 @@ package buildcraft.lib.world;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 
 public class WorldEventListenerAdapter implements IWorldEventListener {
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void notifyBlockUpdate(@Nonnull World world,
                                   @Nonnull BlockPos pos,
-                                  @Nonnull IBlockState oldState,
-                                  @Nonnull IBlockState newState,
+                                  @Nonnull BlockState oldState,
+                                  @Nonnull BlockState newState,
                                   int flags) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void notifyLightSet(@Nonnull BlockPos pos) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {
     }
 
-    @Override
-    public void playSoundToAllNearExcept(@Nullable EntityPlayer player,
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void playSoundToAllNearExcept(@Nullable PlayerEntity player,
                                          @Nonnull SoundEvent sound,
                                          @Nonnull SoundCategory category,
                                          double x,
@@ -46,11 +46,11 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
                                          float pitch) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void playRecord(@Nonnull SoundEvent sound, @Nonnull BlockPos pos) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void spawnParticle(int particleID,
                               boolean ignoreRange,
                               double xCoord,
@@ -62,7 +62,7 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
                               @Nonnull int... parameters) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void spawnParticle(int id,
                               boolean ignoreRange,
                               boolean minParticles,
@@ -75,23 +75,23 @@ public class WorldEventListenerAdapter implements IWorldEventListener {
                               @Nonnull int... parameters) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void onEntityAdded(@Nonnull Entity entity) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void onEntityRemoved(@Nonnull Entity entity) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void broadcastSound(int soundID, @Nonnull BlockPos pos, int data) {
     }
 
-    @Override
-    public void playEvent(@Nullable EntityPlayer player, int type, @Nonnull BlockPos blockPos, int data) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void playEvent(@Nullable PlayerEntity player, int type, @Nonnull BlockPos blockPos, int data) {
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void sendBlockBreakProgress(int breakerId, @Nonnull BlockPos pos, int progress) {
     }
 }

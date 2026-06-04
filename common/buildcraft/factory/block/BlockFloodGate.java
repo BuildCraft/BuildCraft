@@ -10,16 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.state.property.Property;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
@@ -31,47 +32,47 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.factory.tile.TileFloodGate;
 
 public class BlockFloodGate extends BlockBCTile_Neptune {
-    public static final Map<EnumFacing, IProperty<Boolean>> CONNECTED_MAP;
+    public static final Map<Direction, Property<Boolean>> CONNECTED_MAP;
 
     static {
         CONNECTED_MAP = new HashMap<>(BuildCraftProperties.CONNECTED_MAP);
-        CONNECTED_MAP.remove(EnumFacing.UP);
+        CONNECTED_MAP.remove(Direction.UP);
     }
 
-    public BlockFloodGate(Material material, String id) {
+    public BlockFloodGate(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     @Override
-    protected void addProperties(List<IProperty<?>> properties) {
+    protected void addProperties(List<Property<?>> properties) {
         super.addProperties(properties);
         properties.addAll(CONNECTED_MAP.values());
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileFloodGate();
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public BlockState getActualState(BlockState state, BlockView world, BlockPos pos) {
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileFloodGate) {
-            for (EnumFacing side : CONNECTED_MAP.keySet()) {
-                state = state.withProperty(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
+            for (Direction side : CONNECTED_MAP.keySet()) {
+                state = state.with(CONNECTED_MAP.get(side), ((TileFloodGate) tile).openSides.contains(side));
             }
         }
         return state;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand);
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
+        ItemStack heldItem = player.getStackInHand(hand);
         if (heldItem.getItem() instanceof IToolWrench) {
-            if (!world.isRemote) {
-                if (side != EnumFacing.UP) {
-                    TileEntity tile = world.getTileEntity(pos);
+            if (!world.isClient) {
+                if (side != Direction.UP) {
+                    BlockEntity tile = world.getBlockEntity(pos);
                     if (tile instanceof TileFloodGate) {
                         if (CONNECTED_MAP.containsKey(side)) {
                             TileFloodGate floodGate = (TileFloodGate) tile;

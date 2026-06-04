@@ -6,7 +6,7 @@
 
 package buildcraft.lib.client.render;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.client.render.DetachedRenderer.IDetachedRenderer;
 import buildcraft.lib.marker.MarkerCache;
@@ -16,12 +16,15 @@ import buildcraft.lib.marker.MarkerSubCache;
 public enum MarkerRenderer implements IDetachedRenderer {
     INSTANCE;
 
-    @Override
-    public void render(EntityPlayer player, float partialTicks) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void render(PlayerEntity player, float partialTicks) {
         for (MarkerCache<? extends MarkerSubCache<?>> cache : MarkerCache.CACHES) {
-            for (MarkerConnection<?> connection : cache.getSubCache(player.world).getConnections()) {
+            for (MarkerConnection<?> connection : cache.getSubCache(player.getWorld()).getConnections()) {
                 connection.renderInWorld();
             }
         }
     }
+
+    @Override
+    public void render(float partialTicks) { /* STUB */ }
 }

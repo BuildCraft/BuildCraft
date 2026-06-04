@@ -11,7 +11,7 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.server.world.ServerWorld;
 
 import net.minecraftforge.common.util.FakePlayer;
 
@@ -40,7 +40,7 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return tile.getWorldBC().isAirBlock(blockPos);
+        return tile.getWorldBC().isAir(blockPos);
     }
 
     @Override
@@ -61,27 +61,27 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
     @Override
     protected boolean doPlaceTask(PlaceTask placeTask) {
         FakePlayer fakePlayer = BuildCraftAPI.fakePlayerProvider.getFakePlayer(
-            (WorldServer) tile.getWorldBC(),
+            (ServerWorld) tile.getWorldBC(),
             tile.getOwner(),
             tile.getBuilderPos()
         );
-        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
+        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.required.get(0));
         return TemplateApi.templateRegistry.handle(
             tile.getWorldBC(),
             placeTask.pos,
             fakePlayer,
-            placeTask.items.get(0)
+            placeTask.required.get(0)
         );
     }
 
-    @Override
+    // @Override removed (R.Chen): no longer overrides — Phase 10
     protected void cancelPlaceTask(PlaceTask placeTask) {
-        super.cancelPlaceTask(placeTask);
-        tile.getInvResources().insert(placeTask.items.get(0), false, false);
+        // STUB(R.Chen): base SnapshotBuilder has no cancelPlaceTask in the Fabric port — Phase 10
+        tile.getInvResources().insert(placeTask.required.get(0), false, false);
     }
 
     @Override
     protected boolean isBlockCorrect(BlockPos blockPos) {
-        return !isAir(blockPos) && !tile.getWorldBC().isAirBlock(blockPos);
+        return !isAir(blockPos) && !tile.getWorldBC().isAir(blockPos);
     }
 }

@@ -2,36 +2,22 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.factory.tile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-
-import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -40,98 +26,83 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
-import buildcraft.lib.inventory.TransactorEntityItem;
-import buildcraft.lib.misc.AdvancementUtil;
-import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
-import buildcraft.factory.block.BlockChute;
+// Forge→Fabric migration notes (R.Chen):
+//   ITickable.update()         → tick() + static ticker()
+//   ItemEntity                 → ItemEntity
+//   LivingEntity           → LivingEntity
+//   Direction                 → Direction
+//   NbtCompound             → NbtCompound
+//   Box              → Box
+//   BlockView               → BlockView
+//   world.getTileEntity        → world.getBlockEntity
+//   EntitySelectors.IS_ALIVE   → EntityPredicates.VALID_ENTITY
+//   Identifier           → Identifier
+//   ICapabilityProvider        → Object
+//   pickupItems/putInNearInventories: TransactorEntityItem + BoundingBoxUtil not in libLeaf — STUBbed.
+//   TilesAPI.CAP_HAS_WORK      → deferred (Phase 4F)
+public class TileChute extends TileBC_Neptune implements IDebuggable {
+    private static final Identifier ADVANCEMENT_DID_INSERT = new Identifier("buildcraftfactory", "retired_hopper");
 
-public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable {
-    private static final ResourceLocation ADVANCEMENT_DID_INSERT = new ResourceLocation("buildcraftfactory:retired_hopper");
-
+    @SuppressWarnings("unused")
     private static final int PICKUP_MAX = 3;
 
-    public final ItemHandlerSimple inv = itemManager.addInvHandler(
-        "inv",
-        4,
-        EnumAccess.INSERT,
-        EnumPipePart.VALUES
-    );
+    // STUB(R.Chen): per-face pipe-part capability registration deferred — use 3-arg form.
+    public final ItemHandlerSimple inv = itemManager.addInvHandler("inv", 4, EnumAccess.INSERT);
 
     private final MjBattery battery = new MjBattery(1 * MjAPI.MJ);
     private int progress = 0;
 
-    public TileChute() {
+    public TileChute(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
     }
 
-    public static boolean hasInventoryAtPosition(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
-        return ItemTransactorHelper.getTransactor(tile, side.getOpposite()) != NoSpaceTransactor.INSTANCE;
+    public static boolean hasInventoryAtPosition(BlockView world, BlockPos pos, Direction side) {
+        return ItemTransactorHelper.getTransactor(world.getBlockEntity(pos), side.getOpposite())
+            != NoSpaceTransactor.INSTANCE;
     }
 
-    private void pickupItems(EnumFacing currentSide) {
-        AxisAlignedBB aabb = BoundingBoxUtil.extrudeFace(getPos(), currentSide, 0.25);
-        int count = PICKUP_MAX;
-        for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, aabb, EntitySelectors.IS_ALIVE)) {
-            int moved = ItemTransactorHelper.move(new TransactorEntityItem(entity), inv, count);
-            count -= moved;
-            if (count <= 0) {
-                return;
-            }
-        }
+    /** STUB(R.Chen): BoundingBoxUtil.extrudeFace + TransactorEntityItem not yet in libLeaf.
+     *               Item entity pickup deferred to Phase 4E. */
+    @SuppressWarnings("unused")
+    private void pickupItems(Direction currentSide) {
+        // STUB(R.Chen): deferred — BoundingBoxUtil / TransactorEntityItem not in libLeaf.
     }
 
-    private void putInNearInventories(EnumFacing currentSide) {
-        boolean[] didWork = { false };
-        List<EnumFacing> sides = new ArrayList<>(Arrays.asList(EnumFacing.VALUES));
-        Collections.shuffle(sides, new Random());
-        sides.removeIf(Predicate.isEqual(currentSide));
-        Stream.<Pair<EnumFacing, ICapabilityProvider>>concat(
-            sides.stream()
-                .map(side -> Pair.of(side, world.getTileEntity(pos.offset(side)))),
-            sides.stream()
-                .flatMap(side ->
-                    world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.offset(side))).stream()
-                        .filter(entity -> !(entity instanceof EntityLivingBase))
-                        .map(entity -> Pair.of(side, entity))
-                )
-        )
-            .map(sideProvider -> ItemTransactorHelper.getTransactor(sideProvider.getRight(), sideProvider.getLeft().getOpposite()))
-            .filter(Predicate.isEqual(NoSpaceTransactor.INSTANCE).negate())
-            .forEach(transactor -> {
-                if (ItemTransactorHelper.move(inv, transactor, 1) > 0) {
-                    didWork[0] = true;
-                }
-            });
-        if (didWork[0]) {
-            AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT_DID_INSERT);
-        }
+    /** STUB(R.Chen): ItemTransactorHelper.move() not in migrated libLeaf. Deferred to Phase 4E. */
+    @SuppressWarnings("unused")
+    private void putInNearInventories(Direction currentSide) {
+        // STUB(R.Chen): item insertion into adjacent inventories deferred to Phase 4E.
+        // Full algorithm:
+        //   for each Direction != currentSide: getTransactor(world.getBlockEntity(pos.offset(side)))
+        //   then ItemTransactorHelper.move(inv, transactor, 1) — move method not yet in libLeaf.
+        //   Entity targets (TransactorEntityItem) also deferred.
     }
 
-    // ITickable
+    /** BlockEntityTicker wired in BlockChute.getTicker(). Replaces ITickable.update(). */
+    @SuppressWarnings("unchecked")
+    public static <T extends TileChute> BlockEntityTicker<T> ticker() {
+        return (world, pos, state, be) -> be.tick();
+    }
 
-    @Override
-    public void update() {
-        if (world.isRemote) {
+    public void tick() {
+        if (world.isClient) {
             return;
         }
 
-        if (!(world.getBlockState(pos).getBlock() instanceof BlockChute)) {
-            return;
-        }
-
+        // STUB(R.Chen): instanceof BlockChute check removed — BlockChute not in libLeaf.
         battery.tick(getWorld(), getPos());
 
-        EnumFacing currentSide = world.getBlockState(pos).getValue(BlockBCBase_Neptune.BLOCK_FACING_6);
+        Direction currentSide = world.getBlockState(pos).get(BlockBCBase_Neptune.BLOCK_FACING_6);
 
         int target = 100000;
-        if (currentSide == EnumFacing.UP) {
-            progress += 1000; // can be free because of gravity
+        if (currentSide == Direction.UP) {
+            progress += 1000;
         }
         progress += battery.extractPower(0, target - progress);
 
@@ -144,24 +115,21 @@ public class TileChute extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        progress = nbt.getInteger("progress");
-        battery.deserializeNBT(nbt.getCompoundTag("battery"));
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        progress = nbt.getInt("progress");
+        battery.readFromNbt(nbt.getCompound("battery"));
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setInteger("progress", progress);
-        nbt.setTag("battery", battery.serializeNBT());
-        return nbt;
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.putInt("progress", progress);
+        nbt.put("battery", battery.writeToNbt());
     }
 
-    // IDebuggable
-
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         left.add("battery = " + battery.getDebugString());
         left.add("progress = " + progress);
     }

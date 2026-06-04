@@ -2,22 +2,20 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui.ledger;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.core.render.ISprite;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.gui.BuildCraftGui;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.config.GuiConfigManager;
-import buildcraft.lib.misc.SpriteUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+@Environment(EnvType.CLIENT)
 public class LedgerOwnership extends Ledger_Neptune {
 
     private final TileBC_Neptune tile;
@@ -27,28 +25,18 @@ public class LedgerOwnership extends Ledger_Neptune {
         this.title = "gui.ledger.ownership";
         this.tile = tile;
 
-        appendText(this::getOwnerName, 0);
-
+        appendText(this::getOwnerName, 0xFF_00_00_00);
         calculateMaxSize();
-        setOpenProperty(GuiConfigManager.getOrAddBoolean(new ResourceLocation("buildcraftlib:base"),
-            "ledger.owner.is_open", false));
+        // TODO(R.Chen): ownership ledger open persistence — GuiConfigManager blocked by BCLibConfig migration.
     }
 
     @Override
     protected void drawIcon(double x, double y) {
-        ISprite sprite = SpriteUtil.getFaceSprite(tile.getOwner());
-        GuiIcon.draw(sprite, x, y, x + 16, y + 16);
-        sprite = SpriteUtil.getFaceOverlaySprite(tile.getOwner());
-        if (sprite != null) {
-            GuiIcon.draw(sprite, x - 0.5, y - 0.5, x + 17, y + 17);
-        }
+        // TODO(R.Chen): owner face sprite draw — SpriteUtil.getFaceSprite not yet migrated.
     }
 
     private String getOwnerName() {
         GameProfile owner = tile.getOwner();
-        if (owner == null) {
-            return "no-one";
-        }
-        return owner.getName();
+        return owner == null ? "no-one" : owner.getName();
     }
 }

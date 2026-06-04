@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.Loader;
@@ -59,9 +60,9 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
         }
     }
 
-    public static void onPlayerJoinWorld(EntityPlayerMP player) {
+    public static void onPlayerJoinWorld(ServerPlayerEntity player) {
         for (MarkerCache<?> cache : CACHES) {
-            World world = player.world;
+            World world = player.getWorld();
             cache.getSubCache(world).onPlayerJoinWorld(player);
         }
     }
@@ -73,16 +74,16 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
     }
 
     private void onWorldUnloadImpl(World world) {
-        Map<Integer, S> cache = world.isRemote ? cacheClient : cacheServer;
-        Integer key = world.provider.getDimension();
+        Map<Integer, S> cache = world.isClient ? cacheClient : cacheServer;
+        Integer key = System.identityHashCode(world);
         cache.remove(key);
     }
 
     protected abstract S createSubCache(World world);
 
     public S getSubCache(World world) {
-        Map<Integer, S> cache = world.isRemote ? cacheClient : cacheServer;
-        Integer key = world.provider.getDimension();
+        Map<Integer, S> cache = world.isClient ? cacheClient : cacheServer;
+        Integer key = System.identityHashCode(world);
         return cache.computeIfAbsent(key, k -> createSubCache(world));
     }
 }

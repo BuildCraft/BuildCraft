@@ -12,13 +12,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import gnu.trove.list.array.TByteArrayList;
-import gnu.trove.list.array.TIntArrayList;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.network.PacketByteBuf;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.data.NbtSquishConstants;
@@ -82,7 +80,7 @@ class NbtSquishMapReader {
             int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
                 int arraySize = in.readUnsignedShort();
-                TByteArrayList list = new TByteArrayList();
+                ArrayList<Byte> list = new ArrayList<Byte>();
                 for (int j = 0; j < arraySize; j++) {
                     list.add(in.readByte());
                 }
@@ -94,7 +92,7 @@ class NbtSquishMapReader {
             int count = readVarInt(in);
             for (int i = 0; i < count; i++) {
                 int arraySize = in.readUnsignedShort();
-                TIntArrayList list = new TIntArrayList();
+                ArrayList<Integer> list = new ArrayList<Integer>();
                 for (int j = 0; j < arraySize; j++) {
                     list.add(in.readInt());
                 }
@@ -131,7 +129,7 @@ class NbtSquishMapReader {
         return map;
     }
 
-    /** Similar to {@link PacketBuffer#readVarInt()} */
+    /** Similar to {@link PacketByteBuf#readVarInt()} */
     private static int readVarInt(DataInput in) throws IOException {
         int value = 0;
         int bytesRead = 0;
@@ -154,41 +152,41 @@ class NbtSquishMapReader {
         return (flags & flag) == flag;
     }
 
-    private NBTTagCompound readCompound(WrittenType type, DataInput in) throws IOException {
+    private NbtCompound readCompound(WrittenType type, DataInput in) throws IOException {
         WrittenType stringType = WrittenType.getForSize(map.stringSize());
         int count = readVarInt(in);
-        NBTTagCompound nbt = new NBTTagCompound();
+        NbtCompound nbt = new NbtCompound();
         for (int i = 0; i < count; i++) {
             String key = map.getStringForReading(stringType.readIndex(in));
-            NBTBase value = map.getTagForReading(type.readIndex(in));
-            nbt.setTag(key, value.copy());
+            NbtElement value = map.getTagForReading(type.readIndex(in));
+            nbt.put(key, value.copy());
         }
         return nbt;
     }
 
-    private NBTTagList readNormalList(WrittenType type, DataInput in) throws IOException {
+    private NbtList readNormalList(WrittenType type, DataInput in) throws IOException {
         int count = readVarInt(in);
-        NBTTagList list = new NBTTagList();
+        NbtList list = new NbtList();
 
         for (int i = 0; i < count; i++) {
             int index = type.readIndex(in);
-            list.appendTag(map.getTagForReading(index));
+            list.add(map.getTagForReading(index));
         }
 
         return list;
     }
 
-    private NBTTagList readPackedList(WrittenType type, DataInput in) throws IOException {
+    private NbtList readPackedList(WrittenType type, DataInput in) throws IOException {
         // First make the dictionary
         int count = readVarInt(in);
-        List<NBTBase> dictionary = new ArrayList<>();
+        List<NbtElement> dictionary = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             int index = type.readIndex(in);
-            NBTBase nbt = map.getTagForReading(index);
+            NbtElement nbt = map.getTagForReading(index);
             dictionary.add(nbt);
         }
-        List<NBTBase> list = new ArrayList<>();
-        TIntArrayList left = new TIntArrayList();
+        List<NbtElement> list = new ArrayList<>();
+        ArrayList<Integer> left = new ArrayList<Integer>();
         int bits = 1;
         int entries = readVarInt(in);
 
@@ -203,10 +201,10 @@ class NbtSquishMapReader {
             in.readFully(bitsetData);
             DecompactingBitSet decompactor = new DecompactingBitSet(bits, bitsetData);
 
-            TIntArrayList nextLeft = new TIntArrayList();
+            ArrayList<Integer> nextLeft = new ArrayList<Integer>();
 
             int maxVal = (1 << bits) - 1;
-            for (int i : left.toArray()) {
+            for (int i : left) {
                 int index = decompactor.next();
                 if (index < maxVal) {
                     list.set(i, dictionary.get(index));
@@ -220,9 +218,9 @@ class NbtSquishMapReader {
             bits++;
         }
 
-        NBTTagList tag = new NBTTagList();
-        for (NBTBase base : list) {
-            tag.appendTag(base);
+        NbtList tag = new NbtList();
+        for (NbtElement base : list) {
+            tag.add(base);
         }
         return tag;
     }

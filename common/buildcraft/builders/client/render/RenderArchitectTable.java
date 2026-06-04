@@ -8,8 +8,8 @@ package buildcraft.builders.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
@@ -18,32 +18,35 @@ import buildcraft.builders.tile.TileArchitectTable;
 import buildcraft.core.client.BuildCraftLaserManager;
 
 public class RenderArchitectTable extends TileEntitySpecialRenderer<TileArchitectTable> {
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(TileArchitectTable tile, double x, double y, double z, float partialTicks, int destroyStage,
         float partial) {
         if (!tile.markerBox) {
             return;
         }
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("architect_table");
+        MinecraftClient.getInstance().getProfiler().push("bc");
+        MinecraftClient.getInstance().getProfiler().push("architect_table");
 
         GL11.glPushMatrix();
         GL11.glTranslated(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
         RenderHelper.disableStandardItemLighting();
 
-        Minecraft.getMinecraft().mcProfiler.startSection("box");
+        MinecraftClient.getInstance().getProfiler().push("box");
         LaserBoxRenderer.renderLaserBoxStatic(tile.box, BuildCraftLaserManager.STRIPES_READ, true);
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
 
         RenderHelper.enableStandardItemLighting();
         GL11.glPopMatrix();
 
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        MinecraftClient.getInstance().getProfiler().pop();
+        MinecraftClient.getInstance().getProfiler().pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileArchitectTable te) {
         return true;
     }
+
+    @Override
+    public void render(TileArchitectTable entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
 }

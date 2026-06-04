@@ -11,12 +11,12 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
@@ -33,9 +33,9 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             return;
         }
         isBuilt = true;
-        for (Item item : Item.REGISTRY) {
-            NonNullList<ItemStack> stacks = NonNullList.create();
-            item.getSubItems(CreativeTabs.SEARCH, stacks);
+        for (Item item : net.minecraft.registry.Registries.ITEM) {
+            DefaultedList<ItemStack> stacks = DefaultedList.of();
+            // TODO(migration): item.getSubItems removed in 1.20.1 — populate stacks via ItemGroupEvents
             for (ItemStack toTry : stacks) {
                 IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(toTry);
                 if (fluidHandler != null && fluidHandler.drain(1, false) == null) {
@@ -62,8 +62,8 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
                 }
             }
         } else if (type == Type.MATERIAL) {
-            FluidStack fStack = FluidUtil.getFluidContained(stack);
-            FluidStack fTarget = FluidUtil.getFluidContained(target);
+            FluidStackBC fStack = FluidUtil.getFluidContained(stack);
+            FluidStackBC fTarget = FluidUtil.getFluidContained(target);
             if (fStack != null && fTarget != null) {
                 return fStack.isFluidEqual(fTarget);
             }
@@ -82,12 +82,12 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     }
 
     @Override
-    public NonNullList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
+    public DefaultedList<ItemStack> getClientExamples(Type type, @Nonnull ItemStack stack) {
         buildClientExampleList();
         if (type == Type.MATERIAL) {
-            FluidStack fStack = FluidUtil.getFluidContained(stack);
+            FluidStackBC fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {
-                NonNullList<ItemStack> examples = NonNullList.create();
+                DefaultedList<ItemStack> examples = DefaultedList.of();
 
                 for (ItemStack potentialHolder : clientExampleHolders) {
                     potentialHolder = potentialHolder.copy();
@@ -103,9 +103,9 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(stack.copy());
 
             if (fluidHandler != null) {
-                NonNullList<ItemStack> examples = NonNullList.create();
+                DefaultedList<ItemStack> examples = DefaultedList.of();
                 examples.add(stack);
-                FluidStack contained = fluidHandler.drain(Integer.MAX_VALUE, true);
+                FluidStackBC contained = fluidHandler.drain(Integer.MAX_VALUE, true);
                 if (contained != null) {
                     examples.add(fluidHandler.getContainer());
                     for (ItemStack potential : clientExampleHolders) {

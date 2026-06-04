@@ -1,16 +1,23 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
+
 package buildcraft.transport.pipe.behaviour;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.fabricmc.api.EnvType;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
@@ -21,16 +28,13 @@ import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeApi.PowerTransferInfo;
 import buildcraft.api.transport.pipe.PipeApi.RedstoneFluxTransferInfo;
 import buildcraft.api.transport.pipe.PipeBehaviour;
-import buildcraft.api.transport.pipe.PipeEventActionActivate;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeEventPower;
 import buildcraft.api.transport.pipe.PipeEventRedstoneFlux;
 
-import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.MathUtil;
 
 import buildcraft.transport.pipe.flow.PipeFlowRedstoneFlux;
-import buildcraft.transport.statements.ActionPowerLimit;
 
 public class PipeBehaviourLimiter extends PipeBehaviour {
 
@@ -42,26 +46,26 @@ public class PipeBehaviourLimiter extends PipeBehaviour {
         super(pipe);
     }
 
-    public PipeBehaviourLimiter(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourLimiter(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
-        limitShift = MathUtil.clamp(nbt.getInteger("limitShift"), 0, MAX_SHIFT);
+        limitShift = MathUtil.clamp(nbt.getInt("limitShift"), 0, MAX_SHIFT);
     }
 
     @Override
-    public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = super.writeToNbt();
-        nbt.setInteger("limitShift", limitShift);
+    public NbtCompound writeToNbt() {
+        NbtCompound nbt = super.writeToNbt();
+        nbt.putInt("limitShift", limitShift);
         return nbt;
     }
 
     @Override
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketByteBuf buffer, EnvType side, Object ctx) throws IOException {
         super.readPayload(buffer, side, ctx);
         limitShift = buffer.readUnsignedByte();
     }
 
     @Override
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketByteBuf buffer, EnvType side) {
         super.writePayload(buffer, side);
         buffer.writeByte(limitShift);
     }
@@ -84,25 +88,12 @@ public class PipeBehaviourLimiter extends PipeBehaviour {
         }
     }
 
-    @PipeEventHandler
-    public void onActionActivate(PipeEventActionActivate event) {
-        if (event.action instanceof ActionPowerLimit) {
-            limitShift = ((ActionPowerLimit) event.action).limitShift;
-
-            requestReconfigure();
-        }
-    }
-
     @Override
     public boolean onPipeActivate(
-        EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part
+        PlayerEntity player, HitResult trace, float hitX, float hitY, float hitZ, EnumPipePart part
     ) {
-        if (EntityUtil.getWrenchHand(player) == null) {
-            return false;
-        }
-
-        if (!player.world.isRemote) {
-            EntityUtil.activateWrench(player, trace);
+        // STUB(R.Chen): EntityUtil.getWrenchHand not migrated — wrench detection disabled.
+        if (!player.getWorld().isClient) {
             limitShift++;
             if (limitShift > MAX_SHIFT) {
                 limitShift = 0;
@@ -120,8 +111,7 @@ public class PipeBehaviourLimiter extends PipeBehaviour {
                 limit = (int) ((transferInfo.transferPerTick >> limitShift) / MjAPI.MJ);
             }
             String key = "chat.pipe." + (isRf ? "rf" : "power") + ".iron.mode";
-            TextComponentTranslation chat = new TextComponentTranslation(key, limit);
-            player.sendStatusMessage(chat, true);
+            player.sendMessage(Text.translatable(key, limit), true);
 
             requestReconfigure();
         }
@@ -136,7 +126,7 @@ public class PipeBehaviourLimiter extends PipeBehaviour {
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
+    public int getTextureIndex(Direction face) {
         return MAX_SHIFT - limitShift;
     }
 }

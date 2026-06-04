@@ -6,11 +6,11 @@
 
 package buildcraft.lib.fluid;
 
-import net.minecraft.block.material.MapColor;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.block.MapColor;
+import net.minecraft.util.Identifier;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.lib.misc.LocaleUtil;
 
@@ -23,17 +23,17 @@ public class BCFluid extends Fluid {
     private boolean heatable;
     private String blockName;
 
-    public BCFluid(String fluidName, ResourceLocation still, ResourceLocation flowing) {
+    public BCFluid(String fluidName, Identifier still, Identifier flowing) {
         super(fluidName, still, flowing);
         blockName = fluidName;
     }
 
-    public String getBareLocalizedName(FluidStack stack) {
+    public String getBareLocalizedName(FluidStackBC stack) {
         return super.getLocalizedName(stack);
     }
 
-    @Override
-    public String getLocalizedName(FluidStack stack) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public String getLocalizedName(FluidStackBC stack) {
         if (heat <= 0 && !isHeatable()) return getBareLocalizedName(stack);
         String name = getBareLocalizedName(stack);
         return LocaleUtil.localize("buildcraft.fluid.heat_" + heat, name);
@@ -71,7 +71,7 @@ public class BCFluid extends Fluid {
         return blockName;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getColor() {
         return colour;
     }
@@ -112,5 +112,16 @@ public class BCFluid extends Fluid {
 
     public boolean isHeatable() {
         return heatable;
+    }
+
+    // ---- Forge fluid-block compat ----
+    private net.minecraft.block.Block fluidBlock;
+
+    public void setBlock(net.minecraft.block.Block block) {
+        this.fluidBlock = block;
+    }
+
+    public net.minecraft.block.Block getBlock() {
+        return fluidBlock;
     }
 }

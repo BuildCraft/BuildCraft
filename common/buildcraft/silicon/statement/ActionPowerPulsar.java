@@ -2,11 +2,15 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.silicon.statement;
 
-import net.minecraft.util.EnumFacing;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IActionInternalSided;
@@ -41,7 +45,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
     }
 
     @Override
-    public void actionActivate(EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
+    public void actionActivate(Direction side, IStatementContainer source, IStatementParameter[] parameters) {
         if (source instanceof IGate) {
             IGate gate = (IGate) source;
             IPipeHolder pipe = gate.getPipeHolder();
@@ -63,6 +67,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public SpriteHolder getSprite() {
         return constant ? BCSiliconSprites.ACTION_PULSAR_CONSTANT : BCSiliconSprites.ACTION_PULSAR_SINGLE;
     }

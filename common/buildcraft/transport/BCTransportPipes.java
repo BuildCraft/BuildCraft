@@ -2,15 +2,16 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport;
 
 import java.util.Arrays;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.pipe.PipeApi;
 import buildcraft.api.transport.pipe.PipeDefinition;
@@ -43,65 +44,19 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodPower;
 
 public class BCTransportPipes {
     public static PipeDefinition structure;
-
-    public static PipeDefinition woodItem;
-    public static PipeDefinition woodFluid;
-    public static PipeDefinition woodPower;
-    public static PipeDefinition woodRf;
-
-    public static PipeDefinition stoneItem;
-    public static PipeDefinition stoneFluid;
-    public static PipeDefinition stonePower;
-    public static PipeDefinition stoneRf;
-
-    public static PipeDefinition cobbleItem;
-    public static PipeDefinition cobbleFluid;
-    public static PipeDefinition cobblePower;
-    public static PipeDefinition cobbleRf;
-
-    public static PipeDefinition quartzItem;
-    public static PipeDefinition quartzFluid;
-    public static PipeDefinition quartzPower;
-    public static PipeDefinition quartzRf;
-
-    public static PipeDefinition goldItem;
-    public static PipeDefinition goldFluid;
-    public static PipeDefinition goldPower;
-    public static PipeDefinition goldRf;
-
-    public static PipeDefinition sandstoneItem;
-    public static PipeDefinition sandstoneFluid;
-    public static PipeDefinition sandstonePower;
-    public static PipeDefinition sandstoneRf;
-
-    public static PipeDefinition ironItem;
-    public static PipeDefinition ironFluid;
-    public static PipeDefinition ironPower;
-    public static PipeDefinition ironRf;
-
-    public static PipeDefinition diamondItem;
-    public static PipeDefinition diamondFluid;
-    public static PipeDefinition diamondPower;
-    public static PipeDefinition diamondRf;
-
-    public static PipeDefinition diaWoodItem;
-    public static PipeDefinition diaWoodFluid;
-    public static PipeDefinition diaWoodPower;
-    public static PipeDefinition diaWoodRf;
-
-    public static PipeDefinition clayItem;
-    public static PipeDefinition clayFluid;
-
-    public static PipeDefinition voidItem;
-    public static PipeDefinition voidFluid;
-
-    public static PipeDefinition obsidianItem;
-    public static PipeDefinition obsidianFluid;
-
-    public static PipeDefinition lapisItem;
-    public static PipeDefinition daizuliItem;
-    public static PipeDefinition emzuliItem;
-    public static PipeDefinition stripesItem;
+    public static PipeDefinition woodItem, woodFluid, woodPower, woodRf;
+    public static PipeDefinition stoneItem, stoneFluid, stonePower, stoneRf;
+    public static PipeDefinition cobbleItem, cobbleFluid, cobblePower, cobbleRf;
+    public static PipeDefinition quartzItem, quartzFluid, quartzPower, quartzRf;
+    public static PipeDefinition goldItem, goldFluid, goldPower, goldRf;
+    public static PipeDefinition sandstoneItem, sandstoneFluid, sandstonePower, sandstoneRf;
+    public static PipeDefinition ironItem, ironFluid, ironPower, ironRf;
+    public static PipeDefinition diamondItem, diamondFluid, diamondPower, diamondRf;
+    public static PipeDefinition diaWoodItem, diaWoodFluid, diaWoodPower, diaWoodRf;
+    public static PipeDefinition clayItem, clayFluid;
+    public static PipeDefinition voidItem, voidFluid;
+    public static PipeDefinition obsidianItem, obsidianFluid;
+    public static PipeDefinition lapisItem, daizuliItem, emzuliItem, stripesItem;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
@@ -159,7 +114,7 @@ public class BCTransportPipes {
         sandstoneFluid = builder.idTex("sandstone_fluid").flowFluid().define();
         sandstonePower = builder.idTex("sandstone_power").flowPower().define();
         if (!BCTransportConfig.disableRfPipe) {
-            sandstoneRf = builder.idTex("sandstone_rf").flowRf().define();
+            sandstoneRf = builder.idTexPrefix("sandstone_rf").flowRf().define();
         }
 
         builder.logic(PipeBehaviourIron::new, PipeBehaviourIron::new).texSuffixes("_clear", "_filled");
@@ -171,14 +126,12 @@ public class BCTransportPipes {
         String[] diamondTextureSuffixes = new String[8];
         diamondTextureSuffixes[0] = "";
         diamondTextureSuffixes[7] = "_itemstack";
-        for (EnumFacing face : EnumFacing.VALUES) {
+        for (Direction face : Direction.values()) {
             diamondTextureSuffixes[face.ordinal() + 1] = "_" + face.getName();
         }
-
         builder.logic(PipeBehaviourDiamondItem::new, PipeBehaviourDiamondItem::new).texSuffixes(diamondTextureSuffixes);
         builder.builder.itemTex(7);
         diamondItem = builder.idTexPrefix("diamond_item").flowItem().define();
-
         builder.logic(PipeBehaviourDiamondFluid::new, PipeBehaviourDiamondFluid::new);
         diamondFluid = builder.idTexPrefix("diamond_fluid").flowFluid().define();
         builder.builder.itemTex(0);
@@ -216,20 +169,17 @@ public class BCTransportPipes {
 
         builder.logic(PipeBehaviourObsidian::new, PipeBehaviourObsidian::new);
         obsidianItem = builder.idTex("obsidian_item").flowItem().define();
-        // obsidianFluid = builder.idTex("obsidian_fluid").flowFluid().define();
 
-        EnumDyeColor[] colourArray = EnumDyeColor.values();
+        DyeColor[] colourArray = DyeColor.values();
         String[] texSuffix = new String[16];
         for (int i = 0; i < 16; i++) {
             texSuffix[i] = "_" + colourArray[i].getName();
         }
-
         builder.logic(PipeBehaviourLapis::new, PipeBehaviourLapis::new).texSuffixes(texSuffix);
         lapisItem = builder.idTexPrefix("lapis_item").flowItem().define();
 
         String[] texSuffixPlus = Arrays.copyOf(texSuffix, 17);
         texSuffixPlus[16] = "_filled";
-
         builder.logic(PipeBehaviourDaizuli::new, PipeBehaviourDaizuli::new).texSuffixes(texSuffixPlus);
         builder.builder.itemTex(0, 0, 16);
         daizuliItem = builder.idTexPrefix("daizuli_item").flowItem().define();
@@ -251,11 +201,11 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder idTex(String both) {
-            return id(both).tex(both);
+            return id(both).texture(both);
         }
 
         public DefinitionBuilder id(String post) {
-            builder.identifier = new ResourceLocation("buildcrafttransport", post);
+            builder.identifier = new Identifier("buildcrafttransport", post);
             return this;
         }
 
@@ -272,11 +222,7 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder texSuffixes(String... suffixes) {
-            if (suffixes.length == 0) {
-                builder.textureSuffixes = new String[] { "" };
-            } else {
-                builder.textureSuffixes = suffixes;
-            }
+            builder.textureSuffixes = suffixes.length == 0 ? new String[] { "" } : suffixes;
             return this;
         }
 
@@ -286,21 +232,10 @@ public class BCTransportPipes {
             return this;
         }
 
-        public DefinitionBuilder flowItem() {
-            return flow(PipeApi.flowItems);
-        }
-
-        public DefinitionBuilder flowFluid() {
-            return flow(PipeApi.flowFluids);
-        }
-
-        public DefinitionBuilder flowPower() {
-            return flow(PipeApi.flowPower);
-        }
-
-        public DefinitionBuilder flowRf() {
-            return flow(PipeApi.flowRf);
-        }
+        public DefinitionBuilder flowItem()  { return flow(PipeApi.flowItems);  }
+        public DefinitionBuilder flowFluid() { return flow(PipeApi.flowFluids); }
+        public DefinitionBuilder flowPower() { return flow(PipeApi.flowPower);  }
+        public DefinitionBuilder flowRf()    { return flow(PipeApi.flowRf);     }
 
         public DefinitionBuilder flow(PipeFlowType flow) {
             builder.flow(flow);

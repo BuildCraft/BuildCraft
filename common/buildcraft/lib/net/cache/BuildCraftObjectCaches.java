@@ -2,91 +2,47 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.net.cache;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import buildcraft.lib.misc.StackUtil;
 
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.misc.ItemStackKey;
-
-/** Stores default caches for {@link ItemStack} and {@link FluidStack}. Note that because {@link ItemStack} doesn't
- * override {@link #hashCode()} or {@link #equals(Object)} {@link ItemStackKey} is used as the key type instead, so you
- * probably want to use {@link #storeItemStack(ItemStack)}, {@link #getItemStackId(ItemStack)} and
- * {@link #retrieveItemStack(int)} instead of {@link #CACHE_ITEMS} directly. This also stores the */
+// STUB(R.Chen): full implementation in Phase 4E.
 public class BuildCraftObjectCaches {
-    public static final NetworkedItemStackCache CACHE_ITEMS = new NetworkedItemStackCache();
+
+    /** Real NetworkedFluidStackCache — provides typed server()/client() API Tank.java expects. */
     public static final NetworkedFluidStackCache CACHE_FLUIDS = new NetworkedFluidStackCache();
+    /** STUB(R.Chen): all caches list — stub for FML lifecycle calls. */
+    public static final List<Object> CACHES = new ArrayList<>();
 
-    static final List<NetworkedObjectCache<?>> CACHES = new ArrayList<>();
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int storeItemStack(@Nonnull ItemStack stack) { return 0; }
 
-    public static void registerCache(NetworkedObjectCache<?> cache) {
-        if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
-            throw new IllegalStateException("May only construct a cache BEFORE post-init!");
-        }
-        BuildCraftObjectCaches.CACHES.add(cache);
-    }
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int getItemStackId(@Nonnull ItemStack stack) { return 0; }
 
-    /** @see NetworkedObjectCache.ServerView#store(Object) */
-    public static int storeItemStack(@Nonnull ItemStack stack) {
-        return CACHE_ITEMS.server().store(stack);
-    }
+    /** STUB(R.Chen): returns an empty supplier until the client cache is migrated. */
+    public static Supplier<ItemStack> retrieveItemStack(int id) { return () -> StackUtil.EMPTY; }
 
-    /** @see NetworkedObjectCache.ServerView#getId(Object) */
-    public static int getItemStackId(@Nonnull ItemStack stack) {
-        return CACHE_ITEMS.server().getId(stack);
-    }
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int storeFluid(@Nonnull FluidVariant fluid) { return 0; }
 
-    /** @see NetworkedObjectCache.ClientView#retrieve(int) */
-    public static Supplier<ItemStack> retrieveItemStack(int id) {
-        return CACHE_ITEMS.client().retrieve(id);
-    }
+    /** STUB(R.Chen): returns a sentinel id; real id allocation is Phase 4E. */
+    public static int getFluidId(@Nonnull FluidVariant fluid) { return 0; }
 
-    /** Called by BuildCraftLib in the {@link FMLPreInitializationEvent} */
-    public static void fmlPreInit() {
-        registerCache(CACHE_ITEMS);
-        registerCache(CACHE_FLUIDS);
-    }
-
-    /** Called by BuildCraftLib in the {@link FMLPostInitializationEvent} */
-    public static void fmlPostInit() {
-        CACHES.sort(Comparator.comparing(a -> a.getClass().getSimpleName()));
-        if (NetworkedObjectCache.DEBUG_LOG) {
-            BCLog.logger.info("[lib.net.cache] Sorted list of networked object caches:");
-            for (int i = 0; i < CACHES.size(); i++) {
-                final NetworkedObjectCache<?> cache = CACHES.get(i);
-                BCLog.logger.info("  " + i + " = " + cache.getCacheName());
-            }
-            BCLog.logger.info("[lib.net.cache] Total of " + CACHES.size() + " caches");
-        }
-    }
-
-    /** Called by BuildCraftLib on every client tick. */
-    public static void onClientTick() {
-        for (NetworkedObjectCache<?> cache : CACHES) {
-            cache.onClientWorldTick();
-        }
-    }
-
-    /** Called by BuildCraftLib on the client side whenever it joins a server. */
-    public static void onClientJoinServer() {
-        for (NetworkedObjectCache<?> cache : CACHES) {
-            cache.onClientJoinServer();
-        }
-    }
+    /** STUB(R.Chen): returns a blank supplier until the client cache is migrated. */
+    public static Supplier<FluidVariant> retrieveFluid(int id) { return FluidVariant::blank; }
 }

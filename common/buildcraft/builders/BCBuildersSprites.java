@@ -9,7 +9,7 @@ package buildcraft.builders;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
@@ -50,10 +50,10 @@ public class BCBuildersSprites {
 
     public static final SpriteHolder[] PARAM_ROTATION;
 
-    public static final Map<EnumFacing, SpriteHolder> PARAM_XZ_DIR;
+    public static final Map<Direction, SpriteHolder> PARAM_XZ_DIR;
     public static final Map<PatternParameterCenter, SpriteHolder> PARAM_CENTER;
-    public static final Map<EnumFacing.Axis, SpriteHolder> PARAM_AXIS;
-    public static final Map<EnumFacing, SpriteHolder> PARAM_FACE;
+    public static final Map<Direction.Axis, SpriteHolder> PARAM_AXIS;
+    public static final Map<Direction, SpriteHolder> PARAM_FACE;
     public static final Map<PatternSpherePart.SpherePartType, SpriteHolder> FILLER_SPHERE_PART;
 
     static {
@@ -92,24 +92,24 @@ public class BCBuildersSprites {
             PARAM_ROTATION[r] = getHolder("filler/parameters/rotation_" + r);
         }
 
-        PARAM_XZ_DIR = new EnumMap<>(EnumFacing.class);
-        PARAM_XZ_DIR.put(EnumFacing.WEST, getHolder("filler/parameters/arrow_left"));
-        PARAM_XZ_DIR.put(EnumFacing.EAST, getHolder("filler/parameters/arrow_right"));
-        PARAM_XZ_DIR.put(EnumFacing.NORTH, getHolder("filler/parameters/arrow_up"));
-        PARAM_XZ_DIR.put(EnumFacing.SOUTH, getHolder("filler/parameters/arrow_down"));
+        PARAM_XZ_DIR = new EnumMap<>(Direction.class);
+        PARAM_XZ_DIR.put(Direction.WEST, getHolder("filler/parameters/arrow_left"));
+        PARAM_XZ_DIR.put(Direction.EAST, getHolder("filler/parameters/arrow_right"));
+        PARAM_XZ_DIR.put(Direction.NORTH, getHolder("filler/parameters/arrow_up"));
+        PARAM_XZ_DIR.put(Direction.SOUTH, getHolder("filler/parameters/arrow_down"));
 
         PARAM_CENTER = new EnumMap<>(PatternParameterCenter.class);
         for (PatternParameterCenter param : PatternParameterCenter.values()) {
             PARAM_CENTER.put(param, getHolder("filler/parameters/center_" + param.ordinal()));
         }
 
-        PARAM_AXIS = new EnumMap<>(EnumFacing.Axis.class);
-        for (EnumFacing.Axis axis : EnumFacing.Axis.values()) {
+        PARAM_AXIS = new EnumMap<>(Direction.Axis.class);
+        for (Direction.Axis axis : Direction.Axis.values()) {
             PARAM_AXIS.put(axis, getHolder("filler/parameters/axis_" + axis.getName()));
         }
 
-        PARAM_FACE = new EnumMap<>(EnumFacing.class);
-        for (EnumFacing face : EnumFacing.VALUES) {
+        PARAM_FACE = new EnumMap<>(Direction.class);
+        for (Direction face : Direction.values()) {
             PARAM_FACE.put(face, getHolder("filler/parameters/face_" + face.getName()));
         }
 

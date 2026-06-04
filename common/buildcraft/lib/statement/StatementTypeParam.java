@@ -1,8 +1,15 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.statement;
 
 import java.io.IOException;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.core.InvalidInputDataException;
 import buildcraft.api.statements.IStatementParameter;
@@ -25,7 +32,7 @@ public class StatementTypeParam extends StatementType<IStatementParameter> {
     }
 
     @Override
-    public IStatementParameter readFromNbt(NBTTagCompound nbt) {
+    public IStatementParameter readFromNbt(NbtCompound nbt) {
         String kind = nbt.getString("kind");
         IParameterReader reader = StatementManager.getParameterReader(kind);
         if (reader == null) {
@@ -36,11 +43,11 @@ public class StatementTypeParam extends StatementType<IStatementParameter> {
     }
 
     @Override
-    public NBTTagCompound writeToNbt(IStatementParameter slot) {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public NbtCompound writeToNbt(IStatementParameter slot) {
+        NbtCompound nbt = new NbtCompound();
         if (slot != null) {
             slot.writeToNbt(nbt);
-            nbt.setString("kind", slot.getUniqueTag());
+            nbt.putString("kind", slot.getUniqueTag());
         }
         return nbt;
     }

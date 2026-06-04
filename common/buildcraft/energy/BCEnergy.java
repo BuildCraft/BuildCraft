@@ -6,7 +6,7 @@ package buildcraft.energy;
 
 import java.util.function.Consumer;
 
-import net.minecraftforge.fluids.FluidRegistry;
+import buildcraft.lib.compat.FluidRegistryBC;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -34,7 +34,7 @@ public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
 
     static {
-        FluidRegistry.enableUniversalBucket();
+        FluidRegistryBC.enableUniversalBucket();
     }
 
     @Mod.Instance(MODID)
@@ -45,7 +45,7 @@ public class BCEnergy {
         RegistryConfig.useOtherModConfigFor(MODID, BCCore.MODID);
         BCEnergyConfig.preInit();
         BCEnergyEntities.preInit();
-        BCEnergyFluids.preInit();
+        BCEnergyFluids.fmlPreInit();
         BCEnergyBlocks.preInit();
         BCEnergyItems.preInit();
 
@@ -57,7 +57,7 @@ public class BCEnergy {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
         BCEnergyRecipes.init();
-        BCEnergyWorldGen.init();
+        BCEnergyWorldGen.fmlInit();
         BCEnergyProxy.getProxy().fmlInit();
     }
 
@@ -70,9 +70,8 @@ public class BCEnergy {
 
     private static void registerMigrations() {
         /** 7.99.0 */
+        // STUB(R.Chen): fluid block migrations deferred until BCEnergyFluids is ported — Phase 10
         // Fluid registration changed from "fluid_block_[FLUID]" to "fluid_block_heat_[HEAT]_[FLUID]"
-        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.crudeOil[0].getBlock(), "fluid_block_oil");
-        MigrationManager.INSTANCE.addBlockMigration(BCEnergyFluids.fuelLight[0].getBlock(), "fluid_block_fuel");
     }
 
     static {

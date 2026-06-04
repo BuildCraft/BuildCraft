@@ -5,14 +5,15 @@
 package buildcraft.factory.item;
 
 import java.util.Locale;
+import java.util.Map;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.util.DyeColor;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.item.ItemBlockBCMulti;
 import buildcraft.lib.misc.ColourUtil;
@@ -35,11 +36,11 @@ public class ItemPlastic extends ItemBlockBCMulti {
         return switched;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
-        for (EnumDyeColor colour : EnumDyeColor.values()) {
-            addVariant(variants, colour.getMetadata(), colour.getName());
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    @Environment(EnvType.CLIENT)
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
+        for (DyeColor colour : DyeColor.values()) {
+            addVariant(variants, colour.getId(), colour.getName());
         }
     }
 }

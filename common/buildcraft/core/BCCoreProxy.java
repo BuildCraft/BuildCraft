@@ -6,14 +6,14 @@ package buildcraft.core;
 
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.BCModules;
 
@@ -40,7 +40,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
         if (ID == BCCoreGuis.LIST.ordinal()) {
             return new ContainerList(player);
         }
@@ -48,12 +48,12 @@ public abstract class BCCoreProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
         return null;
     }
 
     public void fmlPreInit() {
-        MessageManager.registerMessageClass(BCModules.CORE, MessageVolumeBoxes.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.CORE, MessageVolumeBoxes.class, EnvType.CLIENT);
     }
 
     public void fmlInit() {}
@@ -64,15 +64,15 @@ public abstract class BCCoreProxy implements IGuiHandler {
         return WorldSavedDataVolumeBoxes.get(world).volumeBoxes;
     }
 
-    @SideOnly(Side.SERVER)
+    @Environment(EnvType.SERVER)
     public static class ServerProxy extends BCCoreProxy {
 
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class ClientProxy extends BCCoreProxy {
         @Override
-        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
             if (ID == BCCoreGuis.LIST.ordinal()) {
                 return new GuiList(player);
             }
@@ -85,20 +85,20 @@ public abstract class BCCoreProxy implements IGuiHandler {
             BCCoreSprites.fmlPreInit();
             BCCoreModels.fmlPreInit();
             DetachedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeBoxes.INSTANCE);
-            MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
-            MessageManager.setHandler(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, Side.CLIENT);
+            // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
+            MessageManager.setHandler(MessageVolumeBoxes.class, MessageVolumeBoxes.HANDLER, EnvType.CLIENT);
         }
 
         @Override
         public void fmlInit() {
             super.fmlInit();
             BCCoreModels.fmlInit();
-            MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
+            // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(RenderTickListener.class);
         }
 
         @Override
         public List<VolumeBox> getVolumeBoxes(World world) {
-            return world.isRemote ? ClientVolumeBoxes.INSTANCE.volumeBoxes : super.getVolumeBoxes(world);
+            return world.isClient ? ClientVolumeBoxes.INSTANCE.volumeBoxes : super.getVolumeBoxes(world);
         }
     }
 }

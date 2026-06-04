@@ -3,26 +3,18 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// STUB(R.Chen): GuideChapterContents deferred
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.client.resources.I18n;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.guide.GuiGuide;
 
+@Environment(EnvType.CLIENT)
 public class GuideChapterContents extends GuideChapter {
+
     public GuideChapterContents(GuiGuide gui) {
-        super(gui, I18n.format("buildcraft.guide.chapter.contents"));
-    }
-
-    @Override
-    public void reset() {
-        lastDrawn = EnumGuiSide.LEFT;
-    }
-
-    @Override
-    protected boolean onClick() {
-        gui.goBackToMenu();
-        return true;
+        super(gui, "contents");
     }
 }

@@ -6,11 +6,12 @@
 
 package buildcraft.factory.block;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import buildcraft.lib.compat.MaterialBC;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,19 +23,19 @@ import buildcraft.factory.tile.TileAutoWorkbenchFluids;
 
 public class BlockAutoWorkbenchFluids extends BlockBCTile_Neptune {
 
-    public BlockAutoWorkbenchFluids(Material material, String id) {
+    public BlockAutoWorkbenchFluids(AbstractBlock.Settings material, String id) {
         super(material, id);
     }
 
     @Override
-    public TileBC_Neptune createTileEntity(World world, IBlockState state) {
+    public TileBC_Neptune createTileEntity(World world, BlockState state) {
         return new TileAutoWorkbenchFluids();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-        EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+        Direction side, float hitX, float hitY, float hitZ) {
+        if (!world.isClient) {
             BCFactoryGuis.AUTO_WORKBENCH_FLUIDS.openGUI(player, pos);
         }
         return true;

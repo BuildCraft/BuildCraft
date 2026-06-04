@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 public enum BCBuildersGuis {
@@ -15,11 +15,11 @@ public enum BCBuildersGuis {
     REPLACER,
     FILLER_PLANNER;
 
-    public void openGUI(EntityPlayer player) {
-        player.openGui(BCBuilders.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
+    public void openGUI(PlayerEntity player) {
+        // STUB(R.Chen): Forge player.openGui → Fabric ScreenHandler, deferred — Phase 10
     }
 
-    public void openGUI(EntityPlayer player, BlockPos pos) {
-        player.openGui(BCBuilders.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
+    public void openGUI(PlayerEntity player, BlockPos pos) {
+        // STUB(R.Chen): Forge player.openGui → Fabric ScreenHandler, deferred — Phase 10
     }
 }

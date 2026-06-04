@@ -8,16 +8,16 @@ package buildcraft.builders.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.MinecraftClient;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.render.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -33,6 +33,8 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.core.client.BuildCraftLaserManager;
+import com.mojang.blaze3d.platform.GlStateManager;
+import buildcraft.lib.misc.GlStateManagerCompat;
 
 public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static final LaserData_BC8.LaserType FRAME;
@@ -73,36 +75,36 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
         }
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void render(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-        profiler.startSection("bc");
-        profiler.startSection("quarry");
-        profiler.startSection("setup");
+        Profiler profiler = MinecraftClient.getInstance().getProfiler();
+        profiler.push("bc");
+        profiler.push("quarry");
+        profiler.push("setup");
 
         SpriteUtil.bindBlockTextureMap();
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.enableBlend();
 
-        if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        if (MinecraftClient.isAmbientOcclusionEnabled()) {
+            GlStateManagerCompat.shadeModel(GL11.GL_SMOOTH);
         } else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
+            GlStateManagerCompat.shadeModel(GL11.GL_FLAT);
         }
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+        RenderSystem.getModelViewStack().push();
+        RenderSystem.getModelViewStack().translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
         final BlockPos min = tile.frameBox.min();
         final BlockPos max = tile.frameBox.max();
 
 
-        profiler.endSection();
+        profiler.pop();
         if (tile.frameBox.isInitialized()) {
             double yOffset = 1 + 4 / 16D;
 
-            profiler.startSection("laser");
+            profiler.push("laser");
             if (tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskBreakBlock) {
                 TileQuarry.TaskBreakBlock taskBreakBlock = (TileQuarry.TaskBreakBlock) tile.currentTask;
                 BlockPos pos = taskBreakBlock.breakPos;
@@ -120,7 +122,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                         taskBreakBlock.prevClientPower +
                             (taskBreakBlock.clientPower - taskBreakBlock.prevClientPower) * (double) partialTicks
                     );
-                    AxisAlignedBB aabb = tile.getWorld().getBlockState(pos).getBoundingBox(tile.getWorld(), pos);
+                    Box aabb = tile.getWorld().getBlockState(pos).getBoundingBox(tile.getWorld(), pos);
                     double value = (double) power / taskBreakBlock.getTarget();
                     if (value < 0.9) {
                         value = 1 - value / 0.9;
@@ -133,9 +135,9 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 }
             }
 
-            profiler.endStartSection("frame");
+            profiler.swap("frame");
             if (tile.clientDrillPos != null && tile.prevClientDrillPos != null) {
-                Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
+                Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).multiply(partialTicks));
 
                 LaserRenderer_BC8.renderLaserStatic(new LaserData_BC8(FRAME,//
                         new Vec3d(interpolatedPos.x + 0.5, max.getY() + 0.5, interpolatedPos.z),//
@@ -164,11 +166,11 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
             } else {
                 LaserBoxRenderer.renderLaserBoxStatic(tile.frameBox, BuildCraftLaserManager.STRIPES_WRITE, true);
             }
-            profiler.endSection();
+            profiler.pop();
         }
 
-        GlStateManager.popMatrix();
-        profiler.startSection("items");
+        RenderSystem.getModelViewStack().pop();
+        profiler.push("items");
 
         if (tile.frameBox.isInitialized() && false) {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
@@ -183,7 +185,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                     : -1 /* not possible */;
                 double xProgress = -1;
                 double zProgress = -1;
-                EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+                Direction side = tile.getWorld().getBlockState(tile.getPos()).get(BuildCraftProperties.BLOCK_FACING).getOpposite();
                 BlockPos firstPos = tile.getPos().offset(side);
                 switch (side) {
                     case SOUTH:
@@ -228,27 +230,27 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 ItemStack stack = new ItemStack(BCBuildersBlocks.frame);
 
                 RenderHelper.disableStandardItemLighting();
-                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-                GlStateManager.disableTexture2D();
-                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(xResult + 0.5, tile.getPos().getY(), zResult + 0.5);
-                GlStateManager.scale(3, 3, 3);
-                Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
-                GlStateManager.popMatrix();
-                GlStateManager.popMatrix();
+                GlStateManagerCompat.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+                ;
+                GlStateManagerCompat.setActiveTexture(OpenGlHelper.defaultTexUnit);
+                RenderSystem.getModelViewStack().push();
+                RenderSystem.getModelViewStack().translate(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+                RenderSystem.getModelViewStack().push();
+                RenderSystem.getModelViewStack().translate(xResult + 0.5, tile.getPos().getY(), zResult + 0.5);
+                RenderSystem.getModelViewStack().scale(3, 3, 3);
+                MinecraftClient.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
+                RenderSystem.getModelViewStack().pop();
+                RenderSystem.getModelViewStack().pop();
             }
         }
         RenderHelper.enableStandardItemLighting();
 
-        profiler.endSection();
-        profiler.endSection();
-        profiler.endSection();
+        profiler.pop();
+        profiler.pop();
+        profiler.pop();
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public boolean isGlobalRenderer(TileQuarry tile) {
         return true;
     }
@@ -256,4 +258,7 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static void init() {
 
     }
+
+    @Override
+    public void render(TileQuarry entity, float tickDelta, net.minecraft.client.util.math.MatrixStack matrices, net.minecraft.client.render.VertexConsumerProvider vertexConsumers, int light, int overlay) { /* STUB */ }
 }

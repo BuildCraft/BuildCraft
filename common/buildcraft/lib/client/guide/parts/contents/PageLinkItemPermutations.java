@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.entry.ItemStackValueFilter;
@@ -31,7 +31,7 @@ public final class PageLinkItemPermutations extends PageLink {
         return gui -> {
             List<GuidePart> parts = new ArrayList<>();
 
-            Profiler prof = new Profiler();
+            Profiler prof = net.minecraft.util.profiler.DummyProfiler.INSTANCE;
             prof.profilingEnabled = true;
             for (ItemStack stack : permutations) {
                 parts.add(PageLinkItemStack.create(true, stack, prof).createGuidePart(gui));
@@ -42,7 +42,7 @@ public final class PageLinkItemPermutations extends PageLink {
         };
     }
 
-    public static PageLinkItemPermutations create(boolean startVisible, NonNullList<ItemStack> stacks, Profiler prof) {
+    public static PageLinkItemPermutations create(boolean startVisible, DefaultedList<ItemStack> stacks, Profiler prof) {
         PageLinkItemStack link = PageLinkItemStack.create(startVisible, stacks.get(0), prof);
         return new PageLinkItemPermutations(link.text, startVisible, stacks);
     }

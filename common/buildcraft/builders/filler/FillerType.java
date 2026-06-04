@@ -1,6 +1,6 @@
 package buildcraft.builders.filler;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -23,7 +23,7 @@ public class FillerType extends StatementType<IFillerPattern> {
     }
 
     @Override
-    public IFillerPattern readFromNbt(NBTTagCompound nbt) {
+    public IFillerPattern readFromNbt(NbtCompound nbt) {
         String kind = nbt.getString("kind");
         IFillerPattern pattern = FillerManager.registry.getPattern(kind);
         if (pattern == null) {
@@ -33,9 +33,9 @@ public class FillerType extends StatementType<IFillerPattern> {
     }
 
     @Override
-    public NBTTagCompound writeToNbt(IFillerPattern slot) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("kind", slot.getUniqueTag());
+    public NbtCompound writeToNbt(IFillerPattern slot) {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putString("kind", slot.getUniqueTag());
         return nbt;
     }
 

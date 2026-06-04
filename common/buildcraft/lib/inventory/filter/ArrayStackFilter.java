@@ -7,13 +7,14 @@
 package buildcraft.lib.inventory.filter;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.collection.DefaultedList;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.recipes.StackDefinition;
@@ -23,7 +24,7 @@ import buildcraft.lib.misc.StackUtil;
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayStackFilter implements IStackFilter {
 
-    protected NonNullList<ItemStack> stacks;
+    protected DefaultedList<ItemStack> stacks;
 
     public ArrayStackFilter(ItemStack... stacks) {
         this.stacks = StackUtil.listOf(stacks);
@@ -52,7 +53,7 @@ public class ArrayStackFilter implements IStackFilter {
         return false;
     }
 
-    public NonNullList<ItemStack> getStacks() {
+    public DefaultedList<ItemStack> getStacks() {
         return stacks;
     }
 
@@ -66,7 +67,7 @@ public class ArrayStackFilter implements IStackFilter {
     }
 
     @Override
-    public NonNullList<ItemStack> getExamples() {
+    public DefaultedList<ItemStack> getExamples() {
         return stacks;
     }
 

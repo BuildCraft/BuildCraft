@@ -6,7 +6,7 @@
 
 package buildcraft.energy.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -14,10 +14,10 @@ import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.energy.tile.TileEngineStone_BC8;
 
 public class ContainerEngineStone_BC8 extends ContainerBCTile<TileEngineStone_BC8> {
-    public ContainerEngineStone_BC8(EntityPlayer player, TileEngineStone_BC8 engine) {
+    public ContainerEngineStone_BC8(PlayerEntity player, TileEngineStone_BC8 engine) {
         super(player, engine);
 
         addFullPlayerInventory(84);
-        addSlotToContainer(new SlotBase(engine.invFuel, 0, 80, 41));
+        addSlot(new SlotBase(engine.invFuel, 0, 80, 41));
     }
 }

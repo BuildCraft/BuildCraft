@@ -2,8 +2,9 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.gui.button;
 
 import java.util.ArrayList;
@@ -11,7 +12,10 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import net.minecraft.client.gui.FontRenderer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.client.MinecraftClient;
 
 import buildcraft.lib.gui.BuildCraftGui;
 import buildcraft.lib.gui.GuiElementSimple;
@@ -21,9 +25,10 @@ import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiArea;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
-/** If this only has 1 subclass (GuiButtonDrawable), then why not merge them? */
+@Environment(EnvType.CLIENT)
 public abstract class GuiAbstractButton extends GuiElementSimple
     implements IButtonClickEventTrigger, IInteractionElement {
+
     private final List<IButtonClickEventListener> listeners = new ArrayList<>();
 
     public final String id;
@@ -41,60 +46,28 @@ public abstract class GuiAbstractButton extends GuiElementSimple
     }
 
     public GuiElementText createTextElement(Supplier<String> text) {
-        FontRenderer fr = gui.mc.fontRenderer;
-        DoubleSupplier x = () -> -fr.getStringWidth(text.get()) / 2;
-        DoubleSupplier y = () -> -fr.FONT_HEIGHT / 2;
+        var fr = MinecraftClient.getInstance().textRenderer;
+        DoubleSupplier x = () -> -(double) fr.getWidth(text.get()) / 2;
+        DoubleSupplier y = () -> -(double) fr.fontHeight / 2;
         IGuiPosition pos = getCenter().offset(x, y);
         return new GuiElementText(gui, pos, text, this::getColourForText);
     }
 
     public int getColourForText() {
-        if (!enabled) {
-            return 0xa0_a0_a0;
-        } else if (isMouseOver()) {
-            return 0xff_ff_a0;
-        } else {
-            return 0xe0_e0_e0;
-        }
+        if (!enabled) return 0xa0_a0_a0;
+        else if (isMouseOver()) return 0xff_ff_a0;
+        else return 0xe0_e0_e0;
     }
 
-    // Properties
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public final void activate() {
-        setActive(true);
-    }
-
-    public final void deActivate() {
-        setActive(false);
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public boolean isMouseOver() {
-        return contains(gui.mouse);
-    }
-
-    protected int getHoverState(boolean mouseOver) {
-        if (!enabled) {
-            return 0;
-        }
-
-        return mouseOver ? (active ? 2 : 4) : (active ? 1 : 3);
-    }
-
-    // Behaviour
+    public boolean isActive() { return active; }
+    public final void activate() { setActive(true); }
+    public final void deActivate() { setActive(false); }
+    public void setActive(boolean active) { this.active = active; }
+    public boolean isMouseOver() { return contains(gui.mouse); }
 
     public void setBehaviour(IButtonBehaviour behaviour) {
         this.behaviour = behaviour;
     }
-
-    // Tooltips
 
     public void setToolTip(ToolTip tips) {
         this.toolTip = tips;
@@ -106,8 +79,6 @@ public abstract class GuiAbstractButton extends GuiElementSimple
             tooltips.add(toolTip);
         }
     }
-
-    // Click Notification
 
     @Override
     public void notifyButtonClicked(int bkey) {
@@ -127,11 +98,7 @@ public abstract class GuiAbstractButton extends GuiElementSimple
     }
 
     @Override
-    public boolean isButtonActive() {
-        return this.active;
-    }
-
-    // IGuiElement
+    public boolean isButtonActive() { return this.active; }
 
     @Override
     public void onMouseClicked(int button) {

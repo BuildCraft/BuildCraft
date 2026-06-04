@@ -1,29 +1,32 @@
 /* Copyright (c) 2016 SpaceToad and the BuildCraft team
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+// TODO(R.Chen): blocked by BCCoreGuis (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.item;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.TooltipContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.items.IList;
 
@@ -36,37 +39,37 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.core.BCCoreGuis;
 
 public class ItemList_BC8 extends ItemBC_Neptune implements IList {
-    private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftcore:list");
+    private static final Identifier ADVANCEMENT = new Identifier("buildcraftcore:list");
     public ItemList_BC8(String id) {
         super(id);
         setMaxStackSize(1);
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         AdvancementUtil.unlockAdvancement(player, ADVANCEMENT);
         BCCoreGuis.LIST.openGUI(player);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    @Environment(EnvType.CLIENT)
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         addVariant(variants, 0, "clean");
         addVariant(variants, 1, "used");
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public int getMetadata(ItemStack stack) {
         return ListHandler.hasItems(StackUtil.asNonNull(stack)) ? 1 : 0;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    @Environment(EnvType.CLIENT)
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, TooltipContext flag) {
         String name = getName(StackUtil.asNonNull(stack));
         if (StringUtils.isNullOrEmpty(name)) return;
-        tooltip.add(TextFormatting.ITALIC + name);
+        tooltip.add(Formatting.ITALIC + name);
     }
 
     // IList
@@ -78,7 +81,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public boolean setName(@Nonnull ItemStack stack, String name) {
-        NBTUtilBC.getItemData(stack).setString("label", name);
+        NBTUtilBC.getItemData(stack).putString("label", name);
         return true;
     }
 

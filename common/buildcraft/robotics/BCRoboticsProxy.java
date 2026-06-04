@@ -6,16 +6,16 @@
 
 package buildcraft.robotics;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.BCModules;
 
@@ -37,8 +37,8 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+    public Object getServerGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
+        BlockEntity tile = world.getBlockEntity(new BlockPos(x, y, z));
         if (ID == RoboticsGuis.ZONE_PLANTER.ordinal()) {
             if (tile instanceof TileZonePlanner) {
                 TileZonePlanner zonePlanner = (TileZonePlanner) tile;
@@ -49,13 +49,13 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
         return null;
     }
 
     public void fmlPreInit() {
-        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, Side.SERVER);
-        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapResponse.class, Side.CLIENT);
+        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapRequest.class, MessageZoneMapRequest.HANDLER, EnvType.SERVER);
+        MessageManager.registerMessageClass(BCModules.ROBOTICS, MessageZoneMapResponse.class, EnvType.CLIENT);
     }
 
     public void fmlInit() {
@@ -65,16 +65,16 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
     }
 
     @SuppressWarnings("unused")
-    @SideOnly(Side.SERVER)
+    @Environment(EnvType.SERVER)
     public static class ServerProxy extends BCRoboticsProxy {
     }
 
     @SuppressWarnings("unused")
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class ClientProxy extends BCRoboticsProxy {
         @Override
-        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-            TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+        public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
+            BlockEntity tile = world.getBlockEntity(new BlockPos(x, y, z));
             if (ID == RoboticsGuis.ZONE_PLANTER.ordinal()) {
                 if (tile instanceof TileZonePlanner) {
                     TileZonePlanner zonePlanner = (TileZonePlanner) tile;
@@ -87,7 +87,7 @@ public abstract class BCRoboticsProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             super.fmlPreInit();
-            MessageManager.setHandler(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, Side.CLIENT);
+            MessageManager.setHandler(MessageZoneMapResponse.class, MessageZoneMapResponse.HANDLER, EnvType.CLIENT);
         }
 
         @Override

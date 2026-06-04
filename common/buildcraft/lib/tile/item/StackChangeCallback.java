@@ -10,9 +10,9 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.items.IItemHandlerModifiable;
-
+// STUB(R.Chen): first arg was Forge IItemHandlerModifiable; reduced to Object until the Transfer-API
+// item-handler layer is migrated (matches TileBC_Neptune#onSlotChange's stubbed signature).
 @FunctionalInterface
 public interface StackChangeCallback {
-    void onStackChange(IItemHandlerModifiable itemHandler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after);
+    void onStackChange(Object itemHandler, int slot, @Nonnull ItemStack before, @Nonnull ItemStack after);
 }

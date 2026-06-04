@@ -2,18 +2,18 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.container;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.Map;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.DyeColor;
 
 import buildcraft.api.transport.pipe.IPipeHolder.PipeMessageReceiver;
 
@@ -28,22 +28,23 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourEmzuli.SlotIndex;
 
 public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
+
     public final PipeBehaviourEmzuli behaviour;
     public final EnumMap<SlotIndex, PaintWidget> paintWidgets = new EnumMap<>(SlotIndex.class);
     private final ItemHandlerSimple filterInv;
 
-    public ContainerEmzuliPipe_BC8(EntityPlayer player, PipeBehaviourEmzuli behaviour) {
-        super(player, behaviour.pipe.getHolder());
+    public ContainerEmzuliPipe_BC8(PlayerEntity player, int syncId, PipeBehaviourEmzuli behaviour) {
+        super(player, syncId, behaviour.pipe.getHolder());
         this.behaviour = behaviour;
         this.filterInv = behaviour.invFilters;
         behaviour.pipe.getHolder().onPlayerOpen(player);
 
         addFullPlayerInventory(84);
 
-        addSlotToContainer(new SlotPhantom(filterInv, 0, 25, 21));
-        addSlotToContainer(new SlotPhantom(filterInv, 1, 25, 49));
-        addSlotToContainer(new SlotPhantom(filterInv, 2, 134, 21));
-        addSlotToContainer(new SlotPhantom(filterInv, 3, 134, 49));
+        addSlot(new SlotPhantom(filterInv, 0, 25, 21));
+        addSlot(new SlotPhantom(filterInv, 1, 25, 49));
+        addSlot(new SlotPhantom(filterInv, 2, 134, 21));
+        addSlot(new SlotPhantom(filterInv, 3, 134, 49));
 
         for (SlotIndex index : SlotIndex.VALUES) {
             createPaintWidget(index);
@@ -57,8 +58,8 @@ public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
+    public void onClosed(PlayerEntity player) {
+        super.onClosed(player);
         behaviour.pipe.getHolder().onPlayerClose(player);
     }
 
@@ -70,13 +71,14 @@ public class ContainerEmzuliPipe_BC8 extends ContainerPipe {
             this.index = index;
         }
 
-        public void setColour(EnumDyeColor colour) {
+        public void setColour(DyeColor colour) {
             sendWidgetData((buffer) -> MessageUtil.writeEnumOrNull(buffer, colour));
         }
 
         @Override
-        public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
-            EnumDyeColor colour = MessageUtil.readEnumOrNull(buffer, EnumDyeColor.class);
+        public buildcraft.lib.net.MessageUpdateTile handleWidgetDataServer(Object ctx,
+            PacketBufferBC buffer) throws IOException {
+            DyeColor colour = MessageUtil.readEnumOrNull(buffer, DyeColor.class);
             if (colour == null) {
                 container.behaviour.slotColours.remove(index);
             } else {

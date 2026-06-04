@@ -3,12 +3,13 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
  */
-
+// TODO(R.Chen): blocked by lib.item.ItemBlockBCMulti (not yet migrated to Fabric 1.20.1)
 package buildcraft.core.item;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ModelIdentifier;
 
 import buildcraft.lib.item.ItemBlockBCMulti;
 
@@ -21,8 +22,8 @@ public class ItemBlockSpring extends ItemBlockBCMulti {
         super(block, NAMES);
     }
 
-    @Override
-    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
         for(int i = 0; i < NAMES.length; i++) {
             addVariant(variants, i, "");
         }

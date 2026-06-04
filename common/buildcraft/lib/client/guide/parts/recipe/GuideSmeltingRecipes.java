@@ -12,17 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.misc.StackUtil;
@@ -36,7 +37,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
         Map<ItemStack, ItemStack> recipes, old = FurnaceRecipes.instance().getSmeltingList();
         recipes = new TreeMap<>(Comparator.comparing(ItemStack::getDisplayName));
         recipes.putAll(old);
-        if (stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+        if (stack.getDamage() == OreDictionaryStub.WILDCARD_VALUE) {
             List<GuidePartFactory> list = new ArrayList<>();
             for (Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
                 if (StackUtil.doesEitherStackMatch(stack, StackUtil.asNonNull(recipe.getValue()))//
@@ -53,7 +54,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
             return ImmutableList.of(new GuideSmeltingFactory(stack, result));
         }
 
-        if (stack.getItem() == Item.getItemFromBlock(Blocks.FURNACE)) {
+        if (stack.getItem() == Item.fromBlock(Blocks.FURNACE)) {
             List<GuidePartFactory> list = new ArrayList<>();
             for (Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
                 list.add(new GuideSmeltingFactory(recipe.getKey(), recipe.getValue()));

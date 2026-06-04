@@ -4,7 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
@@ -18,22 +18,22 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
 
     public final SlotBase[] materialSlots;
 
-    public ContainerAutoCraftItems(EntityPlayer player, TileAutoWorkbenchItems tile) {
+    public ContainerAutoCraftItems(PlayerEntity player, TileAutoWorkbenchItems tile) {
         super(player, tile);
 
-        addSlotToContainer(new SlotOutput(tile.invResult, 0, 124, 35));
+        addSlot(new SlotOutput(tile.invResult, 0, 124, 35));
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18, false));
+                addSlot(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18, false));
             }
         }
         materialSlots = new SlotBase[9];
         for (int x = 0; x < 9; x++) {
             // hide the filter slots, but still sync them
-            addSlotToContainer(new SlotPhantom(tile.invMaterialFilter, x, -1000000, -1000000));
-            addSlotToContainer(materialSlots[x] = new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
+            addSlot(new SlotPhantom(tile.invMaterialFilter, x, -1000000, -1000000));
+            addSlot(materialSlots[x] = new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
         }
-        addSlotToContainer(new SlotDisplay(i -> tile.resultClient, 0, 93, 27));
+        addSlot(new SlotDisplay(i -> tile.resultClient, 0, 93, 27));
 
         addFullPlayerInventory(115);
     }

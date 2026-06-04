@@ -6,9 +6,10 @@
 
 package buildcraft.lib.list;
 
-import net.minecraft.item.ItemFood;
+import net.minecraft.item.FoodItem;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.api.lists.ListRegistry;
 
@@ -18,11 +19,11 @@ public class VanillaListHandlers {
         ListRegistry.registerHandler(new ListMatchHandlerFluid());
         ListRegistry.registerHandler(new ListMatchHandlerTools());
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
-        ListRegistry.itemClassAsType.add(ItemFood.class);
+        ListRegistry.itemClassAsType.add(FoodItem.class);
     }
 
     public static void fmlPostInit() {
-        for (String s : OreDictionary.getOreNames()) {
+        for (String s : OreDictionaryStub.getOreNames()) {
             ListOreDictionaryCache.INSTANCE.registerName(s);
         }
         ListRegistry.registerHandler(new ListMatchHandlerOreDictionary());

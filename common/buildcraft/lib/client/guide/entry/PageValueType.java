@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 
@@ -27,7 +27,7 @@ import buildcraft.lib.gui.ISimpleDrawable;
 
 public abstract class PageValueType<T> {
 
-    public abstract OptionallyDisabled<PageEntry<T>> deserialize(ResourceLocation name, JsonObject json,
+    public abstract OptionallyDisabled<PageEntry<T>> deserialize(Identifier name, JsonObject json,
         JsonDeserializationContext ctx);
 
     public abstract Class<T> getEntryClass();

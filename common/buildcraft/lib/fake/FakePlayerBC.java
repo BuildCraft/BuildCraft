@@ -8,17 +8,17 @@ package buildcraft.lib.fake;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.world.WorldServer;
+import net.minecraft.block.entity.BlockEntitySign;
+import net.minecraft.server.world.ServerWorld;
 
 import net.minecraftforge.common.util.FakePlayer;
 
 public class FakePlayerBC extends FakePlayer {
-    public FakePlayerBC(WorldServer world, GameProfile name) {
+    public FakePlayerBC(ServerWorld world, GameProfile name) {
         super(world, name);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void openEditSign(TileEntitySign signTile) {
         // TODO: Put this in forge!
     }

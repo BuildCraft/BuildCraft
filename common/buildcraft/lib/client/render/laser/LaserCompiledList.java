@@ -2,144 +2,61 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.render.laser;
 
-import org.lwjgl.opengl.GL11;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.lib.misc.RenderUtil;
-import buildcraft.lib.misc.RenderUtil.AutoTessellator;
-
-@SideOnly(Side.CLIENT)
+/**
+ * STUB(R.Chen): client render — full implementation in Phase 5.
+ *
+ * The Forge original compiled laser geometry into either a GL display list ({@code GLAllocation} +
+ * {@code GL11.glNewList}) or a {@code VertexBuffer} (VBO), driven by {@code GlStateManager}/
+ * {@code OpenGlHelper} and a {@code RenderUtil} thread-local tessellator. 1.20.1 has no display lists
+ * and a different VBO/RenderSystem pipeline, so this is deferred to the dedicated render pass. The
+ * abstract {@link #render}/{@link #delete} surface and the {@link Builder} are kept as no-ops.
+ */
+@Environment(EnvType.CLIENT)
 public abstract class LaserCompiledList {
     public abstract void render();
 
     public abstract void delete();
 
     public static class Builder implements ILaserRenderer, AutoCloseable {
-        private final AutoTessellator tess;
-        private final boolean useColour;
-
         public Builder(boolean useNormalColour) {
-            this.useColour = useNormalColour;
-            tess = RenderUtil.getThreadLocalUnusedTessellator();
-            BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
-            bufferBuilder.begin(GL11.GL_QUADS,
-                useNormalColour ? LaserRenderer_BC8.FORMAT_ALL : LaserRenderer_BC8.FORMAT_LESS);
+            // STUB(R.Chen): OpenGL — tessellator setup deferred to Phase 5.
         }
 
         @Override
-        public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz,
-            float diffuse) {
-            BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
-            bufferBuilder.pos(x, y, z);
-            bufferBuilder.tex(u, v);
-            bufferBuilder.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
-            if (useColour) {
-                bufferBuilder.color(diffuse, diffuse, diffuse, 1.0f);
-            }
-            bufferBuilder.endVertex();
+        public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz, float diffuse) {
+            // STUB(R.Chen): client render — vertex accumulation deferred to Phase 5.
         }
 
         public LaserCompiledList build() {
-            if (OpenGlHelper.useVbo()) {
-                BufferBuilder bufferBuilder = tess.tessellator.getBuffer();
-                VertexBuffer vertexBuffer = new VertexBuffer(bufferBuilder.getVertexFormat());
-                bufferBuilder.finishDrawing();
-                bufferBuilder.reset();
-                vertexBuffer.bufferData(bufferBuilder.getByteBuffer());
-                return new Vbo(useColour, vertexBuffer);
-            } else {
-                int glList = GLAllocation.generateDisplayLists(1);
-                GL11.glNewList(glList, GL11.GL_COMPILE);
-                tess.tessellator.draw();
-                GL11.glEndList();
-                return new GlList(glList);
-            }
+            // STUB(R.Chen): OpenGL — display-list / VBO compile deferred to Phase 5.
+            return new Noop();
         }
 
         @Override
         public void close() {
-            tess.close();
+            // STUB(R.Chen): OpenGL — tessellator release deferred to Phase 5.
         }
     }
 
-    private static class GlList extends LaserCompiledList {
-        private final int glListId;
-
-        private GlList(int glListId) {
-            this.glListId = glListId;
-        }
-
+    /** Placeholder compiled list that renders nothing until the Phase 5 render pass. */
+    private static class Noop extends LaserCompiledList {
         @Override
         public void render() {
-            GL11.glCallList(glListId);
+            // STUB(R.Chen): OpenGL — display-list / VBO draw deferred to Phase 5.
         }
 
         @Override
         public void delete() {
-            GL11.glDeleteLists(glListId, 1);
-        }
-    }
-
-    private static class Vbo extends LaserCompiledList {
-        private final boolean useColour;
-        private final VertexBuffer vertexBuffer;
-
-        private Vbo(boolean useColour, VertexBuffer vertexBuffer) {
-            this.useColour = useColour;
-            this.vertexBuffer = vertexBuffer;
-        }
-
-        @Override
-        public void render() {
-            final int stride = useColour ? 28 : 24;
-
-            vertexBuffer.bindBuffer();
-            GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, stride, 0);
-
-            GlStateManager.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            GlStateManager.glTexCoordPointer(2, GL11.GL_FLOAT, stride, 12);
-
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            GlStateManager.glTexCoordPointer(2, GL11.GL_SHORT, stride, 20);
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-
-            if (useColour) {
-                GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
-                GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, stride, 24);
-            }
-
-            vertexBuffer.drawArrays(GL11.GL_QUADS);
-            vertexBuffer.unbindBuffer();
-
-            GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-            GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-
-            if (useColour) {
-                GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
-                GlStateManager.color(1, 1, 1, 1);
-            }
-        }
-
-        @Override
-        public void delete() {
-            vertexBuffer.deleteGlBuffers();
+            // STUB(R.Chen): OpenGL — GL resource deletion deferred to Phase 5.
         }
     }
 }

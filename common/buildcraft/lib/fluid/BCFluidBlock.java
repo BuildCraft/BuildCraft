@@ -2,65 +2,34 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.fluid;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FluidBlock;
+import net.minecraft.fluid.FlowableFluid;
 
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.Fluid;
+// STUB(R.Chen): original BCFluidBlock extended net.minecraftforge.fluids.BlockFluidClassic.
+// Replaced with a thin Fabric FluidBlock shell. Forge-specific overrides (isEntityInsideMaterial,
+// getFlammability, onEntityCollidedWithBlock) removed — TODO(R.Chen): re-implement via Fabric API.
 
-public class BCFluidBlock extends BlockFluidClassic {
+public class BCFluidBlock extends FluidBlock {
+
     private boolean sticky = false;
 
-    public BCFluidBlock(Fluid fluid, Material material) {
-        super(fluid, material);
-        Boolean displaceWater = fluid.getDensity() > 1000;
-        displacements.put(Blocks.WATER, displaceWater);
-        displacements.put(Blocks.FLOWING_WATER, displaceWater);
-
-        Boolean displaceLava = fluid.getDensity() > 9000;
-        displacements.put(Blocks.LAVA, displaceLava);
-        displacements.put(Blocks.FLOWING_LAVA, displaceLava);
-
-        renderLayer = BlockRenderLayer.SOLID;
-    }
-
-    @Override
-    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity, double yToTest, Material material, boolean testingHead) {
-        if (material == Material.WATER) {
-            return true;
-        }
-        return null;
-    }
-
-    @Override
-    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return blockMaterial.getCanBurn() ? 200 : 0;
-    }
-
-    @Override
-    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return blockMaterial.getCanBurn() ? 200 : 0;
-    }
-
-    @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-        if (sticky) {
-            entityIn.setInWeb();
-        }
+    public BCFluidBlock(FlowableFluid fluid, AbstractBlock.Settings settings) {
+        super(fluid, settings);
     }
 
     public void setSticky(boolean sticky) {
         this.sticky = sticky;
+    }
+
+    public boolean isSticky() {
+        return sticky;
     }
 }

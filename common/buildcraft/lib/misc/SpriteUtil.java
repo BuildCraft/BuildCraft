@@ -15,11 +15,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+// STUB: BlockEntitySkull renamed to SkullBlockEntity in 1.20
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.render.ISprite;
 
@@ -28,39 +28,39 @@ import buildcraft.lib.client.sprite.SpriteRaw;
 
 public class SpriteUtil {
 
-    private static final ResourceLocation LOCATION_SKIN_LOADING = new ResourceLocation("skin:loading");
+    private static final Identifier LOCATION_SKIN_LOADING = new Identifier("skin:loading");
     private static final Map<GameProfile, GameProfile> CACHED = new HashMap<>();
 
     public static void bindBlockTextureMap() {
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        bindTexture(net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
     }
 
     public static void bindTexture(String identifier) {
-        bindTexture(new ResourceLocation(identifier));
+        bindTexture(new Identifier(identifier));
     }
 
-    public static void bindTexture(ResourceLocation identifier) {
-        Minecraft.getMinecraft().renderEngine.bindTexture(identifier);
+    public static void bindTexture(Identifier identifier) {
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, identifier);
     }
 
-    /** Transforms the given {@link ResourceLocation}, adding ".png" to the end and prepending that
-     * {@link ResourceLocation#getResourcePath()} with "textures/", just like what {@link TextureMap} does. */
-    public static ResourceLocation transformLocation(ResourceLocation location) {
-        return new ResourceLocation(location.getResourceDomain(), "textures/" + location.getResourcePath() + ".png");
+    /** Transforms the given {@link Identifier}, adding ".png" to the end and prepending that
+     * {@link Identifier#getResourcePath()} with "textures/", just like what {@link TextureMap} does. */
+    public static Identifier transformLocation(Identifier location) {
+        return new Identifier(location.getNamespace(), "textures/" + location.getPath() + ".png");
     }
 
     @Nullable
-    public static ResourceLocation getSkinSpriteLocation(GameProfile profile) {
-        ResourceLocation loc = getSkinSpriteLocation0(profile);
+    public static Identifier getSkinSpriteLocation(GameProfile profile) {
+        Identifier loc = getSkinSpriteLocation0(profile);
         return loc == LOCATION_SKIN_LOADING ? null : loc;
     }
 
     @Nullable
-    private static ResourceLocation getSkinSpriteLocation0(GameProfile profile) {
+    private static Identifier getSkinSpriteLocation0(GameProfile profile) {
         if (profile == null) {
             return null;
         }
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
 
         if (CACHED.containsKey(profile) && CACHED.get(profile) == null && Math.random() >= 0.99) {
             CACHED.remove(profile);
@@ -95,7 +95,7 @@ public class SpriteUtil {
         if (profile == null) {
             return BCLibSprites.HELP;
         }
-        ResourceLocation loc = getSkinSpriteLocation0(profile);
+        Identifier loc = getSkinSpriteLocation0(profile);
         if (loc == null) {
             return BCLibSprites.LOCK;
         }
@@ -107,14 +107,14 @@ public class SpriteUtil {
         if (profile == null) {
             return null;
         }
-        ResourceLocation loc = getSkinSpriteLocation0(profile);
+        Identifier loc = getSkinSpriteLocation0(profile);
         if (loc == null) {
             return null;
         }
         return new SpriteRaw(loc, 40, 8, 8, 8, 64);
     }
 
-    public static TextureAtlasSprite missingSprite() {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+    public static Sprite missingSprite() {
+        return buildcraft.lib.compat.McTextureCompat.getMissingSprite();
     }
 }

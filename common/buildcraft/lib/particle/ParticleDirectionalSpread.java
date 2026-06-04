@@ -37,7 +37,7 @@ public enum ParticleDirectionalSpread implements IParticlePositionPipe {
         double dx = getRandom();
         double dy = getRandom();
         double dz = getRandom();
-        return motion.addVector(dx, dy, dz);
+        return motion.add(dx, dy, dz);
     }
 
     private double getRandom() {

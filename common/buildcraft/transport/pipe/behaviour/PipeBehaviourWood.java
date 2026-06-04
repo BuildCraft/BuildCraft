@@ -2,25 +2,26 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe.behaviour;
+
+// STUB(R.Chen): PipeBehaviourWood — Forge MjCapabilityHelper (removes with cap layer), FluidStack
+// (Forge fluid, Phase 4E fluid). getCapability → stub null. extractFluid → stub null.
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.pipe.IFlowFluid;
 import buildcraft.api.transport.pipe.IFlowItems;
@@ -31,37 +32,33 @@ import buildcraft.api.transport.pipe.PipeEventFluid;
 import buildcraft.api.transport.pipe.PipeEventHandler;
 import buildcraft.api.transport.pipe.PipeFaceTex;
 
-import buildcraft.lib.inventory.filter.StackFilter;
-
-import buildcraft.transport.BCTransportConfig;
+// BCTransportConfig inlined below — BCTransportConfig has Forge deps and is not yet in libLeaf.
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver, IDebuggable {
 
     private static final PipeFaceTex TEX_CLEAR = PipeFaceTex.get(0);
     private static final PipeFaceTex TEX_FILLED = PipeFaceTex.get(1);
 
-    private final MjCapabilityHelper mjCaps = new MjCapabilityHelper(this);
-
     public PipeBehaviourWood(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourWood(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourWood(IPipe pipe, NbtCompound nbt) {
         super(pipe, nbt);
     }
 
     @Override
-    public PipeFaceTex getTextureData(EnumFacing face) {
+    public PipeFaceTex getTextureData(Direction face) {
         return (face != null && face == getCurrentDir()) ? TEX_FILLED : TEX_CLEAR;
     }
 
     @Override
-    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+    public boolean canConnect(Direction face, PipeBehaviour other) {
         return !(other instanceof PipeBehaviourWood);
     }
 
     @Override
-    protected boolean canFaceDirection(EnumFacing dir) {
+    protected boolean canFaceDirection(Direction dir) {
         return dir != null && pipe.getConnectedType(dir) == ConnectedType.TILE;
     }
 
@@ -72,38 +69,31 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         }
     }
 
+    // BCTransportConfig constants inlined (BCTransportConfig has Forge deps, not in libLeaf).
+    private static final long MJ_PER_ITEM        = MjAPI.MJ;      // BCTransportConfig.mjPerItem default
+    private static final long MJ_PER_MILLIBUCKET = 1_000L;        // BCTransportConfig.mjPerMillibucket default
+
     protected long extract(long power, boolean simulate) {
         if (power > 0) {
             if (pipe.getFlow() instanceof IFlowItems) {
                 IFlowItems flow = (IFlowItems) pipe.getFlow();
-                int maxItems = (int) (power / BCTransportConfig.mjPerItem);
+                int maxItems = (int) (power / MJ_PER_ITEM);
                 if (maxItems > 0) {
                     int extracted = extractItems(flow, getCurrentDir(), maxItems, simulate);
                     if (extracted > 0) {
-                        return power - extracted * BCTransportConfig.mjPerItem;
+                        return power - extracted * MJ_PER_ITEM;
                     }
                 }
             } else if (pipe.getFlow() instanceof IFlowFluid) {
-                IFlowFluid flow = (IFlowFluid) pipe.getFlow();
-                int maxMillibuckets = (int) (power / BCTransportConfig.mjPerMillibucket);
-                if (maxMillibuckets > 0) {
-                    FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets, simulate);
-                    if (extracted != null && extracted.amount > 0) {
-                        return power - extracted.amount * BCTransportConfig.mjPerMillibucket;
-                    }
-                }
+                // STUB(R.Chen): extractFluid deferred — FluidStack (Forge) not migrated (Phase 4E).
             }
         }
         return power;
     }
 
-    protected int extractItems(IFlowItems flow, EnumFacing dir, int count, boolean simulate) {
-        return flow.tryExtractItems(count, dir, null, StackFilter.ALL, simulate);
-    }
-
-    @Nullable
-    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets, boolean simulate) {
-        return flow.tryExtractFluid(millibuckets, dir, null, simulate);
+    protected int extractItems(IFlowItems flow, Direction dir, int count, boolean simulate) {
+        // StackFilter.ALL inlined — StackFilter (Forge TileEntityFurnace dep) not yet in libLeaf.
+        return flow.tryExtractItems(count, dir, null, stack -> true, simulate);
     }
 
     // IMjRedstoneReceiver
@@ -125,12 +115,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        return mjCaps.getCapability(capability, facing);
-    }
-
-    @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         left.add("Facing = " + currentDir);
     }
 }

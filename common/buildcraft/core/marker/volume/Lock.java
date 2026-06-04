@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.core.marker.volume;
@@ -12,19 +14,22 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+// Yarn 1.20.1 renames:
+//   NbtCompound → NbtCompound, NBTUtil → NbtHelper, PacketByteBuf → PacketByteBuf,
+//   Identifier → Identifier, Block.REGISTRY → Registries.BLOCK
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.lib.client.render.laser.LaserData_BC8;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtilBC;
 import buildcraft.lib.net.PacketBufferBC;
 
@@ -42,44 +47,44 @@ public class Lock {
         this.targets.addAll(Arrays.asList(targets));
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        NBTTagCompound causeTag = new NBTTagCompound();
-        causeTag.setTag("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
-        causeTag.setTag("data", cause.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("cause", causeTag);
-        nbt.setTag("targets", NBTUtilBC.writeCompoundList(targets.stream().map(target -> {
-            NBTTagCompound targetTag = new NBTTagCompound();
-            targetTag.setTag("type", NBTUtilBC.writeEnum(Target.EnumTarget.getForClass(target.getClass())));
-            targetTag.setTag("data", target.writeToNBT(new NBTTagCompound()));
+    public NbtCompound writeToNBT() {
+        NbtCompound nbt = new NbtCompound();
+        NbtCompound causeTag = new NbtCompound();
+        causeTag.put("type", NBTUtilBC.writeEnum(Cause.EnumCause.getForClass(cause.getClass())));
+        causeTag.put("data", cause.writeToNBT(new NbtCompound()));
+        nbt.put("cause", causeTag);
+        nbt.put("targets", NBTUtilBC.writeCompoundList(targets.stream().map(target -> {
+            NbtCompound targetTag = new NbtCompound();
+            targetTag.put("type", NBTUtilBC.writeEnum(Target.EnumTarget.getForClass(target.getClass())));
+            targetTag.put("data", target.writeToNBT(new NbtCompound()));
             return targetTag;
         })));
         return nbt;
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagCompound causeTag = nbt.getCompoundTag("cause");
-        cause = NBTUtilBC.readEnum(causeTag.getTag("type"), Cause.EnumCause.class).supplier.get();
-        cause.readFromNBT(causeTag.getCompoundTag("data"));
-        NBTUtilBC.readCompoundList(nbt.getTag("targets")).map(targetTag -> {
+    public void readFromNBT(NbtCompound nbt) {
+        NbtCompound causeTag = nbt.getCompound("cause");
+        cause = NBTUtilBC.readEnum(causeTag.get("type"), Cause.EnumCause.class).supplier.get();
+        cause.readFromNBT(causeTag.getCompound("data"));
+        NBTUtilBC.readCompoundList(nbt.get("targets")).map(targetTag -> {
             Target target;
-            target = NBTUtilBC.readEnum(targetTag.getTag("type"), Target.EnumTarget.class).supplier.get();
-            target.readFromNBT(targetTag.getCompoundTag("data"));
+            target = NBTUtilBC.readEnum(targetTag.get("type"), Target.EnumTarget.class).supplier.get();
+            target.readFromNBT(targetTag.getCompound("data"));
             return target;
         }).forEach(targets::add);
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(PacketByteBuf buf) {
         new PacketBufferBC(buf).writeEnumValue(Cause.EnumCause.getForClass(cause.getClass()));
         cause.toBytes(buf);
         buf.writeInt(targets.size());
         targets.forEach(target -> {
-            new PacketBuffer(buf).writeEnumValue(Target.EnumTarget.getForClass(target.getClass()));
+            new PacketBufferBC(buf).writeEnumValue(Target.EnumTarget.getForClass(target.getClass()));
             target.toBytes(buf);
         });
     }
 
-    public void fromBytes(PacketBuffer buf) {
+    public void fromBytes(PacketByteBuf buf) {
         cause = new PacketBufferBC(buf).readEnumValue(Cause.EnumCause.class).supplier.get();
         cause.fromBytes(buf);
         targets.clear();
@@ -92,13 +97,13 @@ public class Lock {
     }
 
     public static abstract class Cause {
-        public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
+        public abstract NbtCompound writeToNBT(NbtCompound nbt);
 
-        public abstract void readFromNBT(NBTTagCompound nbt);
+        public abstract void readFromNBT(NbtCompound nbt);
 
-        public abstract void toBytes(PacketBuffer buf);
+        public abstract void toBytes(PacketByteBuf buf);
 
-        public abstract void fromBytes(PacketBuffer buf);
+        public abstract void fromBytes(PacketByteBuf buf);
 
         public abstract boolean stillWorks(World world);
 
@@ -115,28 +120,28 @@ public class Lock {
             }
 
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-                nbt.setTag("pos", NBTUtil.createPosTag(pos));
-                nbt.setString("block", Block.REGISTRY.getNameForObject(block).toString());
+            public NbtCompound writeToNBT(NbtCompound nbt) {
+                nbt.put("pos", NbtHelper.fromBlockPos(pos));
+                nbt.putString("block", Registries.BLOCK.getId(block).toString());
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
-                pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
-                block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("block")));
+            public void readFromNBT(NbtCompound nbt) {
+                pos = NbtHelper.toBlockPos(nbt.getCompound("pos"));
+                block = Registries.BLOCK.get(new Identifier(nbt.getString("block")));
             }
 
             @Override
-            public void toBytes(PacketBuffer buf) {
-                MessageUtil.writeBlockPos(buf, pos);
-                buf.writeString(Block.REGISTRY.getNameForObject(block).toString());
+            public void toBytes(PacketByteBuf buf) {
+                buf.writeBlockPos(pos);
+                buf.writeString(Registries.BLOCK.getId(block).toString());
             }
 
             @Override
-            public void fromBytes(PacketBuffer buf) {
-                pos = MessageUtil.readBlockPos(buf);
-                block = Block.REGISTRY.getObject(new ResourceLocation(buf.readString(1024)));
+            public void fromBytes(PacketByteBuf buf) {
+                pos = buf.readBlockPos();
+                block = Registries.BLOCK.get(new Identifier(buf.readString(1024)));
             }
 
             @Override
@@ -164,49 +169,49 @@ public class Lock {
     }
 
     public static abstract class Target {
-        public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
+        public abstract NbtCompound writeToNBT(NbtCompound nbt);
 
-        public abstract void readFromNBT(NBTTagCompound nbt);
+        public abstract void readFromNBT(NbtCompound nbt);
 
-        public abstract void toBytes(PacketBuffer buf);
+        public abstract void toBytes(PacketByteBuf buf);
 
-        public abstract void fromBytes(PacketBuffer buf);
+        public abstract void fromBytes(PacketByteBuf buf);
 
         public static class TargetRemove extends Target {
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            public NbtCompound writeToNBT(NbtCompound nbt) {
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
+            public void readFromNBT(NbtCompound nbt) {
             }
 
             @Override
-            public void toBytes(PacketBuffer buf) {
+            public void toBytes(PacketByteBuf buf) {
             }
 
             @Override
-            public void fromBytes(PacketBuffer buf) {
+            public void fromBytes(PacketByteBuf buf) {
             }
         }
 
         public static class TargetResize extends Target {
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            public NbtCompound writeToNBT(NbtCompound nbt) {
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
+            public void readFromNBT(NbtCompound nbt) {
             }
 
             @Override
-            public void toBytes(PacketBuffer buf) {
+            public void toBytes(PacketByteBuf buf) {
             }
 
             @Override
-            public void fromBytes(PacketBuffer buf) {
+            public void fromBytes(PacketByteBuf buf) {
             }
         }
 
@@ -221,23 +226,23 @@ public class Lock {
             }
 
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-                nbt.setTag("slot", NBTUtilBC.writeEnum(slot));
+            public NbtCompound writeToNBT(NbtCompound nbt) {
+                nbt.put("slot", NBTUtilBC.writeEnum(slot));
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
-                slot = NBTUtilBC.readEnum(nbt.getTag("slot"), EnumAddonSlot.class);
+            public void readFromNBT(NbtCompound nbt) {
+                slot = NBTUtilBC.readEnum(nbt.get("slot"), EnumAddonSlot.class);
             }
 
             @Override
-            public void toBytes(PacketBuffer buf) {
+            public void toBytes(PacketByteBuf buf) {
                 new PacketBufferBC(buf).writeEnumValue(slot);
             }
 
             @Override
-            public void fromBytes(PacketBuffer buf) {
+            public void fromBytes(PacketByteBuf buf) {
                 slot = new PacketBufferBC(buf).readEnumValue(EnumAddonSlot.class);
             }
         }
@@ -253,43 +258,43 @@ public class Lock {
             }
 
             @Override
-            public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-                nbt.setTag("type", NBTUtilBC.writeEnum(type));
+            public NbtCompound writeToNBT(NbtCompound nbt) {
+                nbt.put("type", NBTUtilBC.writeEnum(type));
                 return nbt;
             }
 
             @Override
-            public void readFromNBT(NBTTagCompound nbt) {
-                type = NBTUtilBC.readEnum(nbt.getTag("type"), EnumType.class);
+            public void readFromNBT(NbtCompound nbt) {
+                type = NBTUtilBC.readEnum(nbt.get("type"), EnumType.class);
             }
 
             @Override
-            public void toBytes(PacketBuffer buf) {
+            public void toBytes(PacketByteBuf buf) {
                 new PacketBufferBC(buf).writeEnumValue(type);
             }
 
             @Override
-            public void fromBytes(PacketBuffer buf) {
+            public void fromBytes(PacketByteBuf buf) {
                 type = new PacketBufferBC(buf).readEnumValue(EnumType.class);
             }
 
             public enum EnumType {
                 STRIPES_WRITE {
-                    @SideOnly(Side.CLIENT)
+                    @Environment(EnvType.CLIENT)
                     @Override
                     public LaserData_BC8.LaserType getLaserType() {
                         return BuildCraftLaserManager.STRIPES_WRITE;
                     }
                 },
                 STRIPES_READ {
-                    @SideOnly(Side.CLIENT)
+                    @Environment(EnvType.CLIENT)
                     @Override
                     public LaserData_BC8.LaserType getLaserType() {
                         return BuildCraftLaserManager.STRIPES_READ;
                     }
                 };
 
-                @SideOnly(Side.CLIENT)
+                @Environment(EnvType.CLIENT)
                 public abstract LaserData_BC8.LaserType getLaserType();
             }
         }

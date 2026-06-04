@@ -6,11 +6,11 @@
 
 package buildcraft.lib.item;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,25 +22,25 @@ public class ItemDebugger extends ItemBC_Neptune {
         super(id);
     }
 
-    @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        if (world.isRemote) {
-            return EnumActionResult.PASS;
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public ActionResult onItemUseFirst(PlayerEntity player, World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, Hand hand) {
+        if (world.isClient) {
+            return ActionResult.PASS;
         }
-        TileEntity tile = world.getTileEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile == null) {
-            return EnumActionResult.FAIL;
+            return ActionResult.FAIL;
         }
         if (tile instanceof IAdvDebugTarget) {
             BCAdvDebugging.setCurrentDebugTarget((IAdvDebugTarget) tile);
-            return EnumActionResult.SUCCESS;
+            return ActionResult.SUCCESS;
         }
-        return EnumActionResult.FAIL;
+        return ActionResult.FAIL;
     }
 
-    public static boolean isShowDebugInfo(EntityPlayer player) {
+    public static boolean isShowDebugInfo(PlayerEntity player) {
         return player.capabilities.isCreativeMode ||
-            player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemDebugger ||
-            player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof ItemDebugger;
+            player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof ItemDebugger ||
+            player.getStackInHand(Hand.OFF_HAND).getItem() instanceof ItemDebugger;
     }
 }

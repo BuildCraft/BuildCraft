@@ -8,7 +8,7 @@ package buildcraft.lib.misc;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
@@ -16,7 +16,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.world.WorldEventListenerAdapter;
 
 public class DebuggingTools {
-    public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.world");
+    public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.getWorld()");
 
     public static void fmlInit() {
         if (ENABLE) {
@@ -25,7 +25,7 @@ public class DebuggingTools {
     }
 
     private static class EventHook {
-        @SubscribeEvent
+        // @SubscribeEvent — TODO(R.Chen): port to Fabric event
         public void worldLoadEvent(WorldEvent.Load load) {
             load.getWorld().addEventListener(new WorldListener());
         }
@@ -43,9 +43,9 @@ public class DebuggingTools {
                 bc[bcIndex++] = ste.getClassName() + " # " + ste.getMethodName() + " : " + ste.getLineNumber();
             }
             if (bcIndex > 0) {
-                BCLog.logger.info("[lib.debug.world] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
+                BCLog.logger.info("[lib.debug.getWorld()] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
                 for (int i = 0; i < bcIndex; i++) {
-                    BCLog.logger.info("[lib.debug.world]   at " + bc[i]);
+                    BCLog.logger.info("[lib.debug.getWorld()]   at " + bc[i]);
                 }
             }
         }

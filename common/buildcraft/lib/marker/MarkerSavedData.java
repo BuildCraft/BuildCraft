@@ -9,8 +9,8 @@ package buildcraft.lib.marker;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -30,21 +30,21 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         markerPositions.clear();
         markerConnections.clear();
 
-        NBTTagList positionList = (NBTTagList) nbt.getTag("positions");
-        for (int i = 0; i < positionList.tagCount(); i++) {
+        NbtList positionList = (NbtList) nbt.get("positions");
+        for (int i = 0; i < positionList.size(); i++) {
             markerPositions.add(NBTUtilBC.readBlockPos(positionList.get(i)));
         }
 
-        NBTTagList connectionList = (NBTTagList) nbt.getTag("connections");
-        for (int i = 0; i < connectionList.tagCount(); i++) {
-            positionList = (NBTTagList) connectionList.get(i);
+        NbtList connectionList = (NbtList) nbt.get("connections");
+        for (int i = 0; i < connectionList.size(); i++) {
+            positionList = (NbtList) connectionList.get(i);
             List<BlockPos> inner = new ArrayList<>();
             markerConnections.add(inner);
-            for (int j = 0; j < positionList.tagCount(); j++) {
+            for (int j = 0; j < positionList.size(); j++) {
                 inner.add(NBTUtilBC.readBlockPos(positionList.get(j)));
             }
         }
@@ -66,7 +66,7 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NbtCompound writeToNBT(NbtCompound nbt) {
         markerPositions.clear();
         markerConnections.clear();
 
@@ -75,21 +75,21 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
             markerConnections.add(new ArrayList<>(connection.getMarkerPositions()));
         }
 
-        NBTTagList positionList = new NBTTagList();
+        NbtList positionList = new NbtList();
         for (BlockPos p : markerPositions) {
-            positionList.appendTag(NBTUtilBC.writeBlockPos(p));
+            positionList.add(NBTUtilBC.writeBlockPos(p));
         }
-        nbt.setTag("positions", positionList);
+        nbt.put("positions", positionList);
 
-        NBTTagList connectionList = new NBTTagList();
+        NbtList connectionList = new NbtList();
         for (List<BlockPos> connection : markerConnections) {
-            NBTTagList inner = new NBTTagList();
+            NbtList inner = new NbtList();
             for (BlockPos p : connection) {
-                inner.appendTag(NBTUtilBC.writeBlockPos(p));
+                inner.add(NBTUtilBC.writeBlockPos(p));
             }
-            connectionList.appendTag(inner);
+            connectionList.add(inner);
         }
-        nbt.setTag("connections", connectionList);
+        nbt.put("connections", connectionList);
 
         if (DEBUG_FULL) {
             BCLog.logger.info("[lib.marker.full] Writing to NBT (" + mapName + ")");

@@ -14,8 +14,8 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -205,7 +205,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void renderInWorld() {
         BlockPos last = null;
         for (BlockPos p : positions) {
@@ -223,7 +223,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     private static void renderLaser(Vec3d from, Vec3d to) {
         Vec3d one = offset(from, to);
         Vec3d two = offset(to, from);
@@ -231,9 +231,9 @@ public class PathConnection extends MarkerConnection<PathConnection> {
         LaserRenderer_BC8.renderLaserStatic(data);
     }
 
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     private static Vec3d offset(Vec3d from, Vec3d to) {
         Vec3d dir = to.subtract(from).normalize();
-        return from.add(VecUtil.scale(dir, 0.125));
+        return from.add(VecUtil.multiply(dir, 0.125));
     }
 }

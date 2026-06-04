@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "buildcraft",
+  "version": "${version}",
+
+  "name": "BuildCraft",
+  "description": "BuildCraft for Minecraft 1.20.1 (Fabric port)",
+  "authors": [
+    "SpaceToad",
+    "BuildCraft Team"
+  ],
+  "contact": {
+    "homepage": "https://www.mod-buildcraft.com/",
+    "sources":  "https://github.com/MantraChen/BuildCraft",
+    "issues":   "https://github.com/MantraChen/BuildCraft/issues"
+  },
+
+  "license": "MPL-2.0",
+  "icon": "assets/buildcraft/logo.png",
+
+  "environment": "*",
+
+  "entrypoints": {
+    "main": [
+      "buildcraft.BuildCraftFabric",
+      "buildcraft.lib.BCLibInitializer",
+      "buildcraft.core.BCCoreInitializer",
+      "buildcraft.energy.BCEnergyInitializer",
+      "buildcraft.factory.BCFactoryInitializer",
+      "buildcraft.silicon.BCSiliconInitializer",
+      "buildcraft.builders.BCBuildersInitializer"
+    ],
+    "client": [
+      "buildcraft.lib.BCLibClientInitializer",
+      "buildcraft.transport.BCTransportClientInitializer"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api":   "*",
+    "minecraft":    "~1.20.1"
+  },
+
+  "suggests": {
+    "team_reborn_energy": "*"
+  },
+
+  "custom": {
+    "porter": "R.Chen",
+    "porter-url": "https://github.com/MantraChen",
+    "migration-notes": [
+      "Ported from Forge 1.12.2 (ForgeGradle 2.3).",
+      "Entrypoints marked TODO must be created as ModInitializer/ClientModInitializer classes.",
+      "Each TODO entry corresponds to one @Mod class from the original codebase.",
+      "See migration-plan.md for porting phases and API mapping table."
+    ]
+  }
+}

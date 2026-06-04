@@ -103,8 +103,8 @@ public class BCBuildersConfig {
         quarryFrameMoveBoth = propQuarryFrameMoveBoth.getBoolean();
         enableStencil = propEnableStencil.getBoolean();
         quarryMaxTasksPerTick = MathUtil.clamp(propQuarryMaxTasksPerTick.getInt(), 0, 20);
-        quarryTaskPowerDivisor = MathUtil.clamp(propQuarryPowerDivisor.getDouble(), 0, 100);
-        quarryMaxFrameMoveSpeed = MathUtil.clamp(propQuarryMaxFrameSpeed.getDouble(), 0, 5120.0);
-        quarryMaxBlockMineRate = MathUtil.clamp(propQuarryMaxBlockMineRate.getDouble(), 0, 1000.0);
+        quarryTaskPowerDivisor = MathUtil.clamp(propQuarryPowerDivisor.doubleValue(), 0, 100);
+        quarryMaxFrameMoveSpeed = MathUtil.clamp(propQuarryMaxFrameSpeed.doubleValue(), 0, 5120.0);
+        quarryMaxBlockMineRate = MathUtil.clamp(propQuarryMaxBlockMineRate.doubleValue(), 0, 1000.0);
     }
 }

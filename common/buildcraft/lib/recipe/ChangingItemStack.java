@@ -7,13 +7,15 @@
 package buildcraft.lib.recipe;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.util.collection.DefaultedList;
 
-import net.minecraftforge.oredict.OreDictionary;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
@@ -25,7 +27,7 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
     /** Creates a stack list that iterates through all of the given stacks. This does NOT check possible variants.
      * 
      * @param stacks The list to iterate through. */
-    public ChangingItemStack(NonNullList<ItemStack> stacks) {
+    public ChangingItemStack(DefaultedList<ItemStack> stacks) {
         super(makeListArray(stacks));
     }
 
@@ -38,10 +40,10 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
     }
 
     public ChangingItemStack(String oreId) {
-        this(OreDictionary.getOres(oreId));
+        this(OreDictionaryStub.getOres(oreId));
     }
 
-    private static ItemStackKey[] makeListArray(NonNullList<ItemStack> stacks) {
+    private static ItemStackKey[] makeListArray(DefaultedList<ItemStack> stacks) {
         return makeStackArray(stacks.toArray(new ItemStack[0]));
     }
 
@@ -49,9 +51,9 @@ public final class ChangingItemStack extends ChangingObject<ItemStackKey> {
         if (stack.isEmpty()) {
             return new ItemStackKey[] { ItemStackKey.EMPTY };
         }
-        if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-            NonNullList<ItemStack> subs = NonNullList.create();
-            stack.getItem().getSubItems(CreativeTabs.SEARCH, subs);
+        if (stack.getDamage() == OreDictionaryStub.WILDCARD_VALUE) {
+            DefaultedList<ItemStack> subs = DefaultedList.of();
+            stack.getItem().getSubItems(ItemGroup.SEARCH, subs);
             return makeListArray(subs);
         } else {
             return new ItemStackKey[] { new ItemStackKey(stack) };

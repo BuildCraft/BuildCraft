@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
+import net.minecraft.util.profiler.Profiler;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
@@ -24,17 +24,17 @@ public final class PageLinkItemStack extends PageLink {
     public final String searchText;
 
     public static PageLinkItemStack create(boolean startVisible, ItemStack stack, Profiler prof) {
-        prof.startSection("create_page_link");
-        prof.startSection("get_tooltip");
+        prof.push("create_page_link");
+        prof.push("get_tooltip");
         List<String> tooltip = getTooltip(stack);
-        prof.endStartSection("join_tooltip");
+        prof.swap("join_tooltip");
         String searchText = joinTooltip(tooltip);
-        prof.endStartSection("create_line");
+        prof.swap("create_line");
         ISimpleDrawable icon = new GuiStack(stack);
         PageLine text = new PageLine(icon, icon, 2, tooltip.get(0), true);
-        prof.endSection();
+        prof.pop();
         PageLinkItemStack page = new PageLinkItemStack(text, startVisible, stack, tooltip, searchText);
-        prof.endSection();
+        prof.pop();
         return page;
     }
 
@@ -85,21 +85,21 @@ public final class PageLinkItemStack extends PageLink {
     private PageLinkItemStack(boolean startVisible, ItemStack stack, Profiler prof) {
         super(createPageLine(stack, prof), startVisible);
         this.stack = stack;
-        prof.startSection("get_tooltip");
+        prof.push("get_tooltip");
         tooltip = getTooltip(stack);
-        prof.endStartSection("join_tooltip");
+        prof.swap("join_tooltip");
         searchText = joinTooltip(tooltip);
-        prof.endSection();
+        prof.pop();
     }
 
     private static PageLine createPageLine(ItemStack stack, Profiler prof) {
-        prof.startSection("create_line");
+        prof.push("create_line");
         ISimpleDrawable icon = new GuiStack(stack);
-        prof.startSection("get_display_name");
+        prof.push("get_display_name");
         String title = GuiUtil.getStackDisplayName(stack);
-        prof.endSection();
+        prof.pop();
         PageLine line = new PageLine(icon, icon, 2, title, true);
-        prof.endSection();
+        prof.pop();
         return line;
     }
 

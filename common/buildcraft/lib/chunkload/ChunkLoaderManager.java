@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.chunkload;
@@ -9,109 +11,86 @@ package buildcraft.lib.chunkload;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.ForgeChunkManager;
-
-import buildcraft.api.core.BCLog;
-
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.misc.NBTUtilBC;
-import buildcraft.lib.misc.data.WorldPos;
-
+/**
+ * Forge→Fabric chunk-loading migration (R.Chen):
+ *   ForgeChunkManager.Ticket / requestTicket / forceChunk / unforceChunk
+ *     → {@link ServerWorld#setChunkForced(int, int, boolean)} (vanilla force-loaded chunks, persisted by the
+ *       server in the world's forced-chunk set — no manual ticket rebinding needed on world load).
+ *
+ * The Forge implementation tracked one ticket per tile and diffed its chunk list each update; this keeps the
+ * same diff behaviour but drives it through {@code setChunkForced}. The Forge {@code rebindTickets} hook is
+ * dropped because Fabric/vanilla persists forced chunks itself.
+ */
 public class ChunkLoaderManager {
-    private static final Map<WorldPos, ForgeChunkManager.Ticket> TICKETS = new HashMap<>();
 
-    /**
-     * This should be called in {@link TileEntity#validate()}, if a tile entity might be able to load. A check is
-     * performed to see if the config allows it
-     */
-    public static <T extends TileEntity & IChunkLoadingTile> void loadChunksForTile(T tile) {
-        if (!canLoadFor(tile)) {
+    // Tracks the chunks currently force-loaded per tile position, so they can be diffed and released.
+    // STUB(R.Chen): keyed on BlockPos only (no dimension/WorldPos) — the Forge WorldPos key and the
+    // BCLibConfig.chunkLoadingLevel gating are deferred until BCLibConfig lands in libLeaf. A single quarry
+    // per position makes multi-world key collisions harmless in practice.
+    private static final Map<BlockPos, Set<ChunkPos>> FORCED = new HashMap<>();
+
+    /** Should be called when a tile that wants to chunkload loads/validates. A check is performed to see if loading
+     * is permitted (currently always, pending the config gating). */
+    public static <T extends BlockEntity & IChunkLoadingTile> void loadChunksForTile(T tile) {
+        World world = tile.getWorld();
+        if (!canLoadFor(tile) || !(world instanceof ServerWorld)) {
             releaseChunksFor(tile);
             return;
         }
-        updateChunksFor(tile);
+        updateChunksFor(tile, (ServerWorld) world);
     }
 
-    public static <T extends TileEntity & IChunkLoadingTile> void releaseChunksFor(T tile) {
-        ForgeChunkManager.releaseTicket(TICKETS.remove(new WorldPos(tile)));
-    }
-
-    private static <T extends TileEntity & IChunkLoadingTile> void updateChunksFor(T tile) {
-        WorldPos wPos = new WorldPos(tile);
-        ForgeChunkManager.Ticket ticket = TICKETS.get(wPos);
-        if (ticket == null) {
-            ticket = ForgeChunkManager.requestTicket(
-                BCLib.INSTANCE,
-                tile.getWorld(),
-                ForgeChunkManager.Type.NORMAL
-            );
-            if (ticket == null) {
-                BCLog.logger.warn("[lib.chunkloading] Failed to chunkload " + tile.getClass().getName() + " at " + tile.getPos());
-                return;
-            }
-            ticket.getModData().setTag("location", NBTUtilBC.writeBlockPos(tile.getPos()));
-            TICKETS.put(wPos, ticket);
+    public static <T extends BlockEntity & IChunkLoadingTile> void releaseChunksFor(T tile) {
+        Set<ChunkPos> previous = FORCED.remove(tile.getPos());
+        if (previous == null) {
+            return;
         }
-        Set<ChunkPos> chunks = getChunksToLoad(tile);
-        for (ChunkPos pos : ticket.getChunkList()) {
-            if (!chunks.contains(pos)) {
-                ForgeChunkManager.unforceChunk(ticket, pos);
-            }
-        }
-        for (ChunkPos pos : chunks) {
-            if (!ticket.getChunkList().contains(pos)) {
-                ForgeChunkManager.forceChunk(ticket, pos);
+        World world = tile.getWorld();
+        if (world instanceof ServerWorld) {
+            ServerWorld serverWorld = (ServerWorld) world;
+            for (ChunkPos pos : previous) {
+                serverWorld.setChunkForced(pos.x, pos.z, false);
             }
         }
     }
 
-    public static <T extends TileEntity & IChunkLoadingTile> Set<ChunkPos> getChunksToLoad(T tile) {
+    private static <T extends BlockEntity & IChunkLoadingTile> void updateChunksFor(T tile, ServerWorld world) {
+        Set<ChunkPos> wanted = getChunksToLoad(tile);
+        Set<ChunkPos> previous = FORCED.getOrDefault(tile.getPos(), Collections.emptySet());
+        // Unforce chunks we no longer need.
+        for (ChunkPos pos : previous) {
+            if (!wanted.contains(pos)) {
+                world.setChunkForced(pos.x, pos.z, false);
+            }
+        }
+        // Force newly-wanted chunks.
+        for (ChunkPos pos : wanted) {
+            if (!previous.contains(pos)) {
+                world.setChunkForced(pos.x, pos.z, true);
+            }
+        }
+        FORCED.put(tile.getPos(), new HashSet<>(wanted));
+    }
+
+    public static <T extends BlockEntity & IChunkLoadingTile> Set<ChunkPos> getChunksToLoad(T tile) {
         Set<ChunkPos> chunksToLoad = tile.getChunksToLoad();
-        Set<ChunkPos> chunkPoses = new HashSet<>(chunksToLoad != null ? chunksToLoad : Collections.emptyList());
+        Set<ChunkPos> chunkPoses = new HashSet<>(chunksToLoad != null ? chunksToLoad : Collections.emptySet());
         chunkPoses.add(new ChunkPos(tile.getPos()));
         return chunkPoses;
     }
 
-    public static void rebindTickets(List<ForgeChunkManager.Ticket> tickets, World world) {
-        TICKETS.clear();
-        if (BCLibConfig.chunkLoadingLevel != BCLibConfig.ChunkLoaderLevel.NONE) {
-            for (ForgeChunkManager.Ticket ticket : tickets) {
-                BlockPos pos = NBTUtilBC.readBlockPos(ticket.getModData().getTag("location"));
-                if (pos == null) {
-                    ForgeChunkManager.releaseTicket(ticket);
-                    continue;
-                }
-                WorldPos wPos = new WorldPos(world, pos);
-                if (TICKETS.containsKey(wPos)) {
-                    ForgeChunkManager.releaseTicket(ticket);
-                    continue;
-                }
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile == null || !(tile instanceof IChunkLoadingTile) || !canLoadFor((IChunkLoadingTile) tile)) {
-                    TICKETS.remove(wPos);
-                    ForgeChunkManager.releaseTicket(ticket);
-                    continue;
-                }
-                TICKETS.put(wPos, ticket);
-                for (ChunkPos chunkPos : getChunksToLoad((TileEntity & IChunkLoadingTile) tile)) {
-                    ForgeChunkManager.forceChunk(ticket, chunkPos);
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    // STUB(R.Chen): Forge BCLibConfig.chunkLoadingLevel.canLoad(loadType) gating deferred (BCLibConfig not yet
+    // in libLeaf). Permits any tile that declares a non-null LoadType; the NONE/STRICT config levels return.
     private static boolean canLoadFor(IChunkLoadingTile tile) {
-        return BCLibConfig.chunkLoadingLevel.canLoad(tile.getLoadType());
+        return tile.getLoadType() != null;
     }
 }

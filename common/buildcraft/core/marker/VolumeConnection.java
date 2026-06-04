@@ -9,12 +9,12 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.marker.MarkerConnection;
@@ -43,7 +43,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     }
 
     public static boolean canCreateConnection(VolumeSubCache subCache, BlockPos from, BlockPos to) {
-        EnumFacing directOffset = PositionUtil.getDirectFacingOffset(from, to);
+        Direction directOffset = PositionUtil.getDirectFacingOffset(from, to);
         if (directOffset == null) return false;
         for (int i = 1; i <= BCCoreConfig.markerMaxDistance; i++) {
             BlockPos offset = from.offset(directOffset, i);
@@ -86,7 +86,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     public boolean canAddMarker(BlockPos to) {
         Set<Axis> taken = getConnectedAxis();
         for (BlockPos from : makeup) {
-            EnumFacing direct = PositionUtil.getDirectFacingOffset(from, to);
+            Direction direct = PositionUtil.getDirectFacingOffset(from, to);
             if (direct != null && !taken.contains(direct.getAxis())) {
                 return true;
             }
@@ -119,7 +119,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         blacklisted.addAll(them);
         for (BlockPos from : makeup) {
             for (BlockPos to : other.makeup) {
-                EnumFacing offset = PositionUtil.getDirectFacingOffset(from, to);
+                Direction offset = PositionUtil.getDirectFacingOffset(from, to);
                 if (offset != null && !blacklisted.contains(offset.getAxis())) {
                     return true;
                 }
@@ -129,10 +129,10 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     }
 
     public EnumSet<Axis> getConnectedAxis() {
-        EnumSet<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
+        EnumSet<Axis> taken = EnumSet.noneOf(Direction.Axis.class);
         for (BlockPos a : getMarkerPositions()) {
             for (BlockPos b : getMarkerPositions()) {
-                EnumFacing offset = PositionUtil.getDirectFacingOffset(a, b);
+                Direction offset = PositionUtil.getDirectFacingOffset(a, b);
                 if (offset != null) {
                     taken.add(offset.getAxis());
                 }
@@ -164,7 +164,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     // ###########
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void renderInWorld() {
         LaserBoxRenderer.renderLaserBoxStatic(box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, true);
     }

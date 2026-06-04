@@ -30,14 +30,16 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
+
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 import buildcraft.lib.misc.data.SingleCache;
 import buildcraft.lib.nbt.NbtSquisher;
 
 public class GlobalSavedDataSnapshots {
     private static final String SNAPSHOT_FILE_EXTENSION = ".bcnbt";
-    private static final Map<Side, GlobalSavedDataSnapshots> INSTANCES = new EnumMap<>(Side.class);
+    private static final Map<Side, GlobalSavedDataSnapshots> INSTANCES = new EnumMap<>(net.fabricmc.api.EnvType.class);
     private final LoadingCache<Snapshot.Key, Optional<Snapshot>> snapshotsCache = CacheBuilder.newBuilder()
         .expireAfterAccess(10, TimeUnit.MINUTES)
         .build(CacheLoader.from(key -> Optional.ofNullable(readSnapshot(key)).map(Pair::getLeft)));
@@ -48,7 +50,7 @@ public class GlobalSavedDataSnapshots {
     );
     private final File snapshotsFile;
 
-    private GlobalSavedDataSnapshots(Side side) {
+    private GlobalSavedDataSnapshots(NetSide side) {
         snapshotsFile = new File(
             FMLCommonHandler.instance().getSavesDirectory().getParentFile(),
             "snapshots-" + side.name().toLowerCase(Locale.ROOT)
@@ -62,11 +64,11 @@ public class GlobalSavedDataSnapshots {
         }
     }
 
-    public static void reInit(Side side) {
+    public static void reInit(NetSide side) {
         INSTANCES.put(side, new GlobalSavedDataSnapshots(side));
     }
 
-    public static GlobalSavedDataSnapshots get(Side side) {
+    public static GlobalSavedDataSnapshots get(NetSide side) {
         if (!INSTANCES.containsKey(side)) {
             INSTANCES.put(side, new GlobalSavedDataSnapshots(side));
         }
@@ -74,7 +76,7 @@ public class GlobalSavedDataSnapshots {
     }
 
     public static GlobalSavedDataSnapshots get(World world) {
-        return get(world.isRemote ? Side.CLIENT : Side.SERVER);
+        return get(world.isClient ? EnvType.CLIENT : EnvType.SERVER);
     }
 
     private Pair<Snapshot, File> readSnapshot(Snapshot.Key key) {

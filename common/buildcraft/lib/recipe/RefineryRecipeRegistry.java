@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.fluids.FluidStack;
+import buildcraft.lib.compat.FluidStackBC;
 
 import buildcraft.api.recipes.IRefineryRecipeManager;
 
@@ -29,17 +29,17 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     public final IRefineryRegistry<ICoolableRecipe> coolableRegistry = new SingleRegistry<>();
 
     @Override
-    public IHeatableRecipe createHeatingRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+    public IHeatableRecipe createHeatingRecipe(FluidStackBC in, FluidStackBC out, int heatFrom, int heatTo) {
         return new HeatableRecipe(in, out, heatFrom, heatTo);
     }
 
     @Override
-    public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+    public ICoolableRecipe createCoolableRecipe(FluidStackBC in, FluidStackBC out, int heatFrom, int heatTo) {
         return new CoolableRecipe(in, out, heatFrom, heatTo);
     }
 
     @Override
-    public IDistillationRecipe createDistillationRecipe(FluidStack in, FluidStack outGas, FluidStack outLiquid, long powerRequired) {
+    public IDistillationRecipe createDistillationRecipe(FluidStackBC in, FluidStackBC outGas, FluidStackBC outLiquid, long powerRequired) {
         return new DistillationRecipe(powerRequired, in, outGas, outLiquid);
     }
 
@@ -73,7 +73,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
 
         @Override
         @Nullable
-        public R getRecipeForInput(@Nullable FluidStack fluid) {
+        public R getRecipeForInput(@Nullable FluidStackBC fluid) {
             if (fluid == null) {
                 return null;
             }
@@ -116,23 +116,23 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     public static abstract class RefineryRecipe implements IRefineryRecipe {
-        private final FluidStack in;
+        private final FluidStackBC in;
 
-        public RefineryRecipe(FluidStack in) {
+        public RefineryRecipe(FluidStackBC in) {
             this.in = in;
         }
 
         @Override
-        public FluidStack in() {
+        public FluidStackBC in() {
             return in;
         }
     }
 
     public static class DistillationRecipe extends RefineryRecipe implements IDistillationRecipe {
-        private final FluidStack outGas, outLiquid;
+        private final FluidStackBC outGas, outLiquid;
         private final long powerRequired;
 
-        public DistillationRecipe(long powerRequired, FluidStack in, FluidStack outGas, FluidStack outLiquid) {
+        public DistillationRecipe(long powerRequired, FluidStackBC in, FluidStackBC outGas, FluidStackBC outLiquid) {
             super(in);
             this.powerRequired = powerRequired;
             this.outGas = outGas;
@@ -140,12 +140,12 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         }
 
         @Override
-        public FluidStack outGas() {
+        public FluidStackBC outGas() {
             return outGas;
         }
 
         @Override
-        public FluidStack outLiquid() {
+        public FluidStackBC outLiquid() {
             return outLiquid;
         }
 
@@ -156,10 +156,10 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     public static abstract class HeatExchangeRecipe extends RefineryRecipe implements IHeatExchangerRecipe {
-        private final FluidStack out;
+        private final FluidStackBC out;
         private final int heatFrom, heatTo;
 
-        public HeatExchangeRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+        public HeatExchangeRecipe(FluidStackBC in, FluidStackBC out, int heatFrom, int heatTo) {
             super(in);
             this.out = out;
             this.heatFrom = heatFrom;
@@ -167,7 +167,7 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
         }
 
         @Override
-        public FluidStack out() {
+        public FluidStackBC out() {
             return out;
         }
 
@@ -183,13 +183,13 @@ public enum RefineryRecipeRegistry implements IRefineryRecipeManager {
     }
 
     public static class HeatableRecipe extends HeatExchangeRecipe implements IHeatableRecipe {
-        public HeatableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+        public HeatableRecipe(FluidStackBC in, FluidStackBC out, int heatFrom, int heatTo) {
             super(in, out, heatFrom, heatTo);
         }
     }
 
     public static class CoolableRecipe extends HeatExchangeRecipe implements ICoolableRecipe {
-        public CoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo) {
+        public CoolableRecipe(FluidStackBC in, FluidStackBC out, int heatFrom, int heatTo) {
             super(in, out, heatFrom, heatTo);
         }
     }

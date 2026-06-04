@@ -2,25 +2,29 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.lib.client.sprite;
 
-import org.lwjgl.opengl.GL11;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import buildcraft.api.core.render.ISprite;
 
 import buildcraft.lib.gui.pos.IGuiArea;
 
-/** Defines and draws a 9-sliced sprite. */
-@SideOnly(Side.CLIENT)
+/** Defines and draws a 9-sliced sprite from the block atlas. */
+@Environment(EnvType.CLIENT)
 public class SpriteNineSliced {
     public final ISprite sprite;
     public final double xMin, yMin, xMax, yMax;
@@ -60,52 +64,38 @@ public class SpriteNineSliced {
     }
 
     public void draw(double x, double y, double width, double height) {
-        sprite.bindTexture();
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+
         Tessellator tess = Tessellator.getInstance();
-        BufferBuilder vb = tess.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        vb.setTranslation(x, y, 0);
+        BufferBuilder buf = tess.getBuffer();
+        buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
 
-        double sx = xScale;
-        double sy = yScale;
-        double[] xa = { 0, xMin * sx, width + (xMax - 1) * sx, width };
-        double[] ya = { 0, yMin * sy, height + (yMax - 1) * sy, height };
-
+        double sx = xScale, sy = yScale;
+        double[] xa = { x, x + xMin * sx, x + width + (xMax - 1) * sx, x + width };
+        double[] ya = { y, y + yMin * sy, y + height + (yMax - 1) * sy, y + height };
         double[] ua = { 0, xMin, xMax, 1 };
         double[] va = { 0, yMin, yMax, 1 };
 
-        quad(vb, xa, ya, ua, va, 0, 0);
-        quad(vb, xa, ya, ua, va, 0, 1);
-        quad(vb, xa, ya, ua, va, 0, 2);
+        for (int xi = 0; xi < 3; xi++) {
+            for (int yi = 0; yi < 3; yi++) {
+                quad(buf, xa, ya, ua, va, xi, yi);
+            }
+        }
 
-        quad(vb, xa, ya, ua, va, 1, 0);
-        quad(vb, xa, ya, ua, va, 1, 1);
-        quad(vb, xa, ya, ua, va, 1, 2);
-
-        quad(vb, xa, ya, ua, va, 2, 0);
-        quad(vb, xa, ya, ua, va, 2, 1);
-        quad(vb, xa, ya, ua, va, 2, 2);
-
-        tess.draw();
-        vb.setTranslation(0, 0, 0);
+        BufferRenderer.drawWithGlobalProgram(buf.end());
     }
 
-    private void quad(BufferBuilder vb, double[] x, double[] y, double[] u, double[] v, int xIndex, int yIndex) {
-        int xis = xIndex;
-        int xIB = xIndex + 1;
-
-        int yis = yIndex;
-        int yIB = yIndex + 1;
-
-        vertex(vb, x[xis], y[yis], u[xis], v[yis]);
-        vertex(vb, x[xis], y[yIB], u[xis], v[yIB]);
-        vertex(vb, x[xIB], y[yIB], u[xIB], v[yIB]);
-        vertex(vb, x[xIB], y[yis], u[xIB], v[yis]);
+    private void quad(BufferBuilder buf, double[] x, double[] y, double[] u, double[] v, int xi, int yi) {
+        vertex(buf, x[xi],   y[yi],   u[xi],   v[yi]);
+        vertex(buf, x[xi],   y[yi+1], u[xi],   v[yi+1]);
+        vertex(buf, x[xi+1], y[yi+1], u[xi+1], v[yi+1]);
+        vertex(buf, x[xi+1], y[yi],   u[xi+1], v[yi]);
     }
 
-    private void vertex(BufferBuilder vb, double x, double y, double texU, double texV) {
-        vb.pos(x, y, 0);
-        vb.tex(sprite.getInterpU(texU), sprite.getInterpV(texV));
-        vb.endVertex();
+    private void vertex(BufferBuilder buf, double x, double y, double texU, double texV) {
+        buf.vertex((float) x, (float) y, 0)
+            .texture((float) sprite.getInterpU(texU), (float) sprite.getInterpV(texV))
+            .next();
     }
 }

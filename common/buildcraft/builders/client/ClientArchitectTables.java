@@ -9,13 +9,13 @@ package buildcraft.builders.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 
 public class ClientArchitectTables {
     public static final int START_BOX_VALUE = 3;
     public static final int START_SCANNED_BLOCK_VALUE = 50;
-    public static final Map<AxisAlignedBB, Integer> BOXES = new HashMap<>();
+    public static final Map<Box, Integer> BOXES = new HashMap<>();
     public static final Map<BlockPos, Integer> SCANNED_BLOCKS = new HashMap<>();
 
     public static void tick() {

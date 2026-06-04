@@ -8,10 +8,10 @@ package buildcraft.builders.container;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
 
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.ContainerBC_Neptune;
@@ -22,17 +22,18 @@ import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 import buildcraft.builders.tile.TileArchitectTable;
+import buildcraft.lib.tile.TileBC_Neptune.NetSide;
 
 public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable> {
     private static final IdAllocator IDS = ContainerBC_Neptune.IDS.makeChild("architect_table");
     private static final int ID_NAME = IDS.allocId("NAME");
 
-    public ContainerArchitectTable(EntityPlayer player, TileArchitectTable tile) {
+    public ContainerArchitectTable(PlayerEntity player, TileArchitectTable tile) {
         super(player, tile);
         addFullPlayerInventory(88, 84);
 
-        addSlotToContainer(new SlotBase(tile.invSnapshotIn, 0, 135, 35));
-        addSlotToContainer(new SlotOutput(tile.invSnapshotOut, 0, 194, 35));
+        addSlot(new SlotBase(tile.invSnapshotIn, 0, 135, 35));
+        addSlot(new SlotOutput(tile.invSnapshotOut, 0, 194, 35));
     }
     
     @Override
@@ -44,10 +45,10 @@ public class ContainerArchitectTable extends ContainerBCTile<TileArchitectTable>
         sendMessage(ID_NAME, buffer -> buffer.writeString(name));
     }
 
-    @Override
-    public void readMessage(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public void readMessage(int id, PacketBufferBC buffer, NetSide side, MessageContext ctx) throws IOException {
         super.readMessage(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+        if (side == NetSide.SERVER) {
             if (id == ID_NAME) {
                 tile.name = buffer.readString();
                 tile.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);

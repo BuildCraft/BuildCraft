@@ -1,10 +1,10 @@
 package buildcraft.core.statements;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.enums.EnumPowerStage;
@@ -24,27 +24,27 @@ public class TriggerEnginePowerStage extends BCStatement implements ITriggerExte
     public final EnumPowerStage stage;
 
     public TriggerEnginePowerStage(EnumPowerStage stage) {
-        super("buildcraft:engine.stage." + stage.getName());
+        super("buildcraft:engine.stage." + stage.asString());
         this.stage = stage;
     }
 
-    public static boolean isTriggeringTile(TileEntity tile) {
+    public static boolean isTriggeringTile(BlockEntity tile) {
         return tile instanceof TileEngineBase_BC8;
     }
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.engine." + stage.getName());
+        return LocaleUtil.localize("gate.trigger.engine." + stage.asString());
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public ISprite getSprite() {
         return BCCoreSprites.TRIGGER_POWER_STAGE.get(stage);
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity target, EnumFacing side, IStatementContainer source,
+    public boolean isTriggerActive(BlockEntity target, Direction side, IStatementContainer source,
         IStatementParameter[] parameters) {
         if (target instanceof TileEngineBase_BC8) {
             return ((TileEngineBase_BC8) target).getPowerStage() == stage;

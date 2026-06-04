@@ -1,3 +1,8 @@
+// TODO(R.Chen): Fabric migration DEFERRED — blocked by unmigrated lib.block.BlockBCBase_Neptune,
+//               lib.item.IItemBuildCraft, lib.item.ItemBlockBC_Neptune. Migrate alongside lib.block /
+//               lib.item, then strip Forge here: ModelRegistryEvent (→ resource packs), OreDictionaryStub
+//               (→ item tags), GameRegistry.registerTileEntity (→ Registries.BLOCK_ENTITY_TYPE),
+//               RegistryEvent.Register + MinecraftForge.EVENT_BUS (→ Fabric Registry.register).
 package buildcraft.lib.registry;
 
 import java.util.ArrayList;
@@ -6,21 +11,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import buildcraft.lib.compat.forge_stubs.OreDictionaryStub;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
 
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+// STUB(R.Chen): // @SubscribeEvent — TODO(R.Chen): port to Fabric event removed — port to Fabric events
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+// STUB(R.Chen): OreDictionaryStub removed — TODO(R.Chen): implement via Tags
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.IItemBuildCraft;
@@ -41,34 +47,34 @@ public final class RegistrationHelper {
     private final List<Item> items = new ArrayList<>();
 
     public RegistrationHelper() {
-        MinecraftForge.EVENT_BUS.register(this);
+        // STUB(R.Chen): MinecraftForge.EVENT_BUS.register(this);
     }
 
     public static void registerOredictEntries() {
         for (Entry<String, Item> entry : oredictItems.entrySet()) {
-            OreDictionary.registerOre(entry.getKey(), entry.getValue());
+            OreDictionaryStub.registerOre(entry.getKey(), entry.getValue());
         }
         for (Entry<String, Block> entry : oredictBlocks.entrySet()) {
-            OreDictionary.registerOre(entry.getKey(), entry.getValue());
+            OreDictionaryStub.registerOre(entry.getKey(), entry.getValue());
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public final void onRegisterBlocks(RegistryEvent.Register<Block> event) {
         for (Block block : blocks) {
             event.getRegistry().register(block);
         }
     }
 
-    @SubscribeEvent
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
     public final void onRegisterItems(RegistryEvent.Register<Item> event) {
         for (Item item : items) {
             event.getRegistry().register(item);
         }
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    // @SubscribeEvent — TODO(R.Chen): port to Fabric event
+    @Environment(EnvType.CLIENT)
     public final void onModelRegistry(ModelRegistryEvent event) {
         for (Item item : items) {
             if (item instanceof IItemBuildCraft) {
@@ -159,12 +165,12 @@ public final class RegistrationHelper {
             addForcedItem(itemBlockConstructor.apply(added));
         } else {
             // FIXME: This won't work if the item has a different reg name to the block!
-            RegistryConfig.setDisabled("items", block.getRegistryName().getResourcePath());
+            RegistryConfig.setDisabled("items", net.minecraft.registry.Registries.BLOCK.getId(block).getPath());
         }
         return added;
     }
 
-    public void registerTile(Class<? extends TileEntity> clazz, String id) {
+    public void registerTile(Class<? extends BlockEntity> clazz, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntity(clazz, regName);

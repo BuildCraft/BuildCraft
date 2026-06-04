@@ -24,12 +24,12 @@ public class MessageZoneMapRequest implements IMessage {
         this.key = key;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void fromBytes(ByteBuf buf) {
         key = new ZonePlannerMapChunkKey(buf);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void toBytes(ByteBuf buf) {
         key.toBytes(buf);
     }
@@ -40,7 +40,7 @@ public class MessageZoneMapRequest implements IMessage {
                 new MessageZoneMapResponse(
                         message.key,
                         ZonePlannerMapDataServer.INSTANCE.getChunk(
-                                ctx.getServerHandler().player.world,
+                                ctx.getServerHandler().player.getWorld(),
                                 message.key
                         )
                 )

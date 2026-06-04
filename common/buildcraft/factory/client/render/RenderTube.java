@@ -8,7 +8,7 @@ package buildcraft.factory.client.render;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -27,7 +27,7 @@ public class RenderTube extends FastTESR<TileMiner> {
         this.laserType = laserType;
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     public void renderTileEntityFast(@Nonnull TileMiner tile, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         if (tile.isComplete()) {
             return;
@@ -36,7 +36,7 @@ public class RenderTube extends FastTESR<TileMiner> {
         double tubeY = tile.getPos().getY() - tile.getLength(partialTicks);
 
         BlockPos from = tile.getPos();
-        buffer.setTranslation(x - from.getX(), y - from.getY(), z - from.getZ());
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(x - from.getX(), y - from.getY(), z - from.getZ());
 
         Vec3d start = new Vec3d(from.getX() + 0.5, from.getY(), from.getZ() + 0.5);
 
@@ -45,6 +45,6 @@ public class RenderTube extends FastTESR<TileMiner> {
         LaserData_BC8 data = new LaserData_BC8(laserType, start, end, 1 / 16.0);
         LaserRenderer_BC8.renderLaserDynamic(data, buffer);
 
-        buffer.setTranslation(0, 0, 0);
+        // TODO(R.Chen): setTranslation removed — use MatrixStack instead: buffer.setTranslation(0, 0, 0);
     }
 }

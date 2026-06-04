@@ -6,8 +6,8 @@
 
 package buildcraft.builders.snapshot;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Rotation;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -31,7 +31,7 @@ public final class SchematicBlockAir implements ISchematicBlock {
     }
 
     @Override
-    public SchematicBlockAir getRotated(Rotation rotation) {
+    public SchematicBlockAir getRotated(net.minecraft.util.BlockRotation rotation) {
         return SchematicBlockManager.createCleanCopy(this);
     }
 
@@ -55,13 +55,14 @@ public final class SchematicBlockAir implements ISchematicBlock {
         return true;
     }
 
-    @Override
-    public NBTTagCompound serializeNBT() {
-        return new NBTTagCompound();
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public NbtCompound createNbt() { return serializeNBT(); }
+    public NbtCompound serializeNBT() {
+        return new NbtCompound();
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) throws InvalidInputDataException {
+    public void deserializeNBT(NbtCompound nbt) throws InvalidInputDataException {
     }
 
     @Override

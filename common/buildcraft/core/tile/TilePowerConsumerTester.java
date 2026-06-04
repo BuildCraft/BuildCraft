@@ -2,8 +2,8 @@ package buildcraft.core.tile;
 
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.ITickable;
 
 import buildcraft.api.mj.IMjConnector;
@@ -28,7 +28,7 @@ public class TilePowerConsumerTester extends TileBC_Neptune implements IMjReceiv
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NbtCompound nbt) {
         super.readFromNBT(nbt);
         lastReceived = nbt.getLong("last");
         nextTickReceived = nbt.getLong("nt");
@@ -37,12 +37,12 @@ public class TilePowerConsumerTester extends TileBC_Neptune implements IMjReceiv
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NbtCompound writeToNBT(NbtCompound nbt) {
         nbt = super.writeToNBT(nbt);
-        nbt.setLong("last", lastReceived);
-        nbt.setLong("nt", nextTickReceived);
-        nbt.setLong("lt", lastTickReceived);
-        nbt.setLong("total", totalReceived);
+        nbt.putLong("last", lastReceived);
+        nbt.putLong("nt", nextTickReceived);
+        nbt.putLong("lt", lastTickReceived);
+        nbt.putLong("total", totalReceived);
         return nbt;
     }
 
@@ -79,7 +79,7 @@ public class TilePowerConsumerTester extends TileBC_Neptune implements IMjReceiv
     // IDebuggable
 
     @Override
-    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+    public void getDebugInfo(List<String> left, List<String> right, Direction side) {
         left.add("");
         left.add("Last received = " + LocaleUtil.localizeMj(lastReceived));
         left.add("Tick received = " + LocaleUtil.localizeMj(lastTickReceived));

@@ -6,7 +6,7 @@
 
 package buildcraft.energy.client.gui;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -17,7 +17,7 @@ import buildcraft.lib.misc.LocaleUtil;
 import buildcraft.energy.container.ContainerEngineIron_BC8;
 
 public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
+    private static final Identifier TEXTURE_BASE = new Identifier("buildcraftenergy:textures/gui/combustion_engine_gui.png");
     private static final int SIZE_X = 176, SIZE_Y = 177;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_TANK_OVERLAY = new GuiIcon(TEXTURE_BASE, 176, 0, 16, 60);
@@ -33,21 +33,21 @@ public class GuiEngineIron_BC8 extends GuiBC8<ContainerEngineIron_BC8> {
         mainGui.shownElements.add(container.widgetTankResidue.createGuiElement(mainGui, new GuiRectangle(134, 18, 16, 60).offset(mainGui.rootElement), ICON_TANK_OVERLAY));
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(mainGui.rootElement);
     }
 
-    @Override
+    // @Override -- removed: method does not exist in Fabric 1.20.1
     protected void drawForegroundLayer() {
         String str = LocaleUtil.localize("tile.engineIron.name");
-        int strWidth = fontRenderer.getStringWidth(str);
+        int strWidth = fontRenderer.getWidth(str);
         double titleX = mainGui.rootElement.getCenterX() - strWidth / 2;
         double titleY = mainGui.rootElement.getY() + 6;
-        fontRenderer.drawString(str, (int) titleX, (int) titleY, 0x404040);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(str, (int) titleX, (int) titleY, 0x404040)
 
         double invX = mainGui.rootElement.getX() + 8;
         double invY = mainGui.rootElement.getY() + SIZE_Y - 96;
-        fontRenderer.drawString(LocaleUtil.localize("gui.inventory"), (int) invX, (int) invY, 0x404040);
+        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(LocaleUtil.localize("gui.getInventory()"), (int) invX, (int) invY, 0x404040)
     }
 }

@@ -9,8 +9,8 @@ package buildcraft.core.statements;
 import java.util.Locale;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.items.IItemHandler;
 
@@ -35,7 +35,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
     public TriggerInventory(State state) {
         super(
             "buildcraft:inventory." + state.name().toLowerCase(Locale.ROOT),
-            "buildcraft.inventory." + state.name().toLowerCase(Locale.ROOT)
+            "buildcraft.getInventory()." + state.name().toLowerCase(Locale.ROOT)
         );
         this.state = state;
     }
@@ -52,18 +52,18 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return LocaleUtil.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ROOT));
+        return LocaleUtil.localize("gate.trigger.getInventory()." + state.name().toLowerCase(Locale.ROOT));
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
+    public boolean isTriggerActive(BlockEntity tile, Direction side, IStatementContainer container, IStatementParameter[] parameters) {
         ItemStack searchedStack = StackUtil.EMPTY;
 
         if (parameters != null && parameters.length >= 1 && parameters[0] != null) {
             searchedStack = parameters[0].getItemStack();
         }
 
-        IItemHandler handler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+        IItemHandler handler = CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, side.getOpposite());
 
         if (handler != null) {
             boolean hasSlots = false;
@@ -77,7 +77,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 // TODO: Replace some of this with
                 foundItems |= !stack.isEmpty() && (searchedStack.isEmpty() || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack.isEmpty() || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxStackSize()))//
+                foundSpace |= (stack.isEmpty() || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.getCount() < stack.getMaxCount()))//
                     && (searchedStack.isEmpty() || searchedStack.getItem() instanceof IList || handler.insertItem(i, searchedStack, true).isEmpty());
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a

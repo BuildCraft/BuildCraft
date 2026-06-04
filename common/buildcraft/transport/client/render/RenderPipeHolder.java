@@ -2,16 +2,21 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.EnumFacing;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.client.model.animation.FastTESR;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Direction;
 
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
 import buildcraft.api.transport.pipe.IPipeFlowRenderer;
@@ -24,81 +29,65 @@ import buildcraft.transport.client.PipeRegistryClient;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 
-public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
+@Environment(EnvType.CLIENT)
+public class RenderPipeHolder implements BlockEntityRenderer<TilePipeHolder> {
+
+    public RenderPipeHolder(BlockEntityRendererFactory.Context ctx) {}
+
     @Override
-    public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks,
-        int destroyStage, float partial, BufferBuilder buffer) {
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+    public void render(TilePipeHolder entity, float tickDelta, MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        VertexConsumer cutout = vertexConsumers.getBuffer(RenderLayer.getCutout());
 
-        Minecraft.getMinecraft().mcProfiler.startSection("bc");
-        Minecraft.getMinecraft().mcProfiler.startSection("pipe");
-
-        Minecraft.getMinecraft().mcProfiler.startSection("wire");
-        PipeWireRenderer.renderWires(pipe, x, y, z, buffer);
-
-        Minecraft.getMinecraft().mcProfiler.endStartSection("pluggable");
-        renderPluggables(pipe, x, y, z, partialTicks, buffer);
-
-        Minecraft.getMinecraft().mcProfiler.endStartSection("contents");
-        renderContents(pipe, x, y, z, partialTicks, buffer);
-
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        PipeWireRenderer.renderWires(entity, matrices, cutout, light);
+        renderPluggables(entity, matrices, cutout, light, tickDelta);
+        renderContents(entity, matrices, cutout, light, tickDelta);
     }
 
-    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks,
-        BufferBuilder bb) {
-        for (EnumFacing face : EnumFacing.VALUES) {
+    private static void renderPluggables(TilePipeHolder pipe, MatrixStack matrices,
+            VertexConsumer vc, int light, float tickDelta) {
+        for (Direction face : Direction.values()) {
             PipePluggable plug = pipe.getPluggable(face);
-            if (plug == null) {
-                continue;
-            }
-            renderPlug(plug, x, y, z, partialTicks, bb);
+            if (plug == null) continue;
+            renderPlug(plug, matrices, vc, light, tickDelta);
         }
     }
 
-    private static <P extends PipePluggable> void renderPlug(P plug, double x, double y, double z, float partialTicks,
-        BufferBuilder bb) {
-        IPlugDynamicRenderer<P> renderer = PipeRegistryClient.getPlugRenderer(plug);
+    @SuppressWarnings("unchecked")
+    private static <P extends PipePluggable> void renderPlug(P plug, MatrixStack matrices,
+            VertexConsumer vc, int light, float tickDelta) {
+        IPlugDynamicRenderer<P> renderer =
+            (IPlugDynamicRenderer<P>) PipeRegistryClient.getPlugRenderer(plug);
         if (renderer != null) {
-            Minecraft.getMinecraft().mcProfiler.startSection(plug.getClass());
-            renderer.render(plug, x, y, z, partialTicks, bb);
-            Minecraft.getMinecraft().mcProfiler.endSection();
+            renderer.render(plug, matrices, vc, light, tickDelta);
         }
     }
 
-    private static void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks,
-        BufferBuilder bb) {
+    private static void renderContents(TilePipeHolder pipe, MatrixStack matrices,
+            VertexConsumer vc, int light, float tickDelta) {
         Pipe p = pipe.getPipe();
-        if (p == null) {
-            return;
-        }
-        if (p.flow != null) {
-            renderFlow(p.flow, x, y, z, partialTicks, bb);
-        }
-        if (p.behaviour != null) {
-            renderBehaviour(p.behaviour, x, y, z, partialTicks, bb);
+        if (p == null) return;
+        if (p.flow != null) renderFlow(p.flow, matrices, vc, light, tickDelta);
+        if (p.behaviour != null) renderBehaviour(p.behaviour, matrices, vc, light, tickDelta);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <F extends PipeFlow> void renderFlow(F flow, MatrixStack matrices,
+            VertexConsumer vc, int light, float tickDelta) {
+        IPipeFlowRenderer<F> renderer =
+            (IPipeFlowRenderer<F>) PipeRegistryClient.getFlowRenderer(flow);
+        if (renderer != null) {
+            renderer.render(flow, matrices, vc, light, tickDelta);
         }
     }
 
-    private static <F extends PipeFlow> void renderFlow(F flow, double x, double y, double z, float partialTicks,
-        BufferBuilder bb) {
-        IPipeFlowRenderer<F> renderer = PipeRegistryClient.getFlowRenderer(flow);
+    @SuppressWarnings("unchecked")
+    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, MatrixStack matrices,
+            VertexConsumer vc, int light, float tickDelta) {
+        IPipeBehaviourRenderer<B> renderer =
+            (IPipeBehaviourRenderer<B>) PipeRegistryClient.getBehaviourRenderer(behaviour);
         if (renderer != null) {
-            Minecraft.getMinecraft().mcProfiler.startSection(flow.getClass());
-            renderer.render(flow, x, y, z, partialTicks, bb);
-            Minecraft.getMinecraft().mcProfiler.endSection();
-        }
-    }
-
-    private static <B extends PipeBehaviour> void renderBehaviour(B behaviour, double x, double y, double z,
-        float partialTicks, BufferBuilder bb) {
-        IPipeBehaviourRenderer<B> renderer = PipeRegistryClient.getBehaviourRenderer(behaviour);
-        if (renderer != null) {
-            Minecraft.getMinecraft().mcProfiler.startSection(behaviour.getClass());
-            renderer.render(behaviour, x, y, z, partialTicks, bb);
-            Minecraft.getMinecraft().mcProfiler.endSection();
+            renderer.render(behaviour, matrices, vc, light, tickDelta);
         }
     }
 }

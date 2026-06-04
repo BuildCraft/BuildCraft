@@ -9,6 +9,7 @@ package buildcraft.lib.client.guide.node;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
 

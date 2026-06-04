@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import net.minecraft.profiler.Profiler;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.registry.IScriptableRegistry.OptionallyDisabled;
 
@@ -20,7 +20,7 @@ public class PageEntryExternal extends PageValueType<String> {
     public static final PageEntryExternal INSTANCE = new PageEntryExternal();
 
     @Override
-    public OptionallyDisabled<PageEntry<String>> deserialize(ResourceLocation name, JsonObject json,
+    public OptionallyDisabled<PageEntry<String>> deserialize(Identifier name, JsonObject json,
         JsonDeserializationContext ctx) {
         String value = PageValue.getTitle(json);
         return new OptionallyDisabled<>(new PageEntry<>(this, name, json, value));

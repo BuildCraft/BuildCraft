@@ -29,13 +29,13 @@ public class TransactorEntityArrow implements IItemExtractable {
     @Nonnull
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
-        if (entity.isDead || entity.pickupStatus != PickupStatus.ALLOWED || min > 1 || max < 1 || max < min) {
+        if (entity.isRemoved() || entity.pickupStatus != PickupStatus.ALLOWED || min > 1 || max < 1 || max < min) {
             return StackUtil.EMPTY;
         }
 
         ItemStack stack = EntityUtil.getArrowStack(entity);
         if (!simulate) {
-            entity.setDead();
+            entity.discard();
         }
         return stack;
     }

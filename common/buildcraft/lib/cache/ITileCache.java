@@ -2,20 +2,20 @@ package buildcraft.lib.cache;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public interface ITileCache {
 
-    /** Call this in {@link TileEntity#invalidate()} to remove everything that has been cached. */
+    /** Call this in {@link BlockEntity#markRemoved()} to remove everything that has been cached. */
     void invalidate();
 
     @Nullable
     TileCacheRet getTile(BlockPos pos);
 
     @Nullable
-    TileCacheRet getTile(EnumFacing offset);
+    TileCacheRet getTile(Direction offset);
 
     public enum TileCacheState {
         CACHED,

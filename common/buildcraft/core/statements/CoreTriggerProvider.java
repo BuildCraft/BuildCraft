@@ -10,8 +10,8 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -48,10 +48,10 @@ public enum CoreTriggerProvider implements ITriggerProvider {
 
     @Override
     public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container,
-        @Nonnull EnumFacing side) {}
+        @Nonnull Direction side) {}
 
     @Override
-    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull EnumFacing side, TileEntity tile) {
+    public void addExternalTriggers(Collection<ITriggerExternal> res, @Nonnull Direction side, BlockEntity tile) {
 
         if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
@@ -67,7 +67,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockInventoryTriggers) {
-            IItemHandler itemHandler = tile.getCapability(CapUtil.CAP_ITEMS, side.getOpposite());
+            IItemHandler itemHandler = CapUtil.getCapability(tile, CapUtil.CAP_ITEMS, side.getOpposite());
             if (itemHandler != null) {
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_EMPTY);
                 res.add(BCCoreStatements.TRIGGER_INVENTORY_SPACE);
@@ -80,7 +80,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         }
 
         if (!blockFluidHandlerTriggers) {
-            IFluidHandler fluidHandler = tile.getCapability(CapUtil.CAP_FLUIDS, side.getOpposite());
+            IFluidHandler fluidHandler = CapUtil.getCapability(tile, CapUtil.CAP_FLUIDS, side.getOpposite());
             if (fluidHandler != null) {
 
                 IFluidTankProperties[] liquids = fluidHandler.getTankProperties();
@@ -96,7 +96,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
             }
         }
 
-        if (tile.hasCapability(TilesAPI.CAP_HAS_WORK, null)) {
+        if (CapUtil.hasCapability(tile, TilesAPI.CAP_HAS_WORK, null)) {
             res.add(BCCoreStatements.TRIGGER_MACHINE_ACTIVE);
             res.add(BCCoreStatements.TRIGGER_MACHINE_INACTIVE);
         }

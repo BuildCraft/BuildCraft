@@ -2,19 +2,20 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.silicon.gate;
 
 import java.util.Locale;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 
 public enum EnumGateMaterial {
-    CLAY_BRICK(Blocks.BRICK_BLOCK, 1, false),
+    CLAY_BRICK(Blocks.BRICKS, 1, false),
     IRON(Blocks.IRON_BLOCK, 2, true),
-    NETHER_BRICK(Blocks.NETHER_BRICK, 4, true),
+    NETHER_BRICK(Blocks.NETHER_BRICKS, 4, true),
     GOLD(Blocks.GOLD_BLOCK, 8, true);
 
     public static final EnumGateMaterial[] VALUES = values();

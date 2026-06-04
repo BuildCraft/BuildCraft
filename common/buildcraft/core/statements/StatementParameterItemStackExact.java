@@ -11,7 +11,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NbtCompound;
 
 import buildcraft.api.core.render.ISprite;
 import buildcraft.api.statements.IStatement;
@@ -67,17 +67,17 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public void writeToNbt(NBTTagCompound compound) {
+    public void writeToNbt(NbtCompound compound) {
         if (stack != null) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            stack.writeToNBT(tagCompound);
-            compound.setTag("stack", tagCompound);
+            NbtCompound tagCompound = new NbtCompound();
+            stack.writeNbt(tagCompound);
+            compound.put("stack", tagCompound);
         }
     }
 
-    public static StatementParameterItemStackExact readFromNbt(NBTTagCompound nbt) {
+    public static StatementParameterItemStackExact readFromNbt(NbtCompound nbt) {
         StatementParameterItemStackExact param = new StatementParameterItemStackExact();
-        param.stack = new ItemStack(nbt.getCompoundTag("stack"));
+        param.stack = new ItemStack(nbt.getCompound("stack"));
         return param;
     }
 
@@ -94,7 +94,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 
     private static boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
         if (stack1 != null) {
-            return stack2 != null && stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+            return stack2 != null && ItemStack.areItemsEqual(stack1, stack2) && java.util.Objects.equals(stack1.getNbt(), stack2.getNbt());
         } else {
             return stack2 == null;
         }
@@ -108,7 +108,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     @Override
     public String getDescription() {
         if (stack != null) {
-            return stack.getDisplayName();
+            return stack.getName().getString();
         } else {
             return "";
         }

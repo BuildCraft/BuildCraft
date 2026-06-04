@@ -11,7 +11,9 @@ import java.util.Queue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.vecmath.Point2i;
+// org.joml.Vector2i ships with MinecraftClient 1.20.1 and replaces javax.vecmath.Vector2i
+// (removed when Java 3D was dropped). Field names .x/.y are the same.
+import org.joml.Vector2i;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -157,10 +159,10 @@ public class DrawingUtil {
 
 
     public static void fill(boolean[][] data, int startX, int startY, int width, int height) {
-        Queue<Point2i> queue = new ArrayDeque<>();
-        queue.add(new Point2i(startX, startY));
+        Queue<Vector2i> queue = new ArrayDeque<>();
+        queue.add(new Vector2i(startX, startY));
         while (!queue.isEmpty()) {
-            Point2i point = queue.poll();
+            Vector2i point = queue.poll();
             if (point.x < 0 || point.y < 0 || point.x >= width || point.y >= height) {
                 continue;
             }
@@ -168,10 +170,10 @@ public class DrawingUtil {
                 continue;
             }
             data[point.x][point.y] = true;
-            queue.add(new Point2i(point.x - 1, point.y));
-            queue.add(new Point2i(point.x + 1, point.y));
-            queue.add(new Point2i(point.x, point.y - 1));
-            queue.add(new Point2i(point.x, point.y + 1));
+            queue.add(new Vector2i(point.x - 1, point.y));
+            queue.add(new Vector2i(point.x + 1, point.y));
+            queue.add(new Vector2i(point.x, point.y - 1));
+            queue.add(new Vector2i(point.x, point.y + 1));
         }
     }
 }

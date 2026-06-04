@@ -6,8 +6,8 @@
 
 package buildcraft.core.statements;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
@@ -62,11 +62,11 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
         return false;
     }
 
-    public static boolean isTriggeringTile(TileEntity tile) {
+    public static boolean isTriggeringTile(BlockEntity tile) {
         return isTriggeringTile(tile, null);
     }
 
-    public static boolean isTriggeringTile(TileEntity tile, EnumFacing face) {
+    public static boolean isTriggeringTile(BlockEntity tile, Direction face) {
         return tile.getCapability(MjAPI.CAP_READABLE, face) != null;
     }
 
@@ -80,7 +80,7 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
     }
 
     @Override
-    public boolean isTriggerActive(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
+    public boolean isTriggerActive(BlockEntity target, Direction side, IStatementContainer source, IStatementParameter[] parameters) {
         return isActive(target, EnumPipePart.fromFacing(side.getOpposite()));
     }
 

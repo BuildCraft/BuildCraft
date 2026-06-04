@@ -8,9 +8,9 @@ package buildcraft.energy.client.sprite;
 
 import java.util.function.Function;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
 
@@ -19,11 +19,11 @@ import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.misc.SpriteUtil;
 
 public class AtlasSpriteFluid extends AtlasSpriteSwappable {
-    final ResourceLocation fromName;
+    final Identifier fromName;
     final BCFluid fluid;
     final int colourLight, colourDark;
 
-    public AtlasSpriteFluid(String baseName, ResourceLocation fromName, BCFluid fluid) {
+    public AtlasSpriteFluid(String baseName, Identifier fromName, BCFluid fluid) {
         super(baseName);
         this.fromName = fromName;
         this.fluid = fluid;
@@ -31,23 +31,23 @@ public class AtlasSpriteFluid extends AtlasSpriteSwappable {
         colourDark = fluid.getDarkColour();
     }
 
-    @Override
-    public boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
-        ResourceLocation from = SpriteUtil.transformLocation(fromName);
-        TextureAtlasSprite sprite = loadSprite(manager, from.toString(), from, true);
+    // @Override removed (R.Chen): no longer overrides — Phase 10
+    public boolean load(ResourceManager manager, Identifier location, Function<Identifier, Sprite> textureGetter) {
+        Identifier from = SpriteUtil.transformLocation(fromName);
+        Sprite sprite = loadSprite(manager, from.toString(), from, true);
         if (sprite == null) {
             BCLog.logger.warn("Unable to recolour " + from + " as it couldn't be loaded!");
             return true;
         }
-        for (int f = 0; f < sprite.getFrameCount(); f++) {
+        for (int f = 0; f < buildcraft.lib.compat.SpriteCompat.getFrameCount(sprite); f++) {
             recolourFrame(sprite, f);
         }
         swapWith(sprite);
         return false;
     }
 
-    private void recolourFrame(TextureAtlasSprite sprite, int f) {
-        int[][] frameData = sprite.getFrameTextureData(f);
+    private void recolourFrame(Sprite sprite, int f) {
+        int[][] frameData = buildcraft.lib.compat.SpriteCompat.getFrameTextureData(sprite, f);
         if (frameData != null) {
             // frameData[0] is mipmap 0
             int[] pixels = frameData[0];

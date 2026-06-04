@@ -13,7 +13,7 @@ public class ItemStackValueFilter {
     public final boolean matchMeta;
 
     public ItemStackValueFilter(ItemStack stack) {
-        this(new ItemStackKey(stack), stack.getHasSubtypes(), false);
+        this(new ItemStackKey(stack), stack.getItem().isDamageable(), false);
     }
 
     public ItemStackValueFilter(ItemStackKey stack, boolean matchMeta, boolean matchNbt) {

@@ -1,10 +1,10 @@
 package buildcraft.lib.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 import buildcraft.lib.BCLib;
@@ -22,13 +22,13 @@ public class ItemGuideNote extends ItemBC_Neptune {
 
     public ItemStack storeNoteId(String noteId) {
         ItemStack stack = new ItemStack(this);
-        NBTUtilBC.getItemData(stack).setString("note_id", noteId);
+        NBTUtilBC.getItemData(stack).putString("note_id", noteId);
         return stack;
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        player.openGui(BCLib.INSTANCE, 1, world, 0, 0, 0);
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+    // @Override -- removed: method does not exist in Fabric 1.20.1
+    public TypedActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        // STUB(R.Chen): Forge player.openGui → Fabric ScreenHandler, deferred — Phase 10
+        return new ActionResult<>(ActionResult.SUCCESS, player.getStackInHand(hand));
     }
 }

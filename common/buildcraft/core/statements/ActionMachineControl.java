@@ -8,13 +8,14 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Direction;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import buildcraft.api.statements.IActionExternal;
+import buildcraft.lib.misc.CapUtil;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -45,15 +46,15 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
     }
 
     @Override
-    public void actionActivate(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
-        IControllable controllable = target.getCapability(TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
+    public void actionActivate(BlockEntity target, Direction side, IStatementContainer source, IStatementParameter[] parameters) {
+        IControllable controllable = CapUtil.getCapability(target, TilesAPI.CAP_CONTROLLABLE, side.getOpposite());
         if (controllable != null && controllable.acceptsControlMode(mode)) {
             controllable.setControlMode(mode);
         }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @Environment(EnvType.CLIENT)
     public SpriteHolder getSprite() {
         return BCCoreSprites.ACTION_MACHINE_CONTROL.get(mode);
     }

@@ -2,15 +2,16 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
-
 package buildcraft.transport.client.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.util.math.MatrixStack;
 
 import buildcraft.api.transport.pipe.IPipeBehaviourRenderer;
 
@@ -19,22 +20,24 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStripes;
 
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public enum PipeBehaviourRendererStripes implements IPipeBehaviourRenderer<PipeBehaviourStripes> {
     INSTANCE;
 
     @Override
-    public void render(PipeBehaviourStripes stripes, double x, double y, double z, float partialTicks, BufferBuilder bb) {
-        EnumFacing dir = stripes.direction;
-        if (dir == null) return;
-        MutableQuad[] quads = BCTransportModels.getStripesDynQuads(dir);
-        bb.setTranslation(x, y, z);
-        int light = stripes.pipe.getHolder().getPipeWorld().getCombinedLight(stripes.pipe.getHolder().getPipePos(), 0);
-        for (MutableQuad q : quads) {
-            q.multShade();
-            q.lighti(light);
-            q.render(bb);
-        }
-        bb.setTranslation(0, 0, 0);
+    public void render(PipeBehaviourStripes stripes, MatrixStack matrices, VertexConsumer vc,
+            int light, float partialTicks) {
+        if (stripes.direction == null) return;
+        // TODO(R.Chen): BCTransportModels.getStripesDynQuads deferred to Phase 5 FRAPI model layer.
+        // MutableQuad[] quads = BCTransportModels.getStripesDynQuads(stripes.direction);
+        // if (quads == null) return;
+        // int blockLight = light & 0xFFFF;
+        // int skyLight = (light >> 16) & 0xFFFF;
+        // for (MutableQuad q : quads) {
+        //     MutableQuad copy = new MutableQuad(q);
+        //     copy.setCalculatedDiffuse();
+        //     copy.lighti(blockLight, skyLight);
+        //     copy.render(vc);
+        // }
     }
 }

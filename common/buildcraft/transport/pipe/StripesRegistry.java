@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.transport.pipe;
@@ -9,10 +11,11 @@ package buildcraft.transport.pipe;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -49,9 +52,9 @@ public enum StripesRegistry implements IStripesRegistry {
     @Override
     public boolean handleItem(World world,
                               BlockPos pos,
-                              EnumFacing direction,
+                              Direction direction,
                               ItemStack stack,
-                              EntityPlayer player,
+                              PlayerEntity player,
                               IStripesActivator activator) {
         for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (IStripesHandlerItem handler : itemHandlers.get(priority)) {
@@ -67,8 +70,8 @@ public enum StripesRegistry implements IStripesRegistry {
     @Override
     public boolean handleBlock(World world,
                                BlockPos pos,
-                               EnumFacing direction,
-                               EntityPlayer player,
+                               Direction direction,
+                               PlayerEntity player,
                                IStripesActivator activator) {
         for (EnumHandlerPriority priority : EnumHandlerPriority.VALUES) {
             for (IStripesHandlerBlock handler : blockHandlers.get(priority)) {

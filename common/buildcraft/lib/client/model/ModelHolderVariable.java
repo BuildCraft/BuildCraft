@@ -2,6 +2,8 @@
  * Copyright (c) 2017 SpaceToad and the BuildCraft team
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
  */
 
 package buildcraft.lib.client.model;
@@ -15,9 +17,11 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonParseException;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.Identifier;
 
 import buildcraft.api.core.BCLog;
 
@@ -27,16 +31,18 @@ import buildcraft.lib.client.model.json.JsonVariableModel;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.ITickableNode;
 
-import buildcraft.transport.BCTransportModels;
-
-/** Holds a model that can be changed by variables. Models are defined in this way by firstly creating a
- * {@link FunctionContext}, and then defining all of the variables with FunctionContext.getOrAddX(). It is recommended
- * that you define all models inside of static initializer block. For a complete usage example look in
- * {@link BCTransportModels}. <br>
- * The json model definition of a variable model matches the vanilla format, except that any of the static numbers may
- * be replaced with an expression, that may use any of the variables you have defined. */
+/**
+ * STUB(R.Chen): client model — Phase 5.
+ *
+ * The Forge original resolved sprites via {@code MinecraftClient.getInstance().getTextureMapBlocks()}
+ * during ModelBakeEvent. In Fabric 1.20.1 sprite resolution goes through a Fabric atlas pipeline.
+ * The public API surface (fields, getCutoutQuads/getTranslucentQuads) is preserved so callers
+ * compile. Sprite lookup stubs return null; baking produces empty arrays until Phase 5.
+ */
+@Environment(EnvType.CLIENT)
 public class ModelHolderVariable extends ModelHolder {
-    public final Map<String, TextureAtlasSprite> customSprites = new HashMap<>();
+    // STUB(R.Chen): Sprite map used by Phase-5 render pass to inject custom sprites.
+    public final Map<String, Sprite> customSprites = new HashMap<>();
     private final FunctionContext context;
     private JsonVariableModel rawModel;
     private boolean unseen = true;
@@ -52,7 +58,7 @@ public class ModelHolderVariable extends ModelHolder {
     }
 
     @Override
-    protected void onTextureStitchPre(Set<ResourceLocation> toRegisterSprites) {
+    protected void onTextureStitchPre(Set<Identifier> toRegisterSprites) {
         rawModel = null;
         failReason = null;
 
@@ -74,31 +80,13 @@ public class ModelHolderVariable extends ModelHolder {
 
     @Override
     protected void onModelBake() {
-        // NO-OP: we bake every time get{Cutout/Translucent}Quads is called as this is a variable model
+        // NO-OP: variable models are baked on demand
     }
 
+    // STUB(R.Chen): Phase 5 — sprite resolution via Fabric atlas pipeline.
     private TexturedFace lookupTexture(String lookup) {
-        int attempts = 0;
-        JsonTexture texture = new JsonTexture(lookup);
-        TextureAtlasSprite sprite;
-        while (texture.location.startsWith("#") && attempts < 10) {
-            JsonTexture tex = rawModel.textures.get(texture.location);
-            if (tex == null) break;
-            else texture = texture.inParent(tex);
-            attempts++;
-        }
-        lookup = texture.location;
-        if (lookup.startsWith("~")) {
-            sprite = customSprites.get(lookup.substring(1));
-            if (sprite == null) {
-                sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
-            }
-        } else {
-            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
-        }
         TexturedFace face = new TexturedFace();
-        face.sprite = sprite;
-        face.faceData = texture.faceData;
+        face.sprite = null; // STUB
         return face;
     }
 
