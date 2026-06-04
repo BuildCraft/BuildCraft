@@ -44,7 +44,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
 
     // public static GuideAssemblyFactory create(@Nonnull ItemStack stack) {
     // for (net.minecraft.recipe.CraftingRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-    // if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
+    // if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY)), false)) {
     // GuideAssemblyFactory val = getFactory(recipe);
     // if (val != null) {
     // return val;
@@ -68,7 +68,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // dimInput[x][y] = input[x + y * dimInput.length].copy();
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof ShapedOreRecipe) {
     // Object[] input = ((ShapedOreRecipe) recipe).getInput();
     // ItemStack[][] dimInput = getStackSizeArray(recipe);
@@ -77,7 +77,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // dimInput[x][y] = oreConvert(input[x + y * dimInput.length]);
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof ShapelessOreRecipe) {
     // List<Object> input = ((ShapelessOreRecipe) recipe).getInput();
     // ItemStack[][] dimInput = getStackSizeArray(recipe);
@@ -89,7 +89,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // }
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof ShapelessRecipes) {
     // List<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
     // ItemStack[][] dimInput = getStackSizeArray(recipe);
@@ -101,7 +101,7 @@ public class GuideAssemblyFactory implements GuidePartFactory {
     // }
     // }
     // }
-    // val = new GuideAssemblyFactory(dimInput, recipe.getRecipeOutput());
+    // val = new GuideAssemblyFactory(dimInput, recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
     // } else if (recipe instanceof IRecipeViewable) {
     // // TODO: Implement IRecipeViewable usage
     // } else {

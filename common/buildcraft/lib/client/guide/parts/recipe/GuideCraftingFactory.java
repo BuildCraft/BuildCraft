@@ -50,7 +50,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
     public static GuidePartFactory create(@Nonnull ItemStack stack) {
         for (net.minecraft.recipe.CraftingRecipe recipe : ForgeRegistries.RECIPES) {
-            if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getRecipeOutput()), false)) {
+            if (OreDictionaryStub.itemMatches(stack, StackUtil.asNonNull(recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY)), false)) {
                 GuidePartFactory val = getFactory(recipe);
                 if (val != null) {
                     return val;
@@ -64,7 +64,7 @@ public class GuideCraftingFactory implements GuidePartFactory {
     }
 
     public static GuidePartFactory getFactory(net.minecraft.recipe.CraftingRecipe recipe) {
-        ItemStack output = recipe.getRecipeOutput();
+        ItemStack output = recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY);
         DefaultedList<Ingredient> input = recipe.getIngredients();
         if (input == null || input.isEmpty() || output.isEmpty()) {
             return null;

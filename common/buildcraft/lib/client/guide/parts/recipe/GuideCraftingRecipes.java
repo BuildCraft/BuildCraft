@@ -177,7 +177,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 appendIndex(stack.baseStack, recipe, outputIndexMap);
             }
         } else {
-            ItemStack output = recipe.getRecipeOutput();
+            ItemStack output = recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY);
             if (!output.isEmpty()) {
                 appendIndex(output, recipe, outputIndexMap);
             }
@@ -194,7 +194,7 @@ public enum GuideCraftingRecipes implements IStackRecipes {
                 return true;
             }
         } else {
-            ItemStack out = StackUtil.asNonNull(recipe.getRecipeOutput());
+            ItemStack out = StackUtil.asNonNull(recipe.getOutput(net.minecraft.registry.DynamicRegistryManager.EMPTY));
             if (OreDictionaryStub.itemMatches(target, out, false) || OreDictionaryStub.itemMatches(out, target, false)) {
                 return true;
             }

@@ -20,7 +20,7 @@ public class PageLinkNormal extends PageLink {
     }
 
     private static String strip(String text) {
-        return Formatting.getTextWithoutFormattingCodes(text.trim());
+        return Formatting.strip(text.trim());
     }
 
     @Override
