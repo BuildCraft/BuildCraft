@@ -1,13 +1,21 @@
+/*
+ * Copyright (c) 2017 SpaceToad and the BuildCraft team
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Ported to Fabric 1.20.1 by R.Chen (https://github.com/MantraChen).
+ */
 package buildcraft.lib.client;
 
-import net.minecraft.client.gui.toasts.GuiToast;
-import net.minecraft.client.gui.toasts.IToast;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.toast.Toast;
+import net.minecraft.client.toast.ToastManager;
 
 import buildcraft.lib.gui.ISimpleDrawable;
-import buildcraft.lib.misc.LocaleUtil;
 
-public class ToastInformation implements IToast {
+// STUB(R.Chen): Forge IToast.draw(GuiToast, long) → Yarn Toast.draw(DrawContext, ToastManager, long).
+// Full toast rendering (texture + localized text) is deferred — Phase 10.
+public class ToastInformation implements Toast {
 
     public final String localeKey;
     public final ISimpleDrawable icon;
@@ -20,21 +28,13 @@ public class ToastInformation implements IToast {
     }
 
     public ToastInformation(String localeKey, ISimpleDrawable icon) {
-        this(localeKey, icon, NO_TOKEN);
+        this(localeKey, icon, new Object());
     }
 
-    // @Override -- removed: method does not exist in Fabric 1.20.1
-    public Visibility draw(GuiToast toastGui, long delta) {
-        toastGui.getMinecraft().getTextureManager().bindTexture(TEXTURE_TOASTS);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        toastGui.drawTexturedModalRect(0, 0, 0, 0, 160, 32);
-        int x = 10;
-        if (icon != null) {
-            icon.drawAt(0, 0);
-            x = 30;
-        }
-        // TODO(migration): fontRenderer.draw in 1.20.1 needs DrawContext; originally: draw(LocaleUtil.localize(localeKey), x, 13, -1)
-        return delta >= 5000L ? Visibility.HIDE : Visibility.SHOW;
+    @Override
+    public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
+        // STUB(R.Chen): toast rendering deferred — Phase 10
+        return startTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
 
     @Override
