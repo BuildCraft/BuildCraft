@@ -94,7 +94,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
 
     private static boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
         if (stack1 != null) {
-            return stack2 != null && stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+            return stack2 != null && ItemStack.areItemsEqual(stack1, stack2) && java.util.Objects.equals(stack1.getNbt(), stack2.getNbt());
         } else {
             return stack2 == null;
         }

@@ -18,6 +18,6 @@ public class ItemHandlerHelper {
     }
 
     public static boolean canItemStacksStack(ItemStack a, ItemStack b) {
-        return ItemStack.areItemsEqual(a, b) && ItemStack.areNbtEqual(a, b);
+        return ItemStack.areItemsEqual(a, b) && java.util.Objects.equals(a.getNbt(), b.getNbt());
     }
 }

@@ -55,4 +55,10 @@ public final class OreDictionaryStub {
     public static boolean containsMatch(boolean strict, ItemStack[] inputs, ItemStack... targets) {
         return false;
     }
+
+    /** STUB(R.Chen): Forge OreDictionary.itemMatches — simplified to exact item match (ignores ore-dict). */
+    public static boolean itemMatches(ItemStack target, ItemStack input, boolean strict) {
+        if (target.isEmpty() || input.isEmpty()) return target.isEmpty() == input.isEmpty();
+        return target.getItem() == input.getItem();
+    }
 }

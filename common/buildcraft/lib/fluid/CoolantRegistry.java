@@ -129,7 +129,7 @@ public enum CoolantRegistry implements ICoolantManager {
 
         @Override
         public FluidStackBC getFluidFromSolidCoolant(ItemStack stack) {
-            if (stack == null || !stack.isItemEqual(solid)) {
+            if (stack == null || !ItemStack.areItemsEqual(stack, solid)) {
                 return null;
             }
             int liquidAmount = (int) (stack.getCount() * fluid.amount * multiplier / solid.getCount());

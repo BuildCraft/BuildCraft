@@ -217,7 +217,7 @@ public class StackUtil {
     public static boolean isMatchingItem(ItemStack filter, ItemStack test, boolean matchDamage, boolean matchNbt) {
         if (filter.isEmpty() || test.isEmpty()) return false;
         if (filter.getItem() != test.getItem()) return false;
-        if (matchNbt && !ItemStack.areNbtEqual(filter, test)) return false;
+        if (matchNbt && !java.util.Objects.equals(filter.getNbt(), test.getNbt())) return false;
         return true;
     }
     public static boolean isMatchingItemOrList(ItemStack filter, ItemStack test) {
