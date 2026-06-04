@@ -65,19 +65,19 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
             tile.getOwner(),
             tile.getBuilderPos()
         );
-        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.items.get(0));
+        fakePlayer.setHeldItem(fakePlayer.getActiveHand(), placeTask.required.get(0));
         return TemplateApi.templateRegistry.handle(
             tile.getWorldBC(),
             placeTask.pos,
             fakePlayer,
-            placeTask.items.get(0)
+            placeTask.required.get(0)
         );
     }
 
     // @Override removed (R.Chen): no longer overrides — Phase 10
     protected void cancelPlaceTask(PlaceTask placeTask) {
-        super.cancelPlaceTask(placeTask);
-        tile.getInvResources().insert(placeTask.items.get(0), false, false);
+        // STUB(R.Chen): base SnapshotBuilder has no cancelPlaceTask in the Fabric port — Phase 10
+        tile.getInvResources().insert(placeTask.required.get(0), false, false);
     }
 
     @Override

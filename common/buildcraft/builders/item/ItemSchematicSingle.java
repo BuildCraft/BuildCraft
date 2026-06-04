@@ -11,6 +11,11 @@ import buildcraft.lib.item.ItemBC_Neptune;
 
 public class ItemSchematicSingle extends ItemBC_Neptune {
 
+    // STUB(R.Chen): legacy meta/NBT constants used by TileReplacer — values match BuildCraft 1.12.2
+    public static final int DAMAGE_CLEAN = 0;
+    public static final int DAMAGE_USED = 1;
+    public static final String NBT_KEY = "schematic";
+
     public ItemSchematicSingle(Settings settings, String id) {
         super(settings, id);
     }
