@@ -81,15 +81,14 @@ public class BCCore {
     }
 
     private static void setItemTab(Item item, CreativeTabBC tab) {
-        if (item != null) {
-            item.setCreativeTab(tab);
-        }
+        // STUB(R.Chen): Forge Item.setCreativeTab dropped — Fabric uses ItemGroupEvents in the ModInitializer, Phase 10
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         BCCoreConfig.saveConfigs();
-        BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
+        // STUB(R.Chen): Forge Item.setCreativeTab dropped — Fabric ItemGroupEvents, Phase 10
+        // BCLibItems.guide creative-tab assignment deferred
 
         BCCoreProxy.getProxy().fmlInit();
 

@@ -34,7 +34,7 @@ public class ItemEngine_BC8<E extends Enum<E> & IEngineType> extends ItemBlockBC
 
     // @Override -- removed: method does not exist in Fabric 1.20.1
     public void addModelVariants(HashMap<Integer, ModelIdentifier> variants) {
-        for (E type : engineBlock.getEngineProperty().getAllowedValues()) {
+        for (E type : engineBlock.getEngineProperty().getValues()) {
             int index = type.ordinal();
             addVariant(variants, index, type.getItemModelLocation());
         }

@@ -140,7 +140,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             if (currentEditing == null) {
                 for (Iterator<VolumeBox> iterator = volumeBoxes.volumeBoxes.iterator(); iterator.hasNext();) {
                     VolumeBox volumeBox = iterator.next();
-                    if (volumeBox.box.getBoundingBox().calculateIntercept(start, end) != null) {
+                    if (volumeBox.box.getBoundingBox().raycast(start, end).isPresent()) {
                         if (volumeBox.getLockTargetsStream().noneMatch(Lock.Target.TargetResize.class::isInstance)) {
                             volumeBox.addons.values().forEach(Addon::onRemoved);
                             iterator.remove();
@@ -171,9 +171,9 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                         .collect(Collectors.toList())
                     ) {
                     for (BlockPos p : PositionUtil.getCorners(volumeBox.box.min(), volumeBox.box.max())) {
-                        HitResult ray = new Box(p).calculateIntercept(start, end);
-                        if (ray != null) {
-                            double dist = ray.hitVec.distanceTo(start);
+                        java.util.Optional<Vec3d> ray = new Box(p).raycast(start, end);
+                        if (ray.isPresent()) {
+                            double dist = ray.get().distanceTo(start);
                             if (bestDist > dist) {
                                 bestDist = dist;
                                 bestVolumeBox = volumeBox;

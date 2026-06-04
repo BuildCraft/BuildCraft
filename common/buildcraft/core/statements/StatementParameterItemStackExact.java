@@ -70,7 +70,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     public void writeToNbt(NbtCompound compound) {
         if (stack != null) {
             NbtCompound tagCompound = new NbtCompound();
-            stack.writeToNBT(tagCompound);
+            stack.writeNbt(tagCompound);
             compound.put("stack", tagCompound);
         }
     }

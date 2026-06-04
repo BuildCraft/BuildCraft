@@ -148,7 +148,7 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E> & IEngineType> exten
 
     // @Override -- removed: method does not exist in Fabric 1.20.1
     public void getSubBlocks(ItemGroup tab, DefaultedList<ItemStack> list) {
-        for (E engine : getEngineProperty().getAllowedValues()) {
+        for (E engine : getEngineProperty().getValues()) {
             if (engineTileConstructors.containsKey(engine)) {
                 list.add(new ItemStack(this, 1));
             }
