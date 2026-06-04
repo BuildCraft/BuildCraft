@@ -13,7 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.SpectralArrowEntity;
 import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
@@ -35,11 +35,12 @@ public class EntityUtil {
     public static DefaultedList<ItemStack> collectItems(World world, Vec3d around, double radius) {
         DefaultedList<ItemStack> stacks = DefaultedList.of();
 
-        Box aabb = BoundingBoxUtil.makeAround(around, radius);
-        for (ItemEntity ent : world.getEntitiesWithinAABB(ItemEntity.class, aabb)) {
+        Box aabb = new Box(around.x - radius, around.y - radius, around.z - radius,
+            around.x + radius, around.y + radius, around.z + radius);
+        for (ItemEntity ent : world.getEntitiesByClass(ItemEntity.class, aabb, e -> true)) {
             if (!ent.isRemoved()) {
                 ent.remove(net.minecraft.entity.Entity.RemovalReason.DISCARDED);
-                stacks.add(ent.getItem());
+                stacks.add(ent.getStack());
             }
         }
         return stacks;
@@ -80,7 +81,7 @@ public class EntityUtil {
     }
 
     @Nonnull
-    public static ItemStack getArrowStack(EntityArrow arrow) {
+    public static ItemStack getArrowStack(PersistentProjectileEntity arrow) {
         // FIXME: Replace this with an invocation of arrow.getArrowStack
         // (but its protected so we can't)
         if (arrow instanceof SpectralArrowEntity) {
