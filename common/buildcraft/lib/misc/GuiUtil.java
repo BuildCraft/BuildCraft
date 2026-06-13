@@ -445,6 +445,9 @@ public class GuiUtil {
     }
 
     public static List<String> getUnFormattedTooltip(ItemStack stack) {
+        if (stack.isEmpty() || stack.getItem() == null) {
+            return Collections.singletonList(getStackDisplayName(stack));
+        }
         Minecraft mc = Minecraft.getMinecraft();
         List<String> list = stack.getTooltip(mc.player, getTooltipFlags());
         if (list.isEmpty()) {
@@ -459,9 +462,14 @@ public class GuiUtil {
             // Temp workaround for headcrumbs
             // TODO: Remove this after https://github.com/BuildCraft/BuildCraft/issues/4268 is fixed from their side! */
             Item item = stack.getItem();
-            String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
-            BCLog.logger.warn("[lib.guide] Found null display name! " + info);
-            name = "!!NULL stack.getDisplayName(): " + info;
+            if (item != null) {
+                String info = item.getRegistryName() + " " + item.getClass() + " (" + stack.serializeNBT() + ")";
+                BCLog.logger.warn("[lib.guide] Found null display name! " + info);
+                name = "!!NULL stack.getDisplayName(): " + info;
+            } else {
+                BCLog.logger.warn("[lib.guide] Found null display name AND null item! " + stack.serializeNBT());
+                name = "!!NULL stack.getDisplayName(): " + stack.serializeNBT();
+            }
         }
         return name;
     }

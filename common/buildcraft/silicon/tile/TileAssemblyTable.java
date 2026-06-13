@@ -42,6 +42,8 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import buildcraft.silicon.EnumAssemblyRecipeState;
 
 public class TileAssemblyTable extends TileLaserTableBase {
@@ -61,6 +63,15 @@ public class TileAssemblyTable extends TileLaserTableBase {
     @Override
     public IdAllocator getIdAllocator() {
         return IDS;
+    }
+
+    @Override
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, net.minecraft.item.ItemStack before,
+        net.minecraft.item.ItemStack after) {
+        super.onSlotChange(handler, slot, before, after);
+        if (!world.isRemote) {
+            updateRecipes();
+        }
     }
 
     private void updateRecipes() {

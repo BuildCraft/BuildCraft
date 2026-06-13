@@ -418,7 +418,8 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
         Section s = sections.get(from);
         if (pipe.getBehaviour() instanceof IPipeTransportPowerHook) {
-            s.nextPowerQuery += ((IPipeTransportPowerHook) pipe.getBehaviour()).requestPower(from, amount);
+            long hooked = ((IPipeTransportPowerHook) pipe.getBehaviour()).requestPower(from, amount);
+            s.nextPowerQuery += (hooked >= 0 ? hooked : amount);
         } else {
             s.nextPowerQuery += amount;
         }
@@ -476,6 +477,14 @@ public class PipeFlowPower extends PipeFlow implements IFlowPower, IDebuggable {
 
             internalPower += internalNextPower;
             internalNextPower = 0;
+
+            if (pipe.getBehaviour() instanceof IPipeTransportPowerHook) {
+                IPipeTransportPowerHook hook = (IPipeTransportPowerHook) pipe.getBehaviour();
+                long used = hook.receivePower(side, internalPower);
+                if (used >= 0) {
+                    internalPower -= used;
+                }
+            }
         }
 
         @Override
