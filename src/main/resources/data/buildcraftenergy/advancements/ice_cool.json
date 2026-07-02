@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.ice_cool.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.ice_cool.description"
+    }
+  },
+  "parent": "buildcraftenergy:powering_up",
+  "criteria": {
+    "has_combustion_and_coolant": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftenergy:engine_iron"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:water_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_combustion_and_coolant"
+    ]
+  ]
+}

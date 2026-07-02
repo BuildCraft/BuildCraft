@@ -1,0 +1,22 @@
+{
+  "block.buildcraftsilicon.charging_table": "Стол зарядки",
+  "item.buildcraftsilicon.charging_table": "Стол зарядки",
+  "block.buildcraftsilicon.advanced_crafting_table": "Продвинутый верстак",
+  "item.buildcraftsilicon.advanced_crafting_table": "Продвинутый верстак",
+  "block.buildcraftsilicon.laser": "Лазер",
+  "block.buildcraftsilicon.assembly_table": "Сборочный стол",
+  "block.buildcraftsilicon.integration_table": "Стол интеграции",
+  "block.buildcraftsilicon.programming_table": "Стол программирования",
+  "item.buildcraftsilicon.redstone_crystal": "Редстоуновый кристалл",
+  "item.buildcraftsilicon.redstone_board": "Редстоуновая плата",
+  "item.buildcraftsilicon.plug.gate": "Гейт",
+  "item.buildcraftsilicon.plug.facade": "Фасад",
+  "item.buildcraftsilicon.plug.lens": "Линза",
+  "item.buildcraftsilicon.plug.light_sensor": "Датчик света",
+  "item.buildcraftsilicon.plug.pulsar": "Трубный пульсар",
+  "item.buildcraftsilicon.gate_copier": "Копировщик гейтов",
+  "item.buildcraftsilicon.laser": "Лазер",
+  "item.buildcraftsilicon.assembly_table": "Сборочный стол",
+  "item.buildcraftsilicon.integration_table": "Стол интеграции",
+  "item.buildcraftsilicon.programming_table": "Стол программирования"
+}

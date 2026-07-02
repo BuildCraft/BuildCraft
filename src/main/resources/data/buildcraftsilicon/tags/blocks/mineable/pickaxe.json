@@ -1,0 +1,10 @@
+{
+  "values": [
+    "buildcraftsilicon:laser",
+    "buildcraftsilicon:assembly_table",
+    "buildcraftsilicon:charging_table",
+    "buildcraftsilicon:integration_table",
+    "buildcraftsilicon:advanced_crafting_table",
+    "buildcraftsilicon:programming_table"
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:diamond_item"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.pipe_fanatic.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.pipe_fanatic.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcrafttransport:pipe_diversification",
+  "criteria": {
+    "has_all_pipe_items": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcrafttransport:structure"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:wood_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:cobblestone_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:stone_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:quartz_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:iron_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:gold_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:clay_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:sandstone_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:void_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:obsidian_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:diamond_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:diamond_wood_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:lapis_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:daizuli_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:emzuli_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:stripes_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:wood_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:cobblestone_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:stone_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:quartz_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:gold_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:iron_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:clay_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:sandstone_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:void_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:diamond_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:diamond_wood_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:wood_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:cobblestone_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:stone_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:quartz_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:iron_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:gold_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:sandstone_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:diamond_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:diamond_wood_power"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_all_pipe_items"
+    ]
+  ]
+}

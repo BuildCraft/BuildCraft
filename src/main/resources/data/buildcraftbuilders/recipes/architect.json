@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "bmb",
+    "ycy",
+    "dsd"
+  ],
+  "key": {
+    "b": {
+      "item": "minecraft:black_dye"
+    },
+    "m": {
+      "item": "buildcraftcore:marker_volume"
+    },
+    "y": {
+      "item": "minecraft:yellow_dye"
+    },
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "d": {
+      "item": "buildcraftcore:gears/gear_diamond"
+    },
+    "s": {
+      "item": "buildcraftbuilders:blueprint"
+    }
+  },
+  "result": {
+    "item": "buildcraftbuilders:architect"
+  }
+}

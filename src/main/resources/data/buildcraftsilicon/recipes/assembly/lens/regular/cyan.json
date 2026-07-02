@@ -1,0 +1,17 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 500000000,
+  "group": "buildcraftsilicon:lens_regulars",
+  "ingredient_counts": [
+    1
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:cyan_stained_glass"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug/lens",
+    "nbt": "{Damage:9}"
+  }
+}

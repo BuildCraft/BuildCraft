@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftenergy:oil_residue/cool_bucket"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.fine_riches.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.fine_riches.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "code_trigger"
+    ]
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:waterproof"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.sealing_fluids.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.sealing_fluids.description"
+    }
+  },
+  "parent": "buildcrafttransport:pipe_diversification",
+  "criteria": {
+    "has_pipe_sealant": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcrafttransport:waterproof"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_pipe_sealant"
+    ]
+  ]
+}

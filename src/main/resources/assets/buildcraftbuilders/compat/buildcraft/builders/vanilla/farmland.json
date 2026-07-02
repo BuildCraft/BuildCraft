@@ -1,0 +1,16 @@
+[
+    {
+        "selectors": ["minecraft:farmland"],
+        "requiredExtractors": [
+            {
+                "type": "constant",
+                "items": [
+                    {
+                        "item": "minecraft:dirt"
+                    }
+                ]
+            }
+        ],
+        "ignoredProperties": ["moisture"]
+    }
+]

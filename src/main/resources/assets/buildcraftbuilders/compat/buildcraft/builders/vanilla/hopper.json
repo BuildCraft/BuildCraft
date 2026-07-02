@@ -1,0 +1,6 @@
+[
+    {
+        "selectors": ["minecraft:hopper"],
+        "ignoredProperties": ["enabled"]
+    }
+]

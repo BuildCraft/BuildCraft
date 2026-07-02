@@ -1,0 +1,35 @@
+{
+    "parent":"buildcraftsilicon:models/plugs/lens",
+    "textures": {
+        "#main": "buildcraftsilicon:plugs/filter"
+    },
+    "values": {
+        "isFilter":"true"
+    },
+    "cutout": [
+        {
+            "from": [ 0, 4.01, 6 ],
+            "to": [ 2, 11.99, 7.01 ],
+            "faces": {
+                "north": { "uv": [ 3,12,13,14 ], "texture": "'#main'", "rotation": 1 },
+                "south": { "uv": [ 3,12,13,14 ], "texture": "'#main'", "rotation": 3 },
+                "west":  { "uv": [ 3,12,13,13 ], "texture": "'#main'", "rotation": 3 },
+                "east":  { "uv": [ 3,13,13,14 ], "texture": "'#main'", "rotation": 1 },
+                "down":  { "uv": [12,12,13,14 ], "texture": "'#main'", "rotation": 1 },
+                "up":    { "uv": [ 3,12, 4,14 ], "texture": "'#main'", "rotation": 1 }
+            }
+        },
+        {
+            "from": [ 0, 4.01, 9 ],
+            "to": [ 2, 11.99, 10.01 ],
+            "faces": {
+                "north": { "uv": [ 3, 2,13, 4 ], "texture": "'#main'", "rotation": 1 },
+                "south": { "uv": [ 3, 2,13, 4 ], "texture": "'#main'", "rotation": 3 },
+                "west":  { "uv": [ 3, 2,13, 3 ], "texture": "'#main'", "rotation": 3 },
+                "east":  { "uv": [ 3, 3,13, 4 ], "texture": "'#main'", "rotation": 1 },
+                "down":  { "uv": [12, 2,13, 4 ], "texture": "'#main'", "rotation": 1 },
+                "up":    { "uv": [ 3, 2, 4, 4 ], "texture": "'#main'", "rotation": 1 }
+            }
+        }
+    ]
+}

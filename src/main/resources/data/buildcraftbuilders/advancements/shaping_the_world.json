@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftbuilders:quarry"
+    },
+    "title": {
+      "translate": "advancements.buildcraftbuilders.shaping_the_world.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftbuilders.shaping_the_world.description"
+    }
+  },
+  "parent": "buildcraftcore:gears",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

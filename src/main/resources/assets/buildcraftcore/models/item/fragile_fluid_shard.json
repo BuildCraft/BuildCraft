@@ -1,0 +1,12 @@
+{
+	"loader":"forge:fluid_container",
+	"fluid":"minecraft:block/water",
+	"flip_gas":false,
+	"cover_is_mask":false,
+	"apply_fluid_luminosity":true,
+    "textures": {
+        "particle": "buildcraftcore:items/fragile_fluid_shard_base",
+		"base": "buildcraftcore:items/fragile_fluid_shard_base",
+        "fluid": "buildcraftcore:items/fragile_fluid_shard_fluid"
+    }
+}

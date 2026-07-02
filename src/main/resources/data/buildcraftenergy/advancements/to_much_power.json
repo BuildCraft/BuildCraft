@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:wrench"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.to_much_power.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.to_much_power.description"
+    }
+  },
+  "parent": "buildcraftenergy:powering_up",
+  "criteria": {
+    "has_combustion_and_wrench": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftenergy:engine_iron"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftcore:wrench"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_combustion_and_wrench"
+    ]
+  ]
+}

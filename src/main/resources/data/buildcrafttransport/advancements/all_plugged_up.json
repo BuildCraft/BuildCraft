@@ -1,0 +1,64 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftsilicon:plug/light_sensor"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.all_plugged_up.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.all_plugged_up.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcrafttransport:pipe_logic",
+  "criteria": {
+    "has_all_pluggables": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcrafttransport:plug_blocker"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:plug_power_adaptor"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftsilicon:plug/gate"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftsilicon:plug/facade"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftsilicon:plug/lens"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftsilicon:plug/light_sensor"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftsilicon:plug/pulsar"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_all_pluggables"
+    ]
+  ]
+}

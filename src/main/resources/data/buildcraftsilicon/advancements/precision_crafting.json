@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftsilicon:assembly_table"
+    },
+    "title": {
+      "translate": "advancements.buildcraftsilicon.precision_crafting.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftsilicon.precision_crafting.description"
+    }
+  },
+  "parent": "buildcraftsilicon:laser_power",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

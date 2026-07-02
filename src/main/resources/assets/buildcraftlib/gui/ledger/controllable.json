@@ -1,0 +1,14 @@
+{
+	"type": "buildcraftlib:ledger",
+	"title": "",
+	"closed": [
+		{
+			"type": "buildcraftlib:drawable",
+			"source": "controllable.sprite",
+			"area": [0, 0, 16, 16]
+		}
+	],
+	"children": [
+		
+	]
+}

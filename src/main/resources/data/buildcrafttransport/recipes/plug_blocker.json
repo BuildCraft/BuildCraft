@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:structure"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "buildcrafttransport:plug_blocker"
+  }
+}

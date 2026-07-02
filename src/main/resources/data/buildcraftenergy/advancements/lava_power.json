@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:lava_bucket"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.lava_power.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.lava_power.description"
+    }
+  },
+  "parent": "buildcraftenergy:engine",
+  "criteria": {
+    "has_stirling_and_lava": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftenergy:engine_stone"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:lava_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_stirling_and_lava"
+    ]
+  ]
+}

@@ -1,0 +1,19 @@
+{
+    "textures": {
+        "template": "buildcraftbuilders:blocks/builder/slot_template"
+    },
+    "elements": [
+        {
+            "from": [3, 4, -2],
+            "to": [13, 6, 8],
+            "faces": {
+                "down": {"texture": "#template", "uv": [3, 3, 13, 13]},
+                "up": {"texture": "#template", "uv": [3, 3, 13, 13]},
+                "north": {"texture": "#template", "uv": [3, 0, 13, 2]},
+                "south": {"texture": "#template", "uv": [3, 0, 13, 2]},
+                "west": {"texture": "#template", "uv": [3, 0, 13, 2]},
+                "east": {"texture": "#template", "uv": [3, 0, 13, 2]}
+            }
+        }
+    ]
+}

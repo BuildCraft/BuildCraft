@@ -1,0 +1,6 @@
+{
+    "parent": "buildcraftbuilders:block/filler/pattern",
+    "textures": {
+        "pattern": "buildcraftbuilders:blocks/filler/patterns/fill"
+    }
+}

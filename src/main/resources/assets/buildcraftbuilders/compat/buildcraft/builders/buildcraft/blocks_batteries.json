@@ -1,0 +1,18 @@
+[
+    {
+        "selectors": [
+            "buildcraftbuilders:quarry",
+            "buildcraftbuilders:filler",
+            "buildcraftfactory:chute",
+            "buildcraftfactory:distiller",
+            "buildcraftfactory:pump",
+            "buildcraftfactory:mining_well",
+            "buildcraftsilicon:laser"
+        ],
+        "replaceNbt": {
+            "battery": {
+                "stored": 0
+            }
+        }
+    }
+]

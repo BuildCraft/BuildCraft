@@ -1,0 +1,79 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftenergy:oil_residue/cool_bucket"
+    },
+    "title": {
+      "translate": "advancements.buildcraftenergy.refine_and_redefine.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftenergy.refine_and_redefine.description"
+    },
+    "frame": "challenge"
+  },
+  "parent": "buildcraftenergy:sticky_dipping",
+  "criteria": {
+    "has_all_oil_products": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftenergy:oil/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:oil_residue/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:oil_heavy/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:oil_dense/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:oil_distilled/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:fuel_dense/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:fuel_mixed_heavy/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:fuel_light/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:fuel_mixed_light/cool_bucket"
+            ]
+          },
+          {
+            "items": [
+              "buildcraftenergy:fuel_gaseous/cool_bucket"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_all_oil_products"
+    ]
+  ]
+}

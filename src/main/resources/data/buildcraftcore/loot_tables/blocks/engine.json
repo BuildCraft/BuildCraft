@@ -1,0 +1,67 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "buildcraftcore:engine_redstone",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "buildcraftcore:engine",
+              "properties": {
+                "type": "wood"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "buildcraftenergy:engine_stone",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "buildcraftcore:engine",
+              "properties": {
+                "type": "stone"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "buildcraftenergy:engine_iron",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "buildcraftcore:engine",
+              "properties": {
+                "type": "iron"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "buildcraftcore:engine_creative",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "buildcraftcore:engine",
+              "properties": {
+                "type": "creative"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

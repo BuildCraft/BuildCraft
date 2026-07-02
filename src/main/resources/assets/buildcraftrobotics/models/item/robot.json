@@ -1,0 +1,107 @@
+{
+  "parent": "buildcraftrobotics:item/robot/empty",
+  "overrides": [
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.01
+      },
+      "model": "buildcraftrobotics:item/robot/picker"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.02
+      },
+      "model": "buildcraftrobotics:item/robot/carrier"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.03
+      },
+      "model": "buildcraftrobotics:item/robot/fluid_carrier"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.04
+      },
+      "model": "buildcraftrobotics:item/robot/lumberjack"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.05
+      },
+      "model": "buildcraftrobotics:item/robot/harvester"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.06
+      },
+      "model": "buildcraftrobotics:item/robot/miner"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.07
+      },
+      "model": "buildcraftrobotics:item/robot/planter"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.08
+      },
+      "model": "buildcraftrobotics:item/robot/farmer"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.09
+      },
+      "model": "buildcraftrobotics:item/robot/leave_cutter"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.1
+      },
+      "model": "buildcraftrobotics:item/robot/butcher"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.11
+      },
+      "model": "buildcraftrobotics:item/robot/shovelman"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.12
+      },
+      "model": "buildcraftrobotics:item/robot/pump"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.13
+      },
+      "model": "buildcraftrobotics:item/robot/delivery"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.14
+      },
+      "model": "buildcraftrobotics:item/robot/knight"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.15
+      },
+      "model": "buildcraftrobotics:item/robot/bomber"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.16
+      },
+      "model": "buildcraftrobotics:item/robot/stripes"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:robot": 0.17
+      },
+      "model": "buildcraftrobotics:item/robot/builder"
+    }
+  ]
+}

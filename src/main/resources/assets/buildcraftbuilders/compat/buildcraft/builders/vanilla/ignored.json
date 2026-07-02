@@ -1,0 +1,9 @@
+[
+    {
+        "selectors": [
+            "minecraft:fire",
+            "minecraft:ender_chest"
+        ],
+        "ignore": true
+    }
+]

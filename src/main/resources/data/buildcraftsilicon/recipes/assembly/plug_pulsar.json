@@ -1,0 +1,19 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 1000000000,
+  "ingredient_counts": [
+    1,
+    2
+  ],
+  "ingredients": [
+    {
+      "item": "buildcraftcore:engine_redstone"
+    },
+    {
+      "tag": "forge:ingots/iron"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug/pulsar"
+  }
+}

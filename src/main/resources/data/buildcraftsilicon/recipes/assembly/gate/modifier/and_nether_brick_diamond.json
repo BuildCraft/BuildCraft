@@ -1,0 +1,24 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 120000000000,
+  "group": "buildcraftsilicon:gate_modifier",
+  "ingredient_counts": [
+    1,
+    1
+  ],
+  "ingredients": [
+    {
+      "type": "forge:nbt",
+      "count": 1,
+      "item": "buildcraftsilicon:plug/gate",
+      "nbt": "{gate:{logic:0b,material:2b,modifier:0b}}"
+    },
+    {
+      "item": "buildcraftsilicon:redstone_chipset/diamond"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:plug/gate",
+    "nbt": "{gate:{logic:0b,material:2b,modifier:3b}}"
+  }
+}

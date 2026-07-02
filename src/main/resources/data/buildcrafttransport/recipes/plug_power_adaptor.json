@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "e": {
+      "item": "buildcraftcore:gears/gear_stone"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "s": {
+      "item": "buildcrafttransport:structure"
+    }
+  },
+  "pattern": [
+    "sgs",
+    "ses",
+    "srs"
+  ],
+  "result": {
+    "item": "buildcrafttransport:plug_power_adaptor"
+  }
+}

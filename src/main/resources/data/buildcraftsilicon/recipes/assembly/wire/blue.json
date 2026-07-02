@@ -1,0 +1,21 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 5000000000,
+  "group": "buildcrafttransport:wires",
+  "ingredient_counts": [
+    1,
+    1
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:redstone"
+    },
+    {
+      "item": "minecraft:blue_dye"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:wire/blue",
+    "count": 8
+  }
+}

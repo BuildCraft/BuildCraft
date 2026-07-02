@@ -1,0 +1,153 @@
+{
+  "texture_size": [
+    16,
+    16
+  ],
+  "gui_light": "front",
+  "textures": {
+    "particle": "buildcraftrobotics:station/robot_station",
+    "station": "buildcraftrobotics:station/robot_station"
+  },
+  "elements": [
+    {
+      "name": "station_post_west",
+      "from": [
+        0.0,
+        6.92,
+        6.92
+      ],
+      "to": [
+        3.016,
+        9.08,
+        9.08
+      ],
+      "shade": true,
+      "faces": {
+        "down": {
+          "uv": [
+            6.92,
+            0,
+            9.08,
+            3.016
+          ],
+          "texture": "#station"
+        },
+        "up": {
+          "uv": [
+            6.92,
+            0,
+            9.08,
+            3.016
+          ],
+          "texture": "#station"
+        },
+        "north": {
+          "uv": [
+            0,
+            6.92,
+            3.016,
+            9.08
+          ],
+          "texture": "#station"
+        },
+        "south": {
+          "uv": [
+            0,
+            6.92,
+            3.016,
+            9.08
+          ],
+          "texture": "#station"
+        },
+        "west": {
+          "uv": [
+            6.92,
+            6.92,
+            9.08,
+            9.08
+          ],
+          "texture": "#station"
+        },
+        "east": {
+          "uv": [
+            6.92,
+            6.92,
+            9.08,
+            9.08
+          ],
+          "texture": "#station"
+        }
+      }
+    },
+    {
+      "name": "station_base_west",
+      "from": [
+        3.0,
+        4.0,
+        4.0
+      ],
+      "to": [
+        4.016,
+        12.0,
+        12.0
+      ],
+      "shade": true,
+      "faces": {
+        "down": {
+          "uv": [
+            4,
+            3,
+            12,
+            4.016
+          ],
+          "texture": "#station"
+        },
+        "up": {
+          "uv": [
+            4,
+            3,
+            12,
+            4.016
+          ],
+          "texture": "#station"
+        },
+        "north": {
+          "uv": [
+            3,
+            4,
+            4.016,
+            12
+          ],
+          "texture": "#station"
+        },
+        "south": {
+          "uv": [
+            3,
+            4,
+            4.016,
+            12
+          ],
+          "texture": "#station"
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#station"
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#station"
+        }
+      }
+    }
+  ]
+}

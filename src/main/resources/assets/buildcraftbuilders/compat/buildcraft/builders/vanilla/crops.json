@@ -1,0 +1,14 @@
+[
+    {
+        "selectors": [
+            "minecraft:wheat",
+            "minecraft:pumpkin_stem",
+            "minecraft:melon_stem",
+            "minecraft:beetroots",
+            "minecraft:carrots",
+            "minecraft:potatoes",
+            "minecraft:reeds"
+        ],
+        "ignoredProperties": ["age"]
+    }
+]

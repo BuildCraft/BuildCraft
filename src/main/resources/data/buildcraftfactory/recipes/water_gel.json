@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " s ",
+    "srs",
+    " s "
+  ],
+  "key": {
+    "s": {
+      "item": "minecraft:sand"
+    },
+    "r": {
+      "item": "buildcraftenergy:oil_residue/cool_bucket"
+    }
+  },
+  "result": {
+    "item": "buildcraftfactory:water_gel"
+  }
+}
