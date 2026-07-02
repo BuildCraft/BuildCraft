@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "f": {
+      "item": "minecraft:iron_bars"
+    },
+    "g": {
+      "item": "buildcraftcore:gears/gear_iron"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "t": {
+      "item": "buildcraftfactory:tank"
+    }
+  },
+  "pattern": [
+    "igi",
+    "ftf",
+    "ifi"
+  ],
+  "result": {
+    "item": "buildcraftfactory:flood_gate"
+  }
+}

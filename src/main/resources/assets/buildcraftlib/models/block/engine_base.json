@@ -1,0 +1,38 @@
+ {
+    "textures": {
+        "chamber":"buildcraftlib:blocks/engine/chamber_base",
+        "back":"buildcraftcore:blocks/engine/wood/back",
+        "side":"buildcraftcore:blocks/engine/wood/side",
+        "trunk":"buildcraftcore:blocks/engine/trunk"
+    },
+    "shade":true,
+    "elements": [
+        {
+            "name":"base",
+            "from": [ 0, 0, 0 ],
+            "to": [ 16, 4, 16 ],
+            "faces": {
+                "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#back" },
+                "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#back" },
+                "north": { "uv": [ 0, 0, 16, 4 ], "texture": "#side" },
+                "south": { "uv": [ 0, 0, 16, 4 ], "texture": "#side" },
+                "west":  { "uv": [ 0, 0, 16, 4 ], "texture": "#side"},
+                "east":  { "uv": [ 0, 0, 16, 4 ], "texture": "#side" }
+            }
+        },
+    
+    {
+        "name":"trunk",
+        "from": [ 4, 4, 4 ],    
+        "to": [ 12, 16, 12],
+        "faces": {
+            "down":  { "uv": [ 0, 0, 8, 8 ], "texture": "#trunk" },
+            "up":    { "uv": [ 0, 0, 8, 8 ], "texture": "#trunk" },
+            "north": { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk" },
+            "south": { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk" },
+            "west":  { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk"},
+            "east":  { "uv": [ 8, 0, 16, 12 ], "texture": "#trunk" }
+        }
+    }  
+    ]
+}

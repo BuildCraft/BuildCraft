@@ -1,0 +1,75 @@
+{
+	"parent":"block/block",
+	"render_type":"cutout",
+    "textures": {
+        "sprite_a":"buildcraftfactory:blocks/heat_exchange/sprite_a",
+        "sprite_b":"buildcraftfactory:blocks/heat_exchange/sprite_b",
+        "sprite_c":"buildcraftfactory:blocks/heat_exchange/sprite_c",
+        "sprite_d":"buildcraftfactory:blocks/heat_exchange/sprite_d",
+        "sprite_e":"buildcraftfactory:blocks/heat_exchange/sprite_e",
+        "particle":"buildcraftfactory:blocks/heat_exchange/sprite_b"
+    },	
+	"elements": [
+		{
+			"comment": "Inner Pipe",
+			"from": [0, 4, 4],
+			"to": [16, 12, 12],
+			"faces": {
+				"up":    { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" },
+				"down":  { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" },
+				"north": { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" },
+				"south": { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" }
+			}
+		},
+		{
+			"comment": "Inner Pipe - Inverted",
+			"from": [16, 12, 12],
+			"to": [2, 4, 4],
+			"faces": {
+				"up":    { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" },
+				"down":  { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" },
+				"north": { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" },
+				"south": { "uv": [ 0, 0, 16, 8 ], "texture": "#sprite_a" }
+			}
+		},
+
+		{
+			"comment": "Side Pipe",
+			"from": [2, 2, 2],
+			"to": [16, 16, 14],
+			"faces": {
+				"down":  { "uv": [ 0, 0, 12, 12 ], "texture": "#sprite_e","rotation":180 },
+				"north": { "uv": [ 2, 0, 16, 14 ], "texture": "#sprite_c","rotation":270 },
+				"south": { "uv": [ 2, 0, 16, 14 ], "texture": "#sprite_c","rotation":0 },
+				"west":  { "uv": [ 0, 0, 12, 12], "texture": "#sprite_e","rotation":90}
+			}
+		},
+		{
+			"comment": "Side Pipe Up",
+			"from": [2, 2, 2],
+			"to": [16, 14, 14],
+			"faces": {
+				"up":    { "uv": [ 0, 0, 12, 12 ], "texture": "#sprite_e","rotation":180 }
+			}
+		},
+		{
+			"comment": "Side Pipe - inverted",
+			"from": [16, 16, 14],
+			"to": [2, 2, 2],
+			"faces": {
+				"up":    { "uv": [ 0, 0, 12, 12 ], "texture": "#sprite_e","rotation":0 },
+				"north": { "uv": [ 2, 0, 16, 14 ], "texture": "#sprite_c","rotation":90 },
+				"south": { "uv": [ 2, 0, 16, 14 ], "texture": "#sprite_c","rotation":180 },
+				"east":  { "uv": [ 0, 0, 12, 12], "texture": "#sprite_e"}
+			}
+		},
+		{
+			"comment": "Side Pipe Up - inverted",
+			"from": [16, 14, 14],
+			"to": [2, 2, 2],
+			"faces": {
+				"down":  { "uv": [ 0, 0, 12, 12 ], "texture": "#sprite_e","rotation":0 }
+			}
+		}
+	]
+}

@@ -1,0 +1,13 @@
+{
+  "values": [
+    "buildcraftfactory:pump",
+    "buildcraftfactory:tank",
+    "buildcraftfactory:chute",
+    "buildcraftfactory:flood_gate",
+    "buildcraftfactory:mining_well",
+	"buildcraftfactory:distiller",
+	"buildcraftfactory:heat_exchange",
+	"buildcraftfactory:autoworkbench_item"
+	
+  ]
+}

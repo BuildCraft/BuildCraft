@@ -1,6 +1,0 @@
-Bugfixes:
-
-* Transport:
-  * Fix item pipes not properly using double chests
-* Energy:
-  * Fixed path markers not rendering at any distance

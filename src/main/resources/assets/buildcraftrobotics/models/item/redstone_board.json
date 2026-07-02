@@ -1,0 +1,29 @@
+{
+  "parent": "buildcraftrobotics:item/board/clean",
+  "overrides": [
+    {
+      "predicate": {
+        "buildcraftrobotics:board": 0.1
+      },
+      "model": "buildcraftrobotics:item/board/green"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:board": 0.2
+      },
+      "model": "buildcraftrobotics:item/board/blue"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:board": 0.3
+      },
+      "model": "buildcraftrobotics:item/board/red"
+    },
+    {
+      "predicate": {
+        "buildcraftrobotics:board": 0.4
+      },
+      "model": "buildcraftrobotics:item/board/yellow"
+    }
+  ]
+}

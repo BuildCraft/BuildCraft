@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:structure"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.pipe_dream.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.pipe_dream.description"
+    }
+  },
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

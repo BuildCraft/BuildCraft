@@ -1,0 +1,48 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:diamond_wood_item"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.pipe_diversification.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.pipe_diversification.description"
+    }
+  },
+  "parent": "buildcrafttransport:pipe_dream",
+  "criteria": {
+    "has_each_pipe_category": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcrafttransport:wood_item"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:wood_fluid"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:wood_power"
+            ]
+          },
+          {
+            "items": [
+              "buildcrafttransport:structure"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_each_pipe_category"
+    ]
+  ]
+}

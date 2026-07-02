@@ -1,0 +1,19 @@
+{
+	
+    "forge_marker": 1,
+    "multipart": [
+        {"when": {"facing":"up"},
+            "apply" : {"model":"buildcraftcore:block/marker_volume"}},
+        {"when": {"facing":"down"},
+        	"apply" : {"model":"buildcraftcore:block/marker_volume", "x":180 }},
+        {"when": {"facing":"east"},
+            "apply" : {"model":"buildcraftcore:block/marker_volume", "y":90,  "x":90 }},
+        {"when": {"facing":"south"},
+            "apply" : {"model":"buildcraftcore:block/marker_volume", "y":180, "x":90  }},
+        {"when": {"facing":"west"},
+            "apply" : {"model":"buildcraftcore:block/marker_volume", "y":270, "x":90  }},
+        {"when": {"facing":"north"},
+            "apply" : {"model":"buildcraftcore:block/marker_volume", "x":90  }}
+   ]
+}
+

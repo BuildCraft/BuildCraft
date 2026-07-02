@@ -1,0 +1,77 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:gears/gear_diamond"
+    },
+    "title": {
+      "translate": "advancements.buildcraftcore.gears.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftcore.gears.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "gear_wood": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:gears/gear_wood"
+            ]
+          }
+        ]
+      }
+    },
+    "gear_stone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:gears/gear_stone"
+            ]
+          }
+        ]
+      }
+    },
+    "gear_iron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:gears/gear_iron"
+            ]
+          }
+        ]
+      }
+    },
+    "gear_gold": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:gears/gear_gold"
+            ]
+          }
+        ]
+      }
+    },
+    "gear_diamond": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:gears/gear_diamond"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

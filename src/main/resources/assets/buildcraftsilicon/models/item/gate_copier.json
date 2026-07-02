@@ -1,0 +1,20 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "buildcraftsilicon:items/gatecopier/empty"
+    },
+	"overrides": [
+	        {
+	            "predicate": {
+	                "buildcraftsilicon:isempty": 0
+	            },
+	            "model": "buildcraftsilicon:item/gatecopier_full"
+	        },
+	        {
+	            "predicate": {
+	                "buildcraftsilicon:isempty": 1
+	            },
+	            "model": "buildcraftsilicon:item/gatecopier_empty"
+	        }
+	    ]
+}

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iri",
+    "gig",
+    "dpd"
+  ],
+  "key": {
+    "i": {
+      "item": "buildcraftcore:gears/gear_iron"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "g": {
+      "item": "buildcraftcore:gears/gear_gold"
+    },
+    "d": {
+      "item": "buildcraftcore:gears/gear_diamond"
+    },
+    "p": {
+      "item": "minecraft:diamond_pickaxe"
+    }
+  },
+  "result": {
+    "item": "buildcraftbuilders:quarry"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "m": {
+      "item": "minecraft:emerald"
+    }
+  },
+  "pattern": [
+    "mgm"
+  ],
+  "result": {
+    "count": 8,
+    "item": "buildcrafttransport:diamond_wood_item"
+  }
+}

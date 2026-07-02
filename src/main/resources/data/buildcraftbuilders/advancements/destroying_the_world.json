@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftbuilders:filler"
+    },
+    "title": {
+      "translate": "advancements.buildcraftbuilders.destroying_the_world.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftbuilders.destroying_the_world.description"
+    },
+    "frame": "challenge"
+  },
+  "parent": "buildcraftbuilders:diggy_diggy_hole",
+  "criteria": {
+    "has_two_quarries": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftbuilders:quarry"
+            ],
+            "count": {
+              "min": 2
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_two_quarries"
+    ]
+  ]
+}

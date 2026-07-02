@@ -1,0 +1,33 @@
+{
+  "replace": false,
+  "values": [
+    "buildcraftbuilders:filler",
+    "buildcraftbuilders:builder",
+    "buildcraftbuilders:architect",
+    "buildcraftbuilders:library",
+    "buildcraftbuilders:replacer",
+    "buildcraftbuilders:quarry",
+    "buildcraftcore:engine",
+    "buildcraftfactory:pump",
+    "buildcraftfactory:tank",
+    "buildcraftfactory:chute",
+    "buildcraftfactory:flood_gate",
+    "buildcraftfactory:mining_well",
+    "buildcraftfactory:distiller",
+    "buildcraftfactory:heat_exchange",
+    "buildcraftfactory:autoworkbench_item",
+    "buildcraftsilicon:laser",
+    "buildcraftsilicon:assembly_table",
+    "buildcraftsilicon:charging_table",
+    "buildcraftsilicon:integration_table",
+    "buildcraftsilicon:advanced_crafting_table",
+    "buildcraftsilicon:programming_table",
+    "buildcrafttransport:filtered_buffer",
+    "buildcrafttransport:pipe_holder",
+    "buildcraftbuilders:frame",
+    "buildcraftcore:marker_path",
+    "buildcraftcore:marker_volume",
+    "buildcraftrobotics:zone_planner",
+    "buildcraftrobotics:requester"
+  ]
+}

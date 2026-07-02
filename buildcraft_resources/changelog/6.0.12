@@ -1,8 +1,0 @@
-#1785 improve consistency of schematic API naming [SpaceToad]
-#1784 fix crashes when using reflection with pipes [undergroundminer3]
-#1783 fix NPE in Box.extendToEncompass [SpaceToad]
-#1782 fix tile marker crashes [SpaceToad]
-#1781 support for IO modes in MjAPI enhancement [Prototik]
-#1780 fix possible crash while scrolling through facades [SpaceToad]
-#1779 improve blueprint behavior when blocks are missing [SpaceToad]
-#1778 enhance default behavior of id translation [SpaceToad]

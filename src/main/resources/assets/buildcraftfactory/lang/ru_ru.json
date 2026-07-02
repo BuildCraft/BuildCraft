@@ -1,0 +1,22 @@
+{
+  "block.buildcraftfactory.autoworkbench_item": "Автоматический верстак",
+  "item.buildcraftfactory.autoworkbench_item": "Автоматический верстак",
+  "block.buildcraftfactory.flood_gate": "Шлюз",
+  "item.buildcraftfactory.flood_gate": "Шлюз",
+  "block.buildcraftfactory.pump": "Помпа",
+  "block.buildcraftfactory.tank": "Резервуар",
+  "block.buildcraftfactory.chute": "Жёлоб",
+  "block.buildcraftfactory.mining_well": "Буровая скважина",
+  "block.buildcraftfactory.distiller": "Дистиллятор",
+  "block.buildcraftfactory.heat_exchange": "Теплообменник",
+  "block.buildcraftfactory.tube": "Труба",
+  "block.buildcraftfactory.water_gel": "Водный гель",
+  "item.buildcraftfactory.pump": "Помпа",
+  "item.buildcraftfactory.tank": "Резервуар",
+  "item.buildcraftfactory.chute": "Жёлоб",
+  "item.buildcraftfactory.mining_well": "Буровая скважина",
+  "item.buildcraftfactory.distiller": "Дистиллятор",
+  "item.buildcraftfactory.heat_exchange": "Теплообменник",
+  "item.buildcraftfactory.water_gel": "Водный гелификатор",
+  "item.buildcraftfactory.gel": "Гель"
+}

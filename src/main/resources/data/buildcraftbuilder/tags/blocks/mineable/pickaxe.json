@@ -1,0 +1,10 @@
+{
+  "values": [
+    "buildcraftbuilders:filler",
+	"buildcraftbuilders:builder",
+	"buildcraftbuilders:architect",
+	"buildcraftbuilders:library",
+	"buildcraftbuilders:replacer",
+	"buildcraftbuilders:quarry"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "e": {
+      "item": "buildcraftcore:gears/gear_diamond"
+    },
+    "r": {
+      "item": "minecraft:redstone_torch"
+    },
+    "t": {
+      "item": "buildcraftfactory:tank"
+    }
+  },
+  "pattern": [
+    "rtr",
+    "ter",
+    "   "
+  ],
+  "result": {
+    "item": "buildcraftfactory:distiller"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:marker_volume"
+    },
+    "title": {
+      "translate": "advancements.buildcraftcore.markers.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftcore.markers.description"
+    }
+  },
+  "parent": "buildcraftcore:root",
+  "criteria": {
+    "has_marker": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftcore:marker_volume"
+            ]
+          }
+        ]
+      }
+    },
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "has_marker",
+      "code_trigger"
+    ]
+  ]
+}

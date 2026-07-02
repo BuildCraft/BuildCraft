@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "paintbrush_colouring",
+  "ingredients": [
+    {
+      "item": "buildcraftcore:paintbrush/clean"
+    },
+    {
+      "tag": "forge:dyes/orange"
+    }
+  ],
+  "result": {
+    "item": "buildcraftcore:paintbrush/orange"
+  }
+}

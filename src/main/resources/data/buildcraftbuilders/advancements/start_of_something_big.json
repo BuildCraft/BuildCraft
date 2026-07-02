@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftbuilders:builder"
+    },
+    "title": {
+      "translate": "advancements.buildcraftbuilders.start_of_something_big.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftbuilders.start_of_something_big.description"
+    },
+    "frame": "goal"
+  },
+  "parent": "buildcraftbuilders:architect",
+  "criteria": {
+    "has_builder": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcraftbuilders:builder"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_builder"
+    ]
+  ]
+}

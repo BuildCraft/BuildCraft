@@ -1,0 +1,157 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcrafttransport:wire/red"
+    },
+    "title": {
+      "translate": "advancements.buildcrafttransport.colorful_electrician.title"
+    },
+    "description": {
+      "translate": "advancements.buildcrafttransport.colorful_electrician.description"
+    },
+    "frame": "challenge"
+  },
+  "parent": "buildcrafttransport:logic_transportation",
+  "criteria": {
+    "has_all_wire_colors": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "buildcrafttransport:wire/white"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/orange"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/magenta"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/light_blue"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/yellow"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/lime"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/pink"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/gray"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/light_gray"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/cyan"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/purple"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/blue"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/brown"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/green"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/red"
+            ],
+            "count": {
+              "min": 16
+            }
+          },
+          {
+            "items": [
+              "buildcrafttransport:wire/black"
+            ],
+            "count": {
+              "min": 16
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_all_wire_colors"
+    ]
+  ]
+}

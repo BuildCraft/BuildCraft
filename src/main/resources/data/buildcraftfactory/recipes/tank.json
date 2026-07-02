@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    }
+  },
+  "pattern": [
+    "ggg",
+    "g g",
+    "ggg"
+  ],
+  "result": {
+    "item": "buildcraftfactory:tank"
+  }
+}

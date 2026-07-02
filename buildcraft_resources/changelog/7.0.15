@@ -1,5 +1,0 @@
-Bugs fixed:
-
-* [#2883] Pipe Empty/Fluid Traversing not working on fluid pipes (asie)
-* [#2882] **Massive Recipe Packager dupe bug** (asie)
-* Packager GUI issues on shift-click (asie)

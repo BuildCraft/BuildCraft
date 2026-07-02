@@ -1,0 +1,7 @@
+{
+"parent": "buildcraftsilicon:block/table/programming",
+	"render_type": "cutout",
+	"textures": {
+		"glass": "buildcraftsilicon:blocks/table/programming/transparent"
+	}
+}

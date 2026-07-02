@@ -1,0 +1,16 @@
+{
+  "type": "buildcraftsilicon:assembly",
+  "MJ": 1000000000000,
+  "group": "buildcraftsilicon:robotics",
+  "ingredient_counts": [
+    1
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:redstone_block"
+    }
+  ],
+  "result": {
+    "item": "buildcraftsilicon:redstone_crystal"
+  }
+}

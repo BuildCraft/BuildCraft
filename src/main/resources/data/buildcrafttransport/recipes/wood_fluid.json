@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "buildcrafttransport:wood_item"
+    },
+    {
+      "item": "buildcrafttransport:waterproof"
+    }
+  ],
+  "result": {
+    "item": "buildcrafttransport:wood_fluid"
+  }
+}

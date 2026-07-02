@@ -1,0 +1,5 @@
+{
+  "variants":{
+	  "":{"model":"buildcraftenergy:block/engine_stone"}
+	}
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ppp",
+    "pmp",
+    "ppp"
+  ],
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "m": {
+      "item": "buildcraftcore:marker_volume"
+    }
+  },
+  "result": {
+    "item": "buildcraftcore:volume_box"
+  }
+}

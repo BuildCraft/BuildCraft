@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " o ",
+    "oio",
+    " o "
+  ],
+  "key": {
+    "o": {
+      "item": "minecraft:iron_ingot"
+    },
+    "i": {
+      "item": "buildcraftcore:gears/gear_stone"
+    }
+  },
+  "result": {
+    "item": "buildcraftcore:gears/gear_iron"
+  }
+}

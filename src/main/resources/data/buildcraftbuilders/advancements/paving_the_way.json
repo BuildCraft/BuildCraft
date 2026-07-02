@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "buildcraftcore:marker_path"
+    },
+    "title": {
+      "translate": "advancements.buildcraftbuilders.paving_the_way.title"
+    },
+    "description": {
+      "translate": "advancements.buildcraftbuilders.paving_the_way.description"
+    }
+  },
+  "parent": "buildcraftbuilders:architect",
+  "criteria": {
+    "code_trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
