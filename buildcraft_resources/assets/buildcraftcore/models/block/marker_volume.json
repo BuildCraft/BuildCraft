@@ -1,6 +1,0 @@
-{
-    "parent":"buildcraftcore:block/torch_center_lit",
-    "textures": {
-        "all":"buildcraftcore:blocks/marker_volume"
-    }
-}

@@ -1,6 +1,0 @@
-{
-    "variants": {
-        "type=water": { "model": "minecraft:bedrock" },
-        "type=oil": { "model": "minecraft:bedrock" }
-    }
-}

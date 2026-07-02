@@ -1,4 +1,0 @@
-Bugs fixed:
-
-* [#3323] Make some BuildCraft machines report the FakePlayer location as the acting tile entity (asie)
-* [#3275] Slightly incorrect usage of extractEnergy in PipePowerWood (asie)

@@ -1,6 +1,0 @@
-Bugs fixed:
-
-* [#3079] Emzuli pipe's round-robin extraction behaving incorrectly (asie)
-* [#3075] Rare crash in AIRobotGoAndLinkToDock (asie)
-* Robot pathfinding using 100% CPU on fast CPUs (asie)
-* Robots flying up due to bugs in "un-stuck" code (asie)

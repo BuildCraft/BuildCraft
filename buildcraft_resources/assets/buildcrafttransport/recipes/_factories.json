@@ -1,5 +1,0 @@
-{
-  "conditions": {
-    "engine_registered": "buildcraft.transport.recipe.EngineRegisteredFactory"
-  }
-}

@@ -1,1 +1,8 @@
-include 'sub_projects:expression'
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+    }
+}
+
+rootProject.name = 'BuildCraft'
