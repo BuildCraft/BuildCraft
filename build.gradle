@@ -24,10 +24,6 @@ buildscript {
             url = "https://files.minecraftforge.net/maven"
         }
         maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
