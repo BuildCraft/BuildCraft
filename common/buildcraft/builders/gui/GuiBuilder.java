@@ -10,6 +10,9 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.button.GuiImageButton;
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.GuiRectangle;
 
 import buildcraft.builders.container.ContainerBuilder;
@@ -48,22 +51,23 @@ public class GuiBuilder extends GuiBC8<ContainerBuilder> {
             );
         }
 
-//        buttonList.add(
-//                new GuiButtonSmall(
-//                        this,
-//                        0,
-//                        rootElement.getX() + (ICON_GUI.width - 100) / 2,
-//                        rootElement.getY() + 50,
-//                        100,
-//                        "Can Excavate"
-//                )
-//                        .setToolTip(ToolTip.createLocalized("gui.builder.canExcavate"))
-//                        .setBehaviour(IButtonBehaviour.TOGGLE)
-//                        .setActive(container.tile.canExcavate())
-//                        .registerListener((button, buttonId, buttonKey) ->
-//                                container.tile.sendCanExcavate(button.isButtonActive())
-//                        )
-//        );
+        // "Don't excavate" (canExcavate) toggle.
+        // The logic already exists on TileBuilder; this just exposes it in the GUI.
+        // Reuses the shared toggle frames from buildcraftcore's list_new.png so no new texture asset is needed.
+        GuiImageButton buttonExcavate = new GuiImageButton(
+                mainGui,
+                0,
+                (int) (mainGui.rootElement.getX() + 161),
+                (int) (mainGui.rootElement.getY() + 8),
+                11,
+                new ResourceLocation("buildcraftcore:textures/gui/list_new.png"),
+                176, 16, 176, 28);
+        buttonExcavate.setToolTip(ToolTip.createLocalized("gui.builder.canExcavate"));
+        buttonExcavate.setBehaviour(IButtonBehaviour.TOGGLE);
+        buttonExcavate.setActive(container.tile.canExcavate());
+        buttonExcavate.registerListener((button, buttonKey) ->
+                container.tile.sendCanExcavate(button.isButtonActive()));
+        mainGui.shownElements.add(buttonExcavate);
     }
 
     @Override

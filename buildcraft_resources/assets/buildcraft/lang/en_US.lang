@@ -965,3 +965,5 @@ advancements.buildcraftbuilders.building_for_the_future.description=Set a filler
 
 advancements.buildcraftbuilders.destroying_the_world.title=Destorying the world
 advancements.buildcraftbuilders.destroying_the_world.description=Have two or more 64 x 64 sized quarries running at once at full speed
+
+gui.builder.canExcavate=Excavate
