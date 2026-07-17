@@ -276,6 +276,13 @@ public abstract class SnapshotBuilder<T extends ITileForSnapshotBuilder> impleme
 
         boolean checkResultsChanged = false;
 
+        // Defensive guard: snapshot may be in a cancelled / not-yet-built state
+        // (checkOrder == null after cancel(), or buildingInfo not ready during load
+        // ordering). Touching checkOrder.length or getBuildingInfo() here would NPE.
+        if (checkOrder == null || getBuildingInfo() == null) {
+            return false;
+        }
+
         tile.getWorldBC().profiler.startSection("scan");
         for (int i = 0; i < CHECKS_PER_TICK; i++) {
             if (check(indexToPos(currentCheckIndex))) {
