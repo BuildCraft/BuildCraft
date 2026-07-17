@@ -1,0 +1,59 @@
+name: Bug 反馈 / Bug Report
+description: 报告 BuildCraft 的 bug、崩溃或异常行为
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请用中文或英文填写，信息越完整越有助于定位。
+  - type: input
+    id: bc-version
+    attributes:
+      label: BuildCraft 版本 / Version
+      description: 例如 8.0.0 / 8.1.0
+    validations:
+      required: true
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft 版本 / MC Version
+      description: 例如 1.12.2
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: 涉及模块 / Component
+      options:
+        - Builder
+        - Filler
+        - Robotics
+        - Transport
+        - Energy
+        - Silicon
+        - Core
+        - 其他/Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么？/ What happened
+      description: 简明描述异常现象
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      description: 一步步说明如何触发
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 崩溃报告 / Logs
+      description: 粘贴最新日志或 crash report 的链接（可用 https://pastebin.com 等）
+    validations:
+      required: false
