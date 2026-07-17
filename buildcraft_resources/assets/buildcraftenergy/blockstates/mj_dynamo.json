@@ -1,0 +1,8 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "normal": {
+            "model": "buildcraftenergy:block/mj_dynamo_base"
+        }
+    }
+}
