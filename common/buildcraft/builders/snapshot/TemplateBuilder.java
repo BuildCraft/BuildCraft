@@ -40,7 +40,14 @@ public class TemplateBuilder extends SnapshotBuilder<ITileForTemplateBuilder> {
 
     @Override
     protected boolean canPlace(BlockPos blockPos) {
-        return tile.getWorldBC().isAirBlock(blockPos);
+        net.minecraft.world.World world = tile.getWorldBC();
+        // The Fill pattern targets the whole bounding box. When the filler is
+        // submerged the volume is occupied by liquids (water/lava) rather than
+        // air, so isAirBlock() returns false and the builder would fall through
+        // to "break" instead of "place" (see SnapshotBuilder#check). Treating
+        // liquids as placeable lets the filler replace water volumes, fixing
+        // the long-standing "filler doesn't fill underwater" bug (#4058).
+        return world.isAirBlock(blockPos) || world.getBlockState(blockPos).getMaterial().isLiquid();
     }
 
     @Override
