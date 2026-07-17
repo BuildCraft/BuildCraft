@@ -18,13 +18,10 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
+        // jcenter() was shut down by JFrog (2021); Aliyun public mirrors its contents.
+        maven { url = "https://maven.aliyun.com/repository/public" }
         maven {
             url = "https://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
         maven {
             url "https://plugins.gradle.org/m2/"

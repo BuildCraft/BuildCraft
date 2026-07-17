@@ -1,0 +1,38 @@
+name: 功能建议 / Feature Request
+description: 建议新功能或对现有功能的改进
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎提建议！请说明你遇到的问题以及期望的方案。
+  - type: dropdown
+    id: component
+    attributes:
+      label: 涉及模块 / Component
+      options:
+        - Builder
+        - Filler
+        - Robotics
+        - Transport
+        - Energy
+        - Silicon
+        - Core
+        - 其他/Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决的问题 / Problem
+      description: 当前有什么不便或缺失？
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 建议方案 / Proposed solution
+      description: 你期望怎么做？
+    validations:
+      required: true

@@ -43,67 +43,57 @@ public class SimpleScriptFileLog implements IScriptFileLog {
 
     @Override
     public void infoSkippingIfBlock(int line) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Skipping if block");
     }
 
     @Override
     public void infoEndSkipping(int line) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "End of skipped block");
     }
 
     @Override
     public void infoConditionalResult(int tokenStart, int startIndex, int endIndex, boolean shouldCall) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(tokenStart, "Conditional evaluated to " + shouldCall + " (range " + startIndex + "-" + endIndex + ")");
     }
 
     @Override
     public void errorFunctionUnknown(int line, int startIndex, int endIndex, Collection<String> knownFunctions) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Unknown function (range " + startIndex + "-" + endIndex + "). Known: " + knownFunctions);
     }
 
     @Override
     public void errorStdInvalidJson(int line, JsonSyntaxException jse) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Invalid JSON: " + jse.getMessage());
     }
 
     @Override
     public void errorStdUnknownFile(int line, String file) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Unknown file referenced: " + file);
     }
 
     @Override
     public void errorImportNotFound(int line, String sourceFile) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Import not found: " + sourceFile);
     }
 
     @Override
     public void errorImportMissingStarter(int line, String sourceFile) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Import missing starter line: " + sourceFile);
     }
 
     @Override
     public void errorImportRecursiveReplace(int line, String newSourceFile) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Recursive import replacement detected: " + newSourceFile);
     }
 
     @Override
     public void errorAliasInvalidArgCount(int line, int startIndex, int endIndex, Integer parsed) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        log(line, "Invalid alias argument count " + parsed + " (range " + startIndex + "-" + endIndex + ")");
     }
 
     @Override
     public void replace(int removeStart, int removeEnd, SourceFile from, int fromStart, List<String> newLines) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("// TODO: Implement this!");
+        String src = from == null ? "this file" : from.toString();
+        log("Replacing lines " + removeStart + "-" + removeEnd + " from " + src + " starting at " + fromStart);
     }
 }

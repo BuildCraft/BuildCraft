@@ -33,14 +33,13 @@ public class RecipePipeColour implements IRecipe, IRecipeViewable {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
+        // Not currently wired into the recipe registry; default to no-match so this stub is safe.
+        return false;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -55,8 +54,7 @@ public class RecipePipeColour implements IRecipe, IRecipeViewable {
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
+        return NonNullList.create();
     }
 
     @Override

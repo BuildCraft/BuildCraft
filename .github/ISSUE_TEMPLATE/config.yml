@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 上游原始项目 / Upstream BuildCraft
+    url: https://github.com/BuildCraft/BuildCraft/issues
+    about: 如果问题属于上游原始 BuildCraft，请优先去那里反馈。

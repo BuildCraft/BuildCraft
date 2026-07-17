@@ -100,6 +100,9 @@ Instructions for depending on BC 7.1.x can be found [here](https://github.com/Bu
 
 8.0.x hasn't been finished yet, so there are no instructions for depending on it :(
 
+Developer build/test instructions for 8.0.x are now available in
+[DEVELOPMENT.md](DEVELOPMENT.md).
+
 The following instructions are for BC 7.99.12 (1.12.2):
 
 Add the following to your build.gradle file:
