@@ -85,7 +85,9 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
 
     @Override
     public void setWorldUpdated(World world, BlockPos eventPos, IBlockState oldState, IBlockState newState, int flags) {
-        this.worldHasUpdated = true;
+        if (oldState.getMaterial() != newState.getMaterial()) {
+            this.worldHasUpdated = true;
+        }
     }
 
     private void findPossibleTargets() {
