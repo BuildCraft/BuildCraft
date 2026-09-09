@@ -49,7 +49,7 @@ import buildcraft.lib.mj.MjBatteryReceiver;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-import buildcraft.silicon.BCSiliconBlocks;
+import buildcraft.silicon.block.BlockLaser;
 import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
@@ -88,10 +88,14 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         this.worldHasUpdated = true;
     }
 
+    protected boolean isLaserBlock(IBlockState state) {
+        return state.getBlock() instanceof BlockLaser;
+    }
+
     private void findPossibleTargets() {
         targetPositions.clear();
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != BCSiliconBlocks.laser) {
+        if (!isLaserBlock(state)) {
             return;
         }
         EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
