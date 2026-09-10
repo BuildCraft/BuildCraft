@@ -6,6 +6,8 @@
 
 package buildcraft.lib.client.render.laser;
 
+import java.util.concurrent.TimeUnit;
+
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -19,14 +21,36 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class LaserCompiledBuffer {
     private static final int DOUBLE_STRIDE = 5;
     private static final int INT_STRIDE = 2;
+    private static final long LIGHTMAP_REFRESH_INTERVAL = TimeUnit.SECONDS.toNanos(5);
     private final int vertices;
     private final double[] da;
     private final int[] ia;
+    private final int minBlockLight;
+    private long lastLightmapRefresh;
 
     public LaserCompiledBuffer(int vertices, double[] da, int[] ia) {
+        this(vertices, da, ia, 0);
+    }
+
+    public LaserCompiledBuffer(int vertices, double[] da, int[] ia, int minBlockLight) {
         this.vertices = vertices;
         this.da = da;
         this.ia = ia;
+        this.minBlockLight = minBlockLight;
+        this.lastLightmapRefresh = System.nanoTime();
+    }
+
+    public void refreshLightmapIfNeeded(long time) {
+        if (time - lastLightmapRefresh < LIGHTMAP_REFRESH_INTERVAL) {
+            return;
+        }
+        for (int i = 0; i < vertices; i++) {
+            int doubleIndex = DOUBLE_STRIDE * i;
+            ia[INT_STRIDE * i + 1] = LaserRenderer_BC8.computeLightmap(
+                da[doubleIndex], da[doubleIndex + 1], da[doubleIndex + 2], minBlockLight
+            );
+        }
+        lastLightmapRefresh = time;
     }
 
     /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
@@ -52,12 +76,18 @@ public class LaserCompiledBuffer {
 
     public static class Builder implements ILaserRenderer {
         private final boolean useNormalColour;
+        private final int minBlockLight;
         private final TDoubleArrayList doubleData = new TDoubleArrayList();
         private final TIntArrayList intData = new TIntArrayList();
         private int vertices = 0;
 
         public Builder(boolean useNormalColour) {
+            this(useNormalColour, 0);
+        }
+
+        public Builder(boolean useNormalColour, int minBlockLight) {
             this.useNormalColour = useNormalColour;
+            this.minBlockLight = minBlockLight;
         }
 
         @Override
@@ -86,7 +116,7 @@ public class LaserCompiledBuffer {
         }
 
         public LaserCompiledBuffer build() {
-            return new LaserCompiledBuffer(vertices, doubleData.toArray(), intData.toArray());
+            return new LaserCompiledBuffer(vertices, doubleData.toArray(), intData.toArray(), minBlockLight);
         }
     }
 }
