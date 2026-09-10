@@ -54,6 +54,8 @@ import buildcraft.silicon.client.render.AdvDebuggerLaser;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable, ILocalBlockUpdateSubscriber {
     private static final int TARGETING_RANGE = 6;
+    private static final int RENDER_POWER_LEVELS = 4;
+    private static final int MAX_RENDER_POWER_INDEX = RENDER_POWER_LEVELS - 1;
 
     private final SafeTimeTracker clientLaserMoveInterval = new SafeTimeTracker(5, 10);
     private final SafeTimeTracker serverTargetMoveInterval = new SafeTimeTracker(10, 20);
@@ -66,6 +68,8 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
     private final AverageLong avgPower = new AverageLong(100);
     private long averageClient;
     private final MjBattery battery;
+    private BlockPos lastRenderTargetPos;
+    private int lastRenderState = -1;
 
     public TileLaser() {
         super();
@@ -166,6 +170,16 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         return 4 * MjAPI.MJ;
     }
 
+    private int getRenderState() {
+        long average = (long) avgPower.getAverage();
+        if (average <= 200_000) {
+            return 0;
+        }
+        average += 200_000;
+        int index = (int) (average * MAX_RENDER_POWER_INDEX / getMaxPowerPerTick());
+        return Math.min(index, MAX_RENDER_POWER_INDEX) + 1;
+    }
+
     @Override
     public void update() {
         if (world.isRemote) {
@@ -179,7 +193,6 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         // set target tile on server side
         avgPower.tick();
 
-        BlockPos previousTargetPos = targetPos;
         if (worldHasUpdated) {
             findPossibleTargets();
             worldHasUpdated = false;
@@ -209,7 +222,10 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
             avgPower.clear();
         }
 
-        if (!Objects.equals(previousTargetPos, targetPos) || true) {
+        int renderState = getRenderState();
+        if (!Objects.equals(lastRenderTargetPos, targetPos) || lastRenderState != renderState) {
+            lastRenderTargetPos = targetPos;
+            lastRenderState = renderState;
             sendNetworkUpdate(NET_RENDER_DATA);
         }
 
