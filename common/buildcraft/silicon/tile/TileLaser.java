@@ -298,6 +298,14 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         }
     }
 
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        if (!world.isRemote) {
+            LocalBlockUpdateNotifier.instance(world).removeSubscriberFromUpdateNotifications(this);
+        }
+    }
+
     @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
