@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -72,6 +73,15 @@ public abstract class TileLaserTableBase extends TileBC_Neptune implements ILase
         if (getTarget() <= 0) {
             power = 0;
             avgPower.clear();
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (!world.isRemote) {
+            IBlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, state, state, 0);
         }
     }
 
