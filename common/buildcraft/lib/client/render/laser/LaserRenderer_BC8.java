@@ -6,6 +6,7 @@
 
 package buildcraft.lib.client.render.laser;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -15,12 +16,15 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 
+import gnu.trove.map.hash.TLongIntHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
@@ -35,6 +39,11 @@ public class LaserRenderer_BC8 {
     private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
     private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_STATIC_LASERS;
     private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_DYNAMIC_LASERS;
+    private static final TLongIntHashMap BLOCK_LIGHTMAP_CACHE = new TLongIntHashMap();
+    private static final TLongIntHashMap SKY_LIGHTMAP_CACHE = new TLongIntHashMap();
+    private static WeakReference<World> dynamicLaserWorld = new WeakReference<>(null);
+    private static WeakReference<World> lightmapCacheWorld = new WeakReference<>(null);
+    private static long lightmapCacheTick = Long.MIN_VALUE;
 
     public static final VertexFormat FORMAT_LESS, FORMAT_ALL;
 
@@ -45,7 +54,8 @@ public class LaserRenderer_BC8 {
             .build(CacheLoader.from(LaserRenderer_BC8::makeStaticLaser));
 
         COMPILED_DYNAMIC_LASERS = CacheBuilder.newBuilder()//
-            .expireAfterWrite(5, TimeUnit.SECONDS)//
+            .maximumSize(4096)//
+            .expireAfterAccess(60, TimeUnit.SECONDS)//
             .build(CacheLoader.from(LaserRenderer_BC8::makeDynamicLaser));
 
         FORMAT_LESS = new VertexFormat();
@@ -62,6 +72,10 @@ public class LaserRenderer_BC8 {
 
     public static void clearModels() {
         COMPILED_LASER_TYPES.clear();
+        COMPILED_STATIC_LASERS.invalidateAll();
+        COMPILED_DYNAMIC_LASERS.invalidateAll();
+        dynamicLaserWorld = new WeakReference<>(null);
+        clearLightmapCache();
     }
 
     private static CompiledLaserType compileType(LaserType laserType) {
@@ -79,7 +93,7 @@ public class LaserRenderer_BC8 {
     }
 
     private static LaserCompiledBuffer makeDynamicLaser(LaserData_BC8 data) {
-        LaserCompiledBuffer.Builder renderer = new LaserCompiledBuffer.Builder(data.enableDiffuse);
+        LaserCompiledBuffer.Builder renderer = new LaserCompiledBuffer.Builder(data.enableDiffuse, data.minBlockLight);
         makeLaser(data, renderer);
         return renderer.build();
     }
@@ -100,6 +114,7 @@ public class LaserRenderer_BC8 {
     public static int computeLightmap(double x, double y, double z, int minBlockLight) {
         World world = Minecraft.getMinecraft().world;
         if (world == null) return 0;
+        updateLightmapCache(world);
         int blockLight =
             minBlockLight >= 15 ? 15 : Math.max(minBlockLight, getLightFor(world, EnumSkyBlock.BLOCK, x, y, z));
         int skyLight = getLightFor(world, EnumSkyBlock.SKY, x, y, z);
@@ -107,6 +122,7 @@ public class LaserRenderer_BC8 {
     }
 
     private static int getLightFor(World world, EnumSkyBlock type, double x, double y, double z) {
+        TLongIntHashMap lightmapCache = type == EnumSkyBlock.BLOCK ? BLOCK_LIGHTMAP_CACHE : SKY_LIGHTMAP_CACHE;
         int max = 0;
         int count = 0;
         int sum = 0;
@@ -130,7 +146,14 @@ public class LaserRenderer_BC8 {
         for (int xp = xl; xp <= xu; xp++) {
             for (int yp = yl; yp <= yu; yp++) {
                 for (int zp = zl; zp <= zu; zp++) {
-                    int light = world.getLightFor(type, new BlockPos(x + xp, y + yp, z + zp));
+                    long packedPos = packLightPos(x + xp, y + yp, z + zp);
+                    int light;
+                    if (lightmapCache.containsKey(packedPos)) {
+                        light = lightmapCache.get(packedPos);
+                    } else {
+                        light = world.getLightFor(type, unpackLightPos(packedPos));
+                        lightmapCache.put(packedPos, light);
+                    }
                     if (light > 0) {
                         sum += light;
                         count++;
@@ -147,6 +170,44 @@ public class LaserRenderer_BC8 {
         }
     }
 
+    private static void updateDynamicLaserWorld(World world) {
+        if (dynamicLaserWorld.get() == world) {
+            return;
+        }
+        COMPILED_DYNAMIC_LASERS.invalidateAll();
+        dynamicLaserWorld = new WeakReference<>(world);
+    }
+
+    private static void updateLightmapCache(World world) {
+        long worldTime = world.getTotalWorldTime();
+        if (lightmapCacheWorld.get() == world && lightmapCacheTick == worldTime) {
+            return;
+        }
+        BLOCK_LIGHTMAP_CACHE.clear();
+        SKY_LIGHTMAP_CACHE.clear();
+        lightmapCacheWorld = new WeakReference<>(world);
+        lightmapCacheTick = worldTime;
+    }
+
+    private static void clearLightmapCache() {
+        BLOCK_LIGHTMAP_CACHE.clear();
+        SKY_LIGHTMAP_CACHE.clear();
+        lightmapCacheWorld = new WeakReference<>(null);
+        lightmapCacheTick = Long.MIN_VALUE;
+    }
+
+    private static long packLightPos(double x, double y, double z) {
+        return packLightPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
+    }
+
+    private static long packLightPos(int x, int y, int z) {
+        return ((long) x & 0x3FFFFFFL) << 38 | ((long) y & 0xFFFL) | ((long) z & 0x3FFFFFFL) << 12;
+    }
+
+    private static BlockPos unpackLightPos(long packedPos) {
+        return new BlockPos((int) (packedPos >> 38), (int) (packedPos & 0xFFFL), (int) (packedPos << 26 >> 38));
+    }
+
     public static void renderLaserStatic(LaserData_BC8 data) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("compute");
@@ -159,9 +220,12 @@ public class LaserRenderer_BC8 {
 
     /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
     public static void renderLaserDynamic(LaserData_BC8 data, BufferBuilder buffer) {
-        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        Minecraft minecraft = Minecraft.getMinecraft();
+        updateDynamicLaserWorld(minecraft.world);
+        Profiler profiler = minecraft.mcProfiler;
         profiler.startSection("compute");
         LaserCompiledBuffer compiled = COMPILED_DYNAMIC_LASERS.getUnchecked(data);
+        compiled.refreshLightmapIfNeeded(System.nanoTime());
         profiler.endStartSection("render");
         compiled.render(buffer);
         profiler.endSection();
