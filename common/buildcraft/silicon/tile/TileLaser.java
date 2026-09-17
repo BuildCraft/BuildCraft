@@ -73,6 +73,13 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable,
         caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
     }
 
+    public TileLaser(int capacity) {
+        super();
+
+        battery = new MjBattery((long) capacity * MjAPI.MJ);
+        caps.addProvider(new MjCapabilityHelper(new MjBatteryReceiver(battery)));
+    }
+
     @Override
     public int getUpdateRange() {
         return TARGETING_RANGE;
