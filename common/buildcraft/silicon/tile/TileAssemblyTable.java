@@ -7,6 +7,9 @@
 package buildcraft.silicon.tile;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import java.util.TreeMap;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,9 +31,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.IngredientStack;
 
 import buildcraft.lib.misc.AdvancementUtil;
 import buildcraft.lib.misc.InventoryUtil;
@@ -57,14 +63,19 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public SortedMap<AssemblyInstruction, EnumAssemblyRecipeState> recipesStates = new TreeMap<>();
 
     private static final ResourceLocation ADVANCEMENT = new ResourceLocation("buildcraftsilicon:precision_crafting");
+    private final SortedMap<AssemblyInstruction, Collection<IngredientStack>> savedTargets = new TreeMap<>();
+    private final Set<EntityPlayer> guiPlayers = Collections.newSetFromMap(new IdentityHashMap<>());
+    private static final int REFRESH_NONE = 0;
+    private static final int REFRESH_TARGETS = 1;
+    private static final int REFRESH_RECIPES = 2;
+    private int refreshState = REFRESH_RECIPES;
 
     @Override
     public IdAllocator getIdAllocator() {
         return IDS;
     }
 
-    private void updateRecipes() {
-        //TODO: rework this to not iterate over every recipe every tick
+    private boolean updateRecipes() {
         boolean changed = false;
         for (AssemblyRecipe recipe: AssemblyRecipeRegistry.REGISTRY.values()) {
             Set<ItemStack> outputs = recipe.getOutputs(inv.stacks);
@@ -84,49 +95,66 @@ public class TileAssemblyTable extends TileLaserTableBase {
             }
         }
 
-        boolean findActive = false;
         for (Iterator<Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState>> iterator = recipesStates.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState> entry = iterator.next();
             AssemblyInstruction instruction = entry.getKey();
-            EnumAssemblyRecipeState state = entry.getValue();
-            boolean enough = extract(inv, instruction.recipe.getInputsFor(instruction.output), true, false);
-            if (state == EnumAssemblyRecipeState.POSSIBLE) {
-                if (!enough) {
-                    iterator.remove();
+            if (entry.getValue() == EnumAssemblyRecipeState.POSSIBLE
+                && !extract(inv, instruction.recipe.getInputsFor(instruction.output), true, false)) {
+                iterator.remove();
+                changed = true;
+            }
+        }
+
+        cacheSavedTargets();
+        return updateSavedTargets() || changed;
+    }
+
+    private void cacheSavedTargets() {
+        savedTargets.clear();
+        for (Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState> entry : recipesStates.entrySet()) {
+            if (entry.getValue() != EnumAssemblyRecipeState.POSSIBLE) {
+                AssemblyInstruction instruction = entry.getKey();
+                savedTargets.put(instruction, instruction.recipe.getInputsFor(instruction.output));
+            }
+        }
+    }
+
+    private boolean updateSavedTargets() {
+        boolean findActive = false;
+        boolean changed = false;
+        for (Map.Entry<AssemblyInstruction, Collection<IngredientStack>> entry : savedTargets.entrySet()) {
+            AssemblyInstruction instruction = entry.getKey();
+            EnumAssemblyRecipeState state = recipesStates.get(instruction);
+            if (state == null || state == EnumAssemblyRecipeState.POSSIBLE) {
+                continue;
+            }
+
+            boolean enough = extract(inv, entry.getValue(), true, false);
+            if (enough) {
+                if (state == EnumAssemblyRecipeState.SAVED) {
+                    state = EnumAssemblyRecipeState.SAVED_ENOUGH;
                     changed = true;
                 }
-            } else {
-                if (enough) {
-                    if (state == EnumAssemblyRecipeState.SAVED) {
-                        state = EnumAssemblyRecipeState.SAVED_ENOUGH;
-                        changed = true;
-                    }
-                } else {
-                    if (state != EnumAssemblyRecipeState.SAVED) {
-                        state = EnumAssemblyRecipeState.SAVED;
-                        changed = true;
-                    }
-                }
+            } else if (state != EnumAssemblyRecipeState.SAVED) {
+                state = EnumAssemblyRecipeState.SAVED;
+                changed = true;
             }
             if (state == EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE) {
                 findActive = true;
             }
-            entry.setValue(state);
+            recipesStates.put(instruction, state);
         }
         if (!findActive) {
-            for (Map.Entry<AssemblyInstruction, EnumAssemblyRecipeState> entry : recipesStates.entrySet()) {
-                EnumAssemblyRecipeState state = entry.getValue();
+            for (AssemblyInstruction instruction : savedTargets.keySet()) {
+                EnumAssemblyRecipeState state = recipesStates.get(instruction);
                 if (state == EnumAssemblyRecipeState.SAVED_ENOUGH) {
-                    state = EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE;
-                    entry.setValue(state);
+                    recipesStates.put(instruction, EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE);
                     changed = true;
                     break;
                 }
             }
         }
-        if (changed) {
-            sendNetworkGuiUpdate(NET_GUI_DATA);
-        }
+        return changed;
     }
 
     private AssemblyInstruction getActiveRecipe() {
@@ -183,20 +211,76 @@ public class TileAssemblyTable extends TileLaserTableBase {
             return;
         }
 
-        updateRecipes();
+        boolean recipesChanged = false;
+        if (refreshState == REFRESH_RECIPES) {
+            recipesChanged = updateRecipes();
+        } else if (refreshState == REFRESH_TARGETS) {
+            recipesChanged = updateSavedTargets();
+        }
+        refreshState = REFRESH_NONE;
+
+        if (recipesChanged) {
+            sendNetworkGuiUpdate(NET_GUI_DATA);
+        }
 
         if (getTarget() > 0) {
             AdvancementUtil.unlockAdvancement(getOwner().getId(), ADVANCEMENT);
             if (power >= getTarget()) {
                 AssemblyInstruction instruction = getActiveRecipe();
-                extract(inv, instruction.recipe.getInputsFor(instruction.output), false, false);
+
+                // As input can be extracted before recipe completion, we check we have everything
+                // before actually completing the recipe and consuming the inputs
+                Collection<IngredientStack> inputs = instruction.recipe.getInputsFor(instruction.output);
+                if (!extract(inv, inputs, true, false)) {
+                    if (updateSavedTargets()) sendNetworkGuiUpdate(NET_GUI_DATA);
+                    return;
+                }
+
+                extract(inv, inputs, false, false);
 
                 InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, instruction.output.copy());
 
                 power -= getTarget();
                 activateNextRecipe();
+                updateSavedTargets();
+                sendNetworkGuiUpdate(NET_GUI_DATA);
             }
-            sendNetworkGuiUpdate(NET_GUI_DATA);
+        }
+    }
+
+    @Override
+    public void onPlayerOpen(EntityPlayer player) {
+        if (!world.isRemote) {
+            updateRecipes();
+            refreshState = REFRESH_NONE;
+        }
+        super.onPlayerOpen(player);
+        if (!world.isRemote) {
+            guiPlayers.add(player);
+        }
+    }
+
+    @Override
+    public void onPlayerClose(EntityPlayer player) {
+        if (!world.isRemote) {
+            guiPlayers.remove(player);
+        }
+        super.onPlayerClose(player);
+    }
+
+    @Override
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+        super.onSlotChange(handler, slot, before, after);
+        if (handler == inv && refreshState == REFRESH_NONE) {
+            if (!guiPlayers.isEmpty()) {
+                // If we have someone viewing the GUI, refresh the recipes every time inventory changes,
+                // so things stay responsive
+                refreshState = REFRESH_RECIPES;
+            } else if (getTarget() == 0) {
+                // Otherwise, we only need to refresh in the (rare) case we have no active target
+                // If we have a target, they will naturally refresh when the it finishes processing
+                refreshState = REFRESH_TARGETS;
+            }
         }
     }
 
@@ -229,6 +313,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
                     recipesStates.put(instruction, EnumAssemblyRecipeState.values()[entryTag.getInteger("state")]);
             }
         }
+        savedTargets.clear();
+        refreshState = REFRESH_RECIPES;
     }
 
     @Override
@@ -263,6 +349,8 @@ public class TileAssemblyTable extends TileLaserTableBase {
             EnumAssemblyRecipeState state = EnumAssemblyRecipeState.values()[buffer.readInt()];
             if (recipesStates.containsKey(recipe)) {
                 recipesStates.put(recipe, state);
+                cacheSavedTargets();
+                updateSavedTargets();
                 sendNetworkUpdate(NET_GUI_DATA);
             }
         }
