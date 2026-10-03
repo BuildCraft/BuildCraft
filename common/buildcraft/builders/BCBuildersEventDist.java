@@ -43,11 +43,14 @@ public enum BCBuildersEventDist {
 
     private static final UUID UUID_SINGLE_SCHEMATIC = new UUID(0xfd3b8c59b0a8b191L, 0x772ec006c1b0ffaaL);
     private final Map<World, Deque<WeakReference<TileQuarry>>> allQuarries = new WeakHashMap<>();
+    /** Registered quarry references in all worlds: collision queries skip the lock while there are none. */
+    private volatile int quarryRefs;
 
     public synchronized void validateQuarry(TileQuarry quarry) {
         Deque<WeakReference<TileQuarry>> quarries =
             allQuarries.computeIfAbsent(quarry.getWorld(), k -> new LinkedList<>());
         quarries.add(new WeakReference<>(quarry));
+        quarryRefs++;
     }
 
     public synchronized void invalidateQuarry(TileQuarry quarry) {
@@ -62,12 +65,21 @@ public enum BCBuildersEventDist {
             TileQuarry pos = ref.get();
             if (pos == null || pos == quarry) {
                 iter.remove();
+                quarryRefs--;
             }
         }
     }
 
     @SubscribeEvent
-    public synchronized void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
+    public void onGetCollisionBoxesForQuarry(GetCollisionBoxesEvent event) {
+        // Fired for every entity collision query on both sides
+        if (quarryRefs == 0) {
+            return;
+        }
+        addQuarryCollisionBoxes(event);
+    }
+
+    private synchronized void addQuarryCollisionBoxes(GetCollisionBoxesEvent event) {
         Deque<WeakReference<TileQuarry>> quarries = allQuarries.get(event.getWorld());
         if (quarries == null) {
             // No quarries in the target world
@@ -79,6 +91,7 @@ public enum BCBuildersEventDist {
             TileQuarry quarry = ref.get();
             if (quarry == null) {
                 iter.remove();
+                quarryRefs--;
                 continue;
             }
             for (AxisAlignedBB aabb : quarry.getCollisionBoxes()) {
