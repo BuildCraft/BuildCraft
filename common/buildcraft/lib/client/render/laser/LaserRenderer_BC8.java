@@ -17,6 +17,7 @@ import com.google.common.cache.RemovalNotification;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.profiler.Profiler;
@@ -71,9 +72,19 @@ public class LaserRenderer_BC8 {
         return COMPILED_LASER_TYPES.get(laserType);
     }
 
+    /** Static lasers are compiled relative to this block and drawn translated to it: compiled vertices are floats,
+     * which far from the world origin (e.g. at x = 1,000,000) cannot place a 1/16 block wide laser. */
+    private static BlockPos staticOrigin(LaserData_BC8 data) {
+        return new BlockPos(data.start);
+    }
+
     private static LaserCompiledList makeStaticLaser(LaserData_BC8 data) {
+        BlockPos origin = staticOrigin(data);
+        double ox = origin.getX(), oy = origin.getY(), oz = origin.getZ();
         try (LaserCompiledList.Builder renderer = new LaserCompiledList.Builder(data.enableDiffuse)) {
-            makeLaser(data, renderer);
+            // The laser (and its lighting) is computed in world coordinates; only the stored positions are relative
+            makeLaser(data, (x, y, z, u, v, lmap, nx, ny, nz, colour) ->
+                renderer.vertex(x - ox, y - oy, z - oz, u, v, lmap, nx, ny, nz, colour));
             return renderer.build();
         }
     }
@@ -153,7 +164,11 @@ public class LaserRenderer_BC8 {
         LaserCompiledList compiled = COMPILED_STATIC_LASERS.getUnchecked(data);
         profiler.endStartSection("render");
         SpriteUtil.bindBlockTextureMap();
+        BlockPos origin = staticOrigin(data);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(origin.getX(), origin.getY(), origin.getZ());
         compiled.render();
+        GlStateManager.popMatrix();
         profiler.endSection();
     }
 
