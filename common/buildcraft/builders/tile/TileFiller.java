@@ -227,6 +227,13 @@ public class TileFiller extends TileBC_Neptune
         builder.invalidate();
     }
 
+    /** A chunk unload doesn't invalidate the tile; the next load creates a new one that registers again. */
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        builder.invalidate();
+    }
+
     @Override
     public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);

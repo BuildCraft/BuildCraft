@@ -172,6 +172,14 @@ public class TileBuilder extends TileBC_Neptune
         blueprintBuilder.invalidate();
     }
 
+    /** A chunk unload doesn't invalidate the tile; the next load creates a new one that registers again. */
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        templateBuilder.invalidate();
+        blueprintBuilder.invalidate();
+    }
+
     private void updateSnapshot(boolean canGetFacing) {
         Optional.ofNullable(getBuilder()).ifPresent(SnapshotBuilder::cancel);
         if (snapshot != null && getCurrentBasePos() != null) {

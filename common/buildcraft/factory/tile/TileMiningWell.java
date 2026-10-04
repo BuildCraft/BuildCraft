@@ -124,6 +124,15 @@ public class TileMiningWell extends TileMiner {
         }
     }
 
+    /** A chunk unload doesn't invalidate the tile; the next load creates a new one that registers again. */
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        if (!world.isRemote) {
+            world.removeEventListener(worldEventListener);
+        }
+    }
+
     @Override
     public void invalidate() {
         super.invalidate();
