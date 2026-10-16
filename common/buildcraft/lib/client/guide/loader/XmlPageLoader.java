@@ -590,7 +590,7 @@ public enum XmlPageLoader implements IPageLoaderText {
             return null;
         }
         String type = tag.get("type");
-        if (type == null) {
+        if (type != null) {
             IStackRecipes recipes = RecipeLookupHelper.handlerTypes.get(type);
             if (recipes == null) {
                 BCLog.logger.warn(

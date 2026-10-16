@@ -1,4 +1,10 @@
 {
+  "conditions": [
+    {
+      "type": "minecraft:item_exists",
+      "item": "buildcraftenergy:mj_dynamo"
+    }
+  ],
   "result": {
     "item": "buildcraftenergy:mj_dynamo"
   },
